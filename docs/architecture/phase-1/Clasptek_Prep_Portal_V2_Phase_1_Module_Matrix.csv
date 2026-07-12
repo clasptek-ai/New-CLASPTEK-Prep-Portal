@@ -1,0 +1,16 @@
+﻿Module,Title,Dependencies,Production Gate,Academic Functionality Allowed
+1,Project Foundation,None,Repository reproducible,No
+2,Database Foundation,"1,10",Migrations/RLS validated,No
+3,Authentication,"1,2,10,11,12",Auth journeys secure,No
+4,Authorization,"1,2,5,11,12",Default deny and policy tests,No
+5,Identity Domain,"1,2,3,4,8,12",Identity invariants pass,No
+6,File Storage Foundation,"1,2,4,8,10,11,12",Private upload lifecycle pass,No
+7,Notification Foundation,"1,2,4,8,10,12",Async delivery and retry pass,No
+8,Audit & Logging,"1,2,10",Audit immutability/redaction pass,No
+9,Observability,"1,8,10",Health/alerts/traces verified,No
+10,Configuration,1,Typed config and secrets verified,No
+11,Security Foundation,"1,3,4,6,7,8,10,12",Critical findings closed,No
+12,API Foundation,"1,10,11",Contracts/idempotency pass,No
+13,Testing Foundation,"1,2,9,11,12",All test layers operational,No
+14,CI/CD Foundation,"1,2,9,10,11,13",Promotion/rollback rehearsed,No
+15,Documentation,All,Handover accepted,No

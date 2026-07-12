@@ -1,0 +1,28 @@
+{
+  "name": "@clasptek/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clasptek/authorization": "workspace:*",
+    "@clasptek/configuration": "workspace:*",
+    "@clasptek/contracts": "workspace:*",
+    "@clasptek/observability": "workspace:*",
+    "@clasptek/persistence": "workspace:*",
+    "@clasptek/ui": "workspace:*",
+    "@clasptek/validation": "workspace:*",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0"
+  }
+}

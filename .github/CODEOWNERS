@@ -1,0 +1,20 @@
+# Global owners
+* @CTO-Team
+
+# Platform/Infrastructure
+/packages/persistence/ @Platform-DB-Team
+/packages/observability/ @Platform-SRE-Team
+/packages/configuration/ @Platform-SRE-Team
+/packages/events/ @Platform-SRE-Team
+/packages/kernel/ @CTO-Team
+/packages/shared/ @CTO-Team
+
+# Identity & Access Domain (Module 3/4/5 ownership)
+/packages/domain/identity-access/ @Platform-Security-Team
+/apps/web/src/app/(auth)/ @Platform-Security-Team
+/apps/web/src/app/account/ @Platform-Security-Team
+
+# Governance & Documentation
+/docs/ @CTO-Team
+/docs/architecture/ @CTO-Team
+/docs/engineering-governance/ @CTO-Team

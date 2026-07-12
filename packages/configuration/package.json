@@ -1,0 +1,15 @@
+{
+  "name": "@clasptek/configuration",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clasptek/validation": "workspace:*",
+    "@clasptek/observability": "workspace:*",
+    "zod": "^3.23.8"
+  }
+}

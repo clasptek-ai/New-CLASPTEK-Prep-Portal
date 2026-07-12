@@ -1,0 +1,40 @@
+{
+  "name": "clasptek-prep-portal-v2",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Clasptek Prep Portal V2 Platform Monorepo",
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "bootstrap": "node ./scripts/bootstrap.js",
+    "verify": "node ./scripts/verify.js",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "format:check": "prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "test:e2e": "turbo run test:e2e",
+    "report:fitness": "tsx ./scripts/generate-fitness-report.ts",
+    "prepare": "simple-git-hooks"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.16.0",
+    "@types/node": "^22.10.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "dependency-cruiser": "^16.5.0",
+    "eslint": "^9.16.0",
+    "prettier": "^3.4.2",
+    "simple-git-hooks": "^2.11.1",
+    "turbo": "^2.3.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "vitest": "^2.1.8"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm format:check && pnpm lint",
+    "pre-push": "pnpm typecheck && pnpm test"
+  }
+}

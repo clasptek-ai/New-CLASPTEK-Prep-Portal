@@ -1,0 +1,16 @@
+{
+  "name": "@clasptek/worker",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit",
+    "start": "node ./dist/index.js"
+  },
+  "dependencies": {
+    "@clasptek/configuration": "workspace:*",
+    "@clasptek/observability": "workspace:*",
+    "@clasptek/persistence": "workspace:*"
+  }
+}

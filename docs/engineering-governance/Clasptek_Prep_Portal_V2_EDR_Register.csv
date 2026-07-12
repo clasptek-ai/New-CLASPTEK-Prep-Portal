@@ -1,0 +1,25 @@
+﻿EDR,Status,Decision,Context,Rationale
+EDR-001,Approved,Use a single monorepo,"Keep applications, workers, contracts, domain packages, database assets, tests and infrastructure under one versioned repository.",Atomic changes and contract visibility outweigh independent repository autonomy at the current team scale.
+EDR-002,Proposed,Use pnpm workspaces,Manage JavaScript/TypeScript packages through a strict workspace-aware package manager.,Fast deterministic installs and explicit workspace dependencies.
+EDR-003,Proposed,Use Turborepo task orchestration,"Coordinate build, lint, type-check and test pipelines across the monorepo.",Provides dependency-aware task execution and cacheable CI work.
+EDR-004,Approved,Use Next.js App Router for the web application,"Implement student, instructor and administrative experiences in one governed web application with clear feature boundaries.",Matches the approved stack and supports server-side access checks.
+EDR-005,Proposed,Use TanStack Query for client server-state,Use a dedicated query cache only where client-side revalidation is needed.,Separates server state from local UI state and provides controlled invalidation.
+EDR-006,Proposed,Use React Hook Form plus schema validation,"Standardise accessible form state, validation and server error mapping.",Avoids custom form frameworks and duplicated validation plumbing.
+EDR-007,Approved,Use PostgreSQL as the transactional source of truth,All canonical transactional state remains in managed PostgreSQL.,"Supports relational integrity, transactions, RLS and temporal audit."
+EDR-008,Approved,Use SQL-first migrations,Schema changes are version-controlled migration files reviewed with application changes.,Prevents schema drift and keeps physical design explicit.
+EDR-009,Approved,Use Supabase Auth behind an identity adapter,Authentication uses the approved provider without leaking provider-specific identity concepts into business domains.,Preserves portability and isolates authentication concerns.
+EDR-010,Approved,Use Supabase Storage behind a media adapter,Store restricted media in private buckets and expose only authorised signed access.,Matches the approved platform while preserving an abstraction boundary.
+EDR-011,Proposed,Use a PostgreSQL-backed durable queue initially,Run long jobs through a durable queue with retry and dead-letter support.,Reduces new infrastructure while providing transactional integration.
+EDR-012,Proposed,Introduce Redis only for proven needs,"Use Redis for distributed rate limits, locks or high-value caching only after measured justification.",Avoids premature cache inconsistency and operational cost.
+EDR-013,Approved,Use a provider-neutral AI gateway,All AI calls pass through typed provider adapters and governed model/prompt registries.,Prevents vendor lock-in and centralises controls.
+EDR-014,Proposed,Use OpenTelemetry-compatible instrumentation,"Emit traces, metrics and structured context through a vendor-neutral standard.",Allows observability backend changes without reinstrumenting domains.
+EDR-015,Approved,Use transactional outbox events,Commit domain changes and outbound event records in one database transaction.,Prevents lost events and dual-write inconsistency.
+EDR-016,Approved,Use REST-style command/query contracts,Expose explicit versioned business APIs rather than generic table CRUD.,"Supports authorization, idempotency and business semantics."
+EDR-017,Proposed,Use OpenAPI as the public contract description,Generate and validate API clients and contract tests from an approved API specification.,Creates a cross-team source of truth.
+EDR-018,Approved,Use feature flags for controlled rollout,"New capabilities, models and risky migrations are enabled by environment, academy or cohort.",Supports gradual exposure and rollback.
+EDR-019,Approved,Use immutable publication manifests,"Every academic publication records exact content, rules, approvals and version identities.",Provides reproducibility and safe correction.
+EDR-020,Proposed,Use Playwright for end-to-end browser testing,Automate critical student and operations journeys across supported browsers.,Provides reliable cross-browser workflow tests.
+EDR-021,Proposed,Use Vitest for TypeScript unit and integration tests,Standardise fast TypeScript testing across web and worker packages.,Reduces tooling fragmentation.
+EDR-022,Approved,Use contract-tested domain events,"Every event has a versioned schema, compatibility policy and consumer contract tests.",Prevents asynchronous integration drift.
+EDR-023,Approved,Use server-authoritative examination time,All deadlines and validity decisions derive from server timestamps.,Protects integrity across clock drift and browser manipulation.
+EDR-024,Approved,Use private-by-default media access,Files are inaccessible unless a domain permission grants a short-lived access mechanism.,Protects student data and premium academic content.

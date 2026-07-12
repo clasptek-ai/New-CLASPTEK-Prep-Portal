@@ -1,0 +1,12 @@
+# Package Manifest: @clasptek/[package-name]
+
+## Purpose
+[Describe why this package exists and what business/technical responsibility it holds]
+
+## Metadata
+- **Owner**: [Owning Team from OWNERS.md]
+- **Depends On**: [List of direct internal and external dependencies]
+- **Publishes**: [Interface endpoints or components exposed]
+- **Consumes**: [What API outputs or event models this package processes]
+- **Business Domain**: [Domain context reference]
+- **ADR References**: [Links to related Architectural Decision Records]

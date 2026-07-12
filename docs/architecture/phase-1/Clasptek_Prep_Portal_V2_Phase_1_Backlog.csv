@@ -1,0 +1,21 @@
+﻿Epic ID,Module,Epic,Scope,Priority,Dependencies
+P1-EP01,Module 1,Repository bootstrap,"Create monorepo, workspaces, apps and package boundaries",Critical,None
+P1-EP02,Module 1,Engineering tooling,"Strict TypeScript, lint, format, hooks and architecture tests",Critical,P1-EP01
+P1-EP03,Module 2,Database bootstrap,"Create schemas, extensions, migration framework and ownership grants",Critical,P1-EP01
+P1-EP04,Module 2,Platform entities,Implement permitted identity/platform entities and constraints,Critical,P1-EP03
+P1-EP05,Module 2,RLS and database tests,Default-deny policies and test harness,Critical,P1-EP04
+P1-EP06,Module 10,Configuration platform,"Typed environments, secrets and flags",Critical,P1-EP01
+P1-EP07,Module 12,API platform,"Versioning, errors, validation, pagination and idempotency",Critical,"P1-EP01,P1-EP06"
+P1-EP08,Module 8,Audit/logging platform,"Audit event ledger, correlation and redaction",Critical,"P1-EP03,P1-EP06"
+P1-EP09,Module 3,Authentication,"Registration, login, verification, reset, sessions and devices",Critical,"P1-EP04,P1-EP07,P1-EP08"
+P1-EP10,Module 4,Authorization,"Roles, permissions, assignments and policy engine",Critical,"P1-EP04,P1-EP07,P1-EP08"
+P1-EP11,Module 5,Identity domain,Account/profile services and UI,Critical,"P1-EP09,P1-EP10"
+P1-EP12,Module 6,File service,"Private uploads, validation, scanning hooks and downloads",High,"P1-EP04,P1-EP07,P1-EP08"
+P1-EP13,Module 7,Notification service,"Templates, in-app, email and channel abstractions",High,"P1-EP04,P1-EP07,P1-EP08"
+P1-EP14,Module 9,Observability,"Health, logs, metrics, traces, dashboards and alerts",Critical,"P1-EP01,P1-EP08"
+P1-EP15,Module 11,Security controls,"Headers, CSRF, CORS, rate limits, scans and threat models",Critical,"P1-EP07,P1-EP09,P1-EP10,P1-EP12"
+P1-EP16,Module 13,Testing platform,"Unit, integration, contract, browser, accessibility and security",Critical,"P1-EP01,P1-EP03,P1-EP07"
+P1-EP17,Module 14,CI validation,PR gates and artifact build,Critical,"P1-EP02,P1-EP16"
+P1-EP18,Module 14,Deployment and rollback,Staging/production promotion and recovery,Critical,"P1-EP14,P1-EP15,P1-EP17"
+P1-EP19,Module 15,Documentation and handover,"Guides, runbooks and compliance evidence",Critical,All
+P1-EP20,Final Review,Phase 1 acceptance,Architecture compliance and Phase 2 decision,Critical,P1-EP01..P1-EP19

@@ -1,0 +1,11 @@
+﻿Gate ID,Gate,Exit Criteria,Evidence,Approver
+QG-01,Architecture Compliance,"Domain owner, aggregate, rule, command, event and permission references supplied; no forbidden dependency.",Architecture Compliance Check,Principal Architect
+QG-02,Database Compliance,"Migration reviewed; constraints, indexes, RLS, rollback and query plans verified.",Database Review,Principal Database Architect
+QG-03,Security Compliance,"Threat model, authorization, secret handling, upload controls and audit verified.",Security Review,Security Lead
+QG-04,Test Compliance,"Required unit, integration, contract, database and browser tests pass.",Automated Test Pipeline,QA Architect
+QG-05,Performance Compliance,Budgets and load scenarios pass without exam-critical regression.,Performance Test Report,SRE Lead
+QG-06,Accessibility Compliance,"Keyboard, screen-reader, focus, contrast and responsive checks pass.",Accessibility Report,Frontend Lead
+QG-07,Observability Compliance,"Logs, metrics, traces, dashboards, alerts and runbooks exist.",Operational Readiness Review,SRE Lead
+QG-08,AI Governance Compliance,"Prompt/model versions, evaluations, thresholds, costs, fallback and human review approved.",AI Release Review,AI Governance Lead
+QG-09,Documentation Compliance,"Contracts, diagrams, data dictionary and user/operations documentation updated.",Documentation Check,Technical Lead
+QG-10,Release Compliance,"Feature flag, rollout, rollback, migration and support ownership approved.",Release Approval,Release Manager
