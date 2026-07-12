@@ -36,3 +36,10 @@ test-results/
 *.sln
 *.sw?
 .DS_Store
+
+
+# Turbo cache
+.turbo/cache/
+
+# Turbo logs
+**/.turbo/
