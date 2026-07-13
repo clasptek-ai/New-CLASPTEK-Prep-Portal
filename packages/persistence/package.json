@@ -10,6 +10,17 @@
   "dependencies": {
     "@clasptek/kernel": "workspace:*",
     "@clasptek/configuration": "workspace:*",
-    "@clasptek/observability": "workspace:*"
+    "@clasptek/observability": "workspace:*",
+    "@clasptek/domain-identity": "workspace:*",
+    "@clasptek/domain-auth": "workspace:*",
+    "@clasptek/domain-authorization": "workspace:*",
+    "@clasptek/domain-security": "workspace:*",
+    "@clasptek/application-identity": "workspace:*",
+    "@supabase/supabase-js": "^2.47.10",
+    "@supabase/ssr": "^0.5.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.10"
   }
 }

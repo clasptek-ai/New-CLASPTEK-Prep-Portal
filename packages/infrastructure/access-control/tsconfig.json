@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfig.options.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "composite": true
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../kernel" },
+    { "path": "../../domain/authorization" },
+    { "path": "../../security" }
+  ]
+}

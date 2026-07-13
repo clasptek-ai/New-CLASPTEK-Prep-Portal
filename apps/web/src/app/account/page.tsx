@@ -1,7 +1,54 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
+interface SupabaseUser {
+  id: string;
+  email?: string;
+}
 
 export default function AccountPage() {
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchSession();
+  }, []);
+
+  async function fetchSession() {
+    try {
+      const res = await fetch('/api/v1/auth/session');
+      if (!res.ok) {
+        // Redirect to login if not authenticated
+        router.push('/login');
+        return;
+      }
+      const data = await res.json();
+      setUser(data.user);
+    } catch {
+      router.push('/login');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleSignOut(e: React.MouseEvent) {
+    e.preventDefault();
+    try {
+      await fetch('/api/v1/auth/logout', { method: 'POST' });
+      router.push('/login');
+    } catch (err) {
+      console.error('Signout failure', err);
+    }
+  }
+
+  if (loading) {
+    return <div style={{ textAlign: 'center', padding: '4rem' }}>Loading account settings...</div>;
+  }
+
   return (
     <>
       <header className="shell-header">
@@ -18,19 +65,24 @@ export default function AccountPage() {
           <Link href="/account/notifications" className="nav-link">
             Notifications
           </Link>
-          <Link href="/" className="nav-link">
+          <a href="#" onClick={handleSignOut} className="nav-link">
             Sign Out
-          </Link>
+          </a>
         </nav>
       </header>
 
       <main className="shell-main">
         <div className="card">
           <h1>My Account</h1>
-          <p style={{ color: 'var(--text-muted)' }}>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
             Manage your personal profile, credentials, active sessions, and communication
             preferences.
           </p>
+          {user && (
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-main)' }}>
+              Logged in as: <strong>{user.email}</strong>
+            </div>
+          )}
         </div>
 
         <div

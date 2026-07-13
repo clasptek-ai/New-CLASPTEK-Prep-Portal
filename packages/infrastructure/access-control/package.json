@@ -1,0 +1,17 @@
+{
+  "name": "@clasptek/infrastructure-access-control",
+  "version": "1.0.0",
+  "description": "Access Control Infrastructure Implementation",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clasptek/kernel": "workspace:*",
+    "@clasptek/domain-authorization": "workspace:*",
+    "@clasptek/security": "workspace:*",
+    "zod": "^3.24.1"
+  }
+}

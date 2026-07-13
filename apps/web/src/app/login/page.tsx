@@ -1,9 +1,40 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Failed to log in');
+      }
+
+      router.push('/account');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <main
       className="shell-main"
@@ -21,8 +52,24 @@ export default function LoginPage() {
         >
           Clasptek Prep Portal Account Login
         </p>
+
+        {error && (
+          <div
+            style={{
+              backgroundColor: '#7f1d1d',
+              color: '#f87171',
+              padding: '0.75rem',
+              borderRadius: '6px',
+              marginBottom: '1rem',
+              fontSize: '0.875rem',
+            }}
+          >
+            {error}
+          </div>
+        )}
+
         <form
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={handleSubmit}
           style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
         >
           <div>
@@ -31,8 +78,10 @@ export default function LoginPage() {
             </label>
             <input
               type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               placeholder="you@domain.com"
-              disabled
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -50,8 +99,10 @@ export default function LoginPage() {
             </label>
             <input
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               placeholder="••••••••"
-              disabled
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -63,12 +114,8 @@ export default function LoginPage() {
               }}
             />
           </div>
-          <button
-            className="btn"
-            disabled
-            style={{ marginTop: '1rem', opacity: 0.6, cursor: 'not-allowed' }}
-          >
-            Sign In (Locked)
+          <button type="submit" className="btn" disabled={loading} style={{ marginTop: '1rem' }}>
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
         <div
@@ -81,18 +128,6 @@ export default function LoginPage() {
         >
           <Link href="/forgot-password">Forgot Password?</Link>
           <Link href="/register">Create Account</Link>
-        </div>
-        <div
-          style={{
-            marginTop: '2rem',
-            borderTop: '1px solid var(--card-border)',
-            paddingTop: '1rem',
-            fontSize: '0.75rem',
-            color: 'var(--text-muted)',
-            textAlign: 'center',
-          }}
-        >
-          Sprint 1.1 Foundation Active. Identity aggregate mapping occurs in Sprint 1.3.
         </div>
       </div>
     </main>

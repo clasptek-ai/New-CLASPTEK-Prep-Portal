@@ -1,0 +1,18 @@
+{
+  "name": "@clasptek/application-identity-sync",
+  "version": "1.0.0",
+  "description": "Event-Driven Identity Synchronization Service",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clasptek/kernel": "workspace:*",
+    "@clasptek/observability": "workspace:*",
+    "@clasptek/domain-identity": "workspace:*",
+    "@clasptek/application-identity": "workspace:*",
+    "zod": "^3.24.1"
+  }
+}

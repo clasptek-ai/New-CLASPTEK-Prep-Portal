@@ -1,0 +1,17 @@
+{
+  "name": "@clasptek/application-auth",
+  "version": "1.0.0",
+  "description": "Authentication Application Use-Cases",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clasptek/kernel": "workspace:*",
+    "@clasptek/domain-auth": "workspace:*",
+    "@clasptek/domain-security": "workspace:*",
+    "zod": "^3.24.1"
+  }
+}

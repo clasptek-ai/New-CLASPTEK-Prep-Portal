@@ -25,11 +25,22 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"],
   "references": [
-    { "path": "../../packages/authorization" },
+    { "path": "../../packages/domain/auth" },
+    { "path": "../../packages/domain/authorization" },
+    { "path": "../../packages/domain/security" },
+    { "path": "../../packages/application/auth" },
+    { "path": "../../packages/application/authorization" },
+    { "path": "../../packages/application/identity-sync" },
+    { "path": "../../packages/infrastructure/access-control" },
     { "path": "../../packages/configuration" },
     { "path": "../../packages/contracts" },
+    { "path": "../../packages/kernel" },
+    { "path": "../../packages/domain/identity" },
+    { "path": "../../packages/application/identity" },
+    { "path": "../../packages/feature-flags" },
     { "path": "../../packages/observability" },
     { "path": "../../packages/persistence" },
+    { "path": "../../packages/security" },
     { "path": "../../packages/ui" },
     { "path": "../../packages/validation" }
   ]

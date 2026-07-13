@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrincipalContext } from '@clasptek/authorization';
+import { PrincipalContext } from '@clasptek/domain-authorization';
 
 export async function GET() {
   const mockPrincipal: PrincipalContext = {
@@ -7,8 +7,8 @@ export async function GET() {
     permissions: [
       'identity:profile:read',
       'identity:profile:write',
-      'identity:session:read',
-      'identity:session:revoke',
+      'auth:session:read',
+      'auth:session:write',
     ],
   };
   return NextResponse.json(mockPrincipal);

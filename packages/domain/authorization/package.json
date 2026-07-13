@@ -1,0 +1,16 @@
+{
+  "name": "@clasptek/domain-authorization",
+  "version": "1.0.0",
+  "description": "Authorization Domain Bounded Context",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clasptek/kernel": "workspace:*",
+    "@clasptek/validation": "workspace:*",
+    "zod": "^3.24.1"
+  }
+}

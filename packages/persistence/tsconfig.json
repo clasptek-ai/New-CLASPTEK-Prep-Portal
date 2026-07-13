@@ -9,6 +9,11 @@
   "references": [
     { "path": "../kernel" },
     { "path": "../configuration" },
-    { "path": "../observability" }
+    { "path": "../observability" },
+    { "path": "../domain/identity" },
+    { "path": "../domain/auth" },
+    { "path": "../domain/authorization" },
+    { "path": "../domain/security" },
+    { "path": "../application/identity" }
   ]
 }

@@ -58,11 +58,42 @@ describe('Architecture Fitness Tests', () => {
       for (const domain of domains) {
         const fullPath = path.join(domainDir, domain);
         if (fs.statSync(fullPath).isDirectory()) {
-          // Expect reference to domain to exist in ADR index file
           const regex = new RegExp(domain, 'i');
           expect(adrIndexContent).toMatch(regex);
         }
       }
+    }
+  });
+
+  test('Client Bundle Leakage check for Server configs/adapters', () => {
+    const webSrcDir = path.join(rootDir, 'apps/web/src');
+
+    const scanDir = (dir: string) => {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          scanDir(fullPath);
+        } else if (entry.isFile() && /\.(ts|tsx)$/.test(entry.name)) {
+          const content = fs.readFileSync(fullPath, 'utf8');
+          // If the file is explicitly designated as browser-facing client component
+          if (content.includes('"use client"') || content.includes("'use client'")) {
+            // Verify it does not import server-only parameters
+            const hasServerConfigImport = content.includes('@clasptek/configuration');
+            const hasPersistenceImport = content.includes('@clasptek/persistence');
+
+            if (hasServerConfigImport || hasPersistenceImport) {
+              throw new Error(
+                `Client bundle leakage detected in "${fullPath}". Client component must not import server configuration or persistence adapters.`
+              );
+            }
+          }
+        }
+      }
+    };
+
+    if (fs.existsSync(webSrcDir)) {
+      scanDir(webSrcDir);
     }
   });
 });
