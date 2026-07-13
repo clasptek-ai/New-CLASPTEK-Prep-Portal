@@ -1,0 +1,47 @@
+﻿{
+  "package": "Clasptek Prep Portal V2 Security Operations Documentation",
+  "generated_date": "2026-07-13",
+  "documents": [
+    {
+      "path": "docs/security/authentication-flow.md",
+      "bytes": 14868,
+      "lines": 353,
+      "sha256": "2924be5c6cf037505cb5e46196b3480243b9382a335380f48a339df851f9e41f"
+    },
+    {
+      "path": "docs/security/authorization-model.md",
+      "bytes": 14376,
+      "lines": 332,
+      "sha256": "49e2330041da0dc6dfa806f7d5dda772fb24a8729fc54c1c158c4d00e3ba8587"
+    },
+    {
+      "path": "docs/security/rls-strategy.md",
+      "bytes": 13271,
+      "lines": 313,
+      "sha256": "42dc0ea6d0153e6e135aa41cb0456c0b7f200f51f8946629b3b3ce104d9c5bd1"
+    },
+    {
+      "path": "docs/security/SECURITY_OPERATIONS_MANUAL.md",
+      "bytes": 19570,
+      "lines": 453,
+      "sha256": "695c034c9263c66bc9c435df3981eee696f26a89bb358feb892a0114f48fd2f4"
+    },
+    {
+      "path": "docs/security/security-model.md",
+      "bytes": 16030,
+      "lines": 382,
+      "sha256": "1f5a50e32602852203ff0183913229c4cde3d2f35ee2367beb5b9562301ca15c"
+    },
+    {
+      "path": "docs/security/threat-model.md",
+      "bytes": 15844,
+      "lines": 305,
+      "sha256": "fa5c0381b986221db6fb82af51ec3c727cda65e47e63d2e412c5d69823db6101"
+    }
+  ],
+  "standards_baseline": {
+    "OWASP_ASVS": "5.0.0",
+    "OWASP_Top_10": "2025"
+  },
+  "authority_note": "Exact implementation identifiers remain release-tag authoritative."
+}
