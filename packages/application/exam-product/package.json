@@ -1,0 +1,17 @@
+{
+  "name": "@clasptek/application-exam-product",
+  "version": "1.0.0",
+  "description": "Application services, command & query handlers for the Exam Product Bounded Context",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clasptek/kernel": "workspace:*",
+    "@clasptek/observability": "workspace:*",
+    "@clasptek/domain-exam-product": "workspace:*",
+    "zod": "^3.24.1"
+  }
+}

@@ -4,13 +4,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 describe('Architecture Fitness Tests', () => {
-  const rootDir = path.resolve(__dirname, '../../..');
+  const rootDir = path.resolve(__dirname, '../..');
 
   test('Dependency Cruiser validation check', () => {
     try {
       const output = execSync(
         'npx dependency-cruiser --config dependency-cruiser.config.js --output-type json apps packages',
-        { cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
+        { cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 10 * 1024 * 1024 }
       );
       const report = JSON.parse(output);
       const errors = report.summary.violations.filter((v: any) => v.rule.severity === 'error');
@@ -31,19 +31,25 @@ describe('Architecture Fitness Tests', () => {
     const packagesDir = path.join(rootDir, 'packages');
     const appsDir = path.join(rootDir, 'apps');
 
-    const checkManifests = (dirPath: string) => {
-      const targets = fs.readdirSync(dirPath);
-      for (const target of targets) {
-        const fullPath = path.join(dirPath, target);
-        if (fs.statSync(fullPath).isDirectory()) {
-          const manifestPath = path.join(fullPath, 'package.manifest.md');
-          expect(fs.existsSync(manifestPath)).toBe(true);
+    const checkManifestsInDir = (dirPath: string) => {
+      const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const fullPath = path.join(dirPath, entry.name);
+          const hasPackageJson = fs.existsSync(path.join(fullPath, 'package.json'));
+          if (hasPackageJson) {
+            const manifestPath = path.join(fullPath, 'package.manifest.md');
+            expect(fs.existsSync(manifestPath)).toBe(true);
+          } else {
+            // Recurse into categories like packages/domain, packages/application
+            checkManifestsInDir(fullPath);
+          }
         }
       }
     };
 
-    checkManifests(packagesDir);
-    checkManifests(appsDir);
+    checkManifestsInDir(packagesDir);
+    checkManifestsInDir(appsDir);
   });
 
   test('ADR registration checker for Domain packages', () => {
@@ -95,5 +101,35 @@ describe('Architecture Fitness Tests', () => {
     if (fs.existsSync(webSrcDir)) {
       scanDir(webSrcDir);
     }
+  });
+
+  test('Curriculum Domain dependencies verification', () => {
+    const domainCurriculumSrc = path.join(rootDir, 'packages/domain/curriculum/src');
+    if (!fs.existsSync(domainCurriculumSrc)) return;
+
+    const scanDomainDir = (dir: string) => {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          scanDomainDir(fullPath);
+        } else if (entry.isFile() && /\.(ts|tsx)$/.test(entry.name)) {
+          const content = fs.readFileSync(fullPath, 'utf8');
+          // Rules check
+          const hasSupabase = content.includes('@supabase/supabase-js') || content.includes('@supabase/ssr');
+          const hasPg = content.includes("from 'pg'") || content.includes('from "pg"');
+          const hasReact = content.includes("from 'react'") || content.includes('from "react"') || content.includes("from 'react-dom'") || content.includes('from "react-dom"');
+          const hasNext = content.includes("from 'next/") || content.includes('from "next/');
+          const hasPersistence = content.includes('@clasptek/persistence');
+
+          if (hasSupabase || hasPg || hasReact || hasNext || hasPersistence) {
+            throw new Error(
+              `Boundary violation in Curriculum Domain file "${fullPath}": must not import Supabase, pg, React, Next.js, or Persistence packages.`
+            );
+          }
+        }
+      }
+    };
+    scanDomainDir(domainCurriculumSrc);
   });
 });

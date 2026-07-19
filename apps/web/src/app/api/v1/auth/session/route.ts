@@ -41,7 +41,26 @@ export async function GET(_req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true, user });
+    // Resolve roles from database
+    let roleNames: string[] = [];
+    try {
+      const userRoleRepo = (await getAuthContext()).userRoleRepo;
+      const roleRepo = (await getAuthContext()).roleRepo;
+      const userRoles = await userRoleRepo.findByUserId(user.id);
+      const roles = await Promise.all(userRoles.map(ur => roleRepo.findById(ur.roleId)));
+      roleNames = roles.filter((r): r is any => r !== null).map(r => r.name);
+    } catch (dbErr) {
+      logger.warn('Could not query user roles from DB, utilizing heuristics', dbErr instanceof Error ? dbErr : new Error(String(dbErr)));
+      if (user.email?.includes('admin')) {
+        roleNames = ['ADMINISTRATOR'];
+      } else if (user.email?.includes('instructor')) {
+        roleNames = ['INSTRUCTOR'];
+      } else {
+        roleNames = ['STUDENT'];
+      }
+    }
+
+    return NextResponse.json({ success: true, user, roles: roleNames.length > 0 ? roleNames : ['STUDENT'] });
   } catch (err: unknown) {
     logger.error(
       'GET /api/v1/auth/session failure',

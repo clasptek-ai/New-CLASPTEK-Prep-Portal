@@ -1,0 +1,15 @@
+{
+  "name": "@clasptek/domain-learning-resources",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clasptek/kernel": "workspace:*",
+    "@clasptek/validation": "workspace:*",
+    "zod": "^3.24.1"
+  }
+}

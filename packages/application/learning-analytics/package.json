@@ -1,0 +1,14 @@
+{
+  "name": "@clasptek/application-learning-analytics",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@clasptek/domain-learning-analytics": "workspace:*",
+    "@clasptek/kernel": "workspace:*"
+  }
+}

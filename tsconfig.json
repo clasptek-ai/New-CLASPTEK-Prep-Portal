@@ -19,10 +19,22 @@
     { "path": "./packages/security" },
     { "path": "./packages/feature-flags" },
     { "path": "./packages/domain/identity" },
+    { "path": "./packages/domain/curriculum" },
     { "path": "./packages/application/identity" },
+    { "path": "./packages/application/curriculum" },
     { "path": "./packages/testing" },
     { "path": "./packages/ui" },
     { "path": "./packages/kernel" },
-    { "path": "./packages/shared" }
+    { "path": "./packages/shared" },
+    { "path": "./packages/domain/learning-resources" },
+    { "path": "./packages/application/learning-resources" },
+    { "path": "./packages/domain/question-bank" },
+    { "path": "./packages/application/question-bank" },
+    { "path": "./packages/domain/student-learning" },
+    { "path": "./packages/application/student-learning" },
+    { "path": "./packages/domain/adaptive-practice" },
+    { "path": "./packages/application/adaptive-practice" },
+    { "path": "./packages/domain/assessment-runtime" },
+    { "path": "./packages/application/assessment-runtime" }
   ]
 }

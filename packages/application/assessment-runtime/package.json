@@ -1,0 +1,14 @@
+{
+  "name": "@clasptek/application-assessment-runtime",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clasptek/domain-assessment-runtime": "workspace:*",
+    "@clasptek/kernel": "workspace:*"
+  }
+}

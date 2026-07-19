@@ -11,9 +11,25 @@
     { "path": "../configuration" },
     { "path": "../observability" },
     { "path": "../domain/identity" },
+    { "path": "../domain/exam-product" },
+    { "path": "../domain/curriculum" },
+    { "path": "../domain/learning-resources" },
     { "path": "../domain/auth" },
     { "path": "../domain/authorization" },
     { "path": "../domain/security" },
-    { "path": "../application/identity" }
+    { "path": "../application/identity" },
+    { "path": "../domain/question-bank" },
+    { "path": "../application/question-bank" },
+    { "path": "../domain/student-learning" },
+    { "path": "../application/student-learning" },
+    { "path": "../domain/adaptive-practice" },
+    { "path": "../application/adaptive-practice" },
+    { "path": "../domain/assessment-runtime" },
+    { "path": "../application/assessment-runtime" },
+    { "path": "../domain/ai-evaluation" },
+    { "path": "../application/ai-evaluation" },
+    { "path": "../domain/prediction-engine" },
+    { "path": "../application/prediction-engine" },
+    { "path": "../application/curriculum" }
   ]
 }

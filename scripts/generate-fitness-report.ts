@@ -13,7 +13,7 @@ function runCruiser() {
   try {
     const raw = execSync(
       'npx dependency-cruiser --config dependency-cruiser.config.js --output-type json apps packages',
-      { cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
+      { cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 1024 * 1024 * 50 }
     );
     return JSON.parse(raw);
   } catch (err: any) {

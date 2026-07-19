@@ -5,8 +5,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['tests/**/*.test.ts', 'packages/**/*.test.ts'],
+    include: ['tests/**/*.test.ts', 'packages/**/*.test.ts', 'apps/**/*.test.ts'],
     alias: {
+      '@': path.resolve(__dirname, './apps/web/src'),
       '@clasptek/kernel': path.resolve(__dirname, './packages/kernel/src/index.ts'),
       '@clasptek/shared': path.resolve(__dirname, './packages/shared/src/index.ts'),
       '@clasptek/validation': path.resolve(__dirname, './packages/validation/src/index.ts'),
@@ -51,6 +52,62 @@ export default defineConfig({
       '@clasptek/application-identity': path.resolve(
         __dirname,
         './packages/application/identity/src/index.ts'
+      ),
+      '@clasptek/domain-exam-product': path.resolve(
+        __dirname,
+        './packages/domain/exam-product/src/index.ts'
+      ),
+      '@clasptek/domain-curriculum': path.resolve(
+        __dirname,
+        './packages/domain/curriculum/src/index.ts'
+      ),
+      '@clasptek/application-exam-product': path.resolve(
+        __dirname,
+        './packages/application/exam-product/src/index.ts'
+      ),
+      '@clasptek/application-curriculum': path.resolve(
+        __dirname,
+        './packages/application/curriculum/src/index.ts'
+      ),
+      '@clasptek/domain-student-learning': path.resolve(
+        __dirname,
+        './packages/domain/student-learning/src/index.ts'
+      ),
+      '@clasptek/application-student-learning': path.resolve(
+        __dirname,
+        './packages/application/student-learning/src/index.ts'
+      ),
+      '@clasptek/domain-adaptive-practice': path.resolve(
+        __dirname,
+        './packages/domain/adaptive-practice/src/index.ts'
+      ),
+      '@clasptek/application-adaptive-practice': path.resolve(
+        __dirname,
+        './packages/application/adaptive-practice/src/index.ts'
+      ),
+      '@clasptek/domain-assessment-runtime': path.resolve(
+        __dirname,
+        './packages/domain/assessment-runtime/src/index.ts'
+      ),
+      '@clasptek/application-assessment-runtime': path.resolve(
+        __dirname,
+        './packages/application/assessment-runtime/src/index.ts'
+      ),
+      '@clasptek/domain-ai-evaluation': path.resolve(
+        __dirname,
+        './packages/domain/ai-evaluation/src/index.ts'
+      ),
+      '@clasptek/application-ai-evaluation': path.resolve(
+        __dirname,
+        './packages/application/ai-evaluation/src/index.ts'
+      ),
+      '@clasptek/domain-prediction-engine': path.resolve(
+        __dirname,
+        './packages/domain/prediction-engine/src/index.ts'
+      ),
+      '@clasptek/application-prediction-engine': path.resolve(
+        __dirname,
+        './packages/application/prediction-engine/src/index.ts'
       ),
     },
   },

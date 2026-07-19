@@ -2,16 +2,65 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
+  --spacing-4: 0.25rem;
+  --spacing-8: 0.5rem;
+  --spacing-12: 0.75rem;
+  --spacing-16: 1rem;
+  --spacing-24: 1.5rem;
+  --spacing-32: 2rem;
+  --spacing-48: 3rem;
+  --spacing-64: 4rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+}
+
+:root, .dark {
   --background: #0b0f19;
   --card-bg: #151d30;
   --card-border: #232e48;
-  --primary: #2563eb;
-  --primary-hover: #3b82f6;
+  --primary: #1E5797;
+  --primary-hover: #27417D;
   --accent: #14b8a6;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  --error: #ef4444;
+  --error: #ED1B23;
   --success: #10b981;
+  --nav-bg: #283471;
+}
+
+.light {
+  --background: #f8fafc;
+  --card-bg: #ffffff;
+  --card-border: #D9DDE3;
+  --primary: #1E5797;
+  --primary-hover: #27417D;
+  --accent: #14b8a6;
+  --text-main: #040708;
+  --text-muted: #6B7280;
+  --error: #ED1B23;
+  --success: #10b981;
+  --nav-bg: #283471;
+}
+
+.high-contrast {
+  --background: #000000;
+  --card-bg: #000000;
+  --card-border: #ffffff;
+  --primary: #ffff00;
+  --primary-hover: #ffff00;
+  --accent: #00ffff;
+  --text-main: #ffffff;
+  --text-muted: #ffff00;
+  --error: #ff0000;
+  --success: #00ff00;
+  --nav-bg: #000000;
 }
 
 body {
@@ -53,6 +102,7 @@ a:hover {
   font-weight: 700;
   background: linear-gradient(135deg, #3b82f6, #14b8a6);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

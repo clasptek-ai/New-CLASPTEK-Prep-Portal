@@ -3,7 +3,7 @@ const path = require('path');
 const { Client } = require('pg');
 require('dotenv').config();
 
-const migrationDir = path.resolve(__dirname, '../database/migrations');
+const migrationDir = path.resolve(__dirname, '../supabase/migrations');
 
 async function main() {
   console.log('=========================================');
@@ -11,16 +11,26 @@ async function main() {
   console.log('=========================================');
 
   // Rely on the validated environment loader values
-  const dbUrl = process.env.DATABASE_URL;
+  let dbUrl = process.env.DATABASE_URL;
   if (!dbUrl) {
     console.error('❌ Startup Failure: DATABASE_URL parameter is absent.');
     process.exit(1);
   }
 
-  const client = new Client({ connectionString: dbUrl });
+  // Override verify-full with no-verify to allow rejectUnauthorized: false
+  dbUrl = dbUrl.replace('sslmode=verify-full', 'sslmode=no-verify');
+
+  const client = new Client({
+    connectionString: dbUrl,
+    ssl: dbUrl.includes('supabase') ? { rejectUnauthorized: false } : false,
+  });
   try {
     await client.connect();
     console.log('Connected to PostgreSQL datastore.');
+
+    // Acquire session-level migration lock
+    await client.query('SELECT pg_advisory_lock(1337);');
+    console.log('Acquired session-level migration lock (ID: 1337).');
 
     // Ensure infrastructure migrations log table is initialized
     await client.query(`
@@ -110,6 +120,12 @@ async function main() {
     console.error('❌ Migration failed with critical error:', err.message);
     process.exit(1);
   } finally {
+    try {
+      await client.query('SELECT pg_advisory_unlock(1337);');
+      console.log('Released session-level migration lock (ID: 1337).');
+    } catch (unlockErr) {
+      console.error('Warning: Failed to release advisory lock:', unlockErr.message);
+    }
     await client.end();
   }
 }

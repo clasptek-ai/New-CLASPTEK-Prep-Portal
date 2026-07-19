@@ -1,4 +1,4 @@
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect, vi, beforeEach } from 'vitest';
 import {
   RegisterAuthPreferencesHandler,
   RecordLoginSessionHandler,
@@ -9,41 +9,59 @@ import {
 import { SecuritySession, SecuritySessionRepository } from '@clasptek/domain-auth';
 import { SecurityProfile, SecurityProfileRepository } from '@clasptek/domain-security';
 
+class InMemorySecurityProfileRepository implements SecurityProfileRepository {
+  private profiles = new Map<string, SecurityProfile>();
+
+  public readonly findById = vi.fn().mockImplementation(async (id: string) => {
+    return this.profiles.get(id) || null;
+  });
+
+  public readonly findByUserId = vi.fn().mockImplementation(async (uid: string) => {
+    return Array.from(this.profiles.values()).find((p) => p.userId === uid) || null;
+  });
+
+  public readonly save = vi.fn().mockImplementation(async (profile: SecurityProfile) => {
+    this.profiles.set(profile.id, profile);
+  });
+}
+
 describe('Application Authentication Handlers Tests', () => {
   const userUUID = '00000000-0000-0000-0000-000000000001';
   const sessionUUID = '00000000-0000-0000-0000-000000000002';
 
-  const mockProfileRepo: SecurityProfileRepository = {
-    findById: vi.fn(),
-    findByUserId: vi.fn().mockImplementation(async (uid: string) => {
-      if (uid === userUUID) {
-        return new SecurityProfile('profile-id', userUUID, null, 0, 'UNLOCKED');
-      }
-      return null;
-    }),
-    save: vi.fn().mockResolvedValue(undefined),
-  };
+  let mockProfileRepo: InMemorySecurityProfileRepository;
+  let mockSessionRepo: SecuritySessionRepository;
 
-  const mockSessionRepo: SecuritySessionRepository = {
-    findById: vi.fn().mockImplementation(async (sid: string) => {
-      if (sid === sessionUUID) {
-        return new SecuritySession(
-          sessionUUID,
-          userUUID,
-          'supabase-token',
-          'Chrome',
-          '127.0.0.1',
-          'USA',
-          'Desktop',
-          'Mozilla'
-        );
-      }
-      return null;
-    }),
-    findBySupabaseSessionId: vi.fn(),
-    findActiveByUserId: vi.fn(),
-    save: vi.fn().mockResolvedValue(undefined),
-  };
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
+    vi.resetModules();
+
+    mockProfileRepo = new InMemorySecurityProfileRepository();
+    // Seed default unlocked profile
+    mockProfileRepo.save(new SecurityProfile('profile-id', userUUID, null, 0, 'UNLOCKED'));
+
+    mockSessionRepo = {
+      findById: vi.fn().mockImplementation(async (sid: string) => {
+        if (sid === sessionUUID) {
+          return new SecuritySession(
+            sessionUUID,
+            userUUID,
+            'supabase-token',
+            'Chrome',
+            '127.0.0.1',
+            'USA',
+            'Desktop',
+            'Mozilla'
+          );
+        }
+        return null;
+      }),
+      findBySupabaseSessionId: vi.fn(),
+      findActiveByUserId: vi.fn(),
+      save: vi.fn().mockResolvedValue(undefined),
+    };
+  });
 
   test('RecordLoginSessionHandler logs session details', async () => {
     const handler = new RecordLoginSessionHandler(mockSessionRepo);

@@ -1,0 +1,855 @@
+# Clasptek Prep Portal V2
+# Enterprise Platform Baseline v1.0
+## Enterprise Architecture & Engineering Baseline
+
+**Document ID:** EPB-001
+
+**Version:** 1.0
+
+**Status:** BASELINE FROZEN
+
+**Classification:** Enterprise Architecture Baseline
+
+**Architecture Owner:** Enterprise Architecture Board
+
+**Product:** Clasptek Prep Portal V2
+
+**Baseline Date:** Sprint 2.5 Completion
+
+---
+
+# Executive Summary
+
+## Purpose
+
+This document establishes the **first Enterprise Platform Baseline** for Clasptek Prep Portal V2.
+
+It records the complete architectural state of the platform after the completion of:
+
+- Phase 1
+- Sprint 2.1A
+- Sprint 2.2
+- Sprint 2.3
+- Sprint 2.4
+- Sprint 2.5
+
+From this point forward, all future implementation sprints (2.6 onwards) will be measured against this baseline.
+
+This document serves as the canonical enterprise reference for:
+
+- Architecture
+- Engineering
+- Governance
+- APIs
+- Repository Contracts
+- Domain Boundaries
+- Performance Expectations
+- Technical Debt
+
+---
+
+# Overall Architecture Status
+
+| Area | Status |
+|-------|--------|
+| Platform Foundation | ✅ Complete |
+| Identity & Security | ✅ Complete |
+| Academic Authoring Platform | ✅ Complete |
+| Learning Platform Foundation | ✅ Complete |
+| Student State Platform | ✅ Complete |
+| Enterprise Governance | ✅ Complete |
+| Runtime Platform | ⏳ Pending |
+| Adaptive Learning | ⏳ Pending |
+| AI Platform | ⏳ Pending |
+
+---
+
+# Platform Maturity
+
+```text
+██████████████████████████████
+
+Enterprise Foundation
+
+COMPLETE
+
+██████████████████████████████
+```
+
+---
+
+# Completed Domains
+
+## Phase 1
+
+- Identity
+- Authentication
+- Authorization
+- Security
+
+---
+
+## Sprint 2.1A
+
+- Exam Product
+
+---
+
+## Sprint 2.2
+
+- Curriculum
+- Programme
+
+---
+
+## Sprint 2.3
+
+- Learning Resources
+
+---
+
+## Sprint 2.4
+
+- Question Bank
+
+---
+
+## Sprint 2.5
+
+- Student Learning Journey
+
+---
+
+# Architecture Summary
+
+## Bounded Contexts
+
+| Domain | Status |
+|---------|--------|
+| Identity | Frozen |
+| Authentication | Frozen |
+| Authorization | Frozen |
+| Security | Frozen |
+| Exam Product | Frozen |
+| Curriculum | Frozen |
+| Programme | Frozen |
+| Learning Resources | Frozen |
+| Question Bank | Frozen |
+| Student Learning Journey | Frozen |
+
+---
+
+# Architecture Decision Records
+
+| ADR | Status |
+|------|--------|
+| ADR-001 | Accepted |
+| ADR-002 | Accepted |
+| ADR-003 | Accepted |
+| ADR-004 | Accepted |
+| ADR-005 | Accepted |
+| ADR-006 | Accepted |
+| ADR-007 | Accepted |
+| ADR-008 | Accepted |
+| ADR-009 | Accepted & Frozen |
+| ADR-010 | Accepted & Frozen |
+
+---
+
+# Release History
+
+| Release | Description |
+|-----------|------------|
+| v1.0.0 | Core Platform |
+| v1.1.0 | Exam Product |
+| v1.2.0 | Curriculum |
+| v1.3.0 | Learning Resources |
+| v1.4.0 | Question Bank |
+| v1.5.0 | Student Learning Journey |
+
+---
+
+# Domain Catalogue
+
+---
+
+# Identity
+
+### Owner
+
+Identity Team
+
+### Responsibilities
+
+- User identities
+- Profiles
+- Registration
+- Identity synchronization
+
+### Aggregate Roots
+
+- User
+- Profile
+
+### Repository
+
+IdentityRepository
+
+### Events
+
+- UserRegistered
+- ProfileUpdated
+
+### APIs
+
+/api/v1/users
+
+### Depends On
+
+Shared Kernel
+
+---
+
+# Authentication
+
+### Responsibilities
+
+- Login
+- Sessions
+- Passwords
+- MFA
+
+### Aggregate
+
+AuthenticationSession
+
+### Repository
+
+AuthenticationRepository
+
+### APIs
+
+/api/v1/auth
+
+### Depends On
+
+Identity
+
+---
+
+# Authorization
+
+### Responsibilities
+
+- RBAC
+- Permission Matrix
+- Roles
+
+### Aggregate
+
+Role
+
+### Repository
+
+AuthorizationRepository
+
+---
+
+# Security
+
+### Responsibilities
+
+- Audit
+- Device Trust
+- Lockouts
+- Threat Protection
+
+---
+
+# Exam Product
+
+### Responsibilities
+
+Official examination catalogue
+
+### Aggregate
+
+ExamProduct
+
+### Repositories
+
+ExamProductRepository
+
+### APIs
+
+/api/v1/exams
+
+### Depends On
+
+None
+
+---
+
+# Curriculum
+
+### Responsibilities
+
+Curriculum hierarchy
+
+Programme structure
+
+Competencies
+
+Learning Objectives
+
+### Aggregates
+
+Curriculum
+
+Programme
+
+### Repositories
+
+CurriculumRepository
+
+ProgrammeRepository
+
+### Depends On
+
+Exam Product
+
+---
+
+# Learning Resources
+
+### Responsibilities
+
+Lessons
+
+Resources
+
+Media
+
+Attachments
+
+Versioning
+
+### Aggregates
+
+Lesson
+
+LearningResource
+
+### Repositories
+
+LessonRepository
+
+LearningResourceRepository
+
+### Depends On
+
+Curriculum
+
+Programme
+
+---
+
+# Question Bank
+
+### Responsibilities
+
+Question authoring
+
+Versioning
+
+Solutions
+
+Rubrics
+
+Workflow
+
+### Aggregates
+
+Question
+
+QuestionReview
+
+### Repositories
+
+QuestionRepository
+
+QuestionReviewRepository
+
+QuestionImportRepository
+
+### Depends On
+
+Curriculum
+
+Learning Resources
+
+Exam Product
+
+---
+
+# Student Learning Journey
+
+### Responsibilities
+
+Learning Plans
+
+Programme Enrolment
+
+Progress
+
+Achievements
+
+Study Sessions
+
+Competencies
+
+### Aggregates
+
+StudentLearningJourney
+
+StudentProgrammeEnrollment
+
+LearningPlan
+
+### Repositories
+
+StudentLearningRepository
+
+ProgrammeEnrollmentRepository
+
+LearningPlanRepository
+
+DashboardProjectionRepository
+
+### Depends On
+
+Curriculum
+
+Programme
+
+Learning Resources
+
+Question Bank
+
+---
+
+# Current Dependency Graph
+
+```text
+                    Shared Kernel
+                          │
+────────────────────────────────────────────────
+
+Identity
+
+Authentication
+
+Authorization
+
+Security
+
+────────────────────────────────────────────────
+
+Exam Product
+
+        │
+
+        ▼
+
+Curriculum
+
+        │
+
+        ▼
+
+Learning Resources
+
+        │
+
+        ▼
+
+Question Bank
+
+        │
+
+        ▼
+
+Student Learning Journey
+
+────────────────────────────────────────────────
+
+Future Domains
+
+Adaptive Practice
+
+Assessment Runtime
+
+AI Evaluation
+
+Readiness Engine
+
+AI Coach
+```
+
+---
+
+# Repository Inventory
+
+## Frozen Contracts
+
+### IdentityRepository
+
+- save()
+- findById()
+- search()
+
+---
+
+### AuthenticationRepository
+
+- authenticate()
+- logout()
+- refresh()
+
+---
+
+### AuthorizationRepository
+
+- assignRole()
+- revokeRole()
+- getPermissions()
+
+---
+
+### ExamProductRepository
+
+- save()
+- publish()
+- archive()
+- search()
+
+---
+
+### CurriculumRepository
+
+- save()
+- publish()
+- archive()
+- search()
+
+---
+
+### ProgrammeRepository
+
+- save()
+- duplicate()
+- publish()
+- search()
+
+---
+
+### LessonRepository
+
+- save()
+- publish()
+- archive()
+
+---
+
+### LearningResourceRepository
+
+- save()
+- upload()
+- attach()
+- publish()
+
+---
+
+### QuestionRepository
+
+- save()
+- publish()
+- archive()
+- duplicate()
+- search()
+
+---
+
+### QuestionReviewRepository
+
+- requestReview()
+- approve()
+- reject()
+
+---
+
+### QuestionImportRepository
+
+- preview()
+- validate()
+- import()
+- rollback()
+
+---
+
+### StudentLearningRepository
+
+- save()
+- archive()
+- restore()
+- search()
+
+---
+
+### ProgrammeEnrollmentRepository
+
+- save()
+- updateProgress()
+- archive()
+
+---
+
+### LearningPlanRepository
+
+- save()
+- publish()
+- archive()
+
+---
+
+### DashboardProjectionRepository
+
+- upsert()
+- find()
+
+---
+
+# Event Catalogue
+
+## Published Events
+
+### Identity
+
+- UserRegistered
+- ProfileUpdated
+
+### Authentication
+
+- UserAuthenticated
+- UserLoggedOut
+
+### Exam Product
+
+- ExamProductCreated
+- ExamProductPublished
+
+### Curriculum
+
+- CurriculumPublished
+- ProgrammePublished
+
+### Learning Resources
+
+- LessonPublished
+- ResourcePublished
+
+### Question Bank
+
+- QuestionCreated
+- QuestionPublished
+- QuestionReviewed
+- QuestionApproved
+- QuestionArchived
+
+### Student Learning Journey
+
+- JourneyCreated
+- ProgrammeEnrolled
+- GoalCompleted
+- StudySessionStarted
+- StudySessionEnded
+- CompetencyUpdated
+- ProgressUpdated
+- AchievementUnlocked
+
+---
+
+# REST API Inventory
+
+## Identity
+
+/api/v1/users
+
+/api/v1/auth
+
+---
+
+## Exam Product
+
+/api/v1/exams
+
+---
+
+## Curriculum
+
+/api/v1/curricula
+
+/api/v1/programmes
+
+---
+
+## Learning Resources
+
+/api/v1/lessons
+
+/api/v1/resources
+
+---
+
+## Question Bank
+
+/api/v1/questions
+
+/api/v1/admin/questions
+
+---
+
+## Student Learning
+
+/api/v1/student/journey
+
+/api/v1/student/dashboard
+
+/api/v1/student/programmes
+
+/api/v1/student/goals
+
+/api/v1/student/statistics
+
+/api/v1/student/timeline
+
+/api/v1/student/bookmarks
+
+/api/v1/student/achievements
+
+---
+
+# Architecture Metrics
+
+| Metric | Count |
+|---------|------:|
+| Bounded Contexts | 10 |
+| Aggregate Roots | 16+ |
+| Entities | 70+ |
+| Value Objects | 40+ |
+| Domain Events | 80+ |
+| Commands | 70+ |
+| Queries | 35+ |
+| Repository Interfaces | 16 |
+| Database Migrations | 24 |
+| REST Endpoints | 90+ |
+| ADRs | 10 |
+| Governance Documents | 40+ |
+| Test Suites | 30+ |
+| Passing Tests | 138+ |
+
+> **Note:** Counts marked with "+" are expected to evolve as implementation expands. Update this table after each sprint to reflect the actual frozen architecture.
+
+---
+
+# Performance Baselines
+
+| Operation | Target |
+|------------|--------:|
+| Authentication | <100 ms |
+| Search | <200 ms |
+| CRUD | <150 ms |
+| Dashboard | <250 ms |
+| Question Retrieval | <150 ms |
+| Learning Journey | <200 ms |
+| Timeline | <300 ms |
+| Publish Workflow | <500 ms |
+| Bulk Import | <30 s (10k records) |
+
+---
+
+# Known Technical Debt
+
+## Deferred to Sprint 2.6+
+
+- Adaptive practice engine
+- Practice recommendation algorithms
+- Spaced repetition engine
+- Question recommendation service
+
+---
+
+## Deferred to Sprint 2.7+
+
+- Assessment runtime
+- Session orchestration
+- Timer service
+- Attempt persistence
+
+---
+
+## Deferred to Sprint 2.8+
+
+- AI evaluation
+- Automated marking
+- Essay scoring
+- Speaking assessment
+
+---
+
+## Deferred to Sprint 2.9+
+
+- Readiness prediction
+- Competency forecasting
+- Success probability
+- Weakness analysis
+
+---
+
+## Deferred to Sprint 2.10+
+
+- AI Learning Coach
+- Conversational tutoring
+- Personalized study plans
+- AI mentor
+- Intervention engine
+
+---
+
+# Enterprise Baseline Declaration
+
+This document establishes the **Enterprise Platform Baseline v1.0** for Clasptek Prep Portal V2.
+
+All bounded contexts, repository contracts, architecture decisions, governance artefacts, and integration boundaries described herein are **frozen** as of the completion of Sprint 2.5.
+
+Any future architectural change that alters these frozen contracts, dependencies, or domain boundaries **must** be introduced through a new Architecture Decision Record (ADR), accompanied by updated governance documentation and explicit versioning.
+
+This baseline serves as the official architectural reference for all implementation work from **Sprint 2.6 (Adaptive Practice Domain)** onward.
+
+---
+
+# Approval
+
+| Role | Status |
+|------|--------|
+| Enterprise Architecture | ✅ Approved |
+| Engineering Governance | ✅ Approved |
+| Security Governance | ✅ Approved |
+| Domain Architecture | ✅ Approved |
+| Platform Engineering | ✅ Approved |
+
+---
+
+**Status:** **BASELINE FROZEN**
+
+**Next Milestone:** Sprint 2.6 — Adaptive Practice Domain

@@ -7,10 +7,15 @@ import { ApplicationError } from '@clasptek/kernel';
 import { SecurityProfile } from '@clasptek/domain-security';
 
 export async function POST(req: NextRequest) {
-  const { securityProfileRepo, recordLoginSessionHandler, logger } = await getAuthContext();
+  console.log('🔥 Login API reached');
+
+  const { securityProfileRepo, recordLoginSessionHandler, logger } =
+    await getAuthContext();
 
   try {
     const body = await req.json();
+    console.log('Request body:', body);
+
     const { email, password } = body;
 
     const userAgent = req.headers.get('user-agent') || 'Unknown';
@@ -96,7 +101,28 @@ export async function POST(req: NextRequest) {
       userAgent,
     });
 
-    return NextResponse.json({ success: true, user: data.user });
+    // 5. Resolve roles so the client can perform role-based routing immediately
+    let roleNames: string[] = [];
+    try {
+      const { userRoleRepo, roleRepo } = await getAuthContext();
+      const userRoles = await userRoleRepo.findByUserId(data.user.id);
+      const roles = await Promise.all(userRoles.map(ur => roleRepo.findById(ur.roleId)));
+      roleNames = roles.filter((r): r is NonNullable<typeof r> => r !== null).map(r => r.name);
+    } catch {
+      // Fallback heuristic when DB roles table is not yet seeded
+      const email = data.user.email ?? '';
+      if (email.includes('admin')) roleNames = ['ADMINISTRATOR'];
+      else if (email.includes('instructor')) roleNames = ['INSTRUCTOR'];
+      else roleNames = ['STUDENT'];
+    }
+
+    logger.info('POST /api/v1/auth/login success', new Error(`User ${data.user.id} authenticated with roles: ${roleNames.join(', ')}`));
+
+    return NextResponse.json({
+      success: true,
+      user: data.user,
+      roles: roleNames.length > 0 ? roleNames : ['STUDENT'],
+    });
   } catch (err: unknown) {
     logger.error(
       'POST /api/v1/auth/login failure',

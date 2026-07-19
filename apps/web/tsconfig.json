@@ -36,12 +36,18 @@
     { "path": "../../packages/contracts" },
     { "path": "../../packages/kernel" },
     { "path": "../../packages/domain/identity" },
+    { "path": "../../packages/domain/exam-product" },
     { "path": "../../packages/application/identity" },
+    { "path": "../../packages/application/exam-product" },
     { "path": "../../packages/feature-flags" },
     { "path": "../../packages/observability" },
     { "path": "../../packages/persistence" },
     { "path": "../../packages/security" },
     { "path": "../../packages/ui" },
-    { "path": "../../packages/validation" }
+    { "path": "../../packages/validation" },
+    { "path": "../../packages/domain/ai-evaluation" },
+    { "path": "../../packages/application/ai-evaluation" },
+    { "path": "../../packages/domain/prediction-engine" },
+    { "path": "../../packages/application/prediction-engine" }
   ]
 }
