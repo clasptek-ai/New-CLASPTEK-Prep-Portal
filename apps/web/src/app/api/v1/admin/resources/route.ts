@@ -27,20 +27,21 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { lessonId, code, resourceType, slug, name, description, displayOrder } = body;
+    const { code, resourceType, slug, name, title, description } = body;
 
-    if (!lessonId || !code || !resourceType || !slug || !name || displayOrder === undefined) {
+    const resourceTitle = name || title;
+    if (!code || !resourceType || !slug || !resourceTitle) {
       return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing required parameters' }, { status: 400 });
     }
 
-    const resourceId = await createResourceHandler.execute({
-      lessonId,
+    const resourceId = crypto.randomUUID();
+    await createResourceHandler.execute({
+      id: resourceId,
       code,
-      resourceType,
       slug,
-      name,
+      title: resourceTitle,
       description: description || '',
-      displayOrder
+      resourceTypeId: resourceType
     });
 
     return NextResponse.json({ success: true, id: resourceId }, { status: 201 });

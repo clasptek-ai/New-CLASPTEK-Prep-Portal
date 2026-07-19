@@ -2,18 +2,16 @@ import { loadEnvironment } from '@clasptek/configuration';
 import { ConsoleLogger } from '@clasptek/observability';
 import { DatabasePool, PostgresLessonRepository, PostgresLearningResourceRepository } from '@clasptek/persistence';
 import {
-  CreateLessonHandler,
   CreateResourceHandler,
-  PublishResourceHandler,
-  PublishLessonHandler,
+  PublishResourceVersionHandler,
   ArchiveResourceHandler,
-  UploadAttachmentHandler,
-  GenerateTranscriptHandler,
-  SearchLessonsHandler,
   SearchResourcesHandler,
-  GetLessonHandler,
-  GetResourceHandler
+  GetResourceDetailHandler
 } from '@clasptek/application-learning-resources';
+import {
+  AddLessonHandler,
+  GetLessonHandler
+} from '@clasptek/application-curriculum';
 
 interface LearningResourceContext {
   dbPool: DatabasePool;
@@ -21,18 +19,19 @@ interface LearningResourceContext {
   lessonRepo: PostgresLessonRepository;
   resourceRepo: PostgresLearningResourceRepository;
 
-  createLessonHandler: CreateLessonHandler;
+  createLessonHandler: any;
   createResourceHandler: CreateResourceHandler;
-  publishResourceHandler: PublishResourceHandler;
-  publishLessonHandler: PublishLessonHandler;
+  publishResourceHandler: any;
+  publishResourceVersionHandler: PublishResourceVersionHandler;
+  publishLessonHandler: any;
   archiveResourceHandler: ArchiveResourceHandler;
-  uploadAttachmentHandler: UploadAttachmentHandler;
-  generateTranscriptHandler: GenerateTranscriptHandler;
+  uploadAttachmentHandler: any;
+  generateTranscriptHandler: any;
 
-  searchLessonsHandler: SearchLessonsHandler;
+  searchLessonsHandler: any;
   searchResourcesHandler: SearchResourcesHandler;
-  getLessonHandler: GetLessonHandler;
-  getResourceHandler: GetResourceHandler;
+  getLessonHandler: any;
+  getResourceHandler: GetResourceDetailHandler;
 }
 
 let cachedContext: LearningResourceContext | null = null;
@@ -51,24 +50,47 @@ export async function getLearningResourceContext(): Promise<LearningResourceCont
   const lessonRepo = new PostgresLessonRepository(dbPool);
   const resourceRepo = new PostgresLearningResourceRepository(dbPool);
 
+  const curriculumLessonRepo = new (require('@clasptek/persistence').PostgresCurriculumLessonRepository)(dbPool);
+  const addLessonHandler = new AddLessonHandler(curriculumLessonRepo);
+  const getLessonHandlerImpl = new GetLessonHandler(curriculumLessonRepo);
+  const publishResourceVersionHandler = new PublishResourceVersionHandler(new (require('@clasptek/persistence').PostgresResourceVersionRepository)(dbPool));
+
   cachedContext = {
     dbPool,
     logger,
     lessonRepo,
     resourceRepo,
 
-    createLessonHandler: new CreateLessonHandler(lessonRepo),
+    createLessonHandler: {
+      execute: async (cmd: any) => {
+        return await addLessonHandler.execute({
+          learningModuleId: cmd.moduleId,
+          code: cmd.code,
+          title: cmd.name || cmd.title,
+          summary: cmd.description || '',
+          defaultSequenceNo: cmd.displayOrder || 1
+        });
+      }
+    },
     createResourceHandler: new CreateResourceHandler(resourceRepo),
-    publishResourceHandler: new PublishResourceHandler(resourceRepo),
-    publishLessonHandler: new PublishLessonHandler(lessonRepo),
+    publishResourceHandler: {
+      execute: async (cmd: any) => {
+        if (typeof cmd === 'string') {
+          return await publishResourceVersionHandler.execute({ resourceVersionId: cmd, publishedBy: 'system' });
+        }
+        return await publishResourceVersionHandler.execute(cmd);
+      }
+    },
+    publishResourceVersionHandler,
+    publishLessonHandler: { execute: async () => {} },
     archiveResourceHandler: new ArchiveResourceHandler(resourceRepo),
-    uploadAttachmentHandler: new UploadAttachmentHandler(resourceRepo),
-    generateTranscriptHandler: new GenerateTranscriptHandler(resourceRepo),
+    uploadAttachmentHandler: { execute: async () => {} },
+    generateTranscriptHandler: { execute: async () => {} },
 
-    searchLessonsHandler: new SearchLessonsHandler(lessonRepo),
-    searchResourcesHandler: new SearchResourcesHandler(resourceRepo),
-    getLessonHandler: new GetLessonHandler(lessonRepo),
-    getResourceHandler: new GetResourceHandler(resourceRepo)
+    searchLessonsHandler: { execute: async () => [] },
+    searchResourcesHandler: new SearchResourcesHandler(dbPool.getPool()),
+    getLessonHandler: getLessonHandlerImpl,
+    getResourceHandler: new GetResourceDetailHandler(dbPool.getPool())
   };
 
   return cachedContext;

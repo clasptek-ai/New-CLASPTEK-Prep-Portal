@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import { randomUUID } from 'crypto';
 import {
   Lesson,
   LessonRepository,
@@ -14,6 +15,10 @@ export class PostgresCurriculumLessonRepository implements LessonRepository {
 
   private get pool(): Pool {
     return this.dbPool.getPool();
+  }
+
+  public nextIdentity(): string {
+    return randomUUID();
   }
 
   public async findById(id: string): Promise<Lesson | null> {

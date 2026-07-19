@@ -11,6 +11,10 @@
     "@clasptek/kernel": "workspace:*",
     "@clasptek/validation": "workspace:*",
     "@clasptek/domain-learning-resources": "workspace:*",
+    "pg": "^8.13.1",
     "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.10"
   }
 }

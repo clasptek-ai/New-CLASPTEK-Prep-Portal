@@ -5,10 +5,10 @@ export async function GET(
   req: NextRequest,
   _params: { params: Promise<{ id: string }> }
 ) {
-  const { getLessonHandler } = await getLearningResourceContext();
+  const { lessonRepo } = await getLearningResourceContext();
   const { id } = await _params.params;
 
-  const lesson = await getLessonHandler.execute(id);
+  const lesson = await lessonRepo.findById(id);
   if (!lesson) {
     return NextResponse.json({ code: 'NOT_FOUND', message: 'Lesson not found' }, { status: 404 });
   }
@@ -16,19 +16,19 @@ export async function GET(
   // Format content blocks and versions for JSON delivery
   return NextResponse.json({
     id: lesson.id,
-    moduleId: lesson.moduleId,
-    code: lesson.code.value,
-    name: lesson.name,
-    description: lesson.description,
-    displayOrder: lesson.displayOrder,
+    moduleId: lesson.moduleId || (lesson as any).learningModuleId,
+    code: typeof lesson.code === 'string' ? lesson.code : (lesson as any).code?.value,
+    name: lesson.name || (lesson as any).title,
+    description: lesson.description || (lesson as any).summary,
+    displayOrder: lesson.displayOrder || (lesson as any).defaultSequenceNo,
     status: lesson.status,
-    versions: lesson.versions.map(v => ({
+    versions: (lesson.versions || []).map((v: any) => ({
       id: v.id,
-      versionNo: v.versionNo.value,
+      versionNo: typeof v.versionNo === 'string' ? v.versionNo : v.versionNo?.value,
       status: v.status,
       name: v.name,
       description: v.description,
-      contentBlocks: v.contentBlocks.map(cb => ({
+      contentBlocks: (v.contentBlocks || []).map((cb: any) => ({
         id: cb.id,
         blockType: cb.blockType,
         textContent: cb.textContent,

@@ -17,6 +17,7 @@
     "@clasptek/domain-curriculum": "workspace:*",
     "@clasptek/application-curriculum": "workspace:*",
     "@clasptek/domain-learning-resources": "workspace:*",
+    "@clasptek/application-learning-resources": "workspace:*",
     "@clasptek/domain-question-bank": "workspace:*",
     "@clasptek/application-question-bank": "workspace:*",
     "@clasptek/domain-student-learning": "workspace:*",

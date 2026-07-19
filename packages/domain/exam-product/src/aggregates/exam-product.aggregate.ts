@@ -117,6 +117,9 @@ export class ExamProduct extends AggregateRoot<string> {
 
   public archive(actorId: string): void {
     this.status = new ExamProductStatus('ARCHIVED');
+    for (const v of this._versions) {
+      v.status = 'ARCHIVED';
+    }
     this.updatedAt = new Date();
 
     this.addDomainEvent({

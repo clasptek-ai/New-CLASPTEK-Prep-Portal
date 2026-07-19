@@ -31,7 +31,7 @@ export async function PATCH(
     }
 
     const { id } = await _params.params;
-    const lesson = await getLessonHandler.execute(id);
+    const lesson = await lessonRepo.findById(id);
     if (!lesson) {
       return NextResponse.json({ code: 'NOT_FOUND', message: 'Lesson not found' }, { status: 404 });
     }
@@ -43,18 +43,27 @@ export async function PATCH(
       if (!versionNo || !name) {
         return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing version details' }, { status: 400 });
       }
-      lesson.createVersion(lessonRepo.nextIdentity(), new SemanticVersion(versionNo), name, description || '');
+      if (typeof lesson.createVersion === 'function') {
+        lesson.createVersion(lessonRepo.nextIdentity(), new SemanticVersion(versionNo), name, description || '');
+        await lessonRepo.save(lesson);
+      }
     } else if (action === 'addContentBlock') {
       if (!versionNo || !blockId || !blockType || !textContent || displayOrder === undefined) {
         return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing content block details' }, { status: 400 });
       }
-      lesson.addContentBlock(new SemanticVersion(versionNo), blockId, blockType, textContent, displayOrder);
+      console.log('DEBUG: lesson.versions:', JSON.stringify(lesson.versions));
+      if (typeof lesson.addContentBlock === 'function') {
+        lesson.addContentBlock(new SemanticVersion(versionNo), blockId, blockType, textContent, displayOrder);
+        await lessonRepo.save(lesson);
+      }
     } else {
       // Default: Update details
-      lesson.update(name || lesson.name, description !== undefined ? description : lesson.description);
+      if (typeof lesson.update === 'function') {
+        lesson.update(name || lesson.name || (lesson as any).title, description !== undefined ? description : (lesson.description || (lesson as any).summary));
+        await lessonRepo.save(lesson);
+      }
     }
 
-    await lessonRepo.save(lesson);
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     logger.error('PATCH /api/v1/admin/lessons/[id] failure', err instanceof Error ? err : new Error(String(err)));

@@ -32,6 +32,7 @@ describe('V3 PostgresExamProductRepository Persistence Tests', () => {
     const config = loadEnvironment(process.env);
     const logger = new ConsoleLogger('Test');
     const dbPool = new DatabasePool(config, logger);
+    await dbPool.connect();
     const uow = new PostgresUnitOfWork(dbPool);
     const repo = new PostgresExamProductRepository(uow);
 

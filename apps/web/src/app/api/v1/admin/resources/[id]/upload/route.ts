@@ -10,7 +10,7 @@ export async function POST(
   req: NextRequest,
   _params: { params: Promise<{ id: string }> }
 ) {
-  const { getResourceHandler, resourceRepo, logger } = await getLearningResourceContext();
+  const { dbPool, resourceRepo, logger } = await getLearningResourceContext();
   try {
     let token: string | null = null;
     if (process.env.NODE_ENV !== 'test') {
@@ -31,7 +31,7 @@ export async function POST(
     }
 
     const { id } = await _params.params;
-    const resource = await getResourceHandler.execute(id);
+    const resource = await resourceRepo.findById(id);
     if (!resource) {
       return NextResponse.json({ code: 'NOT_FOUND', message: 'Resource not found' }, { status: 404 });
     }
@@ -43,44 +43,72 @@ export async function POST(
       return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing versionNo' }, { status: 400 });
     }
 
-    const verNoVo = new SemanticVersion(versionNo);
+    const defaultVariant = resource.variants.find(v => v.isDefault);
+    if (!defaultVariant) {
+      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'No default variant found' }, { status: 400 });
+    }
+
+    const versionRepo = new (require('@clasptek/persistence').PostgresResourceVersionRepository)(dbPool);
+    const verNoNum = parseInt(versionNo.split('.')[0]) || 1;
+    const version = await versionRepo.findByVariantAndNo(defaultVariant.id, verNoNum);
+    if (!version) {
+      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Resource version not found' }, { status: 404 });
+    }
+
+    const pool = dbPool.getPool();
+    const objectId = crypto.randomUUID();
+    let role = 'attachment';
 
     if (uploadType === 'media') {
       if (!provider || !bucket || !objectKey || !mimeType || fileSize === undefined) {
         return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing media asset parameters' }, { status: 400 });
       }
-      resource.setMediaAsset(
-        verNoVo,
-        resourceRepo.nextIdentity(),
-        provider,
-        bucket,
-        objectKey,
-        region || '',
-        checksum || '',
-        mimeType,
-        fileSize,
-        duration || null
-      );
+      role = 'primary';
     } else if (uploadType === 'attachment') {
       if (!name || !mimeType || !objectKey || fileSize === undefined) {
         return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing attachment parameters' }, { status: 400 });
       }
-      resource.addAttachment(verNoVo, resourceRepo.nextIdentity(), name, fileSize, mimeType, objectKey);
+      role = 'attachment';
     } else if (uploadType === 'transcript') {
       if (!transcriptText || !language) {
         return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing transcript parameters' }, { status: 400 });
       }
-      resource.addTranscript(verNoVo, resourceRepo.nextIdentity(), transcriptText, language);
+      role = 'transcript';
     } else if (uploadType === 'caption') {
       if (!captionText || !language) {
         return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing caption parameters' }, { status: 400 });
       }
-      resource.addCaption(verNoVo, resourceRepo.nextIdentity(), captionText, language);
+      role = 'captions';
     } else {
       return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Invalid uploadType' }, { status: 400 });
     }
 
-    await resourceRepo.save(resource);
+    // Insert into storage_objects
+    await pool.query(
+      `INSERT INTO public.storage_objects (
+        id, storage_provider, bucket_name, object_path, original_filename,
+        detected_mime_type, size_bytes, etag, availability_status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'available')`,
+      [
+        objectId,
+        provider || 'SUPABASE_STORAGE',
+        bucket || 'delivery',
+        objectKey || `uploads/${objectId}`,
+        name || transcriptText || captionText || 'file',
+        mimeType || 'application/octet-stream',
+        fileSize || 0,
+        checksum || ''
+      ]
+    );
+
+    // Link to resource version
+    await pool.query(
+      `INSERT INTO public.resource_version_objects (
+        id, resource_version_id, storage_object_id, object_role, display_order, is_required
+      ) VALUES (gen_random_uuid(), $1, $2, $3, 1, true)
+       ON CONFLICT (resource_version_id, storage_object_id, object_role) DO NOTHING`,
+      [version.id, objectId, role]
+    );
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     logger.error('POST /api/v1/admin/resources/[id]/upload failure', err instanceof Error ? err : new Error(String(err)));

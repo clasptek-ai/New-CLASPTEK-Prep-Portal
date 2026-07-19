@@ -11,6 +11,7 @@ const ROLLBACK_SQL = `
       r RECORD;
   BEGIN
       EXECUTE 'DROP SCHEMA IF EXISTS curriculum_read CASCADE';
+      EXECUTE 'DROP SCHEMA IF EXISTS resource_read CASCADE';
       FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
           EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
       END LOOP;

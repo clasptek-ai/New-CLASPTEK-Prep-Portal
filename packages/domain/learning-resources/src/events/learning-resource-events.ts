@@ -21,39 +21,33 @@ export abstract class BaseLearningResourceEvent implements DomainEvent {
   ) {}
 }
 
-export class LessonCreated extends BaseLearningResourceEvent {
-  constructor(lessonId: string, moduleId: string, code: string) {
-    super('LessonCreated', lessonId, { moduleId, code });
+export class LearningResourceCreated extends BaseLearningResourceEvent {
+  constructor(resourceId: string, code: string, slug: string) {
+    super('LearningResourceCreated', resourceId, { code, slug });
   }
 }
 
-export class LessonUpdated extends BaseLearningResourceEvent {
-  constructor(lessonId: string, name: string, description: string) {
-    super('LessonUpdated', lessonId, { name, description });
-  }
-}
-
-export class LessonPublished extends BaseLearningResourceEvent {
-  constructor(lessonId: string, versionNo: string) {
-    super('LessonPublished', lessonId, { versionNo });
-  }
-}
-
-export class LessonArchived extends BaseLearningResourceEvent {
-  constructor(lessonId: string) {
-    super('LessonArchived', lessonId);
+export class ResourceVariantCreated extends BaseLearningResourceEvent {
+  constructor(resourceId: string, variantId: string, code: string) {
+    super('ResourceVariantCreated', resourceId, { variantId, code });
   }
 }
 
 export class ResourceVersionCreated extends BaseLearningResourceEvent {
-  constructor(resourceId: string, versionId: string, versionNo: string) {
+  constructor(resourceId: string, versionId: string, versionNo: number) {
     super('ResourceVersionCreated', resourceId, { versionId, versionNo });
   }
 }
 
 export class ResourceVersionPublished extends BaseLearningResourceEvent {
-  constructor(resourceId: string, versionId: string, versionNo: string) {
+  constructor(resourceId: string, versionId: string, versionNo: number) {
     super('ResourceVersionPublished', resourceId, { versionId, versionNo });
+  }
+}
+
+export class ResourceVersionRetired extends BaseLearningResourceEvent {
+  constructor(resourceId: string, versionId: string, versionNo: number) {
+    super('ResourceVersionRetired', resourceId, { versionId, versionNo });
   }
 }
 
@@ -63,14 +57,62 @@ export class ResourceArchived extends BaseLearningResourceEvent {
   }
 }
 
-export class ResourceDownloaded extends BaseLearningResourceEvent {
-  constructor(resourceId: string, versionId: string, userId: string | null) {
-    super('ResourceDownloaded', resourceId, { versionId, userId });
+export class ResourceCollectionCreated extends BaseLearningResourceEvent {
+  constructor(collectionId: string, code: string) {
+    super('ResourceCollectionCreated', collectionId, { code });
   }
 }
 
-export class ResourceViewed extends BaseLearningResourceEvent {
-  constructor(resourceId: string, versionId: string, userId: string | null) {
-    super('ResourceViewed', resourceId, { versionId, userId });
+export class ResourceCollectionUpdated extends BaseLearningResourceEvent {
+  constructor(collectionId: string, name: string) {
+    super('ResourceCollectionUpdated', collectionId, { name });
+  }
+}
+
+export class CollectionResourceAdded extends BaseLearningResourceEvent {
+  constructor(collectionId: string, resourceId: string) {
+    super('CollectionResourceAdded', collectionId, { resourceId });
+  }
+}
+
+export class CollectionResourceRemoved extends BaseLearningResourceEvent {
+  constructor(collectionId: string, resourceId: string) {
+    super('CollectionResourceRemoved', collectionId, { resourceId });
+  }
+}
+
+export class StorageAssetReserved extends BaseLearningResourceEvent {
+  constructor(assetId: string, path: string, sizeBytes: number) {
+    super('StorageAssetReserved', assetId, { path, sizeBytes });
+  }
+}
+
+export class StorageAssetUploaded extends BaseLearningResourceEvent {
+  constructor(assetId: string, path: string) {
+    super('StorageAssetUploaded', assetId, { path });
+  }
+}
+
+export class StorageAssetValidated extends BaseLearningResourceEvent {
+  constructor(assetId: string, mimeType: string, checksum: string) {
+    super('StorageAssetValidated', assetId, { mimeType, checksum });
+  }
+}
+
+export class StorageAssetQuarantined extends BaseLearningResourceEvent {
+  constructor(assetId: string, reason: string) {
+    super('StorageAssetQuarantined', assetId, { reason });
+  }
+}
+
+export class StorageAssetPromoted extends BaseLearningResourceEvent {
+  constructor(assetId: string, destinationPath: string) {
+    super('StorageAssetPromoted', assetId, { destinationPath });
+  }
+}
+
+export class StorageAssetDeleted extends BaseLearningResourceEvent {
+  constructor(assetId: string) {
+    super('StorageAssetDeleted', assetId);
   }
 }

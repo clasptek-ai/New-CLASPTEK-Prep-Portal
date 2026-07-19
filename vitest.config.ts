@@ -39,6 +39,14 @@ export default defineConfig({
         './packages/infrastructure/access-control/src/index.ts'
       ),
       '@clasptek/persistence': path.resolve(__dirname, './packages/persistence/src/index.ts'),
+      '@clasptek/domain-learning-resources': path.resolve(
+        __dirname,
+        './packages/domain/learning-resources/src/index.ts'
+      ),
+      '@clasptek/application-learning-resources': path.resolve(
+        __dirname,
+        './packages/application/learning-resources/src/index.ts'
+      ),
       '@clasptek/observability': path.resolve(__dirname, './packages/observability/src/index.ts'),
       '@clasptek/configuration': path.resolve(__dirname, './packages/configuration/src/index.ts'),
       '@clasptek/ui': path.resolve(__dirname, './packages/ui/src/index.ts'),

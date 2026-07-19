@@ -9,110 +9,159 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = 'mock-service-role-key';
 
 import { loadEnvironment } from '@clasptek/configuration';
 import { ConsoleLogger } from '@clasptek/observability';
-import { DatabasePool, PostgresLessonRepository, PostgresLearningResourceRepository } from './index';
+import { DatabasePool } from './index';
 import {
-  Lesson,
-  LessonCode,
-  SemanticVersion as ResourceSemanticVersion,
   LearningResource,
-  ResourceCode
+  ResourceCode,
+  SensitivityLevel,
+  VisibilityScope,
+  VariantPurpose,
+  ResourceVersion,
+  VersionStatus,
+  ResourceCollection,
+  StorageAsset
 } from '@clasptek/domain-learning-resources';
+import {
+  PostgresLearningResourceRepository,
+  PostgresResourceVersionRepository,
+  PostgresResourceCollectionRepository,
+  PostgresStorageAssetRepository
+} from './index';
 
-let lessonQueryCount = 0;
-let resourceQueryCount = 0;
+// Initialize mutable mock variables on globalThis to bypass Vitest hoist closure isolation
+(globalThis as any).queriesRun = [];
+(globalThis as any).mockRows = [];
 
 vi.mock('pg', () => {
-  const queryMock = vi.fn().mockImplementation(async (sql: string) => {
-    if (sql.includes('SELECT') && sql.includes('lessons')) {
-      if (lessonQueryCount === 0) {
-        lessonQueryCount++;
-        return { rows: [], rowCount: 0 };
+  const queryMock = vi.fn().mockImplementation(async (sql: string, _params?: any[]) => {
+    (globalThis as any).queriesRun.push(sql);
+
+    // Simple routing based on SQL keywords
+    if (sql.includes('SELECT') && sql.includes('learning_resources')) {
+      const customRows = (globalThis as any).mockRows;
+      if (customRows && customRows.length > 0) {
+        return { rows: customRows };
       }
       return {
         rows: [{
-          id: '10000000-0000-0000-0000-000000000001',
-          module_id: 'b1000000-0000-0000-0000-000000000001',
-          code: 'IELTS-LIS-L1',
-          name: 'IELTS Listening Part 1 Intro',
+          id: 'lr-123',
+          code: 'LR-CODE',
+          slug: 'lr-slug',
+          canonical_title: 'Title',
+          canonical_description: 'Desc',
+          resource_type_id: 'type-123',
+          primary_category_id: null,
+          sensitivity: 'normal',
+          visibility: 'authenticated',
+          owner_organization_id: null,
+          default_language_code: 'en',
+          current_default_variant_id: null,
+          status: 'draft',
+          lock_version: 0
+        }]
+      };
+    }
+    if (sql.includes('SELECT') && sql.includes('resource_variants')) {
+      return {
+        rows: [{
+          id: 'v-123',
+          learning_resource_id: 'lr-123',
+          code: 'VAR-CODE',
+          language_code: 'en',
+          region_code: null,
+          accessibility_profile: 'none',
+          variant_purpose: 'standard',
+          is_default: true,
+          current_published_version_id: null,
+          current_version_no: 1,
+          status: 'active'
+        }]
+      };
+    }
+    if (sql.includes('SELECT') && sql.includes('resource_versions')) {
+      return {
+        rows: [{
+          id: 'rv-123',
+          resource_variant_id: 'v-123',
+          version_no: 1,
+          status: 'draft',
+          title: 'Title',
           description: 'Desc',
+          resource_format_id: 'format-123',
+          version_label: null,
+          change_summary: null,
+          source_attribution: null,
+          copyright_owner: null,
+          copyright_year: null,
+          license_id: null,
+          estimated_study_minutes: 10,
+          requires_preview: false,
+          allows_download: true,
+          allows_streaming: false,
+          effective_from: null,
+          effective_to: null,
+          reviewed_at: null,
+          reviewed_by: null,
+          published_at: null,
+          published_by: null,
+          retired_at: null,
+          retired_by: null,
+          lock_version: 0,
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null
+        }]
+      };
+    }
+    if (sql.includes('SELECT') && sql.includes('resource_collections')) {
+      return {
+        rows: [{
+          id: 'rc-123',
+          code: 'RC-CODE',
+          name: 'Collection',
+          description: 'Desc',
+          parent_collection_id: null,
           display_order: 1,
-          status: 'DRAFT',
+          status: 'active',
           lock_version: 0
         }]
       };
     }
-    if (sql.includes('SELECT') && sql.includes('lesson_versions')) {
+    if (sql.includes('SELECT') && sql.includes('collection_resources')) {
       return {
         rows: [{
-          id: '1f000000-0000-0000-0000-000000000001',
-          lesson_id: '10000000-0000-0000-0000-000000000001',
-          version_no: '1.0.0',
-          status: 'DRAFT',
-          name: 'V1.0',
-          description: 'Desc',
-          lock_version: 0
-        }]
-      };
-    }
-    if (sql.includes('SELECT') && sql.includes('content_blocks')) {
-      return {
-        rows: [{
-          id: 'cb000000-0000-0000-0000-000000000001',
-          lesson_version_id: '1f000000-0000-0000-0000-000000000001',
-          block_type: 'HEADING',
-          text_content: '## Heading',
+          id: 'mem-123',
+          resource_collection_id: 'rc-123',
+          learning_resource_id: 'lr-123',
           display_order: 1
         }]
       };
     }
-    if (sql.includes('SELECT') && sql.includes('learning_resources')) {
-      if (resourceQueryCount === 0) {
-        resourceQueryCount++;
-        return { rows: [], rowCount: 0 };
-      }
+    if (sql.includes('SELECT') && sql.includes('storage_objects')) {
       return {
         rows: [{
-          id: '1a000000-0000-0000-0000-000000000001',
-          lesson_id: '10000000-0000-0000-0000-000000000001',
-          code: 'IELTS-LIS-R1',
-          resource_type: 'VIDEO',
-          slug: 'ielts-listening-video',
-          name: 'Video Name',
-          description: 'Desc',
-          display_order: 1,
-          status: 'DRAFT',
-          lock_version: 0
-        }]
-      };
-    }
-    if (sql.includes('SELECT') && sql.includes('learning_resource_versions')) {
-      return {
-        rows: [{
-          id: 'lrv00000-0000-0000-0000-000000000001',
-          learning_resource_id: 'lr000000-0000-0000-0000-000000000001',
-          version_no: '1.0.0',
-          status: 'DRAFT',
-          name: 'V1.0',
-          description: 'Desc',
-          lock_version: 0
-        }]
-      };
-    }
-    if (sql.includes('SELECT') && sql.includes('media_assets')) {
-      return {
-        rows: [{
-          id: 'ma000000-0000-0000-0000-000000000001',
-          resource_version_id: 'lrv00000-0000-0000-0000-000000000001',
-          provider: 'SUPABASE_STORAGE',
-          bucket: 'resource-private',
-          object_key: 'video.mp4',
-          region: 'us-east-1',
-          checksum: 'chk123',
-          mime_type: 'video/mp4',
-          size: 5000000,
-          duration: 120,
-          hash_algorithm: 'SHA-256',
-          encryption_status: 'NONE'
+          id: 'so-123',
+          storage_provider: 'supabase_storage',
+          bucket_name: 'bucket',
+          object_path: 'key',
+          provider_object_id: null,
+          original_filename: 'test.png',
+          detected_mime_type: 'image/png',
+          detected_extension: 'png',
+          size_bytes: 100,
+          etag: null,
+          storage_class: 'STANDARD',
+          integrity_status: 'validated',
+          security_status: 'validated_clear',
+          availability_status: 'available',
+          uploaded_at: new Date(),
+          validated_at: null,
+          promoted_at: null,
+          retention_until: null,
+          lock_version: 0,
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null
         }]
       };
     }
@@ -133,68 +182,188 @@ vi.mock('pg', () => {
   };
 });
 
-describe('Postgres Repository Integration Tests for Lessons & Resources', () => {
+describe('Postgres Repository V2 Integration Tests', () => {
   let dbPool: DatabasePool;
-  let lessonRepo: PostgresLessonRepository;
   let resourceRepo: PostgresLearningResourceRepository;
+  let versionRepo: PostgresResourceVersionRepository;
+  let collectionRepo: PostgresResourceCollectionRepository;
+  let storageRepo: PostgresStorageAssetRepository;
+
   const logger = new ConsoleLogger('PersistenceTest');
   const mockConfig = loadEnvironment(process.env);
 
   beforeEach(async () => {
     dbPool = new DatabasePool(mockConfig, logger);
     await dbPool.connect();
-    lessonRepo = new PostgresLessonRepository(dbPool);
     resourceRepo = new PostgresLearningResourceRepository(dbPool);
-    lessonQueryCount = 0;
-    resourceQueryCount = 0;
+    versionRepo = new PostgresResourceVersionRepository(dbPool);
+    collectionRepo = new PostgresResourceCollectionRepository(dbPool);
+    storageRepo = new PostgresStorageAssetRepository(dbPool);
+    (globalThis as any).mockRows = [];
+    (globalThis as any).queriesRun = [];
   });
 
-  test('Save and Hydrate Lesson aggregate with content blocks successfully', async () => {
-    const lessonId = '10000000-0000-0000-0000-000000000001';
-    const lesson = Lesson.create(
-      lessonId,
-      'b1000000-0000-0000-0000-000000000001',
-      new LessonCode('IELTS-LIS-L1'),
-      'Intro',
-      'Desc',
-      1
-    );
-    lesson.createVersion('lv-1', new ResourceSemanticVersion('1.0.0'), 'Ver 1', 'desc');
-    lesson.addContentBlock(new ResourceSemanticVersion('1.0.0'), 'cb-1', 'HEADING', '## Welcome', 1);
-
-    await lessonRepo.save(lesson);
-
-    const retrieved = await lessonRepo.findById(lessonId);
-    expect(retrieved).not.toBeNull();
-    expect(retrieved!.code.value).toBe('IELTS-LIS-L1');
-    expect(retrieved!.versions.length).toBe(1);
-    expect(retrieved!.versions[0].contentBlocks.length).toBe(1);
-    expect(retrieved!.versions[0].contentBlocks[0].blockType).toBe('HEADING');
-  });
-
-  test('Save and Hydrate LearningResource aggregate with media asset successfully', async () => {
-    const resId = '1a000000-0000-0000-0000-000000000001';
+  test('Save and Hydrate LearningResource successfully', async () => {
     const resource = LearningResource.create(
-      resId,
-      '10000000-0000-0000-0000-000000000001',
-      new ResourceCode('IELTS-LIS-R1'),
-      'VIDEO',
-      'video-slug',
-      'Video Name',
-      'desc',
-      1
+      'lr-123',
+      new ResourceCode('LR-CODE'),
+      'lr-slug',
+      'Title',
+      'Desc',
+      'type-123',
+      null,
+      new SensitivityLevel('normal'),
+      new VisibilityScope('authenticated')
     );
-    const verNo = new ResourceSemanticVersion('1.0.0');
-    resource.createVersion('lrv-1', verNo, 'Ver 1', 'desc');
-    resource.setMediaAsset(verNo, 'ma-1', 'SUPABASE_STORAGE', 'resource-private', 'video.mp4', 'us-east-1', 'chk123', 'video/mp4', 5000000, 120);
+    resource.addVariant('v-123', 'VAR-CODE', 'en', new VariantPurpose('standard'), true);
 
     await resourceRepo.save(resource);
+    const hasVariantInsert = (globalThis as any).queriesRun.some((q: string) => q.includes('INSERT INTO public.resource_variants'));
+    expect(hasVariantInsert).toBe(true);
 
-    const retrieved = await resourceRepo.findById(resId);
+    const retrieved = await resourceRepo.findById('lr-123');
     expect(retrieved).not.toBeNull();
-    expect(retrieved!.code.value).toBe('IELTS-LIS-R1');
-    expect(retrieved!.versions.length).toBe(1);
-    expect(retrieved!.versions[0].mediaAsset).not.toBeNull();
-    expect(retrieved!.versions[0].mediaAsset!.objectKey).toBe('video.mp4');
+    expect(retrieved!.code.value).toBe('LR-CODE');
+    expect(retrieved!.variants.length).toBe(1);
+    expect(retrieved!.variants[0].code).toBe('VAR-CODE');
+  });
+
+  test('Save and Hydrate ResourceVersion successfully', async () => {
+    const version = new ResourceVersion(
+      'rv-123',
+      'v-123',
+      1,
+      new VersionStatus('draft'),
+      'Title',
+      'Desc',
+      'format-123',
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      10,
+      false,
+      true,
+      false,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      0,
+      new Date(),
+      new Date(),
+      null
+    );
+
+    await versionRepo.save(version);
+    const hasVersionInsert = (globalThis as any).queriesRun.some((q: string) => q.includes('INSERT INTO public.resource_versions'));
+    expect(hasVersionInsert).toBe(true);
+
+    const retrieved = await versionRepo.findById('rv-123');
+    expect(retrieved).not.toBeNull();
+    expect(retrieved!.versionNo).toBe(1);
+    expect(retrieved!.resourceVariantId).toBe('v-123');
+  });
+
+  test('Save and Hydrate ResourceCollection successfully', async () => {
+    const collection = new ResourceCollection(
+      'rc-123',
+      null,
+      'RC-CODE',
+      'Collection',
+      'Desc',
+      1,
+      'active',
+      0,
+      new Date(),
+      new Date(),
+      null
+    );
+    collection.addResource('lr-123');
+
+    await collectionRepo.save(collection);
+    const hasMembershipInsert = (globalThis as any).queriesRun.some((q: string) => q.includes('INSERT INTO public.collection_resources'));
+    expect(hasMembershipInsert).toBe(true);
+
+    const retrieved = await collectionRepo.findById('rc-123');
+    expect(retrieved).not.toBeNull();
+    expect(retrieved!.code).toBe('RC-CODE');
+    expect(retrieved!.resourceIds.length).toBe(1);
+  });
+
+  test('Save and Hydrate StorageAsset successfully', async () => {
+    const asset = new StorageAsset(
+      'so-123',
+      'supabase_storage',
+      'bucket',
+      'key',
+      'provider-id-123',
+      'test.png',
+      'image/png',
+      'png',
+      100,
+      'etag-123',
+      'STANDARD',
+      'validated',
+      'validated_clear',
+      'available',
+      new Date(),
+      null,
+      null,
+      null,
+      0,
+      new Date(),
+      new Date(),
+      null
+    );
+
+    await storageRepo.save(asset);
+    const hasStorageInsert = (globalThis as any).queriesRun.some((q: string) => q.includes('INSERT INTO public.storage_objects'));
+    expect(hasStorageInsert).toBe(true);
+
+    const retrieved = await storageRepo.findById('so-123');
+    expect(retrieved).not.toBeNull();
+    expect(retrieved!.bucketName).toBe('bucket');
+    expect(retrieved!.availabilityStatus).toBe('available');
+  });
+
+  test('Optimistic locking concurrency check', async () => {
+    const resource = LearningResource.create(
+      'lr-123',
+      new ResourceCode('LR-CODE'),
+      'lr-slug',
+      'Title',
+      'Desc',
+      'type-123',
+      null,
+      new SensitivityLevel('normal'),
+      new VisibilityScope('authenticated')
+    );
+
+    // Mock existing resource lock version in DB to be higher
+    (globalThis as any).mockRows = [{
+      id: 'lr-123',
+      code: 'LR-CODE',
+      slug: 'lr-slug',
+      canonical_title: 'Title',
+      canonical_description: 'Desc',
+      resource_type_id: 'type-123',
+      primary_category_id: null,
+      sensitivity: 'normal',
+      visibility: 'authenticated',
+      owner_organization_id: null,
+      default_language_code: 'en',
+      current_default_variant_id: null,
+      status: 'draft',
+      lock_version: 5 // different from resource.lockVersion = 0
+    }];
+
+    await expect(resourceRepo.save(resource)).rejects.toThrow('Concurrency violation');
   });
 });

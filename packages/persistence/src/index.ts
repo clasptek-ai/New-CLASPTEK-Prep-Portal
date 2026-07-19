@@ -1,9 +1,16 @@
 import { Pool } from 'pg';
 import { randomUUID } from 'crypto';
-import { ConflictError } from '@clasptek/kernel';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { createBrowserClient, createServerClient } from '@supabase/ssr';
 import { DatabasePool } from './database-pool';
+import {
+  LessonCode,
+  LegacySemanticVersion,
+  ContentBlock,
+  LessonVersion,
+  Lesson,
+  LessonRepository
+} from './legacy-lesson-shim';
 import {
   SecuritySession,
   SecuritySessionRepository,
@@ -23,25 +30,7 @@ import {
   UserRole,
   UserRoleRepository,
 } from '@clasptek/domain-authorization';
-import {
-  Lesson,
-  LessonVersion,
-  ContentBlock,
-  LessonCode,
-  LessonRepository,
-  LearningResource,
-  ResourceVersion,
-  MediaAsset,
-  Attachment,
-  Download,
-  ExternalLink,
-  Transcript,
-  Caption,
-  ResourceCode,
-  SemanticVersion as ResourceSemanticVersion,
-  LearningResourceRepository,
-  LearningResourceSearchFilters
-} from '@clasptek/domain-learning-resources';
+
 
 import {
   Question,
@@ -912,6 +901,8 @@ export * from './curriculum/postgres-lesson.repository';
 export * from './curriculum/postgres-curriculum-template.repository';
 export * from './curriculum/postgres-projection.query';
 
+export * from './legacy-lesson-shim';
+
 export class PostgresLessonRepository implements LessonRepository {
   constructor(private readonly dbPool: DatabasePool) {}
 
@@ -921,51 +912,51 @@ export class PostgresLessonRepository implements LessonRepository {
 
   public async exists(code: string): Promise<boolean> {
     const pool = this.dbPool.getPool();
-    const res = await pool.query('SELECT 1 FROM lessons WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
+    const res = await pool.query('SELECT 1 FROM public.lessons WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
     return res.rows.length > 0;
   }
 
   public async findByCode(code: string): Promise<Lesson | null> {
     const pool = this.dbPool.getPool();
-    const res = await pool.query('SELECT id FROM lessons WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
+    const res = await pool.query('SELECT id FROM public.lessons WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
     if (res.rows.length === 0) return null;
     return this.findById(res.rows[0].id);
   }
 
   public async findById(id: string): Promise<Lesson | null> {
     const pool = this.dbPool.getPool();
-    const res = await pool.query('SELECT * FROM lessons WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const res = await pool.query('SELECT * FROM public.lessons WHERE id = $1 AND deleted_at IS NULL', [id]);
     if (res.rows.length === 0) return null;
     const row = res.rows[0];
 
     const lesson = new Lesson(
       row.id,
-      row.module_id,
+      row.learning_module_id || row.module_id,
       new LessonCode(row.code),
-      row.name,
-      row.description || '',
-      row.display_order,
+      row.title || row.name,
+      row.summary || row.description || '',
+      Number(row.default_sequence_no || row.display_order || 1),
       row.status as any,
-      Number(row.lock_version),
+      Number(row.lock_version || 0),
       row.created_at,
       row.updated_at,
       row.deleted_at
     );
 
     // Load Versions
-    const vRes = await pool.query('SELECT * FROM lesson_versions WHERE lesson_id = $1 AND deleted_at IS NULL', [id]);
+    const vRes = await pool.query('SELECT * FROM public.lesson_versions WHERE lesson_id = $1 AND deleted_at IS NULL', [id]);
     for (const vRow of vRes.rows) {
       const version = new LessonVersion(
         vRow.id,
         vRow.lesson_id,
-        new ResourceSemanticVersion(vRow.version_no),
+        new LegacySemanticVersion(vRow.version_no),
         vRow.status as any,
         vRow.name,
         vRow.description || ''
       );
 
       // Load Content Blocks
-      const cbRes = await pool.query('SELECT * FROM content_blocks WHERE lesson_version_id = $1 ORDER BY display_order ASC', [vRow.id]);
+      const cbRes = await pool.query('SELECT * FROM public.content_blocks WHERE lesson_version_id = $1 ORDER BY display_order ASC', [vRow.id]);
       for (const cbRow of cbRes.rows) {
         version.contentBlocks.push(
           new ContentBlock(
@@ -988,45 +979,45 @@ export class PostgresLessonRepository implements LessonRepository {
     const pool = this.dbPool.getPool();
 
     // Check concurrency
-    const exists = await pool.query('SELECT lock_version FROM lessons WHERE id = $1', [lesson.id]);
+    const exists = await pool.query('SELECT lock_version FROM public.lessons WHERE id = $1', [lesson.id]);
     if (exists.rows.length > 0) {
-      const currentLock = Number(exists.rows[0].lock_version);
+      const currentLock = Number(exists.rows[0].lock_version || 0);
       if (currentLock !== lesson.lockVersion) {
-        throw new ConflictError('Concurrency violation: Lesson has been modified by another process.');
+        throw new Error('Concurrency violation: Lesson has been modified by another process.');
       }
       const newLock = lesson.lockVersion + 1;
       await pool.query(
-        'UPDATE lessons SET name = $1, description = $2, display_order = $3, status = $4, lock_version = $5, updated_at = now() WHERE id = $6',
-        [lesson.name, lesson.description, lesson.displayOrder, lesson.status, newLock, lesson.id]
+        'UPDATE public.lessons SET title = $1, name = $2, summary = $3, description = $4, default_sequence_no = $5, display_order = $6, status = $7, lock_version = $8, updated_at = now() WHERE id = $9',
+        [lesson.name, lesson.name, lesson.description, lesson.description, lesson.displayOrder, lesson.displayOrder, lesson.status, newLock, lesson.id]
       );
       (lesson as any).lockVersion = newLock;
     } else {
       await pool.query(
-        'INSERT INTO lessons (id, module_id, code, name, description, display_order, status, lock_version, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, now(), now())',
-        [lesson.id, lesson.moduleId, lesson.code.value, lesson.name, lesson.description, lesson.displayOrder, lesson.status, lesson.lockVersion]
+        'INSERT INTO public.lessons (id, learning_module_id, module_id, code, title, name, summary, description, default_sequence_no, display_order, status, lock_version, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, now(), now())',
+        [lesson.id, lesson.moduleId, lesson.moduleId, lesson.code.value, lesson.name, lesson.name, lesson.description, lesson.description, lesson.displayOrder, lesson.displayOrder, lesson.status, lesson.lockVersion]
       );
     }
 
     // Save Versions & Content Blocks
     for (const v of lesson.versions) {
-      const vExists = await pool.query('SELECT id FROM lesson_versions WHERE id = $1', [v.id]);
+      const vExists = await pool.query('SELECT id FROM public.lesson_versions WHERE id = $1', [v.id]);
       if (vExists.rows.length > 0) {
         await pool.query(
-          'UPDATE lesson_versions SET status = $1, name = $2, description = $3, updated_at = now() WHERE id = $4',
+          'UPDATE public.lesson_versions SET status = $1, name = $2, description = $3, updated_at = now() WHERE id = $4',
           [v.status, v.name, v.description, v.id]
         );
       } else {
         await pool.query(
-          'INSERT INTO lesson_versions (id, lesson_id, version_no, status, name, description, lock_version, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, 0, now(), now())',
+          'INSERT INTO public.lesson_versions (id, lesson_id, version_no, status, name, description, lock_version, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, 0, now(), now())',
           [v.id, v.lessonId, v.versionNo.value, v.status, v.name, v.description]
         );
       }
 
       // Re-save Content Blocks (clear and insert)
-      await pool.query('DELETE FROM content_blocks WHERE lesson_version_id = $1', [v.id]);
+      await pool.query('DELETE FROM public.content_blocks WHERE lesson_version_id = $1', [v.id]);
       for (const cb of v.contentBlocks) {
         await pool.query(
-          'INSERT INTO content_blocks (id, lesson_version_id, block_type, text_content, display_order) VALUES ($1, $2, $3, $4, $5)',
+          'INSERT INTO public.content_blocks (id, lesson_version_id, block_type, text_content, display_order) VALUES ($1, $2, $3, $4, $5)',
           [cb.id, cb.lessonVersionId, cb.blockType, cb.textContent, cb.displayOrder]
         );
       }
@@ -1035,13 +1026,13 @@ export class PostgresLessonRepository implements LessonRepository {
 
   public async search(filters: { moduleId?: string }): Promise<Lesson[]> {
     const pool = this.dbPool.getPool();
-    let query = 'SELECT id FROM lessons WHERE deleted_at IS NULL';
+    let query = 'SELECT id FROM public.lessons WHERE deleted_at IS NULL';
     const params: any[] = [];
     if (filters.moduleId) {
       params.push(filters.moduleId);
-      query += ` AND module_id = $${params.length}`;
+      query += ` AND (learning_module_id = $${params.length} OR module_id = $${params.length})`;
     }
-    query += ' ORDER BY display_order ASC';
+    query += ' ORDER BY default_sequence_no ASC, display_order ASC';
 
     const res = await pool.query(query, params);
     const lessons: Lesson[] = [];
@@ -1053,284 +1044,19 @@ export class PostgresLessonRepository implements LessonRepository {
   }
 }
 
-export class PostgresLearningResourceRepository implements LearningResourceRepository {
-  constructor(private readonly dbPool: DatabasePool) {}
 
-  public nextIdentity(): string {
-    return randomUUID();
-  }
+export { PostgresLearningResourceRepository } from './learning-resource/postgres-learning-resource.repository';
+export { PostgresResourceVersionRepository } from './learning-resource/postgres-resource-version.repository';
+export { PostgresResourceCollectionRepository } from './learning-resource/postgres-resource-collection.repository';
+export { PostgresStorageAssetRepository } from './learning-resource/postgres-storage-asset.repository';
+export {
+  SupabaseStorageAdapter,
+  LocalMimeInspectionAdapter,
+  LocalChecksumAdapter,
+  MockSecurityScanAdapter,
+  PostgresStorageQuotaAdapter
+} from './learning-resource/storage-provider-adapters';
 
-  public async exists(code: string): Promise<boolean> {
-    const pool = this.dbPool.getPool();
-    const res = await pool.query('SELECT 1 FROM learning_resources WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
-    return res.rows.length > 0;
-  }
-
-  public async findByCode(code: string): Promise<LearningResource | null> {
-    const pool = this.dbPool.getPool();
-    const res = await pool.query('SELECT id FROM learning_resources WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
-    if (res.rows.length === 0) return null;
-    return this.findById(res.rows[0].id);
-  }
-
-  public async findById(id: string): Promise<LearningResource | null> {
-    const pool = this.dbPool.getPool();
-    const res = await pool.query('SELECT * FROM learning_resources WHERE id = $1 AND deleted_at IS NULL', [id]);
-    if (res.rows.length === 0) return null;
-    const row = res.rows[0];
-
-    const resource = new LearningResource(
-      row.id,
-      row.lesson_id,
-      new ResourceCode(row.code),
-      row.resource_type as any,
-      row.slug,
-      row.name,
-      row.description || '',
-      row.display_order,
-      row.status as any,
-      Number(row.lock_version),
-      row.created_at,
-      row.updated_at,
-      row.deleted_at
-    );
-
-    // Load versions
-    const vRes = await pool.query('SELECT * FROM learning_resource_versions WHERE learning_resource_id = $1 AND deleted_at IS NULL', [id]);
-    for (const vRow of vRes.rows) {
-      const version = new ResourceVersion(
-        vRow.id,
-        vRow.learning_resource_id,
-        new ResourceSemanticVersion(vRow.version_no),
-        vRow.status as any,
-        vRow.name,
-        vRow.description || ''
-      );
-
-      // Media Asset
-      const mRes = await pool.query('SELECT * FROM media_assets WHERE resource_version_id = $1 LIMIT 1', [vRow.id]);
-      if (mRes.rows.length > 0) {
-        const m = mRes.rows[0];
-        version.mediaAsset = new MediaAsset(
-          m.id,
-          m.resource_version_id,
-          m.provider,
-          m.bucket,
-          m.object_key,
-          m.region || '',
-          m.checksum || '',
-          m.mime_type,
-          Number(m.size),
-          m.duration ? Number(m.duration) : null,
-          m.hash_algorithm,
-          m.encryption_status
-        );
-      }
-
-      // Attachments
-      const aRes = await pool.query('SELECT * FROM resource_attachments WHERE resource_version_id = $1', [vRow.id]);
-      for (const a of aRes.rows) {
-        version.attachments.push(new Attachment(a.id, a.resource_version_id, a.name, Number(a.file_size), a.mime_type, a.object_key));
-      }
-
-      // Downloads
-      const dRes = await pool.query('SELECT * FROM resource_downloads WHERE resource_version_id = $1', [vRow.id]);
-      for (const d of dRes.rows) {
-        version.downloads.push(new Download(d.id, d.resource_version_id, d.url, d.title));
-      }
-
-      // External Links
-      const lRes = await pool.query('SELECT * FROM resource_links WHERE resource_version_id = $1', [vRow.id]);
-      for (const l of lRes.rows) {
-        version.externalLinks.push(new ExternalLink(l.id, l.resource_version_id, l.url, l.title));
-      }
-
-      // Transcripts
-      const tRes = await pool.query('SELECT * FROM resource_transcripts WHERE resource_version_id = $1', [vRow.id]);
-      for (const t of tRes.rows) {
-        version.transcripts.push(new Transcript(t.id, t.resource_version_id, t.transcript_text, t.language));
-      }
-
-      // Captions
-      const cRes = await pool.query('SELECT * FROM resource_captions WHERE resource_version_id = $1', [vRow.id]);
-      for (const c of cRes.rows) {
-        version.captions.push(new Caption(c.id, c.resource_version_id, c.caption_text, c.language));
-      }
-
-      // Metadata
-      const mdRes = await pool.query('SELECT * FROM resource_metadata WHERE resource_version_id = $1', [vRow.id]);
-      for (const md of mdRes.rows) {
-        version.metadata.set(md.metadata_key, md.metadata_value);
-      }
-
-      resource.versions.push(version);
-    }
-
-    return resource;
-  }
-
-  public async save(resource: LearningResource): Promise<void> {
-    const pool = this.dbPool.getPool();
-
-    // Check concurrency
-    const exists = await pool.query('SELECT lock_version FROM learning_resources WHERE id = $1', [resource.id]);
-    if (exists.rows.length > 0) {
-      const currentLock = Number(exists.rows[0].lock_version);
-      if (currentLock !== resource.lockVersion) {
-        throw new ConflictError('Concurrency violation: Resource has been modified by another process.');
-      }
-      const newLock = resource.lockVersion + 1;
-      await pool.query(
-        'UPDATE learning_resources SET name = $1, description = $2, display_order = $3, status = $4, lock_version = $5, updated_at = now() WHERE id = $6',
-        [resource.name, resource.description, resource.displayOrder, resource.status, newLock, resource.id]
-      );
-      (resource as any).lockVersion = newLock;
-    } else {
-      await pool.query(
-        'INSERT INTO learning_resources (id, lesson_id, code, resource_type, slug, name, description, display_order, status, lock_version, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, now(), now())',
-        [resource.id, resource.lessonId, resource.code.value, resource.resourceType, resource.slug, resource.name, resource.description, resource.displayOrder, resource.status, resource.lockVersion]
-      );
-    }
-
-    // Save versions
-    for (const v of resource.versions) {
-      const vExists = await pool.query('SELECT id FROM learning_resource_versions WHERE id = $1', [v.id]);
-      if (vExists.rows.length > 0) {
-        await pool.query(
-          'UPDATE learning_resource_versions SET status = $1, name = $2, description = $3, updated_at = now() WHERE id = $4',
-          [v.status, v.name, v.description, v.id]
-        );
-      } else {
-        await pool.query(
-          'INSERT INTO learning_resource_versions (id, learning_resource_id, version_no, status, name, description, lock_version, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, 0, now(), now())',
-          [v.id, v.learningResourceId, v.versionNo.value, v.status, v.name, v.description]
-        );
-      }
-
-      // Media Asset
-      await pool.query('DELETE FROM media_assets WHERE resource_version_id = $1', [v.id]);
-      if (v.mediaAsset) {
-        const ma = v.mediaAsset;
-        await pool.query(
-          'INSERT INTO media_assets (id, resource_version_id, provider, bucket, object_key, region, checksum, mime_type, size, duration, hash_algorithm, encryption_status, uploaded_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, now())',
-          [ma.id, ma.resourceVersionId, ma.provider, ma.bucket, ma.objectKey, ma.region, ma.checksum, ma.mimeType, ma.size, ma.duration, ma.hashAlgorithm, ma.encryptionStatus]
-        );
-      }
-
-      // Attachments (clear and insert)
-      await pool.query('DELETE FROM resource_attachments WHERE resource_version_id = $1', [v.id]);
-      for (const att of v.attachments) {
-        await pool.query(
-          'INSERT INTO resource_attachments (id, resource_version_id, name, file_size, mime_type, object_key, created_at) VALUES ($1, $2, $3, $4, $5, $6, now())',
-          [att.id, att.resourceVersionId, att.name, att.fileSize, att.mimeType, att.objectKey]
-        );
-      }
-
-      // Downloads (clear and insert)
-      await pool.query('DELETE FROM resource_downloads WHERE resource_version_id = $1', [v.id]);
-      for (const d of v.downloads) {
-        await pool.query(
-          'INSERT INTO resource_downloads (id, resource_version_id, url, title) VALUES ($1, $2, $3, $4)',
-          [d.id, d.resourceVersionId, d.url, d.title]
-        );
-      }
-
-      // External Links (clear and insert)
-      await pool.query('DELETE FROM resource_links WHERE resource_version_id = $1', [v.id]);
-      for (const l of v.externalLinks) {
-        await pool.query(
-          'INSERT INTO resource_links (id, resource_version_id, url, title) VALUES ($1, $2, $3, $4)',
-          [l.id, l.resourceVersionId, l.url, l.title]
-        );
-      }
-
-      // Transcripts (clear and insert)
-      await pool.query('DELETE FROM resource_transcripts WHERE resource_version_id = $1', [v.id]);
-      for (const t of v.transcripts) {
-        await pool.query(
-          'INSERT INTO resource_transcripts (id, resource_version_id, transcript_text, language) VALUES ($1, $2, $3, $4)',
-          [t.id, t.resourceVersionId, t.transcriptText, t.language]
-        );
-      }
-
-      // Captions (clear and insert)
-      await pool.query('DELETE FROM resource_captions WHERE resource_version_id = $1', [v.id]);
-      for (const c of v.captions) {
-        await pool.query(
-          'INSERT INTO resource_captions (id, resource_version_id, caption_text, language) VALUES ($1, $2, $3, $4)',
-          [c.id, c.resourceVersionId, c.captionText, c.language]
-        );
-      }
-
-      // Metadata (clear and insert)
-      await pool.query('DELETE FROM resource_metadata WHERE resource_version_id = $1', [v.id]);
-      for (const [key, value] of v.metadata.entries()) {
-        await pool.query(
-          'INSERT INTO resource_metadata (resource_version_id, metadata_key, metadata_value) VALUES ($1, $2, $3)',
-          [v.id, key, value]
-        );
-      }
-    }
-  }
-
-  public async search(filters: LearningResourceSearchFilters): Promise<LearningResource[]> {
-    const pool = this.dbPool.getPool();
-    let query = 'SELECT DISTINCT lr.id FROM learning_resources lr';
-    const joins: string[] = [];
-    const params: any[] = [];
-    const wheres: string[] = ['lr.deleted_at IS NULL'];
-
-    if (filters.lessonId) {
-      params.push(filters.lessonId);
-      wheres.push(`lr.lesson_id = $${params.length}`);
-    }
-
-    if (filters.resourceType) {
-      params.push(filters.resourceType);
-      wheres.push(`lr.resource_type = $${params.length}`);
-    }
-
-    if (filters.tags && filters.tags.length > 0) {
-      joins.push('JOIN learning_resource_versions lrv ON lr.id = lrv.learning_resource_id');
-      joins.push('JOIN resource_tags rt ON lrv.id = rt.resource_version_id');
-      const tagPlaceholders = filters.tags.map((t: string) => {
-        params.push(t);
-        return `$${params.length}`;
-      }).join(', ');
-      wheres.push(`rt.tag IN (${tagPlaceholders})`);
-    }
-
-    if (filters.language || filters.difficulty) {
-      if (!joins.includes('JOIN learning_resource_versions lrv ON lr.id = lrv.learning_resource_id')) {
-        joins.push('JOIN learning_resource_versions lrv ON lr.id = lrv.learning_resource_id');
-      }
-      joins.push('JOIN resource_metadata rm ON lrv.id = rm.resource_version_id');
-      if (filters.language) {
-        params.push('language');
-        const keyIdx = params.length;
-        params.push(filters.language);
-        const valIdx = params.length;
-        wheres.push(`rm.metadata_key = $${keyIdx} AND rm.metadata_value = $${valIdx}`);
-      }
-      if (filters.difficulty) {
-        params.push('difficulty');
-        const keyIdx = params.length;
-        params.push(filters.difficulty);
-        const valIdx = params.length;
-        wheres.push(`rm.metadata_key = $${keyIdx} AND rm.metadata_value = $${valIdx}`);
-      }
-    }
-
-    const fullQuery = `${query} ${joins.join(' ')} WHERE ${wheres.join(' AND ')} ORDER BY lr.id ASC`;
-    const res = await pool.query(fullQuery, params);
-    const resources: LearningResource[] = [];
-    for (const row of res.rows) {
-      const lr = await this.findById(row.id);
-      if (lr) resources.push(lr);
-    }
-    return resources;
-  }
-}
 
 export class PostgresQuestionRepository implements QuestionRepository {
   constructor(private readonly dbPool: DatabasePool) {}

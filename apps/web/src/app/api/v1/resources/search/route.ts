@@ -5,31 +5,30 @@ export async function GET(req: NextRequest) {
   const { searchResourcesHandler } = await getLearningResourceContext();
   const searchParams = req.nextUrl.searchParams;
 
-  const lessonId = searchParams.get('lessonId') || undefined;
   const resourceType = searchParams.get('resourceType') || undefined;
-  const tagsCsv = searchParams.get('tags') || '';
-  const tags = tagsCsv ? tagsCsv.split(',') : undefined;
+  const categoryCode = searchParams.get('categoryCode') || undefined;
+  const tag = searchParams.get('tag') || undefined;
   const language = searchParams.get('language') || undefined;
-  const difficulty = searchParams.get('difficulty') || undefined;
+  const sensitivity = searchParams.get('sensitivity') || undefined;
 
   const resources = await searchResourcesHandler.execute({
-    lessonId,
     resourceType,
-    tags,
+    categoryCode,
+    tag,
     language,
-    difficulty
+    sensitivity
   });
 
   return NextResponse.json(
     resources.map(resource => ({
-      id: resource.id,
-      lessonId: resource.lessonId,
-      code: resource.code.value,
+      id: resource.resourceId,
+      resourceId: resource.resourceId,
+      code: resource.code,
       resourceType: resource.resourceType,
       slug: resource.slug,
-      name: resource.name,
+      name: resource.title,
+      title: resource.title,
       description: resource.description,
-      displayOrder: resource.displayOrder,
       status: resource.status
     }))
   );

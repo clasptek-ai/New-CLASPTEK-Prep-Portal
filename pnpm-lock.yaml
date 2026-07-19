@@ -351,9 +351,16 @@ importers:
       '@clasptek/validation':
         specifier: workspace:*
         version: link:../../validation
+      pg:
+        specifier: ^8.13.1
+        version: 8.22.0
       zod:
         specifier: ^3.24.1
         version: 3.25.76
+    devDependencies:
+      '@types/pg':
+        specifier: ^8.11.10
+        version: 8.20.0
 
   packages/application/prediction-engine:
     dependencies:
@@ -639,6 +646,9 @@ importers:
       '@clasptek/application-learning-coach':
         specifier: workspace:*
         version: link:../application/learning-coach
+      '@clasptek/application-learning-resources':
+        specifier: workspace:*
+        version: link:../application/learning-resources
       '@clasptek/application-prediction-engine':
         specifier: workspace:*
         version: link:../application/prediction-engine
