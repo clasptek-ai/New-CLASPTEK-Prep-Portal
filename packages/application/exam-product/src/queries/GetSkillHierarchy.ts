@@ -8,7 +8,9 @@ export interface SkillHierarchyReadService {
 export class GetSkillHierarchyHandler {
   constructor(private readonly readService: SkillHierarchyReadService) {}
 
-  public async execute(frameworkVersionId: string): Promise<Result<SkillHierarchyReadModel[], Error>> {
+  public async execute(
+    frameworkVersionId: string
+  ): Promise<Result<SkillHierarchyReadModel[], Error>> {
     try {
       const results = await this.readService.getSkillHierarchy(frameworkVersionId);
       return Result.success(results);

@@ -11,5 +11,5 @@ export const interceptors: {
   response: ResponseInterceptor[];
 } = {
   request: [],
-  response: []
+  response: [],
 };

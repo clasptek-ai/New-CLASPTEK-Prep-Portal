@@ -123,7 +123,9 @@ export class QueueEvaluationHandler {
       questionSnapshot: cmd.questionSnapshot,
       rubricSnapshot: cmd.rubricSnapshot,
       submissionSnapshot: cmd.submissionSnapshot,
-      ...(cmd.evaluationSettings !== undefined ? { evaluationSettings: cmd.evaluationSettings } : {}),
+      ...(cmd.evaluationSettings !== undefined
+        ? { evaluationSettings: cmd.evaluationSettings }
+        : {}),
       ...(profile?.id !== undefined ? { profileId: profile.id } : {}),
     });
 
@@ -223,7 +225,9 @@ export class RunEvaluationHandler {
         modelCode: cmd.modelCode,
         systemPromptHash: new PromptHash(cmd.systemPromptHash),
         userPromptHash: new PromptHash(cmd.userPromptHash),
-        tokenUsage: cmd.tokenUsage ? new TokenUsage(cmd.tokenUsage.promptTokens, cmd.tokenUsage.completionTokens) : undefined,
+        tokenUsage: cmd.tokenUsage
+          ? new TokenUsage(cmd.tokenUsage.promptTokens, cmd.tokenUsage.completionTokens)
+          : undefined,
         latencyMs: cmd.latencyMs,
         status: 'COMPLETED',
         executedAt: cmd.at ?? new Date(),
@@ -251,16 +255,19 @@ export class RunEvaluationHandler {
 
     // Add rubric scores (constructor-injected in a real flow; here recorded separately)
     // rubricScores are passed via saveResult — collect them into a local for persistence layer
-    const _rubricScores = (cmd.rubricScores ?? []).map(rs => new RubricScore({
-      id: randomUUID(),
-      criterionCode: rs.criterionCode,
-      criterionName: rs.criterionName,
-      score: new Score(rs.score, rs.maxScore),
-      bandDescriptor: rs.bandDescriptor,
-      justification: rs.justification,
-      weight: rs.weight,
-      createdAt: new Date(),
-    }));
+    const _rubricScores = (cmd.rubricScores ?? []).map(
+      (rs) =>
+        new RubricScore({
+          id: randomUUID(),
+          criterionCode: rs.criterionCode,
+          criterionName: rs.criterionName,
+          score: new Score(rs.score, rs.maxScore),
+          bandDescriptor: rs.bandDescriptor,
+          justification: rs.justification,
+          weight: rs.weight,
+          createdAt: new Date(),
+        })
+    );
     void _rubricScores; // Available for persistence layer extension
 
     // Add feedback sections
@@ -362,13 +369,15 @@ export class ApproveEvaluationHandler {
 
       // Add reviewer comments
       for (const c of cmd.comments ?? []) {
-        review.addComment(new ReviewComment({
-          id: randomUUID(),
-          criterionCode: c.criterionCode,
-          commentText: c.commentText,
-          decision: c.decision,
-          recordedAt: cmd.at ?? new Date(),
-        }));
+        review.addComment(
+          new ReviewComment({
+            id: randomUUID(),
+            criterionCode: c.criterionCode,
+            commentText: c.commentText,
+            decision: c.decision,
+            recordedAt: cmd.at ?? new Date(),
+          })
+        );
       }
 
       const decision = new ReviewDecision({
@@ -426,9 +435,7 @@ export class PublishEvaluationHandler {
 // ─── OverrideScoreHandler ─────────────────────────────────────────
 
 export class OverrideScoreHandler {
-  constructor(
-    private readonly reviewRepo: HumanReviewRepository
-  ) {}
+  constructor(private readonly reviewRepo: HumanReviewRepository) {}
 
   public async execute(cmd: {
     reviewId: string;
@@ -466,7 +473,10 @@ export class OverrideScoreHandler {
 export class GetEvaluationHandler {
   constructor(private readonly evaluationRepo: EvaluationRepository) {}
 
-  public async execute(cmd: { jobId?: string | undefined; resultId?: string | undefined }): Promise<EvaluationResult | null> {
+  public async execute(cmd: {
+    jobId?: string | undefined;
+    resultId?: string | undefined;
+  }): Promise<EvaluationResult | null> {
     if (cmd.resultId) {
       return this.evaluationRepo.findResultById(cmd.resultId);
     }
@@ -532,3 +542,18 @@ export class SearchEvaluationsHandler {
     });
   }
 }
+
+export * from './addendum';
+
+// ═══════════════════════════════════════════════════════════════════
+// CANONICAL AI EVALUATION DELIVERY APPLICATION EXPORTS (Sprint 3.7)
+// ═══════════════════════════════════════════════════════════════════
+export * from './engines/worker-pool';
+export * from './ai-delivery-command-adapters';
+export * from './services/PromptBuilderService';
+export * from './services/EvaluationPipeline';
+
+// ═══════════════════════════════════════════════════════════════════
+// SPRINT 3.8 APPLICATION HANDLERS AND REPOSITORIES
+// ═══════════════════════════════════════════════════════════════════
+export * from './handlers/IntelligenceHandlers';

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getStudentLearningContext } from '@/lib/student-learning-context';
 import type { GoalPriority } from '@clasptek/domain-student-learning';
@@ -11,15 +13,17 @@ export async function GET(req: NextRequest) {
     const journey = await ctx.getJourney.execute({ journeyId });
     if (!journey) return NextResponse.json({ error: 'Journey not found' }, { status: 404 });
 
-    return NextResponse.json(journey.goals.map(g => ({
-      id: g.id,
-      title: g.title,
-      description: g.description,
-      priority: g.priority,
-      status: g.status,
-      targetDate: g.targetDate,
-      completedAt: g.completedAt,
-    })));
+    return NextResponse.json(
+      journey.goals.map((g) => ({
+        id: g.id,
+        title: g.title,
+        description: g.description,
+        priority: g.priority,
+        status: g.status,
+        targetDate: g.targetDate,
+        completedAt: g.completedAt,
+      }))
+    );
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

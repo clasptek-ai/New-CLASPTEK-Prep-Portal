@@ -11,7 +11,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
         gap: '1.5rem',
         width: '100%',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
       }}
     >
       {children}
@@ -20,7 +20,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 }
 
 // ─── Row Component ───────────────────────────────────────────────────
-export function Row({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+export function Row({
+  children,
+  style,
+}: {
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}) {
   return (
     <div
       style={{
@@ -28,7 +34,7 @@ export function Row({ children, style }: { children: React.ReactNode; style?: Re
         flexWrap: 'wrap',
         gap: '1.5rem',
         width: '100%',
-        ...style
+        ...style,
       }}
     >
       {children}
@@ -67,7 +73,7 @@ export function Column({ span = 12, children, style }: ColumnProps) {
         flex: span === 12 ? '0 0 100%' : `0 0 calc(${getWidth()} - 1.5rem)`,
         minWidth: '280px',
         boxSizing: 'border-box',
-        ...style
+        ...style,
       }}
     >
       {children}

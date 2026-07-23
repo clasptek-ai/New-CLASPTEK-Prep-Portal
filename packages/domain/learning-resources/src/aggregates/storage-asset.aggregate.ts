@@ -6,7 +6,7 @@ import {
   StorageAssetValidated,
   StorageAssetQuarantined,
   StorageAssetPromoted,
-  StorageAssetDeleted
+  StorageAssetDeleted,
 } from '../events/learning-resource-events';
 
 export class StorageAsset extends AggregateRoot<string> {
@@ -23,8 +23,10 @@ export class StorageAsset extends AggregateRoot<string> {
     public etag: string | null = null,
     public storageClass: string = 'STANDARD',
     public integrityStatus: 'unchecked' | 'validated' | 'failed' = 'unchecked',
-    public securityStatus: 'unchecked' | 'scanning' | 'validated_clear' | 'quarantined' | 'failed' = 'unchecked',
-    public availabilityStatus: 'unavailable' | 'available' | 'archived' | 'deletion_pending' | 'deleted' = 'unavailable',
+    public securityStatus:
+      'unchecked' | 'scanning' | 'validated_clear' | 'quarantined' | 'failed' = 'unchecked',
+    public availabilityStatus:
+      'unavailable' | 'available' | 'archived' | 'deletion_pending' | 'deleted' = 'unavailable',
     public uploadedAt: Date = new Date(),
     public validatedAt: Date | null = null,
     public promotedAt: Date | null = null,
@@ -77,7 +79,10 @@ export class StorageAsset extends AggregateRoot<string> {
   public validateIntegrity(detectedMime: string, detectedSize: number, sha256Value: string) {
     if (detectedSize !== this.sizeBytes) {
       this.integrityStatus = 'failed';
-      throw new DomainError(`File size mismatch: declared ${this.sizeBytes} bytes, found ${detectedSize} bytes.`, 'INTEGRITY_SIZE_MISMATCH');
+      throw new DomainError(
+        `File size mismatch: declared ${this.sizeBytes} bytes, found ${detectedSize} bytes.`,
+        'INTEGRITY_SIZE_MISMATCH'
+      );
     }
     this.detectedMimeType = detectedMime;
     this.integrityStatus = 'validated';
@@ -100,10 +105,16 @@ export class StorageAsset extends AggregateRoot<string> {
 
   public promote(destinationPath: string) {
     if (this.securityStatus === 'quarantined') {
-      throw new DomainError('Cannot promote quarantined storage object.', 'PROMOTION_FAILED_QUARANTINE');
+      throw new DomainError(
+        'Cannot promote quarantined storage object.',
+        'PROMOTION_FAILED_QUARANTINE'
+      );
     }
     if (this.integrityStatus !== 'validated') {
-      throw new DomainError('Cannot promote unchecked or failed storage object.', 'PROMOTION_FAILED_INTEGRITY');
+      throw new DomainError(
+        'Cannot promote unchecked or failed storage object.',
+        'PROMOTION_FAILED_INTEGRITY'
+      );
     }
     this.objectPath = destinationPath;
     this.availabilityStatus = 'available';

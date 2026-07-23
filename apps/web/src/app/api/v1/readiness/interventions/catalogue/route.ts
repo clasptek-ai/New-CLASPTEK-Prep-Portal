@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getPredictionEngineContext } from '@/lib/prediction-engine-context';
 
@@ -12,6 +14,9 @@ export async function GET(req: NextRequest) {
     const list = await ctx.getInterventionCatalogue.execute();
     return NextResponse.json({ templates: list, count: list.length });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

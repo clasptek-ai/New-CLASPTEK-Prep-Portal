@@ -7,24 +7,39 @@ import { ConnectionStatus } from '../../../components/integrations/integration-c
 
 export function ConnectionWorkspace({ connectionId }: { connectionId: string }) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'CONFIGURATION' | 'SYNCHRONIZATION' | 'HEALTH'>('OVERVIEW');
+  const [activeTab, setActiveTab] = useState<
+    'OVERVIEW' | 'CONFIGURATION' | 'SYNCHRONIZATION' | 'HEALTH'
+  >('OVERVIEW');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Connection Workspace: {connectionId}</h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.25rem' }}>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
+            Connection Workspace: {connectionId}
+          </h1>
+          <div
+            style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.25rem' }}
+          >
             <ConnectionStatus status="CONNECTED" latencyMs={150} />
             <Badge>OAUTH2 ENABLED</Badge>
           </div>
         </div>
-        <Button variant="secondary" onClick={() => router.push('/admin/integrations')}>Back to Directory</Button>
+        <Button variant="secondary" onClick={() => router.push('/admin/integrations')}>
+          Back to Directory
+        </Button>
       </div>
 
       {/* Tabs list */}
-      <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid #1e293b', paddingBottom: '0.5rem' }}>
-        {(['OVERVIEW', 'CONFIGURATION', 'SYNCHRONIZATION', 'HEALTH'] as const).map(tab => (
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.5rem',
+          borderBottom: '1px solid #1e293b',
+          paddingBottom: '0.5rem',
+        }}
+      >
+        {(['OVERVIEW', 'CONFIGURATION', 'SYNCHRONIZATION', 'HEALTH'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -36,7 +51,7 @@ export function ConnectionWorkspace({ connectionId }: { connectionId: string }) 
               borderRadius: '6px',
               fontWeight: 600,
               cursor: 'pointer',
-              fontSize: '0.85rem'
+              fontSize: '0.85rem',
             }}
           >
             {tab}
@@ -46,7 +61,15 @@ export function ConnectionWorkspace({ connectionId }: { connectionId: string }) 
 
       {activeTab === 'OVERVIEW' && (
         <Card title="Connection Status">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+              fontSize: '0.85rem',
+              color: '#cbd5e1',
+            }}
+          >
             <p>Sync Engine Mode: **AUTOMATIC WORKFLOWS**</p>
             <p>Credentials Status: **Masked secrets locked. Expiry: 11 months**</p>
             <p>Permissions scope granted: **Read/Write Curricula, POST webhooks**</p>

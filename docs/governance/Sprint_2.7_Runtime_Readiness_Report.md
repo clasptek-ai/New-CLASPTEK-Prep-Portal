@@ -10,6 +10,7 @@
 ## 1. Dependency Validation
 
 The **Assessment Runtime Domain** will reside in two new workspace packages:
+
 1. `@clasptek/domain-assessment-runtime` (within `packages/domain/assessment-runtime`)
 2. `@clasptek/application-assessment-runtime` (within `packages/application/assessment-runtime`)
 
@@ -59,10 +60,12 @@ graph TD
 The Assessment Runtime consumes state events from Adaptive Practice and curriculum boundaries, and publishes domain lifecycle events for downstream consumption by AI Evaluation, Analytics, and Learner Journey.
 
 ### Consumed Upstream Events
+
 - `PracticeSessionCreated` / `PracticeStarted` (Adaptive Practice)
 - `CurriculumPublished` (Curriculum)
 
 ### Published Runtime Events
+
 - `AssessmentSessionCreated`
 - `AssessmentStarted`
 - `AssessmentPaused`
@@ -84,6 +87,7 @@ The Assessment Runtime consumes state events from Adaptive Practice and curricul
 ## 3. Security Assumptions & Safeguards
 
 The runtime domain will enforce strict verification policies directly in the domain logic and repository boundaries:
+
 - **Session Ownership Validation:** Authenticated student context must match `studentId` on the session aggregate.
 - **Row-Level Security (RLS):** database rules restrict access to `student_id = auth.uid()`.
 - **Anti-Duplicate Submission:** Once the aggregate state machine transitions to `SUBMITTED`, all subsequent submission triggers are rejected by returning immediate conflict checks.
@@ -97,14 +101,14 @@ The runtime domain will enforce strict verification policies directly in the dom
 
 Latency budgets are defined as follows:
 
-| Operation | Target Latency | Baseline Strategy |
-|---|---|---|
-| **Session Creation** | `< 150 ms` | Fast blueprint replication and single transaction database insert. |
-| **Save Answer** | `< 75 ms` | Partial update of student answers table, leveraging index lookups. |
-| **Autosave** | `< 100 ms` | Non-blocking background delta saves of answer changes. |
-| **Resume Session** | `< 250 ms` | Direct checkpoint retrieval and token authentication checks. |
-| **Submit Session** | `< 500 ms` | Transactional transition to SUBMITTED state, saving answer sheet. |
-| **Checkpoint Create** | `< 100 ms` | Low-latency state serialization to `runtime_checkpoints` table. |
+| Operation             | Target Latency | Baseline Strategy                                                  |
+| --------------------- | -------------- | ------------------------------------------------------------------ |
+| **Session Creation**  | `< 150 ms`     | Fast blueprint replication and single transaction database insert. |
+| **Save Answer**       | `< 75 ms`      | Partial update of student answers table, leveraging index lookups. |
+| **Autosave**          | `< 100 ms`     | Non-blocking background delta saves of answer changes.             |
+| **Resume Session**    | `< 250 ms`     | Direct checkpoint retrieval and token authentication checks.       |
+| **Submit Session**    | `< 500 ms`     | Transactional transition to SUBMITTED state, saving answer sheet.  |
+| **Checkpoint Create** | `< 100 ms`     | Low-latency state serialization to `runtime_checkpoints` table.    |
 
 ---
 

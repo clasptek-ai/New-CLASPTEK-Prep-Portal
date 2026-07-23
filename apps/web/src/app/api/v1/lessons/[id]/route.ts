@@ -1,10 +1,9 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLearningResourceContext } from '@/lib/learning-resource-context';
 
-export async function GET(
-  req: NextRequest,
-  _params: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, _params: { params: Promise<{ id: string }> }) {
   const { lessonRepo } = await getLearningResourceContext();
   const { id } = await _params.params;
 
@@ -32,8 +31,8 @@ export async function GET(
         id: cb.id,
         blockType: cb.blockType,
         textContent: cb.textContent,
-        displayOrder: cb.displayOrder
-      }))
-    }))
+        displayOrder: cb.displayOrder,
+      })),
+    })),
   });
 }

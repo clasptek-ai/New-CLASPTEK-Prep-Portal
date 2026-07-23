@@ -102,6 +102,7 @@ This governed engineering standard defines the technical requirements, architect
 ## 10. Documentation Standards
 
 Every completed workspace sprint must update the following core documentation items:
+
 - Architecture specification blueprints.
 - OpenAPI API Client definitions catalog.
 - Database Schema and Migration manifests (if changes occur).
@@ -113,6 +114,7 @@ Every completed workspace sprint must update the following core documentation it
 ## 11. Definition of Ready (DoR)
 
 Before a workspace sprint begins, the following conditions must be met:
+
 - [ ] Architecture design approved.
 - [ ] API contracts confirmed.
 - [ ] Database schema validated.
@@ -126,6 +128,7 @@ Before a workspace sprint begins, the following conditions must be met:
 ## 12. Definition of Done (DoD)
 
 A workspace implementation is complete only when:
+
 - [ ] All screens are functional.
 - [ ] All services use the Service Layer.
 - [ ] No direct API or Supabase calls exist in UI components.

@@ -15,14 +15,14 @@ export class CurriculumPublishingSpecification extends Specification<CurriculumV
     }
 
     // 3. Must have a default locale
-    const defaultLocale = version.locales.find(l => l.isDefault);
+    const defaultLocale = version.locales.find((l) => l.isDefault);
     if (!defaultLocale) {
       return false;
     }
 
     // 4. Must have dependency locks frozen if there are any referenced domains
     // (Checked through lock list)
-    
+
     // 5. Circular dependencies check
     const circularSpec = new NoCircularModuleDependenciesSpecification();
     if (!circularSpec.isSatisfiedBy([])) {

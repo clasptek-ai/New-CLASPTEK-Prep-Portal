@@ -6,8 +6,5 @@
     "composite": true
   },
   "include": ["src/**/*"],
-  "references": [
-    { "path": "../../kernel" },
-    { "path": "../../domain/prediction-engine" }
-  ]
+  "references": [{ "path": "../../kernel" }, { "path": "../../domain/prediction-engine" }]
 }

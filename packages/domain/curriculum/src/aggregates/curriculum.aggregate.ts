@@ -29,7 +29,17 @@ export class Curriculum extends AggregateRoot<string> {
     description: string
   ): Curriculum {
     const slug = lowerSlug(name);
-    return new Curriculum(id, code, slug, name, description, CurriculumStatus.draft(), undefined, undefined, 0);
+    return new Curriculum(
+      id,
+      code,
+      slug,
+      name,
+      description,
+      CurriculumStatus.draft(),
+      undefined,
+      undefined,
+      0
+    );
   }
 
   public updateDraft(name: string, description: string): void {
@@ -61,5 +71,8 @@ export class Curriculum extends AggregateRoot<string> {
 }
 
 function lowerSlug(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9_-]/g, '');
 }

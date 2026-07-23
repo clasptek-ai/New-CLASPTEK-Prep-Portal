@@ -9,6 +9,6 @@ export interface BlueprintItemMapping {
 export class BlueprintAlignmentSpecification extends Specification<BlueprintItemMapping[]> {
   public isSatisfiedBy(mappings: BlueprintItemMapping[]): boolean {
     // Total alignment weight should be positive
-    return mappings.length > 0 && mappings.every(m => m.weight >= 0);
+    return mappings.length > 0 && mappings.every((m) => m.weight >= 0);
   }
 }

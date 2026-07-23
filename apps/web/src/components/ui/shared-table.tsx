@@ -28,7 +28,7 @@ export function SharedTable<T extends { id: string }>({
   bulkActionLabel = 'Bulk Action',
   onBulkAction,
   exportLabel = 'Export Data',
-  onExport
+  onExport,
 }: SharedTableProps<T>) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -38,8 +38,8 @@ export function SharedTable<T extends { id: string }>({
 
   // Apply filters
   const filteredData = useMemo(() => {
-    return data.filter(item => {
-      return Object.values(item).some(val =>
+    return data.filter((item) => {
+      return Object.values(item).some((val) =>
         String(val).toLowerCase().includes(filterText.toLowerCase())
       );
     });
@@ -68,7 +68,7 @@ export function SharedTable<T extends { id: string }>({
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedIds(new Set(paginatedData.map(item => item.id)));
+      setSelectedIds(new Set(paginatedData.map((item) => item.id)));
     } else {
       setSelectedIds(new Set());
     }
@@ -97,11 +97,22 @@ export function SharedTable<T extends { id: string }>({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%' }}>
       {/* Top Filter and Actions */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
         <input
           placeholder="Filter table rows..."
           value={filterText}
-          onChange={(e) => { setFilterText(e.target.value); setCurrentPage(1); }}
+          onChange={(e) => {
+            setFilterText(e.target.value);
+            setCurrentPage(1);
+          }}
           style={{
             padding: '0.5rem 1rem',
             borderRadius: '6px',
@@ -109,12 +120,12 @@ export function SharedTable<T extends { id: string }>({
             backgroundColor: '#0b0f19',
             color: '#f8fafc',
             fontSize: '0.85rem',
-            width: '240px'
+            width: '240px',
           }}
         />
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           {onBulkAction && selectedIds.size > 0 && (
-            <Button onClick={() => onBulkAction(data.filter(item => selectedIds.has(item.id)))}>
+            <Button onClick={() => onBulkAction(data.filter((item) => selectedIds.has(item.id)))}>
               {bulkActionLabel} ({selectedIds.size})
             </Button>
           )}
@@ -128,7 +139,14 @@ export function SharedTable<T extends { id: string }>({
 
       {/* Grid container */}
       <div style={{ overflowX: 'auto', border: '1px solid #232e48', borderRadius: '8px' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#151d30', textAlign: 'left' }}>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            backgroundColor: '#151d30',
+            textAlign: 'left',
+          }}
+        >
           <thead>
             <tr style={{ borderBottom: '1px solid #232e48', backgroundColor: '#0b0f19' }}>
               <th style={{ padding: '1rem', width: '40px' }}>
@@ -149,7 +167,7 @@ export function SharedTable<T extends { id: string }>({
                     fontWeight: 600,
                     color: '#94a3b8',
                     cursor: c.sortable ? 'pointer' : 'default',
-                    userSelect: 'none'
+                    userSelect: 'none',
                   }}
                 >
                   {c.header} {c.sortable && (sortKey === c.id ? (sortAsc ? '▲' : '▼') : '↕')}
@@ -160,7 +178,10 @@ export function SharedTable<T extends { id: string }>({
           <tbody>
             {paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length + 1} style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
+                <td
+                  colSpan={columns.length + 1}
+                  style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}
+                >
                   No matching records found.
                 </td>
               </tr>
@@ -188,21 +209,33 @@ export function SharedTable<T extends { id: string }>({
       </div>
 
       {/* Pagination Controls */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem', color: '#94a3b8' }}>
-        <span>Showing {paginatedData.length} of {sortedData.length} records</span>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '0.85rem',
+          color: '#94a3b8',
+        }}
+      >
+        <span>
+          Showing {paginatedData.length} of {sortedData.length} records
+        </span>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <Button
             variant="ghost"
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
             style={{ padding: '0.25rem 0.5rem' }}
           >
             Previous
           </Button>
-          <span>Page {currentPage} of {totalPages}</span>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
           <Button
             variant="ghost"
-            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
             style={{ padding: '0.25rem 0.5rem' }}
           >

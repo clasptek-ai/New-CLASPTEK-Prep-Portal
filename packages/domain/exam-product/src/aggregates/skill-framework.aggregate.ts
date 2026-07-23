@@ -164,7 +164,14 @@ export class SkillFramework extends AggregateRoot<string> {
     return rev;
   }
 
-  public addLevel(id: string, versionId: string, code: string, name: string, ordinal: number, description?: string): SkillFrameworkLevel {
+  public addLevel(
+    id: string,
+    versionId: string,
+    code: string,
+    name: string,
+    ordinal: number,
+    description?: string
+  ): SkillFrameworkLevel {
     const lvl = new SkillFrameworkLevel(id, versionId, code, name, description, ordinal);
     this._levels.push(lvl);
     return lvl;

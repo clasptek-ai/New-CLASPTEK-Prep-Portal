@@ -15,7 +15,7 @@ export class ReadinessCriteria {
     public targetValue?: number,
     public minimumValue?: number,
     public maximumValue?: number,
-    public weight: number = 1.00,
+    public weight: number = 1.0,
     public isMandatory: boolean = true,
     public status: string = 'ACTIVE'
   ) {}
@@ -48,11 +48,7 @@ export class ReadinessFramework extends AggregateRoot<string> {
     return this._criteria;
   }
 
-  public addCriterion(
-    id: string,
-    criterionType: string,
-    priority: number = 1
-  ): ReadinessCriteria {
+  public addCriterion(id: string, criterionType: string, priority: number = 1): ReadinessCriteria {
     const criterion = new ReadinessCriteria(id, this.id, criterionType, priority);
     this._criteria.push(criterion);
     return criterion;

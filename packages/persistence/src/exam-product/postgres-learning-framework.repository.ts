@@ -1,4 +1,8 @@
-import { LearningFrameworkRepository, LearningFramework, LearningPath } from '@clasptek/domain-exam-product';
+import {
+  LearningFrameworkRepository,
+  LearningFramework,
+  LearningPath,
+} from '@clasptek/domain-exam-product';
 import { PostgresUnitOfWork } from './postgres-unit-of-work';
 
 export class PostgresLearningFrameworkRepository implements LearningFrameworkRepository {
@@ -9,19 +13,28 @@ export class PostgresLearningFrameworkRepository implements LearningFrameworkRep
   }
 
   public async findById(id: string): Promise<LearningFramework | null> {
-    const res = await this.client.query('SELECT * FROM learning_frameworks WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const res = await this.client.query(
+      'SELECT * FROM learning_frameworks WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async findByCode(code: string): Promise<LearningFramework | null> {
-    const res = await this.client.query('SELECT * FROM learning_frameworks WHERE code = $1 AND deleted_at IS NULL', [code]);
+    const res = await this.client.query(
+      'SELECT * FROM learning_frameworks WHERE code = $1 AND deleted_at IS NULL',
+      [code]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async exists(code: string): Promise<boolean> {
-    const res = await this.client.query('SELECT 1 FROM learning_frameworks WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
+    const res = await this.client.query(
+      'SELECT 1 FROM learning_frameworks WHERE code = $1 AND deleted_at IS NULL LIMIT 1',
+      [code]
+    );
     return res.rows.length > 0;
   }
 
@@ -94,7 +107,10 @@ export class PostgresLearningFrameworkRepository implements LearningFrameworkRep
     );
 
     // Hydrate paths
-    const pathRes = await this.client.query('SELECT * FROM learning_paths WHERE learning_framework_id = $1 AND deleted_at IS NULL', [framework.id]);
+    const pathRes = await this.client.query(
+      'SELECT * FROM learning_paths WHERE learning_framework_id = $1 AND deleted_at IS NULL',
+      [framework.id]
+    );
     framework.loadPaths(
       pathRes.rows.map(
         (p: any) =>

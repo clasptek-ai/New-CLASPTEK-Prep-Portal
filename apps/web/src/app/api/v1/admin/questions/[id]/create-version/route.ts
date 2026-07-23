@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getQuestionBankContext } from '@/lib/question-bank-context';
@@ -5,10 +7,7 @@ import { AccessControlGuard } from '@clasptek/infrastructure-access-control';
 import { PermissionCode } from '@clasptek/domain-authorization';
 import { ApplicationError } from '@clasptek/kernel';
 
-export async function POST(
-  req: NextRequest,
-  _params: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, _params: { params: Promise<{ id: string }> }) {
   const { createVersionHandler, logger } = await getQuestionBankContext();
   try {
     let token: string | null = null;
@@ -34,7 +33,10 @@ export async function POST(
     const { versionNo, title, payload, digitalSignature } = body;
 
     if (!versionNo || !title || !payload) {
-      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing required version parameters' }, { status: 400 });
+      return NextResponse.json(
+        { code: 'VALIDATION_ERROR', message: 'Missing required version parameters' },
+        { status: 400 }
+      );
     }
 
     const versionId = await createVersionHandler.execute({
@@ -42,15 +44,21 @@ export async function POST(
       versionNo,
       title,
       payload,
-      digitalSignature: digitalSignature || undefined
+      digitalSignature: digitalSignature || undefined,
     });
 
     return NextResponse.json({ success: true, versionId });
   } catch (err: unknown) {
-    logger.error('POST /api/v1/admin/questions/[id]/create-version failure', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      'POST /api/v1/admin/questions/[id]/create-version failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
     if (err instanceof ApplicationError) {
       return NextResponse.json({ code: err.name, message: err.message }, { status: 400 });
     }
-    return NextResponse.json({ code: 'INTERNAL_ERROR', message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

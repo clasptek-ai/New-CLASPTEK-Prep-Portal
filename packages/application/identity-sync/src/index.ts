@@ -25,18 +25,19 @@ export interface SupabaseAuthEvent {
 export class IdentitySynchronizer {
   constructor(
     private readonly repository: IdentityRepository,
-    private readonly lookupService: IdentityLookupService,
+    private readonly _lookupService: IdentityLookupService,
     private readonly logger: Logger
   ) {}
 
   public async syncUserCreated(event: SupabaseAuthEvent): Promise<void> {
     this.logger.info(`Processing Supabase Auth SIGN_UP event for: ${event.email}`);
 
-    // Check unique constraint via lookup service
-    const existing = await this.lookupService.findByLoginIdentifier(event.email);
-    if (existing) {
+    // Verify if User aggregate already exists in domain persistence by primary key or login identifier
+    const existingUser = await this.repository.findById(new UserId(event.id));
+    const existingIdent = await this._lookupService.findByLoginIdentifier(event.email);
+    if (existingUser || existingIdent) {
       this.logger.warn(
-        `User ${event.email} already exists in domain persistence. Synchronization skipped.`
+        `User ${event.id} (${event.email}) already exists in domain persistence. Synchronization skipped.`
       );
       return;
     }
@@ -71,3 +72,5 @@ export class IdentitySynchronizer {
     this.logger.info(`Successfully synchronized Identity Domain for user: ${userIdStr}`);
   }
 }
+
+export * from './ensure-user-aggregate-exists.service';

@@ -8,7 +8,10 @@ export class ResourceCode extends ValueObject<{ value: string }> {
     }
     const sanitized = value.trim();
     if (!/^[A-Za-z][A-Za-z0-9_-]{1,49}$/.test(sanitized)) {
-      throw new DomainError('Resource code must be alphanumeric starting with a letter, length 2-50.', 'INVALID_RESOURCE_CODE');
+      throw new DomainError(
+        'Resource code must be alphanumeric starting with a letter, length 2-50.',
+        'INVALID_RESOURCE_CODE'
+      );
     }
     super({ value: sanitized });
   }
@@ -25,7 +28,10 @@ export class SemanticVersion extends ValueObject<{ value: string }> {
     }
     const pattern = /^\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?$/;
     if (!pattern.test(value)) {
-      throw new DomainError(`Version '${value}' does not follow semantic version pattern X.Y.Z.`, 'INVALID_VERSION');
+      throw new DomainError(
+        `Version '${value}' does not follow semantic version pattern X.Y.Z.`,
+        'INVALID_VERSION'
+      );
     }
     super({ value });
   }
@@ -59,7 +65,10 @@ export class HashSHA256 extends ValueObject<{ value: string }> {
     }
     const sanitized = value.trim().toLowerCase();
     if (!/^[a-f0-9]{64}$/.test(sanitized)) {
-      throw new DomainError('SHA-256 hash must be a 64-character hexadecimal string.', 'INVALID_HASH');
+      throw new DomainError(
+        'SHA-256 hash must be a 64-character hexadecimal string.',
+        'INVALID_HASH'
+      );
     }
     super({ value: sanitized });
   }
@@ -69,10 +78,27 @@ export class HashSHA256 extends ValueObject<{ value: string }> {
   }
 }
 
-export type VariantPurposeType = 'standard' | 'translation' | 'accessible' | 'low_bandwidth' | 'instructor' | 'student' | 'print' | 'screen' | 'custom';
+export type VariantPurposeType =
+  | 'standard'
+  | 'translation'
+  | 'accessible'
+  | 'low_bandwidth'
+  | 'instructor'
+  | 'student'
+  | 'print'
+  | 'screen'
+  | 'custom';
 export class VariantPurpose extends ValueObject<{ value: VariantPurposeType }> {
   private static readonly VALID_PURPOSES: VariantPurposeType[] = [
-    'standard', 'translation', 'accessible', 'low_bandwidth', 'instructor', 'student', 'print', 'screen', 'custom'
+    'standard',
+    'translation',
+    'accessible',
+    'low_bandwidth',
+    'instructor',
+    'student',
+    'print',
+    'screen',
+    'custom',
   ];
 
   constructor(value: VariantPurposeType) {
@@ -87,10 +113,15 @@ export class VariantPurpose extends ValueObject<{ value: VariantPurposeType }> {
   }
 }
 
-export type SensitivityLevelType = 'normal' | 'internal' | 'instructor_only' | 'restricted' | 'confidential';
+export type SensitivityLevelType =
+  'normal' | 'internal' | 'instructor_only' | 'restricted' | 'confidential';
 export class SensitivityLevel extends ValueObject<{ value: SensitivityLevelType }> {
   private static readonly VALID_LEVELS: SensitivityLevelType[] = [
-    'normal', 'internal', 'instructor_only', 'restricted', 'confidential'
+    'normal',
+    'internal',
+    'instructor_only',
+    'restricted',
+    'confidential',
   ];
 
   constructor(value: SensitivityLevelType) {
@@ -105,10 +136,14 @@ export class SensitivityLevel extends ValueObject<{ value: SensitivityLevelType 
   }
 }
 
-export type VisibilityScopeType = 'private' | 'organization' | 'authenticated' | 'controlled_public';
+export type VisibilityScopeType =
+  'private' | 'organization' | 'authenticated' | 'controlled_public';
 export class VisibilityScope extends ValueObject<{ value: VisibilityScopeType }> {
   private static readonly VALID_SCOPES: VisibilityScopeType[] = [
-    'private', 'organization', 'authenticated', 'controlled_public'
+    'private',
+    'organization',
+    'authenticated',
+    'controlled_public',
   ];
 
   constructor(value: VisibilityScopeType) {
@@ -123,10 +158,17 @@ export class VisibilityScope extends ValueObject<{ value: VisibilityScopeType }>
   }
 }
 
-export type UploadStatusType = 'requested' | 'authorised' | 'uploading' | 'uploaded' | 'expired' | 'cancelled' | 'failed';
+export type UploadStatusType =
+  'requested' | 'authorised' | 'uploading' | 'uploaded' | 'expired' | 'cancelled' | 'failed';
 export class UploadStatus extends ValueObject<{ value: UploadStatusType }> {
   private static readonly VALID_STATUSES: UploadStatusType[] = [
-    'requested', 'authorised', 'uploading', 'uploaded', 'expired', 'cancelled', 'failed'
+    'requested',
+    'authorised',
+    'uploading',
+    'uploaded',
+    'expired',
+    'cancelled',
+    'failed',
   ];
 
   constructor(value: UploadStatusType) {
@@ -143,9 +185,7 @@ export class UploadStatus extends ValueObject<{ value: UploadStatusType }> {
 
 export type ResourceStatusType = 'draft' | 'active' | 'archived';
 export class ResourceStatus extends ValueObject<{ value: ResourceStatusType }> {
-  private static readonly VALID_STATUSES: ResourceStatusType[] = [
-    'draft', 'active', 'archived'
-  ];
+  private static readonly VALID_STATUSES: ResourceStatusType[] = ['draft', 'active', 'archived'];
 
   constructor(value: ResourceStatusType) {
     if (!ResourceStatus.VALID_STATUSES.includes(value)) {
@@ -159,10 +199,29 @@ export class ResourceStatus extends ValueObject<{ value: ResourceStatusType }> {
   }
 }
 
-export type VersionStatusType = 'draft' | 'uploading' | 'validating' | 'quarantined' | 'processing' | 'review' | 'published' | 'retired' | 'archived' | 'failed';
+export type VersionStatusType =
+  | 'draft'
+  | 'uploading'
+  | 'validating'
+  | 'quarantined'
+  | 'processing'
+  | 'review'
+  | 'published'
+  | 'retired'
+  | 'archived'
+  | 'failed';
 export class VersionStatus extends ValueObject<{ value: VersionStatusType }> {
   private static readonly VALID_STATUSES: VersionStatusType[] = [
-    'draft', 'uploading', 'validating', 'quarantined', 'processing', 'review', 'published', 'retired', 'archived', 'failed'
+    'draft',
+    'uploading',
+    'validating',
+    'quarantined',
+    'processing',
+    'review',
+    'published',
+    'retired',
+    'archived',
+    'failed',
   ];
 
   constructor(value: VersionStatusType) {

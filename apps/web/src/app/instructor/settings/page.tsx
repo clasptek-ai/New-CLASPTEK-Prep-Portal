@@ -3,7 +3,7 @@ import { SettingsScreen } from '../../../features/instructor/settings/settings-s
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <SettingsScreen />
     </WorkspaceShell>
   );

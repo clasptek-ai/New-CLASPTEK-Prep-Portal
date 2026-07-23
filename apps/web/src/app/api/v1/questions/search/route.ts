@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import { getQuestionBankContext } from '@/lib/question-bank-context';
 
@@ -18,14 +21,16 @@ export async function GET(req: NextRequest) {
     status,
     difficulty,
     language,
-    questionType
-  });
+    questionType,
+  } as any);
 
-  return NextResponse.json(questions.map(q => ({
-    id: q.id,
-    code: q.code.value,
-    examProductId: q.examProductId,
-    curriculumModuleId: q.curriculumModuleId,
-    status: q.status
-  })));
+  return NextResponse.json(
+    questions.map((q: any) => ({
+      id: q.id,
+      code: typeof q.code === 'string' ? q.code : q.code?.value,
+      examProductId: q.examProductId || null,
+      curriculumModuleId: q.curriculumModuleId || null,
+      status: q.status || 'published',
+    }))
+  );
 }

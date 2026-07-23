@@ -6,8 +6,5 @@
     "composite": true
   },
   "include": ["src/**/*"],
-  "references": [
-    { "path": "../../kernel" },
-    { "path": "../../../packages/domain/exam-product" }
-  ]
+  "references": [{ "path": "../../kernel" }, { "path": "../../../packages/domain/exam-product" }]
 }

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLearningResourceContext } from '@/lib/learning-resource-context';
 
@@ -16,11 +18,11 @@ export async function GET(req: NextRequest) {
     categoryCode,
     tag,
     language,
-    sensitivity
+    sensitivity,
   });
 
   return NextResponse.json(
-    resources.map(resource => ({
+    resources.map((resource) => ({
       id: resource.resourceId,
       resourceId: resource.resourceId,
       code: resource.code,
@@ -29,7 +31,7 @@ export async function GET(req: NextRequest) {
       name: resource.title,
       title: resource.title,
       description: resource.description,
-      status: resource.status
+      status: resource.status,
     }))
   );
 }

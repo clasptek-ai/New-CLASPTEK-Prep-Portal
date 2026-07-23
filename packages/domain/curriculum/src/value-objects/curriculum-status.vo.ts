@@ -3,13 +3,21 @@ import { ValueObject, Guard, ValidationError } from '@clasptek/kernel';
 export type AllowedStatuses = 'draft' | 'review' | 'published' | 'retired' | 'archived';
 
 export class CurriculumStatus extends ValueObject<{ value: AllowedStatuses }> {
-  private static readonly ALLOWED: AllowedStatuses[] = ['draft', 'review', 'published', 'retired', 'archived'];
+  private static readonly ALLOWED: AllowedStatuses[] = [
+    'draft',
+    'review',
+    'published',
+    'retired',
+    'archived',
+  ];
 
   constructor(value: AllowedStatuses) {
     Guard.againstNullOrUndefined(value, 'CurriculumStatus');
     const normalized = String(value).toLowerCase() as AllowedStatuses;
     if (!CurriculumStatus.ALLOWED.includes(normalized)) {
-      throw new ValidationError(`Invalid curriculum status: ${value}. Allowed: ${CurriculumStatus.ALLOWED.join(', ')}`);
+      throw new ValidationError(
+        `Invalid curriculum status: ${value}. Allowed: ${CurriculumStatus.ALLOWED.join(', ')}`
+      );
     }
     super({ value: normalized });
   }

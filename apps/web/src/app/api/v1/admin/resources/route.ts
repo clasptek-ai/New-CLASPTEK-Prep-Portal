@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getLearningResourceContext } from '@/lib/learning-resource-context';
@@ -31,7 +33,10 @@ export async function POST(req: NextRequest) {
 
     const resourceTitle = name || title;
     if (!code || !resourceType || !slug || !resourceTitle) {
-      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing required parameters' }, { status: 400 });
+      return NextResponse.json(
+        { code: 'VALIDATION_ERROR', message: 'Missing required parameters' },
+        { status: 400 }
+      );
     }
 
     const resourceId = crypto.randomUUID();
@@ -41,15 +46,21 @@ export async function POST(req: NextRequest) {
       slug,
       title: resourceTitle,
       description: description || '',
-      resourceTypeId: resourceType
+      resourceTypeId: resourceType,
     });
 
     return NextResponse.json({ success: true, id: resourceId }, { status: 201 });
   } catch (err: unknown) {
-    logger.error('POST /api/v1/admin/resources failure', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      'POST /api/v1/admin/resources failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
     if (err instanceof ApplicationError) {
       return NextResponse.json({ code: err.name, message: err.message }, { status: 400 });
     }
-    return NextResponse.json({ code: 'INTERNAL_ERROR', message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

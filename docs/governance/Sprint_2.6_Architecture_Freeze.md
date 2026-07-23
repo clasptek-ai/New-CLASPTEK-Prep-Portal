@@ -15,14 +15,17 @@
 ## Bounded Context Boundaries
 
 ### `PracticeRecommendation` (Aggregate Root)
+
 - Owns AI-generated or instructor-assigned practice recommendations.
 - Stores transparency audits: Input Snapshot, Algorithm Version, Decision Trace, and Output Payload.
 
 ### `PracticePlan` (Aggregate Root)
+
 - Owns the planning details: Question selection blueprints, target competency boundaries, and Spacing Policies.
 - Separated from active practice execution.
 
 ### `PracticeSession` (Aggregate Root)
+
 - Owns the active session progress, active question queue (order index, skips, accuracy), session checkpoints, and feedback survey data.
 
 ---
@@ -32,6 +35,7 @@
 All interfaces reside in `@clasptek/application-adaptive-practice`.
 
 ### `PracticeSessionRepository`
+
 ```typescript
 save(session: PracticeSession): Promise<void>;
 findById(id: string): Promise<PracticeSession | null>;
@@ -43,6 +47,7 @@ nextIdentity(): string;
 ```
 
 ### `PracticePlanRepository`
+
 ```typescript
 save(plan: PracticePlan): Promise<void>;
 findById(id: string): Promise<PracticePlan | null>;
@@ -51,6 +56,7 @@ nextIdentity(): string;
 ```
 
 ### `RecommendationRepository`
+
 ```typescript
 save(recommendation: PracticeRecommendation): Promise<void>;
 findById(id: string): Promise<PracticeRecommendation | null>;
@@ -62,6 +68,7 @@ nextIdentity(): string;
 ```
 
 ### `StrategyRepository`
+
 ```typescript
 findByCode(code: string): Promise<PracticeStrategy | null>;
 findAll(): Promise<PracticeStrategy[]>;
@@ -74,16 +81,16 @@ save(strategy: PracticeStrategy): Promise<void>;
 
 Base: `/api/v1/practice/`
 
-| Endpoint | Method | Handler |
-|---|---|---|
-| `/` | `GET` | `GetPracticeHistoryHandler` |
-| `/` | `POST` | `CreatePracticePlanHandler` (generates plan) |
-| `/{id}` | `GET` | `GetPracticeSessionHandler` |
-| `/recommendations` | `GET` | `SearchRecommendationsHandler` |
-| `/recommendations` | `POST` | `GenerateRecommendationsHandler` |
-| `/recommendations/{id}/accept` | `POST` | `AcceptRecommendationHandler` |
-| `/recommendations/{id}/reject` | `POST` | `RejectRecommendationHandler` |
-| `/start` | `POST` | `StartPracticeSessionHandler` |
-| `/pause` | `POST` | `PausePracticeSessionHandler` |
-| `/resume` | `POST` | `ResumePracticeSessionHandler` |
-| `/complete` | `POST` | `CompletePracticeSessionHandler` |
+| Endpoint                       | Method | Handler                                      |
+| ------------------------------ | ------ | -------------------------------------------- |
+| `/`                            | `GET`  | `GetPracticeHistoryHandler`                  |
+| `/`                            | `POST` | `CreatePracticePlanHandler` (generates plan) |
+| `/{id}`                        | `GET`  | `GetPracticeSessionHandler`                  |
+| `/recommendations`             | `GET`  | `SearchRecommendationsHandler`               |
+| `/recommendations`             | `POST` | `GenerateRecommendationsHandler`             |
+| `/recommendations/{id}/accept` | `POST` | `AcceptRecommendationHandler`                |
+| `/recommendations/{id}/reject` | `POST` | `RejectRecommendationHandler`                |
+| `/start`                       | `POST` | `StartPracticeSessionHandler`                |
+| `/pause`                       | `POST` | `PausePracticeSessionHandler`                |
+| `/resume`                      | `POST` | `ResumePracticeSessionHandler`               |
+| `/complete`                    | `POST` | `CompletePracticeSessionHandler`             |

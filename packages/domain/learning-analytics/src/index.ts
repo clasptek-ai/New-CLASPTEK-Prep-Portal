@@ -10,43 +10,133 @@ export abstract class BaseAnalyticsEvent {
 }
 
 export class DashboardGenerated extends BaseAnalyticsEvent {
-  constructor(public readonly dashboardId: string, public readonly dashboardType: string) {
+  constructor(
+    public readonly dashboardId: string,
+    public readonly dashboardType: string
+  ) {
     super();
   }
 }
 
 export class AnalyticsRefreshed extends BaseAnalyticsEvent {
-  constructor(public readonly jobId: string, public readonly status: string) {
+  constructor(
+    public readonly jobId: string,
+    public readonly status: string
+  ) {
     super();
   }
 }
 
 export class ReportGenerated extends BaseAnalyticsEvent {
-  constructor(public readonly reportId: string, public readonly definitionCode: string) {
+  constructor(
+    public readonly reportId: string,
+    public readonly definitionCode: string
+  ) {
     super();
   }
 }
 
 export class TrendCalculated extends BaseAnalyticsEvent {
-  constructor(public readonly trendId: string, public readonly category: string) {
+  constructor(
+    public readonly trendId: string,
+    public readonly category: string
+  ) {
     super();
   }
 }
 
 export class SnapshotCreated extends BaseAnalyticsEvent {
-  constructor(public readonly snapshotId: string, public readonly version: string) {
+  constructor(
+    public readonly snapshotId: string,
+    public readonly version: string
+  ) {
     super();
   }
 }
 
 export class ExportCompleted extends BaseAnalyticsEvent {
-  constructor(public readonly exportId: string, public readonly format: string) {
+  constructor(
+    public readonly exportId: string,
+    public readonly format: string
+  ) {
     super();
   }
 }
 
 export class ScheduledReportExecuted extends BaseAnalyticsEvent {
-  constructor(public readonly scheduleId: string, public readonly executedAt: Date) {
+  constructor(
+    public readonly scheduleId: string,
+    public readonly executedAt: Date
+  ) {
+    super();
+  }
+}
+
+export class MetricCalculated extends BaseAnalyticsEvent {
+  constructor(
+    public readonly metricCode: string,
+    public readonly value: number,
+    public readonly calculatedAt: Date
+  ) {
+    super();
+  }
+}
+
+export class WarehouseUpdated extends BaseAnalyticsEvent {
+  constructor(
+    public readonly warehouseVersion: string,
+    public readonly snapshotCount: number
+  ) {
+    super();
+  }
+}
+
+export class DataQualityDetected extends BaseAnalyticsEvent {
+  constructor(
+    public readonly issueType: string,
+    public readonly severity: 'INFO' | 'WARNING' | 'CRITICAL',
+    public readonly details: string
+  ) {
+    super();
+  }
+}
+
+export class BenchmarkCompleted extends BaseAnalyticsEvent {
+  constructor(
+    public readonly benchmarkId: string,
+    public readonly category: string,
+    public readonly percentile: number
+  ) {
+    super();
+  }
+}
+
+export class PredictionGenerated extends BaseAnalyticsEvent {
+  constructor(
+    public readonly modelVersion: string,
+    public readonly targetStudentId: string,
+    public readonly predictedScore: number
+  ) {
+    super();
+  }
+}
+
+export class ExecutiveInsightPublished extends BaseAnalyticsEvent {
+  constructor(
+    public readonly insightId: string,
+    public readonly category: string,
+    public readonly title: string
+  ) {
+    super();
+  }
+}
+
+export class ResearchExportCompleted extends BaseAnalyticsEvent {
+  constructor(
+    public readonly jobId: string,
+    public readonly recordCount: number,
+    public readonly isAnonymized: boolean
+  ) {
     super();
   }
 }
@@ -55,24 +145,36 @@ export class ScheduledReportExecuted extends BaseAnalyticsEvent {
 // VALUE OBJECTS
 // ═══════════════════════════════════════════════════════════════════════
 export class MetricValue {
-  constructor(public readonly value: number, public readonly status: 'NORMAL' | 'ALERT' | 'CRITICAL') {}
+  constructor(
+    public readonly value: number,
+    public readonly status: 'NORMAL' | 'ALERT' | 'CRITICAL'
+  ) {}
 }
 
 export class CompletionRate {
-  constructor(public readonly completed: number, public readonly total: number) {}
+  constructor(
+    public readonly completed: number,
+    public readonly total: number
+  ) {}
   get rate(): number {
     return this.total > 0 ? (this.completed / this.total) * 100 : 0;
   }
 }
 
 export class CompetencyScore {
-  constructor(public readonly competencyCode: string, public readonly score: number) {}
+  constructor(
+    public readonly competencyCode: string,
+    public readonly score: number
+  ) {}
 }
 
 export type TrendDirection = 'UPWARD' | 'DOWNWARD' | 'STABLE';
 
 export class GrowthRate {
-  constructor(public readonly currentPeriodValue: number, public readonly priorPeriodValue: number) {}
+  constructor(
+    public readonly currentPeriodValue: number,
+    public readonly priorPeriodValue: number
+  ) {}
   get percentChange(): number {
     if (this.priorPeriodValue === 0) return 0;
     return ((this.currentPeriodValue - this.priorPeriodValue) / this.priorPeriodValue) * 100;
@@ -88,7 +190,10 @@ export class RiskDistribution {
 }
 
 export class DateRange {
-  constructor(public readonly startDate: Date, public readonly endDate: Date) {
+  constructor(
+    public readonly startDate: Date,
+    public readonly endDate: Date
+  ) {
     if (startDate > endDate) {
       throw new Error('Start date must be before end date');
     }
@@ -119,7 +224,12 @@ export class WidgetDefinition extends Entity<string> {
   public displayName: string;
   public defaultConfig: Record<string, any>;
 
-  constructor(props: { id: string; widgetType: string; displayName: string; defaultConfig: Record<string, any> }) {
+  constructor(props: {
+    id: string;
+    widgetType: string;
+    displayName: string;
+    defaultConfig: Record<string, any>;
+  }) {
     super(props.id);
     this.widgetType = props.widgetType;
     this.displayName = props.displayName;
@@ -152,15 +262,25 @@ export class WidgetInstance extends Entity<string> {
 }
 
 export class TrendPoint {
-  constructor(public readonly date: Date, public readonly value: number) {}
+  constructor(
+    public readonly date: Date,
+    public readonly value: number
+  ) {}
 }
 
 export class MetricCard {
-  constructor(public readonly title: string, public readonly value: string, public readonly indicator?: string) {}
+  constructor(
+    public readonly title: string,
+    public readonly value: string,
+    public readonly indicator?: string
+  ) {}
 }
 
 export class PerformanceIndicator {
-  constructor(public readonly alertType: 'INFO' | 'WARNING' | 'DANGER', public readonly message: string) {}
+  constructor(
+    public readonly alertType: 'INFO' | 'WARNING' | 'DANGER',
+    public readonly message: string
+  ) {}
 }
 
 export class HeatMap {
@@ -178,7 +298,14 @@ export class PredictionTrend extends Entity<string> {
   public mae: number;
   public totalPredictions: number;
 
-  constructor(props: { id: string; modelVersion: string; measuredDate: Date; accuracyRate: number; mae: number; totalPredictions: number }) {
+  constructor(props: {
+    id: string;
+    modelVersion: string;
+    measuredDate: Date;
+    accuracyRate: number;
+    mae: number;
+    totalPredictions: number;
+  }) {
     super(props.id);
     this.modelVersion = props.modelVersion;
     this.measuredDate = props.measuredDate;
@@ -222,7 +349,14 @@ export class AssessmentTrend extends Entity<string> {
   public passRate: number;
   public completionRate: number;
 
-  constructor(props: { id: string; cohortId: string; totalSubmissions: number; averageScore: number; passRate: number; completionRate: number }) {
+  constructor(props: {
+    id: string;
+    cohortId: string;
+    totalSubmissions: number;
+    averageScore: number;
+    passRate: number;
+    completionRate: number;
+  }) {
     super(props.id);
     this.cohortId = props.cohortId;
     this.totalSubmissions = props.totalSubmissions;
@@ -239,7 +373,14 @@ export class PracticeTrend extends Entity<string> {
   public accuracyRate: number;
   public timeSpentSeconds: number;
 
-  constructor(props: { id: string; cohortId: string; totalPracticeSessions: number; averageScore: number; accuracyRate: number; timeSpentSeconds: number }) {
+  constructor(props: {
+    id: string;
+    cohortId: string;
+    totalPracticeSessions: number;
+    averageScore: number;
+    accuracyRate: number;
+    timeSpentSeconds: number;
+  }) {
     super(props.id);
     this.cohortId = props.cohortId;
     this.totalPracticeSessions = props.totalPracticeSessions;
@@ -278,7 +419,12 @@ export class ReportDefinition extends Entity<string> {
   public name: string;
   public templateJson: Record<string, any>;
 
-  constructor(props: { id: string; code: string; name: string; templateJson: Record<string, any> }) {
+  constructor(props: {
+    id: string;
+    code: string;
+    name: string;
+    templateJson: Record<string, any>;
+  }) {
     super(props.id);
     this.code = props.code;
     this.name = props.name;
@@ -311,17 +457,36 @@ export class ReportExecution extends Entity<string> {
 }
 
 export class ReportResult {
-  constructor(public readonly url: string, public readonly sizeBytes: number) {}
+  constructor(
+    public readonly url: string,
+    public readonly sizeBytes: number
+  ) {}
 }
 
 export class AnalyticsSource extends Entity<string> {
-  public sourceDomain: 'StudentLearning' | 'AssessmentRuntime' | 'Evaluation' | 'Prediction' | 'LearningCoach' | 'AdaptivePractice' | 'Curriculum' | 'QuestionBank';
+  public sourceDomain:
+    | 'StudentLearning'
+    | 'AssessmentRuntime'
+    | 'Evaluation'
+    | 'Prediction'
+    | 'LearningAssistant'
+    | 'AdaptivePractice'
+    | 'Curriculum'
+    | 'QuestionBank';
   public metricCode: string;
   public lastSyncAt: Date;
 
   constructor(props: {
     id: string;
-    sourceDomain: 'StudentLearning' | 'AssessmentRuntime' | 'Evaluation' | 'Prediction' | 'LearningCoach' | 'AdaptivePractice' | 'Curriculum' | 'QuestionBank';
+    sourceDomain:
+      | 'StudentLearning'
+      | 'AssessmentRuntime'
+      | 'Evaluation'
+      | 'Prediction'
+      | 'LearningAssistant'
+      | 'AdaptivePractice'
+      | 'Curriculum'
+      | 'QuestionBank';
     metricCode: string;
     lastSyncAt: Date;
   }) {
@@ -334,7 +499,8 @@ export class AnalyticsSource extends Entity<string> {
 
 export class AnalyticsValidation extends Entity<string> {
   public runDate: Date;
-  public validationType: 'Missing Data' | 'Late Data' | 'Outliers' | 'Schema Drift' | 'Duplicate Metrics';
+  public validationType:
+    'Missing Data' | 'Late Data' | 'Outliers' | 'Schema Drift' | 'Duplicate Metrics';
   public details: Record<string, any>;
   public status: 'PASSED' | 'WARNING' | 'FAILED';
   public checkedAt: Date;
@@ -342,7 +508,8 @@ export class AnalyticsValidation extends Entity<string> {
   constructor(props: {
     id: string;
     runDate: Date;
-    validationType: 'Missing Data' | 'Late Data' | 'Outliers' | 'Schema Drift' | 'Duplicate Metrics';
+    validationType:
+      'Missing Data' | 'Late Data' | 'Outliers' | 'Schema Drift' | 'Duplicate Metrics';
     details: Record<string, any>;
     status: 'PASSED' | 'WARNING' | 'FAILED';
     checkedAt: Date;
@@ -389,7 +556,12 @@ export class StudentDashboard extends Entity<string> {
   public widgets: WidgetInstance[];
   public isCustomized: boolean;
 
-  constructor(props: { id: string; studentId: string; widgets?: WidgetInstance[]; isCustomized?: boolean }) {
+  constructor(props: {
+    id: string;
+    studentId: string;
+    widgets?: WidgetInstance[];
+    isCustomized?: boolean;
+  }) {
     super(props.id);
     this.studentId = props.studentId;
     this.widgets = props.widgets ?? [];
@@ -410,7 +582,12 @@ export class InstructorDashboard extends Entity<string> {
   public cohortId: string;
   public widgets: WidgetInstance[];
 
-  constructor(props: { id: string; instructorId: string; cohortId: string; widgets?: WidgetInstance[] }) {
+  constructor(props: {
+    id: string;
+    instructorId: string;
+    cohortId: string;
+    widgets?: WidgetInstance[];
+  }) {
     super(props.id);
     this.instructorId = props.instructorId;
     this.cohortId = props.cohortId;
@@ -460,14 +637,19 @@ export class CohortAnalytics extends Entity<string> {
     this.assessmentAverages = props.assessmentAverages;
   }
 
-  public static create(cohortId: string, averageReadiness: number, riskDist: RiskDistribution, avgStudy: number): CohortAnalytics {
+  public static create(
+    cohortId: string,
+    averageReadiness: number,
+    riskDist: RiskDistribution,
+    avgStudy: number
+  ): CohortAnalytics {
     return new CohortAnalytics({
       id: randomUUID(),
       cohortId,
       averageReadiness,
       riskDistribution: riskDist,
       averageStudyMinutes: avgStudy,
-      assessmentAverages: {}
+      assessmentAverages: {},
     });
   }
 }
@@ -495,14 +677,18 @@ export class CompetencyAnalytics extends Entity<string> {
     this.cohortAverages = props.cohortAverages;
   }
 
-  public static create(competencyCode: string, displayName: string, averageScore: number): CompetencyAnalytics {
+  public static create(
+    competencyCode: string,
+    displayName: string,
+    averageScore: number
+  ): CompetencyAnalytics {
     return new CompetencyAnalytics({
       id: randomUUID(),
       competencyCode,
       displayName,
       masteryDistribution: {},
       averageScore,
-      cohortAverages: {}
+      cohortAverages: {},
     });
   }
 }
@@ -512,7 +698,12 @@ export class LearningTrend extends Entity<string> {
   public trendPoints: TrendPoint[];
   public direction: TrendDirection;
 
-  constructor(props: { id: string; category: string; trendPoints?: TrendPoint[]; direction?: TrendDirection }) {
+  constructor(props: {
+    id: string;
+    category: string;
+    trendPoints?: TrendPoint[];
+    direction?: TrendDirection;
+  }) {
     super(props.id);
     this.category = props.category;
     this.trendPoints = props.trendPoints ?? [];
@@ -547,7 +738,13 @@ export class SnapshotVersion extends Entity<string> {
   public schemaVersion: string;
   public aggregationVersion: string;
 
-  constructor(props: { id: string; generatedAt: Date; sourceDomains: string[]; schemaVersion: string; aggregationVersion: string }) {
+  constructor(props: {
+    id: string;
+    generatedAt: Date;
+    sourceDomains: string[];
+    schemaVersion: string;
+    aggregationVersion: string;
+  }) {
     super(props.id);
     this.generatedAt = props.generatedAt;
     this.sourceDomains = props.sourceDomains;
@@ -555,13 +752,17 @@ export class SnapshotVersion extends Entity<string> {
     this.aggregationVersion = props.aggregationVersion;
   }
 
-  public static create(sourceDomains: string[], schemaVer: string, aggVer: string): SnapshotVersion {
+  public static create(
+    sourceDomains: string[],
+    schemaVer: string,
+    aggVer: string
+  ): SnapshotVersion {
     return new SnapshotVersion({
       id: randomUUID(),
       generatedAt: new Date(),
       sourceDomains,
       schemaVersion: schemaVer,
-      aggregationVersion: aggVer
+      aggregationVersion: aggVer,
     });
   }
 }
@@ -572,7 +773,13 @@ export class ScheduledReport extends Entity<string> {
   public cronExpression: string;
   public active: boolean;
 
-  constructor(props: { id: string; reportDefinitionId: string; recipientEmail: string; cronExpression: string; active?: boolean }) {
+  constructor(props: {
+    id: string;
+    reportDefinitionId: string;
+    recipientEmail: string;
+    cronExpression: string;
+    active?: boolean;
+  }) {
     super(props.id);
     this.reportDefinitionId = props.reportDefinitionId;
     this.recipientEmail = props.recipientEmail;
@@ -581,11 +788,16 @@ export class ScheduledReport extends Entity<string> {
   }
 
   public static create(reportDefinitionId: string, email: string, cron: string): ScheduledReport {
-    return new ScheduledReport({ id: randomUUID(), reportDefinitionId, recipientEmail: email, cronExpression: cron });
+    return new ScheduledReport({
+      id: randomUUID(),
+      reportDefinitionId,
+      recipientEmail: email,
+      cronExpression: cron,
+    });
   }
 }
 
-export class MetricDefinition extends Entity<string> {
+export class LegacyMetricDefinition extends Entity<string> {
   public code: string;
   public displayName: string;
   public formula: string;
@@ -647,14 +859,17 @@ export class AnalyticsJob extends Entity<string> {
     this.error = props.error;
   }
 
-  public static create(initiatedBy: string, trigger: 'MANUAL' | 'SCHEDULED' | 'EVENT'): AnalyticsJob {
+  public static create(
+    initiatedBy: string,
+    trigger: 'MANUAL' | 'SCHEDULED' | 'EVENT'
+  ): AnalyticsJob {
     return new AnalyticsJob({
       id: randomUUID(),
       status: 'PENDING',
       startedAt: new Date(),
       initiatedBy,
       trigger,
-      retryCount: 0
+      retryCount: 0,
     });
   }
 
@@ -814,17 +1029,32 @@ export class AdminDashboardProjection extends Entity<string> {
 // DETACHED ENGINES
 // ═══════════════════════════════════════════════════════════════════════
 export interface DashboardAggregationEngine {
-  aggregateStudent(studentId: string, profileId: string, context: Record<string, any>): Promise<StudentDashboardProjection>;
-  aggregateInstructor(cohortId: string, context: Record<string, any>): Promise<InstructorDashboardProjection>;
+  aggregateStudent(
+    studentId: string,
+    profileId: string,
+    context: Record<string, any>
+  ): Promise<StudentDashboardProjection>;
+  aggregateInstructor(
+    cohortId: string,
+    context: Record<string, any>
+  ): Promise<InstructorDashboardProjection>;
   aggregateAdmin(orgId: string, context: Record<string, any>): Promise<AdminDashboardProjection>;
 }
 
 export interface CompetencyTrendEngine {
-  calculateCompetencyTrend(competencyCode: string, range: DateRange, data: any[]): Promise<LearningTrend>;
+  calculateCompetencyTrend(
+    competencyCode: string,
+    range: DateRange,
+    data: any[]
+  ): Promise<LearningTrend>;
 }
 
 export interface PredictionTrendEngine {
-  calculatePredictionTrend(modelVersion: string, range: DateRange, data: any[]): Promise<PredictionTrend>;
+  calculatePredictionTrend(
+    modelVersion: string,
+    range: DateRange,
+    data: any[]
+  ): Promise<PredictionTrend>;
 }
 
 export interface CoachTrendEngine {
@@ -859,7 +1089,11 @@ export interface ExportEngine {
 // CONCRETE STUB IMPLEMENTATIONS FOR DOMAIN ENGINES
 // ═══════════════════════════════════════════════════════════════════════
 export class RuleBasedDashboardAggregationEngine implements DashboardAggregationEngine {
-  async aggregateStudent(studentId: string, profileId: string, _context: Record<string, any>): Promise<StudentDashboardProjection> {
+  async aggregateStudent(
+    studentId: string,
+    profileId: string,
+    _context: Record<string, any>
+  ): Promise<StudentDashboardProjection> {
     return new StudentDashboardProjection({
       studentId,
       profileId,
@@ -872,11 +1106,14 @@ export class RuleBasedDashboardAggregationEngine implements DashboardAggregation
       coachSummary: { lastMessage: 'Well done today!' },
       predictionTrend: [80, 81, 82.5],
       weakCompetencies: ['VOCABULARY_ADVANCED'],
-      recommendedActions: ['Practice Vocabulary']
+      recommendedActions: ['Practice Vocabulary'],
     });
   }
 
-  async aggregateInstructor(cohortId: string, _context: Record<string, any>): Promise<InstructorDashboardProjection> {
+  async aggregateInstructor(
+    cohortId: string,
+    _context: Record<string, any>
+  ): Promise<InstructorDashboardProjection> {
     return new InstructorDashboardProjection({
       cohortId,
       overview: { totalStudents: 25, activeStudents: 22 },
@@ -888,11 +1125,14 @@ export class RuleBasedDashboardAggregationEngine implements DashboardAggregation
       interventions: { active: 3, resolved: 10 },
       coachEngagement: { high: 10, medium: 12, low: 3 },
       topPerformers: [],
-      attentionNeeded: []
+      attentionNeeded: [],
     });
   }
 
-  async aggregateAdmin(orgId: string, _context: Record<string, any>): Promise<AdminDashboardProjection> {
+  async aggregateAdmin(
+    orgId: string,
+    _context: Record<string, any>
+  ): Promise<AdminDashboardProjection> {
     return new AdminDashboardProjection({
       orgId,
       platformUsage: { activeLicences: 500, totalLicences: 600 },
@@ -904,13 +1144,17 @@ export class RuleBasedDashboardAggregationEngine implements DashboardAggregation
       infrastructure: { status: 'HEALTHY', latencyMs: 120 },
       revenue: { mrr: 15000 },
       growthTrends: [],
-      retention: { rate: 94.5 }
+      retention: { rate: 94.5 },
     });
   }
 }
 
 export class DefaultCompetencyTrendEngine implements CompetencyTrendEngine {
-  async calculateCompetencyTrend(competencyCode: string, _range: DateRange, _data: any[]): Promise<LearningTrend> {
+  async calculateCompetencyTrend(
+    competencyCode: string,
+    _range: DateRange,
+    _data: any[]
+  ): Promise<LearningTrend> {
     const trend = LearningTrend.create(competencyCode);
     trend.addPoint(new TrendPoint(new Date(), 70));
     trend.addPoint(new TrendPoint(new Date(), 75));
@@ -919,14 +1163,18 @@ export class DefaultCompetencyTrendEngine implements CompetencyTrendEngine {
 }
 
 export class DefaultPredictionTrendEngine implements PredictionTrendEngine {
-  async calculatePredictionTrend(modelVersion: string, _range: DateRange, _data: any[]): Promise<PredictionTrend> {
+  async calculatePredictionTrend(
+    modelVersion: string,
+    _range: DateRange,
+    _data: any[]
+  ): Promise<PredictionTrend> {
     return new PredictionTrend({
       id: randomUUID(),
       modelVersion,
       measuredDate: new Date(),
       accuracyRate: 88.5,
       mae: 0.12,
-      totalPredictions: 450
+      totalPredictions: 450,
     });
   }
 }
@@ -940,20 +1188,24 @@ export class DefaultCoachTrendEngine implements CoachTrendEngine {
       totalMessages: 98,
       averageResponseTokens: 180,
       satisfactionScore: 4.8,
-      lastActiveAt: new Date()
+      lastActiveAt: new Date(),
     });
   }
 }
 
 export class DefaultPracticeTrendEngine implements PracticeTrendEngine {
-  async calculatePracticeTrend(cohortId: string, _range: DateRange, _data: any[]): Promise<PracticeTrend> {
+  async calculatePracticeTrend(
+    cohortId: string,
+    _range: DateRange,
+    _data: any[]
+  ): Promise<PracticeTrend> {
     return new PracticeTrend({
       id: randomUUID(),
       cohortId,
       totalPracticeSessions: 120,
       averageScore: 78.4,
       accuracyRate: 81.2,
-      timeSpentSeconds: 432000
+      timeSpentSeconds: 432000,
     });
   }
 }
@@ -976,7 +1228,7 @@ export class DefaultCompetencyAnalyticsEngine implements CompetencyAnalyticsEngi
 export class DefaultInstructorInsightEngine implements InstructorInsightEngine {
   async generateInsights(_cohortId: string, _data: any[]): Promise<Record<string, any>> {
     return {
-      recommendations: ['Assign practice tasks on grammar', 'Follow up with 2 high-risk students']
+      recommendations: ['Assign practice tasks on grammar', 'Follow up with 2 high-risk students'],
     };
   }
 }
@@ -986,7 +1238,7 @@ export class DefaultPlatformMetricsEngine implements PlatformMetricsEngine {
     return {
       dau: 320,
       mau: 1450,
-      predictionAccuracyRate: 87.5
+      predictionAccuracyRate: 87.5,
     };
   }
 }
@@ -994,5 +1246,368 @@ export class DefaultPlatformMetricsEngine implements PlatformMetricsEngine {
 export class DefaultExportEngine implements ExportEngine {
   async generateExport(_job: ExportJob, _data: any[]): Promise<ReportResult> {
     return new ReportResult('https://downloads.clasptek.com/reports/analytics_export.csv', 102400);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// SPRINT 2.11.1 ENTERPRISE LEARNING ANALYTICS ADDITIONS
+// ═══════════════════════════════════════════════════════════════════════
+
+export type RefreshPolicyType = 'REALTIME' | 'HOURLY' | 'DAILY' | 'WEEKLY' | 'MONTHLY';
+export type AggregationStrategyType =
+  'SUM' | 'AVERAGE' | 'COUNT' | 'PERCENTILE' | 'WEIGHTED_AVERAGE';
+export type ExportJobStatus =
+  'REQUESTED' | 'VALIDATING' | 'ANONYMIZING' | 'AGGREGATING' | 'READY' | 'EXPIRED' | 'FAILED';
+
+export class MetricCode {
+  constructor(public readonly value: string) {
+    if (!value || value.trim().length === 0) {
+      throw new Error('MetricCode cannot be empty');
+    }
+  }
+}
+
+export class MetricFormula {
+  constructor(
+    public readonly expression: string,
+    public readonly sourceDomains: string[],
+    public readonly aggregationStrategy: AggregationStrategyType
+  ) {}
+}
+
+export class MetricOwner {
+  constructor(
+    public readonly team: string,
+    public readonly email: string
+  ) {}
+}
+
+export class RefreshPolicy {
+  constructor(
+    public readonly policyType: RefreshPolicyType,
+    public readonly cronSchedule?: string
+  ) {}
+}
+
+export class MetricVersion {
+  constructor(
+    public readonly version: string,
+    public readonly effectiveFrom: Date,
+    public readonly retiredAt?: Date
+  ) {}
+}
+
+export class CalculationRule {
+  constructor(
+    public readonly ruleId: string,
+    public readonly formula: MetricFormula,
+    public readonly parameters: Record<string, any> = {}
+  ) {}
+}
+
+export class MetricDefinition extends Entity<string> {
+  public code: MetricCode;
+  public name: string;
+  public businessDefinition: string;
+  public owner: MetricOwner;
+  public refreshPolicy: RefreshPolicy;
+  public currentVersion: MetricVersion;
+  public calculationRule: CalculationRule;
+  public status: 'ACTIVE' | 'DEPRECATED' | 'DRAFT';
+
+  constructor(props: {
+    id: string;
+    code: MetricCode;
+    name: string;
+    businessDefinition: string;
+    owner: MetricOwner;
+    refreshPolicy: RefreshPolicy;
+    currentVersion: MetricVersion;
+    calculationRule: CalculationRule;
+    status: 'ACTIVE' | 'DEPRECATED' | 'DRAFT';
+  }) {
+    super(props.id);
+    this.code = props.code;
+    this.name = props.name;
+    this.businessDefinition = props.businessDefinition;
+    this.owner = props.owner;
+    this.refreshPolicy = props.refreshPolicy;
+    this.currentVersion = props.currentVersion;
+    this.calculationRule = props.calculationRule;
+    this.status = props.status;
+  }
+}
+
+export class MetricCatalog extends Entity<string> {
+  private _metrics: Map<string, MetricDefinition> = new Map();
+
+  constructor(id: string, metrics: MetricDefinition[] = []) {
+    super(id);
+    metrics.forEach((m) => this._metrics.set(m.code.value, m));
+  }
+
+  public registerMetric(metric: MetricDefinition): void {
+    this._metrics.set(metric.code.value, metric);
+  }
+
+  public getMetric(code: string): MetricDefinition | undefined {
+    return this._metrics.get(code);
+  }
+
+  public listMetrics(): MetricDefinition[] {
+    return Array.from(this._metrics.values());
+  }
+}
+
+export class AnalyticsMetadata {
+  constructor(
+    public readonly sourceDomains: string[],
+    public readonly calculationVersion: string,
+    public readonly refreshTimestamp: Date,
+    public readonly dataQualityStatus: 'VALID' | 'DEGRADED' | 'INVALID',
+    public readonly owner: string,
+    public readonly pipelineVersion: string = 'v2.1.1'
+  ) {}
+}
+
+export class DataLineage {
+  constructor(
+    public readonly targetEntityId: string,
+    public readonly upstreamSources: Array<{ domain: string; entityId: string; fetchedAt: Date }>,
+    public readonly transformationPipeline: string
+  ) {}
+}
+
+export class AnalyticsSnapshot extends Entity<string> {
+  public generatedAt: Date;
+  public warehouseVersion: string;
+  public metricVersions: Record<string, string>;
+  public benchmarkVersion: string;
+  public predictionVersion: string;
+
+  constructor(props: {
+    id: string;
+    generatedAt: Date;
+    warehouseVersion: string;
+    metricVersions: Record<string, string>;
+    benchmarkVersion: string;
+    predictionVersion: string;
+  }) {
+    super(props.id);
+    this.generatedAt = props.generatedAt;
+    this.warehouseVersion = props.warehouseVersion;
+    this.metricVersions = props.metricVersions;
+    this.benchmarkVersion = props.benchmarkVersion;
+    this.predictionVersion = props.predictionVersion;
+  }
+}
+
+export class ConfidenceScore {
+  constructor(
+    public readonly score: number, // 0.0 to 1.0
+    public readonly sampleSize: number,
+    public readonly marginOfError: number
+  ) {
+    if (score < 0 || score > 1) {
+      throw new Error('Confidence score must be between 0.0 and 1.0');
+    }
+  }
+}
+
+export class EvidenceSummary {
+  constructor(
+    public readonly supportingKpis: Array<{ code: string; value: number; trend: string }>,
+    public readonly timePeriod: DateRange,
+    public readonly comparisonBaseline: string,
+    public readonly rationale: string
+  ) {}
+}
+
+export class ExecutiveFinding extends Entity<string> {
+  public topic: string;
+  public findingStatement: string;
+  public evidence: EvidenceSummary;
+  public confidence: ConfidenceScore;
+  public snapshotId: string;
+
+  constructor(props: {
+    id: string;
+    topic: string;
+    findingStatement: string;
+    evidence: EvidenceSummary;
+    confidence: ConfidenceScore;
+    snapshotId: string;
+  }) {
+    super(props.id);
+    this.topic = props.topic;
+    this.findingStatement = props.findingStatement;
+    this.evidence = props.evidence;
+    this.confidence = props.confidence;
+    this.snapshotId = props.snapshotId;
+  }
+}
+
+export class ExecutiveInsight extends Entity<string> {
+  public category: string;
+  public title: string;
+  public presentationNarrative: string;
+  public primaryFindingId: string;
+  public supportingFindingIds: string[];
+  public recommendedActions: string[];
+  public publishedAt: Date;
+
+  constructor(props: {
+    id: string;
+    category: string;
+    title: string;
+    presentationNarrative: string;
+    primaryFindingId: string;
+    supportingFindingIds: string[];
+    recommendedActions: string[];
+    publishedAt: Date;
+  }) {
+    super(props.id);
+    this.category = props.category;
+    this.title = props.title;
+    this.presentationNarrative = props.presentationNarrative;
+    this.primaryFindingId = props.primaryFindingId;
+    this.supportingFindingIds = props.supportingFindingIds;
+    this.recommendedActions = props.recommendedActions;
+    this.publishedAt = props.publishedAt;
+  }
+}
+
+export class ResearchExportJob extends Entity<string> {
+  public requestedBy: string;
+  public datasetType: 'STUDENT_PROGRESS' | 'READINESS' | 'INTERVENTIONS' | 'PROGRAMME_PERFORMANCE';
+  public status: ExportJobStatus;
+  public isAnonymized: boolean;
+  public recordCount: number;
+  public fileUrl?: string | undefined;
+  public requestedAt: Date;
+  public completedAt?: Date | undefined;
+  public failureReason?: string | undefined;
+
+  constructor(props: {
+    id: string;
+    requestedBy: string;
+    datasetType: 'STUDENT_PROGRESS' | 'READINESS' | 'INTERVENTIONS' | 'PROGRAMME_PERFORMANCE';
+    status: ExportJobStatus;
+    isAnonymized: boolean;
+    recordCount: number;
+    fileUrl?: string;
+    requestedAt: Date;
+    completedAt?: Date;
+    failureReason?: string;
+  }) {
+    super(props.id);
+    this.requestedBy = props.requestedBy;
+    this.datasetType = props.datasetType;
+    this.status = props.status;
+    this.isAnonymized = props.isAnonymized;
+    this.recordCount = props.recordCount;
+    this.fileUrl = props.fileUrl;
+    this.requestedAt = props.requestedAt;
+    this.completedAt = props.completedAt;
+    this.failureReason = props.failureReason;
+  }
+
+  public updateStatus(
+    status: ExportJobStatus,
+    fileUrl?: string,
+    recordCount?: number,
+    failureReason?: string
+  ): void {
+    this.status = status;
+    if (fileUrl !== undefined) this.fileUrl = fileUrl;
+    if (recordCount !== undefined) this.recordCount = recordCount;
+    if (failureReason !== undefined) this.failureReason = failureReason;
+    if (status === 'READY' || status === 'FAILED') {
+      this.completedAt = new Date();
+    }
+  }
+}
+
+export class DataQualityAlert extends Entity<string> {
+  public issueType: string;
+  public severity: 'INFO' | 'WARNING' | 'CRITICAL';
+  public sourceComponent: string;
+  public details: string;
+  public status: 'ACTIVE' | 'RESOLVED';
+  public detectedAt: Date;
+
+  constructor(props: {
+    id: string;
+    issueType: string;
+    severity: 'INFO' | 'WARNING' | 'CRITICAL';
+    sourceComponent: string;
+    details: string;
+    status: 'ACTIVE' | 'RESOLVED';
+    detectedAt: Date;
+  }) {
+    super(props.id);
+    this.issueType = props.issueType;
+    this.severity = props.severity;
+    this.sourceComponent = props.sourceComponent;
+    this.details = props.details;
+    this.status = props.status;
+    this.detectedAt = props.detectedAt;
+  }
+}
+
+export class InstitutionalBenchmark extends Entity<string> {
+  public category: string;
+  public metricCode: string;
+  public institutionalAverage: number;
+  public topDecileScore: number;
+  public cohortPercentiles: Array<{ cohortId: string; percentile: number; score: number }>;
+  public computedAt: Date;
+
+  constructor(props: {
+    id: string;
+    category: string;
+    metricCode: string;
+    institutionalAverage: number;
+    topDecileScore: number;
+    cohortPercentiles: Array<{ cohortId: string; percentile: number; score: number }>;
+    computedAt: Date;
+  }) {
+    super(props.id);
+    this.category = props.category;
+    this.metricCode = props.metricCode;
+    this.institutionalAverage = props.institutionalAverage;
+    this.topDecileScore = props.topDecileScore;
+    this.cohortPercentiles = props.cohortPercentiles;
+    this.computedAt = props.computedAt;
+  }
+}
+
+export class PredictionForecast extends Entity<string> {
+  public studentId: string;
+  public targetMetric: string;
+  public predictedValue: number;
+  public confidence: ConfidenceScore;
+  public forecastHorizonDays: number;
+  public modelVersion: string;
+  public generatedAt: Date;
+
+  constructor(props: {
+    id: string;
+    studentId: string;
+    targetMetric: string;
+    predictedValue: number;
+    confidence: ConfidenceScore;
+    forecastHorizonDays: number;
+    modelVersion: string;
+    generatedAt: Date;
+  }) {
+    super(props.id);
+    this.studentId = props.studentId;
+    this.targetMetric = props.targetMetric;
+    this.predictedValue = props.predictedValue;
+    this.confidence = props.confidence;
+    this.forecastHorizonDays = props.forecastHorizonDays;
+    this.modelVersion = props.modelVersion;
+    this.generatedAt = props.generatedAt;
   }
 }

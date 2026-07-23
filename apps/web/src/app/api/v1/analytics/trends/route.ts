@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLearningAnalyticsContext } from '@/lib/learning-analytics-context';
 
@@ -14,7 +16,7 @@ export async function GET(req: NextRequest) {
         category: 'PLATFORM',
         targetId: category,
         startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-        endDate: new Date()
+        endDate: new Date(),
       });
     }
 

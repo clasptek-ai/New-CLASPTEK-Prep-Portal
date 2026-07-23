@@ -17,13 +17,13 @@ vi.mock('pg', () => {
       public connect() {
         return {
           query: async () => ({ rows: [] }),
-          release: () => {}
+          release: () => {},
         };
       }
       public query() {
         return { rows: [] };
       }
-    }
+    },
   };
 });
 

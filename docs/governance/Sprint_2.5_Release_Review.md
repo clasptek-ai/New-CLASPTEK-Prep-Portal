@@ -17,89 +17,89 @@ Sprint 2.5 delivers the **Student Learning Journey Domain** — the canonical st
 
 ### Database (4 migrations)
 
-| Migration | Description |
-|---|---|
-| `00500_student_learning.sql` | Core schema: 15 tables covering journey, goals, sessions, milestones, competencies, achievements, bookmarks, streaks, plans, health, privacy, dashboard projection |
-| `00501_student_learning_seed.sql` | Achievement definition catalogue seed data |
-| `00502_student_learning_rls.sql` | Row Level Security policies for all student tables |
-| `00503_student_learning_indexes.sql` | Performance indexes (BRIN on timestamps, partial indexes on status) |
+| Migration                            | Description                                                                                                                                                        |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `00500_student_learning.sql`         | Core schema: 15 tables covering journey, goals, sessions, milestones, competencies, achievements, bookmarks, streaks, plans, health, privacy, dashboard projection |
+| `00501_student_learning_seed.sql`    | Achievement definition catalogue seed data                                                                                                                         |
+| `00502_student_learning_rls.sql`     | Row Level Security policies for all student tables                                                                                                                 |
+| `00503_student_learning_indexes.sql` | Performance indexes (BRIN on timestamps, partial indexes on status)                                                                                                |
 
 ### Domain Package — `@clasptek/domain-student-learning`
 
-| Category | Count |
-|---|---|
-| Domain Events | 17 |
-| Value Objects | 4 (`CompletionPercentage`, `MasteryScore`, `StudyDuration`, `StreakCount`) |
-| Entities | 11 |
-| Aggregate Roots | 3 |
-| Domain Tests | 34 |
+| Category        | Count                                                                      |
+| --------------- | -------------------------------------------------------------------------- |
+| Domain Events   | 17                                                                         |
+| Value Objects   | 4 (`CompletionPercentage`, `MasteryScore`, `StudyDuration`, `StreakCount`) |
+| Entities        | 11                                                                         |
+| Aggregate Roots | 3                                                                          |
+| Domain Tests    | 34                                                                         |
 
 ### Application Package — `@clasptek/application-student-learning`
 
-| Category | Count |
-|---|---|
-| Repository Interfaces (frozen) | 4 |
-| Command Handlers | 11 |
-| Query Handlers | 5 |
-| Application Tests | 8 |
+| Category                       | Count |
+| ------------------------------ | ----- |
+| Repository Interfaces (frozen) | 4     |
+| Command Handlers               | 11    |
+| Query Handlers                 | 5     |
+| Application Tests              | 8     |
 
 ### Persistence — `@clasptek/persistence`
 
-| Class | Description |
-|---|---|
-| `PostgresStudentLearningRepository` | Full CRUD + event stream append for `StudentLearningJourney` |
-| `PostgresProgrammeEnrollmentRepository` | Full CRUD with optimistic locking |
-| `PostgresLearningPlanRepository` | Full CRUD with versioning |
-| `PostgresDashboardProjectionRepository` | Read model upsert + query |
+| Class                                   | Description                                                  |
+| --------------------------------------- | ------------------------------------------------------------ |
+| `PostgresStudentLearningRepository`     | Full CRUD + event stream append for `StudentLearningJourney` |
+| `PostgresProgrammeEnrollmentRepository` | Full CRUD with optimistic locking                            |
+| `PostgresLearningPlanRepository`        | Full CRUD with versioning                                    |
+| `PostgresDashboardProjectionRepository` | Read model upsert + query                                    |
 
 ### Web API (10 routes)
 
-| Route | Methods | Description |
-|---|---|---|
-| `/api/v1/student/journey` | `GET POST` | Create and retrieve learning journey |
-| `/api/v1/student/programmes` | `GET POST` | List and enrol in programmes |
-| `/api/v1/student/programmes/[id]` | `PATCH` | Withdraw from programme |
-| `/api/v1/student/goals` | `GET POST` | Create and list learning goals |
-| `/api/v1/student/goals/[id]` | `PATCH` | Complete a goal |
-| `/api/v1/student/study-session/start` | `POST` | Start a study session |
-| `/api/v1/student/study-session/end` | `POST` | End a study session |
-| `/api/v1/student/bookmarks` | `GET POST` | Create and list bookmarks |
-| `/api/v1/student/bookmarks/[id]` | `DELETE` | Remove a bookmark |
-| `/api/v1/student/achievements` | `GET` | List earned achievements |
-| `/api/v1/student/dashboard` | `GET` | Student dashboard projection |
-| `/api/v1/student/statistics` | `GET` | Study statistics |
-| `/api/v1/student/timeline` | `GET` | Learning timeline |
-| `/api/v1/student/learning-plan` | `GET POST` | Versioned learning plan |
-| `/api/v1/student/archive` | `POST` | Archive journey |
+| Route                                 | Methods    | Description                          |
+| ------------------------------------- | ---------- | ------------------------------------ |
+| `/api/v1/student/journey`             | `GET POST` | Create and retrieve learning journey |
+| `/api/v1/student/programmes`          | `GET POST` | List and enrol in programmes         |
+| `/api/v1/student/programmes/[id]`     | `PATCH`    | Withdraw from programme              |
+| `/api/v1/student/goals`               | `GET POST` | Create and list learning goals       |
+| `/api/v1/student/goals/[id]`          | `PATCH`    | Complete a goal                      |
+| `/api/v1/student/study-session/start` | `POST`     | Start a study session                |
+| `/api/v1/student/study-session/end`   | `POST`     | End a study session                  |
+| `/api/v1/student/bookmarks`           | `GET POST` | Create and list bookmarks            |
+| `/api/v1/student/bookmarks/[id]`      | `DELETE`   | Remove a bookmark                    |
+| `/api/v1/student/achievements`        | `GET`      | List earned achievements             |
+| `/api/v1/student/dashboard`           | `GET`      | Student dashboard projection         |
+| `/api/v1/student/statistics`          | `GET`      | Study statistics                     |
+| `/api/v1/student/timeline`            | `GET`      | Learning timeline                    |
+| `/api/v1/student/learning-plan`       | `GET POST` | Versioned learning plan              |
+| `/api/v1/student/archive`             | `POST`     | Archive journey                      |
 
 ### Architecture
 
-| Deliverable | Status |
-|---|---|
-| ADR-010 | ✅ Accepted, Frozen |
-| `student-learning-context.ts` DI container | ✅ Created |
-| Root `tsconfig.json` references | ✅ Updated |
-| Persistence `package.json` + `tsconfig.json` | ✅ Updated |
+| Deliverable                                  | Status              |
+| -------------------------------------------- | ------------------- |
+| ADR-010                                      | ✅ Accepted, Frozen |
+| `student-learning-context.ts` DI container   | ✅ Created          |
+| Root `tsconfig.json` references              | ✅ Updated          |
+| Persistence `package.json` + `tsconfig.json` | ✅ Updated          |
 
 ---
 
 ## Test Results
 
-| Suite | Tests | Pass | Fail |
-|---|---|---|---|
-| `domain/student-learning` | 34 | 34 | 0 |
-| `application/student-learning` | 8 | 8 | 0 |
-| **Total** | **42** | **42** | **0** |
+| Suite                          | Tests  | Pass   | Fail  |
+| ------------------------------ | ------ | ------ | ----- |
+| `domain/student-learning`      | 34     | 34     | 0     |
+| `application/student-learning` | 8      | 8      | 0     |
+| **Total**                      | **42** | **42** | **0** |
 
 ---
 
 ## Build Status
 
-| Package | Build |
-|---|---|
-| `@clasptek/domain-student-learning` | ✅ |
-| `@clasptek/application-student-learning` | ✅ |
-| `@clasptek/persistence` (typecheck) | ✅ |
+| Package                                  | Build |
+| ---------------------------------------- | ----- |
+| `@clasptek/domain-student-learning`      | ✅    |
+| `@clasptek/application-student-learning` | ✅    |
+| `@clasptek/persistence` (typecheck)      | ✅    |
 
 ---
 

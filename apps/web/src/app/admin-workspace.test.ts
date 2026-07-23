@@ -6,11 +6,11 @@ vi.mock('next/navigation', () => {
     usePathname: () => '/admin/dashboard',
     useRouter: () => ({
       push: vi.fn(),
-      prefetch: vi.fn()
+      prefetch: vi.fn(),
     }),
     use: (promise: any) => {
       return { attemptId: 'att1', userId: 'u1' };
-    }
+    },
   };
 });
 
@@ -19,8 +19,8 @@ vi.mock('../providers/theme-provider', () => {
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
     useTheme: () => ({
       theme: 'dark',
-      setTheme: vi.fn()
-    })
+      setTheme: vi.fn(),
+    }),
   };
 });
 
@@ -90,7 +90,10 @@ describe('Platform Administration Workspace Integration & Verification', () => {
     expect(detail.questions[0].marksAllocated).toBe(5);
     expect(detail.integrity.browserDevice).toBeDefined();
 
-    const noteRes = await adminAssessmentReviewsService.addAdministrativeNote('att1', 'Reviewing attempt logs');
+    const noteRes = await adminAssessmentReviewsService.addAdministrativeNote(
+      'att1',
+      'Reviewing attempt logs'
+    );
     expect(noteRes).toBe(true);
   });
 
@@ -98,7 +101,9 @@ describe('Platform Administration Workspace Integration & Verification', () => {
     const res1 = await adminReportsService.generateQuestionAnalysisReport({ programmeId: 'p1' });
     expect(res1).toBeDefined();
 
-    const res2 = await adminReportsService.generateProgrammeReadinessReport({ cohortId: 'cohort-c' });
+    const res2 = await adminReportsService.generateProgrammeReadinessReport({
+      cohortId: 'cohort-c',
+    });
     expect(res2).toBeDefined();
   });
 

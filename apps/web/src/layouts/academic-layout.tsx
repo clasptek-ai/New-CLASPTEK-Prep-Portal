@@ -4,25 +4,38 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { authoringNavigation } from '../navigation/authoring.navigation';
-import { useTheme } from '../providers/theme-provider';
 import { RouteGuard } from '../components/auth/route-guard';
 
 export function AcademicStudioLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { theme } = useTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [activeWorkspace, setActiveWorkspace] = useState('Central Academic Repository');
 
   const notifications = [
-    { title: 'Draft Rejected', body: 'Question #120 Grammar Modifiers rejected by reviewer Jane Smith', time: '10m ago' },
-    { title: 'Review Requested', body: 'Programme IELTS prep draft submitted for outcome validation review', time: '1h ago' }
+    {
+      title: 'Draft Rejected',
+      body: 'Question #120 Grammar Modifiers rejected by reviewer Jane Smith',
+      time: '10m ago',
+    },
+    {
+      title: 'Review Requested',
+      body: 'Programme IELTS prep draft submitted for outcome validation review',
+      time: '1h ago',
+    },
   ];
 
   return (
     <RouteGuard allowedRoles={['ADMINISTRATOR', 'INSTRUCTOR']}>
-      <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--background)', color: 'var(--text-main)' }}>
+      <div
+        style={{
+          display: 'flex',
+          minHeight: '100vh',
+          backgroundColor: 'var(--background)',
+          color: 'var(--text-main)',
+        }}
+      >
         {/* Collapsible Sidebar */}
         <aside
           style={{
@@ -32,13 +45,29 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
             display: 'flex',
             flexDirection: 'column',
             boxSizing: 'border-box',
-            transition: 'width 0.2s ease'
+            transition: 'width 0.2s ease',
           }}
         >
           {/* Brand header */}
-          <div style={{ padding: '1.25rem', borderBottom: '1px solid #1e293b', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div
+            style={{
+              padding: '1.25rem',
+              borderBottom: '1px solid #1e293b',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
             {!collapsed && (
-              <span style={{ fontSize: '1.1rem', fontWeight: 800, background: 'linear-gradient(135deg, #10b981, #06b6d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <span
+                style={{
+                  fontSize: '1.1rem',
+                  fontWeight: 800,
+                  background: 'linear-gradient(135deg, #10b981, #06b6d4)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
                 Authoring Studio
               </span>
             )}
@@ -50,7 +79,7 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
                 color: '#94a3b8',
                 cursor: 'pointer',
                 fontSize: '1rem',
-                margin: collapsed ? '0 auto' : '0'
+                margin: collapsed ? '0 auto' : '0',
               }}
               title={collapsed ? 'Expand menu' : 'Collapse menu'}
             >
@@ -61,7 +90,18 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
           {/* Workspace Switcher */}
           {!collapsed && (
             <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid #1e293b' }}>
-              <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Active Workspace</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  color: '#64748b',
+                  textTransform: 'uppercase',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Active Workspace
+              </label>
               <select
                 value={activeWorkspace}
                 onChange={(e) => setActiveWorkspace(e.target.value)}
@@ -73,7 +113,7 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
                   backgroundColor: '#020617',
                   color: '#cbd5e1',
                   fontSize: '0.8rem',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               >
                 <option value="Central Academic Repository">Central Academic Repository</option>
@@ -83,7 +123,16 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
           )}
 
           {/* Nav list */}
-          <nav style={{ flex: 1, padding: '1rem 0.5rem', display: 'flex', flexDirection: 'column', gap: '0.35rem', overflowY: 'auto' }}>
+          <nav
+            style={{
+              flex: 1,
+              padding: '1rem 0.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.35rem',
+              overflowY: 'auto',
+            }}
+          >
             {authoringNavigation.map((item, idx) => {
               const isActive = pathname === item.href;
               return (
@@ -101,8 +150,10 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
                     fontWeight: isActive ? 600 : 500,
                     color: isActive ? '#f8fafc' : '#94a3b8',
                     backgroundColor: isActive ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
-                    border: isActive ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid transparent',
-                    transition: 'all 0.15s ease'
+                    border: isActive
+                      ? '1px solid rgba(16, 185, 129, 0.25)'
+                      : '1px solid transparent',
+                    transition: 'all 0.15s ease',
                   }}
                   title={item.name}
                 >
@@ -126,11 +177,20 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '0 2rem',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
             }}
           >
             {/* Breadcrumbs */}
-            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div
+              style={{
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: '#94a3b8',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
               <span>Studio Workspace</span>
               <span>&rarr;</span>
               <span style={{ color: '#cbd5e1' }}>
@@ -139,7 +199,14 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
             </div>
 
             {/* Quick Search palette & notifications bell */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', position: 'relative' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1.25rem',
+                position: 'relative',
+              }}
+            >
               <input
                 placeholder="🔍 Studio Command Search..."
                 onClick={() => setSearchOpen(true)}
@@ -152,7 +219,7 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
                   backgroundColor: '#020617',
                   color: '#cbd5e1',
                   fontSize: '0.8rem',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               />
 
@@ -164,11 +231,21 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
                   color: '#cbd5e1',
                   cursor: 'pointer',
                   fontSize: '1.1rem',
-                  position: 'relative'
+                  position: 'relative',
                 }}
               >
                 🔔
-                <span style={{ position: 'absolute', top: '-2px', right: '-2px', width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%' }} />
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '-2px',
+                    right: '-2px',
+                    width: '8px',
+                    height: '8px',
+                    backgroundColor: '#10b981',
+                    borderRadius: '50%',
+                  }}
+                />
               </button>
 
               {notificationsOpen && (
@@ -183,10 +260,18 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
                     borderRadius: '8px',
                     boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
                     padding: '1rem',
-                    zIndex: 100
+                    zIndex: 100,
                   }}
                 >
-                  <h4 style={{ margin: '0 0 0.75rem 0', borderBottom: '1px solid #1e293b', paddingBottom: '0.5rem' }}>Content Notifications</h4>
+                  <h4
+                    style={{
+                      margin: '0 0 0.75rem 0',
+                      borderBottom: '1px solid #1e293b',
+                      paddingBottom: '0.5rem',
+                    }}
+                  >
+                    Content Notifications
+                  </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     {notifications.map((n, i) => (
                       <div key={i} style={{ fontSize: '0.8rem' }}>
@@ -199,7 +284,20 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
               )}
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#f8fafc', fontSize: '0.85rem' }}>
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    backgroundColor: '#10b981',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    color: '#f8fafc',
+                    fontSize: '0.85rem',
+                  }}
+                >
                   <span>A</span>
                 </div>
               </div>
@@ -225,7 +323,7 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
               justifyContent: 'center',
               alignItems: 'flex-start',
               paddingTop: '10vh',
-              zIndex: 1000
+              zIndex: 1000,
             }}
             onClick={() => setSearchOpen(false)}
           >
@@ -237,9 +335,9 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
                 border: '1px solid #1e293b',
                 borderRadius: '8px',
                 boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
-                padding: '1rem'
+                padding: '1rem',
               }}
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <input
                 autoFocus
@@ -252,7 +350,7 @@ export function AcademicStudioLayout({ children }: { children: React.ReactNode }
                   backgroundColor: '#020617',
                   color: '#f8fafc',
                   fontSize: '0.95rem',
-                  outline: 'none'
+                  outline: 'none',
                 }}
               />
               <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#94a3b8' }}>

@@ -24,9 +24,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const addToast = useCallback((type: NotificationType, message: string) => {
     const id = Math.random().toString(36).slice(2, 9);
-    setToasts(prev => [...prev, { id, type, message }]);
+    setToasts((prev) => [...prev, { id, type, message }]);
     setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
+      setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 4000);
   }, []);
 
@@ -37,19 +37,27 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const getBorderColor = (type: NotificationType) => {
     switch (type) {
-      case 'success': return '#10b981';
-      case 'error': return '#ef4444';
-      case 'warning': return '#f59e0b';
-      case 'info': return '#3b82f6';
+      case 'success':
+        return '#10b981';
+      case 'error':
+        return '#ef4444';
+      case 'warning':
+        return '#f59e0b';
+      case 'info':
+        return '#3b82f6';
     }
   };
 
   const getBgColor = (type: NotificationType) => {
     switch (type) {
-      case 'success': return 'rgba(16, 185, 129, 0.15)';
-      case 'error': return 'rgba(239, 68, 68, 0.15)';
-      case 'warning': return 'rgba(245, 158, 11, 0.15)';
-      case 'info': return 'rgba(59, 130, 246, 0.15)';
+      case 'success':
+        return 'rgba(16, 185, 129, 0.15)';
+      case 'error':
+        return 'rgba(239, 68, 68, 0.15)';
+      case 'warning':
+        return 'rgba(245, 158, 11, 0.15)';
+      case 'info':
+        return 'rgba(59, 130, 246, 0.15)';
     }
   };
 
@@ -66,10 +74,10 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           display: 'flex',
           flexDirection: 'column',
           gap: '10px',
-          pointerEvents: 'none'
+          pointerEvents: 'none',
         }}
       >
-        {toasts.map(toast => (
+        {toasts.map((toast) => (
           <div
             key={toast.id}
             style={{
@@ -90,12 +98,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              gap: '1rem'
+              gap: '1rem',
             }}
           >
             <span>{toast.message}</span>
             <button
-              onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
+              onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
               style={{
                 background: 'none',
                 border: 'none',
@@ -103,7 +111,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
                 cursor: 'pointer',
                 fontSize: '1.25rem',
                 padding: 0,
-                lineHeight: 1
+                lineHeight: 1,
               }}
             >
               ×

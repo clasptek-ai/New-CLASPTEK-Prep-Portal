@@ -1,13 +1,13 @@
 import { Pool } from 'pg';
-import { 
-  LearningResource, 
-  ResourceVariant, 
-  LearningResourceRepository, 
+import {
+  LearningResource,
+  ResourceVariant,
+  LearningResourceRepository,
   ResourceCode,
   ResourceStatus,
   SensitivityLevel,
   VisibilityScope,
-  VariantPurpose
+  VariantPurpose,
 } from '@clasptek/domain-learning-resources';
 import { randomUUID } from 'crypto';
 
@@ -22,7 +22,10 @@ export class PostgresLearningResourceRepository implements LearningResourceRepos
     try {
       await client.query('BEGIN');
       // Check concurrency
-      const lockRes = await client.query('SELECT lock_version FROM public.learning_resources WHERE id = $1', [resource.id]);
+      const lockRes = await client.query(
+        'SELECT lock_version FROM public.learning_resources WHERE id = $1',
+        [resource.id]
+      );
       if (lockRes.rows.length > 0) {
         const currentLock = Number(lockRes.rows[0].lock_version);
         if (currentLock !== resource.lockVersion) {
@@ -63,7 +66,7 @@ export class PostgresLearningResourceRepository implements LearningResourceRepos
         resource.currentDefaultVariantId,
         resource.status.value,
         1, // version_no defaults to 1
-        resource.lockVersion
+        resource.lockVersion,
       ]);
 
       // 2. Sync variants (upsert active variants, delete inactive if necessary)
@@ -93,7 +96,7 @@ export class PostgresLearningResourceRepository implements LearningResourceRepos
           variant.isDefault,
           variant.currentPublishedVersionId,
           variant.currentVersionNo,
-          variant.status
+          variant.status,
         ]);
       }
 
@@ -164,19 +167,22 @@ export class PostgresLearningResourceRepository implements LearningResourceRepos
       row.deleted_at
     );
 
-    const variants = variantsRes.rows.map(v => new ResourceVariant(
-      v.id,
-      v.learning_resource_id,
-      v.code,
-      v.language_code,
-      v.region_code,
-      v.accessibility_profile,
-      new VariantPurpose(v.variant_purpose),
-      v.is_default,
-      v.current_published_version_id,
-      v.current_version_no,
-      v.status
-    ));
+    const variants = variantsRes.rows.map(
+      (v) =>
+        new ResourceVariant(
+          v.id,
+          v.learning_resource_id,
+          v.code,
+          v.language_code,
+          v.region_code,
+          v.accessibility_profile,
+          new VariantPurpose(v.variant_purpose),
+          v.is_default,
+          v.current_published_version_id,
+          v.current_version_no,
+          v.status
+        )
+    );
 
     resource.setVariants(variants);
     return resource;

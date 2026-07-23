@@ -2,7 +2,10 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { studentProfileService, StudentProfileDetails } from '../services/student/profile.service';
-import { studentReadinessService, StudentReadinessInfo } from '../services/student/readiness.service';
+import {
+  studentReadinessService,
+  StudentReadinessInfo,
+} from '../services/student/readiness.service';
 import { studentLearningService, EnrolledProgramme } from '../services/student/learning.service';
 import { studentNotificationsService } from '../services/student/notifications.service';
 
@@ -16,7 +19,9 @@ export interface StudentWorkspaceContextType {
   refreshContext: () => Promise<void>;
 }
 
-export const StudentWorkspaceContext = createContext<StudentWorkspaceContextType | undefined>(undefined);
+export const StudentWorkspaceContext = createContext<StudentWorkspaceContextType | undefined>(
+  undefined
+);
 
 export const StudentWorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [student, setStudent] = useState<StudentProfileDetails | null>(null);
@@ -28,22 +33,34 @@ export const StudentWorkspaceProvider: React.FC<{ children: React.ReactNode }> =
 
   const refreshContext = async () => {
     try {
-      const studentData = await studentProfileService.getProfile();
-      setStudent(studentData);
+      // 1. Verify active authentication session before requesting authenticated student domain data
+      const sessionRes = await fetch('/api/v1/auth/session');
+      if (!sessionRes.ok) {
+        setLoading(false);
+        return;
+      }
 
-      const readinessData = await studentReadinessService.getReadiness();
-      setReadiness(readinessData);
+      // 2. Auth session verified — load student domain data concurrently
+      const [studentData, readinessData, programmes, notifs] = await Promise.all([
+        studentProfileService.getProfile().catch(() => null),
+        studentReadinessService.getReadiness().catch(() => null),
+        studentLearningService.getEnrolledProgrammes().catch(() => []),
+        studentNotificationsService.getNotifications().catch(() => []),
+      ]);
 
-      const programmes = await studentLearningService.getEnrolledProgrammes();
-      if (programmes.length > 0) {
+      if (studentData) setStudent(studentData);
+      if (readinessData) setReadiness(readinessData);
+
+      if (programmes && programmes.length > 0) {
         setProgramme(programmes[0]);
         setLearningProgress(programmes[0].completionPercentage);
       }
 
-      const notifs = await studentNotificationsService.getNotifications();
-      setNotificationCount(notifs.filter(n => !n.read).length);
+      if (notifs) {
+        setNotificationCount(notifs.filter((n) => !n.read).length);
+      }
     } catch (e) {
-      console.error('Failed to load student context', e);
+      console.error('Failed to load student workspace context', e);
     } finally {
       setLoading(false);
     }
@@ -62,7 +79,7 @@ export const StudentWorkspaceProvider: React.FC<{ children: React.ReactNode }> =
         notificationCount,
         learningProgress,
         loading,
-        refreshContext
+        refreshContext,
       }}
     >
       {children}

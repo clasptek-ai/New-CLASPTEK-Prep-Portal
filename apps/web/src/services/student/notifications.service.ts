@@ -4,7 +4,13 @@ export interface NotificationItem {
   id: string;
   title: string;
   content: string;
-  type: 'ASSIGNMENT_PUBLISHED' | 'ASSIGNMENT_GRADED' | 'MOCK_AVAILABLE' | 'MOCK_RESULT' | 'INSTRUCTOR_NOTE' | 'SYSTEM_ANNOUNCEMENT';
+  type:
+    | 'ASSIGNMENT_PUBLISHED'
+    | 'ASSIGNMENT_GRADED'
+    | 'MOCK_AVAILABLE'
+    | 'MOCK_RESULT'
+    | 'INSTRUCTOR_NOTE'
+    | 'SYSTEM_ANNOUNCEMENT';
   read: boolean;
   createdAt: string;
 }
@@ -27,15 +33,16 @@ export const studentNotificationsService = {
           content: 'Your Advanced Essay Syntax assignment has been graded. Score: 85/100.',
           type: 'ASSIGNMENT_GRADED',
           read: false,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'n2',
           title: 'Instructor Note Logged',
-          content: 'Sarah Jenkins left a permanent note regarding your Relative Clauses practice accuracy.',
+          content:
+            'Sarah Jenkins left a permanent note regarding your Relative Clauses practice accuracy.',
           type: 'INSTRUCTOR_NOTE',
           read: false,
-          createdAt: new Date(Date.now() - 3600000).toISOString()
+          createdAt: new Date(Date.now() - 3600000).toISOString(),
         },
         {
           id: 'n3',
@@ -43,8 +50,8 @@ export const studentNotificationsService = {
           content: 'IELTS Grammar Diagnostic Mock B is now available for attempts.',
           type: 'MOCK_AVAILABLE',
           read: true,
-          createdAt: new Date(Date.now() - 86400000).toISOString()
-        }
+          createdAt: new Date(Date.now() - 86400000).toISOString(),
+        },
       ];
     }
   },
@@ -60,12 +67,14 @@ export const studentNotificationsService = {
 
   async getPreferences(): Promise<NotificationPreferences> {
     try {
-      return await apiClient.get<NotificationPreferences>('/api/v1/student/notifications/preferences');
+      return await apiClient.get<NotificationPreferences>(
+        '/api/v1/student/notifications/preferences'
+      );
     } catch {
       return {
         emailAlerts: true,
         pushNotifications: true,
-        weeklySummary: false
+        weeklySummary: false,
       };
     }
   },
@@ -77,5 +86,5 @@ export const studentNotificationsService = {
     } catch {
       return true;
     }
-  }
+  },
 };

@@ -7,8 +7,8 @@ export class ModulePrerequisite extends Entity<string> {
     public readonly moduleId: string,
     public readonly prerequisiteModuleId: string,
     public prerequisiteType: string = 'module_completion', // module_completion, outcome_mastery, skill_mastery, diagnostic_clearance, learning_path_entry, custom
-    public minimumCompletionPercentage: number = 100.00,
-    public minimumMasteryPercentage: number = 100.00,
+    public minimumCompletionPercentage: number = 100.0,
+    public minimumMasteryPercentage: number = 100.0,
     public requiredSkillRevisionId?: string,
     public requiredSkillLevelId?: string,
     public isMandatory: boolean = true,

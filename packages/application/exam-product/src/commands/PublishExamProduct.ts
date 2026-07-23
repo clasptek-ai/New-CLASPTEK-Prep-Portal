@@ -25,7 +25,11 @@ export class PublishExamProductHandler {
         throw new Error(`Exam product with ID ${command.productId} not found.`);
       }
 
-      const publishResult = this.publishingService.publish(product, command.versionId, command.actorId);
+      const publishResult = this.publishingService.publish(
+        product,
+        command.versionId,
+        command.actorId
+      );
       if (publishResult.isFailure) {
         throw publishResult.error;
       }

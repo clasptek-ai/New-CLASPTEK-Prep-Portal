@@ -6,7 +6,7 @@ import { AuthoringDashboardScreen } from '../../../features/authoring/dashboard/
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="AUTHORING">
+    <WorkspaceShell workspaceRole="ADMIN">
       <AuthoringDashboardScreen />
     </WorkspaceShell>
   );

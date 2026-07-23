@@ -3,7 +3,30 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "composite": true
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@clasptek/domain-diagnostic-placement": ["../domain/diagnostic-placement/src/index.ts"],
+      "@clasptek/application-diagnostic-placement": [
+        "../application/diagnostic-placement/src/index.ts"
+      ],
+      "@clasptek/domain-mock-examination": ["../domain/mock-examination/src/index.ts"],
+      "@clasptek/application-mock-examination": ["../application/mock-examination/src/index.ts"],
+      "@clasptek/domain-learning-assistant": ["../domain/learning-assistant/src/index.ts"],
+      "@clasptek/application-learning-assistant": [
+        "../application/learning-assistant/src/index.ts"
+      ],
+      "@clasptek/domain-learning-analytics": ["../domain/learning-analytics/src/index.ts"],
+      "@clasptek/application-learning-analytics": [
+        "../application/learning-analytics/src/index.ts"
+      ],
+      "@clasptek/domain-results": ["../domain/results/src/index.ts"],
+      "@clasptek/application-results": ["../application/results/src/index.ts"],
+      "@clasptek/domain-notification": ["../domain/notification/src/index.ts"],
+      "@clasptek/domain-announcement": ["../domain/announcement/src/index.ts"],
+      "@clasptek/application-notification": ["../application/notification/src/index.ts"],
+      "@clasptek/application-announcement": ["../application/announcement/src/index.ts"]
+    }
   },
   "include": ["src/**/*"],
   "references": [
@@ -30,6 +53,20 @@
     { "path": "../application/ai-evaluation" },
     { "path": "../domain/prediction-engine" },
     { "path": "../application/prediction-engine" },
-    { "path": "../application/curriculum" }
+    { "path": "../application/curriculum" },
+    { "path": "../domain/diagnostic-placement" },
+    { "path": "../application/diagnostic-placement" },
+    { "path": "../domain/mock-examination" },
+    { "path": "../application/mock-examination" },
+    { "path": "../domain/learning-assistant" },
+    { "path": "../application/learning-assistant" },
+    { "path": "../domain/learning-analytics" },
+    { "path": "../application/learning-analytics" },
+    { "path": "../domain/results" },
+    { "path": "../application/results" },
+    { "path": "../domain/notification" },
+    { "path": "../domain/announcement" },
+    { "path": "../application/notification" },
+    { "path": "../application/announcement" }
   ]
 }

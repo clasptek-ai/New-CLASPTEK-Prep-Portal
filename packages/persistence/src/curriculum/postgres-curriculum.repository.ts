@@ -8,7 +8,7 @@ import {
   DependencyVersion,
   DependencyLock,
   CurriculumLocale,
-  Translation
+  Translation,
 } from '@clasptek/domain-curriculum';
 import { DatabasePool } from '../database-pool';
 
@@ -69,7 +69,15 @@ export class PostgresCurriculumRepository implements CurriculumRepository {
         [vRow.id]
       );
       v.dependencyLocks = locksRes.rows.map(
-        r => new DependencyLock(r.id, r.curriculum_version_id, r.dependency_type, r.dependency_id, r.locked_version_no, r.locked_at)
+        (r) =>
+          new DependencyLock(
+            r.id,
+            r.curriculum_version_id,
+            r.dependency_type,
+            r.dependency_id,
+            r.locked_version_no,
+            r.locked_at
+          )
       );
 
       const localesRes = await this.pool.query(
@@ -77,14 +85,23 @@ export class PostgresCurriculumRepository implements CurriculumRepository {
         [vRow.id]
       );
       v.locales = localesRes.rows.map(
-        r => new CurriculumLocale(r.id, r.curriculum_version_id, r.language_code, r.is_default, r.is_required_for_publication, r.translation_status, r.display_order)
+        (r) =>
+          new CurriculumLocale(
+            r.id,
+            r.curriculum_version_id,
+            r.language_code,
+            r.is_default,
+            r.is_required_for_publication,
+            r.translation_status,
+            r.display_order
+          )
       );
 
       const metaRes = await this.pool.query(
         'SELECT * FROM curriculum_metadata WHERE curriculum_version_id = $1 AND deleted_at IS NULL',
         [vRow.id]
       );
-      metaRes.rows.forEach(r => {
+      metaRes.rows.forEach((r) => {
         v.metadata.set(r.metadata_key, r.metadata_value);
       });
 
@@ -93,7 +110,19 @@ export class PostgresCurriculumRepository implements CurriculumRepository {
         [vRow.id]
       );
       v.translations = transRes.rows.map(
-        r => new Translation(r.id, r.parent_entity_id, r.language_code, r.localized_name, undefined, r.localized_description, undefined, r.source_language_code, r.translation_method, r.translation_status)
+        (r) =>
+          new Translation(
+            r.id,
+            r.parent_entity_id,
+            r.language_code,
+            r.localized_name,
+            undefined,
+            r.localized_description,
+            undefined,
+            r.source_language_code,
+            r.translation_method,
+            r.translation_status
+          )
       );
 
       curriculum.versions.push(v);
@@ -127,7 +156,7 @@ export class PostgresCurriculumRepository implements CurriculumRepository {
           curriculum.currentVersionId || null,
           curriculum.currentVersionNo || null,
           curriculum.lockVersion,
-          curriculum.id
+          curriculum.id,
         ]
       );
     } else {
@@ -144,17 +173,14 @@ export class PostgresCurriculumRepository implements CurriculumRepository {
           curriculum.status.value,
           curriculum.currentVersionId || null,
           curriculum.currentVersionNo || null,
-          curriculum.lockVersion
+          curriculum.lockVersion,
         ]
       );
     }
   }
 
   public async delete(id: string): Promise<void> {
-    await this.pool.query(
-      'UPDATE curricula SET deleted_at = now() WHERE id = $1',
-      [id]
-    );
+    await this.pool.query('UPDATE curricula SET deleted_at = now() WHERE id = $1', [id]);
   }
 
   public async search(filters: any): Promise<Curriculum[]> {

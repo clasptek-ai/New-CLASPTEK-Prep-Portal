@@ -1,0 +1,41 @@
+{
+  "button": {
+    "primary": {
+      "background": "var(--cds-color-primary)",
+      "text": "var(--cds-color-on-primary)",
+      "hover": "var(--cds-color-primary-container)"
+    },
+    "secondary": {
+      "background": "var(--cds-color-secondary)",
+      "text": "var(--cds-color-on-secondary)",
+      "hover": "var(--cds-color-secondary-container)"
+    },
+    "tertiary": {
+      "background": "var(--cds-color-tertiary)",
+      "text": "var(--cds-color-on-tertiary)",
+      "hover": "var(--cds-color-tertiary-container)"
+    },
+    "danger": {
+      "background": "var(--cds-color-error)",
+      "text": "var(--cds-color-on-error)",
+      "hover": "var(--cds-color-error-container)"
+    }
+  },
+  "card": {
+    "background": "var(--cds-color-surface-container-lowest)",
+    "border": "var(--cds-color-outline-variant)"
+  },
+  "input": {
+    "border": "var(--cds-color-outline)",
+    "focusBorder": "var(--cds-color-primary)"
+  },
+  "navigation": {
+    "active": "var(--cds-color-primary)",
+    "inactive": "var(--cds-color-on-surface-variant)"
+  },
+  "exam": {
+    "correct": "#059669",
+    "incorrect": "var(--cds-color-secondary)",
+    "unanswered": "var(--cds-color-on-surface-variant)"
+  }
+}

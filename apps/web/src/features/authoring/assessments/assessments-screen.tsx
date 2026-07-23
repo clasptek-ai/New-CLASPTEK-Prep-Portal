@@ -7,7 +7,8 @@ export function AssessmentsScreen() {
   return (
     <Card title="Assessment Builder Workspace">
       <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
-        Select questions, outline instructions guides, specify timer limits, and configure randomize rules.
+        Select questions, outline instructions guides, specify timer limits, and configure randomize
+        rules.
       </p>
     </Card>
   );

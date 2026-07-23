@@ -1,16 +1,24 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLearningAnalyticsContext } from '@/lib/learning-analytics-context';
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const modelVersion = searchParams.get('modelVersion') || 'v1.0';
+    const studentId = searchParams.get('studentId') || 'student-1';
 
     const ctx = await getLearningAnalyticsContext();
-    const stats = await ctx.getPredictionAnalytics.execute(modelVersion);
+    const forecast = await ctx.getPredictiveForecasts.execute(studentId);
 
-    return NextResponse.json(stats);
+    return NextResponse.json({
+      success: true,
+      data: forecast,
+    });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || String(err) }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message || String(err) },
+      { status: 500 }
+    );
   }
 }

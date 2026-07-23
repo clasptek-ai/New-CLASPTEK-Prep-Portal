@@ -29,7 +29,7 @@ export const studentResourcesService = {
           tags: ['IELTS', 'Grammar'],
           downloadsCount: 120,
           lastUpdated: '2026-07-10T09:00:00Z',
-          bookmarked: true
+          bookmarked: true,
         },
         {
           id: 'res2',
@@ -41,8 +41,8 @@ export const studentResourcesService = {
           tags: ['Reading', 'Skimming'],
           downloadsCount: 45,
           lastUpdated: '2026-07-14T11:00:00Z',
-          bookmarked: false
-        }
+          bookmarked: false,
+        },
       ];
     }
   },
@@ -54,5 +54,5 @@ export const studentResourcesService = {
     } catch {
       return true;
     }
-  }
+  },
 };

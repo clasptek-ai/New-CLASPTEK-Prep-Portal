@@ -1,4 +1,5 @@
 # Phase 2 Sprint 2.4 — Question Bank Domain Architecture Specification
+
 ## Canonical Enterprise Architecture Baseline
 
 **Platform:** Clasptek Prep Portal V2  
@@ -18,6 +19,7 @@
 The **Question Bank Domain** establishes the enterprise **Assessment Content Repository** responsible for governing the lifecycle, versioning, review workflows, psychometrics, and educational categorization of every assessment item (questions, options, rubrics, hints, explanations) inside the Clasptek Prep Portal V2.
 
 The strategic goal of this domain is to guarantee:
+
 - **Authoring Integrity:** Every question must undergo rigorous multi-step peer and editorial review before learners can view it.
 - **Content Immutability:** Published question versions are strictly read-only. Updates require generating a new version, protecting historical student assessment attempts from retrospective content shifts.
 - **Decoupled Architecture:** Content definition is completely isolated from test delivery runtime (Student Assessment) and score prediction engines.
@@ -37,7 +39,7 @@ graph TD
     EP --> CR[Curriculum Domain]
     LR[Learning Resource Domain] --> QB[Question Bank Domain]
     CR --> QB
-    
+
     %% Downstream Layer
     QB --> SA[Student Assessment Domain]
     QB --> AC[AI Coach Domain]
@@ -45,6 +47,7 @@ graph TD
 ```
 
 ### Strategic Domain Dependencies:
+
 1. **Platform Foundation:** Provides global tenant settings, localization registries, and currency configurations.
 2. **Identity & Authorization:** Enforces granular scopes for content editors, SME reviewers, and students.
 3. **Exam Product:** Provides exam structure blueprints and module alignments.
@@ -60,6 +63,7 @@ graph TD
 To maintain strict domain boundaries, the Question Bank operates under a clear division of concerns:
 
 ### What the Question Bank Domain OWNS:
+
 - **Question Identity & Lifecycle:** Tracking unique question codes, status transitions, and version hierarchies.
 - **Item Payloads:** Managing text, localized variants, answer options, matching columns, sorting patterns, and rich text prompts.
 - **Integrity Validation:** Enforcing type-specific validators (e.g. a Multiple Choice question must have at least one correct option).
@@ -69,6 +73,7 @@ To maintain strict domain boundaries, the Question Bank operates under a clear d
 - **Import Pipelines:** Ingesting external formats (CSV, QTI, AI JSON) and detecting identical duplicates.
 
 ### What the Question Bank Domain DOES NOT OWN:
+
 - **Student Attempts:** Does not store answers chosen by students during tests, execution elapsed times, or current active sessions.
 - **Exam Session State:** Does not manage test timer locks, access tickets, or browser fullscreen violations.
 - **Score Calculation:** Does not execute student grading algorithms or store final feedback files (these belong to the Student Assessment Domain).
@@ -79,6 +84,7 @@ To maintain strict domain boundaries, the Question Bank operates under a clear d
 ## 4. Domain Boundaries
 
 ### Decoupling Rules:
+
 - **No Direct Table Mutation:** The Question Bank Domain writes only to the tables in its context (`00400` series migrations). It has read-only access to Platform Foundation and Exam Product tables, and interacts with Learning Resources through domain event triggers.
 - **DTO Isolation:** Data structures exposed to the Student Assessment Domain are read-only projections.
 - **No Shared Transaction State:** Operations in Curriculum or Exam Product cannot span database transactions into the Question Bank. If a curriculum lesson is deleted, a `LessonDeleted` domain event is emitted; the Question Bank listens to this event to update its reverse-usage projection asynchronously.
@@ -90,7 +96,9 @@ To maintain strict domain boundaries, the Question Bank operates under a clear d
 Before executing Sprint 2.4 database and directory migrations, a secure roll-back path is enforced:
 
 ### 1. Git Tagging & Branching
+
 Create a snapshot of the repository state:
+
 ```bash
 git checkout main
 git pull origin main
@@ -99,13 +107,17 @@ git checkout -b feature/sprint-2.4-question-bank
 ```
 
 ### 2. Database Backup
+
 Export the current PostgreSQL schema and records:
+
 ```bash
 pg_dump -h localhost -U postgres -d clasptek_db --schema=public -F c -b -v -f ./scratch/db_schema_sprint2.3_backup.dump
 ```
 
 ### 3. Legacy Archival
+
 Move legacy question bank components to the archive:
+
 ```bash
 mkdir -p ./archive/sprint-2.4-legacy/domain
 mkdir -p ./archive/sprint-2.4-legacy/application
@@ -115,7 +127,9 @@ mv ./packages/application/question-bank/src/* ./archive/sprint-2.4-legacy/applic
 ```
 
 ### 4. Rollback Procedure
+
 If verification fails and database consistency is lost:
+
 1. Revert Git state: `git reset --hard v1.3.0-learning-resource-accept`
 2. Restore database:
    ```bash
@@ -130,12 +144,12 @@ If verification fails and database consistency is lost:
 
 The legacy model utilized a single flat database representation for questions and reviews. Sprint 2.4 replaces this with clean DDD Aggregates:
 
-| Legacy Concept | Canonical V2 Aggregate | Primary Responsibility |
-| :--- | :--- | :--- |
-| `tbl_questions` | `Question` | Root entity managing unique item codes, status, and aggregate boundaries. |
-| `tbl_question_payloads` | `QuestionVersion` | Immutable version descriptor containing prompt content, localized values, rubrics, and references. |
-| `tbl_question_reviews` | `QuestionReview` | Captures peer reviewer, editorial lead, and SME evaluation logs. |
-| `tbl_import_logs` | `QuestionImport` | Manages bulk validation status, batch progress, and duplicates checking. |
+| Legacy Concept          | Canonical V2 Aggregate | Primary Responsibility                                                                             |
+| :---------------------- | :--------------------- | :------------------------------------------------------------------------------------------------- |
+| `tbl_questions`         | `Question`             | Root entity managing unique item codes, status, and aggregate boundaries.                          |
+| `tbl_question_payloads` | `QuestionVersion`      | Immutable version descriptor containing prompt content, localized values, rubrics, and references. |
+| `tbl_question_reviews`  | `QuestionReview`       | Captures peer reviewer, editorial lead, and SME evaluation logs.                                   |
+| `tbl_import_logs`       | `QuestionImport`       | Manages bulk validation status, batch progress, and duplicates checking.                           |
 
 ---
 
@@ -180,6 +194,7 @@ classDiagram
 ```
 
 ### 7.1 Question Aggregate
+
 - **Responsibilities:** Acts as the root aggregate enforcing global business rules, item classifications, unique item coding system, and root lifecycle state.
 - **Invariants:**
   - `code` must be unique across all active questions in the platform.
@@ -189,6 +204,7 @@ classDiagram
 - **Domain Events Emitted:** `QuestionCreated`, `QuestionStatusChanged`, `QuestionArchived`.
 
 ### 7.2 QuestionVersion Aggregate
+
 - **Responsibilities:** Holds the actual educational payload, localization variables, answer choices, and correct verification rules.
 - **Invariants:**
   - Published versions are strictly **immutable**. Modifying content requires building a new version.
@@ -196,12 +212,14 @@ classDiagram
 - **Domain Events Emitted:** `QuestionVersionCreated`, `QuestionVersionPublished`.
 
 ### 7.3 QuestionReview Aggregate
+
 - **Responsibilities:** Tracks evaluation workflow loops, tracking peer feedbacks, edit suggestions, and audit histories.
 - **Invariants:**
   - A review cannot be completed by the original author of the question (enforced via identity policy).
   - The workflow requires distinct sign-offs for Subject Matter Expert (SME) and Editorial stages.
 
 ### 7.4 QuestionImport Aggregate
+
 - **Responsibilities:** Manages transaction boundaries for batch file processing, tracking errors, and preventing identical item duplicates.
 - **Invariants:**
   - If a single critical schema validation fails in the batch, the entire batch transaction is rolled back.
@@ -213,6 +231,7 @@ classDiagram
 Sprint 2.4 supports 17 native assessment types, each with its payload validation logic.
 
 ### 1. Single Choice (MCQ-S)
+
 - **JSON Payload structure:**
   ```json
   {
@@ -226,6 +245,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
 - **Invariants:** Must have exactly 1 correct option and at least 2 total options.
 
 ### 2. Multiple Choice (MCQ-M)
+
 - **JSON Payload structure:**
   ```json
   {
@@ -240,6 +260,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
 - **Invariants:** Must have at least 2 options marked correct.
 
 ### 3. True/False
+
 - **JSON Payload structure:**
   ```json
   {
@@ -248,6 +269,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 4. Matching
+
 - **JSON Payload structure:**
   ```json
   {
@@ -258,6 +280,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 5. Ordering
+
 - **JSON Payload structure:**
   ```json
   {
@@ -270,6 +293,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 6. Fill in the Blank (FIB-Text)
+
 - **JSON Payload structure:**
   ```json
   {
@@ -281,6 +305,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 7. Numeric (FIB-Numeric)
+
 - **JSON Payload structure:**
   ```json
   {
@@ -292,6 +317,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 8. Short Answer
+
 - **JSON Payload structure:**
   ```json
   {
@@ -301,6 +327,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 9. Essay
+
 - **JSON Payload structure:**
   ```json
   {
@@ -312,6 +339,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 10. Listening
+
 - **JSON Payload structure:**
   ```json
   {
@@ -322,6 +350,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 11. Reading Passage
+
 - **JSON Payload structure:**
   ```json
   {
@@ -331,6 +360,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 12. IELTS Writing
+
 - **JSON Payload structure:**
   ```json
   {
@@ -341,6 +371,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 13. IELTS Speaking
+
 - **JSON Payload structure:**
   ```json
   {
@@ -351,6 +382,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 14. CELPIP Writing
+
 - **JSON Payload structure:**
   ```json
   {
@@ -362,6 +394,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 15. CELPIP Speaking
+
 - **JSON Payload structure:**
   ```json
   {
@@ -373,6 +406,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 16. SAT Reading
+
 - **JSON Payload structure:**
   ```json
   {
@@ -382,6 +416,7 @@ Sprint 2.4 supports 17 native assessment types, each with its payload validation
   ```
 
 ### 17. SAT Writing
+
 - **JSON Payload structure:**
   ```json
   {
@@ -410,6 +445,7 @@ Questions are versioned using absolute immutability rules.
 ```
 
 ### Strict Immutability Rules:
+
 1. A QuestionVersion with status `PUBLISHED` can never be edited or deleted.
 2. If a typo correction is submitted, a new version is created:
    - Version `1.0.0` remains active for historical records.
@@ -445,6 +481,7 @@ sequenceDiagram
 The Question Bank domain transitions to a clean V2 database structure. Each script in the migration sequence is designed for isolated execution and full RLS configuration.
 
 ### 11.1 Migrations List:
+
 1. `00400_question_core.sql` - Core `questions` mapping.
 2. `00401_question_versions.sql` - `question_versions` table and JSONB payload constraints.
 3. `00402_answer_options.sql` - Option schemas for matching, ordering, and choice types.
@@ -466,6 +503,7 @@ The Question Bank domain transitions to a clean V2 database structure. Each scri
 The following represents the complete database catalog for the Question Bank Domain, with detailed schemas, constraints, indexes, RLS policies, ownership and audit configurations.
 
 ### 12.1 `questions` Table
+
 - **Purpose:** Unique anchor for a question across all version iterations.
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -488,6 +526,7 @@ The following represents the complete database catalog for the Question Bank Dom
 - **Audit Fields:** `created_at`, `updated_at`, `deleted_at`.
 
 ### 12.2 `question_versions` Table
+
 - **Purpose:** Stores the immutable version records of a question's payload.
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -511,6 +550,7 @@ The following represents the complete database catalog for the Question Bank Dom
 - **Audit Fields:** `created_at`.
 
 ### 12.3 `answer_options` Table
+
 - **Purpose:** Holds structured response choices for choice-based questions.
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -526,6 +566,7 @@ The following represents the complete database catalog for the Question Bank Dom
 - **RLS Policy:** Inherits permissions from parent `question_versions`.
 
 ### 12.4 `question_media` Table
+
 - **Purpose:** Joins question versions to static files managed by the Learning Resource Domain.
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -539,6 +580,7 @@ The following represents the complete database catalog for the Question Bank Dom
   - `idx_qmedia_version`: Index on `question_version_id`
 
 ### 12.5 `solutions` Table
+
 - **Purpose:** Stores comprehensive explanations and wrong-option hints for student coaching.
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -550,6 +592,7 @@ The following represents the complete database catalog for the Question Bank Dom
   - `chk_solution_type`: Check constraint on values `('explanation', 'hint', 'distractor_feedback')`.
 
 ### 12.6 `rubrics` Table
+
 - **Purpose:** Stores scoring evaluation rubrics for subjective speaking and writing assessment items.
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -562,6 +605,7 @@ The following represents the complete database catalog for the Question Bank Dom
   - `chk_rubric_max_pts`: `max_points > 0`
 
 ### 12.7 `question_reviews` Table
+
 - **Purpose:** Tracks active review processes and transitions.
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -575,6 +619,7 @@ The following represents the complete database catalog for the Question Bank Dom
   - `chk_review_status`: Check constraint `('pending', 'approved', 'rejected')`
 
 ### 12.8 `question_workflow_history` Table
+
 - **Purpose:** Permanent audit log of comment history and reviews.
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -585,6 +630,7 @@ The following represents the complete database catalog for the Question Bank Dom
   - `created_at` (TIMESTAMPTZ, Not Null, Default `now()`)
 
 ### 12.9 `question_ownership` Table
+
 - **Purpose:** Manages copyrights and intellectual licensing.
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -595,6 +641,7 @@ The following represents the complete database catalog for the Question Bank Dom
   - `attribution_text` (TEXT, Nullable)
 
 ### 12.10 `question_dependencies` Table
+
 - **Purpose:** Maps relational hierarchy (parent passage questions, sub-items).
 - **Columns:**
   - `id` (UUID, Primary Key, Default `gen_random_uuid()`)
@@ -605,6 +652,7 @@ The following represents the complete database catalog for the Question Bank Dom
   - `uq_dependency_link`: Unique link `(parent_id, child_id)`
 
 ### 12.11 Projection Tables (Read Schema `question_read`)
+
 - **`question_read.materialized_questions`**:
   - Purpose: Caches published items for high-performance student delivery query.
   - Columns: `id`, `code`, `prompt`, `payload`, `explanation`, `tags`, `difficulty_rating`, `tenant_id`.
@@ -632,6 +680,7 @@ graph LR
 Tracks historical question performance metrics using mathematical equations calculated asynchronously from Student Assessment data.
 
 ### Calculations:
+
 - **Facility Index (p-value):**
   $$p = \frac{\text{Correct Responses}}{\text{Total Attempts}}$$
 - **Discrimination Index ($D$):**
@@ -656,6 +705,7 @@ The `QuestionImport` aggregate handles batch data ingest.
 ```
 
 ### Key Import Rules:
+
 1. **Duplicate Detection:** Computes a SHA-256 hash of the question prompt + payload. If a matching hash already exists, the import skips the item and logs a duplicate warning.
 2. **Atomic Ingestion:** Import runs in a single transactional block. If any schema validation fails, the transaction is rolled back.
 
@@ -666,6 +716,7 @@ The `QuestionImport` aggregate handles batch data ingest.
 Separation of Writes and Reads is strictly enforced at the application layer.
 
 ### 16.1 Commands
+
 - **CreateQuestion:** Initializes `questions` row with status `DRAFT`.
 - **UpdateQuestion:** Updates mutable properties on active drafts.
 - **SubmitReview:** Transitions status to `UNDER_REVIEW` and assigns reviewers.
@@ -679,6 +730,7 @@ Separation of Writes and Reads is strictly enforced at the application layer.
 - **AssignOwner:** Updates `question_ownership` fields.
 
 ### 16.2 Queries
+
 - **SearchQuestions:** Full-text and tag-filtered index search.
 - **QuestionHistory:** Audit log trace of review steps.
 - **PublishedQuestions:** Returns only immutable versions matching `PUBLISHED` status.
@@ -697,59 +749,139 @@ All changes emit events to the enterprise message bus:
 
 - `QuestionCreated`:
   ```json
-  { "eventId": "uuid-1", "questionId": "q-1", "code": "QB-SAT-001", "createdBy": "author-id", "occurredAt": "2026-07-19T23:55:00Z" }
+  {
+    "eventId": "uuid-1",
+    "questionId": "q-1",
+    "code": "QB-SAT-001",
+    "createdBy": "author-id",
+    "occurredAt": "2026-07-19T23:55:00Z"
+  }
   ```
 - `QuestionUpdated`:
   ```json
-  { "eventId": "uuid-2", "questionId": "q-1", "updatedBy": "author-id", "changedFields": ["prompt"], "occurredAt": "2026-07-19T23:56:00Z" }
+  {
+    "eventId": "uuid-2",
+    "questionId": "q-1",
+    "updatedBy": "author-id",
+    "changedFields": ["prompt"],
+    "occurredAt": "2026-07-19T23:56:00Z"
+  }
   ```
 - `QuestionReviewSubmitted`:
   ```json
-  { "eventId": "uuid-3", "reviewId": "rev-1", "questionId": "q-1", "reviewerId": "reviewer-id", "stage": "peer_review", "occurredAt": "2026-07-19T23:57:00Z" }
+  {
+    "eventId": "uuid-3",
+    "reviewId": "rev-1",
+    "questionId": "q-1",
+    "reviewerId": "reviewer-id",
+    "stage": "peer_review",
+    "occurredAt": "2026-07-19T23:57:00Z"
+  }
   ```
 - `QuestionApproved`:
   ```json
-  { "eventId": "uuid-4", "questionId": "q-1", "approvedBy": "reviewer-id", "stage": "sme_review", "occurredAt": "2026-07-19T23:58:00Z" }
+  {
+    "eventId": "uuid-4",
+    "questionId": "q-1",
+    "approvedBy": "reviewer-id",
+    "stage": "sme_review",
+    "occurredAt": "2026-07-19T23:58:00Z"
+  }
   ```
 - `QuestionRejected`:
   ```json
-  { "eventId": "uuid-5", "questionId": "q-1", "rejectedBy": "reviewer-id", "comments": "Grammar issue", "occurredAt": "2026-07-19T23:59:00Z" }
+  {
+    "eventId": "uuid-5",
+    "questionId": "q-1",
+    "rejectedBy": "reviewer-id",
+    "comments": "Grammar issue",
+    "occurredAt": "2026-07-19T23:59:00Z"
+  }
   ```
 - `QuestionPublished`:
   ```json
-  { "eventId": "uuid-6", "questionId": "q-1", "versionId": "ver-1", "publishedBy": "editor-id", "occurredAt": "2026-07-19T23:59:30Z" }
+  {
+    "eventId": "uuid-6",
+    "questionId": "q-1",
+    "versionId": "ver-1",
+    "publishedBy": "editor-id",
+    "occurredAt": "2026-07-19T23:59:30Z"
+  }
   ```
 - `QuestionDeprecated`:
   ```json
-  { "eventId": "uuid-7", "questionId": "q-1", "deprecatedBy": "editor-id", "occurredAt": "2026-07-19T23:59:59Z" }
+  {
+    "eventId": "uuid-7",
+    "questionId": "q-1",
+    "deprecatedBy": "editor-id",
+    "occurredAt": "2026-07-19T23:59:59Z"
+  }
   ```
 - `QuestionArchived`:
   ```json
-  { "eventId": "uuid-8", "questionId": "q-1", "archivedBy": "editor-id", "occurredAt": "2026-07-19T23:59:59Z" }
+  {
+    "eventId": "uuid-8",
+    "questionId": "q-1",
+    "archivedBy": "editor-id",
+    "occurredAt": "2026-07-19T23:59:59Z"
+  }
   ```
 - `QuestionDeleted`:
   ```json
-  { "eventId": "uuid-9", "questionId": "q-1", "deletedBy": "editor-id", "occurredAt": "2026-07-19T23:59:59Z" }
+  {
+    "eventId": "uuid-9",
+    "questionId": "q-1",
+    "deletedBy": "editor-id",
+    "occurredAt": "2026-07-19T23:59:59Z"
+  }
   ```
 - `QuestionImported`:
   ```json
-  { "eventId": "uuid-10", "importId": "imp-1", "totalImported": 50, "occurredAt": "2026-07-19T23:59:59Z" }
+  {
+    "eventId": "uuid-10",
+    "importId": "imp-1",
+    "totalImported": 50,
+    "occurredAt": "2026-07-19T23:59:59Z"
+  }
   ```
 - `QuestionImportFailed`:
   ```json
-  { "eventId": "uuid-11", "importId": "imp-1", "error": "Invalid JSON format", "occurredAt": "2026-07-19T23:59:59Z" }
+  {
+    "eventId": "uuid-11",
+    "importId": "imp-1",
+    "error": "Invalid JSON format",
+    "occurredAt": "2026-07-19T23:59:59Z"
+  }
   ```
 - `QuestionStatisticsUpdated`:
   ```json
-  { "eventId": "uuid-12", "questionId": "q-1", "versionId": "ver-1", "facilityIndex": 0.72, "occurredAt": "2026-07-19T23:59:59Z" }
+  {
+    "eventId": "uuid-12",
+    "questionId": "q-1",
+    "versionId": "ver-1",
+    "facilityIndex": 0.72,
+    "occurredAt": "2026-07-19T23:59:59Z"
+  }
   ```
 - `QuestionDifficultyChanged`:
   ```json
-  { "eventId": "uuid-13", "questionId": "q-1", "oldDifficulty": "easy", "newDifficulty": "medium", "occurredAt": "2026-07-19T23:59:59Z" }
+  {
+    "eventId": "uuid-13",
+    "questionId": "q-1",
+    "oldDifficulty": "easy",
+    "newDifficulty": "medium",
+    "occurredAt": "2026-07-19T23:59:59Z"
+  }
   ```
 - `QuestionOwnershipTransferred`:
   ```json
-  { "eventId": "uuid-14", "questionId": "q-1", "oldOwner": "org-1", "newOwner": "org-2", "occurredAt": "2026-07-19T23:59:59Z" }
+  {
+    "eventId": "uuid-14",
+    "questionId": "q-1",
+    "oldOwner": "org-1",
+    "newOwner": "org-2",
+    "occurredAt": "2026-07-19T23:59:59Z"
+  }
   ```
 
 ---
@@ -757,6 +889,7 @@ All changes emit events to the enterprise message bus:
 ## 18. Persistence Layer
 
 ### 18.1 Repository Interface Definition:
+
 ```typescript
 export interface QuestionRepository {
   save(question: Question): Promise<void>;
@@ -772,12 +905,14 @@ export interface QuestionRepository {
 ## 19. REST APIs
 
 ### Admin Endpoints:
+
 - `POST /api/v1/admin/questions` - Create question draft.
 - `POST /api/v1/admin/questions/:id/versions` - Add new version.
 - `PATCH /api/v1/admin/questions/:id/review` - Update review status.
 - `POST /api/v1/admin/questions/import` - Bulk import.
 
 ### Client Endpoints:
+
 - `GET /api/v1/questions/:id` - Fetch published question (verifies signed media URLs).
 - `GET /api/v1/questions/search` - Search by metadata filters.
 
@@ -786,6 +921,7 @@ export interface QuestionRepository {
 ## 20. Security Model
 
 ### 20.1 Role-Based Scopes (RBAC):
+
 - **Admin:** Full access to read, write, bypass workflows, transfer ownership, and force-purge records.
 - **Content Author:** Can create `DRAFT` items, upload media reference maps, and write revisions on rejected versions. Cannot self-approve or publish.
 - **Reviewer:** Can read items submitted to `UNDER_REVIEW`, write comment logs, and mark approval stamps.
@@ -795,9 +931,11 @@ export interface QuestionRepository {
 - **Student:** Can perform read-only queries solely on versions marked `PUBLISHED` when linked to active assessment sessions.
 
 ### 20.2 Tenant Isolation:
+
 - Every table contains a `tenant_id` column. RLS policies implicitly inject `tenant_id` validation matching the authenticated context token (using `auth.jwt() -> tenant_id`), preventing cross-tenant leakage.
 
 ### 20.3 Copyright & Licensing:
+
 - Authors must bind copyright permissions in the `question_ownership` mapping. Unlicensed items are restricted from public search indexing.
 
 ---
@@ -805,6 +943,7 @@ export interface QuestionRepository {
 ## 21. Admin UI
 
 Admin consoles are divided into specialized panels:
+
 1. **Question Library:** Searchable dashboard containing status lists.
 2. **Review Queue:** SME comments workspace.
 3. **Import Wizard:** Upload console showing parser validations.
@@ -865,12 +1004,12 @@ The verification process ensures compliance before release tagging:
 
 ## 26. Requirement Traceability Matrix
 
-| Requirement ID | Specification Description | Implementation Path | Verification Status |
-| :--- | :--- | :--- | :--- |
-| **REQ-QB-2.4.1** | Question root aggregate | `packages/domain/question-bank/src/aggregates/question.aggregate.ts` | PASS |
-| **REQ-QB-2.4.2** | Immutability lock | `supabase/migrations/00411_question_rls.sql` | PASS |
-| **REQ-QB-2.4.3** | 17 Question types | `packages/domain/question-bank/src/value-objects/QuestionPayload.ts` | PASS |
-| **REQ-QB-2.4.4** | Psychometrics IRT | `packages/persistence/src/question-bank/postgres-question-statistics.ts` | PASS |
+| Requirement ID   | Specification Description | Implementation Path                                                      | Verification Status |
+| :--------------- | :------------------------ | :----------------------------------------------------------------------- | :------------------ |
+| **REQ-QB-2.4.1** | Question root aggregate   | `packages/domain/question-bank/src/aggregates/question.aggregate.ts`     | PASS                |
+| **REQ-QB-2.4.2** | Immutability lock         | `supabase/migrations/00411_question_rls.sql`                             | PASS                |
+| **REQ-QB-2.4.3** | 17 Question types         | `packages/domain/question-bank/src/value-objects/QuestionPayload.ts`     | PASS                |
+| **REQ-QB-2.4.4** | Psychometrics IRT         | `packages/persistence/src/question-bank/postgres-question-statistics.ts` | PASS                |
 
 ---
 
@@ -879,6 +1018,7 @@ The verification process ensures compliance before release tagging:
 The smoke test defines a 90-step sequential verification flow:
 
 ### 27.1 Step-by-Step Executions:
+
 1. Sign in as author -> PASS
 2. Query seeded categories -> PASS
 3. Create Question Draft code `QB-SAT-ENG-001` -> PASS
@@ -899,16 +1039,17 @@ The smoke test defines a 90-step sequential verification flow:
 18. Try to edit prompt of published version -> FAIL (Rejected by DB lock)
 19. Create version 2 of `QB-SAT-ENG-001` -> PASS
 20. Ingest audio reference from Learning Resources -> PASS
-...
-88. Run automated fitness boundary tests -> PASS
-89. Verify all DB migrations executed in order -> PASS
-90. Run `pnpm run verify` -> PASS
+    ...
+21. Run automated fitness boundary tests -> PASS
+22. Verify all DB migrations executed in order -> PASS
+23. Run `pnpm run verify` -> PASS
 
 ---
 
 ## 28. Completion & Exit Criteria
 
 Sprint 2.4 transitions to complete state only when:
+
 - The `v1.4.0-question-bank-domain` tag is successfully created.
 - All unit and integration tests execute successfully.
 - Code coverage is above 90% across the domain.
@@ -918,6 +1059,7 @@ Sprint 2.4 transitions to complete state only when:
 ## 29. Engineering Certification
 
 The release must deliver a signed copy of:
+
 - **v1.4.0-question-bank-certification.md**
 - **Architecture Compliance Report**
 - **Security Audit logs**
@@ -927,6 +1069,7 @@ The release must deliver a signed copy of:
 ## 30. Definition of Done
 
 The Question Bank is fully done when:
+
 - Authorized admins can import, version, and review questions.
 - Downstream systems query only published questions.
 - No direct database write permissions leak from learners roles.

@@ -5,12 +5,12 @@ import {
   ResourceStatus,
   SensitivityLevel,
   VisibilityScope,
-  VariantPurpose
+  VariantPurpose,
 } from '../value-objects/learning-resource-value-objects';
 import {
   LearningResourceCreated,
   ResourceVariantCreated,
-  ResourceArchived
+  ResourceArchived,
 } from '../events/learning-resource-events';
 
 export class ResourceVariant extends Entity<string> {
@@ -100,7 +100,7 @@ export class LearningResource extends AggregateRoot<string> {
     if (this.status.value === 'archived') {
       throw new DomainError('Cannot add variants to an archived resource.', 'RESOURCE_ARCHIVED');
     }
-    if (this._variants.some(v => v.code === code)) {
+    if (this._variants.some((v) => v.code === code)) {
       throw new DomainError(`Variant with code ${code} already exists.`, 'DUPLICATE_VARIANT');
     }
 
@@ -131,7 +131,12 @@ export class LearningResource extends AggregateRoot<string> {
     return variant;
   }
 
-  public update(title: string, description: string, sensitivity?: SensitivityLevel, visibility?: VisibilityScope) {
+  public update(
+    title: string,
+    description: string,
+    sensitivity?: SensitivityLevel,
+    visibility?: VisibilityScope
+  ) {
     if (this.status.value === 'archived') {
       throw new DomainError('Cannot update details of an archived resource.', 'RESOURCE_ARCHIVED');
     }

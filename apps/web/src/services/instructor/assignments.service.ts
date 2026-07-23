@@ -31,7 +31,7 @@ export const instructorAssignmentsService = {
           maxScore: 100,
           submissionType: 'FILE',
           allowedFileTypes: ['pdf', 'docx'],
-          status: 'PUBLISHED'
+          status: 'PUBLISHED',
         },
         {
           id: 'a2',
@@ -44,8 +44,8 @@ export const instructorAssignmentsService = {
           maxScore: 50,
           submissionType: 'TEXT',
           allowedFileTypes: [],
-          status: 'DRAFT'
-        }
+          status: 'DRAFT',
+        },
       ];
     }
   },
@@ -56,7 +56,7 @@ export const instructorAssignmentsService = {
     } catch {
       return {
         id: Math.random().toString(),
-        ...assignment
+        ...assignment,
       };
     }
   },
@@ -68,5 +68,5 @@ export const instructorAssignmentsService = {
     } catch {
       return true; // fallback
     }
-  }
+  },
 };

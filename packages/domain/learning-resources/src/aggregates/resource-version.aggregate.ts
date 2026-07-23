@@ -4,7 +4,7 @@ import { VersionStatus } from '../value-objects/learning-resource-value-objects'
 import {
   ResourceVersionPublished,
   ResourceVersionRetired,
-  ResourceArchived
+  ResourceArchived,
 } from '../events/learning-resource-events';
 
 export class ResourceVersion extends AggregateRoot<string> {
@@ -64,14 +64,22 @@ export class ResourceVersion extends AggregateRoot<string> {
       title,
       description,
       resourceFormatId,
-      null, null, null, null, null, null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
       estimatedStudyMinutes
     );
   }
 
   public submitForReview(_reviewerId?: string) {
     if (this.status.value !== 'draft' && this.status.value !== 'failed') {
-      throw new DomainError(`Cannot submit version for review from status ${this.status.value}.`, 'INVALID_STATUS_TRANSITION');
+      throw new DomainError(
+        `Cannot submit version for review from status ${this.status.value}.`,
+        'INVALID_STATUS_TRANSITION'
+      );
     }
     this.status = new VersionStatus('review');
     this.updatedAt = new Date();
@@ -79,24 +87,34 @@ export class ResourceVersion extends AggregateRoot<string> {
 
   public publish(publishedBy: string) {
     if (this.status.value !== 'review' && this.status.value !== 'draft') {
-      throw new DomainError(`Cannot publish version from status ${this.status.value}.`, 'INVALID_STATUS_TRANSITION');
+      throw new DomainError(
+        `Cannot publish version from status ${this.status.value}.`,
+        'INVALID_STATUS_TRANSITION'
+      );
     }
     this.status = new VersionStatus('published');
     this.publishedBy = publishedBy;
     this.publishedAt = new Date();
     this.updatedAt = new Date();
-    this.addDomainEvent(new ResourceVersionPublished(this.resourceVariantId, this.id, this.versionNo));
+    this.addDomainEvent(
+      new ResourceVersionPublished(this.resourceVariantId, this.id, this.versionNo)
+    );
   }
 
   public retire(retiredBy: string) {
     if (this.status.value !== 'published') {
-      throw new DomainError('Cannot retire a version that is not published.', 'INVALID_STATUS_TRANSITION');
+      throw new DomainError(
+        'Cannot retire a version that is not published.',
+        'INVALID_STATUS_TRANSITION'
+      );
     }
     this.status = new VersionStatus('retired');
     this.retiredBy = retiredBy;
     this.retiredAt = new Date();
     this.updatedAt = new Date();
-    this.addDomainEvent(new ResourceVersionRetired(this.resourceVariantId, this.id, this.versionNo));
+    this.addDomainEvent(
+      new ResourceVersionRetired(this.resourceVariantId, this.id, this.versionNo)
+    );
   }
 
   public archive() {
@@ -107,7 +125,10 @@ export class ResourceVersion extends AggregateRoot<string> {
 
   public setMetadata(key: string, value: string) {
     if (this.status.value === 'published' || this.status.value === 'retired') {
-      throw new DomainError('Cannot modify metadata of a published or retired version.', 'VERSION_LOCKED');
+      throw new DomainError(
+        'Cannot modify metadata of a published or retired version.',
+        'VERSION_LOCKED'
+      );
     }
     this.metadata.set(key, value);
     this.updatedAt = new Date();

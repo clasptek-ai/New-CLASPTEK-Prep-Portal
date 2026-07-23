@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getStudentLearningContext } from '@/lib/student-learning-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
@@ -11,7 +13,8 @@ export async function GET(req: NextRequest) {
     const studentId = req.nextUrl.searchParams.get('studentId');
     if (!studentId) return NextResponse.json({ error: 'studentId required' }, { status: 400 });
 
-    const isSpecialRole = session.roles.includes('ADMINISTRATOR') || session.roles.includes('INSTRUCTOR');
+    const isSpecialRole =
+      session.roles.includes('ADMINISTRATOR') || session.roles.includes('INSTRUCTOR');
     if (session.userId !== studentId && !isSpecialRole) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }

@@ -1,0 +1,20 @@
+{
+  "extends": "../../../tsconfig.options.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@clasptek/domain-diagnostic-placement": ["../../domain/diagnostic-placement/src/index.ts"],
+      "@clasptek/kernel": ["../../kernel/src/index.ts"],
+      "@clasptek/validation": ["../../validation/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../kernel" },
+    { "path": "../../validation" },
+    { "path": "../../domain/diagnostic-placement" }
+  ]
+}

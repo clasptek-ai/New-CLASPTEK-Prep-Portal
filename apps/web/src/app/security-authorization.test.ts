@@ -19,8 +19,8 @@ vi.mock('next/navigation', () => {
     usePathname: () => '/admin/dashboard',
     useRouter: () => ({
       push: vi.fn(),
-      prefetch: vi.fn()
-    })
+      prefetch: vi.fn(),
+    }),
   };
 });
 
@@ -28,8 +28,8 @@ vi.mock('next/navigation', () => {
 vi.mock('next/headers', () => {
   return {
     cookies: async () => ({
-      getAll: () => []
-    })
+      getAll: () => [],
+    }),
   };
 });
 
@@ -49,8 +49,8 @@ describe('Sprint 3.4 — Platform Security, Authorization & Observability Verifi
     const req = new NextRequest('http://localhost/api/v1/readiness', {
       headers: {
         'x-student-id': 'stud-test-abc',
-        'x-user-role': 'STUDENT'
-      }
+        'x-user-role': 'STUDENT',
+      },
     });
     const session = await getAuthenticatedSession(req);
     expect(session).toBeDefined();

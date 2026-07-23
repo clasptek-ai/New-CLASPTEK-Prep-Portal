@@ -6,7 +6,7 @@ import { FeedbackScreen } from '../../../features/instructor/feedback/feedback-s
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <FeedbackScreen />
     </WorkspaceShell>
   );

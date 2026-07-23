@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurriculumContext } from '@/lib/curriculum-context';
 
@@ -10,8 +12,8 @@ export async function GET(req: NextRequest) {
     const examProduct = searchParams.get('examProduct') || undefined;
 
     const curricula = await searchCurriculaHandler.execute({ status, code, examProduct });
-    
-    const results = curricula.map(cur => ({
+
+    const results = curricula.map((cur) => ({
       id: cur.id,
       code: cur.code.value,
       slug: cur.slug,
@@ -19,12 +21,18 @@ export async function GET(req: NextRequest) {
       description: cur.description,
       status: cur.status,
       currentVersionId: cur.currentVersionId,
-      currentVersionNo: cur.currentVersionNo
+      currentVersionNo: cur.currentVersionNo,
     }));
 
     return NextResponse.json(results, { status: 200 });
   } catch (err: unknown) {
-    logger.error('GET /api/v1/curricula failure', err instanceof Error ? err : new Error(String(err)));
-    return NextResponse.json({ code: 'INTERNAL_ERROR', message: 'Internal server error' }, { status: 500 });
+    logger.error(
+      'GET /api/v1/curricula failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
+    return NextResponse.json(
+      { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

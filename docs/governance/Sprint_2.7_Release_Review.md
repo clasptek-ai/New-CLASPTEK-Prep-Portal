@@ -17,12 +17,12 @@ Sprint 2.7 delivers the **Assessment Runtime Domain** — the secure, high-perfo
 
 ### Database Layer (4 migrations)
 
-| Migration | Description |
-|---|---|
-| `00700_assessment_runtime.sql` | Core schema: 8 tables covering assessment sessions, answer sheets, answers, revisions, checkpoints, navigation logs, security incidents, heartbeats, statistics, and submissions |
-| `00701_assessment_runtime_seed.sql` | Diagnostic simulation and mock instance definitions |
-| `00702_assessment_runtime_rls.sql` | Row Level Security policies for student runtime data |
-| `00703_assessment_runtime_indexes.sql` | Performance indexes (B-Tree on student ID, composite on session/checkpoint) |
+| Migration                              | Description                                                                                                                                                                      |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `00700_assessment_runtime.sql`         | Core schema: 8 tables covering assessment sessions, answer sheets, answers, revisions, checkpoints, navigation logs, security incidents, heartbeats, statistics, and submissions |
+| `00701_assessment_runtime_seed.sql`    | Diagnostic simulation and mock instance definitions                                                                                                                              |
+| `00702_assessment_runtime_rls.sql`     | Row Level Security policies for student runtime data                                                                                                                             |
+| `00703_assessment_runtime_indexes.sql` | Performance indexes (B-Tree on student ID, composite on session/checkpoint)                                                                                                      |
 
 ### Domain Package — `@clasptek/domain-assessment-runtime`
 

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAssessmentRuntimeContext } from '@/lib/assessment-runtime-context';
 
@@ -6,7 +8,8 @@ export async function POST(req: NextRequest) {
     const ctx = getAssessmentRuntimeContext();
     const body = await req.json();
     const { type, sessionId } = body;
-    if (!type || !sessionId) return NextResponse.json({ error: 'Missing type or sessionId' }, { status: 400 });
+    if (!type || !sessionId)
+      return NextResponse.json({ error: 'Missing type or sessionId' }, { status: 400 });
 
     const session = await ctx.getSession.execute({ sessionId });
     if (!session) return NextResponse.json({ error: 'Session not found' }, { status: 404 });
@@ -25,9 +28,12 @@ export async function POST(req: NextRequest) {
       });
       // Save updated telemetry log
       const env = require('@clasptek/configuration').loadEnvironment();
-      const logger = new (require('@clasptek/observability').ConsoleLogger)('telemetry-persistence');
+      const logger = new (require('@clasptek/observability').ConsoleLogger)(
+        'telemetry-persistence'
+      );
       const dbPool = new (require('@clasptek/persistence').DatabasePool)(env, logger);
-      const sessionRepo = new (require('@clasptek/persistence').PostgresAssessmentSessionRepository)(dbPool);
+      const sessionRepo =
+        new (require('@clasptek/persistence').PostgresAssessmentSessionRepository)(dbPool);
       await sessionRepo.save(session);
       return NextResponse.json({ success: true });
     }
@@ -43,16 +49,22 @@ export async function POST(req: NextRequest) {
         recordedAt: new Date(),
       });
       const env = require('@clasptek/configuration').loadEnvironment();
-      const logger = new (require('@clasptek/observability').ConsoleLogger)('telemetry-persistence');
+      const logger = new (require('@clasptek/observability').ConsoleLogger)(
+        'telemetry-persistence'
+      );
       const dbPool = new (require('@clasptek/persistence').DatabasePool)(env, logger);
-      const sessionRepo = new (require('@clasptek/persistence').PostgresAssessmentSessionRepository)(dbPool);
+      const sessionRepo =
+        new (require('@clasptek/persistence').PostgresAssessmentSessionRepository)(dbPool);
       await sessionRepo.save(session);
       return NextResponse.json({ success: true });
     }
 
     return NextResponse.json({ error: 'Unsupported telemetry type' }, { status: 400 });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 400 }
+    );
   }
 }
 export async function GET(req: NextRequest) {
@@ -65,6 +77,9 @@ export async function GET(req: NextRequest) {
     const history = await ctx.getNavigationHistory.execute({ sessionId });
     return NextResponse.json({ history });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

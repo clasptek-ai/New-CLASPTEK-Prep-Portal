@@ -14,17 +14,17 @@ Enterprise Platform Baseline v1.2 establishes the official architectural referen
 
 # Architecture Status
 
-| Layer | Status |
-|---|---|
-| Core Platform | ✅ Complete |
-| Identity & Security | ✅ Complete |
-| Academic Authoring | ✅ Complete |
-| Student Learning Journey | ✅ Complete |
-| Adaptive Practice | ✅ Complete |
-| Assessment Runtime | ✅ Complete |
-| AI Evaluation | ⏳ Next Sprint |
-| Prediction Engine | ⏳ Planned |
-| AI Learning Coach | ⏳ Planned |
+| Layer                    | Status         |
+| ------------------------ | -------------- |
+| Core Platform            | ✅ Complete    |
+| Identity & Security      | ✅ Complete    |
+| Academic Authoring       | ✅ Complete    |
+| Student Learning Journey | ✅ Complete    |
+| Adaptive Practice        | ✅ Complete    |
+| Assessment Runtime       | ✅ Complete    |
+| AI Evaluation            | ⏳ Next Sprint |
+| Prediction Engine        | ⏳ Planned     |
+| AI Learning Coach        | ⏳ Planned     |
 
 ---
 
@@ -136,23 +136,23 @@ Consumers:
 
 # Runtime Performance Baseline
 
-| Operation | Target | Actual |
-|---|---:|---:|
+| Operation        |  Target |                           Actual |
+| ---------------- | ------: | -------------------------------: |
 | Session Creation | <150 ms | Record during production rollout |
-| Save Answer | <50 ms | Record during production rollout |
-| Checkpoint | <100 ms | Record during production rollout |
-| Resume | <250 ms | Record during production rollout |
-| Submission | <500 ms | Record during production rollout |
+| Save Answer      |  <50 ms | Record during production rollout |
+| Checkpoint       | <100 ms | Record during production rollout |
+| Resume           | <250 ms | Record during production rollout |
+| Submission       | <500 ms | Record during production rollout |
 
 ---
 
 # Runtime Dependency Matrix
 
-| Domain | Reads | Writes |
-|---|---|---|
+| Domain             | Reads                                                      | Writes             |
+| ------------------ | ---------------------------------------------------------- | ------------------ |
 | Assessment Runtime | Adaptive Practice, Question Bank, Student Learning Journey | Assessment Runtime |
-| AI Evaluation | Assessment Runtime, Question Bank | AI Evaluation |
-| Prediction Engine | AI Evaluation, Student Learning Journey | Prediction Engine |
+| AI Evaluation      | Assessment Runtime, Question Bank                          | AI Evaluation      |
+| Prediction Engine  | AI Evaluation, Student Learning Journey                    | Prediction Engine  |
 
 ---
 
@@ -201,15 +201,15 @@ AI Learning Coach
 
 # Responsibility Matrix
 
-| Domain | Responsibility |
-|---|---|
-| Question Bank | Assessment content |
-| Student Learning Journey | Learner state |
-| Adaptive Practice | Personalized planning |
-| Assessment Runtime | Assessment execution |
-| AI Evaluation | Scoring & feedback |
-| Prediction Engine | Readiness forecasting |
-| AI Learning Coach | Personalized guidance |
+| Domain                   | Responsibility        |
+| ------------------------ | --------------------- |
+| Question Bank            | Assessment content    |
+| Student Learning Journey | Learner state         |
+| Adaptive Practice        | Personalized planning |
+| Assessment Runtime       | Assessment execution  |
+| AI Evaluation            | Scoring & feedback    |
+| Prediction Engine        | Readiness forecasting |
+| AI Learning Coach        | Personalized guidance |
 
 ---
 

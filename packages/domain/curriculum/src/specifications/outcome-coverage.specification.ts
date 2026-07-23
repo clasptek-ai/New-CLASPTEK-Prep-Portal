@@ -7,6 +7,8 @@ export class OutcomeCoverageSpecification extends Specification<LearningOutcome[
     if (outcomes.length === 0) {
       return false;
     }
-    return outcomes.every(o => o.isMeasurable && o.status === 'published' || o.status === 'draft');
+    return outcomes.every(
+      (o) => (o.isMeasurable && o.status === 'published') || o.status === 'draft'
+    );
   }
 }

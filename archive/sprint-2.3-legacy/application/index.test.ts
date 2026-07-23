@@ -3,12 +3,12 @@ import {
   CreateLessonHandler,
   CreateLessonCommand,
   PublishResourceHandler,
-  PublishResourceCommand
+  PublishResourceCommand,
 } from './index';
 import {
   LessonRepository,
   LearningResourceRepository,
-  LearningResource
+  LearningResource,
 } from '@clasptek/domain-learning-resources';
 
 describe('Application Handlers Tests for Lessons & Resources', () => {
@@ -19,7 +19,7 @@ describe('Application Handlers Tests for Lessons & Resources', () => {
       save: vi.fn(),
       exists: vi.fn().mockResolvedValue(false),
       search: vi.fn(),
-      nextIdentity: vi.fn().mockReturnValue('mock-les-id')
+      nextIdentity: vi.fn().mockReturnValue('mock-les-id'),
     };
 
     const handler = new CreateLessonHandler(mockRepo);
@@ -28,7 +28,7 @@ describe('Application Handlers Tests for Lessons & Resources', () => {
       code: 'IELTS-LIS-L1',
       name: 'Lesson 1',
       description: 'Intro to part 1',
-      displayOrder: 1
+      displayOrder: 1,
     };
 
     const id = await handler.execute(command);
@@ -56,13 +56,13 @@ describe('Application Handlers Tests for Lessons & Resources', () => {
       save: vi.fn(),
       exists: vi.fn(),
       search: vi.fn(),
-      nextIdentity: vi.fn()
+      nextIdentity: vi.fn(),
     };
 
     const handler = new PublishResourceHandler(mockRepo);
     const command: PublishResourceCommand = {
       resourceId: 'res-1',
-      versionNo: '1.0.0'
+      versionNo: '1.0.0',
     };
 
     await handler.execute(command);

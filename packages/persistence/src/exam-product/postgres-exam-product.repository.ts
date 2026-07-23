@@ -1,11 +1,22 @@
-import { ExamProductRepository, SearchFilters, ExamProduct, ExamProductVersion } from '@clasptek/domain-exam-product';
-import { ExamProductReadService, GetExamProductsQuery, ExamProductReadModel } from '@clasptek/application-exam-product';
+import {
+  ExamProductRepository,
+  SearchFilters,
+  ExamProduct,
+  ExamProductVersion,
+} from '@clasptek/domain-exam-product';
+import {
+  ExamProductReadService,
+  GetExamProductsQuery,
+  ExamProductReadModel,
+} from '@clasptek/application-exam-product';
 import { ExamCode } from '@clasptek/domain-exam-product';
 import { ExamProductStatus } from '@clasptek/domain-exam-product';
 import { VersionNumber } from '@clasptek/domain-exam-product';
 import { PostgresUnitOfWork } from './postgres-unit-of-work';
 
-export class PostgresExamProductRepository implements ExamProductRepository, ExamProductReadService {
+export class PostgresExamProductRepository
+  implements ExamProductRepository, ExamProductReadService
+{
   constructor(private readonly uow: PostgresUnitOfWork) {}
 
   private get client() {
@@ -13,19 +24,28 @@ export class PostgresExamProductRepository implements ExamProductRepository, Exa
   }
 
   public async findById(id: string): Promise<ExamProduct | null> {
-    const res = await this.client.query('SELECT * FROM exam_products WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const res = await this.client.query(
+      'SELECT * FROM exam_products WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async findByCode(code: string): Promise<ExamProduct | null> {
-    const res = await this.client.query('SELECT * FROM exam_products WHERE code = $1 AND deleted_at IS NULL', [code]);
+    const res = await this.client.query(
+      'SELECT * FROM exam_products WHERE code = $1 AND deleted_at IS NULL',
+      [code]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async exists(code: string): Promise<boolean> {
-    const res = await this.client.query('SELECT 1 FROM exam_products WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
+    const res = await this.client.query(
+      'SELECT 1 FROM exam_products WHERE code = $1 AND deleted_at IS NULL LIMIT 1',
+      [code]
+    );
     return res.rows.length > 0;
   }
 
@@ -127,7 +147,9 @@ export class PostgresExamProductRepository implements ExamProductRepository, Exa
   }
 
   public async getExamProductById(id: string): Promise<ExamProductReadModel | null> {
-    const res = await this.client.query('SELECT * FROM vw_exam_products WHERE product_id = $1', [id]);
+    const res = await this.client.query('SELECT * FROM vw_exam_products WHERE product_id = $1', [
+      id,
+    ]);
     if (res.rows.length === 0) return null;
     const r = res.rows[0];
     return {
@@ -165,7 +187,10 @@ export class PostgresExamProductRepository implements ExamProductRepository, Exa
     product.currentVersionNo = row.current_version_no || undefined;
 
     // Hydrate versions
-    const verRes = await this.client.query('SELECT * FROM exam_product_versions WHERE exam_product_id = $1 AND deleted_at IS NULL', [product.id]);
+    const verRes = await this.client.query(
+      'SELECT * FROM exam_product_versions WHERE exam_product_id = $1 AND deleted_at IS NULL',
+      [product.id]
+    );
     const versions = verRes.rows.map(
       (v: any) =>
         new ExamProductVersion(

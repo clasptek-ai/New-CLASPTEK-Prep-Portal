@@ -29,8 +29,8 @@ export const adminDashboardService = {
       const assessmentsList = await adminAssessmentsService.getAssessments();
       const auditLogs = await adminAuditService.getAuditLogs();
 
-      const students = usersList.filter(u => u.role === 'STUDENT');
-      const instructors = usersList.filter(u => u.role === 'INSTRUCTOR');
+      const students = usersList.filter((u) => u.role === 'STUDENT');
+      const instructors = usersList.filter((u) => u.role === 'INSTRUCTOR');
 
       return {
         stats: {
@@ -41,18 +41,28 @@ export const adminDashboardService = {
           activeExamsCount: assessmentsList.length,
           assignmentsSubmitted: 45,
           overallReadinessAverage: 78.5,
-          platformHealth: 'HEALTHY'
+          platformHealth: 'HEALTHY',
         },
-        recentActivity: auditLogs.slice(0, 5).map(log => ({
+        recentActivity: auditLogs.slice(0, 5).map((log) => ({
           id: log.id,
           action: log.action,
           user: log.user,
-          timestamp: log.timestamp
+          timestamp: log.timestamp,
         })),
         notifications: [
-          { id: '1', title: 'Critical System Alert', message: 'CPU utilization spike detected in database engine.', severity: 'CRITICAL' },
-          { id: '2', title: 'Questions Pending Review', message: '5 question bank entries await validation.', severity: 'WARNING' }
-        ]
+          {
+            id: '1',
+            title: 'Critical System Alert',
+            message: 'CPU utilization spike detected in database engine.',
+            severity: 'CRITICAL',
+          },
+          {
+            id: '2',
+            title: 'Questions Pending Review',
+            message: '5 question bank entries await validation.',
+            severity: 'WARNING',
+          },
+        ],
       };
     } catch {
       return {
@@ -64,16 +74,31 @@ export const adminDashboardService = {
           activeExamsCount: 5,
           assignmentsSubmitted: 45,
           overallReadinessAverage: 78.5,
-          platformHealth: 'HEALTHY'
+          platformHealth: 'HEALTHY',
         },
         recentActivity: [
-          { id: 'a1', action: 'Suspended User Accounts', user: 'Chief Admin Sarah', timestamp: new Date().toISOString() },
-          { id: 'a2', action: 'Published Essay Syllabus', user: 'Chief Admin Sarah', timestamp: new Date().toISOString() }
+          {
+            id: 'a1',
+            action: 'Suspended User Accounts',
+            user: 'Chief Admin Sarah',
+            timestamp: new Date().toISOString(),
+          },
+          {
+            id: 'a2',
+            action: 'Published Essay Syllabus',
+            user: 'Chief Admin Sarah',
+            timestamp: new Date().toISOString(),
+          },
         ],
         notifications: [
-          { id: '1', title: 'Critical System Alert', message: 'CPU utilization spike detected in database engine.', severity: 'CRITICAL' }
-        ]
+          {
+            id: '1',
+            title: 'Critical System Alert',
+            message: 'CPU utilization spike detected in database engine.',
+            severity: 'CRITICAL',
+          },
+        ],
       };
     }
-  }
+  },
 };

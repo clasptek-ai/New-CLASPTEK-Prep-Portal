@@ -59,7 +59,10 @@ describe('StudentLearningJourney', () => {
   const mkJourney = (status?: string) => {
     const j = StudentLearningJourney.create('journey-1', 'student-1');
     if (status === 'ACTIVE') j.activate();
-    if (status === 'PAUSED') { j.activate(); j.pause(); }
+    if (status === 'PAUSED') {
+      j.activate();
+      j.pause();
+    }
     return j;
   };
 
@@ -108,7 +111,10 @@ describe('StudentLearningJourney', () => {
   it('adds a goal to ACTIVE journey', () => {
     const j = mkJourney('ACTIVE');
     const goal = new LearningGoal({
-      id: 'g-1', title: 'Pass IELTS', priority: 'HIGH', status: 'ACTIVE',
+      id: 'g-1',
+      title: 'Pass IELTS',
+      priority: 'HIGH',
+      status: 'ACTIVE',
     });
     j.addGoal(goal);
     expect(j.goals).toHaveLength(1);
@@ -117,7 +123,10 @@ describe('StudentLearningJourney', () => {
   it('cannot add a goal to non-ACTIVE journey', () => {
     const j = mkJourney('PAUSED');
     const goal = new LearningGoal({
-      id: 'g-2', title: 'Pass IELTS', priority: 'MEDIUM', status: 'DRAFT',
+      id: 'g-2',
+      title: 'Pass IELTS',
+      priority: 'MEDIUM',
+      status: 'DRAFT',
     });
     expect(() => j.addGoal(goal)).toThrow();
   });
@@ -125,7 +134,10 @@ describe('StudentLearningJourney', () => {
   it('completes an existing goal', () => {
     const j = mkJourney('ACTIVE');
     const goal = new LearningGoal({
-      id: 'g-3', title: 'Goal', priority: 'LOW', status: 'ACTIVE',
+      id: 'g-3',
+      title: 'Goal',
+      priority: 'LOW',
+      status: 'ACTIVE',
     });
     j.addGoal(goal);
     j.completeGoal('g-3');
@@ -183,16 +195,28 @@ describe('StudentLearningJourney', () => {
 
   it('prevents duplicate bookmarks for same resource', () => {
     const j = mkJourney('ACTIVE');
-    const bm = new Bookmark({ id: 'bm-2', resourceType: 'MODULE', resourceId: 'mod-1', createdAt: new Date() });
+    const bm = new Bookmark({
+      id: 'bm-2',
+      resourceType: 'MODULE',
+      resourceId: 'mod-1',
+      createdAt: new Date(),
+    });
     j.addBookmark(bm);
-    const bm2 = new Bookmark({ id: 'bm-3', resourceType: 'MODULE', resourceId: 'mod-1', createdAt: new Date() });
+    const bm2 = new Bookmark({
+      id: 'bm-3',
+      resourceType: 'MODULE',
+      resourceId: 'mod-1',
+      createdAt: new Date(),
+    });
     expect(() => j.addBookmark(bm2)).toThrow();
   });
 
   it('unlocks an achievement idempotently', () => {
     const j = mkJourney('ACTIVE');
     const a = new Achievement({
-      id: 'ach-1', achievementType: 'FIRST_SESSION', unlockedAt: new Date(),
+      id: 'ach-1',
+      achievementType: 'FIRST_SESSION',
+      unlockedAt: new Date(),
     });
     j.unlockAchievement(a);
     j.unlockAchievement(a); // second call should not throw
@@ -214,7 +238,10 @@ describe('StudentLearningJourney', () => {
   it('completes a milestone and fires event', () => {
     const j = mkJourney('ACTIVE');
     const m = new LearningMilestone({
-      id: 'ms-1', title: 'First Week', milestoneType: 'WEEKLY', completed: false,
+      id: 'ms-1',
+      title: 'First Week',
+      milestoneType: 'WEEKLY',
+      completed: false,
     });
     j.addMilestone(m);
     j.completeMilestone('ms-1');
@@ -236,10 +263,11 @@ describe('StudentLearningJourney', () => {
 // ─────────────────────────────────────────────────────────────────
 
 describe('StudentProgrammeEnrollment', () => {
-  const mkEnrollment = () => StudentProgrammeEnrollment.create(
-    'enr-1', 'journey-1', 'student-1', 'prog-1', 'ver-1',
-    { deliveryMode: 'ONLINE', cohortId: 'cohort-A' }
-  );
+  const mkEnrollment = () =>
+    StudentProgrammeEnrollment.create('enr-1', 'journey-1', 'student-1', 'prog-1', 'ver-1', {
+      deliveryMode: 'ONLINE',
+      cohortId: 'cohort-A',
+    });
 
   it('creates enrollment in ACTIVE status', () => {
     const e = mkEnrollment();
@@ -286,7 +314,11 @@ describe('LearningPlan', () => {
   it('creates a plan and adds a versioned plan entry', () => {
     const plan = LearningPlan.create('plan-1', 'journey-1', 'student-1', 'IELTS 2026 Plan');
     expect(plan.status).toBe('ACTIVE');
-    plan.addVersion({ versionNo: '1.0.0', source: 'AI_GENERATED', notes: 'Initial AI recommendation' });
+    plan.addVersion({
+      versionNo: '1.0.0',
+      source: 'AI_GENERATED',
+      notes: 'Initial AI recommendation',
+    });
     expect(plan.versions).toHaveLength(1);
     expect(plan.currentVersion?.versionNo).toBe('1.0.0');
     expect(plan.currentVersion?.source).toBe('AI_GENERATED');
@@ -309,5 +341,125 @@ describe('LearningPlan', () => {
     const plan = LearningPlan.create('plan-4', 'j-4', 's-4');
     plan.archive();
     expect(() => plan.addVersion({ versionNo: '2.0.0', source: 'STUDENT' })).toThrow();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────
+// Sprint 2.5 Addendum Value Object & Aggregate Tests
+// ─────────────────────────────────────────────────────────────────
+
+import {
+  LearningPace,
+  TargetExamDate,
+  TargetScore,
+  ReadinessScore,
+  StudentIntervention,
+  ReadinessCalculator,
+  StudyPlanEngine,
+  InterventionEngine,
+} from './index';
+
+describe('LearningPace', () => {
+  it('creates valid learning pace and returns default study hours', () => {
+    const p1 = new LearningPace('Accelerated');
+    expect(p1.value).toBe('Accelerated');
+    expect(p1.defaultWeeklyStudyHours).toBe(18);
+
+    const p2 = new LearningPace('Intensive');
+    expect(p2.defaultWeeklyStudyHours).toBe(25);
+  });
+
+  it('throws on invalid pace', () => {
+    expect(() => new LearningPace('SuperFast' as any)).toThrow();
+  });
+});
+
+describe('TargetExamDate & TargetScore', () => {
+  it('calculates days and weeks remaining correctly', () => {
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 14);
+    const ted = new TargetExamDate(targetDate);
+    expect(ted.daysRemaining()).toBe(14);
+    expect(ted.weeksRemaining()).toBe(2);
+  });
+
+  it('creates valid TargetScore and rejects out-of-bounds', () => {
+    const ts = new TargetScore(7.5);
+    expect(ts.value).toBe(7.5);
+    expect(() => new TargetScore(-1)).toThrow();
+  });
+});
+
+describe('ReadinessScore & ReadinessCalculator', () => {
+  it('maps scores to readiness levels correctly', () => {
+    expect(new ReadinessScore(30).level).toBe('HIGH_RISK');
+    expect(new ReadinessScore(50).level).toBe('NEEDS_IMPROVEMENT');
+    expect(new ReadinessScore(70).level).toBe('NEARLY_READY');
+    expect(new ReadinessScore(90).level).toBe('EXAM_READY');
+  });
+
+  it('calculates weighted readiness score via ReadinessCalculator', () => {
+    const calc = new ReadinessCalculator();
+    const score = calc.calculate({
+      diagnosticPerformance: 70,
+      practiceScores: 80,
+      mockScores: 75,
+      curriculumCompletion: 60,
+      lessonConsistency: 85,
+      learningPace: 'Accelerated',
+      weakSkillAreasCount: 1,
+    });
+    expect(score.value).toBeGreaterThanOrEqual(60);
+    expect(score.level).toBeDefined();
+  });
+});
+
+describe('StudyPlanEngine calculations', () => {
+  it('computes lessons per week and revision window correctly', () => {
+    const targetDate = new Date();
+    targetDate.setDate(targetDate.getDate() + 35);
+    const result = StudyPlanEngine.calculateSchedule(
+      new TargetExamDate(targetDate),
+      20, // 20 lessons remaining
+      15 // 15 hours/week
+    );
+    expect(result.remainingWeeks).toBe(5);
+    expect(result.lessonsPerWeek).toBe(4);
+    expect(result.practiceSessionsPerWeek).toBe(5);
+    expect(result.revisionWindowDays).toBe(14);
+  });
+});
+
+describe('InterventionEngine & StudentIntervention', () => {
+  it('evaluates inactivity and low readiness rules', () => {
+    const engine = new InterventionEngine();
+    const result = engine.evaluate({
+      daysSinceLastLogin: 8,
+      missedWeeklyTargets: true,
+      repeatedLessonFailures: 0,
+      readinessScore: 35,
+      completionPercentage: 20,
+      weakCompetenciesCount: 3,
+      missedStudySessionsCount: 2,
+      assessmentScoreTrend: 'DECLINING',
+    });
+
+    expect(result.triggeredRules).toContain('RULE_NO_LOGIN_7D');
+    expect(result.triggeredRules).toContain('RULE_LOW_READINESS');
+    expect(result.recommendedActions).toContain('Notify Student');
+    expect(result.interventionsToCreate.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('creates StudentIntervention and emits StudentAtRisk event', () => {
+    const intervention = StudentIntervention.create('si-1', 'j-1', 's-1', 'RULE_NO_LOGIN_7D', {
+      interventionType: 'INACTIVITY_ALERT',
+      title: '7 Days Inactivity',
+      description: 'Student inactive',
+      triggerReason: 'No login for 7 days',
+      actionRecommended: 'Notify Student',
+    });
+
+    expect(intervention.status).toBe('ACTIVE');
+    expect((intervention.domainEvents[0] as any).eventName).toBe('StudentAtRisk');
   });
 });

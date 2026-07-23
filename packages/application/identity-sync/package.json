@@ -12,6 +12,7 @@
     "@clasptek/kernel": "workspace:*",
     "@clasptek/observability": "workspace:*",
     "@clasptek/domain-identity": "workspace:*",
+    "@clasptek/domain-security": "workspace:*",
     "@clasptek/application-identity": "workspace:*",
     "zod": "^3.24.1"
   }

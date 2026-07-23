@@ -6,7 +6,7 @@ import { ReadinessScreen } from '../../../features/instructor/readiness/readines
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <ReadinessScreen />
     </WorkspaceShell>
   );

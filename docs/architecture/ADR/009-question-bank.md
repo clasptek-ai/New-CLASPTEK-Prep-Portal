@@ -2,10 +2,10 @@
 
 ## Metadata
 
-* **Status:** Accepted
-* **Implementation:** Complete
-* **Frozen:** Yes
-* **Supersedes:** None
+- **Status:** Accepted
+- **Implementation:** Complete
+- **Frozen:** Yes
+- **Supersedes:** None
 
 ## Context
 

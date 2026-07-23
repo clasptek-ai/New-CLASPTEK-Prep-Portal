@@ -8,7 +8,11 @@ export class BlueprintPublishingService {
     try {
       const spec = new BlueprintIsComplete();
       if (!spec.isSatisfiedBy(blueprint)) {
-        return Result.failure(new DomainError('Blueprint is incomplete: must contain items and define a positive item target.'));
+        return Result.failure(
+          new DomainError(
+            'Blueprint is incomplete: must contain items and define a positive item target.'
+          )
+        );
       }
 
       blueprint.publish(actorId);

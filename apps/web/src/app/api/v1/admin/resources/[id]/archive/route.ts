@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getLearningResourceContext } from '@/lib/learning-resource-context';
@@ -5,10 +7,7 @@ import { AccessControlGuard } from '@clasptek/infrastructure-access-control';
 import { PermissionCode } from '@clasptek/domain-authorization';
 import { ApplicationError } from '@clasptek/kernel';
 
-export async function POST(
-  req: NextRequest,
-  _params: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, _params: { params: Promise<{ id: string }> }) {
   const { archiveResourceHandler, logger } = await getLearningResourceContext();
   try {
     let token: string | null = null;
@@ -34,10 +33,16 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    logger.error('POST /api/v1/admin/resources/[id]/archive failure', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      'POST /api/v1/admin/resources/[id]/archive failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
     if (err instanceof ApplicationError) {
       return NextResponse.json({ code: err.name, message: err.message }, { status: 400 });
     }
-    return NextResponse.json({ code: 'INTERNAL_ERROR', message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

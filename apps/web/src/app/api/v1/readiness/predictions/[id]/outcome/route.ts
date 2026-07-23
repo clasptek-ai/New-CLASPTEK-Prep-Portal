@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getPredictionEngineContext } from '@/lib/prediction-engine-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
@@ -8,10 +10,7 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
  * Body: { actualScore }
  */
 
-export async function POST(
-  req: NextRequest,
-  props: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
   try {
     const params = await props.params;
     const ctx = await getPredictionEngineContext();
@@ -29,11 +28,14 @@ export async function POST(
     const result = await ctx.recordPredictionOutcome.execute({
       predictionId: params.id,
       studentId,
-      actualScore: parseFloat(actualScore)
+      actualScore: parseFloat(actualScore),
     });
 
     return NextResponse.json({ success: true, outcomeId: result.outcomeId });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

@@ -13,7 +13,7 @@ export class DiagnosticRule {
     public operator?: string,
     public minimumValue?: number,
     public maximumValue?: number,
-    public weight: number = 1.00,
+    public weight: number = 1.0,
     public confidenceThreshold?: number,
     public status: string = 'ACTIVE'
   ) {}
@@ -47,11 +47,7 @@ export class DiagnosticFramework extends AggregateRoot<string> {
     return this._rules;
   }
 
-  public addRule(
-    id: string,
-    ruleType: string,
-    priority: number = 1
-  ): DiagnosticRule {
+  public addRule(id: string, ruleType: string, priority: number = 1): DiagnosticRule {
     const rule = new DiagnosticRule(id, this.id, ruleType, priority);
     this._rules.push(rule);
     return rule;

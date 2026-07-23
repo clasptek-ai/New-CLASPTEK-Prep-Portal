@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getPredictionEngineContext } from '@/lib/prediction-engine-context';
 
@@ -16,7 +18,10 @@ export async function GET(_req: NextRequest) {
     const active = await ctx.getActiveExperiment.execute();
     return NextResponse.json({ active });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }
 
@@ -29,10 +34,15 @@ export async function POST(req: NextRequest) {
       displayName,
       controlModelVersionId,
       challengerModelVersionId,
-      trafficSplitPercentage
+      trafficSplitPercentage,
     } = body;
 
-    if (!experimentCode || !controlModelVersionId || !challengerModelVersionId || trafficSplitPercentage === undefined) {
+    if (
+      !experimentCode ||
+      !controlModelVersionId ||
+      !challengerModelVersionId ||
+      trafficSplitPercentage === undefined
+    ) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -41,11 +51,14 @@ export async function POST(req: NextRequest) {
       displayName,
       controlModelVersionId,
       challengerModelVersionId,
-      trafficSplitPercentage
+      trafficSplitPercentage,
     });
 
     return NextResponse.json(result);
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

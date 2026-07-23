@@ -29,7 +29,7 @@ export const instructorProgrammesService = {
           assignmentsCount: 8,
           averageProgress: 68,
           averageMockScore: 72,
-          averageReadiness: 74
+          averageReadiness: 74,
         },
         {
           id: 'p2',
@@ -41,9 +41,9 @@ export const instructorProgrammesService = {
           assignmentsCount: 4,
           averageProgress: 82,
           averageMockScore: 79,
-          averageReadiness: 81
-        }
+          averageReadiness: 81,
+        },
       ];
     }
-  }
+  },
 };

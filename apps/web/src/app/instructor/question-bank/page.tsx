@@ -3,7 +3,7 @@ import { QuestionBankScreen } from '../../../features/instructor/question-bank/q
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <QuestionBankScreen />
     </WorkspaceShell>
   );

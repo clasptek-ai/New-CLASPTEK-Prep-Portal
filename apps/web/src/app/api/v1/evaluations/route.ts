@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAiEvaluationContext } from '@/lib/ai-evaluation-context';
 import type { EvaluationJobStatus, QuestionType } from '@clasptek/domain-ai-evaluation';
@@ -33,7 +35,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ jobs, count: jobs.length });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }
 
@@ -46,13 +51,22 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const {
-      submissionId, sessionId, questionType,
-      questionSnapshot, rubricSnapshot, submissionSnapshot,
-      profileCode, evaluationSettings, priority,
+      submissionId,
+      sessionId,
+      questionType,
+      questionSnapshot,
+      rubricSnapshot,
+      submissionSnapshot,
+      profileCode,
+      evaluationSettings,
+      priority,
     } = body;
 
     if (!submissionId || !sessionId || !questionType) {
-      return NextResponse.json({ error: 'Missing required fields: submissionId, sessionId, questionType' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing required fields: submissionId, sessionId, questionType' },
+        { status: 400 }
+      );
     }
 
     const { jobId, snapshotId } = await ctx.queueEvaluation.execute({
@@ -70,6 +84,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ jobId, snapshotId }, { status: 201 });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 400 }
+    );
   }
 }

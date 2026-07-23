@@ -30,7 +30,7 @@ export class AssessmentBlueprintSkillMapping {
     public readonly skillRevisionId: string,
     public readonly skillLevelId?: string,
     public mappingType: string = 'PRIMARY',
-    public importanceWeight: number = 100.00,
+    public importanceWeight: number = 100.0,
     public isPrimary: boolean = true,
     public status: string = 'ACTIVE'
   ) {}
@@ -93,7 +93,15 @@ export class AssessmentBlueprint extends AggregateRoot<string> {
     skillLevelId?: string,
     isPrimary: boolean = true
   ): AssessmentBlueprintSkillMapping {
-    const mapping = new AssessmentBlueprintSkillMapping(id, itemId, skillRevisionId, skillLevelId, isPrimary ? 'PRIMARY' : 'SECONDARY', 100.00, isPrimary);
+    const mapping = new AssessmentBlueprintSkillMapping(
+      id,
+      itemId,
+      skillRevisionId,
+      skillLevelId,
+      isPrimary ? 'PRIMARY' : 'SECONDARY',
+      100.0,
+      isPrimary
+    );
     this._mappings.push(mapping);
     return mapping;
   }

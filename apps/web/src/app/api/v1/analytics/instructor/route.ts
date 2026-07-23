@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLearningAnalyticsContext } from '@/lib/learning-analytics-context';
 
@@ -14,7 +16,10 @@ export async function GET(req: NextRequest) {
     let dashboard = await ctx.getInstructorDashboard.execute(cohortId);
 
     if (!dashboard) {
-      dashboard = await ctx.generateInstructorDashboard.execute({ instructorId: 'system', cohortId });
+      dashboard = await ctx.generateInstructorDashboard.execute({
+        instructorId: 'system',
+        cohortId,
+      });
     }
 
     return NextResponse.json(dashboard);

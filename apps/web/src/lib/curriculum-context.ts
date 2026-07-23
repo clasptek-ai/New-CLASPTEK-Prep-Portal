@@ -7,7 +7,7 @@ import {
   PostgresLearningModuleRepository,
   PostgresCurriculumLessonRepository,
   PostgresCurriculumTemplateRepository,
-  PostgresProjectionQuery
+  PostgresProjectionQuery,
 } from '@clasptek/persistence';
 import {
   CreateCurriculumHandler,
@@ -24,7 +24,7 @@ import {
   CreateCurriculumTemplateHandler,
   GetCurriculumHandler,
   GetLessonHandler,
-  SearchCurriculaHandler
+  SearchCurriculaHandler,
 } from '@clasptek/application-curriculum';
 
 interface CurriculumContext {
@@ -88,7 +88,10 @@ export async function getCurriculumContext(): Promise<CurriculumContext> {
     createCurriculumHandler: new CreateCurriculumHandler(curriculumRepo),
     updateCurriculumDraftHandler: new UpdateCurriculumDraftHandler(curriculumRepo),
     createCurriculumVersionHandler: new CreateCurriculumVersionHandler(curriculumRepo, versionRepo),
-    publishCurriculumVersionHandler: new PublishCurriculumVersionHandler(curriculumRepo, versionRepo),
+    publishCurriculumVersionHandler: new PublishCurriculumVersionHandler(
+      curriculumRepo,
+      versionRepo
+    ),
     submitCurriculumForReviewHandler: new SubmitCurriculumForReviewHandler(curriculumRepo),
     approveCurriculumVersionHandler: new ApproveCurriculumVersionHandler(curriculumRepo),
     archiveCurriculumHandler: new ArchiveCurriculumHandler(curriculumRepo),
@@ -100,7 +103,7 @@ export async function getCurriculumContext(): Promise<CurriculumContext> {
 
     getCurriculumHandler: new GetCurriculumHandler(curriculumRepo),
     getLessonHandler: new GetLessonHandler(lessonRepo),
-    searchCurriculaHandler: new SearchCurriculaHandler(curriculumRepo)
+    searchCurriculaHandler: new SearchCurriculaHandler(curriculumRepo),
   };
 
   return cachedContext;

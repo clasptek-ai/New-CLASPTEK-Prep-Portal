@@ -1,10 +1,12 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getPredictionEngineContext } from '@/lib/prediction-engine-context';
 
 /**
  * GET /api/v1/readiness/metrics
  * Fetch latest lifecycle performance metrics for a model version.
- * 
+ *
  * POST /api/v1/readiness/metrics
  * Calculate and save latest lifecycle performance metrics for a model version.
  */
@@ -14,7 +16,10 @@ export async function GET(req: NextRequest) {
     const modelVersionId = searchParams.get('modelVersionId');
 
     if (!modelVersionId) {
-      return NextResponse.json({ error: 'modelVersionId query parameter is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'modelVersionId query parameter is required' },
+        { status: 400 }
+      );
     }
 
     const ctx = await getPredictionEngineContext();
@@ -22,7 +27,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ metrics });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }
 
@@ -40,6 +48,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result, { status: 201 });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

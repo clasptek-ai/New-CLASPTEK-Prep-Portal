@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getPredictionEngineContext } from '@/lib/prediction-engine-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
@@ -24,6 +26,9 @@ export async function GET(req: NextRequest) {
     const list = await ctx.getPredictionHistory.execute({ studentId, profileId, limit: limitVal });
     return NextResponse.json({ history: list, count: list.length });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

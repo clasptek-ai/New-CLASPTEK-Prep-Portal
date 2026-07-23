@@ -11,7 +11,17 @@ import {
   CoveragePercentage,
   SpacingPolicy,
   RecommendationPriority,
+  StudentPracticeGoal,
+  RetentionProfile,
+  StudentDailyGoal,
+  StudentMotivation,
+  FocusAreaEngine,
+  AdaptiveDailyGoalEngine,
+  MotivationEngine,
+  ConfidenceLevel,
   type Priority,
+  type FocusAreaCategory,
+  type ConfidenceLevelType,
 } from '@clasptek/domain-adaptive-practice';
 import { randomUUID } from 'crypto';
 
@@ -23,7 +33,12 @@ export interface PracticeSessionRepository {
   save(session: PracticeSession): Promise<void>;
   findById(id: string): Promise<PracticeSession | null>;
   findActive(studentId: string): Promise<PracticeSession | null>;
-  search(filters: { studentId?: string | undefined; status?: string | undefined; limit?: number | undefined; offset?: number | undefined }): Promise<PracticeSession[]>;
+  search(filters: {
+    studentId?: string | undefined;
+    status?: string | undefined;
+    limit?: number | undefined;
+    offset?: number | undefined;
+  }): Promise<PracticeSession[]>;
   archive(id: string): Promise<void>;
   restore(id: string): Promise<void>;
   nextIdentity(): string;
@@ -50,6 +65,60 @@ export interface StrategyRepository {
   findByCode(code: string): Promise<PracticeStrategy | null>;
   findAll(): Promise<PracticeStrategy[]>;
   save(strategy: PracticeStrategy): Promise<void>;
+}
+
+/**
+ * @contract PracticeGoalRepository
+ * @frozen Sprint 2.6 Addendum
+ */
+export interface PracticeGoalRepository {
+  save(goal: StudentPracticeGoal): Promise<void>;
+  findByStudent(studentId: string): Promise<StudentPracticeGoal[]>;
+  findActive(studentId: string): Promise<StudentPracticeGoal | null>;
+  nextIdentity(): string;
+}
+
+/**
+ * @contract RetentionRepository
+ * @frozen Sprint 2.6 Addendum
+ */
+export interface RetentionRepository {
+  save(profile: RetentionProfile): Promise<void>;
+  findByStudent(studentId: string): Promise<RetentionProfile[]>;
+  findByStudentAndCompetency(
+    studentId: string,
+    competencyId: string
+  ): Promise<RetentionProfile | null>;
+  nextIdentity(): string;
+}
+
+/**
+ * @contract DailyGoalRepository
+ * @frozen Sprint 2.6 Addendum
+ */
+export interface DailyGoalRepository {
+  save(goal: StudentDailyGoal): Promise<void>;
+  findByStudentAndDate(studentId: string, date: string): Promise<StudentDailyGoal | null>;
+  nextIdentity(): string;
+}
+
+/**
+ * @contract MotivationRepository
+ * @frozen Sprint 2.6 Addendum
+ */
+export interface MotivationRepository {
+  save(motivation: StudentMotivation): Promise<void>;
+  findByStudent(studentId: string): Promise<StudentMotivation | null>;
+  nextIdentity(): string;
+}
+
+/**
+ * @contract PracticeAnalyticsRepository
+ * @frozen Sprint 2.6 Addendum
+ */
+export interface PracticeAnalyticsRepository {
+  saveProjection(studentId: string, data: Record<string, any>): Promise<void>;
+  getProjection(studentId: string): Promise<Record<string, any> | null>;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -82,7 +151,7 @@ export class QuestionEligibilityEngine {
     },
     now: Date = new Date()
   ): any[] {
-    return questions.filter(q => {
+    return questions.filter((q) => {
       // 1. Status Check
       if (q.status !== 'PUBLISHED') return false;
 
@@ -98,13 +167,14 @@ export class QuestionEligibilityEngine {
 
       // 3. Competency Mapping Match
       const qCompetencies: string[] = q.payload?.competencies || [];
-      const matchesCompetency = config.targetCompetencies.length === 0 ||
-        qCompetencies.some(cId => config.targetCompetencies.includes(cId));
+      const matchesCompetency =
+        config.targetCompetencies.length === 0 ||
+        qCompetencies.some((cId) => config.targetCompetencies.includes(cId));
       if (!matchesCompetency) return false;
 
       // 4. Spacing Cooldown Checks (Rec 10)
       const lastAttempt = attempts
-        .filter(a => a.questionVersionId === q.id)
+        .filter((a) => a.questionVersionId === q.id)
         .sort((a, b) => b.answeredAt.getTime() - a.answeredAt.getTime())[0];
 
       if (lastAttempt) {
@@ -133,19 +203,19 @@ export class QuestionEligibilityEngine {
 // ═══════════════════════════════════════════════════════════════════
 
 export interface QuestionSelectionStrategy {
-  execute(
-    eligibleQuestions: any[],
-    snapshot: AdaptiveSnapshot,
-    limit: number
-  ): Promise<any[]>;
+  execute(eligibleQuestions: any[], snapshot: AdaptiveSnapshot, limit: number): Promise<any[]>;
 }
 
 export class WeakestCompetencyFirstStrategy implements QuestionSelectionStrategy {
-  public async execute(eligibleQuestions: any[], snapshot: AdaptiveSnapshot, limit: number): Promise<any[]> {
+  public async execute(
+    eligibleQuestions: any[],
+    snapshot: AdaptiveSnapshot,
+    limit: number
+  ): Promise<any[]> {
     // Sort target competencies by score ascending (weakest first)
     const sortedWeakCompetencies = Object.entries(snapshot.competencyLevels)
       .sort((a, b) => a[1] - b[1])
-      .map(entry => entry[0]);
+      .map((entry) => entry[0]);
 
     const sortedQuestions = [...eligibleQuestions].sort((a, b) => {
       const aComp = a.payload?.competencies?.[0] || '';
@@ -162,14 +232,18 @@ export class WeakestCompetencyFirstStrategy implements QuestionSelectionStrategy
 }
 
 export class BalancedCoverageStrategy implements QuestionSelectionStrategy {
-  public async execute(eligibleQuestions: any[], snapshot: AdaptiveSnapshot, limit: number): Promise<any[]> {
+  public async execute(
+    eligibleQuestions: any[],
+    snapshot: AdaptiveSnapshot,
+    limit: number
+  ): Promise<any[]> {
     // Distribute questions evenly among targeted competencies
     const competencies = Object.keys(snapshot.competencyLevels);
     if (competencies.length === 0) return eligibleQuestions.slice(0, limit);
 
     const buckets: Record<string, any[]> = {};
     for (const compId of competencies) {
-      buckets[compId] = eligibleQuestions.filter(q => q.payload?.competencies?.includes(compId));
+      buckets[compId] = eligibleQuestions.filter((q) => q.payload?.competencies?.includes(compId));
     }
 
     const results: any[] = [];
@@ -188,7 +262,7 @@ export class BalancedCoverageStrategy implements QuestionSelectionStrategy {
 
     // Fill remaining if needed
     if (results.length < limit) {
-      const remaining = eligibleQuestions.filter(q => !results.includes(q));
+      const remaining = eligibleQuestions.filter((q) => !results.includes(q));
       results.push(...remaining.slice(0, limit - results.length));
     }
 
@@ -197,14 +271,22 @@ export class BalancedCoverageStrategy implements QuestionSelectionStrategy {
 }
 
 export class ExamBlueprintCoverageStrategy implements QuestionSelectionStrategy {
-  public async execute(eligibleQuestions: any[], _snapshot: AdaptiveSnapshot, limit: number): Promise<any[]> {
+  public async execute(
+    eligibleQuestions: any[],
+    _snapshot: AdaptiveSnapshot,
+    limit: number
+  ): Promise<any[]> {
     // Mock blueprint matching by targeting blueprint tag weights
     return eligibleQuestions.slice(0, limit);
   }
 }
 
 export class DifficultyProgressionStrategy implements QuestionSelectionStrategy {
-  public async execute(eligibleQuestions: any[], snapshot: AdaptiveSnapshot, limit: number): Promise<any[]> {
+  public async execute(
+    eligibleQuestions: any[],
+    snapshot: AdaptiveSnapshot,
+    limit: number
+  ): Promise<any[]> {
     // Prioritize matching current difficulty profile
     const targetDiff = snapshot.difficultyProfile.minLevel || 'Intermediate';
     const sorted = [...eligibleQuestions].sort((a, b) => {
@@ -219,7 +301,11 @@ export class DifficultyProgressionStrategy implements QuestionSelectionStrategy 
 }
 
 export class RandomWithinConstraintsStrategy implements QuestionSelectionStrategy {
-  public async execute(eligibleQuestions: any[], _snapshot: AdaptiveSnapshot, limit: number): Promise<any[]> {
+  public async execute(
+    eligibleQuestions: any[],
+    _snapshot: AdaptiveSnapshot,
+    limit: number
+  ): Promise<any[]> {
     const shuffled = [...eligibleQuestions].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, limit);
   }
@@ -256,19 +342,30 @@ export class CreatePracticePlanHandler {
     title?: string | undefined;
     selectionRules: { attributeName: string; operator: string; value: string }[];
     targetedCompetencies: { competencyId: string; weight: number; targetPercentage: number }[];
-    spacingPolicy: { reviewIntervalHours: number; expansionFactor: number; maxIntervalHours: number };
+    spacingPolicy: {
+      reviewIntervalHours: number;
+      expansionFactor: number;
+      maxIntervalHours: number;
+    };
   }): Promise<string> {
     const id = this.planRepo.nextIdentity();
     const rules = cmd.selectionRules.map(
-      r => new QuestionSelectionRule({ id: randomUUID(), attributeName: r.attributeName, operator: r.operator, value: r.value })
+      (r) =>
+        new QuestionSelectionRule({
+          id: randomUUID(),
+          attributeName: r.attributeName,
+          operator: r.operator,
+          value: r.value,
+        })
     );
     const comps = cmd.targetedCompetencies.map(
-      c => new CompetencyCoverage({
-        id: randomUUID(),
-        competencyId: c.competencyId,
-        coverageWeight: new SelectionWeight(c.weight),
-        targetPercentage: new CoveragePercentage(c.targetPercentage),
-      })
+      (c) =>
+        new CompetencyCoverage({
+          id: randomUUID(),
+          competencyId: c.competencyId,
+          coverageWeight: new SelectionWeight(c.weight),
+          targetPercentage: new CoveragePercentage(c.targetPercentage),
+        })
     );
 
     const plan = new PracticePlan({
@@ -279,7 +376,11 @@ export class CreatePracticePlanHandler {
       status: 'DRAFT',
       selectionRules: rules,
       targetedCompetencies: comps,
-      spacingPolicy: new SpacingPolicy(cmd.spacingPolicy.reviewIntervalHours, cmd.spacingPolicy.expansionFactor, cmd.spacingPolicy.maxIntervalHours),
+      spacingPolicy: new SpacingPolicy(
+        cmd.spacingPolicy.reviewIntervalHours,
+        cmd.spacingPolicy.expansionFactor,
+        cmd.spacingPolicy.maxIntervalHours
+      ),
     });
 
     plan.generate();
@@ -291,10 +392,7 @@ export class CreatePracticePlanHandler {
 export class StartPracticeSessionHandler {
   constructor(private readonly sessionRepo: PracticeSessionRepository) {}
 
-  public async execute(cmd: {
-    sessionId: string;
-    startedAt?: Date | undefined;
-  }): Promise<void> {
+  public async execute(cmd: { sessionId: string; startedAt?: Date | undefined }): Promise<void> {
     const session = await this.sessionRepo.findById(cmd.sessionId);
     if (!session) throw new Error('Practice Session not found');
     session.start(cmd.startedAt ?? new Date());
@@ -305,10 +403,7 @@ export class StartPracticeSessionHandler {
 export class PausePracticeSessionHandler {
   constructor(private readonly sessionRepo: PracticeSessionRepository) {}
 
-  public async execute(cmd: {
-    sessionId: string;
-    pausedAt?: Date | undefined;
-  }): Promise<void> {
+  public async execute(cmd: { sessionId: string; pausedAt?: Date | undefined }): Promise<void> {
     const session = await this.sessionRepo.findById(cmd.sessionId);
     if (!session) throw new Error('Practice Session not found');
     session.pause(cmd.pausedAt ?? new Date());
@@ -319,9 +414,7 @@ export class PausePracticeSessionHandler {
 export class ResumePracticeSessionHandler {
   constructor(private readonly sessionRepo: PracticeSessionRepository) {}
 
-  public async execute(cmd: {
-    sessionId: string;
-  }): Promise<void> {
+  public async execute(cmd: { sessionId: string }): Promise<void> {
     const session = await this.sessionRepo.findById(cmd.sessionId);
     if (!session) throw new Error('Practice Session not found');
     session.resume();
@@ -335,31 +428,35 @@ export class CompletePracticeSessionHandler {
   public async execute(cmd: {
     sessionId: string;
     completedAt?: Date | undefined;
-    feedback?: {
-      rating: number;
-      difficultyPerception: string;
-      confidence: string;
-      satisfaction: string;
-      usefulness: string;
-      technicalIssue: boolean;
-      recommendationQuality: string;
-      comment?: string | undefined;
-    } | undefined;
+    feedback?:
+      | {
+          rating: number;
+          difficultyPerception: string;
+          confidence: string;
+          satisfaction: string;
+          usefulness: string;
+          technicalIssue: boolean;
+          recommendationQuality: string;
+          comment?: string | undefined;
+        }
+      | undefined;
   }): Promise<void> {
     const session = await this.sessionRepo.findById(cmd.sessionId);
     if (!session) throw new Error('Practice Session not found');
 
-    const fb = cmd.feedback ? new PracticeFeedback({
-      id: randomUUID(),
-      rating: cmd.feedback.rating,
-      difficultyPerception: cmd.feedback.difficultyPerception,
-      confidence: cmd.feedback.confidence,
-      satisfaction: cmd.feedback.satisfaction,
-      usefulness: cmd.feedback.usefulness,
-      technicalIssue: cmd.feedback.technicalIssue,
-      recommendationQuality: cmd.feedback.recommendationQuality,
-      comment: cmd.feedback.comment,
-    }) : undefined;
+    const fb = cmd.feedback
+      ? new PracticeFeedback({
+          id: randomUUID(),
+          rating: cmd.feedback.rating,
+          difficultyPerception: cmd.feedback.difficultyPerception,
+          confidence: cmd.feedback.confidence,
+          satisfaction: cmd.feedback.satisfaction,
+          usefulness: cmd.feedback.usefulness,
+          technicalIssue: cmd.feedback.technicalIssue,
+          recommendationQuality: cmd.feedback.recommendationQuality,
+          comment: cmd.feedback.comment,
+        })
+      : undefined;
 
     session.complete(cmd.completedAt ?? new Date(), fb);
     await this.sessionRepo.save(session);
@@ -399,14 +496,9 @@ export class GenerateRecommendationsHandler {
 }
 
 export class AcceptRecommendationHandler {
-  constructor(
-    private readonly recommendationRepo: RecommendationRepository
-  ) {}
+  constructor(private readonly recommendationRepo: RecommendationRepository) {}
 
-  public async execute(cmd: {
-    recommendationId: string;
-    planId: string;
-  }): Promise<void> {
+  public async execute(cmd: { recommendationId: string; planId: string }): Promise<void> {
     const rec = await this.recommendationRepo.findById(cmd.recommendationId);
     if (!rec) throw new Error('Recommendation not found');
     rec.accept(cmd.planId);
@@ -417,9 +509,7 @@ export class AcceptRecommendationHandler {
 export class RejectRecommendationHandler {
   constructor(private readonly recommendationRepo: RecommendationRepository) {}
 
-  public async execute(cmd: {
-    recommendationId: string;
-  }): Promise<void> {
+  public async execute(cmd: { recommendationId: string }): Promise<void> {
     const rec = await this.recommendationRepo.findById(cmd.recommendationId);
     if (!rec) throw new Error('Recommendation not found');
     rec.reject();
@@ -450,7 +540,11 @@ export class GetPracticePlanHandler {
 export class GetPracticeHistoryHandler {
   constructor(private readonly sessionRepo: PracticeSessionRepository) {}
 
-  public async execute(cmd: { studentId: string; limit?: number | undefined; offset?: number | undefined }): Promise<PracticeSession[]> {
+  public async execute(cmd: {
+    studentId: string;
+    limit?: number | undefined;
+    offset?: number | undefined;
+  }): Promise<PracticeSession[]> {
     return this.sessionRepo.search({
       studentId: cmd.studentId,
       status: 'COMPLETED',
@@ -465,5 +559,205 @@ export class SearchRecommendationsHandler {
 
   public async execute(cmd: { studentId: string }): Promise<PracticeRecommendation[]> {
     return this.recommendationRepo.findPending(cmd.studentId);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 5. SPRINT 2.6 ADDENDUM COMMAND & QUERY HANDLERS
+// ═══════════════════════════════════════════════════════════════════
+
+// ─── Practice Goal Handlers ──────────────────────────────────────
+
+export class SetPracticeGoalHandler {
+  constructor(private readonly goalRepo: PracticeGoalRepository) {}
+
+  public async execute(cmd: {
+    studentId: string;
+    goalType: string;
+    goalTitle: string;
+    targetValue: number;
+    journeyId?: string | undefined;
+  }): Promise<string> {
+    const id = this.goalRepo.nextIdentity();
+    const goal = StudentPracticeGoal.create(
+      id,
+      cmd.studentId,
+      cmd.goalType,
+      cmd.goalTitle,
+      cmd.targetValue,
+      cmd.journeyId
+    );
+    await this.goalRepo.save(goal);
+    return id;
+  }
+}
+
+export class GetPracticeGoalQueryHandler {
+  constructor(private readonly goalRepo: PracticeGoalRepository) {}
+
+  public async execute(query: { studentId: string }): Promise<StudentPracticeGoal[]> {
+    return this.goalRepo.findByStudent(query.studentId);
+  }
+}
+
+// ─── Knowledge Retention Handlers ────────────────────────────────
+
+export class UpdateRetentionHandler {
+  constructor(private readonly retentionRepo: RetentionRepository) {}
+
+  public async execute(cmd: {
+    studentId: string;
+    competencyId: string;
+    wasCorrect: boolean;
+  }): Promise<RetentionProfile> {
+    let profile = await this.retentionRepo.findByStudentAndCompetency(
+      cmd.studentId,
+      cmd.competencyId
+    );
+    if (!profile) {
+      const id = this.retentionRepo.nextIdentity();
+      profile = new RetentionProfile({
+        id,
+        studentId: cmd.studentId,
+        competencyId: cmd.competencyId,
+      });
+    }
+    profile.recordReview(cmd.wasCorrect);
+    await this.retentionRepo.save(profile);
+    return profile;
+  }
+}
+
+export class GetRetentionQueryHandler {
+  constructor(private readonly retentionRepo: RetentionRepository) {}
+
+  public async execute(query: { studentId: string }): Promise<RetentionProfile[]> {
+    return this.retentionRepo.findByStudent(query.studentId);
+  }
+}
+
+// ─── Confidence Tracking Handler ─────────────────────────────────
+
+export class RecordResponseConfidenceHandler {
+  constructor(private readonly sessionRepo: PracticeSessionRepository) {}
+
+  public async execute(cmd: {
+    sessionId: string;
+    questionVersionId: string;
+    confidenceLevel: ConfidenceLevelType;
+  }): Promise<void> {
+    const session = await this.sessionRepo.findById(cmd.sessionId);
+    if (!session) throw new Error(`Practice session ${cmd.sessionId} not found`);
+
+    const cl = new ConfidenceLevel(cmd.confidenceLevel);
+    session.adjustDifficulty(
+      session.difficultyProfile.minLevel,
+      session.difficultyProfile.minLevel,
+      cl.numericScore
+    );
+    await this.sessionRepo.save(session);
+  }
+}
+
+// ─── Adaptive Daily Goal Handlers ────────────────────────────────
+
+export class GenerateDailyGoalHandler {
+  constructor(private readonly dailyGoalRepo: DailyGoalRepository) {}
+
+  public async execute(cmd: {
+    studentId: string;
+    learningPace?: 'Accelerated' | 'Standard' | 'Flexible' | 'Intensive' | 'Self-Paced';
+    mastery?: number;
+    missedDays?: number;
+    readinessScore?: number;
+  }): Promise<StudentDailyGoal> {
+    const engine = new AdaptiveDailyGoalEngine();
+    const goal = engine.generateDailyGoal(cmd.studentId, {
+      learningPace: cmd.learningPace ?? 'Standard',
+      mastery: cmd.mastery ?? 60,
+      missedDays: cmd.missedDays ?? 0,
+      readinessScore: cmd.readinessScore ?? 70,
+    });
+    await this.dailyGoalRepo.save(goal);
+    return goal;
+  }
+}
+
+export class GetDailyGoalQueryHandler {
+  constructor(private readonly dailyGoalRepo: DailyGoalRepository) {}
+
+  public async execute(query: {
+    studentId: string;
+    date?: string;
+  }): Promise<StudentDailyGoal | null> {
+    const dateStr = query.date ?? new Date().toISOString().split('T')[0];
+    return this.dailyGoalRepo.findByStudentAndDate(query.studentId, dateStr);
+  }
+}
+
+// ─── Motivation Engine Handlers ───────────────────────────────────
+
+export class AwardMotivationPointsHandler {
+  constructor(private readonly motivationRepo: MotivationRepository) {}
+
+  public async execute(cmd: {
+    studentId: string;
+    accuracy: number;
+    timeSpentMs: number;
+  }): Promise<StudentMotivation> {
+    let motivation = await this.motivationRepo.findByStudent(cmd.studentId);
+    if (!motivation) {
+      const id = this.motivationRepo.nextIdentity();
+      motivation = new StudentMotivation({ id, studentId: cmd.studentId });
+    }
+
+    const engine = new MotivationEngine();
+    const reward = engine.calculateReward(cmd.accuracy, cmd.timeSpentMs, motivation.dailyStreak);
+    motivation.addActivity(reward.points, reward.xp);
+    if (reward.badgeUnlocked) motivation.awardBadge(reward.badgeUnlocked);
+
+    await this.motivationRepo.save(motivation);
+    return motivation;
+  }
+}
+
+export class GetMotivationQueryHandler {
+  constructor(private readonly motivationRepo: MotivationRepository) {}
+
+  public async execute(query: { studentId: string }): Promise<StudentMotivation | null> {
+    return this.motivationRepo.findByStudent(query.studentId);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CANONICAL PRACTICE DELIVERY APPLICATION EXPORTS (Sprint 3.5.1)
+// ═══════════════════════════════════════════════════════════════════
+export * from './wrong-answer-queue-engine';
+export * from './review-queue-engine';
+export * from './session-recovery.service';
+export * from './practice-command-adapters';
+
+// ─── Practice Analytics & Focus Area Query Handlers ───────────────
+
+export class GetPracticeAnalyticsQueryHandler {
+  constructor(private readonly analyticsRepo: PracticeAnalyticsRepository) {}
+
+  public async execute(query: { studentId: string }): Promise<Record<string, any> | null> {
+    return this.analyticsRepo.getProjection(query.studentId);
+  }
+}
+
+export class GetFocusAreaRecommendationsQueryHandler {
+  public async execute(query: {
+    grammarAccuracy?: number;
+    readingSpeedWpm?: number;
+    vocabularyScore?: number;
+  }): Promise<FocusAreaCategory> {
+    const engine = new FocusAreaEngine();
+    return engine.recommendFocusArea({
+      grammarAccuracy: query.grammarAccuracy ?? 70,
+      readingSpeedWpm: query.readingSpeedWpm ?? 200,
+      vocabularyScore: query.vocabularyScore ?? 75,
+    });
   }
 }

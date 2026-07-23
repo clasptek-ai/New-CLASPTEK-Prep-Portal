@@ -32,7 +32,7 @@ export function AssessmentPlayerScreen() {
   useEffect(() => {
     if (!activeSessionId) return;
     const interval = setInterval(() => {
-      setTimeLeft(prev => {
+      setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
           handleFinish();
@@ -63,13 +63,13 @@ export function AssessmentPlayerScreen() {
   }
 
   function handleAnswerSelect(ans: string) {
-    setAnswers(prev => ({ ...prev, [currentQuestion]: ans }));
+    setAnswers((prev) => ({ ...prev, [currentQuestion]: ans }));
   }
 
   function handleFinish() {
     showBanner('Mock Exam submitted to runtime evaluators!');
-    setMockExams(prev =>
-      prev.map(ex =>
+    setMockExams((prev) =>
+      prev.map((ex) =>
         ex.id === activeSessionId
           ? {
               ...ex,
@@ -80,7 +80,7 @@ export function AssessmentPlayerScreen() {
               sectionScores: { listening: 8.5, reading: 8.0, writing: 8.0, speaking: 8.5 },
               weakObjectives: ['Grammar Relative syntax Modifiers'],
               recommendations: 'Dedicate 10 minutes to scanning exercises.',
-              incorrectQuestions: [14, 25, 36]
+              incorrectQuestions: [14, 25, 36],
             }
           : ex
       )
@@ -94,9 +94,18 @@ export function AssessmentPlayerScreen() {
   }
 
   const mockQuestions = [
-    { text: 'Which word is a synonym of "diligent"?', options: ['Lazy', 'Industrious', 'Careless', 'Passive'] },
-    { text: 'Complete the sentence: "By next week, she _______ completed the project."', options: ['will have', 'has', 'would', 'is'] },
-    { text: 'Choose the correct spelling:', options: ['Accomodate', 'Acommodate', 'Accommodate', 'Acomodate'] }
+    {
+      text: 'Which word is a synonym of "diligent"?',
+      options: ['Lazy', 'Industrious', 'Careless', 'Passive'],
+    },
+    {
+      text: 'Complete the sentence: "By next week, she _______ completed the project."',
+      options: ['will have', 'has', 'would', 'is'],
+    },
+    {
+      text: 'Choose the correct spelling:',
+      options: ['Accomodate', 'Acommodate', 'Accommodate', 'Acomodate'],
+    },
   ];
 
   if (loading) {
@@ -116,10 +125,24 @@ export function AssessmentPlayerScreen() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>Assessment Session Active (Runtime Player)</h2>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>Auto-saving progress logs active...</p>
+            <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>
+              Assessment Session Active (Runtime Player)
+            </h2>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+              Auto-saving progress logs active...
+            </p>
           </div>
-          <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f87171', backgroundColor: 'rgba(239,68,68,0.1)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.3)' }}>
+          <div
+            style={{
+              fontSize: '1.2rem',
+              fontWeight: 700,
+              color: '#f87171',
+              backgroundColor: 'rgba(239,68,68,0.1)',
+              padding: '0.5rem 1rem',
+              borderRadius: '8px',
+              border: '1px solid rgba(239,68,68,0.3)',
+            }}
+          >
             Timer: {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
           </div>
         </div>
@@ -144,7 +167,7 @@ export function AssessmentPlayerScreen() {
                     cursor: 'pointer',
                     fontSize: '0.9rem',
                     fontWeight: isSelected ? 600 : 500,
-                    transition: 'all 0.15s'
+                    transition: 'all 0.15s',
                   }}
                 >
                   {opt}
@@ -155,11 +178,14 @@ export function AssessmentPlayerScreen() {
         </Card>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
-          <Button disabled={currentQuestion === 0} onClick={() => setCurrentQuestion(prev => prev - 1)}>
+          <Button
+            disabled={currentQuestion === 0}
+            onClick={() => setCurrentQuestion((prev) => prev - 1)}
+          >
             Previous
           </Button>
           {currentQuestion < mockQuestions.length - 1 ? (
-            <Button onClick={() => setCurrentQuestion(prev => prev + 1)}>Next</Button>
+            <Button onClick={() => setCurrentQuestion((prev) => prev + 1)}>Next</Button>
           ) : (
             <Button onClick={handleFinish}>Finish & Submit</Button>
           )}
@@ -171,33 +197,85 @@ export function AssessmentPlayerScreen() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Mock Examinations & Assessments</h1>
-        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>Inspect test histories, launch mock exams sessions, and read AI feedback</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
+          Mock Examinations & Assessments
+        </h1>
+        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+          Inspect test histories, launch mock exams sessions, and read AI feedback
+        </p>
       </div>
 
       {banner && (
-        <div style={{ padding: '1rem', backgroundColor: '#10b98120', border: '1px solid #10b98140', borderRadius: '8px', color: '#10b981', fontSize: '0.85rem' }}>
+        <div
+          style={{
+            padding: '1rem',
+            backgroundColor: '#10b98120',
+            border: '1px solid #10b98140',
+            borderRadius: '8px',
+            color: '#10b981',
+            fontSize: '0.85rem',
+          }}
+        >
           {banner}
         </div>
       )}
 
       {selectedCompletedExam && (
-        <Card title={`Mock Diagnostic: ${selectedCompletedExam.title}`} actions={<Button onClick={() => setSelectedCompletedExam(null)}>Close Diagnostic</Button>}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.85rem', color: '#cbd5e1', marginTop: '1rem' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', padding: '0.75rem', backgroundColor: '#0b0f19', borderRadius: '6px' }}>
-              <div>Overall Score: <strong>{selectedCompletedExam.score}%</strong></div>
-              <div>Percentile: <strong>{selectedCompletedExam.percentile}th</strong></div>
-              <div>Time Used: <strong>{selectedCompletedExam.timeUsed}</strong></div>
-              <div>Incorrect Count: <strong>{selectedCompletedExam.incorrectQuestions?.length}</strong></div>
+        <Card
+          title={`Mock Diagnostic: ${selectedCompletedExam.title}`}
+          actions={<Button onClick={() => setSelectedCompletedExam(null)}>Close Diagnostic</Button>}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+              fontSize: '0.85rem',
+              color: '#cbd5e1',
+              marginTop: '1rem',
+            }}
+          >
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(4, 1fr)',
+                gap: '1rem',
+                padding: '0.75rem',
+                backgroundColor: '#0b0f19',
+                borderRadius: '6px',
+              }}
+            >
+              <div>
+                Overall Score: <strong>{selectedCompletedExam.score}%</strong>
+              </div>
+              <div>
+                Percentile: <strong>{selectedCompletedExam.percentile}th</strong>
+              </div>
+              <div>
+                Time Used: <strong>{selectedCompletedExam.timeUsed}</strong>
+              </div>
+              <div>
+                Incorrect Count: <strong>{selectedCompletedExam.incorrectQuestions?.length}</strong>
+              </div>
             </div>
 
             <div>
               <span style={{ fontWeight: 600, color: '#f8fafc' }}>Section Scores:</span>
-              <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem', color: '#94a3b8' }}>
-                <span>Listening: <strong>{selectedCompletedExam.sectionScores?.listening}</strong></span>
-                <span>Reading: <strong>{selectedCompletedExam.sectionScores?.reading}</strong></span>
-                <span>Writing: <strong>{selectedCompletedExam.sectionScores?.writing}</strong></span>
-                <span>Speaking: <strong>{selectedCompletedExam.sectionScores?.speaking}</strong></span>
+              <div
+                style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem', color: '#94a3b8' }}
+              >
+                <span>
+                  Listening: <strong>{selectedCompletedExam.sectionScores?.listening}</strong>
+                </span>
+                <span>
+                  Reading: <strong>{selectedCompletedExam.sectionScores?.reading}</strong>
+                </span>
+                <span>
+                  Writing: <strong>{selectedCompletedExam.sectionScores?.writing}</strong>
+                </span>
+                <span>
+                  Speaking: <strong>{selectedCompletedExam.sectionScores?.speaking}</strong>
+                </span>
               </div>
             </div>
 
@@ -205,13 +283,30 @@ export function AssessmentPlayerScreen() {
               <span style={{ fontWeight: 600, color: '#f8fafc' }}>Weak Objectives:</span>
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
                 {selectedCompletedExam.weakObjectives?.map((o, idx) => (
-                  <Badge key={idx} variant="danger">{o}</Badge>
+                  <Badge key={idx} variant="danger">
+                    {o}
+                  </Badge>
                 ))}
               </div>
             </div>
 
-            <div style={{ padding: '0.75rem', borderLeft: '3px solid #f59e0b', backgroundColor: '#0b0f19' }}>
-              <span style={{ fontWeight: 600, color: '#f59e0b', display: 'block', marginBottom: '0.25rem' }}>AI Feedback Recommendation:</span>
+            <div
+              style={{
+                padding: '0.75rem',
+                borderLeft: '3px solid #f59e0b',
+                backgroundColor: '#0b0f19',
+              }}
+            >
+              <span
+                style={{
+                  fontWeight: 600,
+                  color: '#f59e0b',
+                  display: 'block',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                AI Feedback Recommendation:
+              </span>
               {selectedCompletedExam.recommendations}
             </div>
 
@@ -219,7 +314,17 @@ export function AssessmentPlayerScreen() {
               <span style={{ fontWeight: 600, color: '#f8fafc' }}>Incorrect Questions:</span>
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
                 {selectedCompletedExam.incorrectQuestions?.map((q, idx) => (
-                  <span key={idx} style={{ padding: '0.25rem 0.5rem', backgroundColor: '#ef444415', border: '1px solid #ef444430', color: '#ef4444', borderRadius: '4px', fontWeight: 600 }}>
+                  <span
+                    key={idx}
+                    style={{
+                      padding: '0.25rem 0.5rem',
+                      backgroundColor: '#ef444415',
+                      border: '1px solid #ef444430',
+                      color: '#ef4444',
+                      borderRadius: '4px',
+                      fontWeight: 600,
+                    }}
+                  >
                     Q{q}
                   </span>
                 ))}
@@ -230,10 +335,25 @@ export function AssessmentPlayerScreen() {
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        {mockExams.map(ex => (
-          <Card key={ex.id} title={ex.title} actions={<Badge variant={ex.status === 'COMPLETED' ? 'success' : 'info'}>{ex.status}</Badge>}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
-              <span style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Duration: {ex.durationMinutes} mins | Questions: {ex.questionCount}</span>
+        {mockExams.map((ex) => (
+          <Card
+            key={ex.id}
+            title={ex.title}
+            actions={
+              <Badge variant={ex.status === 'COMPLETED' ? 'success' : 'info'}>{ex.status}</Badge>
+            }
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '0.5rem',
+              }}
+            >
+              <span style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
+                Duration: {ex.durationMinutes} mins | Questions: {ex.questionCount}
+              </span>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 {ex.status === 'COMPLETED' ? (
                   <Button onClick={() => setSelectedCompletedExam(ex)}>Review Results</Button>

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAssessmentRuntimeContext } from '@/lib/assessment-runtime-context';
 
@@ -17,7 +19,13 @@ export async function POST(req: NextRequest) {
       recordedAt,
     } = body;
 
-    if (!sessionId || checkpointVersion === undefined || elapsedTimeMs === undefined || !answersSnapshot || !checksum) {
+    if (
+      !sessionId ||
+      checkpointVersion === undefined ||
+      elapsedTimeMs === undefined ||
+      !answersSnapshot ||
+      !checksum
+    ) {
       return NextResponse.json({ error: 'Missing required checkpoint fields' }, { status: 400 });
     }
 
@@ -34,7 +42,10 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 400 }
+    );
   }
 }
 
@@ -60,6 +71,9 @@ export async function GET(req: NextRequest) {
       recordedAt: cp.recordedAt,
     });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

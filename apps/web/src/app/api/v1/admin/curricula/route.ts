@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getCurriculumContext } from '@/lib/curriculum-context';
@@ -30,21 +32,30 @@ export async function POST(req: NextRequest) {
     const { code, name, description } = body;
 
     if (!code || !name) {
-      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing required parameters' }, { status: 400 });
+      return NextResponse.json(
+        { code: 'VALIDATION_ERROR', message: 'Missing required parameters' },
+        { status: 400 }
+      );
     }
 
     const curriculumId = await createCurriculumHandler.execute({
       code,
       name,
-      description: description || ''
+      description: description || '',
     });
 
     return NextResponse.json({ success: true, id: curriculumId }, { status: 201 });
   } catch (err: unknown) {
-    logger.error('POST /api/v1/admin/curricula failure', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      'POST /api/v1/admin/curricula failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
     if (err instanceof ApplicationError) {
       return NextResponse.json({ code: err.name, message: err.message }, { status: 400 });
     }
-    return NextResponse.json({ code: 'INTERNAL_ERROR', message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

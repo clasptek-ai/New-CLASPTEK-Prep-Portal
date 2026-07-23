@@ -6,7 +6,7 @@ import { MockResultsScreen } from '../../../features/instructor/mock-results/moc
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <MockResultsScreen />
     </WorkspaceShell>
   );

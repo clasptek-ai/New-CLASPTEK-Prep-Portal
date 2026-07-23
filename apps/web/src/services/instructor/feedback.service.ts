@@ -14,7 +14,9 @@ export interface InstructorNoteItem {
 export const instructorFeedbackService = {
   async getNotes(studentId: string): Promise<InstructorNoteItem[]> {
     try {
-      return await apiClient.get<InstructorNoteItem[]>(`/api/v1/instructor/notes?studentId=${studentId}`);
+      return await apiClient.get<InstructorNoteItem[]>(
+        `/api/v1/instructor/notes?studentId=${studentId}`
+      );
     } catch {
       return [
         {
@@ -25,13 +27,16 @@ export const instructorFeedbackService = {
           timestamp: '2026-07-15T10:30:00Z',
           category: 'ACADEMIC',
           visibility: 'PUBLIC',
-          content: 'Grammar active modifier modifiers structure is improving, but still needs practice.'
-        }
+          content:
+            'Grammar active modifier modifiers structure is improving, but still needs practice.',
+        },
       ];
     }
   },
 
-  async addNote(note: Omit<InstructorNoteItem, 'id' | 'timestamp' | 'instructorId' | 'instructorName'>): Promise<InstructorNoteItem> {
+  async addNote(
+    note: Omit<InstructorNoteItem, 'id' | 'timestamp' | 'instructorId' | 'instructorName'>
+  ): Promise<InstructorNoteItem> {
     try {
       return await apiClient.post<InstructorNoteItem>('/api/v1/instructor/notes', note);
     } catch {
@@ -40,8 +45,8 @@ export const instructorFeedbackService = {
         timestamp: new Date().toISOString(),
         instructorId: 'inst-456',
         instructorName: 'Sarah Jenkins',
-        ...note
+        ...note,
       };
     }
-  }
+  },
 };

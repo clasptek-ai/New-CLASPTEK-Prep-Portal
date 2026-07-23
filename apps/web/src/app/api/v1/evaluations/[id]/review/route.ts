@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAiEvaluationContext } from '@/lib/ai-evaluation-context';
 
@@ -11,10 +13,7 @@ import { getAiEvaluationContext } from '@/lib/ai-evaluation-context';
  * Body: { reviewId, criterionCode?, overrideScore, rationale, overriddenBy }
  */
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const ctx = getAiEvaluationContext();
@@ -27,7 +26,10 @@ export async function POST(
     const { resultId, reason, reviewerId } = body;
 
     if (!resultId || !reason) {
-      return NextResponse.json({ error: 'Missing required fields: resultId, reason' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing required fields: resultId, reason' },
+        { status: 400 }
+      );
     }
 
     const reviewId = await ctx.requestReview.execute({
@@ -39,14 +41,14 @@ export async function POST(
 
     return NextResponse.json({ reviewId }, { status: 201 });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 400 }
+    );
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // Await params to satisfy Next.js 15 Route Context type checking
     await params;
@@ -61,7 +63,10 @@ export async function PATCH(
     const { reviewId, criterionCode, overrideScore, rationale } = body;
 
     if (!reviewId || overrideScore === undefined || !rationale) {
-      return NextResponse.json({ error: 'Missing required fields: reviewId, overrideScore, rationale' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing required fields: reviewId, overrideScore, rationale' },
+        { status: 400 }
+      );
     }
 
     await ctx.overrideScore.execute({
@@ -74,6 +79,9 @@ export async function PATCH(
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 400 }
+    );
   }
 }

@@ -30,13 +30,15 @@ export const studentPracticeService = {
         averageTimeSeconds: 45,
         history: [
           { date: '2026-07-15', score: 80 },
-          { date: '2026-07-16', score: 75 }
-        ]
+          { date: '2026-07-16', score: 75 },
+        ],
       };
     }
   },
 
-  async startPractice(category: 'ADAPTIVE' | 'TIMED' | 'TOPIC' | 'REVISION' | 'WEAK_TOPIC' | 'RESUME'): Promise<PracticeQuestion> {
+  async startPractice(
+    category: 'ADAPTIVE' | 'TIMED' | 'TOPIC' | 'REVISION' | 'WEAK_TOPIC' | 'RESUME'
+  ): Promise<PracticeQuestion> {
     try {
       return await apiClient.post<PracticeQuestion>('/api/v1/practice/start', { category });
     } catch {
@@ -47,22 +49,27 @@ export const studentPracticeService = {
           'The book was written by Jane.',
           'Jane wrote the book.',
           'The book has written Jane.',
-          'Jane has written the book.'
+          'Jane has written the book.',
         ],
         answer: 'The book was written by Jane.',
-        explanation: 'Passive voice shifts the focus of the sentence to the receiver of the action (the book).'
+        explanation:
+          'Passive voice shifts the focus of the sentence to the receiver of the action (the book).',
       };
     }
   },
 
-  async submitAnswer(questionId: string, answer: string): Promise<{ correct: boolean; explanation: string }> {
+  async submitAnswer(
+    questionId: string,
+    answer: string
+  ): Promise<{ correct: boolean; explanation: string }> {
     try {
       return await apiClient.post<any>('/api/v1/practice/submit', { questionId, answer });
     } catch {
       return {
         correct: answer === 'The book was written by Jane.',
-        explanation: 'Passive voice shifts the focus of the sentence to the receiver of the action (the book).'
+        explanation:
+          'Passive voice shifts the focus of the sentence to the receiver of the action (the book).',
       };
     }
-  }
+  },
 };

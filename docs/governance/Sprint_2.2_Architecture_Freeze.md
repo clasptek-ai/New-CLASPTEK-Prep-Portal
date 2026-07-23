@@ -1,6 +1,7 @@
 # Sprint-2.2 Architecture Freeze - Curriculum Domain
 
 ## Health Status Badges
+
 ![Architecture: PASS](https://img.shields.io/badge/Architecture-PASS-success)
 ![Compilation: PASS](https://img.shields.io/badge/Compilation-PASS-success)
 ![Tests: PASS](https://img.shields.io/badge/Tests-PASS-success)
@@ -13,6 +14,7 @@
 Sprint 2.2 introduces two distinct aggregates: `Curriculum` and `Programme`.
 
 ### Curriculum Aggregate
+
 ```mermaid
 classDiagram
     class Curriculum {
@@ -32,7 +34,7 @@ classDiagram
         +archive()
         +restore()
     }
-    
+
     class CurriculumVersion {
         +String id
         +String curriculumId
@@ -44,11 +46,12 @@ classDiagram
         +Prerequisite[] prerequisites
         +Map metadata
     }
-    
+
     Curriculum "1" *-- "many" CurriculumVersion
 ```
 
 ### Programme Aggregate
+
 ```mermaid
 classDiagram
     class Programme {
@@ -148,6 +151,7 @@ classDiagram
 ## 2. State Machine Transitions
 
 ### Curriculum Version State Transitions
+
 ```
 [ DRAFT ] ──(submitReview)──> [ UNDER_REVIEW ] ──(approveVersion)──> [ APPROVED ] ──(publishVersion)──> [ PUBLISHED ]
                                                                                                             │
@@ -160,9 +164,11 @@ classDiagram
 ## 3. Database Schema
 
 ### Database Freeze
+
 - **Migration Range:** `00200` to `00203`
 
 ### Tables Introduced
+
 - `curricula`
 - `curriculum_versions`
 - `programmes`
@@ -180,6 +186,7 @@ classDiagram
 ---
 
 ## 4. Verification Tests Result
+
 All 76 tests successfully passed.
 The monorepo compiled and built successfully.
 
@@ -188,6 +195,7 @@ The monorepo compiled and built successfully.
 ## 5. Stable Repository Contracts
 
 ### CurriculumRepository
+
 - `save`
 - `findById`
 - `findByCode`
@@ -199,6 +207,7 @@ The monorepo compiled and built successfully.
 - `nextIdentity`
 
 ### ProgrammeRepository
+
 - `save`
 - `findById`
 - `findByCode`
@@ -211,6 +220,7 @@ The monorepo compiled and built successfully.
 ---
 
 ## 6. Domain Events
+
 - `CurriculumCreated`
 - `CurriculumPublished`
 - `ProgrammeAdded`
@@ -224,9 +234,11 @@ The monorepo compiled and built successfully.
 ---
 
 ## 7. API Freeze Policy
+
 - Freeze all public/admin Curriculum and Programme endpoints as Sprint 2.2 contract baseline.
 
 ---
 
 ## 8. Known Limitations
+
 - Learning Resources are intentionally excluded.

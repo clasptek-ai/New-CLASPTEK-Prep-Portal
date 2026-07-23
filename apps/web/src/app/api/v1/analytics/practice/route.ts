@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -10,7 +12,7 @@ export async function GET(req: NextRequest) {
       totalPracticeSessions: 120,
       averageScore: 78.4,
       accuracyRate: 81.2,
-      timeSpentSeconds: 432000
+      timeSpentSeconds: 432000,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || String(err) }, { status: 500 });

@@ -4,7 +4,7 @@ import {
   ResourceCollectionCreated,
   ResourceCollectionUpdated,
   CollectionResourceAdded,
-  CollectionResourceRemoved
+  CollectionResourceRemoved,
 } from '../events/learning-resource-events';
 
 export class ResourceCollection extends AggregateRoot<string> {
@@ -41,7 +41,15 @@ export class ResourceCollection extends AggregateRoot<string> {
     description?: string,
     displayOrder?: number
   ): ResourceCollection {
-    const col = new ResourceCollection(id, parentCollectionId, code, name, description || null, displayOrder || 1, 'draft');
+    const col = new ResourceCollection(
+      id,
+      parentCollectionId,
+      code,
+      name,
+      description || null,
+      displayOrder || 1,
+      'draft'
+    );
     col.addDomainEvent(new ResourceCollectionCreated(id, code));
     return col;
   }
@@ -59,7 +67,10 @@ export class ResourceCollection extends AggregateRoot<string> {
 
   public addResource(resourceId: string) {
     if (this.status === 'archived') {
-      throw new DomainError('Cannot modify resources in an archived collection.', 'COLLECTION_ARCHIVED');
+      throw new DomainError(
+        'Cannot modify resources in an archived collection.',
+        'COLLECTION_ARCHIVED'
+      );
     }
     if (this._resourceIds.includes(resourceId)) {
       return;
@@ -71,7 +82,10 @@ export class ResourceCollection extends AggregateRoot<string> {
 
   public removeResource(resourceId: string) {
     if (this.status === 'archived') {
-      throw new DomainError('Cannot modify resources in an archived collection.', 'COLLECTION_ARCHIVED');
+      throw new DomainError(
+        'Cannot modify resources in an archived collection.',
+        'COLLECTION_ARCHIVED'
+      );
     }
     const idx = this._resourceIds.indexOf(resourceId);
     if (idx !== -1) {
@@ -83,13 +97,19 @@ export class ResourceCollection extends AggregateRoot<string> {
 
   public reorderResources(orderedResourceIds: string[]) {
     if (this.status === 'archived') {
-      throw new DomainError('Cannot reorder resources in an archived collection.', 'COLLECTION_ARCHIVED');
+      throw new DomainError(
+        'Cannot reorder resources in an archived collection.',
+        'COLLECTION_ARCHIVED'
+      );
     }
     // Verify set matches
     const currentSet = new Set(this._resourceIds);
     const newSet = new Set(orderedResourceIds);
-    if (currentSet.size !== newSet.size || !orderedResourceIds.every(id => currentSet.has(id))) {
-      throw new DomainError('Reordered resource list must contain exactly the same set of resource IDs.', 'INVALID_REORDER_LIST');
+    if (currentSet.size !== newSet.size || !orderedResourceIds.every((id) => currentSet.has(id))) {
+      throw new DomainError(
+        'Reordered resource list must contain exactly the same set of resource IDs.',
+        'INVALID_REORDER_LIST'
+      );
     }
     this._resourceIds = [...orderedResourceIds];
     this.updatedAt = new Date();

@@ -127,7 +127,7 @@ Defines the complete visual language, reusable components, interaction patterns,
 
 # 2. Brand & Style
 
-The design system is anchored in the principles of **Corporate Modernism**, blending the authority of enterprise SaaS with the forward-thinking clarity of AI-driven education. The visual narrative balances high-trust stability with technical innovation. 
+The design system is anchored in the principles of **Corporate Modernism**, blending the authority of enterprise SaaS with the forward-thinking clarity of AI-driven education. The visual narrative balances high-trust stability with technical innovation.
 
 The aesthetic is defined by "Precision Clarity"—utilizing expansive white space, a structured grid, and purposeful data visualization to make complex information digestible. The experience should feel intelligent, dependable, and highly efficient, evoking a sense of calm mastery over complex datasets.
 
@@ -144,72 +144,74 @@ The palette is derived directly from the core brand identity, optimized for digi
 
 ### Global Design System Color Tokens
 
-| Token | Hex | Target Usage |
-| :--- | :--- | :--- |
-| `surface` | `#f7f9fb` | Canvas / background |
-| `surface-dim` | `#d8dadc` | Muted background layering |
-| `surface-bright` | `#f7f9fb` | High contrast canvas |
-| `surface-container-lowest` | `#ffffff` | Elevated structures, inputs, text areas |
-| `surface-container-low` | `#f2f4f6` | Default card body background |
-| `surface-container` | `#eceef0` | Default divider backgrounds, tabs |
-| `surface-container-high` | `#e6e8ea` | Table headers, muted button states |
+| Token                       | Hex       | Target Usage                               |
+| :-------------------------- | :-------- | :----------------------------------------- |
+| `surface`                   | `#f7f9fb` | Canvas / background                        |
+| `surface-dim`               | `#d8dadc` | Muted background layering                  |
+| `surface-bright`            | `#f7f9fb` | High contrast canvas                       |
+| `surface-container-lowest`  | `#ffffff` | Elevated structures, inputs, text areas    |
+| `surface-container-low`     | `#f2f4f6` | Default card body background               |
+| `surface-container`         | `#eceef0` | Default divider backgrounds, tabs          |
+| `surface-container-high`    | `#e6e8ea` | Table headers, muted button states         |
 | `surface-container-highest` | `#e0e3e5` | Active state indicators, border highlights |
-| `on-surface` | `#191c1e` | Main headers and body text |
-| `on-surface-variant` | `#434750` | Muted secondary metadata text |
-| `inverse-surface` | `#2d3133` | Snackbars, dark overlays |
-| `inverse-on-surface` | `#eff1f3` | Text inside dark overlays |
-| `outline` | `#737781` | Default component borders |
-| `outline-variant` | `#c3c6d2` | Inner table borders and rules |
-| `surface-tint` | `#335e9e` | Element decoration, overlay accents |
-| `primary` | `#00346b` | Main primary buttons, brand accents |
-| `on-primary` | `#ffffff` | Primary button text |
-| `primary-container` | `#1b4b8a` | Selected states, primary highlights |
-| `on-primary-container` | `#97bdff` | Text inside selected state containers |
-| `inverse-primary` | `#a9c7ff` | Primary toggle in dark overlays |
-| `secondary` | `#bb0014` | Destructive buttons, error highlights |
-| `on-secondary` | `#ffffff` | Muted alert backgrounds |
-| `secondary-container` | `#e41f25` | Critical alerts |
-| `on-secondary-container` | `#fffbff` | Alert text |
-| `tertiary` | `#253648` | Muted dark indicators, accent boxes |
-| `on-tertiary` | `#ffffff` | Tertiary text |
-| `error` | `#ba1a1a` | Form validation error text |
-| `on-error` | `#ffffff` | Text in error containers |
-| `error-container` | `#ffdad6` | Form error background box |
-| `on-error-container` | `#93000a` | Error icon color |
-| `background` | `#f7f9fb` | HTML Body baseline color |
-| `on-background` | `#191c1e` | Baseline text color |
-| `surface-variant` | `#e0e3e5` | Muted card surfaces |
+| `on-surface`                | `#191c1e` | Main headers and body text                 |
+| `on-surface-variant`        | `#434750` | Muted secondary metadata text              |
+| `inverse-surface`           | `#2d3133` | Snackbars, dark overlays                   |
+| `inverse-on-surface`        | `#eff1f3` | Text inside dark overlays                  |
+| `outline`                   | `#737781` | Default component borders                  |
+| `outline-variant`           | `#c3c6d2` | Inner table borders and rules              |
+| `surface-tint`              | `#335e9e` | Element decoration, overlay accents        |
+| `primary`                   | `#00346b` | Main primary buttons, brand accents        |
+| `on-primary`                | `#ffffff` | Primary button text                        |
+| `primary-container`         | `#1b4b8a` | Selected states, primary highlights        |
+| `on-primary-container`      | `#97bdff` | Text inside selected state containers      |
+| `inverse-primary`           | `#a9c7ff` | Primary toggle in dark overlays            |
+| `secondary`                 | `#bb0014` | Destructive buttons, error highlights      |
+| `on-secondary`              | `#ffffff` | Muted alert backgrounds                    |
+| `secondary-container`       | `#e41f25` | Critical alerts                            |
+| `on-secondary-container`    | `#fffbff` | Alert text                                 |
+| `tertiary`                  | `#253648` | Muted dark indicators, accent boxes        |
+| `on-tertiary`               | `#ffffff` | Tertiary text                              |
+| `error`                     | `#ba1a1a` | Form validation error text                 |
+| `on-error`                  | `#ffffff` | Text in error containers                   |
+| `error-container`           | `#ffdad6` | Form error background box                  |
+| `on-error-container`        | `#93000a` | Error icon color                           |
+| `background`                | `#f7f9fb` | HTML Body baseline color                   |
+| `on-background`             | `#191c1e` | Baseline text color                        |
+| `surface-variant`           | `#e0e3e5` | Muted card surfaces                        |
 
 ---
 
 # 4. Typography
 
-This design system utilizes **Inter** for its exceptional legibility in data-dense environments. 
+This design system utilizes **Inter** for its exceptional legibility in data-dense environments.
 
 The type scale emphasizes a clear hierarchy:
+
 - **Headlines:** Use tighter letter-spacing and heavier weights to anchor page sections.
 - **Body:** Set with generous line-heights to ensure educational content remains readable during long sessions.
 - **Labels:** Utilized for data tables and status badges, often employing `uppercase` for small-scale clarity.
 
 ### Typography Specifications
 
-| Category | Size | Weight | Line Height | Letter Spacing |
-| :--- | :--- | :--- | :--- | :--- |
-| `display-lg` | 48px | 700 (Bold) | 56px | -0.02em |
-| `headline-lg` | 32px | 600 (Semibold) | 40px | -0.01em |
-| `headline-md` | 24px | 600 (Semibold) | 32px | Normal |
-| `body-lg` | 18px | 400 (Regular) | 28px | Normal |
-| `body-md` | 16px | 400 (Regular) | 24px | Normal |
-| `label-md` | 14px | 500 (Medium) | 20px | 0.01em |
-| `label-sm` | 12px | 600 (Semibold) | 16px | 0.05em |
+| Category      | Size | Weight         | Line Height | Letter Spacing |
+| :------------ | :--- | :------------- | :---------- | :------------- |
+| `display-lg`  | 48px | 700 (Bold)     | 56px        | -0.02em        |
+| `headline-lg` | 32px | 600 (Semibold) | 40px        | -0.01em        |
+| `headline-md` | 24px | 600 (Semibold) | 32px        | Normal         |
+| `body-lg`     | 18px | 400 (Regular)  | 28px        | Normal         |
+| `body-md`     | 16px | 400 (Regular)  | 24px        | Normal         |
+| `label-md`    | 14px | 500 (Medium)   | 20px        | 0.01em         |
+| `label-sm`    | 12px | 600 (Semibold) | 16px        | 0.05em         |
 
 ---
 
 # 5. Layout & Spacing
 
-The layout follows a **12-column fixed grid** for desktop, centered within a 1440px max-width container. 
+The layout follows a **12-column fixed grid** for desktop, centered within a 1440px max-width container.
 
 A 8px linear scale governs all spatial relationships. Sidebars are fixed at 280px to maximize the workspace for data tables and charts. Dashboard modules should utilize "Stack" patterns (Vertical spacing) to maintain consistency:
+
 - **8px (Stack Small - stack-sm):** Between labels and inputs.
 - **16px (Stack Medium - stack-md):** Between related elements in a card.
 - **32px (Stack Large - stack-lg):** Between distinct sections or major UI blocks.
@@ -254,6 +256,7 @@ The shape language is "Approachable Professional."
 | Results Summary  |     1.0 | Stable |
 
 Status values:
+
 - Draft
 - Experimental
 - Stable
@@ -264,19 +267,23 @@ Status values:
 # 9. Component Specifications & Behavior
 
 ### Interactive Charts & Progress Rings
+
 - **Charts:** Use a refined color palette of Primary Blue, Teal, and Slate. Grid lines should be faint (`#F1F5F9` or `#eceef0`). Data points should have a 2px white stroke to pop against background fills.
 - **Progress Rings:** Use a 12% opacity version of the stroke color for the "track." The "fill" should utilize a subtle vertical gradient.
 
 ### Data Tables
+
 - **Header:** Light gray background (`#F1F5F9` or `#eceef0`) with `label-sm` typography.
-- **Rows:** 56px minimum height, utilizing a subtle hover state (`#F8FAFC` or `#f2f4f6`). 
+- **Rows:** 56px minimum height, utilizing a subtle hover state (`#F8FAFC` or `#f2f4f6`).
 - **Dividers:** Horizontal lines only, using `#F1F5F9` or `#eceef0`.
 
 ### Cards
+
 - **Padding:** 24px internal padding.
 - **Header:** Includes a bottom border and specific slot for "Export" or "Filter" actions.
 
 ### Buttons & Inputs
+
 - **Primary Button:** Deep Blue fill (`#00346b`) with white text (`#ffffff`).
 - **Input Fields:** 1px border. On focus, the border transitions to Primary Blue with a 3px soft blue outer glow.
 - **Status Badges:** Subtle background tints (e.g., Success: Light Green background with Dark Green text) with no borders.
@@ -286,6 +293,7 @@ Status values:
 # 10. Academic UX Standards
 
 Standard academic components:
+
 - Assessment Timer
 - Question Navigator
 - Reading Passage Viewer
@@ -304,6 +312,7 @@ Standard academic components:
 # 11. Component Behaviour (Generic)
 
 Every interactive component documents:
+
 - Purpose
 - Anatomy
 - Usage
@@ -313,6 +322,7 @@ Every interactive component documents:
 - Responsive behaviour
 
 Supported states:
+
 - Default
 - Hover
 - Focus
@@ -326,6 +336,7 @@ Supported states:
 # 12. Interaction Standards
 
 Supported interactions:
+
 - Click
 - Keyboard shortcuts
 - Drag & drop (where appropriate)
@@ -349,12 +360,14 @@ Supported interactions:
 # 14. Empty-State Library
 
 Every empty state contains:
+
 - Title
 - Explanation
 - Primary action
 - Optional illustration
 
 Standard empty states:
+
 - No Assessments
 - No Questions
 - No Results
@@ -366,6 +379,7 @@ Standard empty states:
 # 15. Notification Design
 
 Notification categories:
+
 - Success
 - Information
 - Warning
@@ -380,9 +394,11 @@ Each notification includes an icon, title, concise message and optional action.
 # 16. Data Visualisation Palette
 
 Supported formats:
+
 - Line, Bar, Area, Pie, KPI Cards, Gauge.
 
 Recommended palette:
+
 1. `#00346b` (Primary Blue)
 2. `#253648` (Tertiary Slate)
 3. `#335e9e` (Accent Light Blue)
@@ -393,9 +409,11 @@ Recommended palette:
 # 17. Theme Strategy
 
 Current:
+
 - Light Theme (Production)
 
 Planned:
+
 - Dark Theme
 - High Contrast Theme
 
@@ -406,6 +424,7 @@ Planned:
 Target: **WCAG 2.2 AA**
 
 Requirements:
+
 - Keyboard navigation
 - Screen-reader support
 - Visible focus indicators
@@ -418,11 +437,13 @@ Requirements:
 # 19. UX Writing
 
 Use action-oriented labels:
+
 - Start Assessment
 - Continue Practice
 - Submit Mock
 
 Error messages explain:
+
 - What happened
 - Why
 - How to recover
@@ -432,6 +453,7 @@ Error messages explain:
 # 20. Design-to-Code Standards
 
 Technology alignment:
+
 - React
 - Tailwind CSS
 - Storybook
@@ -455,6 +477,7 @@ No inline styles.
 # 22. Design QA Metrics
 
 Targets:
+
 - Lighthouse Accessibility: 100
 - Performance: 95+
 - CLS: <0.1

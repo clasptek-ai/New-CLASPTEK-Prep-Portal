@@ -1,9 +1,21 @@
-import { SkillFrameworkRepository, SkillFramework, SkillFrameworkVersion, Skill, SkillRevision, SkillFrameworkLevel } from '@clasptek/domain-exam-product';
-import { SkillHierarchyReadService, SkillHierarchyReadModel } from '@clasptek/application-exam-product';
+import {
+  SkillFrameworkRepository,
+  SkillFramework,
+  SkillFrameworkVersion,
+  Skill,
+  SkillRevision,
+  SkillFrameworkLevel,
+} from '@clasptek/domain-exam-product';
+import {
+  SkillHierarchyReadService,
+  SkillHierarchyReadModel,
+} from '@clasptek/application-exam-product';
 import { SkillCode } from '@clasptek/domain-exam-product';
 import { PostgresUnitOfWork } from './postgres-unit-of-work';
 
-export class PostgresSkillFrameworkRepository implements SkillFrameworkRepository, SkillHierarchyReadService {
+export class PostgresSkillFrameworkRepository
+  implements SkillFrameworkRepository, SkillHierarchyReadService
+{
   constructor(private readonly uow: PostgresUnitOfWork) {}
 
   private get client() {
@@ -11,19 +23,28 @@ export class PostgresSkillFrameworkRepository implements SkillFrameworkRepositor
   }
 
   public async findById(id: string): Promise<SkillFramework | null> {
-    const res = await this.client.query('SELECT * FROM skill_frameworks WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const res = await this.client.query(
+      'SELECT * FROM skill_frameworks WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async findByCode(code: string): Promise<SkillFramework | null> {
-    const res = await this.client.query('SELECT * FROM skill_frameworks WHERE code = $1 AND deleted_at IS NULL', [code]);
+    const res = await this.client.query(
+      'SELECT * FROM skill_frameworks WHERE code = $1 AND deleted_at IS NULL',
+      [code]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async exists(code: string): Promise<boolean> {
-    const res = await this.client.query('SELECT 1 FROM skill_frameworks WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
+    const res = await this.client.query(
+      'SELECT 1 FROM skill_frameworks WHERE code = $1 AND deleted_at IS NULL LIMIT 1',
+      [code]
+    );
     return res.rows.length > 0;
   }
 
@@ -61,14 +82,7 @@ export class PostgresSkillFrameworkRepository implements SkillFrameworkRepositor
          ON CONFLICT (id) DO UPDATE SET
            status = EXCLUDED.status,
            name = EXCLUDED.name`,
-        [
-          v.id,
-          framework.id,
-          v.versionNo,
-          v.status,
-          v.name,
-          v.description || null,
-        ]
+        [v.id, framework.id, v.versionNo, v.status, v.name, v.description || null]
       );
     }
 
@@ -81,14 +95,7 @@ export class PostgresSkillFrameworkRepository implements SkillFrameworkRepositor
            canonical_name = EXCLUDED.canonical_name,
            current_revision_id = EXCLUDED.current_revision_id,
            status = EXCLUDED.status`,
-        [
-          s.id,
-          framework.id,
-          s.code.value,
-          s.canonicalName,
-          s.status,
-          s.currentRevisionId || null,
-        ]
+        [s.id, framework.id, s.code.value, s.canonicalName, s.status, s.currentRevisionId || null]
       );
     }
 
@@ -143,7 +150,10 @@ export class PostgresSkillFrameworkRepository implements SkillFrameworkRepositor
 
   // Read Model Queries
   public async getSkillHierarchy(frameworkVersionId: string): Promise<SkillHierarchyReadModel[]> {
-    const res = await this.client.query('SELECT * FROM vw_skill_hierarchy WHERE skill_framework_version_id = $1', [frameworkVersionId]);
+    const res = await this.client.query(
+      'SELECT * FROM vw_skill_hierarchy WHERE skill_framework_version_id = $1',
+      [frameworkVersionId]
+    );
     return res.rows.map((r: any) => ({
       skillRevisionId: r.skill_revision_id,
       skillId: r.skill_id,
@@ -175,7 +185,10 @@ export class PostgresSkillFrameworkRepository implements SkillFrameworkRepositor
     framework.currentVersionNo = row.current_version_no || undefined;
 
     // Hydrate versions
-    const verRes = await this.client.query('SELECT * FROM skill_framework_versions WHERE skill_framework_id = $1 AND deleted_at IS NULL', [framework.id]);
+    const verRes = await this.client.query(
+      'SELECT * FROM skill_framework_versions WHERE skill_framework_id = $1 AND deleted_at IS NULL',
+      [framework.id]
+    );
     framework.loadVersions(
       verRes.rows.map(
         (v: any) =>
@@ -193,7 +206,10 @@ export class PostgresSkillFrameworkRepository implements SkillFrameworkRepositor
     );
 
     // Hydrate skills
-    const skillRes = await this.client.query('SELECT * FROM skills WHERE skill_framework_id = $1 AND deleted_at IS NULL', [framework.id]);
+    const skillRes = await this.client.query(
+      'SELECT * FROM skills WHERE skill_framework_id = $1 AND deleted_at IS NULL',
+      [framework.id]
+    );
     framework.loadSkills(
       skillRes.rows.map(
         (s: any) =>

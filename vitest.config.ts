@@ -5,7 +5,14 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['tests/**/*.test.ts', 'packages/**/*.test.ts', 'apps/**/*.test.ts'],
+    include: [
+      'tests/**/*.test.ts',
+      'packages/**/*.test.ts',
+      'apps/**/*.test.ts',
+      'apps/**/*.test.tsx',
+      'src/**/*.test.ts',
+      'src/**/*.test.tsx',
+    ],
     alias: {
       '@': path.resolve(__dirname, './apps/web/src'),
       '@clasptek/kernel': path.resolve(__dirname, './packages/kernel/src/index.ts'),
@@ -109,6 +116,10 @@ export default defineConfig({
         __dirname,
         './packages/application/ai-evaluation/src/index.ts'
       ),
+      '@clasptek/infrastructure-ai-providers': path.resolve(
+        __dirname,
+        './packages/infrastructure/ai-providers/src/index.ts'
+      ),
       '@clasptek/domain-prediction-engine': path.resolve(
         __dirname,
         './packages/domain/prediction-engine/src/index.ts'
@@ -116,6 +127,59 @@ export default defineConfig({
       '@clasptek/application-prediction-engine': path.resolve(
         __dirname,
         './packages/application/prediction-engine/src/index.ts'
+      ),
+      '@clasptek/domain-diagnostic-placement': path.resolve(
+        __dirname,
+        './packages/domain/diagnostic-placement/src/index.ts'
+      ),
+      '@clasptek/application-diagnostic-placement': path.resolve(
+        __dirname,
+        './packages/application/diagnostic-placement/src/index.ts'
+      ),
+      '@clasptek/domain-mock-examination': path.resolve(
+        __dirname,
+        './packages/domain/mock-examination/src/index.ts'
+      ),
+      '@clasptek/application-mock-examination': path.resolve(
+        __dirname,
+        './packages/application/mock-examination/src/index.ts'
+      ),
+      '@clasptek/domain-learning-assistant': path.resolve(
+        __dirname,
+        './packages/domain/learning-assistant/src/index.ts'
+      ),
+      '@clasptek/application-learning-assistant': path.resolve(
+        __dirname,
+        './packages/application/learning-assistant/src/index.ts'
+      ),
+      '@clasptek/domain-results': path.resolve(__dirname, './packages/domain/results/src/index.ts'),
+      '@clasptek/application-results': path.resolve(
+        __dirname,
+        './packages/application/results/src/index.ts'
+      ),
+      '@clasptek/domain-notification': path.resolve(
+        __dirname,
+        './packages/domain/notification/src/index.ts'
+      ),
+      '@clasptek/domain-announcement': path.resolve(
+        __dirname,
+        './packages/domain/announcement/src/index.ts'
+      ),
+      '@clasptek/application-notification': path.resolve(
+        __dirname,
+        './packages/application/notification/src/index.ts'
+      ),
+      '@clasptek/application-announcement': path.resolve(
+        __dirname,
+        './packages/application/announcement/src/index.ts'
+      ),
+      '@clasptek/domain-learning-analytics': path.resolve(
+        __dirname,
+        './packages/domain/learning-analytics/src/index.ts'
+      ),
+      '@clasptek/application-learning-analytics': path.resolve(
+        __dirname,
+        './packages/application/learning-analytics/src/index.ts'
       ),
     },
   },

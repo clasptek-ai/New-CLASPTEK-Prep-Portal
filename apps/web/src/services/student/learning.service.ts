@@ -39,22 +39,47 @@ export const studentLearningService = {
               id: 'm1',
               name: 'Advanced Writing Skills',
               lessons: [
-                { id: 'l1', title: 'Passive Voice Syntax Constraints', status: 'COMPLETED', durationMinutes: 45 },
-                { id: 'l2', title: 'Relative Clauses Modifiers Coherence', status: 'IN_PROGRESS', durationMinutes: 60 },
-                { id: 'l3', title: 'Lexical Diversity and Cohesion', status: 'NOT_STARTED', durationMinutes: 50 }
-              ]
+                {
+                  id: 'l1',
+                  title: 'Passive Voice Syntax Constraints',
+                  status: 'COMPLETED',
+                  durationMinutes: 45,
+                },
+                {
+                  id: 'l2',
+                  title: 'Relative Clauses Modifiers Coherence',
+                  status: 'IN_PROGRESS',
+                  durationMinutes: 60,
+                },
+                {
+                  id: 'l3',
+                  title: 'Lexical Diversity and Cohesion',
+                  status: 'NOT_STARTED',
+                  durationMinutes: 50,
+                },
+              ],
             },
             {
               id: 'm2',
               name: 'Academic Reading Diagnostics',
               lessons: [
-                { id: 'l4', title: 'Skimming and Scanning Strategies', status: 'NOT_STARTED', durationMinutes: 40 },
-                { id: 'l5', title: 'Summary Completion Tasks', status: 'NOT_STARTED', durationMinutes: 45 }
-              ]
-            }
-          ]
-        }
+                {
+                  id: 'l4',
+                  title: 'Skimming and Scanning Strategies',
+                  status: 'NOT_STARTED',
+                  durationMinutes: 40,
+                },
+                {
+                  id: 'l5',
+                  title: 'Summary Completion Tasks',
+                  status: 'NOT_STARTED',
+                  durationMinutes: 45,
+                },
+              ],
+            },
+          ],
+        },
       ];
     }
-  }
+  },
 };

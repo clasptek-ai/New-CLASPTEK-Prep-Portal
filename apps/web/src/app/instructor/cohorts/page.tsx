@@ -3,7 +3,7 @@ import { CohortsScreen } from '../../../features/instructor/cohorts/cohorts-scre
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <CohortsScreen />
     </WorkspaceShell>
   );

@@ -17,12 +17,12 @@ Sprint 2.6 delivers the **Adaptive Practice Domain** — the intelligence layer 
 
 ### Database Layer (4 migrations)
 
-| Migration | Description |
-|---|---|
-| `00600_adaptive_practice.sql` | Core schema: 10 tables covering strategy registry, snapshots, plans, blueprints, sessions, session questions, difficulty progressions, feedback, history, statistics |
-| `00601_adaptive_practice_seed.sql` | Default strategies seed data (WEAKEST_FIRST, BALANCED, BLUEPRINT, DIFFICULTY_PROG, RANDOM) |
-| `00602_adaptive_practice_rls.sql` | Row Level Security policies for all student practice data |
-| `00603_adaptive_practice_indexes.sql` | Performance indexes (B-Tree on student ID, BRIN on timestamps, partials) |
+| Migration                             | Description                                                                                                                                                          |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `00600_adaptive_practice.sql`         | Core schema: 10 tables covering strategy registry, snapshots, plans, blueprints, sessions, session questions, difficulty progressions, feedback, history, statistics |
+| `00601_adaptive_practice_seed.sql`    | Default strategies seed data (WEAKEST_FIRST, BALANCED, BLUEPRINT, DIFFICULTY_PROG, RANDOM)                                                                           |
+| `00602_adaptive_practice_rls.sql`     | Row Level Security policies for all student practice data                                                                                                            |
+| `00603_adaptive_practice_indexes.sql` | Performance indexes (B-Tree on student ID, BRIN on timestamps, partials)                                                                                             |
 
 ### Domain Package — `@clasptek/domain-adaptive-practice`
 

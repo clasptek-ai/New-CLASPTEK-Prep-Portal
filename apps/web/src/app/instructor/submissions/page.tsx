@@ -6,7 +6,7 @@ import { SubmissionsScreen } from '../../../features/instructor/submissions/subm
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <SubmissionsScreen />
     </WorkspaceShell>
   );

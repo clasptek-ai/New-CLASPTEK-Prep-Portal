@@ -1,6 +1,7 @@
 # Sprint-2.3 Architecture Freeze - Learning Resources Domain
 
 ## Health Status Badges
+
 ![Architecture: PASS](https://img.shields.io/badge/Architecture-PASS-success)
 ![Compilation: PASS](https://img.shields.io/badge/Compilation-PASS-success)
 ![Tests: PASS](https://img.shields.io/badge/Tests-PASS-success)
@@ -13,7 +14,9 @@
 We separated the Lessons structure from deliverable asset files as two distinct aggregate roots.
 
 ### Lesson Aggregate
+
 Controls stable lesson hierarchies, version histories, metadata, and sequential content blocks.
+
 ```mermaid
 classDiagram
     class Lesson {
@@ -47,7 +50,9 @@ classDiagram
 ```
 
 ### Learning Resource Aggregate
+
 Controls individual video, audio, PDF, and reading passage assets, download link stubs, and closed captions.
+
 ```mermaid
 classDiagram
     class LearningResource {
@@ -101,6 +106,7 @@ classDiagram
 ## 3. Database Schema
 
 Tables created in migration:
+
 - `lessons`
 - `lesson_versions`
 - `content_blocks`
@@ -118,5 +124,6 @@ Tables created in migration:
 ---
 
 ## 4. Verification Results
+
 All 84 tests successfully passed.
 The entire monorepo compiled cleanly.

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLearningAnalyticsContext } from '@/lib/learning-analytics-context';
 import { CompetencyAnalytics } from '@clasptek/domain-learning-analytics';

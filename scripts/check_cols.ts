@@ -33,7 +33,6 @@ async function main() {
     `);
     console.log('Constraints:');
     console.log(JSON.stringify(resCons.rows, null, 2));
-
   } catch (err) {
     console.error(err);
   } finally {

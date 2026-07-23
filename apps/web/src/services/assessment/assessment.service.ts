@@ -12,11 +12,29 @@ export const assessmentService = {
   async getAssessments(): Promise<AssessmentItem[]> {
     try {
       return await apiClient.get<AssessmentItem[]>('/api/v1/analytics/assessments');
-    } catch (e) {
+    } catch (_e) {
       return [
-        { id: 'a1', title: 'English Mock Exam Module A', durationMinutes: 60, questionCount: 40, status: 'AVAILABLE' },
-        { id: 'a2', title: 'Curriculum Competency Test 1', durationMinutes: 30, questionCount: 20, status: 'COMPLETED' },
-        { id: 'a3', title: 'Adaptive Practice Session Final', durationMinutes: 45, questionCount: 30, status: 'IN_PROGRESS' }
+        {
+          id: 'a1',
+          title: 'English Mock Exam Module A',
+          durationMinutes: 60,
+          questionCount: 40,
+          status: 'AVAILABLE',
+        },
+        {
+          id: 'a2',
+          title: 'Curriculum Competency Test 1',
+          durationMinutes: 30,
+          questionCount: 20,
+          status: 'COMPLETED',
+        },
+        {
+          id: 'a3',
+          title: 'Adaptive Practice Session Final',
+          durationMinutes: 45,
+          questionCount: 30,
+          status: 'IN_PROGRESS',
+        },
       ];
     }
   },
@@ -25,8 +43,8 @@ export const assessmentService = {
     try {
       await apiClient.post<any>('/api/v1/runtime/start', { assessmentId });
       return { success: true, message: 'Assessment session started' };
-    } catch (e) {
+    } catch (_e) {
       return { success: true, message: 'Local assessment runner fallback active' };
     }
-  }
+  },
 };

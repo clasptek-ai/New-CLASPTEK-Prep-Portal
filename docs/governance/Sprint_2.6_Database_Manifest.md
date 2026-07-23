@@ -13,7 +13,9 @@ This manifest records all schemas, constraints, Row Level Security rules, and in
 ## 1. Schema Definitions
 
 ### `practice_strategy_registry`
+
 Stores the registry of pluggable algorithms.
+
 - `strategy_code` VARCHAR(100) PRIMARY KEY
 - `display_name` VARCHAR(200) NOT NULL
 - `algorithm_version` VARCHAR(50) NOT NULL
@@ -21,7 +23,9 @@ Stores the registry of pluggable algorithms.
 - `status` VARCHAR(50) CHECK IN ('ACTIVE', 'INACTIVE', 'DEPRECATED')
 
 ### `adaptive_snapshots`
+
 Caches the student learning state to avoid expensive joins.
+
 - `id` UUID PRIMARY KEY
 - `student_id` UUID NOT NULL
 - `competency_levels` JSONB NOT NULL
@@ -31,7 +35,9 @@ Caches the student learning state to avoid expensive joins.
 - `recommendation_score` DECIMAL(5,2)
 
 ### `practice_recommendations`
+
 Stores recommendation queue entries with decision trace audits.
+
 - `id` UUID PRIMARY KEY
 - `student_id` UUID NOT NULL
 - `recommendation_rules` JSONB
@@ -46,7 +52,9 @@ Stores recommendation queue entries with decision trace audits.
 - `lock_version` INT
 
 ### `practice_plans`
+
 Stores the planned session configurations.
+
 - `id` UUID PRIMARY KEY
 - `student_id` UUID NOT NULL
 - `recommendation_id` UUID REFERENCES practice_recommendations
@@ -58,7 +66,9 @@ Stores the planned session configurations.
 - `lock_version` INT
 
 ### `practice_sessions`
+
 Stores session execution state.
+
 - `id` UUID PRIMARY KEY
 - `student_id` UUID NOT NULL
 - `plan_id` UUID REFERENCES practice_plans
@@ -69,7 +79,9 @@ Stores session execution state.
 - `lock_version` INT
 
 ### `practice_session_questions`
+
 Stores the questions loaded in the practice session queue.
+
 - `id` UUID PRIMARY KEY
 - `session_id` UUID REFERENCES practice_sessions ON DELETE CASCADE
 - `question_version_id` UUID NOT NULL
@@ -79,7 +91,9 @@ Stores the questions loaded in the practice session queue.
 - `time_spent_ms` INT
 
 ### `practice_feedback`
+
 Stores feedback logs.
+
 - `id` UUID PRIMARY KEY
 - `session_id` UUID REFERENCES practice_sessions ON DELETE CASCADE
 - `rating` INT CHECK (rating BETWEEN 1 AND 5)
@@ -92,6 +106,7 @@ Stores feedback logs.
 ## 2. Row Level Security Policies
 
 Enabled on:
+
 - `adaptive_snapshots`
 - `practice_recommendations`
 - `practice_plans`
@@ -102,6 +117,7 @@ Enabled on:
 - `practice_statistics`
 
 Policy:
+
 - Authenticated student has read/write access to rows where `student_id = auth.uid()`.
 - Access to child tables (`practice_session_questions`, `practice_feedback`) checks presence of parent session where `s.student_id = auth.uid()`.
 - Strategy Registry is open for select queries (`public_read_strategies`).

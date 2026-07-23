@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLearningAnalyticsContext } from '@/lib/learning-analytics-context';
 
@@ -10,7 +12,7 @@ export async function POST(req: NextRequest) {
     const ctx = await getLearningAnalyticsContext();
     const job = await ctx.refreshAnalytics.execute({
       initiatedBy,
-      isProduction
+      isProduction,
     });
 
     return NextResponse.json(job);

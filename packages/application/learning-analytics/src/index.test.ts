@@ -19,6 +19,10 @@ import {
   GetCoachAnalyticsHandler,
   GetPlatformMetricsHandler,
   SearchReportsHandler,
+  AnalyticsWarehouseService,
+  WidgetRegistry,
+  ResearchExportPipelineService,
+  DataQualityMonitorEngine,
   StudentDashboardProjectionRepository,
   InstructorDashboardProjectionRepository,
   AdminDashboardProjectionRepository,
@@ -27,7 +31,7 @@ import {
   TrendRepository,
   ReportRepository,
   ExportRepository,
-  AssessmentRuntimePort
+  AssessmentRuntimePort,
 } from './index';
 import {
   RuleBasedDashboardAggregationEngine,
@@ -45,68 +49,112 @@ import {
   ReportDefinition,
   ReportExecution,
   ScheduledReport,
-  ExportJob
+  ExportJob,
 } from '@clasptek/domain-learning-analytics';
 
 function createMockRepos() {
   const studentProjDb = new Map<string, StudentDashboardProjection>();
   const studentProjRepo: StudentDashboardProjectionRepository = {
-    save: vi.fn().mockImplementation(async (p: StudentDashboardProjection) => { studentProjDb.set(`${p.studentId}-${p.profileId}`, p); }),
-    find: vi.fn().mockImplementation(async (studentId: string, profileId: string) => studentProjDb.get(`${studentId}-${profileId}`) ?? null)
+    save: vi.fn().mockImplementation(async (p: StudentDashboardProjection) => {
+      studentProjDb.set(`${p.studentId}-${p.profileId}`, p);
+    }),
+    find: vi
+      .fn()
+      .mockImplementation(
+        async (studentId: string, profileId: string) =>
+          studentProjDb.get(`${studentId}-${profileId}`) ?? null
+      ),
   };
 
   const instructorProjDb = new Map<string, InstructorDashboardProjection>();
   const instructorProjRepo: InstructorDashboardProjectionRepository = {
-    save: vi.fn().mockImplementation(async (p: InstructorDashboardProjection) => { instructorProjDb.set(p.cohortId, p); }),
-    find: vi.fn().mockImplementation(async (cohortId: string) => instructorProjDb.get(cohortId) ?? null)
+    save: vi.fn().mockImplementation(async (p: InstructorDashboardProjection) => {
+      instructorProjDb.set(p.cohortId, p);
+    }),
+    find: vi
+      .fn()
+      .mockImplementation(async (cohortId: string) => instructorProjDb.get(cohortId) ?? null),
   };
 
   const adminProjDb = new Map<string, AdminDashboardProjection>();
   const adminProjRepo: AdminDashboardProjectionRepository = {
-    save: vi.fn().mockImplementation(async (p: AdminDashboardProjection) => { adminProjDb.set(p.orgId, p); }),
-    find: vi.fn().mockImplementation(async (orgId: string) => adminProjDb.get(orgId) ?? null)
+    save: vi.fn().mockImplementation(async (p: AdminDashboardProjection) => {
+      adminProjDb.set(p.orgId, p);
+    }),
+    find: vi.fn().mockImplementation(async (orgId: string) => adminProjDb.get(orgId) ?? null),
   };
 
   const compProjDb = new Map<string, CompetencyAnalytics>();
   const compProjRepo: CompetencyProjectionRepository = {
-    save: vi.fn().mockImplementation(async (p: CompetencyAnalytics) => { compProjDb.set(p.competencyCode, p); }),
-    find: vi.fn().mockImplementation(async (code: string) => compProjDb.get(code) ?? null)
+    save: vi.fn().mockImplementation(async (p: CompetencyAnalytics) => {
+      compProjDb.set(p.competencyCode, p);
+    }),
+    find: vi.fn().mockImplementation(async (code: string) => compProjDb.get(code) ?? null),
   };
 
   const riskProjDb = new Map<string, any>();
   const riskProjRepo: RiskProjectionRepository = {
-    save: vi.fn().mockImplementation(async (id: string, risk: string, score: number, factors: any, action: string) => {
-      riskProjDb.set(id, { riskLevel: risk, score, factors, action });
-    }),
-    find: vi.fn().mockImplementation(async (id: string) => riskProjDb.get(id) ?? null)
+    save: vi
+      .fn()
+      .mockImplementation(
+        async (id: string, risk: string, score: number, factors: any, action: string) => {
+          riskProjDb.set(id, { riskLevel: risk, score, factors, action });
+        }
+      ),
+    find: vi.fn().mockImplementation(async (id: string) => riskProjDb.get(id) ?? null),
   };
 
   const trendDb = new Map<string, LearningTrend>();
   const trendRepo: TrendRepository = {
-    saveLearningTrend: vi.fn().mockImplementation(async (t: LearningTrend) => { trendDb.set(t.category, t); }),
-    findLearningTrendByCategory: vi.fn().mockImplementation(async (cat: string) => trendDb.get(cat) ?? null),
-    savePredictionTrend: vi.fn()
+    saveLearningTrend: vi.fn().mockImplementation(async (t: LearningTrend) => {
+      trendDb.set(t.category, t);
+    }),
+    findLearningTrendByCategory: vi
+      .fn()
+      .mockImplementation(async (cat: string) => trendDb.get(cat) ?? null),
+    savePredictionTrend: vi.fn(),
   };
 
   const reportDefDb = new Map<string, ReportDefinition>();
   const reportExecDb = new Map<string, ReportExecution>();
   const reportSchedDb = new Map<string, ScheduledReport>();
   const reportRepo: ReportRepository = {
-    saveDefinition: vi.fn().mockImplementation(async (d: ReportDefinition) => { reportDefDb.set(d.code, d); }),
-    findDefinitionByCode: vi.fn().mockImplementation(async (code: string) => reportDefDb.get(code) ?? null),
-    saveExecution: vi.fn().mockImplementation(async (e: ReportExecution) => { reportExecDb.set(e.id, e); }),
-    findExecutionById: vi.fn().mockImplementation(async (id: string) => reportExecDb.get(id) ?? null),
-    saveSchedule: vi.fn().mockImplementation(async (s: ScheduledReport) => { reportSchedDb.set(s.id, s); }),
-    findActiveSchedules: vi.fn().mockImplementation(async () => Array.from(reportSchedDb.values()))
+    saveDefinition: vi.fn().mockImplementation(async (d: ReportDefinition) => {
+      reportDefDb.set(d.code, d);
+    }),
+    findDefinitionByCode: vi
+      .fn()
+      .mockImplementation(async (code: string) => reportDefDb.get(code) ?? null),
+    saveExecution: vi.fn().mockImplementation(async (e: ReportExecution) => {
+      reportExecDb.set(e.id, e);
+    }),
+    findExecutionById: vi
+      .fn()
+      .mockImplementation(async (id: string) => reportExecDb.get(id) ?? null),
+    saveSchedule: vi.fn().mockImplementation(async (s: ScheduledReport) => {
+      reportSchedDb.set(s.id, s);
+    }),
+    findActiveSchedules: vi.fn().mockImplementation(async () => Array.from(reportSchedDb.values())),
   };
 
   const exportDb = new Map<string, ExportJob>();
   const exportRepo: ExportRepository = {
-    saveJob: vi.fn().mockImplementation(async (j: ExportJob) => { exportDb.set(j.id, j); }),
-    findJobById: vi.fn().mockImplementation(async (id: string) => exportDb.get(id) ?? null)
+    saveJob: vi.fn().mockImplementation(async (j: ExportJob) => {
+      exportDb.set(j.id, j);
+    }),
+    findJobById: vi.fn().mockImplementation(async (id: string) => exportDb.get(id) ?? null),
   };
 
-  return { studentProjRepo, instructorProjRepo, adminProjRepo, compProjRepo, riskProjRepo, trendRepo, reportRepo, exportRepo };
+  return {
+    studentProjRepo,
+    instructorProjRepo,
+    adminProjRepo,
+    compProjRepo,
+    riskProjRepo,
+    trendRepo,
+    reportRepo,
+    exportRepo,
+  };
 }
 
 describe('Learning Analytics Command Handlers', () => {
@@ -143,7 +191,12 @@ describe('Learning Analytics Command Handlers', () => {
   test('RefreshAnalyticsHandler executes development synchronous flow', async () => {
     const { studentProjRepo, instructorProjRepo, adminProjRepo } = createMockRepos();
     const aggregationEngine = new RuleBasedDashboardAggregationEngine();
-    const handler = new RefreshAnalyticsHandler(aggregationEngine, studentProjRepo, instructorProjRepo, adminProjRepo);
+    const handler = new RefreshAnalyticsHandler(
+      aggregationEngine,
+      studentProjRepo,
+      instructorProjRepo,
+      adminProjRepo
+    );
 
     const job = await handler.execute({ initiatedBy: 'admin-1', isProduction: false });
     expect(job.status).toBe('COMPLETED');
@@ -153,7 +206,12 @@ describe('Learning Analytics Command Handlers', () => {
   test('RefreshAnalyticsHandler routes through background worker queue for production', async () => {
     const { studentProjRepo, instructorProjRepo, adminProjRepo } = createMockRepos();
     const aggregationEngine = new RuleBasedDashboardAggregationEngine();
-    const handler = new RefreshAnalyticsHandler(aggregationEngine, studentProjRepo, instructorProjRepo, adminProjRepo);
+    const handler = new RefreshAnalyticsHandler(
+      aggregationEngine,
+      studentProjRepo,
+      instructorProjRepo,
+      adminProjRepo
+    );
 
     const job = await handler.execute({ initiatedBy: 'admin-1', isProduction: true });
     expect(job.status).toBe('PENDING');
@@ -164,13 +222,17 @@ describe('Learning Analytics Command Handlers', () => {
     const { trendRepo } = createMockRepos();
     const compTrendEngine = new DefaultCompetencyTrendEngine();
     const platformTrendEngine = new DefaultPlatformTrendEngine();
-    const handler = new GenerateTrendAnalysisHandler(trendRepo, compTrendEngine, platformTrendEngine);
+    const handler = new GenerateTrendAnalysisHandler(
+      trendRepo,
+      compTrendEngine,
+      platformTrendEngine
+    );
 
     const trend = await handler.execute({
       category: 'COMPETENCY',
       targetId: 'COMP-1',
       startDate: new Date('2026-07-01'),
-      endDate: new Date('2026-07-15')
+      endDate: new Date('2026-07-15'),
     });
     expect(trend.category).toBe('COMP-1');
     expect(trendRepo.saveLearningTrend).toHaveBeenCalled();
@@ -178,7 +240,12 @@ describe('Learning Analytics Command Handlers', () => {
 
   test('GenerateReportHandler registers completed execution results', async () => {
     const { reportRepo } = createMockRepos();
-    const def = new ReportDefinition({ id: 'def-1', code: 'WEEKLY_STATUS', name: 'Weekly Status', templateJson: {} });
+    const def = new ReportDefinition({
+      id: 'def-1',
+      code: 'WEEKLY_STATUS',
+      name: 'Weekly Status',
+      templateJson: {},
+    });
     await reportRepo.saveDefinition(def);
 
     const handler = new GenerateReportHandler(reportRepo);
@@ -199,18 +266,32 @@ describe('Learning Analytics Command Handlers', () => {
 
   test('ScheduleReportHandler schedules custom recurring reports', async () => {
     const { reportRepo } = createMockRepos();
-    const def = new ReportDefinition({ id: 'def-1', code: 'WEEKLY_STATUS', name: 'Weekly Status', templateJson: {} });
+    const def = new ReportDefinition({
+      id: 'def-1',
+      code: 'WEEKLY_STATUS',
+      name: 'Weekly Status',
+      templateJson: {},
+    });
     await reportRepo.saveDefinition(def);
 
     const handler = new ScheduleReportHandler(reportRepo);
-    const sched = await handler.execute({ reportDefinitionCode: 'WEEKLY_STATUS', recipientEmail: 'test@clasptek.com', cronExpression: '0 9 * * 1' });
+    const sched = await handler.execute({
+      reportDefinitionCode: 'WEEKLY_STATUS',
+      recipientEmail: 'test@clasptek.com',
+      cronExpression: '0 9 * * 1',
+    });
     expect(sched.recipientEmail).toBe('test@clasptek.com');
   });
 
   test('RefreshProjectionHandler overrides dynamic projections', async () => {
     const { studentProjRepo, instructorProjRepo, adminProjRepo } = createMockRepos();
     const aggregationEngine = new RuleBasedDashboardAggregationEngine();
-    const handler = new RefreshProjectionHandler(aggregationEngine, studentProjRepo, instructorProjRepo, adminProjRepo);
+    const handler = new RefreshProjectionHandler(
+      aggregationEngine,
+      studentProjRepo,
+      instructorProjRepo,
+      adminProjRepo
+    );
 
     await handler.execute({ projectionType: 'STUDENT', targetId: 'stud-1', profileId: 'prof-1' });
     expect(studentProjRepo.save).toHaveBeenCalled();
@@ -220,7 +301,11 @@ describe('Learning Analytics Command Handlers', () => {
 describe('Learning Analytics Query Handlers', () => {
   test('GetStudentDashboardHandler fetches read models', async () => {
     const { studentProjRepo } = createMockRepos();
-    const proj = new StudentDashboardProjection({ studentId: 'stud-1', profileId: 'prof-1', readinessScore: 84.5 });
+    const proj = new StudentDashboardProjection({
+      studentId: 'stud-1',
+      profileId: 'prof-1',
+      readinessScore: 84.5,
+    });
     await studentProjRepo.save(proj);
 
     const handler = new GetStudentDashboardHandler(studentProjRepo);
@@ -231,9 +316,17 @@ describe('Learning Analytics Query Handlers', () => {
   test('GetInstructorDashboardHandler fetches cohort projections', async () => {
     const { instructorProjRepo } = createMockRepos();
     const proj = new InstructorDashboardProjection({
-      cohortId: 'cohort-1', overview: {}, riskMatrix: {}, heatmap: {},
-      completionRates: {}, qualitySummary: {}, predictionsDist: {},
-      interventions: {}, coachEngagement: {}, topPerformers: {}, attentionNeeded: {}
+      cohortId: 'cohort-1',
+      overview: {},
+      riskMatrix: {},
+      heatmap: {},
+      completionRates: {},
+      qualitySummary: {},
+      predictionsDist: {},
+      interventions: {},
+      coachEngagement: {},
+      topPerformers: {},
+      attentionNeeded: {},
     });
     await instructorProjRepo.save(proj);
 
@@ -245,9 +338,17 @@ describe('Learning Analytics Query Handlers', () => {
   test('GetAdminDashboardHandler fetches organizational projections', async () => {
     const { adminProjRepo } = createMockRepos();
     const proj = new AdminDashboardProjection({
-      orgId: 'org-1', platformUsage: {}, dau: {}, enrollments: {},
-      completionStats: {}, aiUsage: {}, predictionAccuracy: {},
-      infrastructure: {}, revenue: {}, growthTrends: {}, retention: {}
+      orgId: 'org-1',
+      platformUsage: {},
+      dau: {},
+      enrollments: {},
+      completionStats: {},
+      aiUsage: {},
+      predictionAccuracy: {},
+      infrastructure: {},
+      revenue: {},
+      growthTrends: {},
+      retention: {},
     });
     await adminProjRepo.save(proj);
 
@@ -275,7 +376,7 @@ describe('Learning Analytics Query Handlers', () => {
 
   test('GetAssessmentAnalyticsHandler calls assessment port', async () => {
     const assessmentPort: AssessmentRuntimePort = {
-      getSubmissions: vi.fn().mockResolvedValue([{ score: 80 }, { score: 90 }])
+      getSubmissions: vi.fn().mockResolvedValue([{ score: 80 }, { score: 90 }]),
     };
     const handler = new GetAssessmentAnalyticsHandler(assessmentPort);
     const res = await handler.execute('cohort-1');
@@ -315,5 +416,105 @@ describe('Learning Analytics Query Handlers', () => {
     const handler = new SearchReportsHandler(reportRepo);
     const res = await handler.execute('WEEKLY');
     expect(res.length).toBeGreaterThan(0);
+  });
+});
+
+describe('Sprint 2.11.1 Enterprise Application Services & Handlers', () => {
+  test('AnalyticsWarehouseService builds snapshots and refreshes projections', async () => {
+    const mockProjections = new Map<string, any>();
+    const mockSnapshots: any[] = [];
+
+    const mockWarehouseRepo = {
+      saveProjection: async (key: string, data: any) => {
+        mockProjections.set(key, data);
+      },
+      findProjectionByKey: async (key: string) => mockProjections.get(key) || null,
+      refreshMaterializedViews: async () => ({ refreshedCount: 5, durationMs: 12 }),
+    };
+
+    const mockSnapshotRepo = {
+      saveVersion: async (_ver: any) => {},
+      findLatestVersion: async () => null,
+      findVersionById: async (_id: string) => null,
+      saveSnapshot: async (snap: any) => {
+        mockSnapshots.push(snap);
+      },
+      findLatestSnapshot: async () => mockSnapshots[mockSnapshots.length - 1] || null,
+      findSnapshotById: async (id: string) => mockSnapshots.find((s) => s.id === id) || null,
+    };
+
+    const service = new AnalyticsWarehouseService(mockWarehouseRepo, mockSnapshotRepo);
+    const snap = await service.buildWarehouseSnapshot();
+
+    expect(snap.warehouseVersion).toContain('wh-v2.1.1');
+    expect(mockProjections.get('latest_warehouse_snapshot').refreshedCount).toBe(5);
+  });
+
+  test('WidgetRegistry manages dynamic widget registration and permissions', async () => {
+    const { WidgetDefinition } = await import('@clasptek/domain-learning-analytics');
+    const w1 = new WidgetDefinition({
+      id: 'w-kpi',
+      widgetType: 'KPI_CARD',
+      displayName: 'KPI Card',
+      defaultConfig: {},
+    });
+
+    WidgetRegistry.registerWidget(w1, ['ANALYTICS_VIEW']);
+
+    expect(WidgetRegistry.getWidget('KPI_CARD')?.displayName).toBe('KPI Card');
+    expect(WidgetRegistry.listWidgets(['ANALYTICS_VIEW'])).toHaveLength(1);
+    expect(WidgetRegistry.listWidgets(['STUDENT_READ_ONLY'])).toHaveLength(0);
+  });
+
+  test('ResearchExportPipelineService executes full export state machine', async () => {
+    const jobs = new Map<string, any>();
+    const mockExportRepo = {
+      saveJob: async (job: any) => {
+        jobs.set(job.id, job);
+      },
+      findJobById: async (id: string) => jobs.get(id) || null,
+      listJobsByRequester: async (req: string) =>
+        Array.from(jobs.values()).filter((j) => j.requestedBy === req),
+    };
+
+    const pipeline = new ResearchExportPipelineService(mockExportRepo);
+
+    const initialJob = await pipeline.requestExport({
+      requestedBy: 'researcher-lead',
+      datasetType: 'PROGRAMME_PERFORMANCE',
+    });
+
+    expect(initialJob.status).toBe('REQUESTED');
+
+    const completedJob = await pipeline.processExportJob(initialJob.id);
+    expect(completedJob.status).toBe('READY');
+    expect(completedJob.recordCount).toBe(2450);
+    expect(completedJob.fileUrl).toContain('programme_performance');
+  });
+
+  test('DataQualityMonitorEngine scans pipelines and logs quality checks', async () => {
+    const alerts: any[] = [];
+    const checks: any[] = [];
+
+    const mockQualityRepo = {
+      saveAlert: async (alert: any) => {
+        alerts.push(alert);
+      },
+      findActiveAlerts: async () => alerts.filter((a) => a.status === 'ACTIVE'),
+      logDataQualityCheck: async (
+        comp: string,
+        status: 'PASSED' | 'WARNING' | 'FAILED',
+        details: string
+      ) => {
+        checks.push({ comp, status, details });
+      },
+    };
+
+    const monitor = new DataQualityMonitorEngine(mockQualityRepo);
+
+    const activeAlerts = await monitor.runQualityScan();
+    expect(checks).toHaveLength(2);
+    expect(checks[0].status).toBe('PASSED');
+    expect(activeAlerts).toHaveLength(0);
   });
 });

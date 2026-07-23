@@ -5,14 +5,14 @@ import {
   CreateCurriculumVersionHandler,
   CreateCurriculumVersionCommand,
   AddLearningModuleHandler,
-  AddLearningModuleCommand
+  AddLearningModuleCommand,
 } from './index';
 import {
   CurriculumRepository,
   CurriculumVersionRepository,
   LearningModuleRepository,
   Curriculum,
-  CurriculumCode
+  CurriculumCode,
 } from '@clasptek/domain-curriculum';
 
 describe('Curriculum Application Handlers Tests', () => {
@@ -22,14 +22,14 @@ describe('Curriculum Application Handlers Tests', () => {
       findByCode: vi.fn().mockResolvedValue(null),
       save: vi.fn(),
       delete: vi.fn(),
-      search: vi.fn()
+      search: vi.fn(),
     };
 
     const handler = new CreateCurriculumHandler(mockRepo);
     const command: CreateCurriculumCommand = {
       code: 'IELTS-AC-TEST',
       name: 'IELTS Academic Test',
-      description: 'Testing'
+      description: 'Testing',
     };
 
     const id = await handler.execute(command);
@@ -40,21 +40,26 @@ describe('Curriculum Application Handlers Tests', () => {
 
   test('CreateCurriculumVersionHandler and AddLearningModuleHandler execute successfully', async () => {
     const curId = 'mock-cur-123';
-    const mockCur = Curriculum.create(curId, new CurriculumCode('IELTS-AC-TEST'), 'IELTS Academic', 'Testing');
+    const mockCur = Curriculum.create(
+      curId,
+      new CurriculumCode('IELTS-AC-TEST'),
+      'IELTS Academic',
+      'Testing'
+    );
 
     const mockCurRepo: CurriculumRepository = {
       findById: vi.fn().mockResolvedValue(mockCur),
       findByCode: vi.fn(),
       save: vi.fn(),
       delete: vi.fn(),
-      search: vi.fn()
+      search: vi.fn(),
     };
 
     const mockVersionRepo: CurriculumVersionRepository = {
       findById: vi.fn(),
       findByCurriculumAndVersion: vi.fn(),
       save: vi.fn(),
-      delete: vi.fn()
+      delete: vi.fn(),
     };
 
     const versionHandler = new CreateCurriculumVersionHandler(mockCurRepo, mockVersionRepo);
@@ -63,7 +68,7 @@ describe('Curriculum Application Handlers Tests', () => {
       versionNo: '1.0.0',
       name: 'Release 1.0.0',
       description: 'First version',
-      expectedVersion: 0
+      expectedVersion: 0,
     };
 
     const versionId = await versionHandler.execute(versionCommand);
@@ -75,7 +80,7 @@ describe('Curriculum Application Handlers Tests', () => {
       findById: vi.fn(),
       findByVersion: vi.fn(),
       save: vi.fn(),
-      delete: vi.fn()
+      delete: vi.fn(),
     };
 
     const moduleHandler = new AddLearningModuleHandler(mockModuleRepo);
@@ -87,7 +92,7 @@ describe('Curriculum Application Handlers Tests', () => {
       moduleType: 'core',
       defaultSequenceNo: 1,
       estimatedStudyMinutes: 60,
-      isRequired: true
+      isRequired: true,
     };
 
     const moduleId = await moduleHandler.execute(moduleCommand);

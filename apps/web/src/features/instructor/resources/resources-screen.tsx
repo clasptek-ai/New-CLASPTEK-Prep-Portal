@@ -2,8 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Badge } from '../../../components/ui/ui-components';
-import { instructorResourcesService, LearningResourceItem } from '../../../services/instructor/resources.service';
-import { instructorProgrammesService, Programme } from '../../../services/instructor/programmes.service';
+import {
+  instructorResourcesService,
+  LearningResourceItem,
+} from '../../../services/instructor/resources.service';
+import {
+  instructorProgrammesService,
+  Programme,
+} from '../../../services/instructor/programmes.service';
 
 export function ResourcesScreen() {
   const [resources, setResources] = useState<LearningResourceItem[]>([]);
@@ -60,10 +66,10 @@ export function ResourcesScreen() {
         fileSizeBytes: 102400,
         uploadedBy: 'inst-active', // Set dynamically by runtime context mock
         uploadedAt: new Date().toISOString(),
-        version: 1
+        version: 1,
       });
 
-      setResources(prev => [newItem, ...prev]);
+      setResources((prev) => [newItem, ...prev]);
       setTitle('');
       setDescription('');
       setLesson('');
@@ -91,26 +97,57 @@ export function ResourcesScreen() {
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Learning Resources Repository</h1>
-          <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>Manage diagnostic guides, files uploads, and download analytics</p>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
+            Learning Resources Repository
+          </h1>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+            Manage diagnostic guides, files uploads, and download analytics
+          </p>
         </div>
 
         {notification && (
-          <div style={{ padding: '1rem', backgroundColor: '#10b98120', border: '1px solid #10b98140', borderRadius: '8px', color: '#10b981', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              padding: '1rem',
+              backgroundColor: '#10b98120',
+              border: '1px solid #10b98140',
+              borderRadius: '8px',
+              color: '#10b981',
+              fontSize: '0.85rem',
+            }}
+          >
             {notification}
           </div>
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {resources.map(res => (
+          {resources.map((res) => (
             <Card key={res.id} title={res.title} actions={<Badge>{res.resourceType}</Badge>}>
-              <div style={{ fontSize: '0.85rem', color: '#cbd5e1', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div
+                style={{
+                  fontSize: '0.85rem',
+                  color: '#cbd5e1',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                }}
+              >
                 <p style={{ margin: 0 }}>{res.description}</p>
-                <div style={{ display: 'flex', gap: '1rem', color: '#64748b', fontSize: '0.75rem' }}>
-                  <span>Lesson: <strong>{res.lesson}</strong></span>
-                  <span>Difficulty: <strong>{res.difficulty}</strong></span>
-                  <span>Downloads: <strong>{res.downloads}</strong></span>
-                  <span>Views: <strong>{res.views}</strong></span>
+                <div
+                  style={{ display: 'flex', gap: '1rem', color: '#64748b', fontSize: '0.75rem' }}
+                >
+                  <span>
+                    Lesson: <strong>{res.lesson}</strong>
+                  </span>
+                  <span>
+                    Difficulty: <strong>{res.difficulty}</strong>
+                  </span>
+                  <span>
+                    Downloads: <strong>{res.downloads}</strong>
+                  </span>
+                  <span>
+                    Views: <strong>{res.views}</strong>
+                  </span>
                 </div>
               </div>
             </Card>
@@ -120,43 +157,115 @@ export function ResourcesScreen() {
 
       <div>
         <Card title="Upload New Resource">
-          <form onSubmit={handleUpload} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form
+            onSubmit={handleUpload}
+            style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+          >
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Target Programme</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Target Programme
+              </label>
               <select
                 value={selectedProgrammeId}
-                onChange={e => setSelectedProgrammeId(e.target.value)}
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', backgroundColor: '#0b0f19', color: '#f8fafc', border: '1px solid #232e48' }}
+                onChange={(e) => setSelectedProgrammeId(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0b0f19',
+                  color: '#f8fafc',
+                  border: '1px solid #232e48',
+                }}
               >
-                {programmes.map(prog => (
-                  <option key={prog.id} value={prog.id}>{prog.name}</option>
+                {programmes.map((prog) => (
+                  <option key={prog.id} value={prog.id}>
+                    {prog.name}
+                  </option>
                 ))}
               </select>
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Resource Title</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Resource Title
+              </label>
               <input
                 type="text"
                 value={title}
-                onChange={e => setTitle(e.target.value)}
+                onChange={(e) => setTitle(e.target.value)}
                 required
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', backgroundColor: '#0b0f19', color: '#f8fafc', border: '1px solid #232e48', boxSizing: 'border-box' }}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0b0f19',
+                  color: '#f8fafc',
+                  border: '1px solid #232e48',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Description</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Description
+              </label>
               <textarea
                 value={description}
-                onChange={e => setDescription(e.target.value)}
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', backgroundColor: '#0b0f19', color: '#f8fafc', border: '1px solid #232e48', boxSizing: 'border-box', height: '60px' }}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0b0f19',
+                  color: '#f8fafc',
+                  border: '1px solid #232e48',
+                  boxSizing: 'border-box',
+                  height: '60px',
+                }}
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Resource Type</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Resource Type
+              </label>
               <select
                 value={resourceType}
-                onChange={e => setResourceType(e.target.value as any)}
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', backgroundColor: '#0b0f19', color: '#f8fafc', border: '1px solid #232e48' }}
+                onChange={(e) => setResourceType(e.target.value as any)}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0b0f19',
+                  color: '#f8fafc',
+                  border: '1px solid #232e48',
+                }}
               >
                 <option value="PDF">PDF Document</option>
                 <option value="DOCX">Word Document</option>
@@ -168,31 +277,81 @@ export function ResourcesScreen() {
               </select>
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Lesson Name</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Lesson Name
+              </label>
               <input
                 type="text"
                 value={lesson}
-                onChange={e => setLesson(e.target.value)}
+                onChange={(e) => setLesson(e.target.value)}
                 required
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', backgroundColor: '#0b0f19', color: '#f8fafc', border: '1px solid #232e48', boxSizing: 'border-box' }}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0b0f19',
+                  color: '#f8fafc',
+                  border: '1px solid #232e48',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Module Name</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Module Name
+              </label>
               <input
                 type="text"
                 value={moduleName}
-                onChange={e => setModuleName(e.target.value)}
+                onChange={(e) => setModuleName(e.target.value)}
                 required
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', backgroundColor: '#0b0f19', color: '#f8fafc', border: '1px solid #232e48', boxSizing: 'border-box' }}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0b0f19',
+                  color: '#f8fafc',
+                  border: '1px solid #232e48',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Difficulty</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Difficulty
+              </label>
               <select
                 value={difficulty}
-                onChange={e => setDifficulty(e.target.value as any)}
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', backgroundColor: '#0b0f19', color: '#f8fafc', border: '1px solid #232e48' }}
+                onChange={(e) => setDifficulty(e.target.value as any)}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0b0f19',
+                  color: '#f8fafc',
+                  border: '1px solid #232e48',
+                }}
               >
                 <option value="EASY">Easy</option>
                 <option value="MEDIUM">Medium</option>
@@ -200,11 +359,27 @@ export function ResourcesScreen() {
               </select>
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Visibility</label>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.25rem',
+                }}
+              >
+                Visibility
+              </label>
               <select
                 value={visibility}
-                onChange={e => setVisibility(e.target.value as any)}
-                style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', backgroundColor: '#0b0f19', color: '#f8fafc', border: '1px solid #232e48' }}
+                onChange={(e) => setVisibility(e.target.value as any)}
+                style={{
+                  width: '100%',
+                  padding: '0.5rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0b0f19',
+                  color: '#f8fafc',
+                  border: '1px solid #232e48',
+                }}
               >
                 <option value="PUBLIC">Visible to All Students</option>
                 <option value="PRIVATE">Draft (Private)</option>

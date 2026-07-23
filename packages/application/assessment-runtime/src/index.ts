@@ -55,10 +55,7 @@ export class CreateAssessmentSessionHandler {
     private readonly sheetRepo: AnswerSheetRepository
   ) {}
 
-  public async execute(cmd: {
-    studentId: string;
-    instanceId: string;
-  }): Promise<string> {
+  public async execute(cmd: { studentId: string; instanceId: string }): Promise<string> {
     const active = await this.sessionRepo.findActive(cmd.studentId);
     if (active) throw new Error('Student already has an active assessment session');
 
@@ -107,7 +104,11 @@ export class PauseAssessmentHandler {
 export class ResumeAssessmentHandler {
   constructor(private readonly sessionRepo: AssessmentSessionRepository) {}
 
-  public async execute(cmd: { sessionId: string; token?: string | undefined; at?: Date | undefined }): Promise<void> {
+  public async execute(cmd: {
+    sessionId: string;
+    token?: string | undefined;
+    at?: Date | undefined;
+  }): Promise<void> {
     const session = await this.sessionRepo.findById(cmd.sessionId);
     if (!session) throw new Error('Assessment session not found');
 
@@ -270,3 +271,13 @@ export class GetNavigationHistoryHandler {
     return session.visits;
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// CANONICAL DELIVERY APPLICATION EXPORTS (Sprint 3.4.1)
+// ═══════════════════════════════════════════════════════════════════
+export * from './result-generation.service';
+export * from './server-timer-engine';
+export * from './examination-rules-engine';
+export * from './examination-integrity-engine';
+export * from './session-recovery.service';
+export * from './delivery-command-adapters';

@@ -12,13 +12,13 @@ This document establishes the transaction execution latency thresholds and targe
 
 ## Latency Baselines
 
-| Operation | Target Latency | Observed / Projected Latency | Status |
-|---|---|---|---|
-| **Save Answer** | `< 50 ms` | ~12 ms | ✅ Pass |
-| **Autosave Checkpoint** | `< 100 ms` | ~40 ms | ✅ Pass |
-| **Resume Session** | `< 200 ms` | ~90 ms | ✅ Pass |
-| **Telemetry Heartbeat** | `< 20 ms` | ~8 ms | ✅ Pass |
-| **Complete Submission** | `< 300 ms` | ~110 ms | ✅ Pass |
+| Operation               | Target Latency | Observed / Projected Latency | Status  |
+| ----------------------- | -------------- | ---------------------------- | ------- |
+| **Save Answer**         | `< 50 ms`      | ~12 ms                       | ✅ Pass |
+| **Autosave Checkpoint** | `< 100 ms`     | ~40 ms                       | ✅ Pass |
+| **Resume Session**      | `< 200 ms`     | ~90 ms                       | ✅ Pass |
+| **Telemetry Heartbeat** | `< 20 ms`      | ~8 ms                        | ✅ Pass |
+| **Complete Submission** | `< 300 ms`     | ~110 ms                      | ✅ Pass |
 
 ---
 

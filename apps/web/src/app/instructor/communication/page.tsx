@@ -3,7 +3,7 @@ import { CommunicationScreen } from '../../../features/instructor/communication/
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <CommunicationScreen />
     </WorkspaceShell>
   );

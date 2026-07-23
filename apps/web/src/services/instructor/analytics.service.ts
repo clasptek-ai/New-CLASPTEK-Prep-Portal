@@ -12,9 +12,14 @@ export interface PracticeAnalyticsSummary {
 }
 
 export const instructorAnalyticsService = {
-  async getPracticeAnalytics(programmeId?: string, studentId?: string): Promise<PracticeAnalyticsSummary> {
+  async getPracticeAnalytics(
+    programmeId?: string,
+    studentId?: string
+  ): Promise<PracticeAnalyticsSummary> {
     try {
-      return await apiClient.get<PracticeAnalyticsSummary>(`/api/v1/instructor/analytics?programmeId=${programmeId || ''}&studentId=${studentId || ''}`);
+      return await apiClient.get<PracticeAnalyticsSummary>(
+        `/api/v1/instructor/analytics?programmeId=${programmeId || ''}&studentId=${studentId || ''}`
+      );
     } catch {
       return {
         completionRate: 75.4,
@@ -24,8 +29,8 @@ export const instructorAnalyticsService = {
         strongestTopics: ['Vocabulary Advanced', 'Active Voice Direct', 'Time Management'],
         timePerQuestionSeconds: 42,
         progressTrend: [60, 64, 68, 71, 74, 75],
-        readinessTrend: [65, 68, 70, 71, 73, 74]
+        readinessTrend: [65, 68, 70, 71, 73, 74],
       };
     }
-  }
+  },
 };

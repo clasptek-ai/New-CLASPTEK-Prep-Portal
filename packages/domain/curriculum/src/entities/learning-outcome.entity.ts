@@ -39,7 +39,7 @@ export class LearningOutcome extends Entity<string> {
     public cognitiveLevelId?: string,
     public difficultyLevelId?: string,
     public evidenceTypeId?: string,
-    public minimumMasteryPercentage: number = 80.00,
+    public minimumMasteryPercentage: number = 80.0,
     public estimatedEvidenceMinutes: number = 0,
     public isMeasurable: boolean = true,
     public status: string = 'draft'

@@ -24,7 +24,7 @@ export class CurriculumTemplate extends AggregateRoot<string> {
   }
 
   public publishVersion(versionId: string): void {
-    const version = this.versions.find(v => v.id === versionId);
+    const version = this.versions.find((v) => v.id === versionId);
     if (!version) {
       throw new Error('Template version not found');
     }

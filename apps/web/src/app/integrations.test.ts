@@ -6,11 +6,11 @@ vi.mock('next/navigation', () => {
     usePathname: () => '/admin/integrations',
     useRouter: () => ({
       push: vi.fn(),
-      prefetch: vi.fn()
+      prefetch: vi.fn(),
     }),
     use: (promise: any) => {
       return { connectionId: 'c1' };
-    }
+    },
   };
 });
 
@@ -19,12 +19,16 @@ vi.mock('../providers/theme-provider', () => {
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
     useTheme: () => ({
       theme: 'dark',
-      setTheme: vi.fn()
-    })
+      setTheme: vi.fn(),
+    }),
   };
 });
 
-import { IntegrationCard, ConnectionStatus, ConnectionWizard } from '../components/integrations/integration-components';
+import {
+  IntegrationCard,
+  ConnectionStatus,
+  ConnectionWizard,
+} from '../components/integrations/integration-components';
 import { IntegrationsScreen } from '../features/admin/integrations/integrations-screen';
 import { ConnectionWorkspace } from '../features/admin/integrations/connection-workspace';
 import { WebhooksScreen } from '../features/admin/integrations/webhooks-screen';

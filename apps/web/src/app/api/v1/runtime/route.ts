@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAssessmentRuntimeContext } from '@/lib/assessment-runtime-context';
 
@@ -30,7 +32,10 @@ export async function GET(req: NextRequest) {
     const sessions = await ctx.getSession.execute({ sessionId: studentId }); // or search sessions
     return NextResponse.json({ sessions });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }
 
@@ -48,6 +53,9 @@ export async function POST(req: NextRequest) {
     const sessionId = await ctx.createSession.execute({ studentId, instanceId });
     return NextResponse.json({ id: sessionId }, { status: 201 });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 400 }
+    );
   }
 }

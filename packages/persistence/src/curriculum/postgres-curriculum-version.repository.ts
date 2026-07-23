@@ -5,7 +5,7 @@ import {
   DependencyLock,
   CurriculumLocale,
   Translation,
-  DependencyVersion
+  DependencyVersion,
 } from '@clasptek/domain-curriculum';
 import { DatabasePool } from '../database-pool';
 
@@ -47,7 +47,15 @@ export class PostgresCurriculumVersionRepository implements CurriculumVersionRep
       [id]
     );
     version.dependencyLocks = locksRes.rows.map(
-      r => new DependencyLock(r.id, r.curriculum_version_id, r.dependency_type, r.dependency_id, r.locked_version_no, r.locked_at)
+      (r) =>
+        new DependencyLock(
+          r.id,
+          r.curriculum_version_id,
+          r.dependency_type,
+          r.dependency_id,
+          r.locked_version_no,
+          r.locked_at
+        )
     );
 
     // Load locales
@@ -56,7 +64,16 @@ export class PostgresCurriculumVersionRepository implements CurriculumVersionRep
       [id]
     );
     version.locales = localesRes.rows.map(
-      r => new CurriculumLocale(r.id, r.curriculum_version_id, r.language_code, r.is_default, r.is_required_for_publication, r.translation_status, r.display_order)
+      (r) =>
+        new CurriculumLocale(
+          r.id,
+          r.curriculum_version_id,
+          r.language_code,
+          r.is_default,
+          r.is_required_for_publication,
+          r.translation_status,
+          r.display_order
+        )
     );
 
     // Load metadata
@@ -64,7 +81,7 @@ export class PostgresCurriculumVersionRepository implements CurriculumVersionRep
       'SELECT * FROM curriculum_metadata WHERE curriculum_version_id = $1 AND deleted_at IS NULL',
       [id]
     );
-    metaRes.rows.forEach(r => {
+    metaRes.rows.forEach((r) => {
       version.metadata.set(r.metadata_key, r.metadata_value);
     });
 
@@ -74,7 +91,19 @@ export class PostgresCurriculumVersionRepository implements CurriculumVersionRep
       [id]
     );
     version.translations = transRes.rows.map(
-      r => new Translation(r.id, r.parent_entity_id, r.language_code, r.localized_name, undefined, r.localized_description, undefined, r.source_language_code, r.translation_method, r.translation_status)
+      (r) =>
+        new Translation(
+          r.id,
+          r.parent_entity_id,
+          r.language_code,
+          r.localized_name,
+          undefined,
+          r.localized_description,
+          undefined,
+          r.source_language_code,
+          r.translation_method,
+          r.translation_status
+        )
     );
 
     return version;
@@ -111,7 +140,7 @@ export class PostgresCurriculumVersionRepository implements CurriculumVersionRep
           version.breakingChange,
           version.migrationNotes || null,
           version.lockVersion,
-          version.id
+          version.id,
         ]
       );
     } else {
@@ -131,7 +160,7 @@ export class PostgresCurriculumVersionRepository implements CurriculumVersionRep
           version.supersededBy || null,
           version.breakingChange,
           version.migrationNotes || null,
-          version.lockVersion
+          version.lockVersion,
         ]
       );
     }
@@ -147,7 +176,14 @@ export class PostgresCurriculumVersionRepository implements CurriculumVersionRep
          (id, curriculum_version_id, dependency_type, dependency_id, locked_version_no, locked_at) 
          VALUES ($1, $2, $3, $4, $5, $6) 
          ON CONFLICT (id) DO UPDATE SET deleted_at = null, locked_version_no = EXCLUDED.locked_version_no`,
-        [lock.id, lock.curriculumVersionId, lock.dependencyType, lock.dependencyId, lock.lockedVersionNo, lock.lockedAt]
+        [
+          lock.id,
+          lock.curriculumVersionId,
+          lock.dependencyType,
+          lock.dependencyId,
+          lock.lockedVersionNo,
+          lock.lockedAt,
+        ]
       );
     }
 
@@ -162,7 +198,15 @@ export class PostgresCurriculumVersionRepository implements CurriculumVersionRep
          (id, curriculum_version_id, language_code, is_default, is_required_for_publication, translation_status, display_order) 
          VALUES ($1, $2, $3, $4, $5, $6, $7) 
          ON CONFLICT (id) DO UPDATE SET deleted_at = null, is_default = EXCLUDED.is_default, is_required_for_publication = EXCLUDED.is_required_for_publication`,
-        [loc.id, loc.curriculumVersionId, loc.languageCode, loc.isDefault, loc.isRequiredForPublication, loc.translationStatus, loc.displayOrder]
+        [
+          loc.id,
+          loc.curriculumVersionId,
+          loc.languageCode,
+          loc.isDefault,
+          loc.isRequiredForPublication,
+          loc.translationStatus,
+          loc.displayOrder,
+        ]
       );
     }
 
@@ -182,9 +226,6 @@ export class PostgresCurriculumVersionRepository implements CurriculumVersionRep
   }
 
   public async delete(id: string): Promise<void> {
-    await this.pool.query(
-      'UPDATE curriculum_versions SET deleted_at = now() WHERE id = $1',
-      [id]
-    );
+    await this.pool.query('UPDATE curriculum_versions SET deleted_at = now() WHERE id = $1', [id]);
   }
 }

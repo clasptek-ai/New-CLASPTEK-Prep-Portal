@@ -12,14 +12,14 @@ This document establishes the transaction execution latency thresholds and targe
 
 ## Latency Baselines
 
-| Operation | Target Latency | Observed / Projected Latency | Status |
-|---|---|---|---|
-| **Generate Session Plan** | `< 500 ms` | ~120 ms | ✅ Pass |
-| **Recommendation Engine Audit Log** | `< 300 ms` | ~45 ms | ✅ Pass |
-| **Active Session Retrieval** | `< 200 ms` | ~80 ms | ✅ Pass |
-| **Eligibility Filter execution** | `< 150 ms` | ~10 ms | ✅ Pass |
-| **Question Selection Strategy run** | `< 200 ms` | ~15 ms | ✅ Pass |
-| **Complete Session & Feedback save** | `< 250 ms` | ~95 ms | ✅ Pass |
+| Operation                            | Target Latency | Observed / Projected Latency | Status  |
+| ------------------------------------ | -------------- | ---------------------------- | ------- |
+| **Generate Session Plan**            | `< 500 ms`     | ~120 ms                      | ✅ Pass |
+| **Recommendation Engine Audit Log**  | `< 300 ms`     | ~45 ms                       | ✅ Pass |
+| **Active Session Retrieval**         | `< 200 ms`     | ~80 ms                       | ✅ Pass |
+| **Eligibility Filter execution**     | `< 150 ms`     | ~10 ms                       | ✅ Pass |
+| **Question Selection Strategy run**  | `< 200 ms`     | ~15 ms                       | ✅ Pass |
+| **Complete Session & Feedback save** | `< 250 ms`     | ~95 ms                       | ✅ Pass |
 
 ---
 

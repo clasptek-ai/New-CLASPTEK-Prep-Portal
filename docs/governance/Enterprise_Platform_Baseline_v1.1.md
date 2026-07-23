@@ -62,6 +62,7 @@ AI Learning Coach
 ## Repository Contracts (Frozen)
 
 ### PracticeSessionRepository
+
 - save()
 - findById()
 - findActive()
@@ -71,12 +72,14 @@ AI Learning Coach
 - nextIdentity()
 
 ### PracticePlanRepository
+
 - save()
 - findById()
 - publish()
 - search()
 
 ### RecommendationRepository
+
 - save()
 - findPending()
 - accept()
@@ -84,6 +87,7 @@ AI Learning Coach
 - expire()
 
 ### StrategyRepository
+
 - save()
 - findByCode()
 - findAll()
@@ -123,12 +127,12 @@ Assessment Runtime consumes these events and must not mutate Adaptive Practice s
 
 ## Performance Baselines
 
-| Operation | Target | Current |
-|---|---:|---:|
+| Operation                   |  Target | Current |
+| --------------------------- | ------: | ------: |
 | Practice Session Generation | <500 ms | ~120 ms |
-| Recommendation Engine | <300 ms | ~45 ms |
-| Session Retrieval | <200 ms | ~80 ms |
-| Eligibility Filter | <150 ms | ~10 ms |
+| Recommendation Engine       | <300 ms |  ~45 ms |
+| Session Retrieval           | <200 ms |  ~80 ms |
+| Eligibility Filter          | <150 ms |  ~10 ms |
 
 ## Governance Documents
 

@@ -46,7 +46,7 @@ export const studentDashboardService = {
       }
 
       const learningProgress = programmes.length > 0 ? programmes[0].completionPercentage : 0;
-      const activeAssignmentsCount = assignments.filter(a => a.status === 'PENDING').length;
+      const activeAssignmentsCount = assignments.filter((a) => a.status === 'PENDING').length;
 
       return {
         stats: {
@@ -55,21 +55,21 @@ export const studentDashboardService = {
           mockAverage: 82,
           readinessScore: readiness.overallReadiness,
           assignmentsDue: activeAssignmentsCount || 2,
-          studyStreak: 8
+          studyStreak: 8,
         },
         recommendations: [
           'Review Relative Clauses modifiers grammar practice logs.',
-          'Take IELTS Grammar Diagnostic Mock B exam.'
+          'Take IELTS Grammar Diagnostic Mock B exam.',
         ],
         upcomingDeadlines: [
           { title: 'Advanced Essay Syntax Assignment', due: '2026-07-24', type: 'ASSIGNMENT' },
-          { title: 'IELTS Grammar Diagnostic Mock B', due: '2026-08-01', type: 'MOCK' }
+          { title: 'IELTS Grammar Diagnostic Mock B', due: '2026-08-01', type: 'MOCK' },
         ],
         notifications: notifications.slice(0, 3),
         activities: [
           { id: '1', title: 'Finished Relative Clauses lesson', type: 'LESSON', time: '10m ago' },
-          { id: '2', title: 'Completed Timed Practice Session', type: 'PRACTICE', time: '1h ago' }
-        ]
+          { id: '2', title: 'Completed Timed Practice Session', type: 'PRACTICE', time: '1h ago' },
+        ],
       };
     } catch {
       return {
@@ -79,15 +79,15 @@ export const studentDashboardService = {
           mockAverage: 82,
           readinessScore: 76,
           assignmentsDue: 2,
-          studyStreak: 8
+          studyStreak: 8,
         },
         recommendations: [
           'Review Relative Clauses modifiers grammar practice logs.',
-          'Take IELTS Grammar Diagnostic Mock B exam.'
+          'Take IELTS Grammar Diagnostic Mock B exam.',
         ],
         upcomingDeadlines: [
           { title: 'Advanced Essay Syntax Assignment', due: '2026-07-24', type: 'ASSIGNMENT' },
-          { title: 'IELTS Grammar Diagnostic Mock B', due: '2026-08-01', type: 'MOCK' }
+          { title: 'IELTS Grammar Diagnostic Mock B', due: '2026-08-01', type: 'MOCK' },
         ],
         notifications: [
           {
@@ -96,14 +96,14 @@ export const studentDashboardService = {
             content: 'Your Advanced Essay Syntax assignment has been graded. Score: 85/100.',
             type: 'ASSIGNMENT_GRADED',
             read: false,
-            createdAt: new Date().toISOString()
-          }
+            createdAt: new Date().toISOString(),
+          },
         ],
         activities: [
           { id: '1', title: 'Finished Relative Clauses lesson', type: 'LESSON', time: '10m ago' },
-          { id: '2', title: 'Completed Timed Practice Session', type: 'PRACTICE', time: '1h ago' }
-        ]
+          { id: '2', title: 'Completed Timed Practice Session', type: 'PRACTICE', time: '1h ago' },
+        ],
       };
     }
-  }
+  },
 };

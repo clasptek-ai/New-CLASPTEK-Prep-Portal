@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getIdentityContext } from '@/lib/identity-context';
 import { ArchiveUserCommand } from '@clasptek/application-identity';

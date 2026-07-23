@@ -4,7 +4,7 @@ import {
   CurriculumCoverageProjection,
   CurriculumPublicationReadinessProjection,
   CurriculumGraphProjection,
-  LessonTreeProjection
+  LessonTreeProjection,
 } from '@clasptek/application-curriculum';
 import { DatabasePool } from '../database-pool';
 
@@ -31,7 +31,7 @@ export class PostgresProjectionQuery {
       currentVersionNo: r.current_version_no || undefined,
       totalModules: Number(r.total_modules),
       totalLessons: Number(r.total_lessons),
-      updatedAt: r.updated_at
+      updatedAt: r.updated_at,
     };
   }
 
@@ -48,11 +48,13 @@ export class PostgresProjectionQuery {
       outcomesCoveredCount: Number(r.outcomes_covered_count),
       skillsFrameworkCoveragePercentage: Number(r.skills_framework_coverage_percentage),
       examWeightAlignmentScore: Number(r.exam_weight_alignment_score),
-      isFullyAligned: r.is_fully_aligned
+      isFullyAligned: r.is_fully_aligned,
     };
   }
 
-  public async getReadiness(versionId: string): Promise<CurriculumPublicationReadinessProjection | null> {
+  public async getReadiness(
+    versionId: string
+  ): Promise<CurriculumPublicationReadinessProjection | null> {
     const res = await this.pool.query(
       'SELECT * FROM curriculum_read.curriculum_publication_readiness_projection WHERE curriculum_version_id = $1',
       [versionId]
@@ -65,7 +67,7 @@ export class PostgresProjectionQuery {
       blockingErrors: r.blocking_errors || [],
       circularReferencesCount: Number(r.circular_references_count),
       missingTranslationsLanguages: r.missing_translations_languages || [],
-      dependencyLocksFrozen: r.dependency_locks_frozen
+      dependencyLocksFrozen: r.dependency_locks_frozen,
     };
   }
 
@@ -80,7 +82,7 @@ export class PostgresProjectionQuery {
       curriculumVersionId: r.curriculum_version_id,
       nodesJson: JSON.stringify(r.nodes),
       edgesJson: JSON.stringify(r.edges),
-      longestSequencePathLength: Number(r.longest_sequence_path_length)
+      longestSequencePathLength: Number(r.longest_sequence_path_length),
     };
   }
 
@@ -93,7 +95,7 @@ export class PostgresProjectionQuery {
     const r = res.rows[0];
     return {
       curriculumVersionId: r.curriculum_version_id,
-      treeJson: JSON.stringify(r.tree)
+      treeJson: JSON.stringify(r.tree),
     };
   }
 

@@ -1,12 +1,14 @@
 # package: @clasptek/application-assessment-runtime
 
 ## Frozen Repository Contracts
+
 - `AssessmentSessionRepository`
 - `AnswerSheetRepository`
 - `CheckpointRepository`
 - `RuntimeStatisticsRepository`
 
 ## Commands
+
 - `CreateAssessmentSession`
 - `StartAssessment`
 - `PauseAssessment`
@@ -17,6 +19,7 @@
 - `ArchiveSession`
 
 ## Queries
+
 - `GetAssessmentSession`
 - `GetAnswerSheet`
 - `GetRuntimeStatistics`

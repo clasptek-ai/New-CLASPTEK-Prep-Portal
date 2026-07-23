@@ -10,7 +10,7 @@ export default function Page({ params }: PageProps) {
   const { cohortId } = use(params);
 
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <CohortsScreen cohortId={cohortId} />
     </WorkspaceShell>
   );

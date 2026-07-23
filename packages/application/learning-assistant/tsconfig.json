@@ -1,0 +1,16 @@
+{
+  "extends": "../../../tsconfig.options.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../kernel" },
+    { "path": "../../domain/learning-assistant" },
+    { "path": "../../domain/ai-evaluation" },
+    { "path": "../../domain/prediction-engine" },
+    { "path": "../../domain/adaptive-practice" }
+  ]
+}

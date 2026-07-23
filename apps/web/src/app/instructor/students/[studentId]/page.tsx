@@ -12,7 +12,7 @@ export default function Page({ params }: PageProps) {
   const { studentId } = use(params);
 
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <StudentsScreen studentId={studentId} />
     </WorkspaceShell>
   );

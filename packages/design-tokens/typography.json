@@ -1,0 +1,26 @@
+{
+  "fontFamily": {
+    "sans": "Outfit, Inter, system-ui, sans-serif",
+    "mono": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+  },
+  "fontSize": {
+    "displayXl": "48px",
+    "displayLg": "36px",
+    "headingXl": "30px",
+    "headingLg": "24px",
+    "headingMd": "20px",
+    "headingSm": "18px",
+    "bodyLg": "16px",
+    "bodyMd": "14px",
+    "bodySm": "12px",
+    "caption": "11px",
+    "label": "12px"
+  },
+  "fontWeight": {
+    "regular": 400,
+    "medium": 500,
+    "semibold": 600,
+    "bold": 700,
+    "extrabold": 800
+  }
+}

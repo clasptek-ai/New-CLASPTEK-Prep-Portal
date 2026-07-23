@@ -13,13 +13,13 @@ export function SavedViewsPanel({ onSelectView }: { onSelectView: (view: SavedVi
   const [views, setViews] = useState<SavedViewItem[]>([
     { id: '1', name: 'My Active Drafts', filters: { author: 'me', status: 'DRAFT' } },
     { id: '2', name: 'Pending Peer Reviews', filters: { status: 'PENDING_REVIEW' } },
-    { id: '3', name: 'Published This Week', filters: { status: 'PUBLISHED', date: '7d' } }
+    { id: '3', name: 'Published This Week', filters: { status: 'PUBLISHED', date: '7d' } },
   ]);
 
   return (
     <Card title="Author Saved Views">
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {views.map(view => (
+        {views.map((view) => (
           <button
             key={view.id}
             onClick={() => onSelectView(view)}
@@ -33,7 +33,7 @@ export function SavedViewsPanel({ onSelectView }: { onSelectView: (view: SavedVi
               textAlign: 'left',
               cursor: 'pointer',
               fontWeight: 600,
-              transition: 'background-color 0.2s'
+              transition: 'background-color 0.2s',
             }}
           >
             ★ {view.name}

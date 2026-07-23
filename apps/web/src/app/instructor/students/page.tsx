@@ -3,7 +3,7 @@ import { StudentsScreen } from '../../../features/instructor/students/students-s
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <StudentsScreen />
     </WorkspaceShell>
   );

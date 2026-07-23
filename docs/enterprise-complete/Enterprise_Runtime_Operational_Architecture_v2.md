@@ -1,6 +1,7 @@
-
 # Clasptek Prep Portal V2
+
 # Enterprise Runtime & Operational Architecture
+
 ## Production Runtime Governance Specification
 
 **Version:** 2.0.0  
@@ -51,29 +52,29 @@ This document defines the canonical runtime architecture, operational model, pro
 
 # 3. Runtime Components
 
-| Component | Responsibility | Scaling |
-|---|---|---|
-| Web | UI rendering | Horizontal |
-| API | Business services | Horizontal |
-| Assessment Workers | Attempt processing | Queue driven |
-| AI Writing Workers | Essay evaluation | Queue driven |
-| AI Speaking Workers | Speech evaluation | Queue driven |
-| Notification Workers | Email, SMS, WhatsApp, Push | Queue driven |
-| Analytics Workers | Aggregation & reporting | Scheduled + Queue |
-| Scheduler | Cron orchestration | Singleton |
+| Component            | Responsibility             | Scaling           |
+| -------------------- | -------------------------- | ----------------- |
+| Web                  | UI rendering               | Horizontal        |
+| API                  | Business services          | Horizontal        |
+| Assessment Workers   | Attempt processing         | Queue driven      |
+| AI Writing Workers   | Essay evaluation           | Queue driven      |
+| AI Speaking Workers  | Speech evaluation          | Queue driven      |
+| Notification Workers | Email, SMS, WhatsApp, Push | Queue driven      |
+| Analytics Workers    | Aggregation & reporting    | Scheduled + Queue |
+| Scheduler            | Cron orchestration         | Singleton         |
 
 ---
 
 # 4. Worker Catalogue
 
-| Worker | Queue | Responsibility |
-|---|---|---|
-| Writing Evaluation | ai-writing | Essay scoring |
-| Speaking Evaluation | ai-speaking | Speech scoring |
-| Email | notification-email | Email delivery |
-| WhatsApp | notification-whatsapp | WhatsApp delivery |
-| Analytics | analytics | KPI aggregation |
-| Import | imports | Workbook processing |
+| Worker              | Queue                 | Responsibility      |
+| ------------------- | --------------------- | ------------------- |
+| Writing Evaluation  | ai-writing            | Essay scoring       |
+| Speaking Evaluation | ai-speaking           | Speech scoring      |
+| Email               | notification-email    | Email delivery      |
+| WhatsApp            | notification-whatsapp | WhatsApp delivery   |
+| Analytics           | analytics             | KPI aggregation     |
+| Import              | imports               | Workbook processing |
 
 ---
 
@@ -115,13 +116,13 @@ Deployment standards:
 
 # 7. Runtime Configuration Matrix
 
-| Configuration | Dev | QA | Prod |
-|---|:---:|:---:|:---:|
-| PostgreSQL | ✓ | ✓ | ✓ |
-| Redis | Optional | ✓ | ✓ |
-| Object Storage | Local | ✓ | ✓ |
-| AI Provider | Mock | Live | Live |
-| Email | Sandbox | Sandbox | Production |
+| Configuration  |   Dev    |   QA    |    Prod    |
+| -------------- | :------: | :-----: | :--------: |
+| PostgreSQL     |    ✓     |    ✓    |     ✓      |
+| Redis          | Optional |    ✓    |     ✓      |
+| Object Storage |  Local   |    ✓    |     ✓      |
+| AI Provider    |   Mock   |  Live   |    Live    |
+| Email          | Sandbox  | Sandbox | Production |
 
 Secrets are stored outside source control and injected at runtime.
 
@@ -129,12 +130,12 @@ Secrets are stored outside source control and injected at runtime.
 
 # 8. Autoscaling Strategy
 
-| Service | Trigger | Action |
-|---|---:|---|
-| API | CPU >70% | Add instance |
-| AI Workers | Queue >500 jobs | Add workers |
-| Notifications | Queue >1000 jobs | Add workers |
-| Analytics | CPU >75% | Add worker |
+| Service       |          Trigger | Action       |
+| ------------- | ---------------: | ------------ |
+| API           |         CPU >70% | Add instance |
+| AI Workers    |  Queue >500 jobs | Add workers  |
+| Notifications | Queue >1000 jobs | Add workers  |
+| Analytics     |         CPU >75% | Add worker   |
 
 ---
 
@@ -186,6 +187,7 @@ Retention policies apply to each file category.
 - Verified backup integrity
 
 Target:
+
 - RPO: ≤15 minutes
 - RTO: ≤2 hours
 
@@ -214,21 +216,25 @@ Alerts
 # 13. Operational Metrics
 
 ## API
+
 - Latency
 - Requests/sec
 - Error rate
 
 ## Database
+
 - Connections
 - Slow queries
 - Lock contention
 
 ## Queues
+
 - Queue depth
 - Retry rate
 - Processing time
 
 ## AI
+
 - Evaluation duration
 - Token usage
 - Confidence score
@@ -238,13 +244,13 @@ Alerts
 
 # 14. Capacity Planning Assumptions
 
-| Metric | Initial Target |
-|---|---:|
-| Registered Users | 10,000 |
-| Concurrent Candidates | 500 |
-| Questions | 100,000 |
-| AI Evaluations / Month | 50,000 |
-| Storage | 5 TB |
+| Metric                 | Initial Target |
+| ---------------------- | -------------: |
+| Registered Users       |         10,000 |
+| Concurrent Candidates  |            500 |
+| Questions              |        100,000 |
+| AI Evaluations / Month |         50,000 |
+| Storage                |           5 TB |
 
 Review quarterly.
 
@@ -252,15 +258,15 @@ Review quarterly.
 
 # 15. Operational Runbook Index
 
-| ID | Runbook |
-|---|---|
-| OPS-001 | Platform Startup |
-| OPS-002 | Deployment |
-| OPS-003 | Rollback |
-| OPS-004 | Queue Recovery |
+| ID      | Runbook            |
+| ------- | ------------------ |
+| OPS-001 | Platform Startup   |
+| OPS-002 | Deployment         |
+| OPS-003 | Rollback           |
+| OPS-004 | Queue Recovery     |
 | OPS-005 | Database Migration |
-| OPS-006 | Disaster Recovery |
-| OPS-007 | Incident Response |
+| OPS-006 | Disaster Recovery  |
+| OPS-007 | Incident Response  |
 
 ---
 
@@ -284,23 +290,23 @@ Running
 
 # 17. SLA Catalogue
 
-| Service | SLA |
-|---|---:|
-| Authentication | 99.95% |
+| Service            |    SLA |
+| ------------------ | -----: |
+| Authentication     | 99.95% |
 | Assessment Runtime | 99.90% |
-| AI Evaluation | 99.50% |
-| Analytics | 99.00% |
+| AI Evaluation      | 99.50% |
+| Analytics          | 99.00% |
 
 ---
 
 # 18. Incident Severity Matrix
 
-| Severity | Response Target |
-|---|---:|
-| P1 Critical | 15 min |
-| P2 High | 1 hour |
-| P3 Medium | 4 hours |
-| P4 Low | Next business day |
+| Severity    |   Response Target |
+| ----------- | ----------------: |
+| P1 Critical |            15 min |
+| P2 High     |            1 hour |
+| P3 Medium   |           4 hours |
+| P4 Low      | Next business day |
 
 ---
 

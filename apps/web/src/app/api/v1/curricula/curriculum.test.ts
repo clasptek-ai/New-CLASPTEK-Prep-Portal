@@ -40,7 +40,17 @@ vi.mock('pg', () => {
         const status = params[5];
         const current_version_id = params[6];
         const current_version_no = params[7];
-        mockCurricula.set(id, { id, code, slug, name, description, status, current_version_id, current_version_no, lock_version: 0 });
+        mockCurricula.set(id, {
+          id,
+          code,
+          slug,
+          name,
+          description,
+          status,
+          current_version_id,
+          current_version_no,
+          lock_version: 0,
+        });
       }
       return { rowCount: 1 };
     }
@@ -52,7 +62,15 @@ vi.mock('pg', () => {
         const status = params[3];
         const name = params[4];
         const description = params[5];
-        mockCurriculumVersions.set(id, { id, curriculum_id, version_no, status, name, description, lock_version: 0 });
+        mockCurriculumVersions.set(id, {
+          id,
+          curriculum_id,
+          version_no,
+          status,
+          name,
+          description,
+          lock_version: 0,
+        });
       }
       return { rowCount: 1 };
     }
@@ -66,7 +84,7 @@ vi.mock('pg', () => {
         const current_version_id = params[3];
         const current_version_no = params[4];
         const id = params[5];
-        
+
         const current = mockCurricula.get(id);
         if (current) {
           current.name = name;
@@ -99,7 +117,7 @@ vi.mock('pg', () => {
     if (sql.includes('SELECT') && sql.includes('FROM curricula')) {
       if (sql.includes('code = $1')) {
         const code = params?.[0];
-        const found = Array.from(mockCurricula.values()).find(c => c.code === code);
+        const found = Array.from(mockCurricula.values()).find((c) => c.code === code);
         return { rows: found ? [found] : [] };
       }
       if (sql.includes('id = $1')) {
@@ -112,7 +130,9 @@ vi.mock('pg', () => {
 
     if (sql.includes('SELECT') && sql.includes('FROM curriculum_versions')) {
       const curriculumId = params?.[0];
-      const found = Array.from(mockCurriculumVersions.values()).filter(v => v.curriculum_id === curriculumId);
+      const found = Array.from(mockCurriculumVersions.values()).filter(
+        (v) => v.curriculum_id === curriculumId
+      );
       return { rows: found };
     }
 
@@ -133,11 +153,11 @@ vi.mock('pg', () => {
     Pool: vi.fn().mockImplementation(() => ({
       connect: vi.fn().mockResolvedValue({
         query: queryMock,
-        release: vi.fn()
+        release: vi.fn(),
       }),
       query: queryMock,
-      on: vi.fn()
-    }))
+      on: vi.fn(),
+    })),
   };
 });
 
@@ -156,8 +176,8 @@ describe('Curriculum & Programme REST APIs Integration Tests', () => {
       body: JSON.stringify({
         code: 'IELTS-AC-PREP-CURRIC',
         name: 'IELTS Academic Master Curriculum',
-        description: 'Standard master curriculum'
-      })
+        description: 'Standard master curriculum',
+      }),
     });
 
     const res = await createCurriculumApi(req);
@@ -179,14 +199,14 @@ describe('Curriculum & Programme REST APIs Integration Tests', () => {
       status: 'PUBLISHED',
       current_version_id: 'mock-ver-123',
       current_version_no: '1.0.0',
-      lock_version: 0
+      lock_version: 0,
     });
     mockCurriculumVersions.set('mock-ver-123', {
       id: 'mock-ver-123',
       curriculum_id: cId,
       version_no: '1.0.0',
       status: 'PUBLISHED',
-      name: 'V1 Release'
+      name: 'V1 Release',
     });
 
     const reqSearch = new NextRequest('http://localhost/api/v1/curricula?status=PUBLISHED');
@@ -195,9 +215,12 @@ describe('Curriculum & Programme REST APIs Integration Tests', () => {
     const searchBody = await resSearch.json();
     expect(searchBody.length).toBe(1);
 
-    const resGet = await getCurriculumApi(new NextRequest('http://localhost/api/v1/curricula/' + cId), {
-      params: Promise.resolve({ id: cId })
-    });
+    const resGet = await getCurriculumApi(
+      new NextRequest('http://localhost/api/v1/curricula/' + cId),
+      {
+        params: Promise.resolve({ id: cId }),
+      }
+    );
     expect(resGet.status).toBe(200);
     const detailBody = await resGet.json();
     expect(detailBody.code).toBe('IELTS-AC-PREP-CURRIC');

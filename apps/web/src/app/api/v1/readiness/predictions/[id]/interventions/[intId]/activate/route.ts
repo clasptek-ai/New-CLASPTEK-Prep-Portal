@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getPredictionEngineContext } from '@/lib/prediction-engine-context';
 
@@ -13,9 +15,15 @@ export async function POST(
   try {
     const params = await props.params;
     const ctx = await getPredictionEngineContext();
-    await ctx.triggerIntervention.execute({ predictionId: params.id, interventionId: params.intId });
+    await ctx.triggerIntervention.execute({
+      predictionId: params.id,
+      interventionId: params.intId,
+    });
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

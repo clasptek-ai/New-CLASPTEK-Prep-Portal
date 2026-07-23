@@ -6,7 +6,7 @@ import {
   LessonPrerequisite,
   LessonSequence,
   LessonOutcomeMapping,
-  LessonResourceMapping
+  LessonResourceMapping,
 } from '@clasptek/domain-curriculum';
 import { DatabasePool } from '../database-pool';
 
@@ -60,7 +60,20 @@ export class PostgresCurriculumLessonRepository implements LessonRepository {
       [id]
     );
     lesson.prerequisites = prereqRes.rows.map(
-      r => new LessonPrerequisite(r.id, r.lesson_id, r.prerequisite_lesson_id, r.prerequisite_type, Number(r.minimum_completion_percentage), Number(r.minimum_mastery_percentage), r.required_skill_revision_id, r.required_skill_level_id, r.is_mandatory, r.rationale, r.status)
+      (r) =>
+        new LessonPrerequisite(
+          r.id,
+          r.lesson_id,
+          r.prerequisite_lesson_id,
+          r.prerequisite_type,
+          Number(r.minimum_completion_percentage),
+          Number(r.minimum_mastery_percentage),
+          r.required_skill_revision_id,
+          r.required_skill_level_id,
+          r.is_mandatory,
+          r.rationale,
+          r.status
+        )
     );
 
     // Sequences
@@ -68,60 +81,57 @@ export class PostgresCurriculumLessonRepository implements LessonRepository {
       'SELECT * FROM public.lesson_sequences WHERE (source_lesson_id = $1 OR target_lesson_id = $1) AND deleted_at IS NULL',
       [id]
     );
-    lesson.sequences = seqRes.rows.map(
-      r => {
-        const seq: LessonSequence = {
-          id: r.id,
-          learningModuleId: r.learning_module_id,
-          sourceLessonId: r.source_lesson_id,
-          targetLessonId: r.target_lesson_id,
-          relationType: r.relation_type,
-          priority: Number(r.priority),
-          isMandatory: r.is_mandatory,
-          status: r.status
-        };
-        if (r.condition_json !== null && r.condition_json !== undefined) {
-          seq.conditionJson = typeof r.condition_json === 'string' ? r.condition_json : JSON.stringify(r.condition_json);
-        }
-        return seq;
+    lesson.sequences = seqRes.rows.map((r) => {
+      const seq: LessonSequence = {
+        id: r.id,
+        learningModuleId: r.learning_module_id,
+        sourceLessonId: r.source_lesson_id,
+        targetLessonId: r.target_lesson_id,
+        relationType: r.relation_type,
+        priority: Number(r.priority),
+        isMandatory: r.is_mandatory,
+        status: r.status,
+      };
+      if (r.condition_json !== null && r.condition_json !== undefined) {
+        seq.conditionJson =
+          typeof r.condition_json === 'string'
+            ? r.condition_json
+            : JSON.stringify(r.condition_json);
       }
-    );
+      return seq;
+    });
 
     // Outcomes
     const outcomeRes = await this.pool.query(
       'SELECT * FROM public.lesson_learning_outcomes WHERE lesson_id = $1 AND deleted_at IS NULL',
       [id]
     );
-    lesson.outcomes = outcomeRes.rows.map(
-      r => {
-        const out: LessonOutcomeMapping = {
-          id: r.id,
-          learningOutcomeId: r.learning_outcome_id,
-          sequenceNo: Number(r.sequence_no),
-          isPrimary: r.is_primary
-        };
-        return out;
-      }
-    );
+    lesson.outcomes = outcomeRes.rows.map((r) => {
+      const out: LessonOutcomeMapping = {
+        id: r.id,
+        learningOutcomeId: r.learning_outcome_id,
+        sequenceNo: Number(r.sequence_no),
+        isPrimary: r.is_primary,
+      };
+      return out;
+    });
 
     // Resources
     const resRes = await this.pool.query(
       'SELECT * FROM public.lesson_resources WHERE lesson_id = $1 AND deleted_at IS NULL',
       [id]
     );
-    lesson.resources = resRes.rows.map(
-      r => {
-        const res: LessonResourceMapping = {
-          id: r.id,
-          resourceReferenceId: r.resource_reference_id,
-          usageType: r.usage_type,
-          sequenceNo: Number(r.sequence_no),
-          isRequired: r.is_required,
-          availabilityPolicy: r.availability_policy
-        };
-        return res;
-      }
-    );
+    lesson.resources = resRes.rows.map((r) => {
+      const res: LessonResourceMapping = {
+        id: r.id,
+        resourceReferenceId: r.resource_reference_id,
+        usageType: r.usage_type,
+        sequenceNo: Number(r.sequence_no),
+        isRequired: r.is_required,
+        availabilityPolicy: r.availability_policy,
+      };
+      return res;
+    });
 
     return lesson;
   }
@@ -164,7 +174,7 @@ export class PostgresCurriculumLessonRepository implements LessonRepository {
           lesson.isRequired,
           lesson.status,
           lesson.lockVersion,
-          lesson.id
+          lesson.id,
         ]
       );
     } else {
@@ -188,7 +198,7 @@ export class PostgresCurriculumLessonRepository implements LessonRepository {
           lesson.completionPolicy,
           lesson.isRequired,
           lesson.status,
-          lesson.lockVersion
+          lesson.lockVersion,
         ]
       );
     }
@@ -204,7 +214,19 @@ export class PostgresCurriculumLessonRepository implements LessonRepository {
          (id, lesson_id, prerequisite_lesson_id, prerequisite_type, minimum_completion_percentage, minimum_mastery_percentage, required_skill_revision_id, required_skill_level_id, is_mandatory, rationale, status) 
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
          ON CONFLICT (id) DO UPDATE SET deleted_at = null`,
-        [prereq.id, prereq.lessonId, prereq.prerequisiteLessonId, prereq.prerequisiteType, prereq.minimumCompletionPercentage, prereq.minimumMasteryPercentage, prereq.requiredSkillRevisionId || null, prereq.requiredSkillLevelId || null, prereq.isMandatory, prereq.rationale || null, prereq.status]
+        [
+          prereq.id,
+          prereq.lessonId,
+          prereq.prerequisiteLessonId,
+          prereq.prerequisiteType,
+          prereq.minimumCompletionPercentage,
+          prereq.minimumMasteryPercentage,
+          prereq.requiredSkillRevisionId || null,
+          prereq.requiredSkillLevelId || null,
+          prereq.isMandatory,
+          prereq.rationale || null,
+          prereq.status,
+        ]
       );
     }
 
@@ -219,7 +241,17 @@ export class PostgresCurriculumLessonRepository implements LessonRepository {
          (id, learning_module_id, source_lesson_id, target_lesson_id, relation_type, priority, is_mandatory, condition_json, status) 
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
          ON CONFLICT (id) DO UPDATE SET deleted_at = null`,
-        [seq.id, seq.learningModuleId, seq.sourceLessonId, seq.targetLessonId, seq.relationType, seq.priority, seq.isMandatory, seq.conditionJson ? JSON.parse(seq.conditionJson) : null, seq.status]
+        [
+          seq.id,
+          seq.learningModuleId,
+          seq.sourceLessonId,
+          seq.targetLessonId,
+          seq.relationType,
+          seq.priority,
+          seq.isMandatory,
+          seq.conditionJson ? JSON.parse(seq.conditionJson) : null,
+          seq.status,
+        ]
       );
     }
 
@@ -247,15 +279,20 @@ export class PostgresCurriculumLessonRepository implements LessonRepository {
         `INSERT INTO public.lesson_resources (id, lesson_id, resource_reference_id, usage_type, sequence_no, is_required, availability_policy) 
          VALUES ($1, $2, $3, $4, $5, $6, $7) 
          ON CONFLICT (id) DO UPDATE SET deleted_at = null`,
-        [r.id, lesson.id, r.resourceReferenceId, r.usageType, r.sequenceNo, r.isRequired, r.availabilityPolicy]
+        [
+          r.id,
+          lesson.id,
+          r.resourceReferenceId,
+          r.usageType,
+          r.sequenceNo,
+          r.isRequired,
+          r.availabilityPolicy,
+        ]
       );
     }
   }
 
   public async delete(id: string): Promise<void> {
-    await this.pool.query(
-      'UPDATE public.lessons SET deleted_at = now() WHERE id = $1',
-      [id]
-    );
+    await this.pool.query('UPDATE public.lessons SET deleted_at = now() WHERE id = $1', [id]);
   }
 }

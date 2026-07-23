@@ -104,7 +104,7 @@ export class GetResourceDetailHandler {
          WHERE resource_variant_id = ANY($1) AND deleted_at IS NULL`,
         [variantIds]
       );
-      
+
       for (const vRow of versionsRes.rows) {
         const objectsRes = await this.pool.query(
           `SELECT rvo.object_role, so.* 
@@ -113,7 +113,7 @@ export class GetResourceDetailHandler {
            WHERE rvo.resource_version_id = $1 AND rvo.deleted_at IS NULL`,
           [vRow.id]
         );
-        
+
         const metadataRes = await this.pool.query(
           `SELECT md.namespace, md.metadata_key, m.metadata_value_json 
            FROM public.resource_metadata m
@@ -122,33 +122,42 @@ export class GetResourceDetailHandler {
           [vRow.id]
         );
         const metadataMap = new Map<string, string>();
-        metadataRes.rows.forEach(m => {
+        metadataRes.rows.forEach((m) => {
           const fullKey = `${m.namespace}.${m.metadata_key}`;
-          const val = typeof m.metadata_value_json === 'string' ? m.metadata_value_json : JSON.stringify(m.metadata_value_json);
+          const val =
+            typeof m.metadata_value_json === 'string'
+              ? m.metadata_value_json
+              : JSON.stringify(m.metadata_value_json);
           // Strip outer quotes if it's a JSON string representing a primitive
-          const cleanVal = (val.startsWith('"') && val.endsWith('"')) ? val.slice(1, -1) : val;
+          const cleanVal = val.startsWith('"') && val.endsWith('"') ? val.slice(1, -1) : val;
           metadataMap.set(fullKey, cleanVal);
           metadataMap.set(m.metadata_key, cleanVal);
         });
 
-        const mediaObj = objectsRes.rows.find(o => o.object_role === 'primary');
-        const attachments = objectsRes.rows.filter(o => o.object_role === 'attachment').map(o => ({
-          id: o.id,
-          name: o.original_filename || 'Attachment',
-          fileSize: Number(o.size_bytes),
-          mimeType: o.detected_mime_type,
-          objectKey: o.object_path
-        }));
-        const transcripts = objectsRes.rows.filter(o => o.object_role === 'transcript').map(o => ({
-          id: o.id,
-          transcriptText: o.original_filename || 'Transcript text',
-          language: 'en'
-        }));
-        const captions = objectsRes.rows.filter(o => o.object_role === 'captions').map(o => ({
-          id: o.id,
-          captionText: o.original_filename || 'Caption text',
-          language: 'en'
-        }));
+        const mediaObj = objectsRes.rows.find((o) => o.object_role === 'primary');
+        const attachments = objectsRes.rows
+          .filter((o) => o.object_role === 'attachment')
+          .map((o) => ({
+            id: o.id,
+            name: o.original_filename || 'Attachment',
+            fileSize: Number(o.size_bytes),
+            mimeType: o.detected_mime_type,
+            objectKey: o.object_path,
+          }));
+        const transcripts = objectsRes.rows
+          .filter((o) => o.object_role === 'transcript')
+          .map((o) => ({
+            id: o.id,
+            transcriptText: o.original_filename || 'Transcript text',
+            language: 'en',
+          }));
+        const captions = objectsRes.rows
+          .filter((o) => o.object_role === 'captions')
+          .map((o) => ({
+            id: o.id,
+            captionText: o.original_filename || 'Caption text',
+            language: 'en',
+          }));
 
         versions.push({
           id: vRow.id,
@@ -156,23 +165,25 @@ export class GetResourceDetailHandler {
           status: vRow.status,
           name: vRow.title,
           description: vRow.description,
-          mediaAsset: mediaObj ? {
-            id: mediaObj.id,
-            provider: mediaObj.storage_provider,
-            bucket: mediaObj.bucket_name,
-            objectKey: mediaObj.object_path,
-            region: '',
-            checksum: mediaObj.etag || '',
-            mimeType: mediaObj.detected_mime_type,
-            size: Number(mediaObj.size_bytes),
-            duration: null
-          } : null,
+          mediaAsset: mediaObj
+            ? {
+                id: mediaObj.id,
+                provider: mediaObj.storage_provider,
+                bucket: mediaObj.bucket_name,
+                objectKey: mediaObj.object_path,
+                region: '',
+                checksum: mediaObj.etag || '',
+                mimeType: mediaObj.detected_mime_type,
+                size: Number(mediaObj.size_bytes),
+                duration: null,
+              }
+            : null,
           attachments,
           downloads: [],
           externalLinks: [],
           transcripts,
           captions,
-          metadata: metadataMap
+          metadata: metadataMap,
         });
       }
     }
@@ -194,9 +205,9 @@ export class GetResourceDetailHandler {
         languageCode: v.language_code,
         variantPurpose: v.variant_purpose,
         isDefault: v.is_default,
-        currentPublishedVersionId: v.current_published_version_id
+        currentPublishedVersionId: v.current_published_version_id,
       })),
-      versions
+      versions,
     };
   }
 }

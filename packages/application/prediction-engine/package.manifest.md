@@ -1,6 +1,7 @@
 # package: @clasptek/application-prediction-engine
 
 ## Frozen Repository Contracts
+
 - `ReadinessPredictionRepository` — save, findById, findLatestByStudent, findHistoryByStudent, search
 - `ReadinessSnapshotRepository` — save, findById, findLatestByStudent
 - `PredictionExperimentRepository` — save, findById, findActiveExperiment, findByCode
@@ -8,6 +9,7 @@
 - `ModelVersionRepository` — findById, findCurrentByModelCode
 
 ## Commands
+
 - `GeneratePredictionHandler` — create readiness snapshot, fetch active predictor from registry, generate prediction scores, save aggregate
 - `PublishPredictionHandler` — publish prediction to student view
 - `CreateExperimentHandler` — create new predictor A/B experiment
@@ -18,6 +20,7 @@
 - `DiscardInterventionHandler` — discard proposed intervention workflow
 
 ## Queries
+
 - `GetLatestPredictionHandler` — fetch latest prediction for student
 - `GetPredictionHistoryHandler` — fetch time-series prediction history for student
 - `GetActiveExperimentHandler` — fetch active experiment for registry checks

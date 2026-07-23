@@ -1,24 +1,24 @@
-import { 
-  LearningResource, 
-  ResourceVersion, 
-  ResourceCollection, 
-  StorageAsset, 
-  ResourceCode, 
-  SensitivityLevel, 
-  VisibilityScope, 
+import {
+  LearningResource,
+  ResourceVersion,
+  ResourceCollection,
+  StorageAsset,
+  ResourceCode,
+  SensitivityLevel,
+  VisibilityScope,
   VariantPurpose,
   LearningResourceRepository,
   ResourceVersionRepository,
   ResourceCollectionRepository,
-  StorageAssetRepository
+  StorageAssetRepository,
 } from '@clasptek/domain-learning-resources';
 import { ConflictError, NotFoundError } from '@clasptek/kernel';
-import { 
-  ObjectStoragePort, 
-  MimeInspectionPort, 
-  ChecksumPort, 
-  SecurityScanPort, 
-  StorageQuotaPort 
+import {
+  ObjectStoragePort,
+  MimeInspectionPort,
+  ChecksumPort,
+  SecurityScanPort,
+  StorageQuotaPort,
 } from '../ports/storage-ports';
 
 // 1. DTO interfaces
@@ -119,9 +119,7 @@ export class CreateResourceHandler {
 }
 
 export class CreateResourceVersionHandler {
-  constructor(
-    private readonly versionRepo: ResourceVersionRepository
-  ) {}
+  constructor(private readonly versionRepo: ResourceVersionRepository) {}
 
   public async execute(dto: CreateVersionDTO): Promise<void> {
     const version = ResourceVersion.create(
@@ -147,7 +145,10 @@ export class RequestUploadSessionHandler {
 
   public async execute(dto: RequestUploadSessionDTO): Promise<string> {
     // 1. Quota check
-    const hasQuota = await this.quotaPort.hasSufficientQuota(dto.organizationId, dto.declaredSizeBytes);
+    const hasQuota = await this.quotaPort.hasSufficientQuota(
+      dto.organizationId,
+      dto.declaredSizeBytes
+    );
     if (!hasQuota) {
       throw new ConflictError('Storage quota limit reached for organization.');
     }
@@ -165,7 +166,11 @@ export class RequestUploadSessionHandler {
       dto.declaredSizeBytes
     );
 
-    await this.quotaPort.reserveQuota(dto.organizationId, dto.uploadSessionId, dto.declaredSizeBytes);
+    await this.quotaPort.reserveQuota(
+      dto.organizationId,
+      dto.uploadSessionId,
+      dto.declaredSizeBytes
+    );
     await this.assetRepo.save(asset);
 
     // 3. Generate short-lived signed upload URL
@@ -196,7 +201,7 @@ export class CompleteUploadHandler {
     // 2. Perform server-side inspections
     const mime = await this.mimeInspection.detectMimeType(dto.tempFilePath);
     const hash = await this.checksumPort.calculateSHA256(dto.tempFilePath);
-    
+
     // Check size matches (tempFilePath represents local physical upload check in test/runtime)
     asset.validateIntegrity(mime, asset.sizeBytes, hash);
 
@@ -205,7 +210,9 @@ export class CompleteUploadHandler {
     if (!scan.isClear) {
       asset.quarantine(scan.threats.join(', '));
       await this.assetRepo.save(asset);
-      throw new ConflictError(`Security threat detected: ${scan.threats.join(', ')}. Ingest quarantined.`);
+      throw new ConflictError(
+        `Security threat detected: ${scan.threats.join(', ')}. Ingest quarantined.`
+      );
     }
 
     asset.clearSecurity();
@@ -213,7 +220,7 @@ export class CompleteUploadHandler {
     // 4. Promote asset from ingest to private bucket
     const targetBucket = 'resource-private';
     const targetPath = asset.objectPath.replace('session/', 'resource/');
-    
+
     await this.storagePort.promote(asset.bucketName, asset.objectPath, targetBucket, targetPath);
     asset.promote(targetPath);
     asset.bucketName = targetBucket;
@@ -224,9 +231,7 @@ export class CompleteUploadHandler {
 }
 
 export class PublishResourceVersionHandler {
-  constructor(
-    private readonly versionRepo: ResourceVersionRepository
-  ) {}
+  constructor(private readonly versionRepo: ResourceVersionRepository) {}
 
   public async execute(dto: PublishVersionDTO): Promise<void> {
     const version = await this.versionRepo.findById(dto.resourceVersionId);

@@ -1,5 +1,6 @@
 import { Entity, AggregateRoot, ValueObject } from '@clasptek/kernel';
 import { randomUUID } from 'crypto';
+import { AIProvider, EvaluationExecutionContext, EvaluationHealth } from './interfaces/AIProvider';
 
 // ═══════════════════════════════════════════════════════════════════
 // 1. DOMAIN EVENT INFRASTRUCTURE
@@ -37,32 +38,77 @@ export class EvaluationRequested extends BaseEvaluationEvent {
   }
 }
 
+/** Emitted when an EvaluationJob is placed into the QUEUED state (canonical event name). */
+export class EvaluationJobQueued extends BaseEvaluationEvent {
+  constructor(jobId: string, submissionId: string, questionType: string, occurredAt?: Date) {
+    super('EvaluationJobQueued', jobId, { submissionId, questionType }, occurredAt);
+  }
+}
+
 export class EvaluationStarted extends BaseEvaluationEvent {
   constructor(jobId: string, modelCode: string, occurredAt?: Date) {
     super('EvaluationStarted', jobId, { modelCode }, occurredAt);
   }
 }
 
+/** Emitted when an EvaluationJob reaches a terminal FAILED state with no retries remaining. */
+export class EvaluationJobFailed extends BaseEvaluationEvent {
+  constructor(jobId: string, errorMessage: string, attempts: number, occurredAt?: Date) {
+    super('EvaluationJobFailed', jobId, { errorMessage, attempts }, occurredAt);
+  }
+}
+
+/** Emitted when an EvaluationJob is archived after its lifecycle terminates. */
+export class EvaluationJobArchived extends BaseEvaluationEvent {
+  constructor(jobId: string, occurredAt?: Date) {
+    super('EvaluationJobArchived', jobId, {}, occurredAt);
+  }
+}
+
 export class ObjectiveScored extends BaseEvaluationEvent {
-  constructor(jobId: string, resultId: string, score: number, isCorrect: boolean, occurredAt?: Date) {
+  constructor(
+    jobId: string,
+    resultId: string,
+    score: number,
+    isCorrect: boolean,
+    occurredAt?: Date
+  ) {
     super('ObjectiveScored', jobId, { resultId, score, isCorrect }, occurredAt);
   }
 }
 
 export class EssayScored extends BaseEvaluationEvent {
-  constructor(jobId: string, resultId: string, bandScore: string, rawScore: number, occurredAt?: Date) {
+  constructor(
+    jobId: string,
+    resultId: string,
+    bandScore: string,
+    rawScore: number,
+    occurredAt?: Date
+  ) {
     super('EssayScored', jobId, { resultId, bandScore, rawScore }, occurredAt);
   }
 }
 
 export class WritingScored extends BaseEvaluationEvent {
-  constructor(jobId: string, resultId: string, bandScore: string, rawScore: number, occurredAt?: Date) {
+  constructor(
+    jobId: string,
+    resultId: string,
+    bandScore: string,
+    rawScore: number,
+    occurredAt?: Date
+  ) {
     super('WritingScored', jobId, { resultId, bandScore, rawScore }, occurredAt);
   }
 }
 
 export class SpeakingScored extends BaseEvaluationEvent {
-  constructor(jobId: string, resultId: string, bandScore: string, rawScore: number, occurredAt?: Date) {
+  constructor(
+    jobId: string,
+    resultId: string,
+    bandScore: string,
+    rawScore: number,
+    occurredAt?: Date
+  ) {
     super('SpeakingScored', jobId, { resultId, bandScore, rawScore }, occurredAt);
   }
 }
@@ -112,7 +158,9 @@ export class EvaluationId extends ValueObject<{ value: string }> {
     if (!value) throw new Error('EvaluationId cannot be empty');
     super({ value });
   }
-  get value(): string { return this.props.value; }
+  get value(): string {
+    return this.props.value;
+  }
 }
 
 export class Score extends ValueObject<{ value: number; max: number }> {
@@ -122,18 +170,31 @@ export class Score extends ValueObject<{ value: number; max: number }> {
     if (value > max) throw new Error('Score cannot exceed max score');
     super({ value, max });
   }
-  get value(): number { return this.props.value; }
-  get max(): number { return this.props.max; }
-  get percentage(): number { return (this.props.value / this.props.max) * 100; }
+  get value(): number {
+    return this.props.value;
+  }
+  get max(): number {
+    return this.props.max;
+  }
+  get percentage(): number {
+    return (this.props.value / this.props.max) * 100;
+  }
 }
 
-export class BandScore extends ValueObject<{ band: string; numericEquivalent: number | undefined }> {
+export class BandScore extends ValueObject<{
+  band: string;
+  numericEquivalent: number | undefined;
+}> {
   constructor(band: string, numericEquivalent?: number) {
     if (!band) throw new Error('BandScore cannot be empty');
     super({ band, numericEquivalent });
   }
-  get band(): string { return this.props.band; }
-  get numericEquivalent(): number | undefined { return this.props.numericEquivalent; }
+  get band(): string {
+    return this.props.band;
+  }
+  get numericEquivalent(): number | undefined {
+    return this.props.numericEquivalent;
+  }
 }
 
 export class ConfidenceLevel extends ValueObject<{ value: number }> {
@@ -141,21 +202,36 @@ export class ConfidenceLevel extends ValueObject<{ value: number }> {
     if (value < 0 || value > 1) throw new Error('ConfidenceLevel must be between 0.0 and 1.0');
     super({ value });
   }
-  get value(): number { return this.props.value; }
-  get isHigh(): boolean { return this.props.value >= 0.85; }
-  get isMedium(): boolean { return this.props.value >= 0.70 && this.props.value < 0.85; }
-  get isLow(): boolean { return this.props.value < 0.70; }
+  get value(): number {
+    return this.props.value;
+  }
+  get isHigh(): boolean {
+    return this.props.value >= 0.85;
+  }
+  get isMedium(): boolean {
+    return this.props.value >= 0.7 && this.props.value < 0.85;
+  }
+  get isLow(): boolean {
+    return this.props.value < 0.7;
+  }
 }
 
 export class RubricCriterion extends ValueObject<{ code: string; name: string; weight: number }> {
   constructor(code: string, name: string, weight: number) {
     if (!code) throw new Error('RubricCriterion code cannot be empty');
-    if (weight < 0 || weight > 1) throw new Error('RubricCriterion weight must be between 0.0 and 1.0');
+    if (weight < 0 || weight > 1)
+      throw new Error('RubricCriterion weight must be between 0.0 and 1.0');
     super({ code, name, weight });
   }
-  get code(): string { return this.props.code; }
-  get name(): string { return this.props.name; }
-  get weight(): number { return this.props.weight; }
+  get code(): string {
+    return this.props.code;
+  }
+  get name(): string {
+    return this.props.name;
+  }
+  get weight(): number {
+    return this.props.weight;
+  }
 }
 
 export type FeedbackSeverityLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -164,51 +240,93 @@ export class FeedbackSeverity extends ValueObject<{ level: FeedbackSeverityLevel
   constructor(level: FeedbackSeverityLevel) {
     super({ level });
   }
-  get level(): FeedbackSeverityLevel { return this.props.level; }
+  get level(): FeedbackSeverityLevel {
+    return this.props.level;
+  }
 }
 
 export class GrammarScore extends ValueObject<{ band: string; score: number }> {
   constructor(band: string, score: number) {
     super({ band, score });
   }
-  get band(): string { return this.props.band; }
-  get score(): number { return this.props.score; }
+  get band(): string {
+    return this.props.band;
+  }
+  get score(): number {
+    return this.props.score;
+  }
 }
 
 export class VocabularyScore extends ValueObject<{ band: string; score: number }> {
-  constructor(band: string, score: number) { super({ band, score }); }
-  get band(): string { return this.props.band; }
-  get score(): number { return this.props.score; }
+  constructor(band: string, score: number) {
+    super({ band, score });
+  }
+  get band(): string {
+    return this.props.band;
+  }
+  get score(): number {
+    return this.props.score;
+  }
 }
 
 export class FluencyScore extends ValueObject<{ band: string; score: number }> {
-  constructor(band: string, score: number) { super({ band, score }); }
-  get band(): string { return this.props.band; }
-  get score(): number { return this.props.score; }
+  constructor(band: string, score: number) {
+    super({ band, score });
+  }
+  get band(): string {
+    return this.props.band;
+  }
+  get score(): number {
+    return this.props.score;
+  }
 }
 
 export class PronunciationScore extends ValueObject<{ band: string; score: number }> {
-  constructor(band: string, score: number) { super({ band, score }); }
-  get band(): string { return this.props.band; }
-  get score(): number { return this.props.score; }
+  constructor(band: string, score: number) {
+    super({ band, score });
+  }
+  get band(): string {
+    return this.props.band;
+  }
+  get score(): number {
+    return this.props.score;
+  }
 }
 
 export class TaskAchievement extends ValueObject<{ band: string; score: number }> {
-  constructor(band: string, score: number) { super({ band, score }); }
-  get band(): string { return this.props.band; }
-  get score(): number { return this.props.score; }
+  constructor(band: string, score: number) {
+    super({ band, score });
+  }
+  get band(): string {
+    return this.props.band;
+  }
+  get score(): number {
+    return this.props.score;
+  }
 }
 
 export class CoherenceScore extends ValueObject<{ band: string; score: number }> {
-  constructor(band: string, score: number) { super({ band, score }); }
-  get band(): string { return this.props.band; }
-  get score(): number { return this.props.score; }
+  constructor(band: string, score: number) {
+    super({ band, score });
+  }
+  get band(): string {
+    return this.props.band;
+  }
+  get score(): number {
+    return this.props.score;
+  }
 }
 
 export class LexicalResource extends ValueObject<{ band: string; score: number }> {
-  constructor(band: string, score: number) { super({ band, score }); }
-  get band(): string { return this.props.band; }
-  get score(): number { return this.props.score; }
+  constructor(band: string, score: number) {
+    super({ band, score });
+  }
+  get band(): string {
+    return this.props.band;
+  }
+  get score(): number {
+    return this.props.score;
+  }
 }
 
 // Rec 5 — Prompt Audit Value Objects
@@ -217,17 +335,30 @@ export class PromptHash extends ValueObject<{ sha256: string }> {
     if (!sha256) throw new Error('PromptHash cannot be empty');
     super({ sha256 });
   }
-  get sha256(): string { return this.props.sha256; }
+  get sha256(): string {
+    return this.props.sha256;
+  }
 }
 
-export class TokenUsage extends ValueObject<{ promptTokens: number; completionTokens: number; totalTokens: number }> {
+export class TokenUsage extends ValueObject<{
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}> {
   constructor(promptTokens: number, completionTokens: number) {
-    if (promptTokens < 0 || completionTokens < 0) throw new Error('TokenUsage counts cannot be negative');
+    if (promptTokens < 0 || completionTokens < 0)
+      throw new Error('TokenUsage counts cannot be negative');
     super({ promptTokens, completionTokens, totalTokens: promptTokens + completionTokens });
   }
-  get promptTokens(): number { return this.props.promptTokens; }
-  get completionTokens(): number { return this.props.completionTokens; }
-  get totalTokens(): number { return this.props.totalTokens; }
+  get promptTokens(): number {
+    return this.props.promptTokens;
+  }
+  get completionTokens(): number {
+    return this.props.completionTokens;
+  }
+  get totalTokens(): number {
+    return this.props.totalTokens;
+  }
 }
 
 // Rec 3 — Calibration Value Objects
@@ -235,8 +366,12 @@ export class CalibrationError extends ValueObject<{ value: number }> {
   constructor(value: number) {
     super({ value });
   }
-  get value(): number { return this.props.value; }
-  get isAcceptable(): boolean { return Math.abs(this.props.value) <= 0.5; }
+  get value(): number {
+    return this.props.value;
+  }
+  get isAcceptable(): boolean {
+    return Math.abs(this.props.value) <= 0.5;
+  }
 }
 
 export type DriftIndicator = 'STABLE' | 'DRIFTING_UP' | 'DRIFTING_DOWN' | 'VOLATILE';
@@ -246,8 +381,12 @@ export class ReviewerAgreementRate extends ValueObject<{ rate: number }> {
     if (rate < 0 || rate > 1) throw new Error('ReviewerAgreementRate must be between 0.0 and 1.0');
     super({ rate });
   }
-  get rate(): number { return this.props.rate; }
-  get isGood(): boolean { return this.props.rate >= 0.80; }
+  get rate(): number {
+    return this.props.rate;
+  }
+  get isGood(): boolean {
+    return this.props.rate >= 0.8;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -405,7 +544,8 @@ export class RubricScore extends Entity<string> {
   }
 }
 
-export type FeedbackSectionType = 'OVERALL' | 'STRENGTHS' | 'IMPROVEMENTS' | 'EXAMPLES' | 'NEXT_STEPS' | 'CRITERION';
+export type FeedbackSectionType =
+  'OVERALL' | 'STRENGTHS' | 'IMPROVEMENTS' | 'EXAMPLES' | 'NEXT_STEPS' | 'CRITERION';
 
 export class FeedbackSection extends Entity<string> {
   public readonly sectionType: FeedbackSectionType;
@@ -806,22 +946,240 @@ export interface ProviderResponse {
   rawResponse?: Record<string, any>;
 }
 
-export interface AIProvider {
-  readonly id: string;
-  readonly name: string;
-  readonly provider: string;
-  evaluate(prompt: EvaluationPrompt): Promise<ProviderResponse>;
-  isAvailable(): Promise<boolean>;
+// ─── Provider Health & Circuit Breaker ───────────────────────────
+
+export type ProviderCircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+
+export interface ProviderHealthStatus {
+  provider: string;
+  isHealthy: boolean;
+  latencyMs: number;
+  circuitState: ProviderCircuitState;
+  consecutiveFailures: number;
+  lastCheckedAt: Date;
+  fallbackProvider?: string;
 }
 
-// Mock AI Provider (Rec Q2 — deterministic testing in CI)
+// ─── Cost Estimation ─────────────────────────────────────────────
+
+/** Represents the estimated or actual cost of an AI provider call in USD. */
+export class CostEstimate extends ValueObject<{
+  inputTokens: number;
+  outputTokens: number;
+  costUsd: number;
+  currency: string;
+}> {
+  constructor(inputTokens: number, outputTokens: number, costUsd: number, currency = 'USD') {
+    if (inputTokens < 0 || outputTokens < 0) throw new Error('Token counts cannot be negative');
+    if (costUsd < 0) throw new Error('Cost cannot be negative');
+    super({ inputTokens, outputTokens, costUsd, currency });
+  }
+  get inputTokens(): number {
+    return this.props.inputTokens;
+  }
+  get outputTokens(): number {
+    return this.props.outputTokens;
+  }
+  get totalTokens(): number {
+    return this.props.inputTokens + this.props.outputTokens;
+  }
+  get costUsd(): number {
+    return this.props.costUsd;
+  }
+  get currency(): string {
+    return this.props.currency;
+  }
+}
+
+// ─── AI Safety Types ─────────────────────────────────────────────
+
+export type SafetyViolationType =
+  | 'PROMPT_INJECTION'
+  | 'PII_DETECTED'
+  | 'TOXICITY'
+  | 'INVALID_JSON_OUTPUT'
+  | 'HASH_MISMATCH'
+  | 'OUTPUT_SCHEMA_VIOLATION';
+
+export interface SafetyViolation {
+  type: SafetyViolationType;
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  detail: string;
+  detectedAt: Date;
+}
+
+export interface InputSanitizationResult {
+  isSafe: boolean;
+  sanitizedInput: string;
+  violations: SafetyViolation[];
+}
+
+export interface SafetyPolicy {
+  enablePromptInjectionDetection: boolean;
+  enablePiiDetection: boolean;
+  enableToxicityFilter: boolean;
+  enableOutputSchemaValidation: boolean;
+  maxRetries: number;
+  timeoutMs: number;
+  fallbackOnViolation: boolean;
+}
+
+/** Default production safety policy. */
+export const DEFAULT_SAFETY_POLICY: SafetyPolicy = {
+  enablePromptInjectionDetection: true,
+  enablePiiDetection: true,
+  enableToxicityFilter: true,
+  enableOutputSchemaValidation: true,
+  maxRetries: 3,
+  timeoutMs: 30_000,
+  fallbackOnViolation: true,
+};
+
+// AIProvider contract is loaded from interfaces/AIProvider.ts
+
+// ─── PromptAggregate (First-Class Business Asset) ────────────────
+
+/**
+ * PromptAggregate elevates the prompt template to a first-class domain aggregate.
+ * Prompts are versioned, content-hashed, and snapshotted at execution time.
+ * This guarantees full reproducibility of every AI evaluation.
+ */
+export class PromptAggregate extends AggregateRoot<string> {
+  public readonly templateCode: string;
+  public readonly displayName: string;
+  public readonly questionTypeTarget: string;
+  public readonly examContext: string | undefined;
+  private _versions: PromptVersion[];
+  public readonly isActive: boolean;
+  public readonly createdAt: Date;
+
+  constructor(props: {
+    id: string;
+    templateCode: string;
+    displayName: string;
+    questionTypeTarget: string;
+    examContext?: string | undefined;
+    versions?: PromptVersion[];
+    isActive: boolean;
+    createdAt?: Date;
+  }) {
+    super(props.id);
+    this.templateCode = props.templateCode;
+    this.displayName = props.displayName;
+    this.questionTypeTarget = props.questionTypeTarget;
+    this.examContext = props.examContext;
+    this._versions = props.versions ?? [];
+    this.isActive = props.isActive;
+    this.createdAt = props.createdAt ?? new Date();
+  }
+
+  get versions(): readonly PromptVersion[] {
+    return this._versions;
+  }
+
+  /** Returns the current active version (highest version number). */
+  get currentVersion(): PromptVersion | undefined {
+    return this._versions
+      .filter((v) => v.isCurrent)
+      .sort((a, b) => b.versionNumber - a.versionNumber)[0];
+  }
+
+  public addVersion(version: PromptVersion): void {
+    if (version.templateId !== this.id) {
+      throw new Error(
+        `PromptVersion templateId '${version.templateId}' does not match aggregate id '${this.id}'`
+      );
+    }
+    this._versions.push(version);
+  }
+
+  public static create(props: {
+    templateCode: string;
+    displayName: string;
+    questionTypeTarget: string;
+    examContext?: string;
+    isActive?: boolean;
+  }): PromptAggregate {
+    return new PromptAggregate({ id: randomUUID(), isActive: props.isActive ?? true, ...props });
+  }
+}
+
+// ─── Mock AI Provider (CI / Deterministic Testing) ───────────────
+
+/** MockAIProvider implements the full AIProvider enterprise contract. */
 export class MockAIProvider implements AIProvider {
   public readonly id = 'mock-provider-v1';
   public readonly name = 'Mock AI Provider';
   public readonly provider = 'MOCK';
 
-  public async evaluate(_prompt: EvaluationPrompt): Promise<ProviderResponse> {
-    // Deterministic mock response for CI/test environments
+  public async evaluateWriting(context: EvaluationExecutionContext): Promise<EvaluationResult> {
+    const resultId = `res-mock-${context.jobId}`;
+    const res = new EvaluationResult({
+      id: resultId,
+      jobId: context.jobId,
+      snapshotId: `snap-${context.jobId}`,
+      studentId: context.studentId,
+      submissionId: context.submissionId,
+      questionType: 'WRITING',
+      rawScore: 7.0,
+      maxScore: 9.0,
+      bandScore: new BandScore('7.0', 7.0),
+      isCorrect: true,
+      evaluationNotes: 'Strong coherence and lexical resource.',
+    });
+
+    res.addFeedbackSection(
+      new FeedbackSection({
+        id: `fb-mock-${context.jobId}`,
+        sectionType: 'OVERALL',
+        content: 'Strong coherence and cohesive devices.',
+        orderIndex: 0,
+        createdAt: new Date(),
+      })
+    );
+
+    return res;
+  }
+
+  public async evaluateSpeaking(context: EvaluationExecutionContext): Promise<EvaluationResult> {
+    return this.evaluateWriting(context);
+  }
+
+  public async health(): Promise<EvaluationHealth> {
+    return {
+      provider: 'MOCK',
+      isHealthy: true,
+      latencyMs: 10,
+      circuitState: 'CLOSED',
+      consecutiveFailures: 0,
+      lastCheckedAt: new Date(),
+    };
+  }
+
+  public estimateCost(inputTokens: number, outputTokens: number): CostEstimate {
+    return new CostEstimate(inputTokens, outputTokens, 0.0);
+  }
+
+  public estimateTokens(text: string): number {
+    return Math.ceil(text.length / 4);
+  }
+
+  public supportsStreaming(): boolean {
+    return false;
+  }
+  public supportsVision(): boolean {
+    return false;
+  }
+  public supportsAudio(): boolean {
+    return false;
+  }
+
+  public async isAvailable(): Promise<boolean> {
+    return true;
+  }
+
+  public async evaluate(prompt: any): Promise<any> {
+    if (!prompt) throw new Error('Prompt is required');
     const mockScore = 7.0;
     const content = JSON.stringify({
       overallBand: mockScore,
@@ -832,20 +1190,16 @@ export class MockAIProvider implements AIProvider {
       feedback: {
         strengths: ['Clear structure and coherent arguments'],
         improvements: ['Expand vocabulary range for higher band'],
-        nextSteps: ['Practice complex sentence structures']
-      }
+        nextSteps: ['Practice complex sentence structures'],
+      },
     });
     return {
       content,
-      tokenUsage: new TokenUsage(150, 200),
+      tokenUsage: { promptTokens: 150, completionTokens: 200, totalTokens: 350 },
       latencyMs: 50,
       modelCode: 'mock-v1',
       provider: 'MOCK',
     };
-  }
-
-  public async isAvailable(): Promise<boolean> {
-    return true;
   }
 }
 
@@ -855,17 +1209,31 @@ export class MockAIProvider implements AIProvider {
 
 export class RubricEngine {
   public score(
-    criteriaInputs: Array<{ code: string; name: string; rawScore: number; maxScore: number; weight: number; justification: string }>,
+    criteriaInputs: Array<{
+      code: string;
+      name: string;
+      rawScore: number;
+      maxScore: number;
+      weight: number;
+      justification: string;
+    }>,
     bandDescriptors: Map<string, Map<string, string>> = new Map()
   ): RubricScore[] {
-    return criteriaInputs.map(ci => {
+    return criteriaInputs.map((ci) => {
       const score = new Score(ci.rawScore, ci.maxScore);
       const descriptorMap = bandDescriptors.get(ci.code);
-      const band = score.percentage >= 88 ? '9' :
-                   score.percentage >= 77 ? '8' :
-                   score.percentage >= 66 ? '7' :
-                   score.percentage >= 55 ? '6' :
-                   score.percentage >= 44 ? '5' : '4';
+      const band =
+        score.percentage >= 88
+          ? '9'
+          : score.percentage >= 77
+            ? '8'
+            : score.percentage >= 66
+              ? '7'
+              : score.percentage >= 55
+                ? '6'
+                : score.percentage >= 44
+                  ? '5'
+                  : '4';
       const bandDescriptor = descriptorMap?.get(band);
       return new RubricScore({
         id: randomUUID(),
@@ -938,7 +1306,7 @@ export class EvaluationSnapshot extends AggregateRoot<string> {
     this.submissionSnapshot = Object.freeze({ ...props.submissionSnapshot });
     this.modelVersionId = props.modelVersionId;
     this.promptVersionId = props.promptVersionId;
-    this.evaluationSettings = Object.freeze({ ...props.evaluationSettings ?? {} });
+    this.evaluationSettings = Object.freeze({ ...(props.evaluationSettings ?? {}) });
     this.profileId = props.profileId;
     this.snapshottedAt = props.snapshottedAt ?? new Date();
   }
@@ -1001,10 +1369,14 @@ export class EvaluationProfile extends AggregateRoot<string> {
 
   public requiresHumanReview(confidence: ConfidenceLevel): boolean {
     switch (this.moderationPolicy) {
-      case 'ALWAYS_HUMAN': return true;
-      case 'AUTO': return false;
-      case 'THRESHOLD_BASED': return confidence.value < this.confidenceThreshold;
-      case 'SAMPLE_BASED': return Math.random() < 0.10; // 10% sample rate
+      case 'ALWAYS_HUMAN':
+        return true;
+      case 'AUTO':
+        return false;
+      case 'THRESHOLD_BASED':
+        return confidence.value < this.confidenceThreshold;
+      case 'SAMPLE_BASED':
+        return Math.random() < 0.1; // 10% sample rate
     }
   }
 }
@@ -1079,12 +1451,24 @@ export class EvaluationJob extends AggregateRoot<string> {
     this.lockVersion = props.lockVersion ?? 0;
   }
 
-  get status(): EvaluationJobStatus { return this._status; }
-  get attempts(): number { return this._attempts; }
-  get errorMessage(): string | undefined { return this._errorMessage; }
-  get startedAt(): Date | undefined { return this._startedAt; }
-  get completedAt(): Date | undefined { return this._completedAt; }
-  get publishedAt(): Date | undefined { return this._publishedAt; }
+  get status(): EvaluationJobStatus {
+    return this._status;
+  }
+  get attempts(): number {
+    return this._attempts;
+  }
+  get errorMessage(): string | undefined {
+    return this._errorMessage;
+  }
+  get startedAt(): Date | undefined {
+    return this._startedAt;
+  }
+  get completedAt(): Date | undefined {
+    return this._completedAt;
+  }
+  get publishedAt(): Date | undefined {
+    return this._publishedAt;
+  }
 
   public static queue(props: {
     snapshotId: string;
@@ -1228,7 +1612,9 @@ export class EvaluationResult extends AggregateRoot<string> {
     this.confidence = props.confidence;
     this.evaluationNotes = props.evaluationNotes;
     this._rubricScores = props.rubricScores ?? [];
-    this._feedbackSections = (props.feedbackSections ?? []).sort((a, b) => a.orderIndex - b.orderIndex);
+    this._feedbackSections = (props.feedbackSections ?? []).sort(
+      (a, b) => a.orderIndex - b.orderIndex
+    );
     this._evidenceRefs = props.evidenceRefs ?? [];
     this._recommendations = props.recommendations ?? [];
     this._isPublished = props.isPublished ?? false;
@@ -1238,13 +1624,27 @@ export class EvaluationResult extends AggregateRoot<string> {
     this._publishedAt = props.publishedAt;
   }
 
-  get rubricScores(): readonly RubricScore[] { return this._rubricScores; }
-  get feedbackSections(): readonly FeedbackSection[] { return this._feedbackSections; }
-  get evidenceRefs(): readonly EvidenceReference[] { return this._evidenceRefs; }
-  get recommendations(): readonly EvaluationRecommendation[] { return this._recommendations; }
-  get isPublished(): boolean { return this._isPublished; }
-  get isArchived(): boolean { return this._isArchived; }
-  get publishedAt(): Date | undefined { return this._publishedAt; }
+  get rubricScores(): readonly RubricScore[] {
+    return this._rubricScores;
+  }
+  get feedbackSections(): readonly FeedbackSection[] {
+    return this._feedbackSections;
+  }
+  get evidenceRefs(): readonly EvidenceReference[] {
+    return this._evidenceRefs;
+  }
+  get recommendations(): readonly EvaluationRecommendation[] {
+    return this._recommendations;
+  }
+  get isPublished(): boolean {
+    return this._isPublished;
+  }
+  get isArchived(): boolean {
+    return this._isArchived;
+  }
+  get publishedAt(): Date | undefined {
+    return this._publishedAt;
+  }
 
   public addFeedbackSection(section: FeedbackSection): void {
     if (this._isPublished) throw new Error('Cannot modify a published EvaluationResult');
@@ -1270,14 +1670,16 @@ export class EvaluationResult extends AggregateRoot<string> {
   }
 
   public get scorePercentage(): number | undefined {
-    if (this.rawScore === undefined || this.maxScore === undefined || this.maxScore === 0) return undefined;
+    if (this.rawScore === undefined || this.maxScore === undefined || this.maxScore === 0)
+      return undefined;
     return (this.rawScore / this.maxScore) * 100;
   }
 }
 
 // ─── HumanReview (Rec 6 — Expanded 6-State Lifecycle) ───────────
 
-export type HumanReviewStatus = 'ASSIGNED' | 'IN_REVIEW' | 'ESCALATED' | 'APPROVED' | 'REJECTED' | 'PUBLISHED';
+export type HumanReviewStatus =
+  'ASSIGNED' | 'IN_REVIEW' | 'ESCALATED' | 'APPROVED' | 'REJECTED' | 'PUBLISHED';
 
 export class HumanReview extends AggregateRoot<string> {
   public readonly jobId: string;
@@ -1323,15 +1725,33 @@ export class HumanReview extends AggregateRoot<string> {
     this.lockVersion = props.lockVersion ?? 0;
   }
 
-  get status(): HumanReviewStatus { return this._status; }
-  get comments(): readonly ReviewComment[] { return this._comments; }
-  get decisions(): readonly ReviewDecision[] { return this._decisions; }
-  get escalationReason(): string | undefined { return this._escalationReason; }
-  get reviewStartedAt(): Date | undefined { return this._reviewStartedAt; }
-  get reviewCompletedAt(): Date | undefined { return this._reviewCompletedAt; }
-  get publishedAt(): Date | undefined { return this._publishedAt; }
+  get status(): HumanReviewStatus {
+    return this._status;
+  }
+  get comments(): readonly ReviewComment[] {
+    return this._comments;
+  }
+  get decisions(): readonly ReviewDecision[] {
+    return this._decisions;
+  }
+  get escalationReason(): string | undefined {
+    return this._escalationReason;
+  }
+  get reviewStartedAt(): Date | undefined {
+    return this._reviewStartedAt;
+  }
+  get reviewCompletedAt(): Date | undefined {
+    return this._reviewCompletedAt;
+  }
+  get publishedAt(): Date | undefined {
+    return this._publishedAt;
+  }
 
-  public static assign(props: { jobId: string; resultId?: string | undefined; reviewerId?: string | undefined }): HumanReview {
+  public static assign(props: {
+    jobId: string;
+    resultId?: string | undefined;
+    reviewerId?: string | undefined;
+  }): HumanReview {
     return new HumanReview({ id: randomUUID(), ...props, status: 'ASSIGNED' });
   }
 
@@ -1386,3 +1806,40 @@ export class HumanReview extends AggregateRoot<string> {
     this._publishedAt = at;
   }
 }
+
+export * from './addendum';
+
+// ═══════════════════════════════════════════════════════════════════
+// CANONICAL AI EVALUATION DELIVERY DOMAIN EXPORTS (Sprint 3.7)
+// ═══════════════════════════════════════════════════════════════════
+export * from './aggregates/evaluation-orchestrator.aggregate';
+export * from './aggregates/evaluation-budget.aggregate';
+export * from './aggregates/evaluation-queue.aggregate';
+export * from './services/provider-selection.service';
+export * from './services/evaluation-sla.policy';
+export * from './strategies/provider-capability-strategy';
+export * from './strategies/retry-policy';
+export * from './strategies/failure-escalation-policy';
+export * from './strategies/notification-strategy';
+export * from './events/ai-delivery-canonical-events';
+export * from './repositories/ai-delivery-canonical-repositories';
+export * from './interfaces/AIProvider';
+
+// ═══════════════════════════════════════════════════════════════════
+// SPRINT 3.8 AI EVALUATION INTELLIGENCE FRAMEWORK EXPORTS
+// ═══════════════════════════════════════════════════════════════════
+export * from './value-objects/AssessmentType';
+export * from './aggregates/assessment-profile.aggregate';
+export * from './services/EvaluationRubric';
+export * from './aggregates/ai-evaluation-standard.aggregate';
+export * from './services/AssessmentRegistry';
+export * from './aggregates/prompt-catalog.aggregate';
+export * from './aggregates/prompt-template.aggregate';
+export * from './aggregates/prompt-version.aggregate';
+export * from './aggregates/prompt-governance.aggregate';
+export * from './aggregates/golden-dataset.aggregate';
+export * from './aggregates/calibration-session.aggregate';
+export * from './services/CalibrationEngine';
+export * from './services/CostAnalyticsEngine';
+export * from './services/EvaluationQualityAnalytics';
+export * from './aggregates/prompt-experiment.aggregate';

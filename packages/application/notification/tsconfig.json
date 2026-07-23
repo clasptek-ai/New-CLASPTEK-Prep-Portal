@@ -1,0 +1,15 @@
+{
+  "extends": "../../../tsconfig.options.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@clasptek/kernel": ["../../kernel/src/index.ts"],
+      "@clasptek/domain-notification": ["../../domain/notification/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*"],
+  "references": [{ "path": "../../kernel" }, { "path": "../../domain/notification" }]
+}

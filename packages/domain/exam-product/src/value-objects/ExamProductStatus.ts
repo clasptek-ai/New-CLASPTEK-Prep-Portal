@@ -1,7 +1,8 @@
 import { ValueObject } from '@clasptek/kernel';
 import { DomainError } from '../errors/exam-product-errors';
 
-export type AllowedStatuses = 'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'PUBLISHED' | 'DEPRECATED' | 'ARCHIVED';
+export type AllowedStatuses =
+  'DRAFT' | 'UNDER_REVIEW' | 'APPROVED' | 'PUBLISHED' | 'DEPRECATED' | 'ARCHIVED';
 
 export class ExamProductStatus extends ValueObject<{ value: AllowedStatuses }> {
   private static readonly ALLOWED_VALUES: AllowedStatuses[] = [

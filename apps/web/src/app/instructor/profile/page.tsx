@@ -6,7 +6,7 @@ import { ProfileScreen } from '../../../features/instructor/profile/profile-scre
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <ProfileScreen />
     </WorkspaceShell>
   );

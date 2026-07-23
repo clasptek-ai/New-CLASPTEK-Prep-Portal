@@ -3,7 +3,7 @@ import { ResourcesScreen } from '../../../features/instructor/resources/resource
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <ResourcesScreen />
     </WorkspaceShell>
   );

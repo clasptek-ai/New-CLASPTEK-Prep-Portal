@@ -3,7 +3,7 @@ import { CurriculumScreen } from '../../../features/instructor/curriculum/curric
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <CurriculumScreen />
     </WorkspaceShell>
   );

@@ -18,5 +18,5 @@ export const authoringNavigation: AuthoringNavigationItem[] = [
   { name: 'Import Center', href: '/authoring/imports', icon: 'Upload' },
   { name: 'Export Center', href: '/authoring/exports', icon: 'Download' },
   { name: 'Audit Logs', href: '/authoring/audit', icon: 'History' },
-  { name: 'Studio Settings', href: '/authoring/settings', icon: 'Settings' }
+  { name: 'Studio Settings', href: '/authoring/settings', icon: 'Settings' },
 ];

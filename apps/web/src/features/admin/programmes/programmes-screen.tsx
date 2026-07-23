@@ -27,7 +27,7 @@ export function ProgrammesScreen() {
   async function handleArchive(id: string) {
     const success = await adminProgrammesService.archiveProgramme(id);
     if (success) {
-      setProgrammes(prev => prev.map(p => p.id === id ? { ...p, status: 'ARCHIVED' } : p));
+      setProgrammes((prev) => prev.map((p) => (p.id === id ? { ...p, status: 'ARCHIVED' } : p)));
       showBanner('Programme archived successfully!');
     }
   }
@@ -35,7 +35,7 @@ export function ProgrammesScreen() {
   async function handlePublish(id: string) {
     const success = await adminProgrammesService.updateProgramme(id, { status: 'PUBLISHED' });
     if (success) {
-      setProgrammes(prev => prev.map(p => p.id === id ? { ...p, status: 'PUBLISHED' } : p));
+      setProgrammes((prev) => prev.map((p) => (p.id === id ? { ...p, status: 'PUBLISHED' } : p)));
       showBanner('Programme published successfully!');
     }
   }
@@ -56,12 +56,25 @@ export function ProgrammesScreen() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
       <div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Academic Programmes Studio</h1>
-        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>Create new catalog tracks, toggle client enrollment limits, and publish modules</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
+          Academic Programmes Studio
+        </h1>
+        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+          Create new catalog tracks, toggle client enrollment limits, and publish modules
+        </p>
       </div>
 
       {banner && (
-        <div style={{ padding: '1rem', backgroundColor: '#10b98120', border: '1px solid #10b98140', borderRadius: '8px', color: '#10b981', fontSize: '0.85rem' }}>
+        <div
+          style={{
+            padding: '1rem',
+            backgroundColor: '#10b98120',
+            border: '1px solid #10b98140',
+            borderRadius: '8px',
+            color: '#10b981',
+            fontSize: '0.85rem',
+          }}
+        >
           {banner}
         </div>
       )}
@@ -69,24 +82,51 @@ export function ProgrammesScreen() {
       <Table
         data={programmes}
         columns={[
-          { header: 'Programme Title', render: row => <span style={{ fontWeight: 600 }}>{row.name}</span> },
-          { header: 'Category', render: row => <Badge>{row.category}</Badge> },
-          { header: 'Status', render: row => <Badge variant={row.status === 'PUBLISHED' ? 'success' : row.status === 'DRAFT' ? 'warning' : 'danger'}>{row.status}</Badge> },
-          { header: 'Visibility', render: row => <span>{row.visibility}</span> },
-          { header: 'Enrollments', render: row => <span>{row.currentEnrollments} / {row.enrollmentLimit}</span> },
+          {
+            header: 'Programme Title',
+            render: (row) => <span style={{ fontWeight: 600 }}>{row.name}</span>,
+          },
+          { header: 'Category', render: (row) => <Badge>{row.category}</Badge> },
+          {
+            header: 'Status',
+            render: (row) => (
+              <Badge
+                variant={
+                  row.status === 'PUBLISHED'
+                    ? 'success'
+                    : row.status === 'DRAFT'
+                      ? 'warning'
+                      : 'danger'
+                }
+              >
+                {row.status}
+              </Badge>
+            ),
+          },
+          { header: 'Visibility', render: (row) => <span>{row.visibility}</span> },
+          {
+            header: 'Enrollments',
+            render: (row) => (
+              <span>
+                {row.currentEnrollments} / {row.enrollmentLimit}
+              </span>
+            ),
+          },
           {
             header: 'Actions',
-            render: row => (
+            render: (row) => (
               <div style={{ display: 'flex', gap: '0.5rem' }}>
                 {row.status !== 'PUBLISHED' && (
                   <Button onClick={() => handlePublish(row.id)}>Publish</Button>
                 )}
                 {row.status !== 'ARCHIVED' && (
-                  <Button variant="secondary" onClick={() => handleArchive(row.id)}>Archive</Button>
+                  <Button variant="secondary" onClick={() => handleArchive(row.id)}>
+                    Archive
+                  </Button>
                 )}
               </div>
-            )
-          }
+            ),
+          },
         ]}
       />
     </div>

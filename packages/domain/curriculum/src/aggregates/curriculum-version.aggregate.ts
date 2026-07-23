@@ -39,14 +39,14 @@ export class CurriculumVersion extends AggregateRoot<string> {
     }
     // Remove duplicate dependency lock type
     this.dependencyLocks = this.dependencyLocks.filter(
-      l => !(l.dependencyType === lock.dependencyType && l.dependencyId === lock.dependencyId)
+      (l) => !(l.dependencyType === lock.dependencyType && l.dependencyId === lock.dependencyId)
     );
     this.dependencyLocks.push(lock);
   }
 
   public addLocale(locale: CurriculumLocale): void {
     if (locale.isDefault) {
-      this.locales.forEach(l => {
+      this.locales.forEach((l) => {
         l.isDefault = false;
       });
     }

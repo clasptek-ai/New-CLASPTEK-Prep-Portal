@@ -4,11 +4,19 @@ import { DomainError } from '../errors/exam-product-errors';
 import { Result } from '@clasptek/kernel';
 
 export class ExamProductPublishingService {
-  public publish(product: ExamProduct, versionId: string, actorId: string): Result<void, DomainError> {
+  public publish(
+    product: ExamProduct,
+    versionId: string,
+    actorId: string
+  ): Result<void, DomainError> {
     try {
       const spec = new CanPublishExamProduct();
       if (!spec.isSatisfiedBy(product)) {
-        return Result.failure(new DomainError('Exam product does not satisfy publish specifications: must have name and at least one version.'));
+        return Result.failure(
+          new DomainError(
+            'Exam product does not satisfy publish specifications: must have name and at least one version.'
+          )
+        );
       }
 
       product.publishVersion(versionId, actorId);

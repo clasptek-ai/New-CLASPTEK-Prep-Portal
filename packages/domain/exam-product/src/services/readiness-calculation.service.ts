@@ -19,7 +19,7 @@ export class ReadinessCalculationService {
       for (const criterion of framework.criteria) {
         if (criterion.isMandatory) {
           totalMandatory++;
-          
+
           if (criterion.criterionType === 'PROGRESS') {
             if (progress.overallProgress >= (criterion.targetValue ?? 0)) {
               passedCount++;

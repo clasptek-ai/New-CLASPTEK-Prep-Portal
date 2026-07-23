@@ -127,7 +127,7 @@ describe('QueueEvaluationHandler', () => {
       id: 'prof-1',
       profileCode: 'IELTS_WRITING',
       displayName: 'IELTS Writing',
-      confidenceThreshold: 0.80,
+      confidenceThreshold: 0.8,
       moderationPolicy: 'THRESHOLD_BASED',
       isActive: true,
     });
@@ -160,14 +160,16 @@ describe('RunEvaluationHandler', () => {
     const evalRepo = makeEvalRepo({ findJobById: vi.fn().mockResolvedValue(null) });
     const handler = new RunEvaluationHandler(evalRepo, makeProfileRepo(), makePromptRepo());
 
-    await expect(handler.execute({
-      jobId: 'nonexistent',
-      modelCode: 'gpt-4o',
-      provider: 'OPENAI',
-      rawScore: 7.0,
-      maxScore: 9.0,
-      confidence: 0.88,
-    })).rejects.toThrow("not found");
+    await expect(
+      handler.execute({
+        jobId: 'nonexistent',
+        modelCode: 'gpt-4o',
+        provider: 'OPENAI',
+        rawScore: 7.0,
+        maxScore: 9.0,
+        confidence: 0.88,
+      })
+    ).rejects.toThrow('not found');
   });
 
   it('runs evaluation and saves result', async () => {
@@ -185,9 +187,7 @@ describe('RunEvaluationHandler', () => {
       maxScore: 9.0,
       bandScore: '7.0',
       confidence: 0.88,
-      feedbackSections: [
-        { sectionType: 'STRENGTHS', content: 'Good structure', orderIndex: 1 },
-      ],
+      feedbackSections: [{ sectionType: 'STRENGTHS', content: 'Good structure', orderIndex: 1 }],
       systemPromptHash: 'hash-sys-001',
       userPromptHash: 'hash-usr-001',
       tokenUsage: { promptTokens: 100, completionTokens: 200 },
@@ -335,8 +335,9 @@ describe('GetFeedbackHandler', () => {
     const evalRepo = makeEvalRepo({ findResultById: vi.fn().mockResolvedValue(result) });
     const handler = new GetFeedbackHandler(evalRepo);
 
-    await expect(handler.execute({ resultId: 'result-unpublished', studentId: 'student-1' }))
-      .rejects.toThrow('not been published');
+    await expect(
+      handler.execute({ resultId: 'result-unpublished', studentId: 'student-1' })
+    ).rejects.toThrow('not been published');
   });
 
   it('throws on student ownership mismatch', async () => {
@@ -344,8 +345,9 @@ describe('GetFeedbackHandler', () => {
     const evalRepo = makeEvalRepo({ findResultById: vi.fn().mockResolvedValue(result) });
     const handler = new GetFeedbackHandler(evalRepo);
 
-    await expect(handler.execute({ resultId: 'result-1', studentId: 'other-student' }))
-      .rejects.toThrow('Access denied');
+    await expect(
+      handler.execute({ resultId: 'result-1', studentId: 'other-student' })
+    ).rejects.toThrow('Access denied');
   });
 });
 

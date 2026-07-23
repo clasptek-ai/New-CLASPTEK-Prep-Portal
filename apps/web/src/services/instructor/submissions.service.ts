@@ -37,10 +37,11 @@ export const instructorSubmissionsService = {
             predictedBand: 7.0,
             grammarScore: 78,
             coherenceScore: 80,
-            feedback: 'Coherent modifiers. Sentence syntax demonstrates clear passive voices structures.'
+            feedback:
+              'Coherent modifiers. Sentence syntax demonstrates clear passive voices structures.',
           },
-          status: 'PENDING'
-        }
+          status: 'PENDING',
+        },
       ];
     }
   },
@@ -52,5 +53,5 @@ export const instructorSubmissionsService = {
     } catch {
       return true; // fallback
     }
-  }
+  },
 };

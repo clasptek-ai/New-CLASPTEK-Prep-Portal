@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getStudentLearningContext } from '@/lib/student-learning-context';
 
@@ -8,20 +10,23 @@ export async function GET(req: NextRequest) {
     if (!journeyId) return NextResponse.json({ error: 'journeyId required' }, { status: 400 });
 
     const plan = await ctx.getLearningPlan.execute({ journeyId });
-    if (!plan) return NextResponse.json({ error: 'No active learning plan found' }, { status: 404 });
+    if (!plan)
+      return NextResponse.json({ error: 'No active learning plan found' }, { status: 404 });
 
     return NextResponse.json({
       id: plan.id,
       title: plan.title,
       status: plan.status,
-      currentVersion: plan.currentVersion ? {
-        versionNo: plan.currentVersion.versionNo,
-        source: plan.currentVersion.source,
-        goals: plan.currentVersion.goals,
-        schedule: plan.currentVersion.schedule,
-        notes: plan.currentVersion.notes,
-        createdAt: plan.currentVersion.createdAt,
-      } : null,
+      currentVersion: plan.currentVersion
+        ? {
+            versionNo: plan.currentVersion.versionNo,
+            source: plan.currentVersion.source,
+            goals: plan.currentVersion.goals,
+            schedule: plan.currentVersion.schedule,
+            notes: plan.currentVersion.notes,
+            createdAt: plan.currentVersion.createdAt,
+          }
+        : null,
       versionCount: plan.versions.length,
     });
   } catch (err: any) {
@@ -39,9 +44,13 @@ export async function POST(req: NextRequest) {
     }
 
     const id = await ctx.createPlan.execute({
-      journeyId, studentId, title,
+      journeyId,
+      studentId,
+      title,
       versionSource: versionSource ?? 'STUDENT',
-      goals, schedule, notes,
+      goals,
+      schedule,
+      notes,
     });
     return NextResponse.json({ id }, { status: 201 });
   } catch (err: any) {

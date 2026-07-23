@@ -1,0 +1,19 @@
+{
+  "extends": "../../../tsconfig.options.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "paths": {
+      "@clasptek/application-ai-evaluation": ["../../application/ai-evaluation/src/index.ts"],
+      "@clasptek/domain-ai-evaluation": ["../../domain/ai-evaluation/src/index.ts"],
+      "@clasptek/kernel": ["../../kernel/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../domain/ai-evaluation" },
+    { "path": "../../application/ai-evaluation" },
+    { "path": "../../kernel" }
+  ]
+}

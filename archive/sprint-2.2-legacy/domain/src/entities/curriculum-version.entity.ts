@@ -26,7 +26,7 @@ export class CurriculumVersion extends Entity<string> {
   public breakingChange: boolean = false;
   public migrationNotes?: string;
   public lockVersion: number = 0;
-  
+
   public programmeMappings: CurriculumProgrammeMapping[] = [];
   public prerequisites: Prerequisite[] = [];
   public metadata = new Map<string, string>();

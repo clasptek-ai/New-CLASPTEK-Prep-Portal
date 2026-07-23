@@ -10,7 +10,12 @@ describe('Architecture Fitness Tests', () => {
     try {
       const output = execSync(
         'npx dependency-cruiser --config dependency-cruiser.config.js --output-type json apps packages',
-        { cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 10 * 1024 * 1024 }
+        {
+          cwd: rootDir,
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore'],
+          maxBuffer: 10 * 1024 * 1024,
+        }
       );
       const report = JSON.parse(output);
       const errors = report.summary.violations.filter((v: any) => v.rule.severity === 'error');
@@ -116,9 +121,14 @@ describe('Architecture Fitness Tests', () => {
         } else if (entry.isFile() && /\.(ts|tsx)$/.test(entry.name)) {
           const content = fs.readFileSync(fullPath, 'utf8');
           // Rules check
-          const hasSupabase = content.includes('@supabase/supabase-js') || content.includes('@supabase/ssr');
+          const hasSupabase =
+            content.includes('@supabase/supabase-js') || content.includes('@supabase/ssr');
           const hasPg = content.includes("from 'pg'") || content.includes('from "pg"');
-          const hasReact = content.includes("from 'react'") || content.includes('from "react"') || content.includes("from 'react-dom'") || content.includes('from "react-dom"');
+          const hasReact =
+            content.includes("from 'react'") ||
+            content.includes('from "react"') ||
+            content.includes("from 'react-dom'") ||
+            content.includes('from "react-dom"');
           const hasNext = content.includes("from 'next/") || content.includes('from "next/');
           const hasPersistence = content.includes('@clasptek/persistence');
 
@@ -131,5 +141,77 @@ describe('Architecture Fitness Tests', () => {
       }
     };
     scanDomainDir(domainCurriculumSrc);
+  });
+
+  test('AI Evaluation Domain boundary enforcement', () => {
+    // Architecture Fitness Rule: packages/domain/ai-evaluation must never import
+    // React, Supabase SDK, direct pg driver, Next.js, or the Persistence package.
+    // Only @clasptek/kernel contracts and crypto primitives are permitted.
+    const domainAiEvalSrc = path.join(rootDir, 'packages/domain/ai-evaluation/src');
+    if (!fs.existsSync(domainAiEvalSrc)) return;
+
+    const scanDir = (dir: string) => {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          scanDir(fullPath);
+        } else if (entry.isFile() && /\.(ts|tsx)$/.test(entry.name)) {
+          const content = fs.readFileSync(fullPath, 'utf8');
+
+          const hasReact =
+            content.includes("from 'react'") ||
+            content.includes('from "react"') ||
+            content.includes("from 'react-dom'") ||
+            content.includes('from "react-dom"');
+
+          const hasSupabase =
+            content.includes('@supabase/supabase-js') || content.includes('@supabase/ssr');
+
+          const hasDirectPg = content.includes("from 'pg'") || content.includes('from "pg"');
+
+          const hasNext = content.includes("from 'next/") || content.includes('from "next/');
+
+          const hasPersistence = content.includes('@clasptek/persistence');
+
+          const hasAssessmentRuntime =
+            content.includes('@clasptek/domain-assessment-runtime') &&
+            !content.includes('@clasptek/domain-assessment-runtime'); // cross-context ID references are allowed
+
+          if (hasReact) {
+            throw new Error(
+              `AI Evaluation Domain boundary violation in "${fullPath}": React imports are forbidden in domain packages.`
+            );
+          }
+          if (hasSupabase) {
+            throw new Error(
+              `AI Evaluation Domain boundary violation in "${fullPath}": Supabase SDK imports are forbidden in domain packages.`
+            );
+          }
+          if (hasDirectPg) {
+            throw new Error(
+              `AI Evaluation Domain boundary violation in "${fullPath}": Direct pg driver imports are forbidden in domain packages.`
+            );
+          }
+          if (hasNext) {
+            throw new Error(
+              `AI Evaluation Domain boundary violation in "${fullPath}": Next.js imports are forbidden in domain packages.`
+            );
+          }
+          if (hasPersistence) {
+            throw new Error(
+              `AI Evaluation Domain boundary violation in "${fullPath}": Persistence package imports are forbidden in domain packages.`
+            );
+          }
+          if (hasAssessmentRuntime) {
+            throw new Error(
+              `AI Evaluation Domain boundary violation in "${fullPath}": Direct Assessment Runtime domain imports are forbidden. Use only IDs and contracts.`
+            );
+          }
+        }
+      }
+    };
+
+    scanDir(domainAiEvalSrc);
   });
 });

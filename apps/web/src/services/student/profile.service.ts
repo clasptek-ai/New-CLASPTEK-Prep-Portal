@@ -24,8 +24,12 @@ export const studentProfileService = {
         enrolledAt: '2026-01-15T09:00:00Z',
         loginHistory: [
           { ip: '127.0.0.1', device: 'Chrome / Windows', timestamp: new Date().toISOString() },
-          { ip: '192.168.1.10', device: 'Safari / iPhone', timestamp: new Date(Date.now() - 86400000).toISOString() }
-        ]
+          {
+            ip: '192.168.1.10',
+            device: 'Safari / iPhone',
+            timestamp: new Date(Date.now() - 86400000).toISOString(),
+          },
+        ],
       };
     }
   },
@@ -47,5 +51,5 @@ export const studentProfileService = {
     } catch {
       return true;
     }
-  }
+  },
 };

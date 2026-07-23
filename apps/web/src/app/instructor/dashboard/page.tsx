@@ -6,7 +6,7 @@ import { InstructorDashboardScreen } from '../../../features/instructor/dashboar
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <InstructorDashboardScreen />
     </WorkspaceShell>
   );

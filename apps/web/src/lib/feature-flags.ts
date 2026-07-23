@@ -9,7 +9,7 @@ const defaultFlags: FeatureFlags = {
   betaFeatures: false,
   aiCapabilities: true,
   experimentalDashboards: true,
-  institutionSpecificModules: false
+  institutionSpecificModules: false,
 };
 
 export const featureFlagsManager = {
@@ -37,5 +37,5 @@ export const featureFlagsManager = {
     } catch {
       // Ignored in SSR
     }
-  }
+  },
 };

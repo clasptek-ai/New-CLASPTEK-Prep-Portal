@@ -28,7 +28,9 @@ export default function VerifyEmailPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.message || 'Email verification failed. Code might be incorrect or expired.');
+        throw new Error(
+          data.message || 'Email verification failed. Code might be incorrect or expired.'
+        );
       }
 
       setSuccess(true);
@@ -47,18 +49,27 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', minHeight: '100vh', backgroundColor: 'var(--background)' }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+        minHeight: '100vh',
+        backgroundColor: 'var(--background)',
+      }}
+    >
       {/* Branded Hero Left Column */}
-      <div style={{
-        background: 'linear-gradient(135deg, var(--nav-bg), var(--background))',
-        padding: '3rem',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        borderRight: '1px solid var(--card-border)',
-        color: '#ffffff',
-        gap: '2rem'
-      }}>
+      <div
+        style={{
+          background: 'linear-gradient(135deg, var(--nav-bg), var(--background))',
+          padding: '3rem',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          borderRight: '1px solid var(--card-border)',
+          color: '#ffffff',
+          gap: '2rem',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <ClasptekLogo size="large" />
         </div>
@@ -67,32 +78,68 @@ export default function VerifyEmailPage() {
             Verify Your Academic Identity
           </h2>
           <p style={{ color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>
-            Enter the 6-digit confirmation code dispatched to your registered email address to finalize portal authorization.
+            Enter the 6-digit confirmation code dispatched to your registered email address to
+            finalize portal authorization.
           </p>
         </div>
       </div>
 
       {/* Form Right Column */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div style={{ maxWidth: '400px', width: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}
+      >
+        <div
+          style={{
+            maxWidth: '400px',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.5rem',
+          }}
+        >
           <div>
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>Verify Email</h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>Enter code to secure your Clasptek learning portal.</p>
+            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>
+              Verify Email
+            </h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>
+              Enter code to secure your Clasptek learning portal.
+            </p>
           </div>
 
           {error && (
-            <div style={{ backgroundColor: 'rgba(237, 27, 35, 0.1)', border: '1px solid rgba(237, 27, 35, 0.3)', color: '#f87171', padding: '0.75rem 1rem', borderRadius: '6px', fontSize: '0.85rem' }}>
+            <div
+              style={{
+                backgroundColor: 'rgba(237, 27, 35, 0.1)',
+                border: '1px solid rgba(237, 27, 35, 0.3)',
+                color: '#f87171',
+                padding: '0.75rem 1rem',
+                borderRadius: '6px',
+                fontSize: '0.85rem',
+              }}
+            >
               {error}
             </div>
           )}
 
           {success && (
-            <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#34d399', padding: '0.75rem 1rem', borderRadius: '6px', fontSize: '0.85rem' }}>
+            <div
+              style={{
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: '#34d399',
+                padding: '0.75rem 1rem',
+                borderRadius: '6px',
+                fontSize: '0.85rem',
+              }}
+            >
               🎉 Email successfully verified! Redirecting to login...
             </div>
           )}
 
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <form
+            onSubmit={handleSubmit}
+            style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
+          >
             <Input
               label="Email Address"
               type="email"
@@ -102,7 +149,7 @@ export default function VerifyEmailPage() {
               required
               autoComplete="email"
             />
-            
+
             <Input
               label="Verification Code"
               type="text"
@@ -118,7 +165,14 @@ export default function VerifyEmailPage() {
             </Button>
           </form>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '0.85rem',
+            }}
+          >
             <button
               type="button"
               onClick={handleResend}
@@ -128,12 +182,14 @@ export default function VerifyEmailPage() {
                 color: 'var(--primary-hover)',
                 cursor: 'pointer',
                 fontWeight: 700,
-                padding: 0
+                padding: 0,
               }}
             >
               Resend Code
             </button>
-            <Link href="/login" style={{ color: 'var(--text-muted)' }}>Return to Sign In</Link>
+            <Link href="/login" style={{ color: 'var(--text-muted)' }}>
+              Return to Sign In
+            </Link>
           </div>
         </div>
       </div>

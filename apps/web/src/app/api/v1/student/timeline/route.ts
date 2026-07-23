@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getStudentLearningContext } from '@/lib/student-learning-context';
 
@@ -12,9 +14,9 @@ export async function GET(req: NextRequest) {
 
     // Return milestones sorted chronologically as a timeline
     const timeline = journey.milestones
-      .filter(m => m.completed)
+      .filter((m) => m.completed)
       .sort((a, b) => (a.completedAt?.getTime() ?? 0) - (b.completedAt?.getTime() ?? 0))
-      .map(m => ({
+      .map((m) => ({
         id: m.id,
         type: 'MILESTONE',
         title: m.title,

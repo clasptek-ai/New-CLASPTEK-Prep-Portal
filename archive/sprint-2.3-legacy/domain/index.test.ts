@@ -5,7 +5,7 @@ import {
   SemanticVersion,
   LearningResource,
   ResourceCode,
-  DomainError
+  DomainError,
 } from './index';
 
 describe('Domain Learning Resources & Lessons Aggregate Tests', () => {
@@ -13,7 +13,7 @@ describe('Domain Learning Resources & Lessons Aggregate Tests', () => {
     const lessonId = '10000000-0000-0000-0000-000000000001';
     const moduleId = 'b1000000-0000-0000-0000-000000000001';
     const code = new LessonCode('IELTS-LIS-L1');
-    
+
     const lesson = Lesson.create(lessonId, moduleId, code, 'Part 1 Intro', 'Description', 1);
     expect(lesson.status).toBe('DRAFT');
     expect(lesson.domainEvents.length).toBe(1);
@@ -48,13 +48,33 @@ describe('Domain Learning Resources & Lessons Aggregate Tests', () => {
     const lessonId = '10000000-0000-0000-0000-000000000001';
     const code = new ResourceCode('IELTS-LIS-R1');
 
-    const res = LearningResource.create(resId, lessonId, code, 'VIDEO', 'ielts-listening-video', 'Tutorial', 'Desc', 1);
+    const res = LearningResource.create(
+      resId,
+      lessonId,
+      code,
+      'VIDEO',
+      'ielts-listening-video',
+      'Tutorial',
+      'Desc',
+      1
+    );
     expect(res.status).toBe('DRAFT');
 
     const versionNo = new SemanticVersion('1.0.0');
     res.createVersion('lrv-101', versionNo, 'Video Version 1', 'Desc');
-    
-    res.setMediaAsset(versionNo, 'ma-1', 'SUPABASE_STORAGE', 'resource-private', 'video.mp4', 'us-east-1', 'chk123', 'video/mp4', 5000000, 120);
+
+    res.setMediaAsset(
+      versionNo,
+      'ma-1',
+      'SUPABASE_STORAGE',
+      'resource-private',
+      'video.mp4',
+      'us-east-1',
+      'chk123',
+      'video/mp4',
+      5000000,
+      120
+    );
     res.setMetadata(versionNo, 'difficulty', 'BEGINNER');
 
     res.publishVersion(versionNo);

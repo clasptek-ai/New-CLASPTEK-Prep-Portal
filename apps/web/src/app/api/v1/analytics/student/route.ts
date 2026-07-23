@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLearningAnalyticsContext } from '@/lib/learning-analytics-context';
 
@@ -8,7 +10,10 @@ export async function GET(req: NextRequest) {
     const profileId = searchParams.get('profileId');
 
     if (!studentId || !profileId) {
-      return NextResponse.json({ error: 'Missing studentId or profileId parameter' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing studentId or profileId parameter' },
+        { status: 400 }
+      );
     }
 
     const ctx = await getLearningAnalyticsContext();

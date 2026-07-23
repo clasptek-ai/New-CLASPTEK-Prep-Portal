@@ -3,10 +3,12 @@
 # Aggregate Catalogue
 
 ## Curriculum Aggregate
+
 - Curriculum
 - CurriculumVersion
 
 ## Programme Aggregate
+
 - Programme
 - ProgrammeVersion
 - Course
@@ -17,13 +19,17 @@
 - LearningOutcome
 
 # Aggregate Relationships
+
 CurriculumVersion -> ProgrammeVersion (mapping only)
 
 # State Machine
+
 Draft -> Under Review -> Approved -> Published -> Deprecated -> Archived
 
 # Stable Repository Contracts
+
 ## CurriculumRepository
+
 save
 findById
 findByCode
@@ -35,6 +41,7 @@ restore
 nextIdentity
 
 ## ProgrammeRepository
+
 save
 findById
 findByCode
@@ -45,6 +52,7 @@ archive
 nextIdentity
 
 # Domain Events
+
 CurriculumCreated
 CurriculumPublished
 ProgrammeAdded
@@ -56,10 +64,13 @@ LearningObjectiveAdded
 LearningOutcomeAdded
 
 # Database Freeze
+
 Migration Range: 00200-00203
 
 # API Freeze
+
 Freeze all public/admin Curriculum endpoints as Sprint 2.2 contract baseline.
 
 # Known Limitations
+
 Learning Resources intentionally excluded.

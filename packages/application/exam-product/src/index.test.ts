@@ -1,13 +1,6 @@
 import { describe, test, expect, beforeEach } from 'vitest';
-import {
-  ExamProduct,
-  ExamProductRepository,
-  SearchFilters,
-} from '@clasptek/domain-exam-product';
-import {
-  CreateExamProductHandler,
-  IUnitOfWork,
-} from './index';
+import { ExamProduct, ExamProductRepository, SearchFilters } from '@clasptek/domain-exam-product';
+import { CreateExamProductHandler, IUnitOfWork } from './index';
 
 class MockUnitOfWork implements IUnitOfWork {
   public began = false;

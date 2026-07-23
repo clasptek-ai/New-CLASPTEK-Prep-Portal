@@ -20,7 +20,10 @@ import {
   RevokeLoginSessionHandler,
 } from '@clasptek/application-auth';
 import { AssignUserRoleHandler, GrantCapabilityHandler } from '@clasptek/application-authorization';
-import { IdentitySynchronizer } from '@clasptek/application-identity-sync';
+import {
+  IdentitySynchronizer,
+  EnsureUserAggregateExistsService,
+} from '@clasptek/application-identity-sync';
 
 interface AuthContext {
   dbPool: DatabasePool;
@@ -41,6 +44,7 @@ interface AuthContext {
   assignUserRoleHandler: AssignUserRoleHandler;
   grantCapabilityHandler: GrantCapabilityHandler;
   identitySynchronizer: IdentitySynchronizer;
+  ensureUserAggregateExistsService: EnsureUserAggregateExistsService;
 }
 
 let cachedAuthContext: AuthContext | null = null;
@@ -86,6 +90,11 @@ export async function getAuthContext(): Promise<AuthContext> {
     assignUserRoleHandler: new AssignUserRoleHandler(roleRepo, userRoleRepo),
     grantCapabilityHandler: new GrantCapabilityHandler(roleRepo, groupRepo),
     identitySynchronizer: new IdentitySynchronizer(identityRepo, lookupService, logger),
+    ensureUserAggregateExistsService: new EnsureUserAggregateExistsService(
+      identityRepo,
+      securityProfileRepo,
+      logger
+    ),
   };
 
   return cachedAuthContext;

@@ -6,11 +6,11 @@ vi.mock('next/navigation', () => {
     usePathname: () => '/authoring/dashboard',
     useRouter: () => ({
       push: vi.fn(),
-      prefetch: vi.fn()
+      prefetch: vi.fn(),
     }),
     use: (promise: any) => {
       return { programmeId: 'p1', questionId: 'q1' };
-    }
+    },
   };
 });
 
@@ -19,8 +19,8 @@ vi.mock('../providers/theme-provider', () => {
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
     useTheme: () => ({
       theme: 'dark',
-      setTheme: vi.fn()
-    })
+      setTheme: vi.fn(),
+    }),
   };
 });
 

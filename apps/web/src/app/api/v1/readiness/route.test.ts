@@ -48,7 +48,13 @@ vi.mock('pg', () => {
     }
 
     if (sql.includes('INSERT INTO readiness_snapshots')) {
-      if (params) dbStore.set(params[0], { id: params[0], student_id: params[1], learner_state: params[2], forecast_window: params[7] });
+      if (params)
+        dbStore.set(params[0], {
+          id: params[0],
+          student_id: params[1],
+          learner_state: params[2],
+          forecast_window: params[7],
+        });
       return { rowCount: 1 };
     }
     if (sql.includes('INSERT INTO readiness_predictions')) {
@@ -63,7 +69,7 @@ vi.mock('pg', () => {
           confidence_value: params[6],
           lock_version: params[9],
           created_at: params[10],
-          published_at: params[11]
+          published_at: params[11],
         });
       }
       return { rowCount: 1 };
@@ -85,7 +91,7 @@ vi.mock('pg', () => {
           traffic_split_percentage: params[5],
           status: params[6],
           start_date: params[7],
-          end_date: params[8]
+          end_date: params[8],
         });
       }
       return { rowCount: 1 };
@@ -106,7 +112,7 @@ vi.mock('pg', () => {
           normalization_method: params[4],
           default_weight: params[5],
           version: params[6],
-          description: params[7]
+          description: params[7],
         });
       }
       return { rowCount: 1 };
@@ -121,7 +127,7 @@ vi.mock('pg', () => {
           actual_score: params[4],
           variance: params[5],
           calibration_delta: params[6],
-          recorded_at: params[7]
+          recorded_at: params[7],
         });
       }
       return { rowCount: 1 };
@@ -135,7 +141,7 @@ vi.mock('pg', () => {
           description: params[3],
           priority: params[4],
           target_resource_id: params[5],
-          target_competency_code: params[6]
+          target_competency_code: params[6],
         });
       }
       return { rowCount: 1 };
@@ -151,7 +157,7 @@ vi.mock('pg', () => {
           intervention_completion_rate: params[5],
           intervention_effectiveness: params[6],
           model_drift: params[7],
-          experiment_success_rate: params[8]
+          experiment_success_rate: params[8],
         });
       }
       return { rowCount: 1 };
@@ -160,7 +166,9 @@ vi.mock('pg', () => {
     // Hydration queries Mock
     if (sql.includes('FROM readiness_predictions')) {
       // Find matching mock
-      const val = Array.from(dbStore.values()).find(v => v.id === 'pred-1' || v.id === params?.[0]);
+      const val = Array.from(dbStore.values()).find(
+        (v) => v.id === 'pred-1' || v.id === params?.[0]
+      );
       const row = val ?? {
         id: 'pred-1',
         student_id: 'stud-1',
@@ -175,7 +183,7 @@ vi.mock('pg', () => {
         lock_version: 1,
         created_at: new Date(),
         updated_at: new Date(),
-        published_at: new Date()
+        published_at: new Date(),
       };
       return { rows: [row] };
     }
@@ -186,31 +194,79 @@ vi.mock('pg', () => {
 
     if (sql.includes('FROM prediction_explanations')) {
       return {
-        rows: [{
-          id: 'expl-1',
-          prediction_id: 'pred-1',
-          contributing_factors: JSON.stringify([{ factor: 'Accuracy', weight: 1.0 }]),
-          feature_importance: { ACCURACY: 1.0 },
-          confidence_explanation: 'High accuracy rate',
-          evidence_references: JSON.stringify(['snap-1'])
-        }]
+        rows: [
+          {
+            id: 'expl-1',
+            prediction_id: 'pred-1',
+            contributing_factors: JSON.stringify([{ factor: 'Accuracy', weight: 1.0 }]),
+            feature_importance: { ACCURACY: 1.0 },
+            confidence_explanation: 'High accuracy rate',
+            evidence_references: JSON.stringify(['snap-1']),
+          },
+        ],
       };
     }
 
     if (sql.includes('FROM prediction_evidence')) {
-      return { rows: [{ id: 'ev-1', prediction_id: 'pred-1', evidence_type: 'PRACTICE', evidence_source_id: 'src-1', weight: '1.0', description: 'desc' }] };
+      return {
+        rows: [
+          {
+            id: 'ev-1',
+            prediction_id: 'pred-1',
+            evidence_type: 'PRACTICE',
+            evidence_source_id: 'src-1',
+            weight: '1.0',
+            description: 'desc',
+          },
+        ],
+      };
     }
 
     if (sql.includes('FROM prediction_trends')) {
-      return { rows: [{ id: 'tr-1', prediction_id: 'pred-1', trend_type: 'ACCURACY', slope: '0.05', explanation: 'exp' }] };
+      return {
+        rows: [
+          {
+            id: 'tr-1',
+            prediction_id: 'pred-1',
+            trend_type: 'ACCURACY',
+            slope: '0.05',
+            explanation: 'exp',
+          },
+        ],
+      };
     }
 
     if (sql.includes('FROM prediction_interventions')) {
-      return { rows: [{ id: 'int-1', prediction_id: 'pred-1', student_id: 'stud-1', risk_level: 'CRITICAL', risk_score: '90.0', trigger_reason: 'reason', status: 'ACTIVE' }] };
+      return {
+        rows: [
+          {
+            id: 'int-1',
+            prediction_id: 'pred-1',
+            student_id: 'stud-1',
+            risk_level: 'CRITICAL',
+            risk_score: '90.0',
+            trigger_reason: 'reason',
+            status: 'ACTIVE',
+          },
+        ],
+      };
     }
 
     if (sql.includes('FROM prediction_recommendations')) {
-      return { rows: [{ id: 'rec-1', intervention_id: 'int-1', recommendation_type: 'DRILL', priority: 1, title: 'Title', description: 'desc', target_resource_id: 'res-1', target_competency_code: 'comp-1' }] };
+      return {
+        rows: [
+          {
+            id: 'rec-1',
+            intervention_id: 'int-1',
+            recommendation_type: 'DRILL',
+            priority: 1,
+            title: 'Title',
+            description: 'desc',
+            target_resource_id: 'res-1',
+            target_competency_code: 'comp-1',
+          },
+        ],
+      };
     }
 
     if (sql.includes('FROM prediction_feature_catalogue')) {
@@ -218,7 +274,7 @@ vi.mock('pg', () => {
         const val = dbStore.get('feat-' + params?.[0]);
         return { rows: val ? [val] : [] };
       }
-      const vals = Array.from(dbStore.values()).filter(v => v.feature_code);
+      const vals = Array.from(dbStore.values()).filter((v) => v.feature_code);
       return { rows: vals };
     }
 
@@ -228,54 +284,90 @@ vi.mock('pg', () => {
         return { rows: val ? [val] : [] };
       }
       if (sql.includes('WHERE prediction_id = $1')) {
-        const val = Array.from(dbStore.values()).find(v => v.prediction_id === params?.[0] && v.predicted_score !== undefined);
+        const val = Array.from(dbStore.values()).find(
+          (v) => v.prediction_id === params?.[0] && v.predicted_score !== undefined
+        );
         return { rows: val ? [val] : [] };
       }
-      const vals = Array.from(dbStore.values()).filter(v => v.predicted_score !== undefined);
+      const vals = Array.from(dbStore.values()).filter((v) => v.predicted_score !== undefined);
       return { rows: vals };
     }
 
     if (sql.includes('FROM prediction_intervention_catalogue')) {
       if (sql.includes('WHERE intervention_type = $1')) {
-        const val = dbStore.get('int-cat-' + params?.[0]) || Array.from(dbStore.values()).find(v => v.intervention_type === params?.[0]);
+        const val =
+          dbStore.get('int-cat-' + params?.[0]) ||
+          Array.from(dbStore.values()).find((v) => v.intervention_type === params?.[0]);
         return { rows: val ? [val] : [] };
       }
-      const vals = Array.from(dbStore.values()).filter(v => v.intervention_type !== undefined);
+      const vals = Array.from(dbStore.values()).filter((v) => v.intervention_type !== undefined);
       if (vals.length === 0) {
-        return { rows: [{ id: 'int-cat-1', intervention_type: 'GRAMMAR_HELP', title: 'Grammar support', description: 'desc', priority: 1, target_resource_id: null, target_competency_code: 'comp-1' }] };
+        return {
+          rows: [
+            {
+              id: 'int-cat-1',
+              intervention_type: 'GRAMMAR_HELP',
+              title: 'Grammar support',
+              description: 'desc',
+              priority: 1,
+              target_resource_id: null,
+              target_competency_code: 'comp-1',
+            },
+          ],
+        };
       }
       return { rows: vals };
     }
 
     if (sql.includes('FROM prediction_learning_velocity_history')) {
-      const val = Array.from(dbStore.values()).find(v => v.active_hours !== undefined);
-      return { rows: val ? [val] : [{ id: 'vel-1', student_id: 'stud-1', active_hours: '4.50', questions_answered: 20, acceleration_rate: '0.20', stagnation_indicator: false, recorded_at: new Date() }] };
+      const val = Array.from(dbStore.values()).find((v) => v.active_hours !== undefined);
+      return {
+        rows: val
+          ? [val]
+          : [
+              {
+                id: 'vel-1',
+                student_id: 'stud-1',
+                active_hours: '4.50',
+                questions_answered: 20,
+                acceleration_rate: '0.20',
+                stagnation_indicator: false,
+                recorded_at: new Date(),
+              },
+            ],
+      };
     }
 
     if (sql.includes('FROM prediction_lifecycle_metrics')) {
-      const val = dbStore.get('metrics-' + params?.[0]) || Array.from(dbStore.values()).find(v => v.model_version_id === params?.[0]);
+      const val =
+        dbStore.get('metrics-' + params?.[0]) ||
+        Array.from(dbStore.values()).find((v) => v.model_version_id === params?.[0]);
       return { rows: val ? [val] : [] };
     }
 
     if (sql.includes('FROM prediction_experiments')) {
-      const val = Array.from(dbStore.values()).find(v => v.experiment_code === params?.[0] || v.id === params?.[0]);
+      const val = Array.from(dbStore.values()).find(
+        (v) => v.experiment_code === params?.[0] || v.id === params?.[0]
+      );
       if (val) {
         return { rows: [val] };
       }
       if (sql.includes("status = 'RUNNING'")) {
         return {
-          rows: [{
-            id: 'exp-1',
-            experiment_code: 'EXP-ACTIVE',
-            display_name: 'Active Experiment',
-            control_model_version_id: 'control-1',
-            challenger_model_version_id: 'challenger-1',
-            traffic_split_percentage: 50,
-            status: 'RUNNING',
-            start_date: new Date(),
-            end_date: null,
-            created_at: new Date()
-          }]
+          rows: [
+            {
+              id: 'exp-1',
+              experiment_code: 'EXP-ACTIVE',
+              display_name: 'Active Experiment',
+              control_model_version_id: 'control-1',
+              challenger_model_version_id: 'challenger-1',
+              traffic_split_percentage: 50,
+              status: 'RUNNING',
+              start_date: new Date(),
+              end_date: null,
+              created_at: new Date(),
+            },
+          ],
         };
       }
       return { rows: [] };
@@ -289,12 +381,12 @@ vi.mock('pg', () => {
       return {
         connect: vi.fn().mockResolvedValue({
           release: vi.fn(),
-          query: queryMock
+          query: queryMock,
         }),
         end: vi.fn().mockResolvedValue(undefined),
-        query: queryMock
+        query: queryMock,
       };
-    })
+    }),
   };
 });
 
@@ -313,8 +405,8 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
         profileId: 'prof-1',
         profileCode: 'IELTS_ACADEMIC',
         learnerState: { writing: 6.5, speaking: 7.0 },
-        forecastWindow: '14D'
-      })
+        forecastWindow: '14D',
+      }),
     });
 
     const postRes = await generateReadiness(postReq);
@@ -326,7 +418,7 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
     // 2. Search
     const getReq = new NextRequest('http://localhost/api/v1/readiness?profileId=prof-1', {
       method: 'GET',
-      headers: { 'x-student-id': 'stud-1' }
+      headers: { 'x-student-id': 'stud-1' },
     });
 
     const getRes = await searchReadiness(getReq);
@@ -338,7 +430,7 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
   test('GET api/v1/readiness/latest endpoint', async () => {
     const req = new NextRequest('http://localhost/api/v1/readiness/latest?profileId=prof-1', {
       method: 'GET',
-      headers: { 'x-student-id': 'stud-1' }
+      headers: { 'x-student-id': 'stud-1' },
     });
 
     const res = await getLatestReadiness(req);
@@ -348,10 +440,13 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
   });
 
   test('GET api/v1/readiness/history endpoint', async () => {
-    const req = new NextRequest('http://localhost/api/v1/readiness/history?profileId=prof-1&limit=5', {
-      method: 'GET',
-      headers: { 'x-student-id': 'stud-1' }
-    });
+    const req = new NextRequest(
+      'http://localhost/api/v1/readiness/history?profileId=prof-1&limit=5',
+      {
+        method: 'GET',
+        headers: { 'x-student-id': 'stud-1' },
+      }
+    );
 
     const res = await getReadinessHistory(req);
     expect(res.status).toBe(200);
@@ -368,8 +463,8 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
         displayName: 'Experiment 1',
         controlModelVersionId: 'control-1',
         challengerModelVersionId: 'challenger-1',
-        trafficSplitPercentage: 50
-      })
+        trafficSplitPercentage: 50,
+      }),
     });
     const createRes = await createExp(createReq);
     expect(createRes.status).toBe(200);
@@ -377,15 +472,20 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
     expect(createData.experimentId).toBeDefined();
 
     // 2. Start
-    const startReq = new NextRequest(`http://localhost/api/v1/readiness/experiments/${createData.experimentId}/start`, {
-      method: 'POST'
+    const startReq = new NextRequest(
+      `http://localhost/api/v1/readiness/experiments/${createData.experimentId}/start`,
+      {
+        method: 'POST',
+      }
+    );
+    const startRes = await startExp(startReq, {
+      params: Promise.resolve({ id: createData.experimentId }),
     });
-    const startRes = await startExp(startReq, { params: Promise.resolve({ id: createData.experimentId }) });
     expect(startRes.status).toBe(200);
 
     // 3. Get Active
     const getReq = new NextRequest('http://localhost/api/v1/readiness/experiments', {
-      method: 'GET'
+      method: 'GET',
     });
     const getRes = await getActiveExp(getReq);
     expect(getRes.status).toBe(200);
@@ -393,16 +493,21 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
     expect(getData.active).not.toBeNull();
 
     // 4. Complete
-    const completeReq = new NextRequest(`http://localhost/api/v1/readiness/experiments/${createData.experimentId}/complete`, {
-      method: 'POST'
+    const completeReq = new NextRequest(
+      `http://localhost/api/v1/readiness/experiments/${createData.experimentId}/complete`,
+      {
+        method: 'POST',
+      }
+    );
+    const completeRes = await completeExp(completeReq, {
+      params: Promise.resolve({ id: createData.experimentId }),
     });
-    const completeRes = await completeExp(completeReq, { params: Promise.resolve({ id: createData.experimentId }) });
     expect(completeRes.status).toBe(200);
   });
 
   test('POST api/v1/readiness/predictions/[id]/publish endpoint', async () => {
     const req = new NextRequest('http://localhost/api/v1/readiness/predictions/pred-1/publish', {
-      method: 'POST'
+      method: 'POST',
     });
     const res = await publishPred(req, { params: Promise.resolve({ id: 'pred-1' }) });
     expect(res.status).toBe(200);
@@ -412,24 +517,39 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
 
   test('POST api/v1/readiness/predictions/[id]/interventions/[intId]/activate-complete-discard endpoints', async () => {
     // 1. Activate
-    const actReq = new NextRequest('http://localhost/api/v1/readiness/predictions/pred-1/interventions/int-1/activate', {
-      method: 'POST'
+    const actReq = new NextRequest(
+      'http://localhost/api/v1/readiness/predictions/pred-1/interventions/int-1/activate',
+      {
+        method: 'POST',
+      }
+    );
+    const actRes = await activateInter(actReq, {
+      params: Promise.resolve({ id: 'pred-1', intId: 'int-1' }),
     });
-    const actRes = await activateInter(actReq, { params: Promise.resolve({ id: 'pred-1', intId: 'int-1' }) });
     expect(actRes.status).toBe(200);
 
     // 2. Complete
-    const compReq = new NextRequest('http://localhost/api/v1/readiness/predictions/pred-1/interventions/int-1/complete', {
-      method: 'POST'
+    const compReq = new NextRequest(
+      'http://localhost/api/v1/readiness/predictions/pred-1/interventions/int-1/complete',
+      {
+        method: 'POST',
+      }
+    );
+    const compRes = await completeInter(compReq, {
+      params: Promise.resolve({ id: 'pred-1', intId: 'int-1' }),
     });
-    const compRes = await completeInter(compReq, { params: Promise.resolve({ id: 'pred-1', intId: 'int-1' }) });
     expect(compRes.status).toBe(200);
 
     // 3. Discard
-    const discReq = new NextRequest('http://localhost/api/v1/readiness/predictions/pred-1/interventions/int-1/discard', {
-      method: 'POST'
+    const discReq = new NextRequest(
+      'http://localhost/api/v1/readiness/predictions/pred-1/interventions/int-1/discard',
+      {
+        method: 'POST',
+      }
+    );
+    const discRes = await discardInter(discReq, {
+      params: Promise.resolve({ id: 'pred-1', intId: 'int-1' }),
     });
-    const discRes = await discardInter(discReq, { params: Promise.resolve({ id: 'pred-1', intId: 'int-1' }) });
     expect(discRes.status).toBe(200);
   });
 
@@ -442,10 +562,10 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
         displayName: 'Average Accuracy Rate',
         sourceDomain: 'AI Evaluation',
         normalizationMethod: 'MinMax',
-        defaultWeight: 0.70,
+        defaultWeight: 0.7,
         version: 'v1.0.0',
-        description: 'Test feature'
-      })
+        description: 'Test feature',
+      }),
     });
     const postRes = await registerFeature(postReq);
     expect(postRes.status).toBe(201);
@@ -454,7 +574,7 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
 
     // 2. GET (list features)
     const getReq = new NextRequest('http://localhost/api/v1/readiness/features', {
-      method: 'GET'
+      method: 'GET',
     });
     const getRes = await getFeatures(getReq);
     expect(getRes.status).toBe(200);
@@ -465,7 +585,7 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
 
   test('GET api/v1/readiness/interventions/catalogue template endpoint', async () => {
     const getReq = new NextRequest('http://localhost/api/v1/readiness/interventions/catalogue', {
-      method: 'GET'
+      method: 'GET',
     });
     const getRes = await getInterventionsCatalogue(getReq);
     expect(getRes.status).toBe(200);
@@ -475,13 +595,16 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
   });
 
   test('POST api/v1/readiness/predictions/[id]/outcome endpoint', async () => {
-    const postReq = new NextRequest('http://localhost/api/v1/readiness/predictions/pred-1/outcome', {
-      method: 'POST',
-      headers: { 'x-student-id': 'stud-1' },
-      body: JSON.stringify({
-        actualScore: 8.0
-      })
-    });
+    const postReq = new NextRequest(
+      'http://localhost/api/v1/readiness/predictions/pred-1/outcome',
+      {
+        method: 'POST',
+        headers: { 'x-student-id': 'stud-1' },
+        body: JSON.stringify({
+          actualScore: 8.0,
+        }),
+      }
+    );
 
     const postRes = await recordOutcome(postReq, { params: Promise.resolve({ id: 'pred-1' }) });
     expect(postRes.status).toBe(200);
@@ -494,20 +617,23 @@ describe('Next.js Prediction Engine REST API Endpoints Integration Tests', () =>
     // 1. POST (calculate metrics)
     const postReq = new NextRequest('http://localhost/api/v1/readiness/metrics', {
       method: 'POST',
-      body: JSON.stringify({ modelVersionId: 'mv-1' })
+      body: JSON.stringify({ modelVersionId: 'mv-1' }),
     });
     const postRes = await calculateLifecycleMetrics(postReq);
     if (postRes.status !== 201) {
-      console.error("METRICS POST FAILED:", await postRes.json());
+      console.error('METRICS POST FAILED:', await postRes.json());
     }
     expect(postRes.status).toBe(201);
     const postData = await postRes.json();
     expect(postData.metricsId).toBeDefined();
 
     // 2. GET (retrieve metrics)
-    const getReq = new NextRequest('http://localhost/api/v1/readiness/metrics?modelVersionId=mv-1', {
-      method: 'GET'
-    });
+    const getReq = new NextRequest(
+      'http://localhost/api/v1/readiness/metrics?modelVersionId=mv-1',
+      {
+        method: 'GET',
+      }
+    );
     const getRes = await getLifecycleMetrics(getReq);
     expect(getRes.status).toBe(200);
     const getData = await getRes.json();

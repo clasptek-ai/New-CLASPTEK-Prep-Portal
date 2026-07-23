@@ -19,7 +19,7 @@ export class CreateExamProductHandler {
   public async execute(command: CreateExamProductCommand): Promise<Result<string, Error>> {
     try {
       await this.uow.begin();
-      
+
       const exists = await this.repository.exists(command.code);
       if (exists) {
         throw new Error(`Exam product with code ${command.code} already exists.`);

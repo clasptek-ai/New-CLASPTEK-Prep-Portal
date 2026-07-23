@@ -25,8 +25,10 @@ export function AuditScreen() {
     load();
   }, []);
 
-  const filtered = logs.filter(log => {
-    const matchesSearch = log.action.toLowerCase().includes(search.toLowerCase()) || log.user.toLowerCase().includes(search.toLowerCase());
+  const filtered = logs.filter((log) => {
+    const matchesSearch =
+      log.action.toLowerCase().includes(search.toLowerCase()) ||
+      log.user.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = categoryFilter === 'ALL' || log.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
@@ -41,23 +43,54 @@ export function AuditScreen() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
         <div>
           <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Audit Logs Workspace</h1>
-          <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>Platform-wide tracking audits for security and compliance audits</p>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+            Platform-wide tracking audits for security and compliance audits
+          </p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', width: '100%', maxWidth: '600px' }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            flexWrap: 'wrap',
+            width: '100%',
+            maxWidth: '600px',
+          }}
+        >
           <input
             type="text"
             placeholder="Search action logs or users..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ flex: 1, padding: '0.75rem', borderRadius: '8px', backgroundColor: '#0b0f19', color: '#f8fafc', border: '1px solid #232e48' }}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '0.75rem',
+              borderRadius: '8px',
+              backgroundColor: '#0b0f19',
+              color: '#f8fafc',
+              border: '1px solid #232e48',
+            }}
           />
           <select
             value={categoryFilter}
-            onChange={e => setCategoryFilter(e.target.value)}
-            style={{ padding: '0.75rem', borderRadius: '8px', backgroundColor: '#0b0f19', color: '#cbd5e1', border: '1px solid #232e48' }}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            style={{
+              padding: '0.75rem',
+              borderRadius: '8px',
+              backgroundColor: '#0b0f19',
+              color: '#cbd5e1',
+              border: '1px solid #232e48',
+            }}
           >
             <option value="ALL">All Categories</option>
             <option value="AUTHENTICATION">Authentication</option>
@@ -71,12 +104,30 @@ export function AuditScreen() {
       <Table
         data={filtered}
         columns={[
-          { header: 'Action Event', render: row => <span style={{ fontWeight: 600 }}>{row.action}</span> },
-          { header: 'User', render: row => <span>{row.user}</span> },
-          { header: 'IP Address', render: row => <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{row.ip}</span> },
-          { header: 'Details', render: row => <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{row.details}</span> },
-          { header: 'Category', render: row => <Badge>{row.category}</Badge> },
-          { header: 'Timestamp', render: row => <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{new Date(row.timestamp).toLocaleString()}</span> }
+          {
+            header: 'Action Event',
+            render: (row) => <span style={{ fontWeight: 600 }}>{row.action}</span>,
+          },
+          { header: 'User', render: (row) => <span>{row.user}</span> },
+          {
+            header: 'IP Address',
+            render: (row) => <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{row.ip}</span>,
+          },
+          {
+            header: 'Details',
+            render: (row) => (
+              <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{row.details}</span>
+            ),
+          },
+          { header: 'Category', render: (row) => <Badge>{row.category}</Badge> },
+          {
+            header: 'Timestamp',
+            render: (row) => (
+              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                {new Date(row.timestamp).toLocaleString()}
+              </span>
+            ),
+          },
         ]}
       />
     </div>

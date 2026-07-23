@@ -2,7 +2,7 @@ import { Pool } from 'pg';
 import {
   CurriculumTemplate,
   CurriculumTemplateRepository,
-  CurriculumTemplateVersion
+  CurriculumTemplateVersion,
 } from '@clasptek/domain-curriculum';
 import { DatabasePool } from '../database-pool';
 
@@ -39,7 +39,16 @@ export class PostgresCurriculumTemplateRepository implements CurriculumTemplateR
       [id]
     );
     template.versions = verRes.rows.map(
-      r => new CurriculumTemplateVersion(r.id, r.template_id, r.version_no, r.name, r.description || '', JSON.stringify(r.structure_snapshot_json), r.status)
+      (r) =>
+        new CurriculumTemplateVersion(
+          r.id,
+          r.template_id,
+          r.version_no,
+          r.name,
+          r.description || '',
+          JSON.stringify(r.structure_snapshot_json),
+          r.status
+        )
     );
 
     return template;
@@ -69,7 +78,7 @@ export class PostgresCurriculumTemplateRepository implements CurriculumTemplateR
           template.description,
           template.status,
           template.lockVersion,
-          template.id
+          template.id,
         ]
       );
     } else {
@@ -84,7 +93,7 @@ export class PostgresCurriculumTemplateRepository implements CurriculumTemplateR
           template.name,
           template.description,
           template.status,
-          template.lockVersion
+          template.lockVersion,
         ]
       );
     }
@@ -100,7 +109,15 @@ export class PostgresCurriculumTemplateRepository implements CurriculumTemplateR
          (id, template_id, version_no, name, description, structure_snapshot_json, status) 
          VALUES ($1, $2, $3, $4, $5, $6, $7) 
          ON CONFLICT (id) DO UPDATE SET deleted_at = null`,
-        [ver.id, ver.templateId, ver.versionNo, ver.name, ver.description || null, JSON.parse(ver.structureSnapshotJson), ver.status]
+        [
+          ver.id,
+          ver.templateId,
+          ver.versionNo,
+          ver.name,
+          ver.description || null,
+          JSON.parse(ver.structureSnapshotJson),
+          ver.status,
+        ]
       );
     }
   }

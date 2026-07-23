@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAiEvaluationContext } from '@/lib/ai-evaluation-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
@@ -7,10 +9,7 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
  * Fetch evaluation result by job ID or result ID.
  */
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const ctx = getAiEvaluationContext();
@@ -21,9 +20,7 @@ export async function GET(
     const { searchParams } = new URL(req.url);
     const byResult = searchParams.get('type') === 'result';
 
-    const result = await ctx.getEvaluation.execute(
-      byResult ? { resultId: id } : { jobId: id }
-    );
+    const result = await ctx.getEvaluation.execute(byResult ? { resultId: id } : { jobId: id });
     if (!result) return NextResponse.json({ error: 'Evaluation not found' }, { status: 404 });
 
     // Enforce student-scoped access
@@ -46,6 +43,9 @@ export async function GET(
       createdAt: result.createdAt,
     });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

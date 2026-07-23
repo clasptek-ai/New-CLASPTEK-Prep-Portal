@@ -3,7 +3,7 @@ import { EvaluationScreen } from '../../../features/instructor/evaluation/evalua
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <EvaluationScreen />
     </WorkspaceShell>
   );

@@ -6,7 +6,7 @@ import {
   ExamProductStatus,
   DomainError,
   SkillFramework,
-  SkillCode
+  SkillCode,
 } from './index';
 
 describe('Exam Product Domain V3 Unit Tests', () => {
@@ -57,11 +57,7 @@ describe('Exam Product Domain V3 Unit Tests', () => {
   });
 
   test('SkillFramework Hierarchies', () => {
-    const framework = new SkillFramework(
-      'sf-1',
-      'SF-CODE',
-      'Skill Framework 1'
-    );
+    const framework = new SkillFramework('sf-1', 'SF-CODE', 'Skill Framework 1');
     expect(framework.status).toBe('DRAFT');
 
     const vNo = '1.0.0';

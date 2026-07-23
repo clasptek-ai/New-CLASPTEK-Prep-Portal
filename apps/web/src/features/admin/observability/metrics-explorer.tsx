@@ -11,10 +11,12 @@ export function MetricsExplorerScreen() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Metrics Explorer</h1>
-          <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>Switch layout visualizations to inspect latencies, CPU metrics, and traffic loads</p>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+            Switch layout visualizations to inspect latencies, CPU metrics, and traffic loads
+          </p>
         </div>
         <div style={{ display: 'flex', gap: '0.35rem' }}>
-          {(['LINE', 'BAR', 'HEATMAP'] as const).map(mode => (
+          {(['LINE', 'BAR', 'HEATMAP'] as const).map((mode) => (
             <Button
               key={mode}
               variant={viewMode === mode ? 'primary' : 'secondary'}
@@ -28,7 +30,15 @@ export function MetricsExplorerScreen() {
       </div>
 
       <Card title={`Visualizing metrics: ${viewMode} Mode`}>
-        <div style={{ padding: '3rem', border: '1px dashed #1e293b', borderRadius: '8px', backgroundColor: '#020617', textAlign: 'center' }}>
+        <div
+          style={{
+            padding: '3rem',
+            border: '1px dashed #1e293b',
+            borderRadius: '8px',
+            backgroundColor: '#020617',
+            textAlign: 'center',
+          }}
+        >
           <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.9rem' }}>
             [Interactive Charts Canvas Mock representing **{viewMode}** diagram maps]
           </p>

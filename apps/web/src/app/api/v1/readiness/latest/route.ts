@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getPredictionEngineContext } from '@/lib/prediction-engine-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
@@ -21,11 +23,17 @@ export async function GET(req: NextRequest) {
 
     const prediction = await ctx.getLatestPrediction.execute({ studentId, profileId });
     if (!prediction) {
-      return NextResponse.json({ error: 'No published readiness predictions found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'No published readiness predictions found' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(prediction);
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

@@ -1,17 +1,19 @@
+/* eslint-disable */
 import { loadEnvironment } from '@clasptek/configuration';
 import { ConsoleLogger } from '@clasptek/observability';
-import { DatabasePool, PostgresLessonRepository, PostgresLearningResourceRepository } from '@clasptek/persistence';
+import {
+  DatabasePool,
+  PostgresLessonRepository,
+  PostgresLearningResourceRepository,
+} from '@clasptek/persistence';
 import {
   CreateResourceHandler,
   PublishResourceVersionHandler,
   ArchiveResourceHandler,
   SearchResourcesHandler,
-  GetResourceDetailHandler
+  GetResourceDetailHandler,
 } from '@clasptek/application-learning-resources';
-import {
-  AddLessonHandler,
-  GetLessonHandler
-} from '@clasptek/application-curriculum';
+import { AddLessonHandler, GetLessonHandler } from '@clasptek/application-curriculum';
 
 interface LearningResourceContext {
   dbPool: DatabasePool;
@@ -50,10 +52,13 @@ export async function getLearningResourceContext(): Promise<LearningResourceCont
   const lessonRepo = new PostgresLessonRepository(dbPool);
   const resourceRepo = new PostgresLearningResourceRepository(dbPool);
 
-  const curriculumLessonRepo = new (require('@clasptek/persistence').PostgresCurriculumLessonRepository)(dbPool);
+  const curriculumLessonRepo =
+    new (require('@clasptek/persistence').PostgresCurriculumLessonRepository)(dbPool);
   const addLessonHandler = new AddLessonHandler(curriculumLessonRepo);
   const getLessonHandlerImpl = new GetLessonHandler(curriculumLessonRepo);
-  const publishResourceVersionHandler = new PublishResourceVersionHandler(new (require('@clasptek/persistence').PostgresResourceVersionRepository)(dbPool));
+  const publishResourceVersionHandler = new PublishResourceVersionHandler(
+    new (require('@clasptek/persistence').PostgresResourceVersionRepository)(dbPool)
+  );
 
   cachedContext = {
     dbPool,
@@ -68,18 +73,21 @@ export async function getLearningResourceContext(): Promise<LearningResourceCont
           code: cmd.code,
           title: cmd.name || cmd.title,
           summary: cmd.description || '',
-          defaultSequenceNo: cmd.displayOrder || 1
+          defaultSequenceNo: cmd.displayOrder || 1,
         });
-      }
+      },
     },
     createResourceHandler: new CreateResourceHandler(resourceRepo),
     publishResourceHandler: {
       execute: async (cmd: any) => {
         if (typeof cmd === 'string') {
-          return await publishResourceVersionHandler.execute({ resourceVersionId: cmd, publishedBy: 'system' });
+          return await publishResourceVersionHandler.execute({
+            resourceVersionId: cmd,
+            publishedBy: 'system',
+          });
         }
         return await publishResourceVersionHandler.execute(cmd);
-      }
+      },
     },
     publishResourceVersionHandler,
     publishLessonHandler: { execute: async () => {} },
@@ -90,7 +98,7 @@ export async function getLearningResourceContext(): Promise<LearningResourceCont
     searchLessonsHandler: { execute: async () => [] },
     searchResourcesHandler: new SearchResourcesHandler(dbPool.getPool()),
     getLessonHandler: getLessonHandlerImpl,
-    getResourceHandler: new GetResourceDetailHandler(dbPool.getPool())
+    getResourceHandler: new GetResourceDetailHandler(dbPool.getPool()),
   };
 
   return cachedContext;

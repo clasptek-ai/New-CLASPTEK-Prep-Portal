@@ -188,7 +188,15 @@ paths:
           application/json:
             schema:
               type: object
-              required: [sessionId, checkpointVersion, activeQuestionId, elapsedTimeMs, answersSnapshot, checksum]
+              required:
+                [
+                  sessionId,
+                  checkpointVersion,
+                  activeQuestionId,
+                  elapsedTimeMs,
+                  answersSnapshot,
+                  checksum,
+                ]
               properties:
                 sessionId:
                   type: string

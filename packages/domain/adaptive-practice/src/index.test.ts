@@ -107,13 +107,22 @@ describe('PracticePlan Aggregate', () => {
       recommendationId: 'rec-1',
       title: 'Plan Title',
       status: 'DRAFT',
-      selectionRules: [new QuestionSelectionRule({ id: 'rule-1', attributeName: 'type', operator: 'EQUALS', value: 'MCQ' })],
-      targetedCompetencies: [new CompetencyCoverage({
-        id: 'cov-1',
-        competencyId: 'comp-1',
-        coverageWeight: new SelectionWeight(1.0),
-        targetPercentage: new CoveragePercentage(100),
-      })],
+      selectionRules: [
+        new QuestionSelectionRule({
+          id: 'rule-1',
+          attributeName: 'type',
+          operator: 'EQUALS',
+          value: 'MCQ',
+        }),
+      ],
+      targetedCompetencies: [
+        new CompetencyCoverage({
+          id: 'cov-1',
+          competencyId: 'comp-1',
+          coverageWeight: new SelectionWeight(1.0),
+          targetPercentage: new CoveragePercentage(100),
+        }),
+      ],
       spacingPolicy: new SpacingPolicy(12, 1.2, 72),
     });
   };
@@ -165,14 +174,16 @@ describe('PracticeSession Aggregate', () => {
 
   it('starts and completes a practice session', () => {
     const session = mkSession();
-    session.addQuestion(new PracticeQuestion({
-      id: 'pq-1',
-      questionVersionId: 'qv-1',
-      orderIndex: 0,
-      status: 'PENDING',
-      accuracy: undefined,
-      timeSpentMs: undefined,
-    }));
+    session.addQuestion(
+      new PracticeQuestion({
+        id: 'pq-1',
+        questionVersionId: 'qv-1',
+        orderIndex: 0,
+        status: 'PENDING',
+        accuracy: undefined,
+        timeSpentMs: undefined,
+      })
+    );
 
     session.start(new Date());
     expect(session.status).toBe('ACTIVE');
@@ -200,14 +211,16 @@ describe('PracticeSession Aggregate', () => {
 
   it('pauses and resumes a session', () => {
     const session = mkSession();
-    session.addQuestion(new PracticeQuestion({
-      id: 'pq-1',
-      questionVersionId: 'qv-1',
-      orderIndex: 0,
-      status: 'PENDING',
-      accuracy: undefined,
-      timeSpentMs: undefined,
-    }));
+    session.addQuestion(
+      new PracticeQuestion({
+        id: 'pq-1',
+        questionVersionId: 'qv-1',
+        orderIndex: 0,
+        status: 'PENDING',
+        accuracy: undefined,
+        timeSpentMs: undefined,
+      })
+    );
 
     session.start(new Date());
     expect(session.status).toBe('ACTIVE');
@@ -222,26 +235,140 @@ describe('PracticeSession Aggregate', () => {
 
   it('supports skipping questions', () => {
     const session = mkSession();
-    session.addQuestion(new PracticeQuestion({
-      id: 'pq-1',
-      questionVersionId: 'qv-1',
-      orderIndex: 0,
-      status: 'PENDING',
-      accuracy: undefined,
-      timeSpentMs: undefined,
-    }));
+    session.addQuestion(
+      new PracticeQuestion({
+        id: 'pq-1',
+        questionVersionId: 'qv-1',
+        orderIndex: 0,
+        status: 'PENDING',
+        accuracy: undefined,
+        timeSpentMs: undefined,
+      })
+    );
 
     session.start(new Date());
     expect(session.status).toBe('ACTIVE');
 
     session.recordSkip('qv-1');
     expect(session.questions[0].status).toBe('SKIPPED');
-    expect(session.questions[0].accuracy).toBe(0);
+    const e = session.domainEvents.find((ev: any) => ev.eventName === 'QuestionSkipped');
+    expect(e).toBeDefined();
   });
 
   it('adjusts difficulty profile', () => {
     const session = mkSession();
     session.adjustDifficulty('Beginner', 'Intermediate', 0.9);
     expect(session.difficultyProfile.minLevel).toBe('Intermediate');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────
+// Sprint 2.6 Addendum Domain Unit Tests
+// ─────────────────────────────────────────────────────────────────
+
+import {
+  ConfidenceLevel,
+  ConfidenceScore,
+  RetentionProfile,
+  StudentMotivation,
+  PracticeGoalEngine,
+  KnowledgeRetentionEngine,
+  AdaptiveDifficultyEngine,
+  TimePerformanceAnalyzer,
+  FocusAreaEngine,
+  AdaptiveDailyGoalEngine,
+  MotivationEngine,
+} from './index';
+
+describe('Sprint 2.6 Addendum Domain Engines & VOs', () => {
+  it('creates ConfidenceLevel and ConfidenceScore VOs', () => {
+    const cl = new ConfidenceLevel('HIGH');
+    expect(cl.level).toBe('HIGH');
+    expect(cl.numericScore).toBe(0.75);
+
+    const cs = new ConfidenceScore(0.85);
+    expect(cs.value).toBe(0.85);
+  });
+
+  it('evaluates PracticeGoalEngine recommendation', () => {
+    const goal = PracticeGoalEngine.recommendGoal('s-1', 'Grammar');
+    expect(goal.goalType).toBe('IMPROVE_GRAMMAR_ACCURACY');
+    expect(goal.targetValue).toBe(85);
+  });
+
+  it('calculates KnowledgeRetentionEngine decay & RetentionProfile review', () => {
+    const kre = new KnowledgeRetentionEngine();
+    const decay = kre.calculateDecay(new Date(Date.now() - 48 * 3600 * 1000), 24);
+    expect(decay).toBeLessThan(100);
+
+    const profile = new RetentionProfile({
+      id: 'rp-1',
+      studentId: 's-1',
+      competencyId: 'comp-grammar',
+      retentionScore: 80,
+      reviewInterval: 24,
+    });
+    profile.recordReview(true);
+    expect(profile.retentionScore).toBe(95);
+    expect(profile.reviewInterval).toBe(43);
+  });
+
+  it('evaluates AdaptiveDifficultyEngine dynamic output', () => {
+    const engine = new AdaptiveDifficultyEngine();
+    const diff = engine.calculate({
+      accuracy: 95,
+      responseTimeMs: 12000,
+      hintUsage: 0,
+      confidence: 'EXPERT',
+      currentStreak: 5,
+      mastery: 90,
+      recentPerformance: 'IMPROVING',
+    });
+    expect(diff).toBe('Expert');
+  });
+
+  it('analyzes TimePerformanceAnalyzer metrics', () => {
+    const analyzer = new TimePerformanceAnalyzer();
+    const res = analyzer.analyze([
+      { questionId: 'q1', skillId: 'grammar', timeSpentMs: 30000, wordCount: 50 },
+      { questionId: 'q2', skillId: 'reading', timeSpentMs: 60000, wordCount: 150 },
+    ]);
+    expect(res.averageResponseTimeMs).toBe(45000);
+    expect(res.readingSpeedWpm).toBeGreaterThan(0);
+    expect(res.timePerSkillMs['grammar']).toBe(30000);
+  });
+
+  it('recommends FocusArea via FocusAreaEngine', () => {
+    const engine = new FocusAreaEngine();
+    const area = engine.recommendFocusArea({
+      grammarAccuracy: 60,
+      readingSpeedWpm: 180,
+      vocabularyScore: 80,
+    });
+    expect(area).toBe('Grammar');
+  });
+
+  it('generates AdaptiveDailyGoal via AdaptiveDailyGoalEngine', () => {
+    const engine = new AdaptiveDailyGoalEngine();
+    const dailyGoal = engine.generateDailyGoal('s-1', {
+      learningPace: 'Accelerated',
+      mastery: 50,
+      missedDays: 1,
+      readinessScore: 65,
+    });
+    expect(dailyGoal.targetQuestions).toBe(30);
+    expect(dailyGoal.timedPracticeRequired).toBe(true);
+  });
+
+  it('calculates MotivationEngine rewards & updates StudentMotivation', () => {
+    const engine = new MotivationEngine();
+    const reward = engine.calculateReward(85, 15000, 7);
+    expect(reward.xp).toBe(100);
+    expect(reward.badgeUnlocked).toBe('7-Day Practice Streak');
+
+    const motivation = new StudentMotivation({ id: 'm-1', studentId: 's-1' });
+    motivation.addActivity(reward.points, reward.xp);
+    expect(motivation.xp).toBe(100);
+    expect(motivation.dailyStreak).toBe(1);
   });
 });

@@ -23,7 +23,7 @@ export class BlueprintFactory {
       undefined,
       undefined,
       targetTotalItems,
-      100.00
+      100.0
     );
   }
 }

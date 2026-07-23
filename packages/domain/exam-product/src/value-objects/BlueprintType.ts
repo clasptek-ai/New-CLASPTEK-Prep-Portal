@@ -1,7 +1,8 @@
 import { ValueObject } from '@clasptek/kernel';
 import { DomainError } from '../errors/exam-product-errors';
 
-export type AllowedBlueprintTypes = 'SECTION' | 'SUBSECTION' | 'ITEM_GROUP' | 'DIAGNOSTIC' | 'READINESS' | 'DEFAULT';
+export type AllowedBlueprintTypes =
+  'SECTION' | 'SUBSECTION' | 'ITEM_GROUP' | 'DIAGNOSTIC' | 'READINESS' | 'DEFAULT';
 
 export class BlueprintType extends ValueObject<{ value: AllowedBlueprintTypes }> {
   private static readonly ALLOWED_VALUES: AllowedBlueprintTypes[] = [

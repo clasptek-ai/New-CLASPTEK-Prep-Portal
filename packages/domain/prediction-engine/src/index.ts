@@ -68,8 +68,12 @@ export class ReadinessScore extends ValueObject<{ value: number; scale: string }
     if (value < 0) throw new Error('Readiness score cannot be negative');
     super({ value, scale });
   }
-  get value(): number { return this.props.value; }
-  get scale(): string { return this.props.scale; }
+  get value(): number {
+    return this.props.value;
+  }
+  get scale(): string {
+    return this.props.scale;
+  }
 }
 
 export class ConfidenceBand extends ValueObject<{ confidence: number; low: number; high: number }> {
@@ -82,9 +86,15 @@ export class ConfidenceBand extends ValueObject<{ confidence: number; low: numbe
     }
     super({ confidence, low, high });
   }
-  get confidence(): number { return this.props.confidence; }
-  get low(): number { return this.props.low; }
-  get high(): number { return this.props.high; }
+  get confidence(): number {
+    return this.props.confidence;
+  }
+  get low(): number {
+    return this.props.low;
+  }
+  get high(): number {
+    return this.props.high;
+  }
 }
 
 export class PredictionFeature extends ValueObject<{
@@ -102,10 +112,18 @@ export class PredictionFeature extends ValueObject<{
     if (!props.featureCode) throw new Error('Feature code is required');
     super(props);
   }
-  get featureCode(): string { return this.props.featureCode; }
-  get displayName(): string { return this.props.displayName; }
-  get dataType(): string { return this.props.dataType; }
-  get description(): string | undefined { return this.props.description; }
+  get featureCode(): string {
+    return this.props.featureCode;
+  }
+  get displayName(): string {
+    return this.props.displayName;
+  }
+  get dataType(): string {
+    return this.props.dataType;
+  }
+  get description(): string | undefined {
+    return this.props.description;
+  }
 }
 
 export type InterventionPriorityLevel = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW' | 'OPTIONAL';
@@ -126,11 +144,21 @@ export class ModelLineage extends ValueObject<{
   }) {
     super(props);
   }
-  get supersedesVersionId(): string | undefined { return this.props.supersedesVersionId; }
-  get trainedFromDataset(): string | undefined { return this.props.trainedFromDataset; }
-  get calibrationDatasetRef(): string | undefined { return this.props.calibrationDatasetRef; }
-  get deploymentDate(): Date | undefined { return this.props.deploymentDate; }
-  get retirementDate(): Date | undefined { return this.props.retirementDate; }
+  get supersedesVersionId(): string | undefined {
+    return this.props.supersedesVersionId;
+  }
+  get trainedFromDataset(): string | undefined {
+    return this.props.trainedFromDataset;
+  }
+  get calibrationDatasetRef(): string | undefined {
+    return this.props.calibrationDatasetRef;
+  }
+  get deploymentDate(): Date | undefined {
+    return this.props.deploymentDate;
+  }
+  get retirementDate(): Date | undefined {
+    return this.props.retirementDate;
+  }
 }
 
 export class ModelConfiguration extends ValueObject<{
@@ -139,15 +167,19 @@ export class ModelConfiguration extends ValueObject<{
 }> {
   constructor(configuration: Record<string, any>, lineage?: ModelLineage) {
     const props: { configuration: Record<string, any>; lineage?: ModelLineage } = {
-      configuration: Object.freeze({ ...configuration })
+      configuration: Object.freeze({ ...configuration }),
     };
     if (lineage !== undefined) {
       props.lineage = lineage;
     }
     super(props);
   }
-  get configuration(): Record<string, any> { return this.props.configuration; }
-  get lineage(): ModelLineage | undefined { return this.props.lineage; }
+  get configuration(): Record<string, any> {
+    return this.props.configuration;
+  }
+  get lineage(): ModelLineage | undefined {
+    return this.props.lineage;
+  }
 }
 
 export class ModelVersion extends AggregateRoot<string> {
@@ -176,7 +208,6 @@ export class ModelVersion extends AggregateRoot<string> {
     this.trainedAt = props.trainedAt ?? new Date();
   }
 }
-
 
 // ═══════════════════════════════════════════════════════════════════
 // 3. ENTITIES & AGGREGATE ROOTS
@@ -229,7 +260,7 @@ export class ReadinessSnapshot extends AggregateRoot<string> {
   }): ReadinessSnapshot {
     return new ReadinessSnapshot({
       id: randomUUID(),
-      ...props
+      ...props,
     });
   }
 }
@@ -271,9 +302,10 @@ export class PredictionExplanation extends Entity<string> {
     this.featureImportance = Object.freeze({ ...props.featureImportance });
     this.confidenceExplanation = props.confidenceExplanation;
     this.evidenceReferences = [...props.evidenceReferences];
-    this.predictionCertainty = props.predictionCertainty ?? props.certaintyScore ?? 1.00;
+    this.predictionCertainty = props.predictionCertainty ?? props.certaintyScore ?? 1.0;
     this.certaintyScore = this.predictionCertainty;
-    this.featureContributionRanking = props.featureContributionRanking ?? Object.keys(this.featureImportance);
+    this.featureContributionRanking =
+      props.featureContributionRanking ?? Object.keys(this.featureImportance);
     this.topInfluencingCompetencies = props.topInfluencingCompetencies ?? [];
     this.strongestRiskIndicators = props.strongestRiskIndicators ?? [];
   }
@@ -369,7 +401,9 @@ export class PredictionIntervention extends Entity<string> {
     this.recommendations = [...props.recommendations];
   }
 
-  get status(): string { return this._status; }
+  get status(): string {
+    return this._status;
+  }
 
   public activate(): void {
     this._status = 'ACTIVE';
@@ -437,12 +471,24 @@ export class ReadinessPrediction extends AggregateRoot<string> {
     this._publishedAt = props.publishedAt;
   }
 
-  get status(): 'DRAFT' | 'PUBLISHED' { return this._status; }
-  get overallReadinessScore(): ReadinessScore | undefined { return this._overallReadinessScore; }
-  get confidence(): ConfidenceBand | undefined { return this._confidence; }
-  get featureSet(): PredictionFeatureSet | undefined { return this._featureSet; }
-  get explanation(): PredictionExplanation | undefined { return this._explanation; }
-  get publishedAt(): Date | undefined { return this._publishedAt; }
+  get status(): 'DRAFT' | 'PUBLISHED' {
+    return this._status;
+  }
+  get overallReadinessScore(): ReadinessScore | undefined {
+    return this._overallReadinessScore;
+  }
+  get confidence(): ConfidenceBand | undefined {
+    return this._confidence;
+  }
+  get featureSet(): PredictionFeatureSet | undefined {
+    return this._featureSet;
+  }
+  get explanation(): PredictionExplanation | undefined {
+    return this._explanation;
+  }
+  get publishedAt(): Date | undefined {
+    return this._publishedAt;
+  }
 
   public static generate(props: {
     studentId: string;
@@ -454,7 +500,7 @@ export class ReadinessPrediction extends AggregateRoot<string> {
       studentId: props.studentId,
       profileId: props.profileId,
       modelVersionId: props.modelVersionId,
-      status: 'DRAFT'
+      status: 'DRAFT',
     });
   }
 
@@ -480,7 +526,9 @@ export class ReadinessPrediction extends AggregateRoot<string> {
     // Handle automatically triggering events for critical/high interventions
     for (const intervention of interventions) {
       if (intervention.riskLevel === 'CRITICAL' || intervention.riskLevel === 'HIGH') {
-        this.addDomainEvent(new InterventionTriggered(intervention.id, this.studentId, intervention.riskLevel));
+        this.addDomainEvent(
+          new InterventionTriggered(intervention.id, this.studentId, intervention.riskLevel)
+        );
       }
     }
   }
@@ -490,7 +538,9 @@ export class ReadinessPrediction extends AggregateRoot<string> {
     this._status = 'PUBLISHED';
     this._publishedAt = at;
     if (this._overallReadinessScore) {
-      this.addDomainEvent(new PredictionPublished(this.id, this.studentId, this._overallReadinessScore.value, at));
+      this.addDomainEvent(
+        new PredictionPublished(this.id, this.studentId, this._overallReadinessScore.value, at)
+      );
     }
   }
 }
@@ -530,9 +580,15 @@ export class PredictionExperiment extends AggregateRoot<string> {
     this.createdAt = props.createdAt ?? new Date();
   }
 
-  get status(): 'DRAFT' | 'RUNNING' | 'COMPLETED' | 'ARCHIVED' { return this._status; }
-  get startDate(): Date | undefined { return this._startDate; }
-  get endDate(): Date | undefined { return this._endDate; }
+  get status(): 'DRAFT' | 'RUNNING' | 'COMPLETED' | 'ARCHIVED' {
+    return this._status;
+  }
+  get startDate(): Date | undefined {
+    return this._startDate;
+  }
+  get endDate(): Date | undefined {
+    return this._endDate;
+  }
 
   public static create(props: {
     experimentCode: string;
@@ -706,9 +762,12 @@ export interface PredictionEngine {
 
 // Concrete Predictor 1 — Mock Predictor (for CI, integration tests, dynamic verification)
 export class MockPredictor implements PredictionEngine {
-  public async predict(snapshot: ReadinessSnapshot, config: ModelConfiguration): Promise<PredictionResult> {
+  public async predict(
+    snapshot: ReadinessSnapshot,
+    config: ModelConfiguration
+  ): Promise<PredictionResult> {
     const configScore = config.configuration.mock_score ?? 75.0;
-    const configConf = config.configuration.mock_confidence ?? 0.90;
+    const configConf = config.configuration.mock_confidence ?? 0.9;
 
     return {
       overallScore: configScore,
@@ -718,32 +777,46 @@ export class MockPredictor implements PredictionEngine {
         STUDY_VELOCITY: 4.5,
         STUDY_MOMENTUM: 12.0,
         STREAK_COUNT: 5,
-        COMPETENCY_MASTERY: 0.65
+        COMPETENCY_MASTERY: 0.65,
       },
       explanation: {
         contributingFactors: [
-          { factor: 'Recent Practice Accuracy', weight: 0.50 },
-          { factor: 'Competency Mastery Level', weight: 0.30 },
-          { factor: 'Study Momentum', weight: 0.20 }
+          { factor: 'Recent Practice Accuracy', weight: 0.5 },
+          { factor: 'Competency Mastery Level', weight: 0.3 },
+          { factor: 'Study Momentum', weight: 0.2 },
         ],
         featureImportance: {
-          ACCURACY_RATE: 0.50,
-          COMPETENCY_MASTERY: 0.30,
-          STUDY_MOMENTUM: 0.20
+          ACCURACY_RATE: 0.5,
+          COMPETENCY_MASTERY: 0.3,
+          STUDY_MOMENTUM: 0.2,
         },
         confidenceExplanation: 'High confidence due to consistent accuracy rate and study streak.',
         evidenceReferences: [snapshot.id],
         featureContributionRanking: ['ACCURACY_RATE', 'COMPETENCY_MASTERY', 'STUDY_MOMENTUM'],
         predictionCertainty: configConf,
         topInfluencingCompetencies: ['IELTS-LIS-C1'],
-        strongestRiskIndicators: ['Low practice consistency']
+        strongestRiskIndicators: ['Low practice consistency'],
       },
       evidence: [
-        { type: 'COMPLETED_PRACTICE', sourceId: randomUUID(), weight: 0.60, description: 'Completed 12 practice tasks' },
-        { type: 'DIAGNOSTIC_EXAM', sourceId: randomUUID(), weight: 0.40, description: 'Diagnostic score of 72%' }
+        {
+          type: 'COMPLETED_PRACTICE',
+          sourceId: randomUUID(),
+          weight: 0.6,
+          description: 'Completed 12 practice tasks',
+        },
+        {
+          type: 'DIAGNOSTIC_EXAM',
+          sourceId: randomUUID(),
+          weight: 0.4,
+          description: 'Diagnostic score of 72%',
+        },
       ],
       trends: [
-        { type: 'ACCURACY', slope: 0.05, explanation: 'Accuracy trend is positive, increasing 5% week-over-week.' }
+        {
+          type: 'ACCURACY',
+          slope: 0.05,
+          explanation: 'Accuracy trend is positive, increasing 5% week-over-week.',
+        },
       ],
       interventions: [
         {
@@ -751,17 +824,26 @@ export class MockPredictor implements PredictionEngine {
           riskScore: 15.0,
           triggerReason: 'Consistent study streak is active.',
           recommendations: [
-            { type: 'COMPETENCY_DRILL', priority: 1, title: 'Review Grammar Fundamentals', description: 'Focus on complex grammar patterns, syntax rules, and transitions', catalogueCode: 'REVIEW_GRAMMAR_FUNDAMENTALS' }
-          ]
-        }
-      ]
+            {
+              type: 'COMPETENCY_DRILL',
+              priority: 1,
+              title: 'Review Grammar Fundamentals',
+              description: 'Focus on complex grammar patterns, syntax rules, and transitions',
+              catalogueCode: 'REVIEW_GRAMMAR_FUNDAMENTALS',
+            },
+          ],
+        },
+      ],
     };
   }
 }
 
 // Concrete Predictor 2 — Bayesian Knowledge Tracing Predictor
 export class BayesianPredictor implements PredictionEngine {
-  public async predict(snapshot: ReadinessSnapshot, config: ModelConfiguration): Promise<PredictionResult> {
+  public async predict(
+    snapshot: ReadinessSnapshot,
+    config: ModelConfiguration
+  ): Promise<PredictionResult> {
     // Basic BKT variables loaded from config
     const pInit = config.configuration.p_init ?? 0.5;
     const pTransit = config.configuration.p_transit ?? 0.1;
@@ -769,64 +851,88 @@ export class BayesianPredictor implements PredictionEngine {
     const pGuess = config.configuration.p_guess ?? 0.2;
 
     // Simulate competency calculation from mastery ratios
-    const masteryPercentage = Object.keys(snapshot.competencyMastery).length > 0
-      ? (Object.values(snapshot.competencyMastery).filter(v => v === true || v === 'MASTERED').length / Object.keys(snapshot.competencyMastery).length)
-      : pInit;
+    const masteryPercentage =
+      Object.keys(snapshot.competencyMastery).length > 0
+        ? Object.values(snapshot.competencyMastery).filter((v) => v === true || v === 'MASTERED')
+            .length / Object.keys(snapshot.competencyMastery).length
+        : pInit;
 
     // Bayesian update estimation
     const pKnown = masteryPercentage + (1 - masteryPercentage) * pTransit;
-    const estimatedReadiness = (pKnown * (1 - pSlip)) + ((1 - pKnown) * pGuess);
+    const estimatedReadiness = pKnown * (1 - pSlip) + (1 - pKnown) * pGuess;
     const scoreVal = parseFloat((estimatedReadiness * 100).toFixed(2));
 
     return {
       overallScore: scoreVal,
       confidence: new ConfidenceBand(0.85, scoreVal - 8, scoreVal + 8),
       features: {
-        ACCURACY_RATE: 0.70,
-        COMPETENCY_MASTERY: masteryPercentage
+        ACCURACY_RATE: 0.7,
+        COMPETENCY_MASTERY: masteryPercentage,
       },
       explanation: {
         contributingFactors: [
-          { factor: 'Competency Mastery Ratio', weight: 0.70 },
-          { factor: 'Bayesian Transition Probability', weight: 0.30 }
+          { factor: 'Competency Mastery Ratio', weight: 0.7 },
+          { factor: 'Bayesian Transition Probability', weight: 0.3 },
         ],
         featureImportance: {
-          COMPETENCY_MASTERY: 0.70,
-          BAYESIAN_PARAMS: 0.30
+          COMPETENCY_MASTERY: 0.7,
+          BAYESIAN_PARAMS: 0.3,
         },
-        confidenceExplanation: 'Strong predictability derived from formal BKT mastery state probabilities.',
+        confidenceExplanation:
+          'Strong predictability derived from formal BKT mastery state probabilities.',
         evidenceReferences: [snapshot.id],
         featureContributionRanking: ['COMPETENCY_MASTERY', 'BAYESIAN_PARAMS'],
         predictionCertainty: 0.85,
         topInfluencingCompetencies: Object.keys(snapshot.competencyMastery).slice(0, 2),
-        strongestRiskIndicators: scoreVal < 60 ? ['Low predicted readiness score'] : []
+        strongestRiskIndicators: scoreVal < 60 ? ['Low predicted readiness score'] : [],
       },
       evidence: [
-        { type: 'MASTERY_TRACKER', sourceId: randomUUID(), weight: 0.80, description: 'Formal curriculum competency assessment' }
+        {
+          type: 'MASTERY_TRACKER',
+          sourceId: randomUUID(),
+          weight: 0.8,
+          description: 'Formal curriculum competency assessment',
+        },
       ],
       trends: [
-        { type: 'VELOCITY', slope: 0.02, explanation: 'Competency acquisition velocity is steady.' }
-      ],
-      interventions: scoreVal < 60 ? [
         {
-          riskLevel: 'HIGH',
-          riskScore: 75.0,
-          triggerReason: 'Readiness score drops below critical passing criteria.',
-          recommendations: [
-            { type: 'REMEDIAL_LESSON', priority: 1, title: 'Review Grammar Fundamentals', description: 'Focus on complex grammar patterns, syntax rules, and transitions', catalogueCode: 'REVIEW_GRAMMAR_FUNDAMENTALS' }
-          ]
-        }
-      ] : []
+          type: 'VELOCITY',
+          slope: 0.02,
+          explanation: 'Competency acquisition velocity is steady.',
+        },
+      ],
+      interventions:
+        scoreVal < 60
+          ? [
+              {
+                riskLevel: 'HIGH',
+                riskScore: 75.0,
+                triggerReason: 'Readiness score drops below critical passing criteria.',
+                recommendations: [
+                  {
+                    type: 'REMEDIAL_LESSON',
+                    priority: 1,
+                    title: 'Review Grammar Fundamentals',
+                    description: 'Focus on complex grammar patterns, syntax rules, and transitions',
+                    catalogueCode: 'REVIEW_GRAMMAR_FUNDAMENTALS',
+                  },
+                ],
+              },
+            ]
+          : [],
     };
   }
 }
 
 // Concrete Predictor 3 — Linear & Logistic Regression Predictor
 export class RegressionPredictor implements PredictionEngine {
-  public async predict(snapshot: ReadinessSnapshot, config: ModelConfiguration): Promise<PredictionResult> {
+  public async predict(
+    snapshot: ReadinessSnapshot,
+    config: ModelConfiguration
+  ): Promise<PredictionResult> {
     const weights = config.configuration.weights ?? { velocity: 0.3, accuracy: 0.5, momentum: 0.2 };
 
-    const accuracy = snapshot.practiceStatistics.accuracy ?? 0.70;
+    const accuracy = snapshot.practiceStatistics.accuracy ?? 0.7;
     const velocity = snapshot.practiceStatistics.velocity ?? 3.0;
     const momentum = snapshot.practiceStatistics.momentum ?? 5.0;
 
@@ -834,7 +940,10 @@ export class RegressionPredictor implements PredictionEngine {
     const normVelocity = Math.min(velocity / 10, 1.0);
     const normMomentum = Math.min(momentum / 20, 1.0);
 
-    const calculatedReadiness = (accuracy * weights.accuracy) + (normVelocity * weights.velocity) + (normMomentum * weights.momentum);
+    const calculatedReadiness =
+      accuracy * weights.accuracy +
+      normVelocity * weights.velocity +
+      normMomentum * weights.momentum;
     const scoreVal = parseFloat((calculatedReadiness * 100).toFixed(2));
 
     return {
@@ -843,48 +952,64 @@ export class RegressionPredictor implements PredictionEngine {
       features: {
         ACCURACY_RATE: accuracy,
         STUDY_VELOCITY: velocity,
-        STUDY_MOMENTUM: momentum
+        STUDY_MOMENTUM: momentum,
       },
       explanation: {
         contributingFactors: [
           { factor: 'Practice Accuracy Metric', weight: weights.accuracy },
           { factor: 'Learning Velocity Metric', weight: weights.velocity },
-          { factor: 'Activity Momentum Metric', weight: weights.momentum }
+          { factor: 'Activity Momentum Metric', weight: weights.momentum },
         ],
         featureImportance: {
           ACCURACY_RATE: weights.accuracy,
           STUDY_VELOCITY: weights.velocity,
-          STUDY_MOMENTUM: weights.momentum
+          STUDY_MOMENTUM: weights.momentum,
         },
-        confidenceExplanation: 'Multi-factor weighted regression reflecting activity frequency and answer accuracy.',
+        confidenceExplanation:
+          'Multi-factor weighted regression reflecting activity frequency and answer accuracy.',
         evidenceReferences: [snapshot.id],
         featureContributionRanking: ['ACCURACY_RATE', 'STUDY_VELOCITY', 'STUDY_MOMENTUM'],
         predictionCertainty: 0.78,
         topInfluencingCompetencies: [],
-        strongestRiskIndicators: []
+        strongestRiskIndicators: [],
       },
       evidence: [
-        { type: 'STUDY_METRICS_LOG', sourceId: randomUUID(), weight: 0.90, description: 'Weighted aggregation of study history logs' }
+        {
+          type: 'STUDY_METRICS_LOG',
+          sourceId: randomUUID(),
+          weight: 0.9,
+          description: 'Weighted aggregation of study history logs',
+        },
       ],
-      trends: [
-        { type: 'MOMENTUM', slope: -0.01, explanation: 'Momentum is slightly decaying.' }
-      ],
-      interventions: []
+      trends: [{ type: 'MOMENTUM', slope: -0.01, explanation: 'Momentum is slightly decaying.' }],
+      interventions: [],
     };
   }
 }
 
 // Concrete Predictor 4 — Weighted Rubric Predictor (resembling IELTS band mappings)
 export class WeightedRubricPredictor implements PredictionEngine {
-  public async predict(snapshot: ReadinessSnapshot, config: ModelConfiguration): Promise<PredictionResult> {
-    const weights = config.configuration.weights ?? { writing: 0.4, speaking: 0.3, listening: 0.15, reading: 0.15 };
+  public async predict(
+    snapshot: ReadinessSnapshot,
+    config: ModelConfiguration
+  ): Promise<PredictionResult> {
+    const weights = config.configuration.weights ?? {
+      writing: 0.4,
+      speaking: 0.3,
+      listening: 0.15,
+      reading: 0.15,
+    };
 
     const writing = snapshot.learnerState.writing ?? 6.5;
     const speaking = snapshot.learnerState.speaking ?? 7.0;
     const listening = snapshot.learnerState.listening ?? 7.5;
     const reading = snapshot.learnerState.reading ?? 7.0;
 
-    const rawRubricScore = (writing * weights.writing) + (speaking * weights.speaking) + (listening * weights.listening) + (reading * weights.reading);
+    const rawRubricScore =
+      writing * weights.writing +
+      speaking * weights.speaking +
+      listening * weights.listening +
+      reading * weights.reading;
     const roundedBand = Math.round(rawRubricScore * 2) / 2; // Round to nearest 0.5 like IELTS
 
     return {
@@ -894,35 +1019,50 @@ export class WeightedRubricPredictor implements PredictionEngine {
         WRITING_BAND: writing,
         SPEAKING_BAND: speaking,
         LISTENING_BAND: listening,
-        READING_BAND: reading
+        READING_BAND: reading,
       },
       explanation: {
         contributingFactors: [
           { factor: 'Writing Module Band', weight: weights.writing },
           { factor: 'Speaking Module Band', weight: weights.speaking },
           { factor: 'Listening Module Band', weight: weights.listening },
-          { factor: 'Reading Module Band', weight: weights.reading }
+          { factor: 'Reading Module Band', weight: weights.reading },
         ],
         featureImportance: {
           WRITING_BAND: weights.writing,
           SPEAKING_BAND: weights.speaking,
           LISTENING_BAND: weights.listening,
-          READING_BAND: weights.reading
+          READING_BAND: weights.reading,
         },
-        confidenceExplanation: 'High calibration accuracy mapping composite sub-scores against actual exam rubric weights.',
+        confidenceExplanation:
+          'High calibration accuracy mapping composite sub-scores against actual exam rubric weights.',
         evidenceReferences: [snapshot.id],
-        featureContributionRanking: ['WRITING_BAND', 'SPEAKING_BAND', 'LISTENING_BAND', 'READING_BAND'],
+        featureContributionRanking: [
+          'WRITING_BAND',
+          'SPEAKING_BAND',
+          'LISTENING_BAND',
+          'READING_BAND',
+        ],
         predictionCertainty: 0.92,
         topInfluencingCompetencies: [],
-        strongestRiskIndicators: []
+        strongestRiskIndicators: [],
       },
       evidence: [
-        { type: 'ACADEMIC_SUB_SCORES', sourceId: randomUUID(), weight: 0.95, description: 'Composite sub-scores from official exam categories' }
+        {
+          type: 'ACADEMIC_SUB_SCORES',
+          sourceId: randomUUID(),
+          weight: 0.95,
+          description: 'Composite sub-scores from official exam categories',
+        },
       ],
       trends: [
-        { type: 'ACADEMIC_VELOCITY', slope: 0.10, explanation: 'Strong academic performance trends.' }
+        {
+          type: 'ACADEMIC_VELOCITY',
+          slope: 0.1,
+          explanation: 'Strong academic performance trends.',
+        },
       ],
-      interventions: []
+      interventions: [],
     };
   }
 }
@@ -954,7 +1094,9 @@ export class PredictionStrategyRegistry {
   public get(algorithmType: string): PredictionEngine {
     const engine = this._engines.get(algorithmType.toUpperCase());
     if (!engine) {
-      throw new Error(`No prediction engine strategy registered for algorithm type '${algorithmType}'`);
+      throw new Error(
+        `No prediction engine strategy registered for algorithm type '${algorithmType}'`
+      );
     }
     return engine;
   }
@@ -996,8 +1138,12 @@ export class PredictionFeatureCatalogueEntry extends Entity<string> {
   }
 
   // Compatibility getters
-  get normalization(): string { return this.normalizationMethod; }
-  get weight(): number { return this.defaultWeight; }
+  get normalization(): string {
+    return this.normalizationMethod;
+  }
+  get weight(): number {
+    return this.defaultWeight;
+  }
 
   public static create(props: {
     featureCode: string;
@@ -1012,7 +1158,7 @@ export class PredictionFeatureCatalogueEntry extends Entity<string> {
   }): PredictionFeatureCatalogueEntry {
     return new PredictionFeatureCatalogueEntry({
       id: randomUUID(),
-      ...props
+      ...props,
     });
   }
 }
@@ -1022,56 +1168,66 @@ export class PredictionFeatureCatalogue {
   private readonly _entries = new Map<string, PredictionFeatureCatalogueEntry>();
 
   private constructor() {
-    this.register(new PredictionFeatureCatalogueEntry({
-      id: 'f0000000-0000-0000-0000-000000000001',
-      featureCode: 'ACCURACY_RATE',
-      displayName: 'Average Evaluation Accuracy Rate',
-      sourceDomain: 'EVALUATION',
-      normalization: 'NONE',
-      weight: 0.50,
-      version: 'v1.0.0',
-      description: 'Overall accuracy percentage across evaluated subjective/objective questions'
-    }));
-    this.register(new PredictionFeatureCatalogueEntry({
-      id: 'f0000000-0000-0000-0000-000000000002',
-      featureCode: 'STUDY_VELOCITY',
-      displayName: 'Learning Velocity',
-      sourceDomain: 'CURRICULUM',
-      normalization: 'NONE',
-      weight: 0.30,
-      version: 'v1.0.0',
-      description: 'Average competency items covered per week'
-    }));
-    this.register(new PredictionFeatureCatalogueEntry({
-      id: 'f0000000-0000-0000-0000-000000000003',
-      featureCode: 'STUDY_MOMENTUM',
-      displayName: 'Recent Study Momentum',
-      sourceDomain: 'STREAK',
-      normalization: 'NONE',
-      weight: 0.20,
-      version: 'v1.0.0',
-      description: 'Study hours logged in the last 7 days'
-    }));
-    this.register(new PredictionFeatureCatalogueEntry({
-      id: 'f0000000-0000-0000-0000-000000000004',
-      featureCode: 'STREAK_COUNT',
-      displayName: 'Current Study Streak',
-      sourceDomain: 'STREAK',
-      normalization: 'NONE',
-      weight: 0.10,
-      version: 'v1.0.0',
-      description: 'Number of consecutive active study days'
-    }));
-    this.register(new PredictionFeatureCatalogueEntry({
-      id: 'f0000000-0000-0000-0000-000000000005',
-      featureCode: 'COMPETENCY_MASTERY',
-      displayName: 'Overall Competency Mastery',
-      sourceDomain: 'CURRICULUM',
-      normalization: 'NONE',
-      weight: 0.40,
-      version: 'v1.0.0',
-      description: 'Ratio of mastered competencies to target curriculum requirements'
-    }));
+    this.register(
+      new PredictionFeatureCatalogueEntry({
+        id: 'f0000000-0000-0000-0000-000000000001',
+        featureCode: 'ACCURACY_RATE',
+        displayName: 'Average Evaluation Accuracy Rate',
+        sourceDomain: 'EVALUATION',
+        normalization: 'NONE',
+        weight: 0.5,
+        version: 'v1.0.0',
+        description: 'Overall accuracy percentage across evaluated subjective/objective questions',
+      })
+    );
+    this.register(
+      new PredictionFeatureCatalogueEntry({
+        id: 'f0000000-0000-0000-0000-000000000002',
+        featureCode: 'STUDY_VELOCITY',
+        displayName: 'Learning Velocity',
+        sourceDomain: 'CURRICULUM',
+        normalization: 'NONE',
+        weight: 0.3,
+        version: 'v1.0.0',
+        description: 'Average competency items covered per week',
+      })
+    );
+    this.register(
+      new PredictionFeatureCatalogueEntry({
+        id: 'f0000000-0000-0000-0000-000000000003',
+        featureCode: 'STUDY_MOMENTUM',
+        displayName: 'Recent Study Momentum',
+        sourceDomain: 'STREAK',
+        normalization: 'NONE',
+        weight: 0.2,
+        version: 'v1.0.0',
+        description: 'Study hours logged in the last 7 days',
+      })
+    );
+    this.register(
+      new PredictionFeatureCatalogueEntry({
+        id: 'f0000000-0000-0000-0000-000000000004',
+        featureCode: 'STREAK_COUNT',
+        displayName: 'Current Study Streak',
+        sourceDomain: 'STREAK',
+        normalization: 'NONE',
+        weight: 0.1,
+        version: 'v1.0.0',
+        description: 'Number of consecutive active study days',
+      })
+    );
+    this.register(
+      new PredictionFeatureCatalogueEntry({
+        id: 'f0000000-0000-0000-0000-000000000005',
+        featureCode: 'COMPETENCY_MASTERY',
+        displayName: 'Overall Competency Mastery',
+        sourceDomain: 'CURRICULUM',
+        normalization: 'NONE',
+        weight: 0.4,
+        version: 'v1.0.0',
+        description: 'Ratio of mastered competencies to target curriculum requirements',
+      })
+    );
   }
 
   public static get instance(): PredictionFeatureCatalogue {
@@ -1188,9 +1344,15 @@ export class PredictionInterventionCatalogueEntry extends Entity<string> {
   }
 
   // Compatibility getters
-  get catalogueCode(): string { return this.interventionType; }
-  get recommendationType(): string { return this.interventionType; }
-  get isActive(): boolean { return true; }
+  get catalogueCode(): string {
+    return this.interventionType;
+  }
+  get recommendationType(): string {
+    return this.interventionType;
+  }
+  get isActive(): boolean {
+    return true;
+  }
 
   public static create(props: {
     interventionType: string;
@@ -1202,7 +1364,7 @@ export class PredictionInterventionCatalogueEntry extends Entity<string> {
   }): PredictionInterventionCatalogueEntry {
     return new PredictionInterventionCatalogueEntry({
       id: randomUUID(),
-      ...props
+      ...props,
     });
   }
 }
@@ -1236,14 +1398,19 @@ export class PredictionOutcome extends AggregateRoot<string> {
     this.studentId = props.studentId;
     this.predictedScore = props.predictedScore ?? props.predictedReadiness ?? 0;
     this.actualScore = props.actualScore ?? props.actualExamResult ?? 0;
-    this.variance = props.variance ?? parseFloat((this.actualScore - this.predictedScore).toFixed(2));
+    this.variance =
+      props.variance ?? parseFloat((this.actualScore - this.predictedScore).toFixed(2));
     this.calibrationDelta = props.calibrationDelta ?? Math.abs(this.variance);
     this.recordedAt = props.recordedAt ?? new Date();
   }
 
   // Compatibility getters
-  get predictedReadiness(): number { return this.predictedScore; }
-  get actualExamResult(): number { return this.actualScore; }
+  get predictedReadiness(): number {
+    return this.predictedScore;
+  }
+  get actualExamResult(): number {
+    return this.actualScore;
+  }
 
   public static record(props: {
     predictionId: string;
@@ -1262,7 +1429,7 @@ export class PredictionOutcome extends AggregateRoot<string> {
       predictedScore: props.predictedReadiness,
       actualScore: props.actualExamResult,
       variance,
-      calibrationDelta
+      calibrationDelta,
     });
   }
 
@@ -1274,19 +1441,29 @@ export class PredictionOutcome extends AggregateRoot<string> {
   }): PredictionOutcome {
     return new PredictionOutcome({
       id: randomUUID(),
-      ...props
+      ...props,
     });
   }
 }
 
-export class LearningVelocity extends ValueObject<{ value: number; unit: string; calculatedAt: Date }> {
+export class LearningVelocity extends ValueObject<{
+  value: number;
+  unit: string;
+  calculatedAt: Date;
+}> {
   constructor(value: number, unit = 'competencies_per_week', calculatedAt = new Date()) {
     if (value < 0) throw new Error('Learning velocity cannot be negative');
     super({ value, unit, calculatedAt });
   }
-  get value(): number { return this.props.value; }
-  get unit(): string { return this.props.unit; }
-  get calculatedAt(): Date { return this.props.calculatedAt; }
+  get value(): number {
+    return this.props.value;
+  }
+  get unit(): string {
+    return this.props.unit;
+  }
+  get calculatedAt(): Date {
+    return this.props.calculatedAt;
+  }
 }
 
 export class LearningVelocitySnapshot extends AggregateRoot<string> {
@@ -1316,7 +1493,9 @@ export class LearningVelocitySnapshot extends AggregateRoot<string> {
     this.accelerationRate = props.accelerationRate ?? 0;
     this.stagnationIndicator = props.stagnationIndicator ?? false;
     this.recordedAt = props.recordedAt ?? props.velocity?.calculatedAt ?? new Date();
-    this.velocity = props.velocity ?? new LearningVelocity(this.activeHours, 'competencies_per_week', this.recordedAt);
+    this.velocity =
+      props.velocity ??
+      new LearningVelocity(this.activeHours, 'competencies_per_week', this.recordedAt);
   }
 
   public static create(props: {
@@ -1328,7 +1507,7 @@ export class LearningVelocitySnapshot extends AggregateRoot<string> {
   }): LearningVelocitySnapshot {
     return new LearningVelocitySnapshot({
       id: randomUUID(),
-      ...props
+      ...props,
     });
   }
 }
@@ -1366,3 +1545,4 @@ export class PredictionLifecycleMetrics extends Entity<string> {
   }
 }
 
+export * from './addendum';

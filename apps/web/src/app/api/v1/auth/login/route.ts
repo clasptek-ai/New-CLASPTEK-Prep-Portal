@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth-context';
 import { loadEnvironment } from '@clasptek/configuration';
@@ -9,13 +11,15 @@ import { SecurityProfile } from '@clasptek/domain-security';
 export async function POST(req: NextRequest) {
   console.log('🔥 Login API reached');
 
-  const { securityProfileRepo, recordLoginSessionHandler, logger } =
-    await getAuthContext();
+  const {
+    securityProfileRepo,
+    recordLoginSessionHandler,
+    ensureUserAggregateExistsService,
+    logger,
+  } = await getAuthContext();
 
   try {
     const body = await req.json();
-    console.log('Request body:', body);
-
     const { email, password } = body;
 
     const userAgent = req.headers.get('user-agent') || 'Unknown';
@@ -42,7 +46,7 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    // 1. Resolve user ID associated with this email
+    // 1. Resolve initial pre-auth security profile check by email
     const dbPool = (await getAuthContext()).dbPool.getPool();
     const identLookup = await dbPool.query(
       'SELECT user_id FROM identities WHERE email = $1 AND deleted_at IS NULL',
@@ -72,7 +76,6 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      // Increment failed attempts if security profile exists
       if (securityProfile) {
         securityProfile.incrementFailedAttempts(5);
         await securityProfileRepo.save(securityProfile);
@@ -84,10 +87,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ code: 'AUTH_ERROR', message: 'Login failed' }, { status: 400 });
     }
 
-    // 3. Reset failed attempts count on successful login
+    console.log(`AUTH LOGIN: ✓ Supabase Auth OK for ${data.user.email} (${data.user.id})`);
+
+    // 3. Guarantee Domain User Aggregate and Security Profile exist atomically
+    await ensureUserAggregateExistsService.execute({
+      userId: data.user.id,
+      email: data.user.email || email,
+      firstName: data.user.user_metadata?.first_name || 'Clasptek',
+      lastName: data.user.user_metadata?.last_name || 'User',
+      provider: 'LOCAL',
+    });
+    console.log(`AUTH LOGIN: ✓ Domain User Verified / Synchronized (${data.user.id})`);
+
+    // Reload security profile for post-login reset
+    securityProfile = await securityProfileRepo.findByUserId(data.user.id);
     if (securityProfile) {
       securityProfile.resetFailedAttempts();
       await securityProfileRepo.save(securityProfile);
+      console.log('AUTH LOGIN: ✓ Security Profile Reset');
     }
 
     // 4. Log active session info
@@ -100,23 +117,30 @@ export async function POST(req: NextRequest) {
       device: 'Desktop',
       userAgent,
     });
+    console.log('AUTH LOGIN: ✓ Session Persisted');
 
-    // 5. Resolve roles so the client can perform role-based routing immediately
+    // 5. Resolve roles for client route authorization
     let roleNames: string[] = [];
     try {
       const { userRoleRepo, roleRepo } = await getAuthContext();
       const userRoles = await userRoleRepo.findByUserId(data.user.id);
-      const roles = await Promise.all(userRoles.map(ur => roleRepo.findById(ur.roleId)));
-      roleNames = roles.filter((r): r is NonNullable<typeof r> => r !== null).map(r => r.name);
+      const roles = await Promise.all(userRoles.map((ur) => roleRepo.findById(ur.roleId)));
+      roleNames = roles.filter((r): r is NonNullable<typeof r> => r !== null).map((r) => r.name);
     } catch {
-      // Fallback heuristic when DB roles table is not yet seeded
-      const email = data.user.email ?? '';
-      if (email.includes('admin')) roleNames = ['ADMINISTRATOR'];
-      else if (email.includes('instructor')) roleNames = ['INSTRUCTOR'];
+      const userEmail = data.user.email ?? '';
+      if (userEmail.includes('admin')) roleNames = ['ADMINISTRATOR'];
+      else if (userEmail.includes('instructor')) roleNames = ['INSTRUCTOR'];
       else roleNames = ['STUDENT'];
     }
 
-    logger.info('POST /api/v1/auth/login success', new Error(`User ${data.user.id} authenticated with roles: ${roleNames.join(', ')}`));
+    console.log(
+      `AUTH LOGIN: ✓ Login Complete for ${data.user.id} with roles: ${roleNames.join(', ')}`
+    );
+
+    logger.info(
+      'POST /api/v1/auth/login success',
+      new Error(`User ${data.user.id} authenticated with roles: ${roleNames.join(', ')}`)
+    );
 
     return NextResponse.json({
       success: true,

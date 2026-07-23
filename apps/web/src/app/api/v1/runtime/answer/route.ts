@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAssessmentRuntimeContext } from '@/lib/assessment-runtime-context';
 
@@ -5,15 +7,8 @@ export async function POST(req: NextRequest) {
   try {
     const ctx = getAssessmentRuntimeContext();
     const body = await req.json();
-    const {
-      sessionId,
-      questionId,
-      questionVersionId,
-      payload,
-      state,
-      timeSpentMs,
-      recordedAt,
-    } = body;
+    const { sessionId, questionId, questionVersionId, payload, state, timeSpentMs, recordedAt } =
+      body;
 
     if (!sessionId || !questionId || !questionVersionId || !state || timeSpentMs === undefined) {
       return NextResponse.json({ error: 'Missing required answer fields' }, { status: 400 });
@@ -30,7 +25,10 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 400 }
+    );
   }
 }
 export async function GET(req: NextRequest) {
@@ -46,7 +44,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       id: sheet.id,
       sessionId: sheet.sessionId,
-      answers: sheet.answers.map(a => ({
+      answers: sheet.answers.map((a) => ({
         id: a.id,
         questionId: a.questionId,
         questionVersionId: a.questionVersionId,
@@ -57,6 +55,9 @@ export async function GET(req: NextRequest) {
       })),
     });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

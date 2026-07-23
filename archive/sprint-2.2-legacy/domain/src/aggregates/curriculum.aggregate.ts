@@ -12,7 +12,7 @@ import {
   CurriculumApproved,
   CurriculumPublished,
   CurriculumArchived,
-  PrerequisiteAdded
+  PrerequisiteAdded,
 } from '../events/curriculum-events';
 
 export class Curriculum extends AggregateRoot<string> {
@@ -46,8 +46,13 @@ export class Curriculum extends AggregateRoot<string> {
   }
 
   // 1. Versioning Management
-  public createVersion(versionId: string, versionNo: SemanticVersion, name: string, description?: string): CurriculumVersion {
-    if (this._versions.some(v => v.versionNo.value === versionNo.value)) {
+  public createVersion(
+    versionId: string,
+    versionNo: SemanticVersion,
+    name: string,
+    description?: string
+  ): CurriculumVersion {
+    if (this._versions.some((v) => v.versionNo.value === versionNo.value)) {
       throw new DomainError(`Version ${versionNo.value} already exists for this curriculum.`);
     }
 
@@ -57,7 +62,13 @@ export class Curriculum extends AggregateRoot<string> {
     }
     this._versions.push(version);
 
-    this.addDomainEvent(new CurriculumVersionCreated(this.id, this.lockVersion, { versionId, versionNo: versionNo.value, name }));
+    this.addDomainEvent(
+      new CurriculumVersionCreated(this.id, this.lockVersion, {
+        versionId,
+        versionNo: versionNo.value,
+        name,
+      })
+    );
     return version;
   }
 
@@ -95,7 +106,12 @@ export class Curriculum extends AggregateRoot<string> {
     for (const v of this._versions) {
       if (v.status === 'PUBLISHED') {
         v.status = 'DEPRECATED';
-        this.addDomainEvent(new CurriculumVersionSuperseded(this.id, this.lockVersion, { versionId: v.id, supersededByVersionId: versionId }));
+        this.addDomainEvent(
+          new CurriculumVersionSuperseded(this.id, this.lockVersion, {
+            versionId: v.id,
+            supersededByVersionId: versionId,
+          })
+        );
       }
     }
 
@@ -105,7 +121,9 @@ export class Curriculum extends AggregateRoot<string> {
     this.status = 'PUBLISHED';
     this.updatedAt = new Date();
 
-    this.addDomainEvent(new CurriculumPublished(this.id, this.lockVersion, { versionId, publishedBy: actorId }));
+    this.addDomainEvent(
+      new CurriculumPublished(this.id, this.lockVersion, { versionId, publishedBy: actorId })
+    );
   }
 
   public archive(actorId: string): void {
@@ -126,16 +144,33 @@ export class Curriculum extends AggregateRoot<string> {
   }
 
   // 3. Sub-entities mutations
-  public addProgrammeMapping(versionId: string, programmeId: string, programmeVersionId: string, displayOrder: number = 1): void {
+  public addProgrammeMapping(
+    versionId: string,
+    programmeId: string,
+    programmeVersionId: string,
+    displayOrder: number = 1
+  ): void {
     const version = this.getVersionOrThrow(versionId);
     this.ensureMutable(version);
 
-    if (version.programmeMappings.some(m => m.programmeId === programmeId && m.programmeVersionId === programmeVersionId)) {
-      throw new DomainError(`Mapping for programme ${programmeId} version ${programmeVersionId} already exists.`);
+    if (
+      version.programmeMappings.some(
+        (m) => m.programmeId === programmeId && m.programmeVersionId === programmeVersionId
+      )
+    ) {
+      throw new DomainError(
+        `Mapping for programme ${programmeId} version ${programmeVersionId} already exists.`
+      );
     }
 
     version.programmeMappings.push({ programmeId, programmeVersionId, displayOrder });
-    this.addDomainEvent(new CurriculumUpdated(this.id, this.lockVersion, { versionId, programmeId, programmeVersionId }));
+    this.addDomainEvent(
+      new CurriculumUpdated(this.id, this.lockVersion, {
+        versionId,
+        programmeId,
+        programmeVersionId,
+      })
+    );
   }
 
   public addPrerequisite(versionId: string, prerequisite: Prerequisite): void {
@@ -154,13 +189,15 @@ export class Curriculum extends AggregateRoot<string> {
     }
 
     version.prerequisites.push(prerequisite);
-    this.addDomainEvent(new PrerequisiteAdded(this.id, this.lockVersion, {
-      versionId,
-      sourceKind: prerequisite.sourceKind,
-      sourceId: prerequisite.sourceId,
-      targetKind: prerequisite.targetKind,
-      targetId: prerequisite.targetId
-    }));
+    this.addDomainEvent(
+      new PrerequisiteAdded(this.id, this.lockVersion, {
+        versionId,
+        sourceKind: prerequisite.sourceKind,
+        sourceId: prerequisite.sourceId,
+        targetKind: prerequisite.targetKind,
+        targetId: prerequisite.targetId,
+      })
+    );
   }
 
   public setMetadata(versionId: string, key: string, value: string): void {
@@ -168,12 +205,14 @@ export class Curriculum extends AggregateRoot<string> {
     this.ensureMutable(version);
 
     version.metadata.set(key, value);
-    this.addDomainEvent(new CurriculumUpdated(this.id, this.lockVersion, { versionId, key, value }));
+    this.addDomainEvent(
+      new CurriculumUpdated(this.id, this.lockVersion, { versionId, key, value })
+    );
   }
 
   // Helper validation methods
   private getVersionOrThrow(versionId: string): CurriculumVersion {
-    const version = this._versions.find(v => v.id === versionId);
+    const version = this._versions.find((v) => v.id === versionId);
     if (!version) {
       throw new DomainError(`Curriculum version with ID ${versionId} not found.`);
     }

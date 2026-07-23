@@ -129,6 +129,46 @@ export class DifficultyAdjusted extends BaseAdaptiveEvent {
   }
 }
 
+// ───────────────────────────────────────────────────────────────────
+// Sprint 2.6 Addendum Domain Events
+// ───────────────────────────────────────────────────────────────────
+
+export class PracticeGoalSet extends BaseAdaptiveEvent {
+  constructor(goalId: string, studentId: string, goalType: string) {
+    super('PracticeGoalSet', goalId, { studentId, goalType });
+  }
+}
+
+export class RetentionUpdated extends BaseAdaptiveEvent {
+  constructor(profileId: string, studentId: string, retentionScore: number, nextReviewDate: Date) {
+    super('RetentionUpdated', profileId, { studentId, retentionScore, nextReviewDate });
+  }
+}
+
+export class ConfidenceRecorded extends BaseAdaptiveEvent {
+  constructor(sessionId: string, questionVersionId: string, confidenceLevel: string) {
+    super('ConfidenceRecorded', sessionId, { questionVersionId, confidenceLevel });
+  }
+}
+
+export class DailyGoalCompleted extends BaseAdaptiveEvent {
+  constructor(goalId: string, studentId: string, date: string) {
+    super('DailyGoalCompleted', goalId, { studentId, date });
+  }
+}
+
+export class MotivationUpdated extends BaseAdaptiveEvent {
+  constructor(studentId: string, xpGained: number, streak: number) {
+    super('MotivationUpdated', studentId, { xpGained, streak });
+  }
+}
+
+export class FocusAreaRecommended extends BaseAdaptiveEvent {
+  constructor(studentId: string, recommendedCategory: string) {
+    super('FocusAreaRecommended', studentId, { recommendedCategory });
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // 2. VALUE OBJECTS
 // ═══════════════════════════════════════════════════════════════════
@@ -138,17 +178,33 @@ export class PracticeSessionId extends ValueObject<{ value: string }> {
     if (!value) throw new Error('PracticeSessionId cannot be empty');
     super({ value });
   }
-  get value(): string { return this.props.value; }
+  get value(): string {
+    return this.props.value;
+  }
 }
 
-export class DifficultyLevel extends ValueObject<{ level: string; previousLevel: string | undefined; changeReason: string | undefined }> {
-  constructor(level: string, previousLevel?: string | undefined, changeReason?: string | undefined) {
+export class DifficultyLevel extends ValueObject<{
+  level: string;
+  previousLevel: string | undefined;
+  changeReason: string | undefined;
+}> {
+  constructor(
+    level: string,
+    previousLevel?: string | undefined,
+    changeReason?: string | undefined
+  ) {
     if (!level) throw new Error('DifficultyLevel level value cannot be empty');
     super({ level, previousLevel, changeReason });
   }
-  get level(): string { return this.props.level; }
-  get previousLevel(): string | undefined { return this.props.previousLevel; }
-  get changeReason(): string | undefined { return this.props.changeReason; }
+  get level(): string {
+    return this.props.level;
+  }
+  get previousLevel(): string | undefined {
+    return this.props.previousLevel;
+  }
+  get changeReason(): string | undefined {
+    return this.props.changeReason;
+  }
 }
 
 export class SelectionWeight extends ValueObject<{ weight: number }> {
@@ -156,7 +212,9 @@ export class SelectionWeight extends ValueObject<{ weight: number }> {
     if (weight < 0) throw new Error('SelectionWeight cannot be negative');
     super({ weight });
   }
-  get value(): number { return this.props.weight; }
+  get value(): number {
+    return this.props.weight;
+  }
 }
 
 export class MasteryThreshold extends ValueObject<{ value: number }> {
@@ -164,7 +222,9 @@ export class MasteryThreshold extends ValueObject<{ value: number }> {
     if (value < 0 || value > 100) throw new Error('MasteryThreshold must be 0–100');
     super({ value });
   }
-  get value(): number { return this.props.value; }
+  get value(): number {
+    return this.props.value;
+  }
 }
 
 export class PracticeDuration extends ValueObject<{ ms: number }> {
@@ -172,8 +232,12 @@ export class PracticeDuration extends ValueObject<{ ms: number }> {
     if (ms < 0) throw new Error('PracticeDuration cannot be negative');
     super({ ms });
   }
-  get ms(): number { return this.props.ms; }
-  get minutes(): number { return Math.floor(this.props.ms / 60000); }
+  get ms(): number {
+    return this.props.ms;
+  }
+  get minutes(): number {
+    return Math.floor(this.props.ms / 60000);
+  }
 }
 
 export class CoveragePercentage extends ValueObject<{ value: number }> {
@@ -181,7 +245,9 @@ export class CoveragePercentage extends ValueObject<{ value: number }> {
     if (value < 0 || value > 100) throw new Error('CoveragePercentage must be 0–100');
     super({ value });
   }
-  get value(): number { return this.props.value; }
+  get value(): number {
+    return this.props.value;
+  }
 }
 
 export type Priority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -191,8 +257,12 @@ export class RecommendationPriority extends ValueObject<{ priority: Priority; we
     if (weight < 0) throw new Error('RecommendationPriority weight cannot be negative');
     super({ priority, weight });
   }
-  get priority(): Priority { return this.props.priority; }
-  get weight(): number { return this.props.weight; }
+  get priority(): Priority {
+    return this.props.priority;
+  }
+  get weight(): number {
+    return this.props.weight;
+  }
 }
 
 export class AdaptiveConfidence extends ValueObject<{ value: number }> {
@@ -200,7 +270,9 @@ export class AdaptiveConfidence extends ValueObject<{ value: number }> {
     if (value < 0 || value > 1) throw new Error('AdaptiveConfidence must be between 0.0 and 1.0');
     super({ value });
   }
-  get value(): number { return this.props.value; }
+  get value(): number {
+    return this.props.value;
+  }
 }
 
 export class SessionMode extends ValueObject<{ value: string }> {
@@ -208,7 +280,9 @@ export class SessionMode extends ValueObject<{ value: string }> {
     if (!value) throw new Error('SessionMode value cannot be empty');
     super({ value });
   }
-  get value(): string { return this.props.value; }
+  get value(): string {
+    return this.props.value;
+  }
 }
 
 export class PracticeGoal extends ValueObject<{ name: string; targetValue: number }> {
@@ -216,21 +290,35 @@ export class PracticeGoal extends ValueObject<{ name: string; targetValue: numbe
     if (!name) throw new Error('PracticeGoal name cannot be empty');
     super({ name, targetValue });
   }
-  get name(): string { return this.props.name; }
-  get targetValue(): number { return this.props.targetValue; }
+  get name(): string {
+    return this.props.name;
+  }
+  get targetValue(): number {
+    return this.props.targetValue;
+  }
 }
 
 // Spaced Repetition Spacing Policy (Rec 11)
-export class SpacingPolicy extends ValueObject<{ reviewIntervalHours: number; expansionFactor: number; maxIntervalHours: number }> {
+export class SpacingPolicy extends ValueObject<{
+  reviewIntervalHours: number;
+  expansionFactor: number;
+  maxIntervalHours: number;
+}> {
   constructor(reviewIntervalHours: number, expansionFactor: number, maxIntervalHours: number) {
     if (reviewIntervalHours <= 0 || expansionFactor <= 0 || maxIntervalHours <= 0) {
       throw new Error('SpacingPolicy values must be positive');
     }
     super({ reviewIntervalHours, expansionFactor, maxIntervalHours });
   }
-  get reviewIntervalHours(): number { return this.props.reviewIntervalHours; }
-  get expansionFactor(): number { return this.props.expansionFactor; }
-  get maxIntervalHours(): number { return this.props.maxIntervalHours; }
+  get reviewIntervalHours(): number {
+    return this.props.reviewIntervalHours;
+  }
+  get expansionFactor(): number {
+    return this.props.expansionFactor;
+  }
+  get maxIntervalHours(): number {
+    return this.props.maxIntervalHours;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -260,9 +348,15 @@ export class PracticeQuestion extends Entity<string> {
     this._timeSpentMs = props.timeSpentMs;
   }
 
-  get status(): 'PENDING' | 'COMPLETED' | 'SKIPPED' { return this._status; }
-  get accuracy(): number | undefined { return this._accuracy; }
-  get timeSpentMs(): number | undefined { return this._timeSpentMs; }
+  get status(): 'PENDING' | 'COMPLETED' | 'SKIPPED' {
+    return this._status;
+  }
+  get accuracy(): number | undefined {
+    return this._accuracy;
+  }
+  get timeSpentMs(): number | undefined {
+    return this._timeSpentMs;
+  }
 
   public complete(accuracy: number, timeSpentMs: number): void {
     if (this._status !== 'PENDING') throw new Error('Question already responded to');
@@ -304,12 +398,7 @@ export class DifficultyProfile extends Entity<string> {
   public readonly maxLevel: string;
   public readonly progressionRate: number;
 
-  constructor(props: {
-    id: string;
-    minLevel: string;
-    maxLevel: string;
-    progressionRate: number;
-  }) {
+  constructor(props: { id: string; minLevel: string; maxLevel: string; progressionRate: number }) {
     super(props.id);
     this.minLevel = props.minLevel;
     this.maxLevel = props.maxLevel;
@@ -340,12 +429,7 @@ export class QuestionSelectionRule extends Entity<string> {
   public readonly operator: string;
   public readonly value: string;
 
-  constructor(props: {
-    id: string;
-    attributeName: string;
-    operator: string;
-    value: string;
-  }) {
+  constructor(props: { id: string; attributeName: string; operator: string; value: string }) {
     super(props.id);
     this.attributeName = props.attributeName;
     this.operator = props.operator;
@@ -407,7 +491,11 @@ export class PracticeFeedback extends Entity<string> {
 export class AdaptiveSnapshot extends Entity<string> {
   public readonly studentId: string;
   public readonly competencyLevels: Record<string, number>;
-  public readonly difficultyProfile: { minLevel: string; maxLevel: string; progressionRate: number };
+  public readonly difficultyProfile: {
+    minLevel: string;
+    maxLevel: string;
+    progressionRate: number;
+  };
   public readonly weakAreas: string[];
   public readonly strengths: string[];
   public readonly recommendationScore: number;
@@ -461,7 +549,9 @@ export class PracticeStrategy extends AggregateRoot<string> {
     this._status = props.status;
   }
 
-  get status(): 'ACTIVE' | 'INACTIVE' | 'DEPRECATED' { return this._status; }
+  get status(): 'ACTIVE' | 'INACTIVE' | 'DEPRECATED' {
+    return this._status;
+  }
 }
 
 export class PracticeRecommendation extends AggregateRoot<string> {
@@ -470,7 +560,7 @@ export class PracticeRecommendation extends AggregateRoot<string> {
   public readonly recommendationSource: string;
   public readonly priority: RecommendationPriority;
   private _status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED';
-  
+
   // Auditing fields for AI transparency (Rec 3)
   public readonly inputSnapshot: Record<string, any>;
   public readonly algorithmVersion: string;
@@ -504,7 +594,9 @@ export class PracticeRecommendation extends AggregateRoot<string> {
     this.lockVersion = props.lockVersion ?? 0;
   }
 
-  get status(): 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED' { return this._status; }
+  get status(): 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'EXPIRED' {
+    return this._status;
+  }
 
   public accept(planId: string): void {
     if (this._status !== 'PENDING') throw new Error('Recommendation is not pending');
@@ -557,7 +649,9 @@ export class PracticePlan extends AggregateRoot<string> {
     this.lockVersion = props.lockVersion ?? 0;
   }
 
-  get status(): 'DRAFT' | 'GENERATED' | 'SCHEDULED' | 'DISCARDED' { return this._status; }
+  get status(): 'DRAFT' | 'GENERATED' | 'SCHEDULED' | 'DISCARDED' {
+    return this._status;
+  }
 
   public generate(): void {
     if (this._status !== 'DRAFT') throw new Error('Can only generate from DRAFT');
@@ -620,14 +714,30 @@ export class PracticeSession extends AggregateRoot<string> {
     if (props.questions) this._questions = [...props.questions];
   }
 
-  get status(): 'DRAFT' | 'GENERATED' | 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'ARCHIVED' { return this._status; }
-  get questions(): readonly PracticeQuestion[] { return this._questions; }
-  get difficultyProfile(): DifficultyProfile { return this._difficultyProfile; }
-  get checkpoint(): SessionCheckpoint | undefined { return this._checkpoint; }
-  get feedback(): PracticeFeedback | undefined { return this._feedback; }
-  get startedAt(): Date | undefined { return this._startedAt; }
-  get endedAt(): Date | undefined { return this._endedAt; }
-  get durationMs(): number | undefined { return this._durationMs; }
+  get status(): 'DRAFT' | 'GENERATED' | 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'ARCHIVED' {
+    return this._status;
+  }
+  get questions(): readonly PracticeQuestion[] {
+    return this._questions;
+  }
+  get difficultyProfile(): DifficultyProfile {
+    return this._difficultyProfile;
+  }
+  get checkpoint(): SessionCheckpoint | undefined {
+    return this._checkpoint;
+  }
+  get feedback(): PracticeFeedback | undefined {
+    return this._feedback;
+  }
+  get startedAt(): Date | undefined {
+    return this._startedAt;
+  }
+  get endedAt(): Date | undefined {
+    return this._endedAt;
+  }
+  get durationMs(): number | undefined {
+    return this._durationMs;
+  }
 
   public start(at: Date): void {
     if (this._status !== 'DRAFT' && this._status !== 'GENERATED') {
@@ -643,8 +753,8 @@ export class PracticeSession extends AggregateRoot<string> {
     this._status = 'PAUSED';
     this._checkpoint = new SessionCheckpoint({
       id: randomUUID(),
-      questionIndex: this._questions.findIndex(q => q.status === 'PENDING'),
-      completedCount: this._questions.filter(q => q.status === 'COMPLETED').length,
+      questionIndex: this._questions.findIndex((q) => q.status === 'PENDING'),
+      completedCount: this._questions.filter((q) => q.status === 'COMPLETED').length,
       pausedAt: at,
     });
     this.addDomainEvent(new PracticePaused(this.id));
@@ -664,7 +774,7 @@ export class PracticeSession extends AggregateRoot<string> {
     if (feedback) this._feedback = feedback;
 
     // Calculate accuracy
-    const answered = this._questions.filter(q => q.status === 'COMPLETED');
+    const answered = this._questions.filter((q) => q.status === 'COMPLETED');
     const totalCorrect = answered.reduce((acc, q) => acc + (q.accuracy ?? 0), 0);
     const overallAccuracy = answered.length > 0 ? totalCorrect / answered.length : 100;
     const duration = this.startedAt ? at.getTime() - this.startedAt.getTime() : 0;
@@ -683,23 +793,25 @@ export class PracticeSession extends AggregateRoot<string> {
     if (this._status !== 'DRAFT' && this._status !== 'GENERATED') {
       throw new Error('Can only modify question queue in Draft or Generated states');
     }
-    if (this._questions.some(q => q.questionVersionId === question.questionVersionId)) {
+    if (this._questions.some((q) => q.questionVersionId === question.questionVersionId)) {
       throw new Error('Question version already exists in session queue');
     }
     this._questions.push(question);
-    this.addDomainEvent(new QuestionSelected(this.id, question.questionVersionId, question.orderIndex));
+    this.addDomainEvent(
+      new QuestionSelected(this.id, question.questionVersionId, question.orderIndex)
+    );
   }
 
   public recordResponse(questionVersionId: string, accuracy: number, timeSpentMs: number): void {
     if (this._status !== 'ACTIVE') throw new Error('Can only record responses on Active sessions');
-    const q = this._questions.find(item => item.questionVersionId === questionVersionId);
+    const q = this._questions.find((item) => item.questionVersionId === questionVersionId);
     if (!q) throw new Error('Question not found in session queue');
     q.complete(accuracy, timeSpentMs);
   }
 
   public recordSkip(questionVersionId: string): void {
     if (this._status !== 'ACTIVE') throw new Error('Can only skip questions on Active sessions');
-    const q = this._questions.find(item => item.questionVersionId === questionVersionId);
+    const q = this._questions.find((item) => item.questionVersionId === questionVersionId);
     if (!q) throw new Error('Question not found in session queue');
     q.skip();
     this.addDomainEvent(new QuestionSkipped(this.id, questionVersionId));
@@ -719,3 +831,593 @@ export class PracticeSession extends AggregateRoot<string> {
     this._questions.push(q);
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// SPRINT 2.6 ADDENDUM VALUE OBJECTS, AGGREGATES & DOMAIN ENGINES
+// ═══════════════════════════════════════════════════════════════════
+
+// ─── Value Objects ────────────────────────────────────────────────
+
+export type ConfidenceLevelType = 'LOW' | 'MEDIUM' | 'HIGH' | 'EXPERT';
+
+export class ConfidenceLevel extends ValueObject<{ level: ConfidenceLevelType }> {
+  constructor(level: ConfidenceLevelType) {
+    const valid: ConfidenceLevelType[] = ['LOW', 'MEDIUM', 'HIGH', 'EXPERT'];
+    if (!valid.includes(level)) throw new Error(`Invalid ConfidenceLevel: ${level}`);
+    super({ level });
+  }
+  get level(): ConfidenceLevelType {
+    return this.props.level;
+  }
+  get numericScore(): number {
+    switch (this.props.level) {
+      case 'LOW':
+        return 0.25;
+      case 'MEDIUM':
+        return 0.5;
+      case 'HIGH':
+        return 0.75;
+      case 'EXPERT':
+        return 1.0;
+    }
+  }
+}
+
+export class ConfidenceScore extends ValueObject<{ value: number }> {
+  constructor(value: number) {
+    if (value < 0 || value > 1)
+      throw new Error(`ConfidenceScore must be between 0.0 and 1.0, got ${value}`);
+    super({ value });
+  }
+  get value(): number {
+    return this.props.value;
+  }
+}
+
+export type FocusAreaCategory =
+  | 'Accuracy'
+  | 'Speed'
+  | 'Vocabulary'
+  | 'Grammar'
+  | 'Inference'
+  | 'Problem Solving'
+  | 'Listening Accuracy'
+  | 'Essay Structure';
+
+export class FocusArea extends ValueObject<{ category: FocusAreaCategory }> {
+  constructor(category: FocusAreaCategory) {
+    const valid: FocusAreaCategory[] = [
+      'Accuracy',
+      'Speed',
+      'Vocabulary',
+      'Grammar',
+      'Inference',
+      'Problem Solving',
+      'Listening Accuracy',
+      'Essay Structure',
+    ];
+    if (!valid.includes(category)) throw new Error(`Invalid FocusArea category: ${category}`);
+    super({ category });
+  }
+  get category(): FocusAreaCategory {
+    return this.props.category;
+  }
+}
+
+export type SessionTypeKind =
+  | 'Adaptive Practice'
+  | 'Skill Practice'
+  | 'Topic Practice'
+  | 'Review Practice'
+  | 'Timed Practice'
+  | 'Untimed Practice'
+  | 'Challenge Mode'
+  | 'Weak Skill Practice'
+  | 'Daily Practice'
+  | 'Exam Booster'
+  | 'Revision Mode';
+
+export class PracticeSessionType extends ValueObject<{ type: SessionTypeKind }> {
+  constructor(type: SessionTypeKind) {
+    const valid: SessionTypeKind[] = [
+      'Adaptive Practice',
+      'Skill Practice',
+      'Topic Practice',
+      'Review Practice',
+      'Timed Practice',
+      'Untimed Practice',
+      'Challenge Mode',
+      'Weak Skill Practice',
+      'Daily Practice',
+      'Exam Booster',
+      'Revision Mode',
+    ];
+    if (!valid.includes(type)) throw new Error(`Invalid PracticeSessionType: ${type}`);
+    super({ type });
+  }
+  get type(): SessionTypeKind {
+    return this.props.type;
+  }
+}
+
+// ─── AGGREGATE: StudentPracticeGoal (Enhancement 1) ──────────────
+
+export class StudentPracticeGoal extends AggregateRoot<string> {
+  public readonly studentId: string;
+  public readonly journeyId: string | undefined;
+  public readonly goalType: string;
+  public readonly goalTitle: string;
+  public readonly goalDescription: string | undefined;
+  public readonly targetValue: number;
+  private _status: 'ACTIVE' | 'COMPLETED' | 'PAUSED' | 'CANCELLED';
+  public readonly createdAt: Date;
+  public updatedAt: Date;
+
+  constructor(props: {
+    id: string;
+    studentId: string;
+    journeyId?: string | undefined;
+    goalType: string;
+    goalTitle: string;
+    goalDescription?: string | undefined;
+    targetValue: number;
+    status?: 'ACTIVE' | 'COMPLETED' | 'PAUSED' | 'CANCELLED' | undefined;
+    createdAt?: Date | undefined;
+    updatedAt?: Date | undefined;
+  }) {
+    super(props.id);
+    this.studentId = props.studentId;
+    this.journeyId = props.journeyId;
+    this.goalType = props.goalType;
+    this.goalTitle = props.goalTitle;
+    this.goalDescription = props.goalDescription;
+    this.targetValue = props.targetValue;
+    this._status = props.status ?? 'ACTIVE';
+    this.createdAt = props.createdAt ?? new Date();
+    this.updatedAt = props.updatedAt ?? new Date();
+  }
+
+  get status(): 'ACTIVE' | 'COMPLETED' | 'PAUSED' | 'CANCELLED' {
+    return this._status;
+  }
+
+  public complete(): void {
+    this._status = 'COMPLETED';
+    this.updatedAt = new Date();
+  }
+
+  public pause(): void {
+    this._status = 'PAUSED';
+    this.updatedAt = new Date();
+  }
+
+  public cancel(): void {
+    this._status = 'CANCELLED';
+    this.updatedAt = new Date();
+  }
+
+  public static create(
+    id: string,
+    studentId: string,
+    goalType: string,
+    goalTitle: string,
+    targetValue: number,
+    journeyId?: string
+  ): StudentPracticeGoal {
+    const goal = new StudentPracticeGoal({
+      id,
+      studentId,
+      journeyId,
+      goalType,
+      goalTitle,
+      targetValue,
+    });
+    goal.addDomainEvent(new PracticeGoalSet(id, studentId, goalType));
+    return goal;
+  }
+}
+
+// ─── AGGREGATE: RetentionProfile (Enhancement 2) ──────────────────
+
+export class RetentionProfile extends AggregateRoot<string> {
+  public readonly studentId: string;
+  public readonly competencyId: string;
+  private _lastReviewed: Date;
+  private _retentionScore: number; // 0–100
+  private _reviewInterval: number; // Hours
+  private _nextReviewDate: Date;
+  private _reviewPriority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  public readonly createdAt: Date;
+  public updatedAt: Date;
+
+  constructor(props: {
+    id: string;
+    studentId: string;
+    competencyId: string;
+    lastReviewed?: Date | undefined;
+    retentionScore?: number | undefined;
+    reviewInterval?: number | undefined;
+    nextReviewDate?: Date | undefined;
+    reviewPriority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' | undefined;
+    createdAt?: Date | undefined;
+    updatedAt?: Date | undefined;
+  }) {
+    super(props.id);
+    this.studentId = props.studentId;
+    this.competencyId = props.competencyId;
+    this._lastReviewed = props.lastReviewed ?? new Date();
+    this._retentionScore = props.retentionScore ?? 100;
+    this._reviewInterval = props.reviewInterval ?? 24;
+    this._nextReviewDate =
+      props.nextReviewDate ?? new Date(Date.now() + this._reviewInterval * 3600 * 1000);
+    this._reviewPriority = props.reviewPriority ?? 'MEDIUM';
+    this.createdAt = props.createdAt ?? new Date();
+    this.updatedAt = props.updatedAt ?? new Date();
+  }
+
+  get lastReviewed(): Date {
+    return this._lastReviewed;
+  }
+  get retentionScore(): number {
+    return this._retentionScore;
+  }
+  get reviewInterval(): number {
+    return this._reviewInterval;
+  }
+  get nextReviewDate(): Date {
+    return this._nextReviewDate;
+  }
+  get reviewPriority(): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+    return this._reviewPriority;
+  }
+
+  public recordReview(wasCorrect: boolean): void {
+    this._lastReviewed = new Date();
+    if (wasCorrect) {
+      this._reviewInterval = Math.min(720, Math.round(this._reviewInterval * 1.8));
+      this._retentionScore = Math.min(100, Math.round(this._retentionScore + 15));
+    } else {
+      this._reviewInterval = Math.max(12, Math.round(this._reviewInterval * 0.5));
+      this._retentionScore = Math.max(0, Math.round(this._retentionScore - 25));
+    }
+
+    this._nextReviewDate = new Date(Date.now() + this._reviewInterval * 3600 * 1000);
+    if (this._retentionScore < 40) this._reviewPriority = 'CRITICAL';
+    else if (this._retentionScore < 60) this._reviewPriority = 'HIGH';
+    else if (this._retentionScore < 80) this._reviewPriority = 'MEDIUM';
+    else this._reviewPriority = 'LOW';
+
+    this.updatedAt = new Date();
+    this.addDomainEvent(
+      new RetentionUpdated(this.id, this.studentId, this._retentionScore, this._nextReviewDate)
+    );
+  }
+}
+
+// ─── AGGREGATE: StudentDailyGoal (Enhancement 7) ─────────────────
+
+export class StudentDailyGoal extends AggregateRoot<string> {
+  public readonly studentId: string;
+  public readonly targetDate: string; // YYYY-MM-DD
+  public readonly targetQuestions: number;
+  public readonly targetPassages: number;
+  public readonly timedPracticeRequired: boolean;
+  public readonly vocabularyReviewRequired: boolean;
+  private _completedQuestions: number;
+  private _status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'MISSED';
+
+  constructor(props: {
+    id: string;
+    studentId: string;
+    targetDate: string;
+    targetQuestions: number;
+    targetPassages: number;
+    timedPracticeRequired: boolean;
+    vocabularyReviewRequired: boolean;
+    completedQuestions?: number | undefined;
+    status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'MISSED' | undefined;
+  }) {
+    super(props.id);
+    this.studentId = props.studentId;
+    this.targetDate = props.targetDate;
+    this.targetQuestions = props.targetQuestions;
+    this.targetPassages = props.targetPassages;
+    this.timedPracticeRequired = props.timedPracticeRequired;
+    this.vocabularyReviewRequired = props.vocabularyReviewRequired;
+    this._completedQuestions = props.completedQuestions ?? 0;
+    this._status = props.status ?? 'PENDING';
+  }
+
+  get completedQuestions(): number {
+    return this._completedQuestions;
+  }
+  get status(): 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'MISSED' {
+    return this._status;
+  }
+
+  public incrementProgress(questionsCount: number): void {
+    this._completedQuestions += questionsCount;
+    if (this._completedQuestions >= this.targetQuestions) {
+      this._status = 'COMPLETED';
+      this.addDomainEvent(new DailyGoalCompleted(this.id, this.studentId, this.targetDate));
+    } else {
+      this._status = 'IN_PROGRESS';
+    }
+  }
+}
+
+// ─── AGGREGATE: StudentMotivation (Enhancement 9) ───────────────
+
+export class StudentMotivation extends AggregateRoot<string> {
+  public readonly studentId: string;
+  private _dailyStreak: number;
+  private _weeklyStreak: number;
+  private _longestStreak: number;
+  private _practicePoints: number;
+  private _xp: number;
+  private _badges: string[];
+  private _achievements: string[];
+  private _milestones: string[];
+
+  constructor(props: {
+    id: string;
+    studentId: string;
+    dailyStreak?: number | undefined;
+    weeklyStreak?: number | undefined;
+    longestStreak?: number | undefined;
+    practicePoints?: number | undefined;
+    xp?: number | undefined;
+    badges?: string[] | undefined;
+    achievements?: string[] | undefined;
+    milestones?: string[] | undefined;
+  }) {
+    super(props.id);
+    this.studentId = props.studentId;
+    this._dailyStreak = props.dailyStreak ?? 0;
+    this._weeklyStreak = props.weeklyStreak ?? 0;
+    this._longestStreak = props.longestStreak ?? 0;
+    this._practicePoints = props.practicePoints ?? 0;
+    this._xp = props.xp ?? 0;
+    this._badges = props.badges ? [...props.badges] : [];
+    this._achievements = props.achievements ? [...props.achievements] : [];
+    this._milestones = props.milestones ? [...props.milestones] : [];
+  }
+
+  get dailyStreak(): number {
+    return this._dailyStreak;
+  }
+  get weeklyStreak(): number {
+    return this._weeklyStreak;
+  }
+  get longestStreak(): number {
+    return this._longestStreak;
+  }
+  get practicePoints(): number {
+    return this._practicePoints;
+  }
+  get xp(): number {
+    return this._xp;
+  }
+  get badges(): readonly string[] {
+    return this._badges;
+  }
+  get achievements(): readonly string[] {
+    return this._achievements;
+  }
+  get milestones(): readonly string[] {
+    return this._milestones;
+  }
+
+  public addActivity(points: number, xpGained: number): void {
+    this._practicePoints += points;
+    this._xp += xpGained;
+    this._dailyStreak += 1;
+    if (this._dailyStreak > this._longestStreak) {
+      this._longestStreak = this._dailyStreak;
+    }
+    this.addDomainEvent(new MotivationUpdated(this.studentId, xpGained, this._dailyStreak));
+  }
+
+  public awardBadge(badgeName: string): void {
+    if (!this._badges.includes(badgeName)) {
+      this._badges.push(badgeName);
+    }
+  }
+}
+
+// ─── DOMAIN SERVICE: PracticeGoalEngine (Enhancement 1) ───────────
+
+export class PracticeGoalEngine {
+  public static recommendGoal(
+    _studentId: string,
+    weakArea?: string,
+    upcomingMockDate?: Date
+  ): { goalType: string; goalTitle: string; targetValue: number } {
+    if (upcomingMockDate) {
+      return {
+        goalType: 'PREPARE_FOR_MOCK',
+        goalTitle: 'Prepare for Upcoming Mock Examination',
+        targetValue: 80,
+      };
+    }
+    if (weakArea === 'Grammar') {
+      return {
+        goalType: 'IMPROVE_GRAMMAR_ACCURACY',
+        goalTitle: 'Improve Grammar Accuracy to 85%',
+        targetValue: 85,
+      };
+    }
+    if (weakArea === 'Vocabulary') {
+      return {
+        goalType: 'REVIEW_WEAK_VOCABULARY',
+        goalTitle: 'Review Weak Vocabulary Flashcards',
+        targetValue: 50,
+      };
+    }
+    return {
+      goalType: 'MAINTAIN_MASTERED_SKILLS',
+      goalTitle: 'Maintain Mastered Skills via Spaced Review',
+      targetValue: 90,
+    };
+  }
+}
+
+// ─── DOMAIN SERVICE: KnowledgeRetentionEngine (Enhancement 2) ─────
+
+export class KnowledgeRetentionEngine {
+  public calculateDecay(lastReviewed: Date, currentIntervalHours: number): number {
+    const elapsedHours = (Date.now() - lastReviewed.getTime()) / (3600 * 1000);
+    const decayFactor = Math.exp(-elapsedHours / (currentIntervalHours * 2));
+    return Math.max(0, Math.min(100, Math.round(100 * decayFactor)));
+  }
+}
+
+// ─── DOMAIN SERVICE: AdaptiveDifficultyEngine (Enhancement 3) ────
+
+export interface AdaptiveDifficultyInputs {
+  accuracy: number; // 0–100
+  responseTimeMs: number;
+  hintUsage: number;
+  confidence: ConfidenceLevelType;
+  currentStreak: number;
+  mastery: number; // 0–100
+  recentPerformance: 'IMPROVING' | 'STABLE' | 'DECLINING';
+}
+
+export class AdaptiveDifficultyEngine {
+  public calculate(
+    inputs: AdaptiveDifficultyInputs
+  ): 'Easy' | 'Medium' | 'Hard' | 'Expert' | 'Adaptive' {
+    if (inputs.accuracy >= 90 && inputs.currentStreak >= 4 && inputs.confidence === 'EXPERT') {
+      return 'Expert';
+    }
+    if (inputs.accuracy >= 75 && inputs.recentPerformance !== 'DECLINING') {
+      return 'Hard';
+    }
+    if (inputs.accuracy < 50 || inputs.hintUsage >= 3) {
+      return 'Easy';
+    }
+    return 'Medium';
+  }
+}
+
+// ─── DOMAIN SERVICE: TimePerformanceAnalyzer (Enhancement 5) ─────
+
+export interface RawTimeMetric {
+  questionId: string;
+  skillId: string;
+  timeSpentMs: number;
+  wordCount?: number;
+}
+
+export class TimePerformanceAnalyzer {
+  public analyze(metrics: RawTimeMetric[]): {
+    averageResponseTimeMs: number;
+    readingSpeedWpm: number;
+    timePerSkillMs: Record<string, number>;
+  } {
+    if (!metrics.length) {
+      return { averageResponseTimeMs: 0, readingSpeedWpm: 0, timePerSkillMs: {} };
+    }
+
+    const totalTimeMs = metrics.reduce((acc, m) => acc + m.timeSpentMs, 0);
+    const averageResponseTimeMs = Math.round(totalTimeMs / metrics.length);
+
+    const totalWords = metrics.reduce((acc, m) => acc + (m.wordCount ?? 0), 0);
+    const totalMinutes = totalTimeMs / 60000;
+    const readingSpeedWpm = totalMinutes > 0 ? Math.round(totalWords / totalMinutes) : 0;
+
+    const timePerSkillMs: Record<string, number> = {};
+    for (const m of metrics) {
+      timePerSkillMs[m.skillId] = (timePerSkillMs[m.skillId] ?? 0) + m.timeSpentMs;
+    }
+
+    return { averageResponseTimeMs, readingSpeedWpm, timePerSkillMs };
+  }
+}
+
+// ─── DOMAIN SERVICE: FocusAreaEngine (Enhancement 6) ─────────────
+
+export class FocusAreaEngine {
+  public recommendFocusArea(performance: {
+    grammarAccuracy: number;
+    readingSpeedWpm: number;
+    vocabularyScore: number;
+  }): FocusAreaCategory {
+    if (performance.grammarAccuracy < 65) return 'Grammar';
+    if (performance.readingSpeedWpm < 150) return 'Speed';
+    if (performance.vocabularyScore < 70) return 'Vocabulary';
+    return 'Accuracy';
+  }
+}
+
+// ─── DOMAIN SERVICE: AdaptiveDailyGoalEngine (Enhancement 7) ────
+
+export interface DailyGoalInputs {
+  targetExamDate?: Date;
+  learningPace: 'Accelerated' | 'Standard' | 'Flexible' | 'Intensive' | 'Self-Paced';
+  mastery: number;
+  missedDays: number;
+  readinessScore: number;
+}
+
+export class AdaptiveDailyGoalEngine {
+  public generateDailyGoal(studentId: string, inputs: DailyGoalInputs): StudentDailyGoal {
+    let targetQuestions = 15;
+    if (['Accelerated', 'Intensive'].includes(inputs.learningPace)) targetQuestions = 25;
+    if (inputs.missedDays > 0) targetQuestions += 5; // Makeup catch-up
+
+    const dateStr = new Date().toISOString().split('T')[0];
+    return new StudentDailyGoal({
+      id: randomUUID(),
+      studentId,
+      targetDate: dateStr,
+      targetQuestions,
+      targetPassages: 2,
+      timedPracticeRequired: inputs.readinessScore < 70,
+      vocabularyReviewRequired: inputs.mastery < 60,
+    });
+  }
+}
+
+// ─── DOMAIN SERVICE: MotivationEngine (Enhancement 9) ────────────
+
+export class MotivationEngine {
+  public calculateReward(
+    accuracy: number,
+    _timeSpentMs: number,
+    streak: number
+  ): { xp: number; points: number; badgeUnlocked?: string } {
+    let xp = 50;
+    if (accuracy >= 80) xp += 30;
+    if (streak >= 3) xp += 20;
+
+    const points = Math.round(xp / 2);
+    let badgeUnlocked: string | undefined = undefined;
+    if (streak === 7) badgeUnlocked = '7-Day Practice Streak';
+
+    return {
+      xp,
+      points,
+      ...(badgeUnlocked ? { badgeUnlocked } : {}),
+    };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CANONICAL PRACTICE DELIVERY DOMAIN EXPORTS (Sprint 3.5.1)
+// ═══════════════════════════════════════════════════════════════════
+export * from './value-objects/practice-value-objects';
+export * from './entities/practice-attempt.entity';
+export * from './aggregates/practice-result.aggregate';
+export * from './aggregates/practice-bookmark.aggregate';
+export * from './aggregates/wrong-answer-queue.aggregate';
+export * from './aggregates/practice-review-queue.aggregate';
+export * from './aggregates/practice-checkpoint.aggregate';
+export * from './services/practice-scoring.service';
+export * from './services/practice-recommendation.service';
+export * from './services/practice-statistics.service';
+export * from './strategies/feedback-strategy';
+export * from './state-machine/practice-session.state-machine';
+export * from './events/practice-delivery-events';
+export * from './repositories/practice-delivery-repositories';

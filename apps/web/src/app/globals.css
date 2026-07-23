@@ -1,5 +1,29 @@
-/* Global Dark Theme Settings */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-accent: var(--accent);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-error: var(--error);
+  --color-success: var(--success);
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 4px 20px rgba(27, 75, 138, 0.05);
+}
+
+/* Clasptek Global Design System Canonical v3 CSS Variables */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
   --spacing-4: 0.25rem;
@@ -11,75 +35,80 @@
   --spacing-48: 3rem;
   --spacing-64: 4rem;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
   --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 4px 20px rgba(27, 75, 138, 0.05);
+
+  --background: #f7f9fb;
+  --card-bg: #ffffff;
+  --card-border: #c3c6d2;
+  --primary: #00346b;
+  --primary-hover: #1b4b8a;
+  --secondary: #bb0014;
+  --tertiary: #253648;
+  --accent: #335e9e;
+  --text-main: #191c1e;
+  --text-muted: #434750;
+  --error: #ba1a1a;
+  --success: #059669;
+  --nav-bg: #00346b;
 }
 
-:root, .dark {
-  --background: #0b0f19;
-  --card-bg: #151d30;
-  --card-border: #232e48;
-  --primary: #1E5797;
-  --primary-hover: #27417D;
-  --accent: #14b8a6;
+:root,
+.light {
+  --background: #f7f9fb;
+  --card-bg: #ffffff;
+  --card-border: #c3c6d2;
+  --primary: #00346b;
+  --primary-hover: #1b4b8a;
+  --secondary: #bb0014;
+  --tertiary: #253648;
+  --accent: #335e9e;
+  --text-main: #191c1e;
+  --text-muted: #434750;
+  --error: #ba1a1a;
+  --success: #059669;
+  --nav-bg: #00346b;
+}
+
+.dark {
+  --background: #0f172a;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --secondary: #ef4444;
+  --tertiary: #475569;
+  --accent: #38bdf8;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  --error: #ED1B23;
+  --error: #f87171;
   --success: #10b981;
-  --nav-bg: #283471;
-}
-
-.light {
-  --background: #f8fafc;
-  --card-bg: #ffffff;
-  --card-border: #D9DDE3;
-  --primary: #1E5797;
-  --primary-hover: #27417D;
-  --accent: #14b8a6;
-  --text-main: #040708;
-  --text-muted: #6B7280;
-  --error: #ED1B23;
-  --success: #10b981;
-  --nav-bg: #283471;
-}
-
-.high-contrast {
-  --background: #000000;
-  --card-bg: #000000;
-  --card-border: #ffffff;
-  --primary: #ffff00;
-  --primary-hover: #ffff00;
-  --accent: #00ffff;
-  --text-main: #ffffff;
-  --text-muted: #ffff00;
-  --error: #ff0000;
-  --success: #00ff00;
-  --nav-bg: #000000;
+  --nav-bg: #0f172a;
 }
 
 body {
   background-color: var(--background);
   color: var(--text-main);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
   line-height: 1.6;
 }
 
 a {
-  color: var(--primary-hover);
+  color: var(--primary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--accent);
+  color: var(--primary-hover);
 }
 
 .shell-container {
@@ -92,18 +121,18 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: var(--card-bg);
-  border-bottom: 1px solid var(--card-border);
+  padding: 1rem 2.5rem;
+  background-color: var(--nav-bg);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .shell-brand {
   font-size: 1.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #3b82f6, #14b8a6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ffffff;
+  letter-spacing: -0.01em;
 }
 
 .shell-nav {
@@ -113,8 +142,8 @@ a:hover {
 
 .shell-main {
   flex: 1;
-  padding: 3rem 2rem;
-  max-width: 1200px;
+  padding: 2.5rem;
+  max-width: 1440px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
@@ -123,10 +152,9 @@ a:hover {
 .card {
   background-color: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 2rem;
-  margin-top: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
   transition:
     transform 0.2s ease,
     border-color 0.2s ease;
@@ -139,11 +167,12 @@ a:hover {
 
 .btn {
   background-color: var(--primary);
-  color: var(--text-main);
-  padding: 0.75rem 1.5rem;
+  color: #ffffff;
+  padding: 0.65rem 1.25rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 0.75rem;
   font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
   transition:
     background-color 0.2s ease,
@@ -166,10 +195,10 @@ a:hover {
 
 .nav-link {
   font-weight: 500;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .nav-link.active,
 .nav-link:hover {
-  color: var(--text-main);
+  color: #ffffff;
 }

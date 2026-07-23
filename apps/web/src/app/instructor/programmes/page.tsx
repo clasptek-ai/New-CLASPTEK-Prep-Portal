@@ -6,7 +6,7 @@ import { InstructorProgrammesScreen } from '../../../features/instructor/program
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <InstructorProgrammesScreen />
     </WorkspaceShell>
   );

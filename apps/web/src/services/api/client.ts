@@ -51,12 +51,24 @@ export const apiClient = {
         }
 
         return (await interceptedResponse.json()) as T;
-      } catch (error) {
+      } catch (error: any) {
+        // Ensure that thrown objects (including DOM Event objects) are normalized into valid Error instances
+        const normalizedError =
+          error instanceof Error
+            ? error
+            : new Error(
+                error && typeof error === 'object' && 'message' in error
+                  ? String(error.message)
+                  : typeof error === 'string'
+                    ? error
+                    : 'Network request failed'
+              );
+
         if (attempt >= retries) {
-          throw error;
+          throw normalizedError;
         }
         attempt++;
-        // Wait exponentially
+        // Exponential backoff delay
         await new Promise((res) => setTimeout(res, Math.pow(2, attempt) * 100));
       }
     }

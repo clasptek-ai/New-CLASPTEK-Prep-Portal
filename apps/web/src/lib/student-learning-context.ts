@@ -4,8 +4,11 @@ import { loadEnvironment } from '@clasptek/configuration';
 import {
   PostgresStudentLearningRepository,
   PostgresProgrammeEnrollmentRepository,
-  PostgresLearningPlanRepository,
+  PostgresStudentLearningPlanRepository,
   PostgresDashboardProjectionRepository,
+  PostgresStudentLearningProfileRepository,
+  PostgresReadinessRepository,
+  PostgresInterventionRepository,
 } from '@clasptek/persistence';
 import {
   CreateJourneyHandler,
@@ -29,6 +32,15 @@ import {
   GetDashboardHandler,
   SearchJourneysHandler,
   GetStudyStatisticsHandler,
+  SetLearningPaceHandler,
+  GetLearningProfileHandler,
+  SetTargetExamDateHandler,
+  GetExamTargetHandler,
+  CalculateReadinessHandler,
+  GetReadinessHandler,
+  RunInterventionsHandler,
+  GetInterventionsHandler,
+  AcknowledgeInterventionHandler,
 } from '@clasptek/application-student-learning';
 
 export interface StudentLearningContext {
@@ -48,6 +60,11 @@ export interface StudentLearningContext {
   archiveJourney: ArchiveJourneyHandler;
   createPlan: CreateLearningPlanHandler;
   completeMilestone: CompleteMilestoneHandler;
+  setLearningPace: SetLearningPaceHandler;
+  setTargetExamDate: SetTargetExamDateHandler;
+  calculateReadiness: CalculateReadinessHandler;
+  runInterventions: RunInterventionsHandler;
+  acknowledgeIntervention: AcknowledgeInterventionHandler;
   // Query handlers
   getJourney: GetJourneyHandler;
   getEnrollments: GetEnrollmentsHandler;
@@ -55,6 +72,10 @@ export interface StudentLearningContext {
   getDashboard: GetDashboardHandler;
   searchJourneys: SearchJourneysHandler;
   getStatistics: GetStudyStatisticsHandler;
+  getProfile: GetLearningProfileHandler;
+  getExamTarget: GetExamTargetHandler;
+  getReadiness: GetReadinessHandler;
+  getInterventions: GetInterventionsHandler;
 }
 
 let cached: StudentLearningContext | null = null;
@@ -68,8 +89,11 @@ export function getStudentLearningContext(): StudentLearningContext {
 
   const journeyRepo = new PostgresStudentLearningRepository(dbPool);
   const enrollmentRepo = new PostgresProgrammeEnrollmentRepository(dbPool);
-  const planRepo = new PostgresLearningPlanRepository(dbPool);
+  const planRepo = new PostgresStudentLearningPlanRepository(dbPool);
   const dashboardRepo = new PostgresDashboardProjectionRepository(dbPool);
+  const profileRepo = new PostgresStudentLearningProfileRepository(dbPool);
+  const readinessRepo = new PostgresReadinessRepository(dbPool);
+  const interventionRepo = new PostgresInterventionRepository(dbPool);
 
   cached = {
     // Commands
@@ -88,6 +112,11 @@ export function getStudentLearningContext(): StudentLearningContext {
     archiveJourney: new ArchiveJourneyHandler(journeyRepo),
     createPlan: new CreateLearningPlanHandler(planRepo),
     completeMilestone: new CompleteMilestoneHandler(journeyRepo),
+    setLearningPace: new SetLearningPaceHandler(profileRepo),
+    setTargetExamDate: new SetTargetExamDateHandler(enrollmentRepo),
+    calculateReadiness: new CalculateReadinessHandler(journeyRepo, readinessRepo, profileRepo),
+    runInterventions: new RunInterventionsHandler(journeyRepo, interventionRepo, readinessRepo),
+    acknowledgeIntervention: new AcknowledgeInterventionHandler(interventionRepo),
     // Queries
     getJourney: new GetJourneyHandler(journeyRepo),
     getEnrollments: new GetEnrollmentsHandler(enrollmentRepo),
@@ -95,6 +124,10 @@ export function getStudentLearningContext(): StudentLearningContext {
     getDashboard: new GetDashboardHandler(dashboardRepo),
     searchJourneys: new SearchJourneysHandler(journeyRepo),
     getStatistics: new GetStudyStatisticsHandler(journeyRepo),
+    getProfile: new GetLearningProfileHandler(profileRepo),
+    getExamTarget: new GetExamTargetHandler(enrollmentRepo, profileRepo),
+    getReadiness: new GetReadinessHandler(readinessRepo),
+    getInterventions: new GetInterventionsHandler(interventionRepo),
   };
 
   return cached;

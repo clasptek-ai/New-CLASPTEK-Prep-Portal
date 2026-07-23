@@ -5,7 +5,7 @@ import {
   LessonCreated,
   LessonUpdated,
   LessonPublished,
-  LessonArchived
+  LessonArchived,
 } from '../events/learning-resource-events';
 
 export class ContentBlock extends Entity<string> {
@@ -17,7 +17,19 @@ export class ContentBlock extends Entity<string> {
     public displayOrder: number
   ) {
     super(id);
-    if (!['HEADING', 'PARAGRAPH', 'IMAGE', 'VIDEO', 'CODE', 'QUOTE', 'CHECKLIST', 'TABLE', 'EMBED'].includes(blockType)) {
+    if (
+      ![
+        'HEADING',
+        'PARAGRAPH',
+        'IMAGE',
+        'VIDEO',
+        'CODE',
+        'QUOTE',
+        'CHECKLIST',
+        'TABLE',
+        'EMBED',
+      ].includes(blockType)
+    ) {
       throw new DomainError(`Invalid block type: ${blockType}`, 'INVALID_BLOCK_TYPE');
     }
   }
@@ -39,11 +51,17 @@ export class LessonVersion extends Entity<string> {
 
   public addContentBlock(block: ContentBlock) {
     if (this.status === 'PUBLISHED') {
-      throw new DomainError('Cannot modify content blocks of a published version.', 'VERSION_LOCKED');
+      throw new DomainError(
+        'Cannot modify content blocks of a published version.',
+        'VERSION_LOCKED'
+      );
     }
     // Enforce display order uniqueness
-    if (this.contentBlocks.some(b => b.displayOrder === block.displayOrder)) {
-      throw new DomainError(`Display order ${block.displayOrder} already exists in version ${this.versionNo.value}.`, 'DUPLICATE_ORDER');
+    if (this.contentBlocks.some((b) => b.displayOrder === block.displayOrder)) {
+      throw new DomainError(
+        `Display order ${block.displayOrder} already exists in version ${this.versionNo.value}.`,
+        'DUPLICATE_ORDER'
+      );
     }
     this.contentBlocks.push(block);
   }
@@ -98,7 +116,7 @@ export class Lesson extends AggregateRoot<string> {
     if (this.status === 'ARCHIVED') {
       throw new DomainError('Cannot create version on an archived lesson.', 'LESSON_ARCHIVED');
     }
-    if (this.versions.some(v => v.versionNo.value === versionNo.value)) {
+    if (this.versions.some((v) => v.versionNo.value === versionNo.value)) {
       throw new DomainError(`Version ${versionNo.value} already exists.`, 'DUPLICATE_VERSION');
     }
     const version = new LessonVersion(versionId, this.id, versionNo, 'DRAFT', name, description);
@@ -113,7 +131,7 @@ export class Lesson extends AggregateRoot<string> {
     textContent: string,
     displayOrder: number
   ) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
     if (!version) {
       throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
     }
@@ -125,7 +143,7 @@ export class Lesson extends AggregateRoot<string> {
     if (this.status === 'ARCHIVED') {
       throw new DomainError('Cannot publish an archived lesson.', 'LESSON_ARCHIVED');
     }
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
     if (!version) {
       throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
     }

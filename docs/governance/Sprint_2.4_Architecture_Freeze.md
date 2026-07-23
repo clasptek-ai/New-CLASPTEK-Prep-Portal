@@ -1,6 +1,7 @@
 # Sprint 2.4 — Architecture Freeze
 
 ## Health Status
+
 ![Architecture: PASS](https://img.shields.io/badge/Architecture-PASS-success)
 ![Compilation: PASS](https://img.shields.io/badge/Compilation-PASS-success)
 ![Tests: PASS](https://img.shields.io/badge/Tests-PASS-success)
@@ -11,7 +12,9 @@
 ## 1. Domain Aggregate Roots
 
 ### Question Aggregate
+
 Controls immutable question codes, payload versions, solutions, rubrics, accessibility media files, psychometric stats, and translations.
+
 ```mermaid
 classDiagram
     class Question {
@@ -34,7 +37,9 @@ classDiagram
 ```
 
 ### ReviewRequest Aggregate
+
 Orchestrates independent review comments, stage audits, and publication approvals.
+
 ```mermaid
 classDiagram
     class ReviewRequest {
@@ -56,6 +61,7 @@ classDiagram
 ---
 
 ## 2. API Endpoints Catalog
+
 - `GET /api/v1/questions` (list questions by filters)
 - `GET /api/v1/questions/[id]` (retrieve complete question details)
 - `GET /api/v1/questions/search` (advanced search)

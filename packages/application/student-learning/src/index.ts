@@ -6,11 +6,19 @@ import {
   StudySession,
   Bookmark,
   StudentDashboardProjection,
+  StudentLearningProfile,
+  StudentProgress,
+  StudentIntervention,
+  ReadinessCalculator,
+  StudyPlanEngine,
+  InterventionEngine,
   type JourneyStatus,
   type GoalPriority,
   type GoalStatus,
   type BookmarkResourceType,
   type LearningPlanSource,
+  type LearningPaceType,
+  type ReadinessLevel,
 } from '@clasptek/domain-student-learning';
 import { randomUUID } from 'crypto';
 
@@ -42,7 +50,10 @@ export interface ProgrammeEnrollmentRepository {
   save(enrollment: StudentProgrammeEnrollment): Promise<void>;
   findById(id: string): Promise<StudentProgrammeEnrollment | null>;
   findByJourney(journeyId: string): Promise<StudentProgrammeEnrollment[]>;
-  findByStudentAndProgramme(studentId: string, programmeId: string): Promise<StudentProgrammeEnrollment | null>;
+  findByStudentAndProgramme(
+    studentId: string,
+    programmeId: string
+  ): Promise<StudentProgrammeEnrollment | null>;
   findActive(journeyId: string): Promise<StudentProgrammeEnrollment[]>;
   nextIdentity(): string;
 }
@@ -67,6 +78,39 @@ export interface DashboardProjectionRepository {
   save(projection: StudentDashboardProjection): Promise<void>;
   findByStudent(studentId: string): Promise<StudentDashboardProjection | null>;
   findByJourney(journeyId: string): Promise<StudentDashboardProjection | null>;
+}
+
+/**
+ * @contract StudentLearningProfileRepository
+ * @frozen Sprint 2.5 Addendum
+ */
+export interface StudentLearningProfileRepository {
+  save(profile: StudentLearningProfile): Promise<void>;
+  findByStudent(studentId: string): Promise<StudentLearningProfile | null>;
+  nextIdentity(): string;
+}
+
+/**
+ * @contract ReadinessRepository
+ * @frozen Sprint 2.5 Addendum
+ */
+export interface ReadinessRepository {
+  saveProgress(progress: StudentProgress): Promise<void>;
+  findProgressByJourney(journeyId: string): Promise<StudentProgress | null>;
+  findProgressByStudent(studentId: string): Promise<StudentProgress | null>;
+  nextIdentity(): string;
+}
+
+/**
+ * @contract InterventionRepository
+ * @frozen Sprint 2.5 Addendum
+ */
+export interface InterventionRepository {
+  saveIntervention(intervention: StudentIntervention): Promise<void>;
+  findInterventionsByStudent(studentId: string): Promise<StudentIntervention[]>;
+  findActiveInterventionsByStudent(studentId: string): Promise<StudentIntervention[]>;
+  findInterventionById(id: string): Promise<StudentIntervention | null>;
+  nextIdentity(): string;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -149,10 +193,12 @@ export class EnrolProgrammeHandler {
   }): Promise<string> {
     const journey = await this.journeyRepo.findById(cmd.journeyId);
     if (!journey) throw new Error(`Journey ${cmd.journeyId} not found`);
-    if (journey.status !== 'ACTIVE') throw new Error('Journey must be ACTIVE to enrol in a programme');
+    if (journey.status !== 'ACTIVE')
+      throw new Error('Journey must be ACTIVE to enrol in a programme');
 
     const existing = await this.enrollmentRepo.findByStudentAndProgramme(
-      journey.studentId, cmd.programmeId
+      journey.studentId,
+      cmd.programmeId
     );
     if (existing && existing.status === 'ACTIVE') {
       throw new Error(`Already enrolled in programme ${cmd.programmeId}`);
@@ -404,7 +450,10 @@ export class CompleteMilestoneHandler {
 export class GetJourneyHandler {
   constructor(private readonly journeyRepo: StudentLearningRepository) {}
 
-  public async execute(query: { journeyId?: string; studentId?: string }): Promise<StudentLearningJourney | null> {
+  public async execute(query: {
+    journeyId?: string;
+    studentId?: string;
+  }): Promise<StudentLearningJourney | null> {
     if (query.journeyId) return this.journeyRepo.findById(query.journeyId);
     if (query.studentId) return this.journeyRepo.findActive(query.studentId);
     return null;
@@ -414,7 +463,10 @@ export class GetJourneyHandler {
 export class GetEnrollmentsHandler {
   constructor(private readonly enrollmentRepo: ProgrammeEnrollmentRepository) {}
 
-  public async execute(query: { journeyId: string; activeOnly?: boolean }): Promise<StudentProgrammeEnrollment[]> {
+  public async execute(query: {
+    journeyId: string;
+    activeOnly?: boolean;
+  }): Promise<StudentProgrammeEnrollment[]> {
     if (query.activeOnly) return this.enrollmentRepo.findActive(query.journeyId);
     return this.enrollmentRepo.findByJourney(query.journeyId);
   }
@@ -464,8 +516,333 @@ export class GetStudyStatisticsHandler {
       totalStudyTimeMs,
       currentStreak: journey.streak.current,
       longestStreak: journey.streak.longest,
-      goalsCompleted: journey.goals.filter(g => g.status === 'COMPLETED').length,
-      milestonesCompleted: journey.milestones.filter(m => m.completed).length,
+      goalsCompleted: journey.goals.filter((g) => g.status === 'COMPLETED').length,
+      milestonesCompleted: journey.milestones.filter((m) => m.completed).length,
     };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// 5. SPRINT 2.5 ADDENDUM COMMAND & QUERY HANDLERS
+// ═══════════════════════════════════════════════════════════════════
+
+// ─── Learning Pace Handlers ──────────────────────────────────────
+
+export class SetLearningPaceHandler {
+  constructor(private readonly profileRepo: StudentLearningProfileRepository) {}
+
+  public async execute(cmd: {
+    studentId: string;
+    pace: LearningPaceType;
+    weeklyStudyHours?: number;
+  }): Promise<string> {
+    let profile = await this.profileRepo.findByStudent(cmd.studentId);
+    if (!profile) {
+      const id = this.profileRepo.nextIdentity();
+      profile = StudentLearningProfile.create(id, cmd.studentId, cmd.pace, cmd.weeklyStudyHours);
+    } else {
+      profile.setPace(cmd.pace);
+      if (cmd.weeklyStudyHours) profile.setWeeklyStudyHours(cmd.weeklyStudyHours);
+    }
+    await this.profileRepo.save(profile);
+    return profile.id;
+  }
+}
+
+export class GetLearningProfileHandler {
+  constructor(private readonly profileRepo: StudentLearningProfileRepository) {}
+
+  public async execute(query: { studentId: string }): Promise<StudentLearningProfile | null> {
+    return this.profileRepo.findByStudent(query.studentId);
+  }
+}
+
+// ─── Target Exam Date & Score Handlers ───────────────────────────
+
+export class SetTargetExamDateHandler {
+  constructor(private readonly enrollmentRepo: ProgrammeEnrollmentRepository) {}
+
+  public async execute(cmd: {
+    journeyId: string;
+    programmeId: string;
+    targetExamDate: Date | string;
+    targetScore?: number;
+    registrationStatus?: string;
+  }): Promise<void> {
+    const enrollments = await this.enrollmentRepo.findByJourney(cmd.journeyId);
+    const enrollment = enrollments.find(
+      (e) => e.programmeId === cmd.programmeId && e.status === 'ACTIVE'
+    );
+    if (!enrollment) {
+      throw new Error(
+        `Active enrollment for programme ${cmd.programmeId} not found in journey ${cmd.journeyId}`
+      );
+    }
+    enrollment.setTargetExamDate(cmd.targetExamDate);
+    if (cmd.targetScore) enrollment.setTargetScore(cmd.targetScore);
+    if (cmd.registrationStatus) enrollment.setRegistrationStatus(cmd.registrationStatus);
+    await this.enrollmentRepo.save(enrollment);
+  }
+}
+
+export class GetExamTargetHandler {
+  constructor(
+    private readonly enrollmentRepo: ProgrammeEnrollmentRepository,
+    private readonly profileRepo: StudentLearningProfileRepository
+  ) {}
+
+  public async execute(query: { journeyId: string; studentId: string }): Promise<{
+    targetExamDate?: Date | undefined;
+    daysRemaining?: number | undefined;
+    weeksRemaining?: number | undefined;
+    targetScore?: number | undefined;
+    registrationStatus: string;
+    scheduleCalculations?:
+      | {
+          lessonsPerWeek: number;
+          practiceSessionsPerWeek: number;
+          mockIntervalWeeks: number;
+          revisionWindowDays: number;
+        }
+      | undefined;
+  } | null> {
+    const active = await this.enrollmentRepo.findActive(query.journeyId);
+    if (!active.length) return null;
+    const enrollment = active[0];
+
+    const profile = await this.profileRepo.findByStudent(query.studentId);
+    const weeklyHours = profile?.weeklyStudyHours ?? 10;
+
+    let scheduleCalculations;
+    if (enrollment.targetExamDate) {
+      scheduleCalculations = StudyPlanEngine.calculateSchedule(
+        enrollment.targetExamDate,
+        24, // default remaining lessons estimate
+        weeklyHours
+      );
+    }
+
+    return {
+      targetExamDate: enrollment.targetExamDate?.date,
+      daysRemaining: enrollment.targetExamDate?.daysRemaining(),
+      weeksRemaining: enrollment.targetExamDate?.weeksRemaining(),
+      targetScore: enrollment.targetScore?.value,
+      registrationStatus: enrollment.examRegistrationStatus,
+      scheduleCalculations: scheduleCalculations
+        ? {
+            lessonsPerWeek: scheduleCalculations.lessonsPerWeek,
+            practiceSessionsPerWeek: scheduleCalculations.practiceSessionsPerWeek,
+            mockIntervalWeeks: scheduleCalculations.mockIntervalWeeks,
+            revisionWindowDays: scheduleCalculations.revisionWindowDays,
+          }
+        : undefined,
+    };
+  }
+}
+
+// ─── Exam Readiness Handlers ─────────────────────────────────────
+
+export class CalculateReadinessHandler {
+  constructor(
+    _journeyRepo: StudentLearningRepository,
+    private readonly readinessRepo: ReadinessRepository,
+    private readonly profileRepo: StudentLearningProfileRepository
+  ) {}
+
+  public async execute(cmd: {
+    journeyId: string;
+    studentId: string;
+    diagnosticPerformance?: number;
+    practiceScores?: number;
+    mockScores?: number;
+    curriculumCompletion?: number;
+    lessonConsistency?: number;
+    weakSkillAreasCount?: number;
+  }): Promise<{ readinessScore: number; readinessLevel: ReadinessLevel }> {
+    const profile = await this.profileRepo.findByStudent(cmd.studentId);
+    const pace = profile?.learningPace.value ?? 'Standard';
+
+    const calculator = new ReadinessCalculator();
+    const readinessScore = calculator.calculate({
+      diagnosticPerformance: cmd.diagnosticPerformance ?? 70,
+      practiceScores: cmd.practiceScores ?? 75,
+      mockScores: cmd.mockScores ?? 70,
+      curriculumCompletion: cmd.curriculumCompletion ?? 60,
+      lessonConsistency: cmd.lessonConsistency ?? 80,
+      learningPace: pace,
+      weakSkillAreasCount: cmd.weakSkillAreasCount ?? 1,
+    });
+
+    let progress = await this.readinessRepo.findProgressByJourney(cmd.journeyId);
+    if (!progress) {
+      const id = this.readinessRepo.nextIdentity();
+      progress = StudentProgress.create(id, cmd.journeyId, cmd.studentId, readinessScore.value);
+    } else {
+      progress.updateReadiness(readinessScore.value);
+    }
+
+    await this.readinessRepo.saveProgress(progress);
+    return {
+      readinessScore: readinessScore.value,
+      readinessLevel: readinessScore.level,
+    };
+  }
+}
+
+export class GetReadinessHandler {
+  constructor(private readonly readinessRepo: ReadinessRepository) {}
+
+  public async execute(query: { studentId: string }): Promise<StudentProgress | null> {
+    return this.readinessRepo.findProgressByStudent(query.studentId);
+  }
+}
+
+// ─── Intervention Engine Handlers ─────────────────────────────────
+
+export class RunInterventionsHandler {
+  constructor(
+    _journeyRepo: StudentLearningRepository,
+    private readonly interventionRepo: InterventionRepository,
+    private readonly readinessRepo: ReadinessRepository
+  ) {}
+
+  public async execute(cmd: {
+    journeyId: string;
+    studentId: string;
+    daysSinceLastLogin?: number;
+    missedWeeklyTargets?: boolean;
+    repeatedLessonFailures?: number;
+    weakCompetenciesCount?: number;
+    missedSessionsCount?: number;
+    scoreTrend?: 'IMPROVING' | 'STABLE' | 'DECLINING';
+  }): Promise<StudentIntervention[]> {
+    const progress = await this.readinessRepo.findProgressByStudent(cmd.studentId);
+    const readinessScore = progress?.readinessScore.value ?? 50;
+
+    const engine = new InterventionEngine();
+    const evaluation = engine.evaluate({
+      daysSinceLastLogin: cmd.daysSinceLastLogin ?? 0,
+      missedWeeklyTargets: cmd.missedWeeklyTargets ?? false,
+      repeatedLessonFailures: cmd.repeatedLessonFailures ?? 0,
+      readinessScore,
+      completionPercentage: 50,
+      weakCompetenciesCount: cmd.weakCompetenciesCount ?? 0,
+      missedStudySessionsCount: cmd.missedSessionsCount ?? 0,
+      assessmentScoreTrend: cmd.scoreTrend ?? 'STABLE',
+    });
+
+    const createdInterventions: StudentIntervention[] = [];
+    for (const item of evaluation.interventionsToCreate) {
+      const id = this.interventionRepo.nextIdentity();
+      const intervention = StudentIntervention.create(
+        id,
+        cmd.journeyId,
+        cmd.studentId,
+        item.ruleCode,
+        item
+      );
+      await this.interventionRepo.saveIntervention(intervention);
+      createdInterventions.push(intervention);
+    }
+
+    return createdInterventions;
+  }
+}
+
+export class GetInterventionsHandler {
+  constructor(private readonly interventionRepo: InterventionRepository) {}
+
+  public async execute(query: {
+    studentId: string;
+    activeOnly?: boolean;
+  }): Promise<StudentIntervention[]> {
+    if (query.activeOnly) {
+      return this.interventionRepo.findActiveInterventionsByStudent(query.studentId);
+    }
+    return this.interventionRepo.findInterventionsByStudent(query.studentId);
+  }
+}
+
+export class AcknowledgeInterventionHandler {
+  constructor(private readonly interventionRepo: InterventionRepository) {}
+
+  public async execute(cmd: { interventionId: string }): Promise<void> {
+    const intervention = await this.interventionRepo.findInterventionById(cmd.interventionId);
+    if (!intervention) throw new Error(`Intervention ${cmd.interventionId} not found`);
+    intervention.intervention.acknowledge();
+    await this.interventionRepo.saveIntervention(intervention);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// STUDENT JOURNEY ORCHESTRATOR & POLICY ENGINE (Sprint 3.1.1)
+// ═══════════════════════════════════════════════════════════════════
+
+export type StudentJourneyStage =
+  | 'REGISTRATION'
+  | 'DIAGNOSTIC'
+  | 'DIAGNOSTIC_RESULTS'
+  | 'PRACTICE_LOCKED'
+  | 'PRACTICE_UNLOCKED'
+  | 'PRACTICE_STARTED'
+  | 'PRACTICE_COMPLETED'
+  | 'MOCK_LOCKED'
+  | 'MOCK_UNLOCKED'
+  | 'MOCK_STARTED'
+  | 'MOCK_SUBMITTED'
+  | 'RESULTS_PUBLISHED';
+
+export class StudentJourneyStateMachine {
+  private static readonly ALLOWED_TRANSITIONS: Record<StudentJourneyStage, StudentJourneyStage[]> =
+    {
+      REGISTRATION: ['DIAGNOSTIC'],
+      DIAGNOSTIC: ['DIAGNOSTIC_RESULTS'],
+      DIAGNOSTIC_RESULTS: ['PRACTICE_LOCKED', 'PRACTICE_UNLOCKED'],
+      PRACTICE_LOCKED: ['PRACTICE_UNLOCKED'],
+      PRACTICE_UNLOCKED: ['PRACTICE_STARTED'],
+      PRACTICE_STARTED: ['PRACTICE_COMPLETED'],
+      PRACTICE_COMPLETED: ['MOCK_LOCKED', 'MOCK_UNLOCKED'],
+      MOCK_LOCKED: ['MOCK_UNLOCKED'],
+      MOCK_UNLOCKED: ['MOCK_STARTED'],
+      MOCK_STARTED: ['MOCK_SUBMITTED'],
+      MOCK_SUBMITTED: ['RESULTS_PUBLISHED'],
+      RESULTS_PUBLISHED: [],
+    };
+
+  public static canTransition(from: StudentJourneyStage, to: StudentJourneyStage): boolean {
+    return this.ALLOWED_TRANSITIONS[from]?.includes(to) ?? false;
+  }
+
+  public static transition(
+    from: StudentJourneyStage,
+    to: StudentJourneyStage
+  ): StudentJourneyStage {
+    if (!this.canTransition(from, to)) {
+      throw new Error(`Invalid Student Journey Transition: Cannot move from ${from} to ${to}`);
+    }
+    return to;
+  }
+}
+
+export class StudentExamPolicy {
+  public static isDiagnosticRequired(hasCompletedDiagnostic: boolean): boolean {
+    return !hasCompletedDiagnostic;
+  }
+
+  public static isPracticeUnlocked(
+    hasCompletedDiagnostic: boolean,
+    isAdminUnlocked: boolean
+  ): boolean {
+    return hasCompletedDiagnostic && isAdminUnlocked;
+  }
+
+  public static isMockUnlocked(hasCompletedPractice: boolean, isAdminUnlocked: boolean): boolean {
+    return hasCompletedPractice && isAdminUnlocked;
+  }
+
+  public static assertAttemptMutable(isSubmitted: boolean): void {
+    if (isSubmitted) {
+      throw new Error('Forbidden: Submitted attempts are immutable and cannot be modified.');
+    }
   }
 }

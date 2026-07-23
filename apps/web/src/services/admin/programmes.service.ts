@@ -23,7 +23,7 @@ export const adminProgrammesService = {
           status: 'PUBLISHED',
           visibility: 'PUBLIC',
           enrollmentLimit: 100,
-          currentEnrollments: 62
+          currentEnrollments: 62,
         },
         {
           id: 'p2',
@@ -32,20 +32,22 @@ export const adminProgrammesService = {
           status: 'DRAFT',
           visibility: 'PRIVATE',
           enrollmentLimit: 50,
-          currentEnrollments: 0
-        }
+          currentEnrollments: 0,
+        },
       ];
     }
   },
 
-  async createProgramme(data: Omit<AdminProgramme, 'id' | 'currentEnrollments'>): Promise<AdminProgramme> {
+  async createProgramme(
+    data: Omit<AdminProgramme, 'id' | 'currentEnrollments'>
+  ): Promise<AdminProgramme> {
     try {
       return await apiClient.post<AdminProgramme>('/api/v1/admin/programmes', data);
     } catch {
       return {
         id: 'p-' + Math.random().toString(),
         currentEnrollments: 0,
-        ...data
+        ...data,
       };
     }
   },
@@ -66,5 +68,5 @@ export const adminProgrammesService = {
     } catch {
       return true;
     }
-  }
+  },
 };

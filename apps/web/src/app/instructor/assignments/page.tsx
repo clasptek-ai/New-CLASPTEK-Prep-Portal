@@ -6,7 +6,7 @@ import { AssignmentsScreen } from '../../../features/instructor/assignments/assi
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <AssignmentsScreen />
     </WorkspaceShell>
   );

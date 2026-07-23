@@ -21,7 +21,7 @@ export interface MockExamResult {
 export const instructorMockResultsService = {
   async getMockResults(studentId?: string): Promise<MockExamResult[]> {
     try {
-      const url = studentId 
+      const url = studentId
         ? `/api/v1/instructor/mock-results?studentId=${studentId}`
         : '/api/v1/instructor/mock-results';
       return await apiClient.get<MockExamResult[]>(url);
@@ -37,9 +37,9 @@ export const instructorMockResultsService = {
           sectionScores: { listening: 8.0, reading: 7.5, writing: 7.0, speaking: 7.5 },
           weakObjectives: ['Relative Clauses modifiers', 'Coherence transitions'],
           recommendations: 'Dedicate 15 minutes daily to passive syntax voice logs.',
-          incorrectQuestions: [12, 24, 31, 39]
-        }
+          incorrectQuestions: [12, 24, 31, 39],
+        },
       ];
     }
-  }
+  },
 };

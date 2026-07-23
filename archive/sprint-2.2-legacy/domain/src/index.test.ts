@@ -1,11 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import {
-  Curriculum,
-  CurriculumCode,
-  SemanticVersion,
-  Programme,
-  DomainError
-} from './index';
+import { Curriculum, CurriculumCode, SemanticVersion, Programme, DomainError } from './index';
 
 describe('Curriculum Aggregate Invariant Tests', () => {
   const cId = 'c0000000-0000-0000-0000-000000000002';
@@ -23,11 +17,16 @@ describe('Curriculum Aggregate Invariant Tests', () => {
 
   test('Create curriculum versions successfully', () => {
     const cur = new Curriculum(cId, cCode, cSlug, 'IELTS Prep', 'IELTS test preparation');
-    const ver = cur.createVersion('cv-101', new SemanticVersion('1.0.0'), 'V1 Release', 'First draft');
+    const ver = cur.createVersion(
+      'cv-101',
+      new SemanticVersion('1.0.0'),
+      'V1 Release',
+      'First draft'
+    );
     expect(ver.id).toBe('cv-101');
     expect(ver.versionNo.value).toBe('1.0.0');
     expect(cur.versions.length).toBe(1);
-    
+
     // Attempting duplicate versionNo throws DomainError
     expect(() => {
       cur.createVersion('cv-102', new SemanticVersion('1.0.0'), 'V1 Copy');
@@ -37,7 +36,7 @@ describe('Curriculum Aggregate Invariant Tests', () => {
   test('Transition Curriculum versions status machine successfully', () => {
     const cur = new Curriculum(cId, cCode, cSlug, 'IELTS Prep', 'IELTS test preparation');
     cur.createVersion('cv-101', new SemanticVersion('1.0.0'), 'V1 Release');
-    
+
     cur.submitReview('cv-101');
     expect(cur.versions[0].status).toBe('UNDER_REVIEW');
 
@@ -51,7 +50,7 @@ describe('Curriculum Aggregate Invariant Tests', () => {
     // Create a new version and publish it to deprecate the older one
     cur.createVersion('cv-102', new SemanticVersion('2.0.0'), 'V2 Release');
     cur.publishVersion('cv-102', 'admin-user');
-    
+
     expect(cur.versions[0].status).toBe('DEPRECATED');
     expect(cur.versions[1].status).toBe('PUBLISHED');
     expect(cur.currentVersionId).toBe('cv-102');
@@ -67,7 +66,7 @@ describe('Curriculum Aggregate Invariant Tests', () => {
       sourceId: 'm-A',
       targetKind: 'Module',
       targetId: 'm-B',
-      prerequisiteType: 'REQUIRED'
+      prerequisiteType: 'REQUIRED',
     });
 
     // Add prerequisite: Module C depends on Module B
@@ -76,7 +75,7 @@ describe('Curriculum Aggregate Invariant Tests', () => {
       sourceId: 'm-B',
       targetKind: 'Module',
       targetId: 'm-C',
-      prerequisiteType: 'REQUIRED'
+      prerequisiteType: 'REQUIRED',
     });
 
     // Trying to add prerequisite: Module A depends on Module C (cycle: A -> B -> C -> A) must throw DomainError
@@ -86,7 +85,7 @@ describe('Curriculum Aggregate Invariant Tests', () => {
         sourceId: 'm-C',
         targetKind: 'Module',
         targetId: 'm-A',
-        prerequisiteType: 'REQUIRED'
+        prerequisiteType: 'REQUIRED',
       });
     }).toThrow(DomainError);
   });
@@ -112,7 +111,7 @@ describe('Programme Aggregate Invariant Tests', () => {
 
     // Add Subjects under Course
     prog.addSubject('co-001', 'sub-001', 'Listening', 'Desc', 1);
-    
+
     // Duplicate Subject display order throws error
     expect(() => {
       prog.addSubject('co-001', 'sub-002', 'Reading', 'Desc', 1);
@@ -120,7 +119,7 @@ describe('Programme Aggregate Invariant Tests', () => {
 
     // Add Modules under Subject
     prog.addModule('sub-001', 'mod-001', 'Form Spelling', 'Desc', 1);
-    
+
     // Duplicate Module display order throws error
     expect(() => {
       prog.addModule('sub-001', 'mod-002', 'Audio Section 2', 'Desc', 1);

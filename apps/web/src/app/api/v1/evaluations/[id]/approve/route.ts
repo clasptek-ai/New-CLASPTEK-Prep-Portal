@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAiEvaluationContext } from '@/lib/ai-evaluation-context';
 
@@ -11,10 +13,7 @@ import { getAiEvaluationContext } from '@/lib/ai-evaluation-context';
  * Body: { reviewId? }
  */
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const ctx = getAiEvaluationContext();
@@ -29,7 +28,8 @@ export async function POST(
     const body = await req.json();
 
     if (action === 'publish') {
-      if (role !== 'admin') return NextResponse.json({ error: 'Admin access required for publish' }, { status: 403 });
+      if (role !== 'admin')
+        return NextResponse.json({ error: 'Admin access required for publish' }, { status: 403 });
       await ctx.publishEvaluation.execute({ jobId: id, reviewId: body.reviewId });
       return NextResponse.json({ success: true, action: 'published' });
     }
@@ -44,6 +44,9 @@ export async function POST(
 
     return NextResponse.json({ success: true, action: 'approved' });
   } catch (err: unknown) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 400 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : String(err) },
+      { status: 400 }
+    );
   }
 }

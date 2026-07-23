@@ -1,0 +1,37 @@
+name: Production Blue-Green Deployment
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  production-deploy:
+    name: Execute Blue-Green Production Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Validate Quality Gates
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run typecheck
+          pnpm run test
+          pnpm run build
+
+      - name: Automated Pre-Deployment Database Backup
+        run: node scripts/backup-db.js
+
+      - name: Execute Blue-Green Zero-Downtime Cutover
+        run: bash scripts/deploy-blue-green.sh
+
+      - name: Verify Post-Deployment Health & Acceptance Probes
+        run: |
+          curl -f http://localhost:3000/api/v1/health
+          node scripts/smoke-test.js

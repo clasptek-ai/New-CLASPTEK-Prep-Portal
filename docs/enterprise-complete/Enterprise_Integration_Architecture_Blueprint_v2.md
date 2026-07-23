@@ -1,6 +1,7 @@
-
 # Clasptek Prep Portal V2
+
 # Enterprise Integration Architecture Blueprint
+
 ## Canonical Inter-Domain Communication Specification
 
 **Version:** 2.0.0  
@@ -57,16 +58,16 @@ Infrastructure provides persistence, messaging and observability.
 
 # 4. Service Dependency Matrix
 
-| Producer | Consumer | Protocol | Sync | Criticality |
-|---|---|---|:---:|---|
-| Identity | Authorization | Event | No | High |
-| Identity | Security | REST | Yes | High |
-| Curriculum | Question Bank | REST | Yes | High |
-| Question Bank | Assessment Runtime | REST | Yes | Critical |
-| Assessment Runtime | AI Evaluation | Event | No | Critical |
-| AI Evaluation | Results | Event | No | High |
-| Results | Analytics | Event | No | Medium |
-| Results | Notification Centre | Event | No | Medium |
+| Producer           | Consumer            | Protocol | Sync | Criticality |
+| ------------------ | ------------------- | -------- | :--: | ----------- |
+| Identity           | Authorization       | Event    |  No  | High        |
+| Identity           | Security            | REST     | Yes  | High        |
+| Curriculum         | Question Bank       | REST     | Yes  | High        |
+| Question Bank      | Assessment Runtime  | REST     | Yes  | Critical    |
+| Assessment Runtime | AI Evaluation       | Event    |  No  | Critical    |
+| AI Evaluation      | Results             | Event    |  No  | High        |
+| Results            | Analytics           | Event    |  No  | Medium      |
+| Results            | Notification Centre | Event    |  No  | Medium      |
 
 ---
 
@@ -92,9 +93,9 @@ Every API must define:
 
 Example:
 
-| Endpoint | Method | Request | Response |
-|---|---|---|---|
-| /api/v1/questions | GET | Query Params | QuestionCollection |
+| Endpoint          | Method | Request      | Response           |
+| ----------------- | ------ | ------------ | ------------------ |
+| /api/v1/questions | GET    | Query Params | QuestionCollection |
 
 ---
 
@@ -194,30 +195,30 @@ Implement:
 
 # 11. Transaction Strategy
 
-| Pattern | Usage |
-|---|---|
-| ACID | Single bounded context |
-| Saga | Cross-domain workflow |
-| Outbox | Reliable event publishing |
-| Inbox | Reliable event consumption |
-| Eventual Consistency | Analytics & reporting |
+| Pattern              | Usage                      |
+| -------------------- | -------------------------- |
+| ACID                 | Single bounded context     |
+| Saga                 | Cross-domain workflow      |
+| Outbox               | Reliable event publishing  |
+| Inbox                | Reliable event consumption |
+| Eventual Consistency | Analytics & reporting      |
 
 ---
 
 # 12. Data Ownership Matrix
 
-| Domain | Owns Data |
-|---|---|
-| Identity | Users, Profiles |
-| Authorization | Roles, Permissions |
-| Security | Sessions, Trusted Devices |
-| Exam Product | Exam Definitions |
-| Curriculum | Courses, Modules, Lessons |
-| Question Bank | Questions, Versions |
-| Assessment Runtime | Attempts, Responses |
-| AI Evaluation | Evaluations |
-| Results | Scores |
-| Analytics | Aggregated Metrics |
+| Domain             | Owns Data                 |
+| ------------------ | ------------------------- |
+| Identity           | Users, Profiles           |
+| Authorization      | Roles, Permissions        |
+| Security           | Sessions, Trusted Devices |
+| Exam Product       | Exam Definitions          |
+| Curriculum         | Courses, Modules, Lessons |
+| Question Bank      | Questions, Versions       |
+| Assessment Runtime | Attempts, Responses       |
+| AI Evaluation      | Evaluations               |
+| Results            | Scores                    |
+| Analytics          | Aggregated Metrics        |
 
 ---
 
@@ -268,27 +269,27 @@ Include:
 
 # 16. Error Catalogue
 
-| Code | Meaning |
-|---|---|
+| Code   | Meaning                    |
+| ------ | -------------------------- |
 | INT001 | Contract validation failed |
-| INT002 | Timeout |
-| INT003 | Authentication failed |
-| INT004 | Authorization denied |
-| INT005 | Duplicate event |
-| INT006 | Schema mismatch |
-| INT007 | Downstream unavailable |
+| INT002 | Timeout                    |
+| INT003 | Authentication failed      |
+| INT004 | Authorization denied       |
+| INT005 | Duplicate event            |
+| INT006 | Schema mismatch            |
+| INT007 | Downstream unavailable     |
 
 ---
 
 # 17. Performance Budgets
 
-| Component | Target |
-|---|---:|
-| API Read | <200 ms |
-| API Write | <500 ms |
-| Event Delivery | <5 s |
-| Queue Retry | <30 s |
-| Availability | 99.9% |
+| Component      |  Target |
+| -------------- | ------: |
+| API Read       | <200 ms |
+| API Write      | <500 ms |
+| Event Delivery |    <5 s |
+| Queue Retry    |   <30 s |
+| Availability   |   99.9% |
 
 ---
 

@@ -15,7 +15,7 @@ export class ExamProductFactory {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
-    
+
     return new ExamProduct(
       id,
       new ExamCode(code),

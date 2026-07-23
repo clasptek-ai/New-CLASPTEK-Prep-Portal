@@ -11,7 +11,7 @@ async function main() {
 
   const client = new Client({
     connectionString: dbUrl,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
   });
 
   try {
@@ -26,7 +26,7 @@ async function main() {
       ORDER BY table_name;
     `);
     console.log('--- Writable Tables in public ---');
-    tablesRes.rows.forEach(r => console.log(`- ${r.table_name}`));
+    tablesRes.rows.forEach((r) => console.log(`- ${r.table_name}`));
     console.log(`Total public tables: ${tablesRes.rows.length}\n`);
 
     // 2. Get all tables in curriculum_read schema
@@ -37,7 +37,7 @@ async function main() {
       ORDER BY table_name;
     `);
     console.log('--- Tables in curriculum_read ---');
-    readTablesRes.rows.forEach(r => console.log(`- ${r.table_name}`));
+    readTablesRes.rows.forEach((r) => console.log(`- ${r.table_name}`));
     console.log(`Total curriculum_read tables: ${readTablesRes.rows.length}\n`);
 
     // 3. Get all foreign keys
@@ -59,7 +59,11 @@ async function main() {
       ORDER BY tc.table_name;
     `);
     console.log('--- Foreign Keys ---');
-    fkRes.rows.forEach(r => console.log(`- ${r.table_name}.${r.column_name} -> ${r.foreign_table_name}.${r.foreign_column_name}`));
+    fkRes.rows.forEach((r) =>
+      console.log(
+        `- ${r.table_name}.${r.column_name} -> ${r.foreign_table_name}.${r.foreign_column_name}`
+      )
+    );
     console.log(`Total foreign keys: ${fkRes.rows.length}\n`);
 
     // 4. Get RLS policies
@@ -70,7 +74,9 @@ async function main() {
       ORDER BY tablename, policyname;
     `);
     console.log('--- Row Level Security Policies ---');
-    rlsRes.rows.forEach(r => console.log(`- Table: ${r.tablename} | Policy: ${r.policyname} | command: ${r.cmd}`));
+    rlsRes.rows.forEach((r) =>
+      console.log(`- Table: ${r.tablename} | Policy: ${r.policyname} | command: ${r.cmd}`)
+    );
     console.log(`Total RLS policies: ${rlsRes.rows.length}\n`);
 
     // 5. Get all indexes
@@ -97,9 +103,10 @@ async function main() {
         i.relname;
     `);
     console.log('--- Indexes ---');
-    idxRes.rows.forEach(r => console.log(`- Table: ${r.table_name} | Index: ${r.index_name} | Column: ${r.column_name}`));
+    idxRes.rows.forEach((r) =>
+      console.log(`- Table: ${r.table_name} | Index: ${r.index_name} | Column: ${r.column_name}`)
+    );
     console.log(`Total indexes: ${idxRes.rows.length}\n`);
-
   } catch (err) {
     console.error('Error running audit:', err);
   } finally {

@@ -16,5 +16,5 @@ export function getDeterministicId(seed: string): string {
 
 export function getDeterministicName(email: string): string {
   const parts = email.split('@')[0].split('.');
-  return parts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+  return parts.map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 }

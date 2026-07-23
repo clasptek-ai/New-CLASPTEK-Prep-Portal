@@ -164,7 +164,9 @@ export class AssessmentSessionId extends ValueObject<{ value: string }> {
     if (!value) throw new Error('AssessmentSessionId cannot be empty');
     super({ value });
   }
-  get value(): string { return this.props.value; }
+  get value(): string {
+    return this.props.value;
+  }
 }
 
 export class RemainingTime extends ValueObject<{ ms: number }> {
@@ -172,7 +174,9 @@ export class RemainingTime extends ValueObject<{ ms: number }> {
     if (ms < 0) throw new Error('RemainingTime cannot be negative');
     super({ ms });
   }
-  get ms(): number { return this.props.ms; }
+  get ms(): number {
+    return this.props.ms;
+  }
 }
 
 export class ElapsedTime extends ValueObject<{ ms: number }> {
@@ -180,7 +184,9 @@ export class ElapsedTime extends ValueObject<{ ms: number }> {
     if (ms < 0) throw new Error('ElapsedTime cannot be negative');
     super({ ms });
   }
-  get ms(): number { return this.props.ms; }
+  get ms(): number {
+    return this.props.ms;
+  }
 }
 
 export interface QuestionSequenceItem {
@@ -195,30 +201,56 @@ export class QuestionSequence extends ValueObject<{ questions: QuestionSequenceI
     const sorted = [...questions].sort((a, b) => a.orderIndex - b.orderIndex);
     super({ questions: sorted });
   }
-  get questions(): readonly QuestionSequenceItem[] { return this.props.questions; }
+  get questions(): readonly QuestionSequenceItem[] {
+    return this.props.questions;
+  }
 }
 
-export class TimerPolicy extends ValueObject<{ type: 'Countdown' | 'Stopwatch' | 'SectionTimer' | 'PerQuestionTimer' | 'Unlimited'; limitMs: number | undefined }> {
-  constructor(type: 'Countdown' | 'Stopwatch' | 'SectionTimer' | 'PerQuestionTimer' | 'Unlimited', limitMs: number | undefined) {
+export class TimerPolicy extends ValueObject<{
+  type: 'Countdown' | 'Stopwatch' | 'SectionTimer' | 'PerQuestionTimer' | 'Unlimited';
+  limitMs: number | undefined;
+}> {
+  constructor(
+    type: 'Countdown' | 'Stopwatch' | 'SectionTimer' | 'PerQuestionTimer' | 'Unlimited',
+    limitMs: number | undefined
+  ) {
     super({ type, limitMs });
   }
-  get type(): 'Countdown' | 'Stopwatch' | 'SectionTimer' | 'PerQuestionTimer' | 'Unlimited' { return this.props.type; }
-  get limitMs(): number | undefined { return this.props.limitMs; }
+  get type(): 'Countdown' | 'Stopwatch' | 'SectionTimer' | 'PerQuestionTimer' | 'Unlimited' {
+    return this.props.type;
+  }
+  get limitMs(): number | undefined {
+    return this.props.limitMs;
+  }
 }
 
-export class NavigationPolicy extends ValueObject<{ mode: 'Free' | 'Sequential' | 'NoBacktracking' | 'SectionLocked' | 'Adaptive' }> {
+export class NavigationPolicy extends ValueObject<{
+  mode: 'Free' | 'Sequential' | 'NoBacktracking' | 'SectionLocked' | 'Adaptive';
+}> {
   constructor(mode: 'Free' | 'Sequential' | 'NoBacktracking' | 'SectionLocked' | 'Adaptive') {
     super({ mode });
   }
-  get mode(): 'Free' | 'Sequential' | 'NoBacktracking' | 'SectionLocked' | 'Adaptive' { return this.props.mode; }
+  get mode(): 'Free' | 'Sequential' | 'NoBacktracking' | 'SectionLocked' | 'Adaptive' {
+    return this.props.mode;
+  }
 }
 
-export class AutosavePolicy extends ValueObject<{ type: 'Interval' | 'OnNavigation' | 'OnAnswer' | 'ManualOnly'; intervalMs: number | undefined }> {
-  constructor(type: 'Interval' | 'OnNavigation' | 'OnAnswer' | 'ManualOnly', intervalMs: number | undefined) {
+export class AutosavePolicy extends ValueObject<{
+  type: 'Interval' | 'OnNavigation' | 'OnAnswer' | 'ManualOnly';
+  intervalMs: number | undefined;
+}> {
+  constructor(
+    type: 'Interval' | 'OnNavigation' | 'OnAnswer' | 'ManualOnly',
+    intervalMs: number | undefined
+  ) {
     super({ type, intervalMs });
   }
-  get type(): 'Interval' | 'OnNavigation' | 'OnAnswer' | 'ManualOnly' { return this.props.type; }
-  get intervalMs(): number | undefined { return this.props.intervalMs; }
+  get type(): 'Interval' | 'OnNavigation' | 'OnAnswer' | 'ManualOnly' {
+    return this.props.type;
+  }
+  get intervalMs(): number | undefined {
+    return this.props.intervalMs;
+  }
 }
 
 export class CheckpointVersion extends ValueObject<{ version: number }> {
@@ -226,7 +258,9 @@ export class CheckpointVersion extends ValueObject<{ version: number }> {
     if (version < 0) throw new Error('CheckpointVersion cannot be negative');
     super({ version });
   }
-  get version(): number { return this.props.version; }
+  get version(): number {
+    return this.props.version;
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -283,12 +317,25 @@ export class StudentAnswer extends Entity<string> {
     if (props.revisions) this._revisions = [...props.revisions];
   }
 
-  get payload(): any { return this._payload; }
-  get state(): 'UNANSWERED' | 'ANSWERED' | 'FLAGGED' | 'SKIPPED' { return this._state; }
-  get timeSpentMs(): number { return this._timeSpentMs; }
-  get revisions(): readonly AnswerRevision[] { return this._revisions; }
+  get payload(): any {
+    return this._payload;
+  }
+  get state(): 'UNANSWERED' | 'ANSWERED' | 'FLAGGED' | 'SKIPPED' {
+    return this._state;
+  }
+  get timeSpentMs(): number {
+    return this._timeSpentMs;
+  }
+  get revisions(): readonly AnswerRevision[] {
+    return this._revisions;
+  }
 
-  public update(payload: any, state: 'UNANSWERED' | 'ANSWERED' | 'FLAGGED' | 'SKIPPED', timeSpentMs: number, recordedAt: Date): void {
+  public update(
+    payload: any,
+    state: 'UNANSWERED' | 'ANSWERED' | 'FLAGGED' | 'SKIPPED',
+    timeSpentMs: number,
+    recordedAt: Date
+  ): void {
     const revisionNumber = this._revisions.length + 1;
     const revision = new AnswerRevision({
       id: randomUUID(),
@@ -309,20 +356,18 @@ export class StudentAnswerSheet extends Entity<string> {
   public readonly sessionId: string;
   private _answers: StudentAnswer[] = [];
 
-  constructor(props: {
-    id: string;
-    sessionId: string;
-    answers?: StudentAnswer[] | undefined;
-  }) {
+  constructor(props: { id: string; sessionId: string; answers?: StudentAnswer[] | undefined }) {
     super(props.id);
     this.sessionId = props.sessionId;
     if (props.answers) this._answers = [...props.answers];
   }
 
-  get answers(): readonly StudentAnswer[] { return this._answers; }
+  get answers(): readonly StudentAnswer[] {
+    return this._answers;
+  }
 
   public getAnswerForQuestion(questionVersionId: string): StudentAnswer | undefined {
-    return this._answers.find(a => a.questionVersionId === questionVersionId);
+    return this._answers.find((a) => a.questionVersionId === questionVersionId);
   }
 
   public recordAnswer(props: {
@@ -507,7 +552,18 @@ export class AssessmentInstance extends AggregateRoot<string> {
 export class AssessmentSession extends AggregateRoot<string> {
   public readonly studentId: string;
   public readonly instanceId: string;
-  private _status: 'DRAFT' | 'GENERATED' | 'READY' | 'ACTIVE' | 'PAUSED' | 'DISCONNECTED' | 'RESUMED' | 'SUBMITTING' | 'SUBMITTED' | 'EVALUATED' | 'ARCHIVED';
+  private _status:
+    | 'DRAFT'
+    | 'GENERATED'
+    | 'READY'
+    | 'ACTIVE'
+    | 'PAUSED'
+    | 'DISCONNECTED'
+    | 'RESUMED'
+    | 'SUBMITTING'
+    | 'SUBMITTED'
+    | 'EVALUATED'
+    | 'ARCHIVED';
   public readonly answerSheet: StudentAnswerSheet;
   private _checkpoint: RuntimeCheckpoint | undefined;
   private _securityIncidents: SecurityIncident[] = [];
@@ -521,7 +577,18 @@ export class AssessmentSession extends AggregateRoot<string> {
     id: string;
     studentId: string;
     instanceId: string;
-    status: 'DRAFT' | 'GENERATED' | 'READY' | 'ACTIVE' | 'PAUSED' | 'DISCONNECTED' | 'RESUMED' | 'SUBMITTING' | 'SUBMITTED' | 'EVALUATED' | 'ARCHIVED';
+    status:
+      | 'DRAFT'
+      | 'GENERATED'
+      | 'READY'
+      | 'ACTIVE'
+      | 'PAUSED'
+      | 'DISCONNECTED'
+      | 'RESUMED'
+      | 'SUBMITTING'
+      | 'SUBMITTED'
+      | 'EVALUATED'
+      | 'ARCHIVED';
     answerSheet: StudentAnswerSheet;
     checkpoint?: RuntimeCheckpoint | undefined;
     securityIncidents?: SecurityIncident[] | undefined;
@@ -545,12 +612,35 @@ export class AssessmentSession extends AggregateRoot<string> {
     if (props.visits) this._visits = [...props.visits];
   }
 
-  get status(): 'DRAFT' | 'GENERATED' | 'READY' | 'ACTIVE' | 'PAUSED' | 'DISCONNECTED' | 'RESUMED' | 'SUBMITTING' | 'SUBMITTED' | 'EVALUATED' | 'ARCHIVED' { return this._status; }
-  get checkpoint(): RuntimeCheckpoint | undefined { return this._checkpoint; }
-  get securityIncidents(): readonly SecurityIncident[] { return this._securityIncidents; }
-  get heartbeats(): readonly RuntimeHeartbeat[] { return this._heartbeats; }
-  get visits(): readonly QuestionVisit[] { return this._visits; }
-  get submission(): SubmissionRecord | undefined { return this._submission; }
+  get status():
+    | 'DRAFT'
+    | 'GENERATED'
+    | 'READY'
+    | 'ACTIVE'
+    | 'PAUSED'
+    | 'DISCONNECTED'
+    | 'RESUMED'
+    | 'SUBMITTING'
+    | 'SUBMITTED'
+    | 'EVALUATED'
+    | 'ARCHIVED' {
+    return this._status;
+  }
+  get checkpoint(): RuntimeCheckpoint | undefined {
+    return this._checkpoint;
+  }
+  get securityIncidents(): readonly SecurityIncident[] {
+    return this._securityIncidents;
+  }
+  get heartbeats(): readonly RuntimeHeartbeat[] {
+    return this._heartbeats;
+  }
+  get visits(): readonly QuestionVisit[] {
+    return this._visits;
+  }
+  get submission(): SubmissionRecord | undefined {
+    return this._submission;
+  }
 
   public start(at: Date): void {
     if (this._status !== 'DRAFT' && this._status !== 'GENERATED' && this._status !== 'READY') {
@@ -673,11 +763,8 @@ export class AssessmentSession extends AggregateRoot<string> {
     this.addDomainEvent(new CheckpointCreated(this.id, props.checkpointVersion));
   }
 
-  public visitQuestion(props: {
-    questionId: string;
-    enteredAt: Date;
-  }): QuestionVisit {
-    const activeVisit = this._visits.find(v => !v.exitedAt);
+  public visitQuestion(props: { questionId: string; enteredAt: Date }): QuestionVisit {
+    const activeVisit = this._visits.find((v) => !v.exitedAt);
     if (activeVisit) {
       activeVisit.exit(props.enteredAt);
     }
@@ -691,11 +778,7 @@ export class AssessmentSession extends AggregateRoot<string> {
     return visit;
   }
 
-  public submit(props: {
-    signature: string;
-    serverId: string;
-    submittedAt: Date;
-  }): void {
+  public submit(props: { signature: string; serverId: string; submittedAt: Date }): void {
     if (this._status === 'SUBMITTED' || this._status === 'EVALUATED') {
       throw new Error('Session is already submitted');
     }
@@ -719,11 +802,13 @@ export class AssessmentSession extends AggregateRoot<string> {
 
   private calculateAnswersChecksum(): string {
     const serialized = JSON.stringify(
-      this.answerSheet.answers.map(a => ({
-        qvId: a.questionVersionId,
-        payload: a.payload,
-        state: a.state,
-      })).sort((a, b) => a.qvId.localeCompare(b.qvId))
+      this.answerSheet.answers
+        .map((a) => ({
+          qvId: a.questionVersionId,
+          payload: a.payload,
+          state: a.state,
+        }))
+        .sort((a, b) => a.qvId.localeCompare(b.qvId))
     );
     // Simple checksum simulator hash
     let hash = 0;
@@ -734,3 +819,17 @@ export class AssessmentSession extends AggregateRoot<string> {
     return `hash-${Math.abs(hash)}`;
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// CANONICAL DELIVERY DOMAIN EXPORTS (Sprint 3.4.1)
+// ═══════════════════════════════════════════════════════════════════
+export * from './value-objects/delivery-value-objects';
+export * from './entities/assessment-attempt.entity';
+export * from './aggregates/assessment-result.aggregate';
+export * from './services/assessment-scoring.service';
+export * from './services/timer-policy';
+export * from './state-machine/assessment-session.state-machine';
+export * from './strategies/result-visibility.strategy';
+export * from './specifications/delivery-specifications';
+export * from './events/delivery-events';
+export * from './repositories/delivery-repositories';

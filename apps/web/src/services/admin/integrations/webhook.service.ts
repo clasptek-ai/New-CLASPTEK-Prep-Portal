@@ -13,10 +13,24 @@ export const adminWebhookService = {
   async getDeliveryLogs(): Promise<WebhookDeliveryLog[]> {
     try {
       return await apiClient.get<WebhookDeliveryLog[]>('/api/v1/admin/integrations/webhooks/logs');
-    } catch (e) {
+    } catch (_e) {
       return [
-        { id: 'wh1', providerId: 'stripe', eventType: 'payment_intent.succeeded', status: 'SUCCESS', responseStatus: 200, timestamp: '2026-07-16T12:00:00Z' },
-        { id: 'wh2', providerId: 'stripe', eventType: 'charge.failed', status: 'FAILED', responseStatus: 500, timestamp: '2026-07-16T11:58:00Z' }
+        {
+          id: 'wh1',
+          providerId: 'stripe',
+          eventType: 'payment_intent.succeeded',
+          status: 'SUCCESS',
+          responseStatus: 200,
+          timestamp: '2026-07-16T12:00:00Z',
+        },
+        {
+          id: 'wh2',
+          providerId: 'stripe',
+          eventType: 'charge.failed',
+          status: 'FAILED',
+          responseStatus: 500,
+          timestamp: '2026-07-16T11:58:00Z',
+        },
       ];
     }
   },
@@ -25,8 +39,8 @@ export const adminWebhookService = {
     try {
       await apiClient.post(`/api/v1/admin/integrations/webhooks/logs/${deliveryId}/replay`, {});
       return true;
-    } catch (e) {
+    } catch (_e) {
       return true; // Mock replay indicator
     }
-  }
+  },
 };

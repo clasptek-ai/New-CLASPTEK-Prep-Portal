@@ -23,7 +23,7 @@ export const adminQuestionsService = {
           status: 'PENDING_REVIEW',
           difficulty: 'MEDIUM',
           topic: 'Prepositions',
-          learningObjective: 'Use appropriate prepositions for time references'
+          learningObjective: 'Use appropriate prepositions for time references',
         },
         {
           id: 'q-pending-2',
@@ -32,8 +32,8 @@ export const adminQuestionsService = {
           status: 'PENDING_REVIEW',
           difficulty: 'HARD',
           topic: 'Argumentative Essay',
-          learningObjective: 'Write logical synthesis statements'
-        }
+          learningObjective: 'Write logical synthesis statements',
+        },
       ];
     }
   },
@@ -54,5 +54,5 @@ export const adminQuestionsService = {
     } catch {
       return true;
     }
-  }
+  },
 };

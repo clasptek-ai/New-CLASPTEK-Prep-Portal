@@ -10,10 +10,12 @@
 ## 1. Dependency Validation
 
 The **Adaptive Practice Domain** will reside in two new workspace packages:
+
 1. `@clasptek/domain-adaptive-practice` (within `packages/domain/adaptive-practice`)
 2. `@clasptek/application-adaptive-practice` (within `packages/application/adaptive-practice`)
 
 ### Internal Dependencies & References
+
 Both packages will extend `tsconfig.options.json` and declare reference paths.
 
 ```mermaid
@@ -52,6 +54,7 @@ graph TD
 ## 2. Existing Reusable Services
 
 We will reuse the following enterprise infrastructure components:
+
 - **`@clasptek/kernel`:** DDD primitives (`Entity`, `AggregateRoot`, `ValueObject`, `Clock`, `SystemClock`, error classes like `NotFoundError`, `ConflictError`, `ValidationError`).
 - **`@clasptek/validation`:** Zod format check validation (e.g. `idSchema` for UUID format validation).
 - **`@clasptek/persistence`:** `DatabasePool` Postgres pool management and transaction execution wrapper.
@@ -65,12 +68,14 @@ We will reuse the following enterprise infrastructure components:
 The **Adaptive Practice Domain** will strictly interact with the following contexts:
 
 ### Reading from External Contexts
+
 - **Student Learning Journey (`@clasptek/domain-student-learning`)**: Read student's active journey and current competency progress/mastery scores to feed practice recommendations and selection weights.
 - **Question Bank (`@clasptek/domain-question-bank`)**: Look up active question versions and metadata (e.g., taxonomy, difficulty) for generating a practice session's question queue.
 - **Curriculum (`@clasptek/domain-curriculum`)**: Map practice targets to curriculum competencies, modules, and programmes.
 - **Exam Product (`@clasptek/domain-exam-product`)**: Check exam structure for exam-blueprint selection strategies.
 
 ### Writing (Strict Boundary)
+
 - The domain **must write only** to its own tables (`practice_sessions`, `practice_session_questions`, `practice_recommendations`, etc.).
 - Never mutate student learning journeys, question bank, or curriculum records directly from this bounded context. Communication of results (such as updating student competencies) will happen via publishing domain events (`CompetencyUpdated`, `LessonCompleted`, etc.) or standard handlers in the Student Learning Journey context.
 
@@ -78,12 +83,12 @@ The **Adaptive Practice Domain** will strictly interact with the following conte
 
 ## 4. Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| **Adaptive Algorithm Complexity** | High | Start with pluggable selection strategies. The domain defines a clear contract (`QuestionSelectionStrategy`) allowing strategies to be swapped dynamically without altering core business rules. |
-| **Concurrency & Race Conditions** | Medium | Implement optimistic locking on practice sessions (`lock_version`). Ensure sessions can only be updated if the version matches. |
-| **Question Bank Sync** | Medium | Validate that every question added to a session belongs to a valid, active version in the question bank. |
-| **exactOptionalPropertyTypes TS Constraint** | Low | Declare all optional class fields as `T | undefined` (rather than just `?: T`) to ensure compatibility with root tsconfig. |
+| Risk                                         | Impact | Mitigation                                                                                                                                                                                       |
+| -------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Adaptive Algorithm Complexity**            | High   | Start with pluggable selection strategies. The domain defines a clear contract (`QuestionSelectionStrategy`) allowing strategies to be swapped dynamically without altering core business rules. |
+| **Concurrency & Race Conditions**            | Medium | Implement optimistic locking on practice sessions (`lock_version`). Ensure sessions can only be updated if the version matches.                                                                  |
+| **Question Bank Sync**                       | Medium | Validate that every question added to a session belongs to a valid, active version in the question bank.                                                                                         |
+| **exactOptionalPropertyTypes TS Constraint** | Low    | Declare all optional class fields as `T                                                                                                                                                          | undefined`(rather than just`?: T`) to ensure compatibility with root tsconfig. |
 
 ---
 

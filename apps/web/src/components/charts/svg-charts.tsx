@@ -28,7 +28,10 @@ export function LineChart({ data, labels, height = 150 }: LineChartProps) {
 
   return (
     <div style={{ position: 'relative', width: '100%' }}>
-      <svg viewBox={`0 0 300 ${height}`} style={{ width: '100%', height: 'auto', overflow: 'visible' }}>
+      <svg
+        viewBox={`0 0 300 ${height}`}
+        style={{ width: '100%', height: 'auto', overflow: 'visible' }}
+      >
         {/* Grids */}
         {[0, 0.25, 0.5, 0.75, 1].map((ratio, i) => {
           const y = padding + chartHeight * ratio;
@@ -59,19 +62,21 @@ export function LineChart({ data, labels, height = 150 }: LineChartProps) {
         {/* Dots */}
         {points.map((p, idx) => (
           <g key={idx}>
-            <circle
-              cx={p.x}
-              cy={p.y}
-              r={4}
-              fill="#14b8a6"
-              stroke="#151d30"
-              strokeWidth={1.5}
-            />
+            <circle cx={p.x} cy={p.y} r={4} fill="#14b8a6" stroke="#151d30" strokeWidth={1.5} />
             <title>{`${labels[idx]}: ${p.val}`}</title>
           </g>
         ))}
       </svg>
-      <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 10px', fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          padding: '0 10px',
+          fontSize: '0.75rem',
+          color: '#94a3b8',
+          marginTop: '0.5rem',
+        }}
+      >
         {labels.map((l, i) => (
           <span key={i}>{l}</span>
         ))}
@@ -103,35 +108,35 @@ export function RadarChart({ data }: RadarChartProps) {
     return { x, y };
   });
 
-  const pathD = points.reduce((acc, p, idx) => {
-    return idx === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`;
-  }, '') + ' Z';
+  const pathD =
+    points.reduce((acc, p, idx) => {
+      return idx === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`;
+    }, '') + ' Z';
 
   // Grid rings
   const ringCount = 4;
   const rings = Array.from({ length: ringCount }).map((_, rIdx) => {
     const currentRadius = ((rIdx + 1) / ringCount) * radius;
-    const ringPoints = Array.from({ length: total }).map((_, idx) => {
-      const angle = (idx * 2 * Math.PI) / total - Math.PI / 2;
-      const x = center + currentRadius * Math.cos(angle);
-      const y = center + currentRadius * Math.sin(angle);
-      return `${x},${y}`;
-    }).join(' ');
+    const ringPoints = Array.from({ length: total })
+      .map((_, idx) => {
+        const angle = (idx * 2 * Math.PI) / total - Math.PI / 2;
+        const x = center + currentRadius * Math.cos(angle);
+        const y = center + currentRadius * Math.sin(angle);
+        return `${x},${y}`;
+      })
+      .join(' ');
     return ringPoints;
   });
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-      <svg viewBox="0 0 200 200" style={{ width: '100%', maxWidth: '240px', height: 'auto', overflow: 'visible' }}>
+      <svg
+        viewBox="0 0 200 200"
+        style={{ width: '100%', maxWidth: '240px', height: 'auto', overflow: 'visible' }}
+      >
         {/* Grid rings */}
         {rings.map((ringPoints, i) => (
-          <polygon
-            key={i}
-            points={ringPoints}
-            fill="none"
-            stroke="#232e48"
-            strokeWidth={0.5}
-          />
+          <polygon key={i} points={ringPoints} fill="none" stroke="#232e48" strokeWidth={0.5} />
         ))}
 
         {/* Axis lines */}
@@ -154,7 +159,7 @@ export function RadarChart({ data }: RadarChartProps) {
 
         {/* Data polygon */}
         <polygon
-          points={points.map(p => `${p.x},${p.y}`).join(' ')}
+          points={points.map((p) => `${p.x},${p.y}`).join(' ')}
           fill="rgba(37, 99, 235, 0.25)"
           stroke="#2563eb"
           strokeWidth={2}
@@ -178,7 +183,7 @@ export function RadarChart({ data }: RadarChartProps) {
                 fill: '#94a3b8',
                 fontSize: '0.55rem',
                 fontWeight: 600,
-                fontFamily: 'Outfit'
+                fontFamily: 'Outfit',
               }}
             >
               {k}
@@ -193,7 +198,15 @@ export function RadarChart({ data }: RadarChartProps) {
 // ─── SVG Calendar HeatMap ────────────────────────────────────────────
 export function HeatMap({ valList }: { valList: Array<{ day: number; active: boolean }> }) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px', maxWidth: '280px', margin: '0 auto' }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(7, 1fr)',
+        gap: '6px',
+        maxWidth: '280px',
+        margin: '0 auto',
+      }}
+    >
       {valList.map((item, index) => (
         <div
           key={index}
@@ -205,7 +218,7 @@ export function HeatMap({ valList }: { valList: Array<{ day: number; active: boo
             border: item.active ? '1px solid #34d399' : '1px solid #232e48',
             position: 'relative',
             cursor: 'pointer',
-            transition: 'transform 0.15s ease'
+            transition: 'transform 0.15s ease',
           }}
           title={`Day ${item.day}: ${item.active ? 'Studied' : 'No Activity'}`}
         >
@@ -217,7 +230,7 @@ export function HeatMap({ valList }: { valList: Array<{ day: number; active: boo
               transform: 'translate(-50%, -50%)',
               fontSize: '0.65rem',
               fontWeight: 600,
-              color: item.active ? '#064e3b' : '#64748b'
+              color: item.active ? '#064e3b' : '#64748b',
             }}
           >
             {item.day}
@@ -242,21 +255,41 @@ export function BarChart({ data, labels }: BarChartProps) {
         const percent = (val / max) * 100;
         return (
           <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ width: '80px', fontSize: '0.8rem', color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span
+              style={{
+                width: '80px',
+                fontSize: '0.8rem',
+                color: '#94a3b8',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {labels[idx]}
             </span>
-            <div style={{ flex: 1, height: '12px', backgroundColor: '#151d30', borderRadius: '6px', overflow: 'hidden', border: '1px solid #232e48' }}>
+            <div
+              style={{
+                flex: 1,
+                height: '12px',
+                backgroundColor: '#151d30',
+                borderRadius: '6px',
+                overflow: 'hidden',
+                border: '1px solid #232e48',
+              }}
+            >
               <div
                 style={{
                   height: '100%',
                   width: `${percent}%`,
                   background: 'linear-gradient(90deg, #2563eb, #14b8a6)',
                   borderRadius: '6px',
-                  transition: 'width 0.5s ease-out'
+                  transition: 'width 0.5s ease-out',
                 }}
               />
             </div>
-            <span style={{ width: '40px', textAlign: 'right', fontSize: '0.8rem', fontWeight: 600 }}>
+            <span
+              style={{ width: '40px', textAlign: 'right', fontSize: '0.8rem', fontWeight: 600 }}
+            >
               {val}
             </span>
           </div>

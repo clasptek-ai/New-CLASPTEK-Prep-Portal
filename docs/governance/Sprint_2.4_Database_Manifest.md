@@ -5,6 +5,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 ## 1. Schema Tables
 
 ### `questions`
+
 - `id` (UUID, PRIMARY KEY)
 - `code` (VARCHAR, UNIQUE, NOT NULL)
 - `exam_product_id` (UUID, FK to exam_products, NULLABLE)
@@ -16,6 +17,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - `lock_version` (INT, DEFAULT 0)
 
 ### `question_versions`
+
 - `id` (UUID, PRIMARY KEY)
 - `question_id` (UUID, FK to questions, CASCADE)
 - `version_no` (VARCHAR, NOT NULL)
@@ -29,6 +31,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - UNIQUE constraint on (`question_id`, `version_no`)
 
 ### `answer_options`
+
 - `id` (UUID, PRIMARY KEY)
 - `question_version_id` (UUID, FK to question_versions, CASCADE)
 - `code` (VARCHAR, NOT NULL)
@@ -37,6 +40,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - `display_order` (INT, NOT NULL)
 
 ### `question_media`
+
 - `id` (UUID, PRIMARY KEY)
 - `question_version_id` (UUID, FK to question_versions, CASCADE)
 - `provider` (VARCHAR, NOT NULL)
@@ -52,6 +56,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - `alt_text` (TEXT)
 
 ### `solutions`
+
 - `id` (UUID, PRIMARY KEY)
 - `question_version_id` (UUID, FK to question_versions, CASCADE, UNIQUE)
 - `explanation` (TEXT, NOT NULL)
@@ -61,6 +66,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - `teaching_note` (TEXT)
 
 ### `rubrics`
+
 - `id` (UUID, PRIMARY KEY)
 - `question_version_id` (UUID, FK to question_versions, CASCADE, UNIQUE)
 - `criteria` (TEXT, NOT NULL)
@@ -68,6 +74,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - `description` (TEXT)
 
 ### `question_reviews`
+
 - `id` (UUID, PRIMARY KEY)
 - `question_id` (UUID, FK to questions, CASCADE, UNIQUE)
 - `reviewer_id` (UUID, NOT NULL)
@@ -77,6 +84,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - `updated_at` (TIMESTAMP)
 
 ### `question_workflow_history`
+
 - `id` (UUID, PRIMARY KEY)
 - `question_id` (UUID, FK to questions, CASCADE)
 - `stage` (VARCHAR, NOT NULL)
@@ -85,6 +93,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - `timestamp` (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
 
 ### `question_statistics`
+
 - `id` (UUID, PRIMARY KEY)
 - `question_id` (UUID, FK to questions, CASCADE, UNIQUE)
 - `times_used` (INT, DEFAULT 0)
@@ -99,6 +108,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - `last_used` (TIMESTAMP)
 
 ### `question_ownership`
+
 - `id` (UUID, PRIMARY KEY)
 - `question_id` (UUID, FK to questions, CASCADE, UNIQUE)
 - `copyright_holder` (VARCHAR)
@@ -108,6 +118,7 @@ This manifest documents the database tables, relations, and RLS policies introdu
 - `expiration_date` (TIMESTAMP)
 
 ### `question_dependencies`
+
 - `id` (UUID, PRIMARY KEY)
 - `parent_question_id` (UUID, FK to questions, CASCADE)
 - `child_question_id` (UUID, FK to questions, CASCADE)
@@ -117,7 +128,9 @@ This manifest documents the database tables, relations, and RLS policies introdu
 ---
 
 ## 2. Row Level Security (RLS) Policies
+
 All tables enforce RLS:
+
 - **Anonymous/Student Users:** Can read published questions and their published version details only.
 - **Academic Reviewers & Authors:** Full CRUD operations on draft/review versions.
 - **Admin Administrators:** Full privilege access.

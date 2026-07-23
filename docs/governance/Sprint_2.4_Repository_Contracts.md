@@ -110,5 +110,6 @@ export interface QuestionImportRepository {
 ---
 
 ## 4. Stability Rules
-*   **Backwards Compatibility:** Breaking updates to these interface parameters or return types require approval from the Technical Governance Board.
-*   **Implementation Adherence:** Adapters (e.g. Postgres pool or memory mocks) must adhere to all constraints (such as raising concurrency lock exceptions).
+
+- **Backwards Compatibility:** Breaking updates to these interface parameters or return types require approval from the Technical Governance Board.
+- **Implementation Adherence:** Adapters (e.g. Postgres pool or memory mocks) must adhere to all constraints (such as raising concurrency lock exceptions).

@@ -8,7 +8,12 @@ export interface AdminUserRecord {
   status: 'ACTIVE' | 'SUSPENDED';
   programme?: string;
   lastLogin?: string;
-  statusHistory: { status: 'ACTIVE' | 'SUSPENDED'; changedBy: string; date: string; reason: string }[];
+  statusHistory: {
+    status: 'ACTIVE' | 'SUSPENDED';
+    changedBy: string;
+    date: string;
+    reason: string;
+  }[];
 }
 
 export const adminUsersService = {
@@ -26,8 +31,13 @@ export const adminUsersService = {
           programme: 'IELTS Intensive Program',
           lastLogin: new Date().toISOString(),
           statusHistory: [
-            { status: 'ACTIVE', changedBy: 'Sarah Jenkins', date: '2026-01-15T09:00:00Z', reason: 'Account created' }
-          ]
+            {
+              status: 'ACTIVE',
+              changedBy: 'Sarah Jenkins',
+              date: '2026-01-15T09:00:00Z',
+              reason: 'Account created',
+            },
+          ],
         },
         {
           id: 'u2',
@@ -37,8 +47,13 @@ export const adminUsersService = {
           status: 'ACTIVE',
           lastLogin: new Date(Date.now() - 3600000).toISOString(),
           statusHistory: [
-            { status: 'ACTIVE', changedBy: 'Sarah Jenkins', date: '2026-01-10T10:00:00Z', reason: 'Account created' }
-          ]
+            {
+              status: 'ACTIVE',
+              changedBy: 'Sarah Jenkins',
+              date: '2026-01-10T10:00:00Z',
+              reason: 'Account created',
+            },
+          ],
         },
         {
           id: 'u3',
@@ -48,14 +63,23 @@ export const adminUsersService = {
           status: 'SUSPENDED',
           lastLogin: new Date(Date.now() - 86400000).toISOString(),
           statusHistory: [
-            { status: 'SUSPENDED', changedBy: 'Sarah Jenkins', date: '2026-06-01T12:00:00Z', reason: 'Violation of security logs' }
-          ]
-        }
+            {
+              status: 'SUSPENDED',
+              changedBy: 'Sarah Jenkins',
+              date: '2026-06-01T12:00:00Z',
+              reason: 'Violation of security logs',
+            },
+          ],
+        },
       ];
     }
   },
 
-  async updateUserStatus(id: string, status: 'ACTIVE' | 'SUSPENDED', reason: string): Promise<boolean> {
+  async updateUserStatus(
+    id: string,
+    status: 'ACTIVE' | 'SUSPENDED',
+    reason: string
+  ): Promise<boolean> {
     try {
       await apiClient.patch(`/api/v1/admin/users/${id}/status`, { status, reason });
       return true;
@@ -64,7 +88,10 @@ export const adminUsersService = {
     }
   },
 
-  async assignRole(id: string, role: 'STUDENT' | 'INSTRUCTOR' | 'ADMINISTRATOR' | 'STAFF'): Promise<boolean> {
+  async assignRole(
+    id: string,
+    role: 'STUDENT' | 'INSTRUCTOR' | 'ADMINISTRATOR' | 'STAFF'
+  ): Promise<boolean> {
     try {
       await apiClient.patch(`/api/v1/admin/users/${id}/role`, { role });
       return true;
@@ -81,5 +108,5 @@ export const adminUsersService = {
     } catch {
       return true;
     }
-  }
+  },
 };

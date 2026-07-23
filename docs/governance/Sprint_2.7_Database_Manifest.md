@@ -13,7 +13,9 @@ This manifest records all schemas, constraints, Row Level Security rules, and in
 ## 1. Schema Definitions
 
 ### `assessment_sessions`
+
 Stores session execution container state.
+
 - `id` UUID PRIMARY KEY
 - `student_id` UUID NOT NULL
 - `instance_id` UUID NOT NULL
@@ -24,13 +26,17 @@ Stores session execution container state.
 - `updated_at` TIMESTAMPTZ
 
 ### `answer_sheets`
+
 Links answers to sessions.
+
 - `id` UUID PRIMARY KEY
 - `session_id` UUID UNIQUE REFERENCES assessment_sessions ON DELETE CASCADE
 - `created_at` TIMESTAMPTZ
 
 ### `student_answers`
+
 Stores answer payloads.
+
 - `id` UUID PRIMARY KEY
 - `sheet_id` UUID REFERENCES answer_sheets ON DELETE CASCADE
 - `question_id` UUID NOT NULL
@@ -42,7 +48,9 @@ Stores answer payloads.
 - UNIQUE (sheet_id, question_version_id)
 
 ### `answer_revisions`
+
 Provides audits for answer modifications.
+
 - `id` UUID PRIMARY KEY
 - `answer_id` UUID REFERENCES student_answers ON DELETE CASCADE
 - `payload` JSONB NOT NULL
@@ -51,7 +59,9 @@ Provides audits for answer modifications.
 - `recorded_at` TIMESTAMPTZ
 
 ### `runtime_checkpoints`
+
 Monotonically incremented state snapshots.
+
 - `id` UUID PRIMARY KEY
 - `session_id` UUID REFERENCES assessment_sessions ON DELETE CASCADE
 - `checkpoint_version` INT
@@ -65,7 +75,9 @@ Monotonically incremented state snapshots.
 - UNIQUE (session_id, checkpoint_version)
 
 ### `navigation_history`
+
 Tracks active visits logging.
+
 - `id` UUID PRIMARY KEY
 - `session_id` UUID REFERENCES assessment_sessions ON DELETE CASCADE
 - `question_id` UUID NOT NULL
@@ -74,7 +86,9 @@ Tracks active visits logging.
 - `duration_ms` INT
 
 ### `runtime_heartbeats`
+
 EMits client logs every 30s.
+
 - `id` UUID PRIMARY KEY
 - `session_id` UUID REFERENCES assessment_sessions ON DELETE CASCADE
 - `elapsed_time_ms` INT
@@ -84,7 +98,9 @@ EMits client logs every 30s.
 - `recorded_at` TIMESTAMPTZ
 
 ### `security_incidents`
+
 Tracks anomaly audits.
+
 - `id` UUID PRIMARY KEY
 - `session_id` UUID REFERENCES assessment_sessions ON DELETE CASCADE
 - `incident_type` VARCHAR(100)
@@ -92,7 +108,9 @@ Tracks anomaly audits.
 - `recorded_at` TIMESTAMPTZ
 
 ### `submission_records`
+
 Holds final signed receipts.
+
 - `id` UUID PRIMARY KEY
 - `session_id` UUID UNIQUE REFERENCES assessment_sessions ON DELETE CASCADE
 - `receipt_checksum` VARCHAR(255)
@@ -105,6 +123,7 @@ Holds final signed receipts.
 ## 2. Row Level Security Policies
 
 Enabled on:
+
 - `assessment_sessions`
 - `answer_sheets`
 - `student_answers`
@@ -116,6 +135,7 @@ Enabled on:
 - `submission_records`
 
 Policy rules:
+
 - Student user has SELECT/INSERT/UPDATE access for rows matching their UUID: `student_id = auth.uid()`.
 - Access to child tables (`student_answers`, `runtime_checkpoints`, `security_incidents`, etc.) checks presence of parent session matching `s.student_id = auth.uid()`.
 

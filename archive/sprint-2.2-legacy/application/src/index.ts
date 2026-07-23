@@ -7,7 +7,7 @@ import {
   Programme,
   ProgrammeRepository,
   Prerequisite,
-  SearchFilters
+  SearchFilters,
 } from '@clasptek/domain-curriculum';
 import { NotFoundError, ConflictError } from '@clasptek/kernel';
 
@@ -247,8 +247,13 @@ export class CreateCurriculumVersionHandler {
     }
 
     const versionId = randomUUID();
-    const ver = cur.createVersion(versionId, new SemanticVersion(command.versionNo), command.name, command.description);
-    
+    const ver = cur.createVersion(
+      versionId,
+      new SemanticVersion(command.versionNo),
+      command.name,
+      command.description
+    );
+
     if (command.effectiveFrom) ver.effectiveFrom = new Date(command.effectiveFrom);
     if (command.effectiveUntil) ver.effectiveUntil = new Date(command.effectiveUntil);
     if (command.breakingChange !== undefined) ver.breakingChange = command.breakingChange;
@@ -389,7 +394,12 @@ export class AddProgrammeMappingHandler {
       throw new ConflictError('Concurrency conflict: lock_version mismatch.');
     }
 
-    cur.addProgrammeMapping(command.versionId, command.programmeId, command.programmeVersionId, command.displayOrder);
+    cur.addProgrammeMapping(
+      command.versionId,
+      command.programmeId,
+      command.programmeVersionId,
+      command.displayOrder
+    );
     await this.repository.save(cur);
   }
 }
@@ -412,7 +422,7 @@ export class AddPrerequisiteHandler {
       sourceId: command.sourceId,
       targetKind: command.targetKind,
       targetId: command.targetId,
-      prerequisiteType: command.prerequisiteType
+      prerequisiteType: command.prerequisiteType,
     };
 
     cur.addPrerequisite(command.versionId, prereq);
@@ -477,7 +487,12 @@ export class CreateProgrammeVersionHandler {
     }
 
     const versionId = randomUUID();
-    const ver = prog.createVersion(versionId, new SemanticVersion(command.versionNo), command.name, command.description);
+    const ver = prog.createVersion(
+      versionId,
+      new SemanticVersion(command.versionNo),
+      command.name,
+      command.description
+    );
 
     if (command.effectiveFrom) ver.effectiveFrom = new Date(command.effectiveFrom);
     if (command.effectiveUntil) ver.effectiveUntil = new Date(command.effectiveUntil);
@@ -521,7 +536,13 @@ export class AddCourseHandler {
     }
 
     const courseId = command.courseId || randomUUID();
-    prog.addCourse(command.versionId, courseId, command.name, command.description, command.displayOrder);
+    prog.addCourse(
+      command.versionId,
+      courseId,
+      command.name,
+      command.description,
+      command.displayOrder
+    );
     await this.repository.save(prog);
     return courseId;
   }
@@ -541,7 +562,13 @@ export class AddSubjectHandler {
     }
 
     const subjectId = command.subjectId || randomUUID();
-    prog.addSubject(command.courseId, subjectId, command.name, command.description, command.displayOrder);
+    prog.addSubject(
+      command.courseId,
+      subjectId,
+      command.name,
+      command.description,
+      command.displayOrder
+    );
     await this.repository.save(prog);
     return subjectId;
   }
@@ -561,7 +588,13 @@ export class AddModuleHandler {
     }
 
     const moduleId = command.moduleId || randomUUID();
-    prog.addModule(command.subjectId, moduleId, command.name, command.description, command.displayOrder);
+    prog.addModule(
+      command.subjectId,
+      moduleId,
+      command.name,
+      command.description,
+      command.displayOrder
+    );
     await this.repository.save(prog);
     return moduleId;
   }
@@ -581,7 +614,14 @@ export class AddCompetencyHandler {
     }
 
     const competencyId = command.competencyId || randomUUID();
-    prog.addCompetency(command.moduleId, competencyId, command.code, command.name, command.description, command.displayOrder);
+    prog.addCompetency(
+      command.moduleId,
+      competencyId,
+      command.code,
+      command.name,
+      command.description,
+      command.displayOrder
+    );
     await this.repository.save(prog);
     return competencyId;
   }
@@ -601,7 +641,13 @@ export class AddObjectiveHandler {
     }
 
     const objectiveId = command.objectiveId || randomUUID();
-    prog.addObjective(command.competencyId, objectiveId, command.code, command.description, command.displayOrder);
+    prog.addObjective(
+      command.competencyId,
+      objectiveId,
+      command.code,
+      command.description,
+      command.displayOrder
+    );
     await this.repository.save(prog);
     return objectiveId;
   }
@@ -621,7 +667,13 @@ export class AddOutcomeHandler {
     }
 
     const outcomeId = command.outcomeId || randomUUID();
-    prog.addOutcome(command.objectiveId, outcomeId, command.code, command.description, command.displayOrder);
+    prog.addOutcome(
+      command.objectiveId,
+      outcomeId,
+      command.code,
+      command.description,
+      command.displayOrder
+    );
     await this.repository.save(prog);
     return outcomeId;
   }

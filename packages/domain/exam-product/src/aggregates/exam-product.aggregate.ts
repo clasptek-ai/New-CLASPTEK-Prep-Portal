@@ -70,7 +70,14 @@ export class ExamProduct extends AggregateRoot<string> {
       throw new DomainError(`Version ${versionNo.value} already exists.`);
     }
 
-    const version = new ExamProductVersion(versionId, this.id, versionNo, 'DRAFT', name, description);
+    const version = new ExamProductVersion(
+      versionId,
+      this.id,
+      versionNo,
+      'DRAFT',
+      name,
+      description
+    );
     this._versions.push(version);
     return version;
   }

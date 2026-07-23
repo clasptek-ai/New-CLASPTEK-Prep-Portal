@@ -5,7 +5,7 @@ import {
   CreateProgrammeHandler,
   CreateProgrammeCommand,
   AddCourseHandler,
-  AddCourseCommand
+  AddCourseCommand,
 } from './index';
 import { CurriculumRepository, ProgrammeRepository, Programme } from '@clasptek/domain-curriculum';
 
@@ -19,14 +19,14 @@ describe('Application Handlers tests', () => {
       findPublished: vi.fn(),
       findVersion: vi.fn(),
       search: vi.fn(),
-      nextIdentity: vi.fn().mockReturnValue('mock-cur-id')
+      nextIdentity: vi.fn().mockReturnValue('mock-cur-id'),
     };
 
     const handler = new CreateCurriculumHandler(mockRepo);
     const command: CreateCurriculumCommand = {
       code: 'IELTS-AC-TEST',
       name: 'IELTS Academic Test',
-      description: 'Testing'
+      description: 'Testing',
     };
 
     const id = await handler.execute(command);
@@ -38,7 +38,14 @@ describe('Application Handlers tests', () => {
   test('CreateProgrammeHandler and AddCourseHandler execute successfully', async () => {
     const mockProgRepo: ProgrammeRepository = {
       findById: vi.fn().mockImplementation(async (id) => {
-        const prog = new Programme(id, 'ex-1', { value: 'PROG-1' } as any, 'prog-1', 'Prog Name', 'description');
+        const prog = new Programme(
+          id,
+          'ex-1',
+          { value: 'PROG-1' } as any,
+          'prog-1',
+          'Prog Name',
+          'description'
+        );
         prog.createVersion('pv-101', { value: '1.0.0' } as any, 'V1');
         return prog;
       }),
@@ -47,7 +54,7 @@ describe('Application Handlers tests', () => {
       exists: vi.fn().mockResolvedValue(false),
       findPublished: vi.fn(),
       search: vi.fn(),
-      nextIdentity: vi.fn().mockReturnValue('mock-prog-id')
+      nextIdentity: vi.fn().mockReturnValue('mock-prog-id'),
     };
 
     const createHandler = new CreateProgrammeHandler(mockProgRepo);
@@ -55,7 +62,7 @@ describe('Application Handlers tests', () => {
       code: 'IELTS-PROG',
       name: 'IELTS Academic Programme',
       description: 'Prep',
-      examProductId: 'ex-1'
+      examProductId: 'ex-1',
     };
 
     const pId = await createHandler.execute(createCommand);
@@ -68,7 +75,7 @@ describe('Application Handlers tests', () => {
       courseId: 'course-1',
       name: 'IELTS Complete Prep Course',
       displayOrder: 1,
-      expectedVersion: 0
+      expectedVersion: 0,
     };
 
     const courseId = await courseHandler.execute(courseCommand);

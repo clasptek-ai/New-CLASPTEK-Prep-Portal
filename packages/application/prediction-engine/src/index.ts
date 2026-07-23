@@ -16,7 +16,7 @@ import {
   PredictionInterventionCatalogueEntry,
   LearningVelocitySnapshot,
   PredictionLifecycleMetrics,
-  PredictionModel
+  PredictionModel,
 } from '@clasptek/domain-prediction-engine';
 import { randomUUID } from 'crypto';
 
@@ -36,7 +36,11 @@ export interface ReadinessPredictionRepository {
   save(prediction: ReadinessPrediction, latencyMs?: number): Promise<void>;
   findById(id: string): Promise<ReadinessPrediction | null>;
   findLatestByStudent(studentId: string, profileId: string): Promise<ReadinessPrediction | null>;
-  findHistoryByStudent(studentId: string, profileId: string, limit?: number): Promise<ReadinessPrediction[]>;
+  findHistoryByStudent(
+    studentId: string,
+    profileId: string,
+    limit?: number
+  ): Promise<ReadinessPrediction[]>;
   search(filters: PredictionSearchFilters): Promise<ReadinessPrediction[]>;
 }
 
@@ -140,7 +144,12 @@ export class GeneratePredictionHandler {
     // 1. Resolve model version (Check experiment traffic split first)
     let modelVersionId = 'b0000000-0000-0000-0000-000000000101'; // Default Bayesian
     let algorithmType = 'BAYESIAN';
-    let mockConfig: Record<string, any> = { p_init: 0.5, p_transit: 0.1, p_slip: 0.1, p_guess: 0.2 };
+    let mockConfig: Record<string, any> = {
+      p_init: 0.5,
+      p_transit: 0.1,
+      p_slip: 0.1,
+      p_guess: 0.2,
+    };
 
     const activeExperiment = await this.experimentRepo.findActiveExperiment();
     if (activeExperiment && activeExperiment.status === 'RUNNING') {
@@ -164,7 +173,7 @@ export class GeneratePredictionHandler {
       } else if (cmd.profileCode.includes('MOCK')) {
         algorithmType = 'MOCK';
         modelVersionId = 'b0000000-0000-0000-0000-000000000105';
-        mockConfig = { mock_score: 75.0, mock_confidence: 0.90 };
+        mockConfig = { mock_score: 75.0, mock_confidence: 0.9 };
       }
     }
 
@@ -186,7 +195,7 @@ export class GeneratePredictionHandler {
       studyStreak: cmd.studyStreak,
       competencyMastery: cmd.competencyMastery,
       forecastWindow: cmd.forecastWindow,
-      modelVersionId
+      modelVersionId,
     });
 
     // 4. Resolve Strategy Engine from Registry (Recommendation 2)
@@ -198,12 +207,15 @@ export class GeneratePredictionHandler {
     const latencyMs = Date.now() - startTime;
 
     // 6. Map results to value objects and entities
-    const overallScore = new ReadinessScore(result.overallScore, cmd.profileCode.includes('IELTS') ? 'band' : 'percentage');
+    const overallScore = new ReadinessScore(
+      result.overallScore,
+      cmd.profileCode.includes('IELTS') ? 'band' : 'percentage'
+    );
     const confidence = result.confidence;
 
     const featureSet = new PredictionFeatureSet({
       id: randomUUID(),
-      features: result.features
+      features: result.features,
     });
 
     const explanation = new PredictionExplanation({
@@ -215,35 +227,44 @@ export class GeneratePredictionHandler {
       featureContributionRanking: result.explanation.featureContributionRanking,
       predictionCertainty: result.explanation.predictionCertainty,
       topInfluencingCompetencies: result.explanation.topInfluencingCompetencies,
-      strongestRiskIndicators: result.explanation.strongestRiskIndicators
+      strongestRiskIndicators: result.explanation.strongestRiskIndicators,
     });
 
-    const evidence = result.evidence.map(e => new PredictionEvidence({
-      id: randomUUID(),
-      evidenceType: e.type,
-      evidenceSourceId: e.sourceId,
-      weight: e.weight,
-      description: e.description
-    }));
+    const evidence = result.evidence.map(
+      (e) =>
+        new PredictionEvidence({
+          id: randomUUID(),
+          evidenceType: e.type,
+          evidenceSourceId: e.sourceId,
+          weight: e.weight,
+          description: e.description,
+        })
+    );
 
-    const trends = result.trends.map(t => new PredictionTrend({
-      id: randomUUID(),
-      trendType: t.type,
-      slope: t.slope,
-      explanation: t.explanation
-    }));
+    const trends = result.trends.map(
+      (t) =>
+        new PredictionTrend({
+          id: randomUUID(),
+          trendType: t.type,
+          slope: t.slope,
+          explanation: t.explanation,
+        })
+    );
 
-    const interventions = result.interventions.map(i => {
-      const recommendations = i.recommendations.map(r => new PredictionRecommendation({
-        id: randomUUID(),
-        recommendationType: r.type,
-        priority: r.priority,
-        title: r.title,
-        description: r.description,
-        targetResourceId: r.targetResourceId,
-        targetCompetencyCode: r.targetCompetencyCode,
-        catalogueCode: r.catalogueCode
-      }));
+    const interventions = result.interventions.map((i) => {
+      const recommendations = i.recommendations.map(
+        (r) =>
+          new PredictionRecommendation({
+            id: randomUUID(),
+            recommendationType: r.type,
+            priority: r.priority,
+            title: r.title,
+            description: r.description,
+            targetResourceId: r.targetResourceId,
+            targetCompetencyCode: r.targetCompetencyCode,
+            catalogueCode: r.catalogueCode,
+          })
+      );
       return new PredictionIntervention({
         id: randomUUID(),
         studentId: cmd.studentId,
@@ -251,7 +272,7 @@ export class GeneratePredictionHandler {
         riskScore: i.riskScore,
         triggerReason: i.triggerReason,
         status: 'PROPOSED',
-        recommendations
+        recommendations,
       });
     });
 
@@ -259,10 +280,18 @@ export class GeneratePredictionHandler {
     const prediction = ReadinessPrediction.generate({
       studentId: cmd.studentId,
       profileId: cmd.profileId,
-      modelVersionId
+      modelVersionId,
     });
 
-    prediction.completePrediction(overallScore, confidence, featureSet, explanation, evidence, trends, interventions);
+    prediction.completePrediction(
+      overallScore,
+      confidence,
+      featureSet,
+      explanation,
+      evidence,
+      trends,
+      interventions
+    );
 
     await this.snapshotRepo.save(snapshot);
     await this.predictionRepo.save(prediction, latencyMs);
@@ -273,9 +302,11 @@ export class GeneratePredictionHandler {
       const velocitySnapshot = LearningVelocitySnapshot.create({
         studentId: cmd.studentId,
         activeHours: velocityValue,
-        questionsAnswered: cmd.practiceStatistics.accuracy ? Math.round(cmd.practiceStatistics.accuracy * 10) : 0,
+        questionsAnswered: cmd.practiceStatistics.accuracy
+          ? Math.round(cmd.practiceStatistics.accuracy * 10)
+          : 0,
         accelerationRate: 0.0,
-        stagnationIndicator: velocityValue < 1.0
+        stagnationIndicator: velocityValue < 1.0,
       });
       await this.velocityRepo.save(velocitySnapshot);
     }
@@ -351,7 +382,7 @@ export class TriggerInterventionHandler {
     if (!prediction) {
       throw new Error(`Prediction not found: ${cmd.predictionId}`);
     }
-    const intervention = prediction.interventions.find(i => i.id === cmd.interventionId);
+    const intervention = prediction.interventions.find((i) => i.id === cmd.interventionId);
     if (!intervention) {
       throw new Error(`Intervention not found: ${cmd.interventionId}`);
     }
@@ -368,7 +399,7 @@ export class CompleteInterventionHandler {
     if (!prediction) {
       throw new Error(`Prediction not found: ${cmd.predictionId}`);
     }
-    const intervention = prediction.interventions.find(i => i.id === cmd.interventionId);
+    const intervention = prediction.interventions.find((i) => i.id === cmd.interventionId);
     if (!intervention) {
       throw new Error(`Intervention not found: ${cmd.interventionId}`);
     }
@@ -385,7 +416,7 @@ export class DiscardInterventionHandler {
     if (!prediction) {
       throw new Error(`Prediction not found: ${cmd.predictionId}`);
     }
-    const intervention = prediction.interventions.find(i => i.id === cmd.interventionId);
+    const intervention = prediction.interventions.find((i) => i.id === cmd.interventionId);
     if (!intervention) {
       throw new Error(`Intervention not found: ${cmd.interventionId}`);
     }
@@ -401,7 +432,10 @@ export class DiscardInterventionHandler {
 export class GetLatestPredictionHandler {
   constructor(private readonly predictionRepo: ReadinessPredictionRepository) {}
 
-  public async execute(query: { studentId: string; profileId: string }): Promise<ReadinessPrediction | null> {
+  public async execute(query: {
+    studentId: string;
+    profileId: string;
+  }): Promise<ReadinessPrediction | null> {
     return this.predictionRepo.findLatestByStudent(query.studentId, query.profileId);
   }
 }
@@ -409,7 +443,11 @@ export class GetLatestPredictionHandler {
 export class GetPredictionHistoryHandler {
   constructor(private readonly predictionRepo: ReadinessPredictionRepository) {}
 
-  public async execute(query: { studentId: string; profileId: string; limit?: number }): Promise<ReadinessPrediction[]> {
+  public async execute(query: {
+    studentId: string;
+    profileId: string;
+    limit?: number;
+  }): Promise<ReadinessPrediction[]> {
     return this.predictionRepo.findHistoryByStudent(query.studentId, query.profileId, query.limit);
   }
 }
@@ -436,7 +474,11 @@ export class RecordPredictionOutcomeHandler {
     private readonly predictionRepo: ReadinessPredictionRepository
   ) {}
 
-  public async execute(cmd: { predictionId: string; studentId: string; actualScore: number }): Promise<{ outcomeId: string }> {
+  public async execute(cmd: {
+    predictionId: string;
+    studentId: string;
+    actualScore: number;
+  }): Promise<{ outcomeId: string }> {
     const prediction = await this.predictionRepo.findById(cmd.predictionId);
     if (!prediction) {
       throw new Error(`Prediction not found: ${cmd.predictionId}`);
@@ -449,7 +491,7 @@ export class RecordPredictionOutcomeHandler {
       predictionId: cmd.predictionId,
       studentId: cmd.studentId,
       predictedScore: prediction.overallReadinessScore.value,
-      actualScore: cmd.actualScore
+      actualScore: cmd.actualScore,
     });
 
     await this.outcomeRepo.save(outcome);
@@ -481,7 +523,7 @@ export class RegisterFeatureInCatalogueHandler {
       normalizationMethod: cmd.normalizationMethod,
       defaultWeight: cmd.defaultWeight,
       version: cmd.version,
-      ...(cmd.description !== undefined ? { description: cmd.description } : {})
+      ...(cmd.description !== undefined ? { description: cmd.description } : {}),
     });
 
     await this.featureCatalogueRepo.save(entry);
@@ -498,7 +540,9 @@ export class GetFeatureCatalogueHandler {
 }
 
 export class GetInterventionCatalogueHandler {
-  constructor(private readonly interventionCatalogueRepo: PredictionInterventionCatalogueRepository) {}
+  constructor(
+    private readonly interventionCatalogueRepo: PredictionInterventionCatalogueRepository
+  ) {}
 
   public async execute(): Promise<PredictionInterventionCatalogueEntry[]> {
     return this.interventionCatalogueRepo.findAll();
@@ -525,7 +569,8 @@ export class GetLifecycleMetricsHandler {
       totalDelta += outcome.calibrationDelta;
     }
     const totalOutcomes = outcomes.length;
-    const averageDrift = totalOutcomes > 0 ? parseFloat((totalDrift / totalOutcomes).toFixed(2)) : 0;
+    const averageDrift =
+      totalOutcomes > 0 ? parseFloat((totalDrift / totalOutcomes).toFixed(2)) : 0;
     const accuracyMAE = totalOutcomes > 0 ? parseFloat((totalDelta / totalOutcomes).toFixed(2)) : 0;
 
     const predictions = await this.predictionRepo.search({});
@@ -534,7 +579,7 @@ export class GetLifecycleMetricsHandler {
       averageDrift,
       totalPredictions: predictions.length,
       totalOutcomes,
-      accuracyMAE
+      accuracyMAE,
     };
   }
 }
@@ -552,7 +597,10 @@ export class CalculatePredictionLifecycleMetricsHandler {
 export class GetLearningVelocityHistoryHandler {
   constructor(private readonly velocityRepo: LearningVelocityRepository) {}
 
-  public async execute(query: { studentId: string; limit?: number }): Promise<LearningVelocitySnapshot[]> {
+  public async execute(query: {
+    studentId: string;
+    limit?: number;
+  }): Promise<LearningVelocitySnapshot[]> {
     return this.velocityRepo.findHistoryByStudent(query.studentId, query.limit);
   }
 }
@@ -560,7 +608,11 @@ export class GetLearningVelocityHistoryHandler {
 export class GetPredictionLifecycleMetricsHandler {
   constructor(private readonly metricsRepo: PredictionLifecycleMetricsRepository) {}
 
-  public async execute(query: { modelVersionId: string }): Promise<PredictionLifecycleMetrics | null> {
+  public async execute(query: {
+    modelVersionId: string;
+  }): Promise<PredictionLifecycleMetrics | null> {
     return this.metricsRepo.findLatestByModelVersion(query.modelVersionId);
   }
 }
+
+export * from './addendum';

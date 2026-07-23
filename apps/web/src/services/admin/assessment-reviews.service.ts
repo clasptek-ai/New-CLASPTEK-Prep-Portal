@@ -85,8 +85,8 @@ export const adminAssessmentReviewsService = {
           score: 82,
           readinessScore: 76,
           aiEvaluationStatus: 'COMPLETED',
-          status: 'SUBMITTED'
-        }
+          status: 'SUBMITTED',
+        },
       ];
     }
   },
@@ -109,14 +109,18 @@ export const adminAssessmentReviewsService = {
           score: 82,
           readinessScore: 76,
           aiEvaluationStatus: 'COMPLETED',
-          status: 'SUBMITTED'
+          status: 'SUBMITTED',
         },
         lifecycle: [
           { title: 'Assessment Assigned', timestamp: '2026-07-15T09:00:00Z' },
           { title: 'Started', timestamp: '2026-07-16T10:00:00Z' },
-          { title: 'Auto-save triggered', timestamp: '2026-07-16T10:15:00Z', details: 'Backup size: 1.2KB' },
+          {
+            title: 'Auto-save triggered',
+            timestamp: '2026-07-16T10:15:00Z',
+            details: 'Backup size: 1.2KB',
+          },
           { title: 'Submitted', timestamp: '2026-07-16T10:45:00Z' },
-          { title: 'AI Evaluation Completed', timestamp: '2026-07-16T10:46:00Z' }
+          { title: 'AI Evaluation Completed', timestamp: '2026-07-16T10:46:00Z' },
         ],
         questions: [
           {
@@ -132,12 +136,12 @@ export const adminAssessmentReviewsService = {
               'The book was written by Jane.',
               'Jane wrote the book.',
               'The book has written Jane.',
-              'Jane has written the book.'
+              'Jane has written the book.',
             ],
             correctAnswer: 'The book was written by Jane.',
             studentAnswer: 'The book was written by Jane.',
             isCorrect: true,
-            explanation: 'Passive voice shifts focus to the receiver of the action.'
+            explanation: 'Passive voice shifts focus to the receiver of the action.',
           },
           {
             questionId: 'q2',
@@ -149,29 +153,31 @@ export const adminAssessmentReviewsService = {
             marksAwarded: 16,
             questionText: 'Write a 250-word essay about AI tutor diagnostics integration.',
             correctAnswer: 'Syntactically accurate essay with band 8.0 cohesion rules.',
-            studentAnswer: 'In modern education systems, AI diagnostics assist students by scanning weak objectives...',
+            studentAnswer:
+              'In modern education systems, AI diagnostics assist students by scanning weak objectives...',
             isCorrect: true,
             essayWriting: {
-              submissionText: 'In modern education systems, AI diagnostics assist students by scanning weak objectives...',
+              submissionText:
+                'In modern education systems, AI diagnostics assist students by scanning weak objectives...',
               aiBandScore: 8.0,
               rubricCoherenceScore: 8.0,
               grammarFeedback: 'Excellent use of passive and active modifiers transitions.',
               vocabularyFeedback: 'Rich lexical variety matching band 8 requirements.',
-              taskAchievementFeedback: 'All prompt variables successfully covered.'
-            }
-          }
+              taskAchievementFeedback: 'All prompt variables successfully covered.',
+            },
+          },
         ],
         history: [
           { attemptId: 'att0', score: 58, date: '2026-06-10T11:00:00Z' },
           { attemptId: 'att0-2', score: 66, date: '2026-06-25T11:00:00Z' },
-          { attemptId: 'att0-3', score: 74, date: '2026-07-05T11:00:00Z' }
+          { attemptId: 'att0-3', score: 74, date: '2026-07-05T11:00:00Z' },
         ],
         integrity: {
           browserDevice: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0',
           ipAddress: '12.45.98.11',
           pausesCount: 0,
-          autoSaveRecoveries: 1
-        }
+          autoSaveRecoveries: 1,
+        },
       };
     }
   },
@@ -201,5 +207,5 @@ export const adminAssessmentReviewsService = {
     } catch {
       return true;
     }
-  }
+  },
 };

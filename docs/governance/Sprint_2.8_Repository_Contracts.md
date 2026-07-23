@@ -1,4 +1,5 @@
 # Sprint 2.8 — Repository Contracts
+
 ## AI Evaluation & Scoring Domain
 
 **Sprint:** 2.8
@@ -94,10 +95,10 @@ interface EvaluationSearchFilters {
 
 ## Postgres Implementations
 
-| Contract | Postgres Implementation |
-|---|---|
-| `EvaluationRepository` | `PostgresEvaluationRepository` — packages/persistence |
-| `HumanReviewRepository` | `PostgresHumanReviewRepository` — packages/persistence |
-| `ModelRepository` | `PostgresModelRepository` — packages/persistence |
-| `PromptRepository` | `PostgresPromptRepository` — packages/persistence |
+| Contract                      | Postgres Implementation                                      |
+| ----------------------------- | ------------------------------------------------------------ |
+| `EvaluationRepository`        | `PostgresEvaluationRepository` — packages/persistence        |
+| `HumanReviewRepository`       | `PostgresHumanReviewRepository` — packages/persistence       |
+| `ModelRepository`             | `PostgresModelRepository` — packages/persistence             |
+| `PromptRepository`            | `PostgresPromptRepository` — packages/persistence            |
 | `EvaluationProfileRepository` | `PostgresEvaluationProfileRepository` — packages/persistence |

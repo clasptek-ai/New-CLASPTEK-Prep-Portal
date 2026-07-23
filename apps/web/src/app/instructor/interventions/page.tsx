@@ -3,7 +3,7 @@ import { InterventionsScreen } from '../../../features/instructor/interventions/
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <InterventionsScreen />
     </WorkspaceShell>
   );

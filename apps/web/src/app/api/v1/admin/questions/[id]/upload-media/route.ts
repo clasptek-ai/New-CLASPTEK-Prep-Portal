@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getQuestionBankContext } from '@/lib/question-bank-context';
@@ -6,10 +9,7 @@ import { PermissionCode } from '@clasptek/domain-authorization';
 import { ApplicationError } from '@clasptek/kernel';
 import { SemanticVersion, QuestionMedia } from '@clasptek/domain-question-bank';
 
-export async function POST(
-  req: NextRequest,
-  _params: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, _params: { params: Promise<{ id: string }> }) {
   const { getQuestionHandler, questionRepo, logger } = await getQuestionBankContext();
   try {
     let token: string | null = null;
@@ -33,40 +33,72 @@ export async function POST(
     const { id } = await _params.params;
     const question = await getQuestionHandler.execute(id);
     if (!question) {
-      return NextResponse.json({ code: 'NOT_FOUND', message: 'Question not found' }, { status: 404 });
+      return NextResponse.json(
+        { code: 'NOT_FOUND', message: 'Question not found' },
+        { status: 404 }
+      );
     }
 
     const body = await req.json();
-    const { versionNo, mediaId, provider, bucket, objectKey, checksum, mimeType, fileSize, durationSeconds, transcript, caption, thumbnailKey, altText } = body;
-
-    if (!versionNo || !mediaId || !provider || !bucket || !objectKey || !mimeType || fileSize === undefined) {
-      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing media parameters' }, { status: 400 });
-    }
-
-    const media = new QuestionMedia(
+    const {
+      versionNo,
       mediaId,
       provider,
       bucket,
       objectKey,
-      checksum || '',
+      checksum,
       mimeType,
       fileSize,
-      durationSeconds || null,
-      transcript || null,
-      caption || null,
-      thumbnailKey || null,
-      altText || null
-    );
+      durationSeconds,
+      transcript,
+      caption,
+      thumbnailKey,
+      altText,
+    } = body;
+
+    if (
+      !versionNo ||
+      !mediaId ||
+      !provider ||
+      !bucket ||
+      !objectKey ||
+      !mimeType ||
+      fileSize === undefined
+    ) {
+      return NextResponse.json(
+        { code: 'VALIDATION_ERROR', message: 'Missing media parameters' },
+        { status: 400 }
+      );
+    }
+
+    const media: any = new QuestionMedia(mediaId, objectKey, 'primary', 1);
+    media.provider = provider;
+    media.bucket = bucket;
+    media.objectKey = objectKey;
+    media.checksum = checksum || '';
+    media.mimeType = mimeType;
+    media.fileSize = fileSize;
+    media.durationSeconds = durationSeconds || null;
+    media.transcript = transcript || null;
+    media.caption = caption || null;
+    media.thumbnailKey = thumbnailKey || null;
+    media.altText = altText || null;
 
     question.addMedia(new SemanticVersion(versionNo), media);
     await questionRepo.save(question);
 
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
-    logger.error('POST /api/v1/admin/questions/[id]/upload-media failure', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      'POST /api/v1/admin/questions/[id]/upload-media failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
     if (err instanceof ApplicationError) {
       return NextResponse.json({ code: err.name, message: err.message }, { status: 400 });
     }
-    return NextResponse.json({ code: 'INTERNAL_ERROR', message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

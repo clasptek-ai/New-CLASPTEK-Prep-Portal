@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getStudentLearningContext } from '@/lib/student-learning-context';
 
@@ -7,7 +9,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { journeyId, sessionId, durationMs, completionReason } = body;
     if (!journeyId || !sessionId || durationMs === undefined) {
-      return NextResponse.json({ error: 'journeyId, sessionId, durationMs are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'journeyId, sessionId, durationMs are required' },
+        { status: 400 }
+      );
     }
 
     await ctx.endSession.execute({ journeyId, sessionId, durationMs, completionReason });

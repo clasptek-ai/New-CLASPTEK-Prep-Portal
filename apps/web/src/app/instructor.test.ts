@@ -6,12 +6,12 @@ vi.mock('next/navigation', () => {
     usePathname: () => '/instructor/dashboard',
     useRouter: () => ({
       push: vi.fn(),
-      prefetch: vi.fn()
+      prefetch: vi.fn(),
     }),
     use: (promise: any) => {
       // Basic mock of React.use for params promise
       return { studentId: 's2', cohortId: 'c1', assessmentId: 'a1' };
-    }
+    },
   };
 });
 
@@ -20,8 +20,8 @@ vi.mock('../providers/theme-provider', () => {
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
     useTheme: () => ({
       theme: 'dark',
-      setTheme: vi.fn()
-    })
+      setTheme: vi.fn(),
+    }),
   };
 });
 

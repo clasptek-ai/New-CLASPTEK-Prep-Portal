@@ -1,0 +1,17 @@
+{
+  "name": "@clasptek/design-tokens",
+  "version": "3.0.0",
+  "description": "Single source of truth design tokens for Clasptek Prep Portal V2",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build:tokens": "ts-node scripts/build-tokens.ts",
+    "build": "tsc -b",
+    "test": "vitest run"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^2.1.0"
+  }
+}

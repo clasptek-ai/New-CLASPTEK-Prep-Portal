@@ -19,5 +19,5 @@ export const adminNavigation: AdminNavigationItem[] = [
   { name: 'Feature Flags', href: '/admin/feature-flags', icon: 'ToggleLeft' },
   { name: 'Platform Analytics', href: '/admin/analytics', icon: 'BarChart' },
   { name: 'Maintenance Mode', href: '/admin/maintenance', icon: 'Settings' },
-  { name: 'Platform Settings', href: '/admin/settings', icon: 'Sliders' }
+  { name: 'Platform Settings', href: '/admin/settings', icon: 'Sliders' },
 ];

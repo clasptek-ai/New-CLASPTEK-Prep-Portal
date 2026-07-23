@@ -52,7 +52,7 @@ export class PostgresStorageAssetRepository implements StorageAssetRepository {
         asset.validatedAt,
         asset.promotedAt,
         asset.retentionUntil,
-        asset.lockVersion
+        asset.lockVersion,
       ]);
 
       // In case upload sessions are mapped, update upload status
@@ -63,7 +63,7 @@ export class PostgresStorageAssetRepository implements StorageAssetRepository {
         [
           asset.availabilityStatus === 'available' ? 'uploaded' : 'uploading',
           asset.promotedAt,
-          asset.id
+          asset.id,
         ]
       );
 
@@ -127,8 +127,10 @@ export class PostgresStorageAssetRepository implements StorageAssetRepository {
       row.etag,
       row.storage_class,
       row.integrity_status as 'unchecked' | 'validated' | 'failed',
-      row.security_status as 'unchecked' | 'scanning' | 'validated_clear' | 'quarantined' | 'failed',
-      row.availability_status as 'unavailable' | 'available' | 'archived' | 'deletion_pending' | 'deleted',
+      row.security_status as
+        'unchecked' | 'scanning' | 'validated_clear' | 'quarantined' | 'failed',
+      row.availability_status as
+        'unavailable' | 'available' | 'archived' | 'deletion_pending' | 'deleted',
       row.uploaded_at,
       row.validated_at,
       row.promoted_at,

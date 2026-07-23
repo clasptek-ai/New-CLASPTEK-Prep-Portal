@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getCurriculumContext } from '@/lib/curriculum-context';
@@ -5,10 +7,7 @@ import { AccessControlGuard } from '@clasptek/infrastructure-access-control';
 import { PermissionCode } from '@clasptek/domain-authorization';
 import { ApplicationError } from '@clasptek/kernel';
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { archiveCurriculumHandler, logger } = await getCurriculumContext();
   try {
     const resolvedParams = await params;
@@ -38,21 +37,30 @@ export async function POST(
     const { expectedVersion } = body;
 
     if (expectedVersion === undefined) {
-      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing expectedVersion' }, { status: 400 });
+      return NextResponse.json(
+        { code: 'VALIDATION_ERROR', message: 'Missing expectedVersion' },
+        { status: 400 }
+      );
     }
 
     await archiveCurriculumHandler.execute({
       curriculumId,
       expectedVersion,
-      actorId
+      actorId,
     });
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err: unknown) {
-    logger.error('POST /api/v1/admin/curricula/[id]/archive failure', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      'POST /api/v1/admin/curricula/[id]/archive failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
     if (err instanceof ApplicationError) {
       return NextResponse.json({ code: err.name, message: err.message }, { status: 400 });
     }
-    return NextResponse.json({ code: 'INTERNAL_ERROR', message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

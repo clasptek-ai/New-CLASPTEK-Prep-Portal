@@ -5,11 +5,9 @@ import {
   PostgresUnitOfWork,
   PostgresExamProductRepository,
   PostgresBlueprintRepository,
-  PostgresSkillFrameworkRepository
+  PostgresSkillFrameworkRepository,
 } from '@clasptek/persistence';
-import {
-  ExamProductPublishingService
-} from '@clasptek/domain-exam-product';
+import { ExamProductPublishingService } from '@clasptek/domain-exam-product';
 import {
   CreateExamProductHandler,
   PublishExamProductHandler,
@@ -17,7 +15,7 @@ import {
   CreateBlueprintHandler,
   GetExamProductsHandler,
   GetSkillHierarchyHandler,
-  GetBlueprintHandler
+  GetBlueprintHandler,
 } from '@clasptek/application-exam-product';
 
 interface ExamContext {
@@ -66,7 +64,11 @@ export async function getExamContext(): Promise<ExamContext> {
     skillFrameworkRepo,
 
     createExamProductHandler: new CreateExamProductHandler(examProductRepo, uow),
-    publishExamProductHandler: new PublishExamProductHandler(examProductRepo, publishingService, uow),
+    publishExamProductHandler: new PublishExamProductHandler(
+      examProductRepo,
+      publishingService,
+      uow
+    ),
     archiveExamProductHandler: new ArchiveExamProductHandler(examProductRepo, uow),
     createBlueprintHandler: new CreateBlueprintHandler(blueprintRepo, uow),
     getExamProductsHandler: new GetExamProductsHandler(examProductRepo),

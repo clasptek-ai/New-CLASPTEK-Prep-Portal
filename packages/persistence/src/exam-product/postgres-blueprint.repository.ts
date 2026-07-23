@@ -1,8 +1,14 @@
-import { AssessmentBlueprintRepository, AssessmentBlueprint, AssessmentBlueprintItem } from '@clasptek/domain-exam-product';
+import {
+  AssessmentBlueprintRepository,
+  AssessmentBlueprint,
+  AssessmentBlueprintItem,
+} from '@clasptek/domain-exam-product';
 import { BlueprintReadService, BlueprintReadModel } from '@clasptek/application-exam-product';
 import { PostgresUnitOfWork } from './postgres-unit-of-work';
 
-export class PostgresBlueprintRepository implements AssessmentBlueprintRepository, BlueprintReadService {
+export class PostgresBlueprintRepository
+  implements AssessmentBlueprintRepository, BlueprintReadService
+{
   constructor(private readonly uow: PostgresUnitOfWork) {}
 
   private get client() {
@@ -10,19 +16,28 @@ export class PostgresBlueprintRepository implements AssessmentBlueprintRepositor
   }
 
   public async findById(id: string): Promise<AssessmentBlueprint | null> {
-    const res = await this.client.query('SELECT * FROM assessment_blueprints WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const res = await this.client.query(
+      'SELECT * FROM assessment_blueprints WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async findByCode(code: string): Promise<AssessmentBlueprint | null> {
-    const res = await this.client.query('SELECT * FROM assessment_blueprints WHERE code = $1 AND deleted_at IS NULL', [code]);
+    const res = await this.client.query(
+      'SELECT * FROM assessment_blueprints WHERE code = $1 AND deleted_at IS NULL',
+      [code]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async exists(code: string): Promise<boolean> {
-    const res = await this.client.query('SELECT 1 FROM assessment_blueprints WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
+    const res = await this.client.query(
+      'SELECT 1 FROM assessment_blueprints WHERE code = $1 AND deleted_at IS NULL LIMIT 1',
+      [code]
+    );
     return res.rows.length > 0;
   }
 
@@ -91,7 +106,10 @@ export class PostgresBlueprintRepository implements AssessmentBlueprintRepositor
 
   // Read Model Queries
   public async getBlueprint(blueprintId: string): Promise<BlueprintReadModel[]> {
-    const res = await this.client.query('SELECT * FROM vw_assessment_blueprints WHERE blueprint_id = $1', [blueprintId]);
+    const res = await this.client.query(
+      'SELECT * FROM vw_assessment_blueprints WHERE blueprint_id = $1',
+      [blueprintId]
+    );
     return res.rows.map((r: any) => ({
       blueprintId: r.blueprint_id,
       blueprintCode: r.blueprint_code,
@@ -130,7 +148,10 @@ export class PostgresBlueprintRepository implements AssessmentBlueprintRepositor
     );
 
     // Hydrate items
-    const itemRes = await this.client.query('SELECT * FROM assessment_blueprint_items WHERE assessment_blueprint_id = $1 AND deleted_at IS NULL', [blueprint.id]);
+    const itemRes = await this.client.query(
+      'SELECT * FROM assessment_blueprint_items WHERE assessment_blueprint_id = $1 AND deleted_at IS NULL',
+      [blueprint.id]
+    );
     const items = itemRes.rows.map(
       (i: any) =>
         new AssessmentBlueprintItem(

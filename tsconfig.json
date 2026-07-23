@@ -35,6 +35,18 @@
     { "path": "./packages/domain/adaptive-practice" },
     { "path": "./packages/application/adaptive-practice" },
     { "path": "./packages/domain/assessment-runtime" },
-    { "path": "./packages/application/assessment-runtime" }
+    { "path": "./packages/application/assessment-runtime" },
+    { "path": "./packages/domain/diagnostic-placement" },
+    { "path": "./packages/application/diagnostic-placement" },
+    { "path": "./packages/domain/mock-examination" },
+    { "path": "./packages/application/mock-examination" },
+    { "path": "./packages/domain/learning-assistant" },
+    { "path": "./packages/application/learning-assistant" },
+    { "path": "./packages/domain/results" },
+    { "path": "./packages/application/results" },
+    { "path": "./packages/domain/notification" },
+    { "path": "./packages/domain/announcement" },
+    { "path": "./packages/application/notification" },
+    { "path": "./packages/application/announcement" }
   ]
 }

@@ -205,7 +205,12 @@ export class Guard {
     }
   }
 
-  public static againstOutOfRange(value: number, min: number, max: number, argumentName: string): void {
+  public static againstOutOfRange(
+    value: number,
+    min: number,
+    max: number,
+    argumentName: string
+  ): void {
     if (value < min || value > max) {
       throw new ValidationError(`${argumentName} must be between ${min} and ${max}.`);
     }
@@ -232,7 +237,10 @@ export abstract class Specification<T> {
 }
 
 class AndSpecification<T> extends Specification<T> {
-  constructor(private readonly left: Specification<T>, private readonly right: Specification<T>) {
+  constructor(
+    private readonly left: Specification<T>,
+    private readonly right: Specification<T>
+  ) {
     super();
   }
 
@@ -242,7 +250,10 @@ class AndSpecification<T> extends Specification<T> {
 }
 
 class OrSpecification<T> extends Specification<T> {
-  constructor(private readonly left: Specification<T>, private readonly right: Specification<T>) {
+  constructor(
+    private readonly left: Specification<T>,
+    private readonly right: Specification<T>
+  ) {
     super();
   }
 
@@ -260,4 +271,3 @@ class NotSpecification<T> extends Specification<T> {
     return !this.spec.isSatisfiedBy(candidate);
   }
 }
-

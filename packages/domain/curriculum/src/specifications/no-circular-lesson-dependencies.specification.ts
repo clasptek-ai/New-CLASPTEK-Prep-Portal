@@ -4,7 +4,7 @@ import { LessonPrerequisite } from '../entities/lesson-prerequisite.entity';
 export class NoCircularLessonDependenciesSpecification extends Specification<LessonPrerequisite[]> {
   public isSatisfiedBy(prerequisites: LessonPrerequisite[]): boolean {
     const adj: Map<string, string[]> = new Map();
-    prerequisites.forEach(p => {
+    prerequisites.forEach((p) => {
       if (p.status === 'active' && p.isMandatory) {
         const list = adj.get(p.lessonId) || [];
         list.push(p.prerequisiteLessonId);

@@ -91,14 +91,16 @@ describe('AssessmentSession Lifecycle & State Machine', () => {
     session.start(new Date());
     session.submit({ signature: 'sig-abc', serverId: 'server-1', submittedAt: new Date() });
 
-    expect(() => session.saveAnswer({
-      questionId: 'q-1',
-      questionVersionId: 'qv-1',
-      payload: { choice: 'A' },
-      state: 'ANSWERED',
-      timeSpentMs: 5000,
-      recordedAt: new Date(),
-    })).toThrow();
+    expect(() =>
+      session.saveAnswer({
+        questionId: 'q-1',
+        questionVersionId: 'qv-1',
+        payload: { choice: 'A' },
+        state: 'ANSWERED',
+        timeSpentMs: 5000,
+        recordedAt: new Date(),
+      })
+    ).toThrow();
   });
 
   it('records heartbeats and rejects backward clock warnings', () => {
@@ -114,13 +116,15 @@ describe('AssessmentSession Lifecycle & State Machine', () => {
 
     expect(session.heartbeats).toHaveLength(1);
 
-    expect(() => session.recordHeartbeat({
-      elapsedTimeMs: 5000, // Backwards!
-      activeQuestionId: 'q-1',
-      browserVisibility: 'visible',
-      networkStatus: 'online',
-      recordedAt: new Date(),
-    })).toThrow();
+    expect(() =>
+      session.recordHeartbeat({
+        elapsedTimeMs: 5000, // Backwards!
+        activeQuestionId: 'q-1',
+        browserVisibility: 'visible',
+        networkStatus: 'online',
+        recordedAt: new Date(),
+      })
+    ).toThrow();
   });
 
   it('records security incidents', () => {
@@ -183,13 +187,15 @@ describe('AssessmentSession Lifecycle & State Machine', () => {
 
     expect(session.checkpoint?.checkpointVersion).toBe(1);
 
-    expect(() => session.createCheckpoint({
-      checkpointVersion: 1, // Duplicate or lower version!
-      activeQuestionId: 'q-1',
-      elapsedTimeMs: 15000,
-      answersSnapshot: { 'qv-1': { choice: 'A' } },
-      checksum: 'check-123',
-      recordedAt: new Date(),
-    })).toThrow();
+    expect(() =>
+      session.createCheckpoint({
+        checkpointVersion: 1, // Duplicate or lower version!
+        activeQuestionId: 'q-1',
+        elapsedTimeMs: 15000,
+        answersSnapshot: { 'qv-1': { choice: 'A' } },
+        checksum: 'check-123',
+        recordedAt: new Date(),
+      })
+    ).toThrow();
   });
 });

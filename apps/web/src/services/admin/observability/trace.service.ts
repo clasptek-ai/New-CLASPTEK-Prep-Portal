@@ -19,15 +19,15 @@ export const adminTraceService = {
   async getTraces(): Promise<TraceInstance[]> {
     try {
       return await apiClient.get<TraceInstance[]>('/api/v1/admin/observability/traces');
-    } catch (e) {
+    } catch (_e) {
       return [
         {
           id: 't1',
-          path: 'POST /api/v1/coach/conversations',
+          path: 'POST /api/v1/learning-assistant/daily',
           totalDurationMs: 380,
           rootSpan: {
             id: 's1',
-            name: 'HTTP POST /api/v1/coach/conversations',
+            name: 'HTTP POST /api/v1/learning-assistant/daily',
             durationMs: 380,
             service: 'web-gateway',
             children: [
@@ -35,24 +35,24 @@ export const adminTraceService = {
                 id: 's2',
                 name: 'Verify Authorization Bearer token',
                 durationMs: 35,
-                service: 'auth-service'
+                service: 'auth-service',
               },
               {
                 id: 's3',
                 name: 'Query Session Postgres Database',
                 durationMs: 45,
-                service: 'database-engine'
+                service: 'database-engine',
               },
               {
                 id: 's4',
                 name: 'Invoke OpenAI LLM Completion',
                 durationMs: 300,
-                service: 'ai-provider-service'
-              }
-            ]
-          }
-        }
+                service: 'ai-provider-service',
+              },
+            ],
+          },
+        },
       ];
     }
-  }
+  },
 };

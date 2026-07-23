@@ -11,10 +11,7 @@ import {
   type AnswerSheetRepository,
   type CheckpointRepository,
 } from './index';
-import {
-  AssessmentSession,
-  StudentAnswerSheet,
-} from '@clasptek/domain-assessment-runtime';
+import { AssessmentSession, StudentAnswerSheet } from '@clasptek/domain-assessment-runtime';
 
 describe('Assessment Application Command Handlers', () => {
   const mkMocks = () => {

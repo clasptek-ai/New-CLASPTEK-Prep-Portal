@@ -6,7 +6,7 @@ import {
   LearningResource,
   ResourceCode,
   LearningResourceRepository,
-  LearningResourceSearchFilters
+  LearningResourceSearchFilters,
 } from '@clasptek/domain-learning-resources';
 import { NotFoundError, ConflictError } from '@clasptek/kernel';
 
@@ -22,7 +22,18 @@ export interface CreateLessonCommand {
 export interface CreateResourceCommand {
   lessonId: string;
   code: string;
-  resourceType: 'VIDEO' | 'AUDIO' | 'PDF' | 'ARTICLE' | 'MARKDOWN' | 'PRESENTATION' | 'DOWNLOAD' | 'IMAGE' | 'EXERCISE' | 'ASSIGNMENT' | 'EXTERNAL_LINK';
+  resourceType:
+    | 'VIDEO'
+    | 'AUDIO'
+    | 'PDF'
+    | 'ARTICLE'
+    | 'MARKDOWN'
+    | 'PRESENTATION'
+    | 'DOWNLOAD'
+    | 'IMAGE'
+    | 'EXERCISE'
+    | 'ASSIGNMENT'
+    | 'EXTERNAL_LINK';
   slug: string;
   name: string;
   description: string;

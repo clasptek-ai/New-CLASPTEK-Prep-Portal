@@ -6,7 +6,7 @@ import {
   MasteryPercentage,
   SequenceNumber,
   NoCircularModuleDependenciesSpecification,
-  ModulePrerequisite
+  ModulePrerequisite,
 } from './index';
 import { ValidationError } from '@clasptek/kernel';
 
@@ -41,11 +41,11 @@ describe('Curriculum Domain Value Objects and Specifications Tests', () => {
   });
 
   test('MasteryPercentage range checks', () => {
-    const pct = new MasteryPercentage(85.50);
-    expect(pct.value).toBe(85.50);
+    const pct = new MasteryPercentage(85.5);
+    expect(pct.value).toBe(85.5);
 
-    expect(() => new MasteryPercentage(-1.00)).toThrow(ValidationError);
-    expect(() => new MasteryPercentage(100.50)).toThrow(ValidationError);
+    expect(() => new MasteryPercentage(-1.0)).toThrow(ValidationError);
+    expect(() => new MasteryPercentage(100.5)).toThrow(ValidationError);
   });
 
   test('SequenceNumber non-negative checks', () => {
@@ -60,15 +60,67 @@ describe('Curriculum Domain Value Objects and Specifications Tests', () => {
 
     // No cycle
     const prereqs1: ModulePrerequisite[] = [
-      new ModulePrerequisite('p-1', 'v-1', 'MOD-A', 'MOD-B', 'module_completion', 100, 100, undefined, undefined, true, undefined, 'active'),
-      new ModulePrerequisite('p-2', 'v-1', 'MOD-B', 'MOD-C', 'module_completion', 100, 100, undefined, undefined, true, undefined, 'active')
+      new ModulePrerequisite(
+        'p-1',
+        'v-1',
+        'MOD-A',
+        'MOD-B',
+        'module_completion',
+        100,
+        100,
+        undefined,
+        undefined,
+        true,
+        undefined,
+        'active'
+      ),
+      new ModulePrerequisite(
+        'p-2',
+        'v-1',
+        'MOD-B',
+        'MOD-C',
+        'module_completion',
+        100,
+        100,
+        undefined,
+        undefined,
+        true,
+        undefined,
+        'active'
+      ),
     ];
     expect(spec.isSatisfiedBy(prereqs1)).toBe(true);
 
     // Cycle A -> B -> A
     const prereqs2: ModulePrerequisite[] = [
-      new ModulePrerequisite('p-1', 'v-1', 'MOD-A', 'MOD-B', 'module_completion', 100, 100, undefined, undefined, true, undefined, 'active'),
-      new ModulePrerequisite('p-2', 'v-1', 'MOD-B', 'MOD-A', 'module_completion', 100, 100, undefined, undefined, true, undefined, 'active')
+      new ModulePrerequisite(
+        'p-1',
+        'v-1',
+        'MOD-A',
+        'MOD-B',
+        'module_completion',
+        100,
+        100,
+        undefined,
+        undefined,
+        true,
+        undefined,
+        'active'
+      ),
+      new ModulePrerequisite(
+        'p-2',
+        'v-1',
+        'MOD-B',
+        'MOD-A',
+        'module_completion',
+        100,
+        100,
+        undefined,
+        undefined,
+        true,
+        undefined,
+        'active'
+      ),
     ];
     expect(spec.isSatisfiedBy(prereqs2)).toBe(false);
   });

@@ -4,7 +4,7 @@ import { ResourceCode, SemanticVersion } from '../value-objects/learning-resourc
 import {
   ResourceVersionCreated,
   ResourceVersionPublished,
-  ResourceArchived
+  ResourceArchived,
 } from '../events/learning-resource-events';
 
 export class MediaAsset extends Entity<string> {
@@ -161,7 +161,18 @@ export class LearningResource extends AggregateRoot<string> {
     id: string,
     public readonly lessonId: string,
     public readonly code: ResourceCode,
-    public readonly resourceType: 'VIDEO' | 'AUDIO' | 'PDF' | 'ARTICLE' | 'MARKDOWN' | 'PRESENTATION' | 'DOWNLOAD' | 'IMAGE' | 'EXERCISE' | 'ASSIGNMENT' | 'EXTERNAL_LINK',
+    public readonly resourceType:
+      | 'VIDEO'
+      | 'AUDIO'
+      | 'PDF'
+      | 'ARTICLE'
+      | 'MARKDOWN'
+      | 'PRESENTATION'
+      | 'DOWNLOAD'
+      | 'IMAGE'
+      | 'EXERCISE'
+      | 'ASSIGNMENT'
+      | 'EXTERNAL_LINK',
     public slug: string,
     public name: string,
     public description: string,
@@ -173,7 +184,21 @@ export class LearningResource extends AggregateRoot<string> {
     public deletedAt: Date | null = null
   ) {
     super(id);
-    if (!['VIDEO', 'AUDIO', 'PDF', 'ARTICLE', 'MARKDOWN', 'PRESENTATION', 'DOWNLOAD', 'IMAGE', 'EXERCISE', 'ASSIGNMENT', 'EXTERNAL_LINK'].includes(resourceType)) {
+    if (
+      ![
+        'VIDEO',
+        'AUDIO',
+        'PDF',
+        'ARTICLE',
+        'MARKDOWN',
+        'PRESENTATION',
+        'DOWNLOAD',
+        'IMAGE',
+        'EXERCISE',
+        'ASSIGNMENT',
+        'EXTERNAL_LINK',
+      ].includes(resourceType)
+    ) {
       throw new DomainError(`Invalid resource type: ${resourceType}`, 'INVALID_RESOURCE_TYPE');
     }
   }
@@ -182,13 +207,35 @@ export class LearningResource extends AggregateRoot<string> {
     id: string,
     lessonId: string,
     code: ResourceCode,
-    resourceType: 'VIDEO' | 'AUDIO' | 'PDF' | 'ARTICLE' | 'MARKDOWN' | 'PRESENTATION' | 'DOWNLOAD' | 'IMAGE' | 'EXERCISE' | 'ASSIGNMENT' | 'EXTERNAL_LINK',
+    resourceType:
+      | 'VIDEO'
+      | 'AUDIO'
+      | 'PDF'
+      | 'ARTICLE'
+      | 'MARKDOWN'
+      | 'PRESENTATION'
+      | 'DOWNLOAD'
+      | 'IMAGE'
+      | 'EXERCISE'
+      | 'ASSIGNMENT'
+      | 'EXTERNAL_LINK',
     slug: string,
     name: string,
     description: string,
     displayOrder: number
   ): LearningResource {
-    return new LearningResource(id, lessonId, code, resourceType, slug, name, description, displayOrder, 'DRAFT', 0);
+    return new LearningResource(
+      id,
+      lessonId,
+      code,
+      resourceType,
+      slug,
+      name,
+      description,
+      displayOrder,
+      'DRAFT',
+      0
+    );
   }
 
   public update(name: string, description: string) {
@@ -206,7 +253,7 @@ export class LearningResource extends AggregateRoot<string> {
     if (this.status === 'ARCHIVED') {
       throw new DomainError('Cannot create versions for archived resource.', 'RESOURCE_ARCHIVED');
     }
-    if (this.versions.some(v => v.versionNo.value === versionNo.value)) {
+    if (this.versions.some((v) => v.versionNo.value === versionNo.value)) {
       throw new DomainError(`Version ${versionNo.value} already exists.`, 'DUPLICATE_VERSION');
     }
     const version = new ResourceVersion(versionId, this.id, versionNo, 'DRAFT', name, description);
@@ -229,9 +276,23 @@ export class LearningResource extends AggregateRoot<string> {
     hashAlgorithm?: string,
     encryptionStatus?: string
   ) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
-    if (!version) throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
-    const media = new MediaAsset(mediaId, version.id, provider, bucket, objectKey, region, checksum, mimeType, size, duration, hashAlgorithm, encryptionStatus);
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
+    if (!version)
+      throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
+    const media = new MediaAsset(
+      mediaId,
+      version.id,
+      provider,
+      bucket,
+      objectKey,
+      region,
+      checksum,
+      mimeType,
+      size,
+      duration,
+      hashAlgorithm,
+      encryptionStatus
+    );
     version.setMediaAsset(media);
   }
 
@@ -243,39 +304,45 @@ export class LearningResource extends AggregateRoot<string> {
     mimeType: string,
     objectKey: string
   ) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
-    if (!version) throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
+    if (!version)
+      throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
     const att = new Attachment(attachmentId, version.id, name, fileSize, mimeType, objectKey);
     version.addAttachment(att);
   }
 
   public addDownload(versionNo: SemanticVersion, id: string, url: string, title: string) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
-    if (!version) throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
+    if (!version)
+      throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
     version.addDownload(new Download(id, version.id, url, title));
   }
 
   public addExternalLink(versionNo: SemanticVersion, id: string, url: string, title: string) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
-    if (!version) throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
+    if (!version)
+      throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
     version.addExternalLink(new ExternalLink(id, version.id, url, title));
   }
 
   public addTranscript(versionNo: SemanticVersion, id: string, text: string, lang: string) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
-    if (!version) throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
+    if (!version)
+      throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
     version.addTranscript(new Transcript(id, version.id, text, lang));
   }
 
   public addCaption(versionNo: SemanticVersion, id: string, text: string, lang: string) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
-    if (!version) throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
+    if (!version)
+      throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
     version.addCaption(new Caption(id, version.id, text, lang));
   }
 
   public setMetadata(versionNo: SemanticVersion, key: string, value: string) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
-    if (!version) throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
+    if (!version)
+      throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
     version.setMetadata(key, value);
   }
 
@@ -283,7 +350,7 @@ export class LearningResource extends AggregateRoot<string> {
     if (this.status === 'ARCHIVED') {
       throw new DomainError('Cannot publish an archived resource.', 'RESOURCE_ARCHIVED');
     }
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
     if (!version) {
       throw new DomainError(`Version ${versionNo.value} not found.`, 'VERSION_NOT_FOUND');
     }

@@ -1,5 +1,8 @@
 import { Pool } from 'pg';
-import { ResourceCollection, ResourceCollectionRepository } from '@clasptek/domain-learning-resources';
+import {
+  ResourceCollection,
+  ResourceCollectionRepository,
+} from '@clasptek/domain-learning-resources';
 import { randomUUID } from 'crypto';
 
 export class PostgresResourceCollectionRepository implements ResourceCollectionRepository {
@@ -35,13 +38,16 @@ export class PostgresResourceCollectionRepository implements ResourceCollectionR
         collection.description,
         collection.displayOrder,
         collection.status,
-        collection.lockVersion
+        collection.lockVersion,
       ]);
 
       // 2. Sync members list inside collection_resources
       // Clear old members
-      await client.query(`DELETE FROM public.collection_resources WHERE resource_collection_id = $1`, [collection.id]);
-      
+      await client.query(
+        `DELETE FROM public.collection_resources WHERE resource_collection_id = $1`,
+        [collection.id]
+      );
+
       // Re-insert sorted membership lists
       let order = 1;
       for (const resId of collection.resourceIds) {
@@ -105,7 +111,7 @@ export class PostgresResourceCollectionRepository implements ResourceCollectionR
       row.deleted_at
     );
 
-    col.setResourceIds(resourcesRes.rows.map(r => r.learning_resource_id));
+    col.setResourceIds(resourcesRes.rows.map((r) => r.learning_resource_id));
     return col;
   }
 }

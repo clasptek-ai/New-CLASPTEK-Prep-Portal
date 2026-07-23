@@ -25,5 +25,5 @@ export const adminReportsService = {
     } catch {
       return 'Programme Readiness Report successfully generated with chosen filters.';
     }
-  }
+  },
 };

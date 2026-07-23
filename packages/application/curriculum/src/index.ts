@@ -13,7 +13,7 @@ import {
   CurriculumTemplate,
   CurriculumTemplateRepository,
   ConcurrencyError,
-  DependencyVersion
+  DependencyVersion,
 } from '@clasptek/domain-curriculum';
 import { NotFoundError, ConflictError } from '@clasptek/kernel';
 
@@ -159,7 +159,7 @@ export class CreateCurriculumVersionHandler {
     );
 
     await this.versionRepository.save(version);
-    
+
     cur.lockVersion += 1;
     await this.curriculumRepository.save(cur);
 
@@ -202,7 +202,10 @@ export class AddLearningModuleHandler {
 
   public async execute(command: AddLearningModuleCommand): Promise<string> {
     const id = randomUUID();
-    const slug = command.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
+    const slug = command.name
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9_-]/g, '');
     const module = new LearningModule(
       id,
       command.curriculumVersionId,
@@ -230,7 +233,10 @@ export class AddLessonHandler {
 
   public async execute(command: AddLessonCommand): Promise<string> {
     const id = randomUUID();
-    const slug = command.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
+    const slug = command.title
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9_-]/g, '');
     const lesson = new Lesson(
       id,
       command.learningModuleId,
@@ -259,7 +265,10 @@ export class CreateCurriculumTemplateHandler {
 
   public async execute(command: CreateCurriculumTemplateCommand): Promise<string> {
     const id = randomUUID();
-    const slug = command.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
+    const slug = command.name
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9_-]/g, '');
     const template = new CurriculumTemplate(
       id,
       command.code,
@@ -277,7 +286,11 @@ export class CreateCurriculumTemplateHandler {
 export class SubmitCurriculumForReviewHandler {
   constructor(private readonly repository: CurriculumRepository) {}
 
-  public async execute(command: { curriculumId: string; versionId: string; expectedVersion: number }): Promise<void> {
+  public async execute(command: {
+    curriculumId: string;
+    versionId: string;
+    expectedVersion: number;
+  }): Promise<void> {
     const cur = await this.repository.findById(command.curriculumId);
     if (!cur) {
       throw new NotFoundError(`Curriculum with ID ${command.curriculumId} not found.`);
@@ -294,7 +307,11 @@ export class SubmitCurriculumForReviewHandler {
 export class ApproveCurriculumVersionHandler {
   constructor(private readonly repository: CurriculumRepository) {}
 
-  public async execute(command: { curriculumId: string; versionId: string; expectedVersion: number }): Promise<void> {
+  public async execute(command: {
+    curriculumId: string;
+    versionId: string;
+    expectedVersion: number;
+  }): Promise<void> {
     const cur = await this.repository.findById(command.curriculumId);
     if (!cur) {
       throw new NotFoundError(`Curriculum with ID ${command.curriculumId} not found.`);
@@ -312,7 +329,11 @@ export class ApproveCurriculumVersionHandler {
 export class ArchiveCurriculumHandler {
   constructor(private readonly repository: CurriculumRepository) {}
 
-  public async execute(command: { curriculumId: string; expectedVersion: number; actorId?: string }): Promise<void> {
+  public async execute(command: {
+    curriculumId: string;
+    expectedVersion: number;
+    actorId?: string;
+  }): Promise<void> {
     const cur = await this.repository.findById(command.curriculumId);
     if (!cur) {
       throw new NotFoundError(`Curriculum with ID ${command.curriculumId} not found.`);
@@ -346,13 +367,24 @@ export class RestoreCurriculumHandler {
 export class DuplicateCurriculumHandler {
   constructor(private readonly repository: CurriculumRepository) {}
 
-  public async execute(command: { curriculumId: string; newCode: string; newSlug: string; newName: string; newDescription?: string }): Promise<string> {
+  public async execute(command: {
+    curriculumId: string;
+    newCode: string;
+    newSlug: string;
+    newName: string;
+    newDescription?: string;
+  }): Promise<string> {
     const cur = await this.repository.findById(command.curriculumId);
     if (!cur) {
       throw new NotFoundError(`Curriculum with ID ${command.curriculumId} not found.`);
     }
     const id = randomUUID();
-    const duplicated = Curriculum.create(id, new CurriculumCode(command.newCode), command.newName, command.newDescription || cur.description);
+    const duplicated = Curriculum.create(
+      id,
+      new CurriculumCode(command.newCode),
+      command.newName,
+      command.newDescription || cur.description
+    );
     await this.repository.save(duplicated);
     return id;
   }

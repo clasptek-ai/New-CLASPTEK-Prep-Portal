@@ -18,7 +18,7 @@ import {
   PredictionFeatureCatalogueEntry,
   PredictionOutcome,
   PredictionInterventionCatalogueEntry,
-  LearningVelocitySnapshot
+  LearningVelocitySnapshot,
 } from './index';
 
 describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
@@ -46,7 +46,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
       practiceStatistics: { accuracy: 0.75, velocity: 3.2 },
       studyStreak: { current: 5 },
       competencyMastery: { 'IELTS-LIS-C1': 'MASTERED' },
-      forecastWindow: '14D'
+      forecastWindow: '14D',
     });
 
     expect(snap.studentId).toBe('a0000000-0000-0000-0000-000000000001');
@@ -58,31 +58,47 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
     const pred = ReadinessPrediction.generate({
       studentId: 'a0000000-0000-0000-0000-000000000001',
       profileId: 'b0000000-0000-0000-0000-000000000201',
-      modelVersionId: 'b0000000-0000-0000-0000-000000000101'
+      modelVersionId: 'b0000000-0000-0000-0000-000000000101',
     });
 
     expect(pred.status).toBe('DRAFT');
 
     const score = new ReadinessScore(75.0, 'points');
-    const band = new ConfidenceBand(0.90, 70.0, 80.0);
+    const band = new ConfidenceBand(0.9, 70.0, 80.0);
     const featureSet = new PredictionFeatureSet({
       id: 'f-1',
-      features: { ACCURACY_RATE: 0.75 }
+      features: { ACCURACY_RATE: 0.75 },
     });
     const explanation = new PredictionExplanation({
       id: 'exp-1',
       contributingFactors: [{ factor: 'Accuracy', weight: 1.0 }],
       featureImportance: { ACCURACY_RATE: 1.0 },
       confidenceExplanation: 'High accuracy',
-      evidenceReferences: ['snap-1']
+      evidenceReferences: ['snap-1'],
     });
     const evidence = [
-      new PredictionEvidence({ id: 'ev-1', evidenceType: 'PRACTICE', evidenceSourceId: 'src-1', weight: 0.5, description: 'Practice complete' })
+      new PredictionEvidence({
+        id: 'ev-1',
+        evidenceType: 'PRACTICE',
+        evidenceSourceId: 'src-1',
+        weight: 0.5,
+        description: 'Practice complete',
+      }),
     ];
     const trends = [
-      new PredictionTrend({ id: 'tr-1', trendType: 'ACCURACY', slope: 0.05, explanation: 'Improving accuracy' })
+      new PredictionTrend({
+        id: 'tr-1',
+        trendType: 'ACCURACY',
+        slope: 0.05,
+        explanation: 'Improving accuracy',
+      }),
     ];
-    const rec = new PredictionRecommendation({ id: 'rec-1', recommendationType: 'DRILL', priority: 1, title: 'Vocabulary Drill' });
+    const rec = new PredictionRecommendation({
+      id: 'rec-1',
+      recommendationType: 'DRILL',
+      priority: 1,
+      title: 'Vocabulary Drill',
+    });
     const interventions = [
       new PredictionIntervention({
         id: 'int-1',
@@ -91,8 +107,8 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
         riskScore: 85.0,
         triggerReason: 'Critical risk triggered',
         status: 'PROPOSED',
-        recommendations: [rec]
-      })
+        recommendations: [rec],
+      }),
     ];
 
     pred.completePrediction(score, band, featureSet, explanation, evidence, trends, interventions);
@@ -121,7 +137,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
       displayName: 'IELTS A/B Model Experiment',
       controlModelVersionId: 'b0000000-0000-0000-0000-000000000101',
       challengerModelVersionId: 'b0000000-0000-0000-0000-000000000102',
-      trafficSplitPercentage: 50
+      trafficSplitPercentage: 50,
     });
 
     expect(exp.status).toBe('DRAFT');
@@ -142,7 +158,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
 
   test('Registry resolves registered engines correctly', () => {
     const registry = PredictionStrategyRegistry.instance;
-    
+
     // Resolve Bayesian Predictor
     const bayes = registry.get('BAYESIAN');
     expect(bayes).toBeDefined();
@@ -174,7 +190,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
       practiceStatistics: {},
       studyStreak: {},
       competencyMastery: {},
-      forecastWindow: '7D'
+      forecastWindow: '7D',
     });
 
     const config = new ModelConfiguration({ mock_score: 82.5, mock_confidence: 0.95 });
@@ -194,7 +210,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
       trainedFromDataset: 'hash-abc',
       calibrationDatasetRef: 'hash-xyz',
       deploymentDate: new Date(),
-      retirementDate: new Date()
+      retirementDate: new Date(),
     });
     const config = new ModelConfiguration({ mock_score: 75 }, lineage);
     expect(config.lineage).toBeDefined();
@@ -206,7 +222,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
       versionString: 'v2.0.0',
       configuration: config,
       isCurrent: true,
-      lineage
+      lineage,
     });
     expect(mv.versionString).toBe('v2.0.0');
     expect(mv.isCurrent).toBe(true);
@@ -218,7 +234,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
       sourceDomain: 'Student Learning',
       normalizationMethod: 'Standardization',
       defaultWeight: 0.85,
-      version: 'v1.1.0'
+      version: 'v1.1.0',
     });
     expect(feat.featureCode).toBe('VELOCITY_METRIC');
     expect(feat.normalizationMethod).toBe('Standardization');
@@ -230,7 +246,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
       title: 'Advanced Support Program',
       description: 'Custom instructor support session',
       priority: 3,
-      targetCompetencyCode: 'IELTS-COMP-3'
+      targetCompetencyCode: 'IELTS-COMP-3',
     });
     expect(intEntry.interventionType).toBe('ADVANCED_SUPPORT');
     expect(intEntry.recommendationType).toBe('ADVANCED_SUPPORT');
@@ -240,7 +256,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
       predictionId: 'pred-123',
       studentId: 'stud-123',
       predictedScore: 80.0,
-      actualScore: 85.0
+      actualScore: 85.0,
     });
     expect(outcome.predictionId).toBe('pred-123');
     expect(outcome.variance).toBe(5.0);
@@ -252,7 +268,7 @@ describe('Domain Prediction Engine Aggregate & Strategy Tests', () => {
       activeHours: 4.5,
       questionsAnswered: 25,
       accelerationRate: 0.5,
-      stagnationIndicator: false
+      stagnationIndicator: false,
     });
     expect(velSnap.activeHours).toBe(4.5);
     expect(velSnap.questionsAnswered).toBe(25);

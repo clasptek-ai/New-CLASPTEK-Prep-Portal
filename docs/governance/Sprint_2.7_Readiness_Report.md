@@ -19,11 +19,11 @@ Upstream dependencies (Sprint 2.1A, 2.4, 2.6) are completed and frozen.
 
 Sprint 2.6 (Adaptive Practice) delivers several core interfaces ready for Sprint 2.7 consumption:
 
-| Component | Description |
-|---|---|
-| `PracticeSession` | The generated question queue (session ID, version, order, skipped/accuracy status) that serves as the blueprint input for the runtime |
-| `PostgresPracticeSessionRepository` | Repository for saving results (accuracies, duration, time spent) after runtime execution |
-| `AttemptLog` | The interface structure used by the eligibility engine to calculate spaced retrieval cooling-off limits |
+| Component                           | Description                                                                                                                           |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `PracticeSession`                   | The generated question queue (session ID, version, order, skipped/accuracy status) that serves as the blueprint input for the runtime |
+| `PostgresPracticeSessionRepository` | Repository for saving results (accuracies, duration, time spent) after runtime execution                                              |
+| `AttemptLog`                        | The interface structure used by the eligibility engine to calculate spaced retrieval cooling-off limits                               |
 
 ---
 
@@ -40,20 +40,20 @@ Sprint 2.6 (Adaptive Practice) delivers several core interfaces ready for Sprint
 
 ## 4. Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| **High concurrency during live exams** | High | Use session-scoped partitions. Assessment runtimes must operate statelessly per user session, saving checkpoints continuously. |
-| **Network connectivity drops** | Medium | Implement local storage syncing. Telemetry is batched on the client and pushed periodically, allowing offline recovery. |
+| Risk                                   | Impact | Mitigation                                                                                                                     |
+| -------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| **High concurrency during live exams** | High   | Use session-scoped partitions. Assessment runtimes must operate statelessly per user session, saving checkpoints continuously. |
+| **Network connectivity drops**         | Medium | Implement local storage syncing. Telemetry is batched on the client and pushed periodically, allowing offline recovery.        |
 
 ---
 
 ## 5. Go / No-Go Assessment
 
-| Criterion | Status |
-|---|---|
-| All Sprint 2.6 tests pass (23/23) | ✅ Go |
-| Workspace builds clean | ✅ Go |
-| RLS and schema migrations frozen | ✅ Go |
-| Architecture frozen | ✅ Go |
+| Criterion                         | Status |
+| --------------------------------- | ------ |
+| All Sprint 2.6 tests pass (23/23) | ✅ Go  |
+| Workspace builds clean            | ✅ Go  |
+| RLS and schema migrations frozen  | ✅ Go  |
+| Architecture frozen               | ✅ Go  |
 
 **Assessment: ✅ GO for Sprint 2.7**

@@ -47,13 +47,15 @@ export const instructorResourcesService = {
           uploadedAt: '2026-07-10T09:00:00Z',
           version: 1,
           views: 120,
-          downloads: 85
-        }
+          downloads: 85,
+        },
       ];
     }
   },
 
-  async uploadResource(resource: Omit<LearningResourceItem, 'id' | 'views' | 'downloads'>): Promise<LearningResourceItem> {
+  async uploadResource(
+    resource: Omit<LearningResourceItem, 'id' | 'views' | 'downloads'>
+  ): Promise<LearningResourceItem> {
     try {
       return await apiClient.post<LearningResourceItem>('/api/v1/instructor/resources', resource);
     } catch {
@@ -61,8 +63,8 @@ export const instructorResourcesService = {
         id: Math.random().toString(),
         views: 0,
         downloads: 0,
-        ...resource
+        ...resource,
       };
     }
-  }
+  },
 };

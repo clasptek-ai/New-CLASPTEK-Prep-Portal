@@ -2,65 +2,72 @@
 
 **Domain:** Readiness & Prediction Engine  
 **Status:** Completed | Compliance Verified  
-**Date:** 2026-07-16  
+**Date:** 2026-07-16
 
 ---
 
 ## 1. OpenAPI Baseline
+
 Below is the REST API specification mapping for the 12 routes implemented under `apps/web/src/app/api/v1/readiness`:
 
 ### Predictions Search & Generate
+
 - **GET `/api/v1/readiness`**
-  - *Description:* Search historical student predictions.
-  - *Query Parameters:* `studentId` (string, required), `profileId` (string, optional), `status` ('DRAFT' | 'PUBLISHED', optional), `limit` (integer, optional), `offset` (integer, optional).
-  - *Response:* `200 OK` with JSON `{ predictions: ReadinessPrediction[], count: number }`.
+  - _Description:_ Search historical student predictions.
+  - _Query Parameters:_ `studentId` (string, required), `profileId` (string, optional), `status` ('DRAFT' | 'PUBLISHED', optional), `limit` (integer, optional), `offset` (integer, optional).
+  - _Response:_ `200 OK` with JSON `{ predictions: ReadinessPrediction[], count: number }`.
 - **POST `/api/v1/readiness`**
-  - *Description:* Trigger readiness prediction generation for a student.
-  - *Headers:* `x-student-id` (string, required).
-  - *Body:* `{ profileId: string, profileCode: string, learnerState: object, latestEvaluationSummaries: object, practiceStatistics: object, studyStreak: object, competencyMastery: object, forecastWindow: string }`.
-  - *Response:* `200 OK` with JSON `{ predictionId: string, snapshotId: string, modelVersionId: string }`.
+  - _Description:_ Trigger readiness prediction generation for a student.
+  - _Headers:_ `x-student-id` (string, required).
+  - _Body:_ `{ profileId: string, profileCode: string, learnerState: object, latestEvaluationSummaries: object, practiceStatistics: object, studyStreak: object, competencyMastery: object, forecastWindow: string }`.
+  - _Response:_ `200 OK` with JSON `{ predictionId: string, snapshotId: string, modelVersionId: string }`.
 
 ### Latest & History
+
 - **GET `/api/v1/readiness/latest`**
-  - *Description:* Retrieve the latest published prediction for a student.
-  - *Query Parameters:* `profileId` (string, required).
-  - *Response:* `200 OK` with `ReadinessPrediction` body, or `404 Not Found`.
+  - _Description:_ Retrieve the latest published prediction for a student.
+  - _Query Parameters:_ `profileId` (string, required).
+  - _Response:_ `200 OK` with `ReadinessPrediction` body, or `404 Not Found`.
 - **GET `/api/v1/readiness/history`**
-  - *Description:* Retrieve the timeline series history of published predictions.
-  - *Query Parameters:* `profileId` (string, required), `limit` (integer, optional).
-  - *Response:* `200 OK` with `{ history: ReadinessPrediction[], count: number }`.
+  - _Description:_ Retrieve the timeline series history of published predictions.
+  - _Query Parameters:_ `profileId` (string, required), `limit` (integer, optional).
+  - _Response:_ `200 OK` with `{ history: ReadinessPrediction[], count: number }`.
 
 ### Predictions Actions
+
 - **POST `/api/v1/readiness/predictions/[id]/publish`**
-  - *Description:* Transition a draft prediction to published status.
-  - *Response:* `200 OK` with `{ success: true }`.
+  - _Description:_ Transition a draft prediction to published status.
+  - _Response:_ `200 OK` with `{ success: true }`.
 
 ### Experiments Management
+
 - **GET `/api/v1/readiness/experiments`**
-  - *Description:* Fetch the currently running prediction experiment.
-  - *Response:* `200 OK` with `{ active: PredictionExperiment | null }`.
+  - _Description:_ Fetch the currently running prediction experiment.
+  - _Response:_ `200 OK` with `{ active: PredictionExperiment | null }`.
 - **POST `/api/v1/readiness/experiments`**
-  - *Description:* Create a new model A/B testing experiment.
-  - *Body:* `{ experimentCode: string, displayName: string, controlModelVersionId: string, challengerModelVersionId: string, trafficSplitPercentage: number }`.
-  - *Response:* `200 OK` with `{ experimentId: string }`.
+  - _Description:_ Create a new model A/B testing experiment.
+  - _Body:_ `{ experimentCode: string, displayName: string, controlModelVersionId: string, challengerModelVersionId: string, trafficSplitPercentage: number }`.
+  - _Response:_ `200 OK` with `{ experimentId: string }`.
 - **POST `/api/v1/readiness/experiments/[id]/start`**
-  - *Description:* Activate a draft experiment.
-  - *Response:* `200 OK` with `{ success: true }`.
+  - _Description:_ Activate a draft experiment.
+  - _Response:_ `200 OK` with `{ success: true }`.
 - **POST `/api/v1/readiness/experiments/[id]/complete`**
-  - *Description:* Complete a running experiment.
-  - *Response:* `200 OK` with `{ success: true }`.
+  - _Description:_ Complete a running experiment.
+  - _Response:_ `200 OK` with `{ success: true }`.
 
 ### Interventions Management
+
 - **POST `/api/v1/readiness/predictions/[id]/interventions/[intId]/activate`**
-  - *Description:* Trigger/activate a proposed student risk intervention.
+  - _Description:_ Trigger/activate a proposed student risk intervention.
 - **POST `/api/v1/readiness/predictions/[id]/interventions/[intId]/complete`**
-  - *Description:* Close/resolve a student risk intervention.
+  - _Description:_ Close/resolve a student risk intervention.
 - **POST `/api/v1/readiness/predictions/[id]/interventions/[intId]/discard`**
-  - *Description:* Reject/discard a proposed student risk intervention.
+  - _Description:_ Reject/discard a proposed student risk intervention.
 
 ---
 
 ## 2. Repository Contracts
+
 We have defined and frozen the following interfaces inside the application package:
 
 - **`ReadinessPredictionRepository`**
@@ -88,6 +95,7 @@ We have defined and frozen the following interfaces inside the application packa
 ---
 
 ## 3. Database Manifest
+
 The schema migration sql files successfully define 19 database tables:
 
 1. **`prediction_models`**: Tracks core forecasting algorithms.
@@ -113,6 +121,7 @@ The schema migration sql files successfully define 19 database tables:
 ---
 
 ## 4. Model Registry
+
 The seed queries register five pre-calibrated forecasting models:
 
 - **`MOCK`** (MockPredictor): Baseline simulation testing model.
@@ -124,9 +133,10 @@ The seed queries register five pre-calibrated forecasting models:
 ---
 
 ## 5. Engineering Metrics
+
 - **Compilation:** `tsc -b` compiles all domain, application, persistence, and presentation modules with zero errors.
 - **Linter Check:** `next lint` reports zero warnings or errors.
-- **Testing Coverage:** 
+- **Testing Coverage:**
   - Domain tests: 6 tests passing (100%).
   - Application tests: 5 tests passing (100%).
   - Persistence tests: 5 tests passing (100%).
@@ -135,12 +145,14 @@ The seed queries register five pre-calibrated forecasting models:
 ---
 
 ## 6. Technical Debt Register
+
 - **Model Training Integrations:** Currently, model training runs out-of-band and model weights are seeded. In a future sprint, a model training endpoint/worker queue should be created.
 - **BKT Competency Decay:** BKT transition equations do not currently incorporate time-decay values. A study-decay slope metric could be added to transition matrices.
 
 ---
 
 ## 7. Sprint 3.0 Readiness Report
+
 > [!IMPORTANT]
 > **READINESS RECOMMENDATION: READY FOR SPRINT 3.0**  
 > All deliverables for Sprint 2.9 (Readiness & Prediction Bounded Context) have been implemented, verified, and compiled. We are ready to transition to Sprint 3.0.

@@ -112,7 +112,7 @@ export class Lesson extends AggregateRoot<string> {
     textContent: string,
     displayOrder: number
   ) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
     if (!version) {
       throw new Error(`Version ${versionNo.value} not found.`);
     }
@@ -121,7 +121,7 @@ export class Lesson extends AggregateRoot<string> {
   }
 
   public publishVersion(versionNo: LegacySemanticVersion) {
-    const version = this.versions.find(v => v.versionNo.value === versionNo.value);
+    const version = this.versions.find((v) => v.versionNo.value === versionNo.value);
     if (!version) {
       throw new Error(`Version ${versionNo.value} not found.`);
     }

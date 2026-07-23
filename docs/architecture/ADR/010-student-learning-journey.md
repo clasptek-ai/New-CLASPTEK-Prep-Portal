@@ -22,17 +22,18 @@ Sprint 2.5 introduces the **Student Learning Journey Domain** as the canonical s
 
 The domain exposes **three separate aggregate roots** rather than a single monolithic aggregate:
 
-| Aggregate | Responsibility |
-|---|---|
-| `StudentLearningJourney` | Master lifecycle owner; owns goals, milestones, competencies, sessions, achievements, bookmarks, streak, preferences |
+| Aggregate                    | Responsibility                                                                                                         |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `StudentLearningJourney`     | Master lifecycle owner; owns goals, milestones, competencies, sessions, achievements, bookmarks, streak, preferences   |
 | `StudentProgrammeEnrollment` | Programme-level contract; owns enrollment date, payment state, cohort, instructor, completion certificates, withdrawal |
-| `LearningPlan` | Versioned study plan; owns `LearningPlanVersion[]` keyed by source (AI/Instructor/Student) |
+| `LearningPlan`               | Versioned study plan; owns `LearningPlanVersion[]` keyed by source (AI/Instructor/Student)                             |
 
 **Rationale:** Enrollment ownership concerns (payment, cohort, delivery mode) are explicitly separated from learning-state concerns (goals, progress, session history). This prevents enrollment logic from bloating the journey aggregate and allows enrollment to evolve independently (e.g., add Stripe payment verification without modifying journey).
 
 ### 2. Append-Only Journey Event Stream
 
 All domain events emitted by `StudentLearningJourney` are persisted to the `journey_events` table as an **append-only event stream**. This provides:
+
 - Replay capability for analytics and AI coaching
 - Full audit trail for compliance and right-to-delete workflows
 - Foundation for future event sourcing migration
@@ -80,29 +81,33 @@ The following events are published by the domain for future subscriber consumpti
 
 ## Performance Targets
 
-| Operation | Target |
-|---|---|
-| Journey Retrieval | < 150 ms |
-| Dashboard Load | < 250 ms |
-| Programme Progress | < 200 ms |
-| Timeline | < 300 ms |
+| Operation           | Target   |
+| ------------------- | -------- |
+| Journey Retrieval   | < 150 ms |
+| Dashboard Load      | < 250 ms |
+| Programme Progress  | < 200 ms |
+| Timeline            | < 300 ms |
 | Study Session Start | < 100 ms |
-| Goal Update | < 150 ms |
+| Goal Update         | < 150 ms |
 
 ---
 
 ## Repository Contracts (Frozen)
 
 ### `StudentLearningRepository`
+
 `save()` · `findById()` · `findByStudent()` · `findActive()` · `archive()` · `restore()` · `search()` · `nextIdentity()`
 
 ### `ProgrammeEnrollmentRepository`
+
 `save()` · `findById()` · `findByJourney()` · `findByStudentAndProgramme()` · `findActive()` · `nextIdentity()`
 
 ### `LearningPlanRepository`
+
 `save()` · `findById()` · `findByJourney()` · `findActive()` · `nextIdentity()`
 
 ### `DashboardProjectionRepository`
+
 `save()` · `findByStudent()` · `findByJourney()`
 
 > Breaking changes to these interfaces require a new ADR.
@@ -112,6 +117,7 @@ The following events are published by the domain for future subscriber consumpti
 ## Consequences
 
 **Positive:**
+
 - Enrollment lifecycle is cleanly separated; future payment/cohort logic has a clear home
 - Event stream enables AI coaching and analytics replay without schema changes
 - Competency history enables mastery trend analysis
@@ -119,6 +125,7 @@ The following events are published by the domain for future subscriber consumpti
 - Privacy model is in place for compliance sprints
 
 **Negative:**
+
 - Persistence hydration is complex (multiple child table loads per journey)
 - Dashboard projection requires explicit update logic when journey state changes
 

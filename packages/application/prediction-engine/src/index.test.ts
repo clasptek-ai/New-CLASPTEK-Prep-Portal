@@ -24,7 +24,7 @@ import {
   RegisterFeatureInCatalogueHandler,
   GetFeatureCatalogueHandler,
   GetInterventionCatalogueHandler,
-  GetLifecycleMetricsHandler
+  GetLifecycleMetricsHandler,
 } from './index';
 import {
   ReadinessPrediction,
@@ -36,7 +36,7 @@ import {
   PredictionInterventionCatalogueEntry,
   LearningVelocitySnapshot,
   ReadinessScore,
-  ConfidenceBand
+  ConfidenceBand,
 } from '@clasptek/domain-prediction-engine';
 
 // Mock repositories implementation
@@ -56,23 +56,31 @@ const createMockRepos = () => {
     findById: vi.fn().mockImplementation(async (id: string) => {
       return predictionDb.get(id) || null;
     }),
-    findLatestByStudent: vi.fn().mockImplementation(async (studentId: string, profileId: string) => {
-      const preds = Array.from(predictionDb.values())
-        .filter(p => p.studentId === studentId && p.profileId === profileId && p.status === 'PUBLISHED')
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-      return preds[0] || null;
-    }),
-    findHistoryByStudent: vi.fn().mockImplementation(async (studentId: string, profileId: string) => {
-      return Array.from(predictionDb.values())
-        .filter(p => p.studentId === studentId && p.profileId === profileId);
-    }),
+    findLatestByStudent: vi
+      .fn()
+      .mockImplementation(async (studentId: string, profileId: string) => {
+        const preds = Array.from(predictionDb.values())
+          .filter(
+            (p) =>
+              p.studentId === studentId && p.profileId === profileId && p.status === 'PUBLISHED'
+          )
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        return preds[0] || null;
+      }),
+    findHistoryByStudent: vi
+      .fn()
+      .mockImplementation(async (studentId: string, profileId: string) => {
+        return Array.from(predictionDb.values()).filter(
+          (p) => p.studentId === studentId && p.profileId === profileId
+        );
+      }),
     search: vi.fn().mockImplementation(async (filters) => {
       let results = Array.from(predictionDb.values());
-      if (filters.studentId) results = results.filter(p => p.studentId === filters.studentId);
-      if (filters.profileId) results = results.filter(p => p.profileId === filters.profileId);
-      if (filters.status) results = results.filter(p => p.status === filters.status);
+      if (filters.studentId) results = results.filter((p) => p.studentId === filters.studentId);
+      if (filters.profileId) results = results.filter((p) => p.profileId === filters.profileId);
+      if (filters.status) results = results.filter((p) => p.status === filters.status);
       return results;
-    })
+    }),
   };
 
   const snapshotRepo: ReadinessSnapshotRepository = {
@@ -83,9 +91,9 @@ const createMockRepos = () => {
       return snapshotDb.get(id) || null;
     }),
     findLatestByStudent: vi.fn().mockImplementation(async (studentId: string) => {
-      const snaps = Array.from(snapshotDb.values()).filter(s => s.studentId === studentId);
+      const snaps = Array.from(snapshotDb.values()).filter((s) => s.studentId === studentId);
       return snaps[0] || null;
-    })
+    }),
   };
 
   const experimentRepo: PredictionExperimentRepository = {
@@ -96,16 +104,16 @@ const createMockRepos = () => {
       return experimentDb.get(id) || null;
     }),
     findActiveExperiment: vi.fn().mockImplementation(async () => {
-      return Array.from(experimentDb.values()).find(e => e.status === 'RUNNING') || null;
+      return Array.from(experimentDb.values()).find((e) => e.status === 'RUNNING') || null;
     }),
     findByCode: vi.fn().mockImplementation(async (code: string) => {
-      return Array.from(experimentDb.values()).find(e => e.experimentCode === code) || null;
-    })
+      return Array.from(experimentDb.values()).find((e) => e.experimentCode === code) || null;
+    }),
   };
 
   const modelVersionRepo: ModelVersionRepository = {
     findById: vi.fn().mockResolvedValue(null),
-    findCurrentByModelCode: vi.fn().mockResolvedValue(null)
+    findCurrentByModelCode: vi.fn().mockResolvedValue(null),
   };
 
   const featureCatalogueRepo: PredictionFeatureCatalogueRepository = {
@@ -113,11 +121,11 @@ const createMockRepos = () => {
       featureDb.set(entry.id, entry);
     }),
     findByCode: vi.fn().mockImplementation(async (code: string) => {
-      return Array.from(featureDb.values()).find(f => f.featureCode === code) || null;
+      return Array.from(featureDb.values()).find((f) => f.featureCode === code) || null;
     }),
     findAll: vi.fn().mockImplementation(async () => {
       return Array.from(featureDb.values());
-    })
+    }),
   };
 
   const outcomeRepo: PredictionOutcomeRepository = {
@@ -128,11 +136,11 @@ const createMockRepos = () => {
       return outcomeDb.get(id) || null;
     }),
     findByPredictionId: vi.fn().mockImplementation(async (predId: string) => {
-      return Array.from(outcomeDb.values()).find(o => o.predictionId === predId) || null;
+      return Array.from(outcomeDb.values()).find((o) => o.predictionId === predId) || null;
     }),
     findAll: vi.fn().mockImplementation(async () => {
       return Array.from(outcomeDb.values());
-    })
+    }),
   };
 
   const interventionCatalogueRepo: PredictionInterventionCatalogueRepository = {
@@ -140,11 +148,11 @@ const createMockRepos = () => {
       interventionDb.set(entry.id, entry);
     }),
     findByType: vi.fn().mockImplementation(async (type: string) => {
-      return Array.from(interventionDb.values()).find(i => i.interventionType === type) || null;
+      return Array.from(interventionDb.values()).find((i) => i.interventionType === type) || null;
     }),
     findAll: vi.fn().mockImplementation(async () => {
       return Array.from(interventionDb.values());
-    })
+    }),
   };
 
   const learningVelocityRepo: LearningVelocitySnapshotRepository = {
@@ -152,11 +160,11 @@ const createMockRepos = () => {
       velocityDb.set(snap.id, snap);
     }),
     findLatestByStudent: vi.fn().mockImplementation(async (studId: string) => {
-      return Array.from(velocityDb.values()).find(v => v.studentId === studId) || null;
+      return Array.from(velocityDb.values()).find((v) => v.studentId === studId) || null;
     }),
     findHistoryByStudent: vi.fn().mockImplementation(async (studId: string) => {
-      return Array.from(velocityDb.values()).filter(v => v.studentId === studId);
-    })
+      return Array.from(velocityDb.values()).filter((v) => v.studentId === studId);
+    }),
   };
 
   return {
@@ -174,7 +182,7 @@ const createMockRepos = () => {
     featureDb,
     outcomeDb,
     interventionDb,
-    velocityDb
+    velocityDb,
   };
 };
 
@@ -197,7 +205,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
       studyStreak: { current: 7 },
       competencyMastery: { 'IELTS-C1': 'MASTERED' },
       forecastWindow: '14D',
-      profileCode: 'IELTS_ACADEMIC'
+      profileCode: 'IELTS_ACADEMIC',
     });
 
     expect(result.predictionId).toBeDefined();
@@ -221,7 +229,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
       studentId: 'a0000000-0000-0000-0000-000000000001',
       profileId: 'b0000000-0000-0000-0000-000000000201',
       modelVersionId: 'b0000000-0000-0000-0000-000000000101',
-      status: 'DRAFT'
+      status: 'DRAFT',
     });
     repos.predictionDb.set(mockPred.id, mockPred);
 
@@ -234,7 +242,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
 
   test('A/B Testing Experiment Workflow (Create, Start, Complete)', async () => {
     const repos = createMockRepos();
-    
+
     // 1. Create
     const createHandler = new CreateExperimentHandler(repos.experimentRepo);
     const { experimentId } = await createHandler.execute({
@@ -242,7 +250,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
       displayName: 'IELTS Bayesian vs Regression Experiment',
       controlModelVersionId: 'b0000000-0000-0000-0000-000000000101',
       challengerModelVersionId: 'b0000000-0000-0000-0000-000000000102',
-      trafficSplitPercentage: 50
+      trafficSplitPercentage: 50,
     });
 
     const exp = repos.experimentDb.get(experimentId);
@@ -269,7 +277,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
       riskScore: 90.0,
       triggerReason: 'Fail risk',
       status: 'PROPOSED',
-      recommendations: []
+      recommendations: [],
     });
 
     const mockPred = new ReadinessPrediction({
@@ -278,7 +286,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
       profileId: 'b0000000-0000-0000-0000-000000000201',
       modelVersionId: 'b0000000-0000-0000-0000-000000000101',
       status: 'DRAFT',
-      interventions: [intervention]
+      interventions: [intervention],
     });
     repos.predictionDb.set(mockPred.id, mockPred);
 
@@ -302,7 +310,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
       studentId: 'a0000000-0000-0000-0000-000000000001',
       profileId: 'b0000000-0000-0000-0000-000000000201',
       modelVersionId: 'b0000000-0000-0000-0000-000000000101',
-      status: 'PUBLISHED'
+      status: 'PUBLISHED',
     });
     repos.predictionDb.set(mockPred.id, mockPred);
 
@@ -310,7 +318,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
     const latestQuery = new GetLatestPredictionHandler(repos.predictionRepo);
     const latest = await latestQuery.execute({
       studentId: 'a0000000-0000-0000-0000-000000000001',
-      profileId: 'b0000000-0000-0000-0000-000000000201'
+      profileId: 'b0000000-0000-0000-0000-000000000201',
     });
     expect(latest).not.toBeNull();
     expect(latest!.id).toBe('pred-1');
@@ -319,7 +327,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
     const historyQuery = new GetPredictionHistoryHandler(repos.predictionRepo);
     const history = await historyQuery.execute({
       studentId: 'a0000000-0000-0000-0000-000000000001',
-      profileId: 'b0000000-0000-0000-0000-000000000201'
+      profileId: 'b0000000-0000-0000-0000-000000000201',
     });
     expect(history.length).toBe(1);
 
@@ -327,7 +335,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
     const searchQuery = new SearchPredictionsHandler(repos.predictionRepo);
     const list = await searchQuery.execute({
       studentId: 'a0000000-0000-0000-0000-000000000001',
-      status: 'PUBLISHED'
+      status: 'PUBLISHED',
     });
     expect(list.length).toBe(1);
 
@@ -347,9 +355,9 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
       displayName: 'Average Accuracy Rate',
       sourceDomain: 'AI Evaluation',
       normalizationMethod: 'MinMax',
-      defaultWeight: 0.70,
+      defaultWeight: 0.7,
       version: 'v1.0.0',
-      description: 'Test description'
+      description: 'Test description',
     });
     expect(featureId).toBeDefined();
 
@@ -358,14 +366,16 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
     expect(feature!.featureCode).toBe('ACCURACY_RATE');
 
     // Duplicate registration throws
-    await expect(registerFeature.execute({
-      featureCode: 'ACCURACY_RATE',
-      displayName: 'Average Accuracy Rate',
-      sourceDomain: 'AI Evaluation',
-      normalizationMethod: 'MinMax',
-      defaultWeight: 0.70,
-      version: 'v1.0.0'
-    })).rejects.toThrow();
+    await expect(
+      registerFeature.execute({
+        featureCode: 'ACCURACY_RATE',
+        displayName: 'Average Accuracy Rate',
+        sourceDomain: 'AI Evaluation',
+        normalizationMethod: 'MinMax',
+        defaultWeight: 0.7,
+        version: 'v1.0.0',
+      })
+    ).rejects.toThrow();
 
     // 2. Query feature catalogue
     const getFeatures = new GetFeatureCatalogueHandler(repos.featureCatalogueRepo);
@@ -380,15 +390,18 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
       modelVersionId: 'mv-1',
       status: 'PUBLISHED',
       overallReadinessScore: new ReadinessScore(7.5, 'band'),
-      confidence: new ConfidenceBand(0.90, 7.0, 8.0)
+      confidence: new ConfidenceBand(0.9, 7.0, 8.0),
     });
     repos.predictionDb.set(mockPred.id, mockPred);
 
-    const recordOutcome = new RecordPredictionOutcomeHandler(repos.outcomeRepo, repos.predictionRepo);
+    const recordOutcome = new RecordPredictionOutcomeHandler(
+      repos.outcomeRepo,
+      repos.predictionRepo
+    );
     const { outcomeId } = await recordOutcome.execute({
       predictionId: 'pred-1',
       studentId: 'stud-1',
-      actualScore: 8.0
+      actualScore: 8.0,
     });
     expect(outcomeId).toBeDefined();
 
@@ -405,7 +418,7 @@ describe('Application Prediction Engine Command & Query Handler Tests', () => {
       interventionType: 'GRAMMAR_HELP',
       title: 'Grammar Support',
       description: 'Support classes',
-      priority: 1
+      priority: 1,
     });
     await repos.interventionCatalogueRepo.save(entry);
     const interventions = await getInterventions.execute();

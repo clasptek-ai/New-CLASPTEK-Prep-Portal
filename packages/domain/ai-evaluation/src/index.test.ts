@@ -1,17 +1,40 @@
 import { describe, it, expect } from 'vitest';
 import {
   // Value Objects
-  Score, BandScore, ConfidenceLevel, PromptHash, TokenUsage, CalibrationError, ReviewerAgreementRate,
+  Score,
+  BandScore,
+  ConfidenceLevel,
+  PromptHash,
+  TokenUsage,
+  CalibrationError,
+  ReviewerAgreementRate,
+  CostEstimate,
   // Entities
-  FeedbackSection, FeedbackSeverity,
+  FeedbackSection,
+  FeedbackSeverity,
+  PromptVersion,
   // Aggregates
-  EvaluationJob, EvaluationResult, HumanReview, EvaluationSnapshot, EvaluationProfile,
+  EvaluationJob,
+  EvaluationResult,
+  HumanReview,
+  EvaluationSnapshot,
+  EvaluationProfile,
+  PromptAggregate,
   // Domain Events
-  EvaluationRequested, EvaluationStarted, EvaluationPublished, HumanReviewRequested, ReviewCompleted,
+  EvaluationRequested,
+  EvaluationStarted,
+  EvaluationPublished,
+  HumanReviewRequested,
+  ReviewCompleted,
+  EvaluationJobQueued,
+  EvaluationJobFailed,
+  EvaluationJobArchived,
   // Human Review helpers
   ReviewDecision,
-  // AI Provider
+  // AI Providers
   MockAIProvider,
+  // Safety
+  DEFAULT_SAFETY_POLICY,
   // Engine
   RubricEngine,
 } from './index';
@@ -43,7 +66,7 @@ describe('Score', () => {
 
 describe('ConfidenceLevel', () => {
   it('identifies high confidence', () => {
-    const c = new ConfidenceLevel(0.90);
+    const c = new ConfidenceLevel(0.9);
     expect(c.isHigh).toBe(true);
     expect(c.isMedium).toBe(false);
     expect(c.isLow).toBe(false);
@@ -55,7 +78,7 @@ describe('ConfidenceLevel', () => {
   });
 
   it('identifies low confidence', () => {
-    const c = new ConfidenceLevel(0.60);
+    const c = new ConfidenceLevel(0.6);
     expect(c.isLow).toBe(true);
   });
 
@@ -117,13 +140,14 @@ describe('ReviewerAgreementRate (Rec 3)', () => {
 // ═══════════════════════════════════════════════════════════════════
 
 describe('EvaluationJob state machine', () => {
-  const makeJob = () => EvaluationJob.queue({
-    snapshotId: 'snap-1',
-    studentId: 'student-1',
-    submissionId: 'sub-1',
-    questionType: 'ESSAY',
-    priority: 5,
-  });
+  const makeJob = () =>
+    EvaluationJob.queue({
+      snapshotId: 'snap-1',
+      studentId: 'student-1',
+      submissionId: 'sub-1',
+      questionType: 'ESSAY',
+      priority: 5,
+    });
 
   it('creates in QUEUED status and emits EvaluationRequested', () => {
     const job = makeJob();
@@ -137,7 +161,7 @@ describe('EvaluationJob state machine', () => {
     job.start('gpt-4o');
     expect(job.status).toBe('RUNNING');
     expect(job.attempts).toBe(1);
-    expect(job.domainEvents.some(e => e instanceof EvaluationStarted)).toBe(true);
+    expect(job.domainEvents.some((e) => e instanceof EvaluationStarted)).toBe(true);
   });
 
   it('transitions RUNNING → COMPLETED via complete()', () => {
@@ -162,7 +186,7 @@ describe('EvaluationJob state machine', () => {
     job.complete();
     job.requestHumanReview('review-1', 'Low confidence score');
     expect(job.status).toBe('HUMAN_REVIEW_REQUIRED');
-    expect(job.domainEvents.some(e => e instanceof HumanReviewRequested)).toBe(true);
+    expect(job.domainEvents.some((e) => e instanceof HumanReviewRequested)).toBe(true);
   });
 
   it('transitions COMPLETED → APPROVED → PUBLISHED', () => {
@@ -174,7 +198,7 @@ describe('EvaluationJob state machine', () => {
     job.publish('result-1');
     expect(job.status).toBe('PUBLISHED');
     expect(job.publishedAt).toBeDefined();
-    expect(job.domainEvents.some(e => e instanceof EvaluationPublished)).toBe(true);
+    expect(job.domainEvents.some((e) => e instanceof EvaluationPublished)).toBe(true);
   });
 
   it('throws when starting from non-QUEUED status', () => {
@@ -208,18 +232,19 @@ describe('EvaluationJob state machine', () => {
 // ═══════════════════════════════════════════════════════════════════
 
 describe('EvaluationResult immutability', () => {
-  const makeResult = () => new EvaluationResult({
-    id: 'result-1',
-    jobId: 'job-1',
-    snapshotId: 'snap-1',
-    studentId: 'student-1',
-    submissionId: 'sub-1',
-    questionType: 'ESSAY',
-    rawScore: 7.0,
-    maxScore: 9.0,
-    bandScore: new BandScore('7.0', 7.0),
-    confidence: new ConfidenceLevel(0.88),
-  });
+  const makeResult = () =>
+    new EvaluationResult({
+      id: 'result-1',
+      jobId: 'job-1',
+      snapshotId: 'snap-1',
+      studentId: 'student-1',
+      submissionId: 'sub-1',
+      questionType: 'ESSAY',
+      rawScore: 7.0,
+      maxScore: 9.0,
+      bandScore: new BandScore('7.0', 7.0),
+      confidence: new ConfidenceLevel(0.88),
+    });
 
   it('allows adding feedback before publish', () => {
     const result = makeResult();
@@ -259,7 +284,8 @@ describe('EvaluationResult immutability', () => {
 // ═══════════════════════════════════════════════════════════════════
 
 describe('HumanReview lifecycle (Rec 6)', () => {
-  const makeReview = () => HumanReview.assign({ jobId: 'job-1', resultId: 'result-1', reviewerId: 'reviewer-1' });
+  const makeReview = () =>
+    HumanReview.assign({ jobId: 'job-1', resultId: 'result-1', reviewerId: 'reviewer-1' });
 
   it('creates in ASSIGNED status', () => {
     const review = makeReview();
@@ -287,13 +313,18 @@ describe('HumanReview lifecycle (Rec 6)', () => {
     const decision = new ReviewDecision({ id: 'd-1', decision: 'APPROVE', decidedAt: new Date() });
     review.approve(decision);
     expect(review.status).toBe('APPROVED');
-    expect(review.domainEvents.some(e => e instanceof ReviewCompleted)).toBe(true);
+    expect(review.domainEvents.some((e) => e instanceof ReviewCompleted)).toBe(true);
   });
 
   it('transitions IN_REVIEW → REJECTED', () => {
     const review = makeReview();
     review.startReview();
-    const decision = new ReviewDecision({ id: 'd-2', decision: 'REJECT', rationale: 'Scores too high', decidedAt: new Date() });
+    const decision = new ReviewDecision({
+      id: 'd-2',
+      decision: 'REJECT',
+      rationale: 'Scores too high',
+      decidedAt: new Date(),
+    });
     review.reject(decision);
     expect(review.status).toBe('REJECTED');
   });
@@ -348,7 +379,7 @@ describe('EvaluationProfile (Rec 4)', () => {
       id: 'prof-1',
       profileCode: 'IELTS_WRITING',
       displayName: 'IELTS Writing',
-      confidenceThreshold: 0.80,
+      confidenceThreshold: 0.8,
       moderationPolicy: 'ALWAYS_HUMAN',
       isActive: true,
     });
@@ -372,7 +403,7 @@ describe('EvaluationProfile (Rec 4)', () => {
       id: 'prof-3',
       profileCode: 'TOEFL_WRITING',
       displayName: 'TOEFL Writing',
-      confidenceThreshold: 0.80,
+      confidenceThreshold: 0.8,
       moderationPolicy: 'THRESHOLD_BASED',
       isActive: true,
     });
@@ -381,14 +412,17 @@ describe('EvaluationProfile (Rec 4)', () => {
   });
 
   it('throws if confidence threshold is out of range', () => {
-    expect(() => new EvaluationProfile({
-      id: 'prof-bad',
-      profileCode: 'BAD',
-      displayName: 'Bad',
-      confidenceThreshold: 1.5,
-      moderationPolicy: 'AUTO',
-      isActive: true,
-    })).toThrow('between 0.0 and 1.0');
+    expect(
+      () =>
+        new EvaluationProfile({
+          id: 'prof-bad',
+          profileCode: 'BAD',
+          displayName: 'Bad',
+          confidenceThreshold: 1.5,
+          moderationPolicy: 'AUTO',
+          isActive: true,
+        })
+    ).toThrow('between 0.0 and 1.0');
   });
 });
 
@@ -402,11 +436,27 @@ describe('RubricEngine', () => {
   it('scores criteria and assigns band descriptors', () => {
     // 7/9 = 77.78% → engine assigns band '8' (>= 77%)
     const bandDescriptors = new Map([
-      ['TA', new Map([['7', 'Addresses all parts of the task'], ['8', 'Covers all requirements fully']])],
+      [
+        'TA',
+        new Map([
+          ['7', 'Addresses all parts of the task'],
+          ['8', 'Covers all requirements fully'],
+        ]),
+      ],
     ]);
-    const scores = engine.score([
-      { code: 'TA', name: 'Task Achievement', rawScore: 7, maxScore: 9, weight: 0.25, justification: 'Good task coverage' },
-    ], bandDescriptors);
+    const scores = engine.score(
+      [
+        {
+          code: 'TA',
+          name: 'Task Achievement',
+          rawScore: 7,
+          maxScore: 9,
+          weight: 0.25,
+          justification: 'Good task coverage',
+        },
+      ],
+      bandDescriptors
+    );
     expect(scores).toHaveLength(1);
     expect(scores[0].criterionCode).toBe('TA');
     expect(scores[0].bandDescriptor).toBe('Covers all requirements fully'); // band 8 descriptor
@@ -414,10 +464,24 @@ describe('RubricEngine', () => {
 
   it('calculates weighted score across criteria', () => {
     const scores = engine.score([
-      { code: 'TA', name: 'Task Achievement',  rawScore: 7, maxScore: 9, weight: 0.25, justification: '' },
-      { code: 'CC', name: 'Coherence',         rawScore: 8, maxScore: 9, weight: 0.25, justification: '' },
-      { code: 'LR', name: 'Lexical Resource',  rawScore: 7, maxScore: 9, weight: 0.25, justification: '' },
-      { code: 'GR', name: 'Grammar',           rawScore: 7, maxScore: 9, weight: 0.25, justification: '' },
+      {
+        code: 'TA',
+        name: 'Task Achievement',
+        rawScore: 7,
+        maxScore: 9,
+        weight: 0.25,
+        justification: '',
+      },
+      { code: 'CC', name: 'Coherence', rawScore: 8, maxScore: 9, weight: 0.25, justification: '' },
+      {
+        code: 'LR',
+        name: 'Lexical Resource',
+        rawScore: 7,
+        maxScore: 9,
+        weight: 0.25,
+        justification: '',
+      },
+      { code: 'GR', name: 'Grammar', rawScore: 7, maxScore: 9, weight: 0.25, justification: '' },
     ]);
     const weighted = engine.weight(scores);
     expect(weighted).toBeGreaterThan(6);
@@ -432,25 +496,167 @@ describe('RubricEngine', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════
-// MOCK AI PROVIDER TESTS (Rec Q2)
+// MOCK AI PROVIDER TESTS (Enterprise Contract — all methods)
 // ═══════════════════════════════════════════════════════════════════
 
-describe('MockAIProvider (Rec Q2 — CI testing)', () => {
-  const provider = new MockAIProvider();
+// ═══════════════════════════════════════════════════════════════════
+// CostEstimate VALUE OBJECT TESTS
+// ═══════════════════════════════════════════════════════════════════
 
-  it('is always available', async () => {
-    expect(await provider.isAvailable()).toBe(true);
+describe('CostEstimate', () => {
+  it('creates a valid cost estimate', () => {
+    const cost = new CostEstimate(1000, 500, 0.0125);
+    expect(cost.inputTokens).toBe(1000);
+    expect(cost.outputTokens).toBe(500);
+    expect(cost.totalTokens).toBe(1500);
+    expect(cost.costUsd).toBe(0.0125);
+    expect(cost.currency).toBe('USD');
   });
 
-  it('returns deterministic mock response', async () => {
-    const response = await provider.evaluate({
-      systemPrompt: 'You are an examiner',
-      userPrompt: 'Evaluate: my essay response',
+  it('throws on negative token counts', () => {
+    expect(() => new CostEstimate(-1, 100, 0.01)).toThrow('cannot be negative');
+  });
+
+  it('throws on negative cost', () => {
+    expect(() => new CostEstimate(100, 100, -0.01)).toThrow('cannot be negative');
+  });
+
+  it('allows zero cost (e.g. mock provider)', () => {
+    const cost = new CostEstimate(0, 0, 0);
+    expect(cost.costUsd).toBe(0);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// MOCK PROVIDER CANONICAL TESTING
+// ═══════════════════════════════════════════════════════════════════
+
+describe('MockAIProvider implementation', () => {
+  const provider = new MockAIProvider();
+
+  it('evaluates writing using MockAIProvider', async () => {
+    const context = {
+      provider: 'MOCK',
+      model: 'mock-v1',
+      prompt: 'Student content payload',
+      timeout: 10000,
+      temperature: 0.2,
+      maxTokens: 1000,
+      rubric: {},
+      studentId: 'std-1',
+      submissionId: 'sub-1',
+      jobId: 'job-1',
+      retryAttempt: 1,
+      evaluationType: 'WRITING' as const,
+    };
+    const result = await provider.evaluateWriting(context);
+    expect(result.rawScore).toBe(7.0);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// PROMPT AGGREGATE TESTS (First-Class Business Asset)
+// ═══════════════════════════════════════════════════════════════════
+
+describe('PromptAggregate', () => {
+  it('creates a prompt aggregate via factory', () => {
+    const prompt = PromptAggregate.create({
+      templateCode: 'IELTS_ESSAY_EVAL',
+      displayName: 'IELTS Essay Evaluation',
+      questionTypeTarget: 'ESSAY',
+      examContext: 'IELTS_ACADEMIC',
     });
-    expect(response.provider).toBe('MOCK');
-    expect(response.modelCode).toBe('mock-v1');
-    expect(response.tokenUsage.totalTokens).toBe(350);
-    const content = JSON.parse(response.content);
-    expect(content.overallBand).toBe(7.0);
+    expect(prompt.templateCode).toBe('IELTS_ESSAY_EVAL');
+    expect(prompt.isActive).toBe(true);
+    expect(prompt.versions).toHaveLength(0);
+    expect(prompt.currentVersion).toBeUndefined();
+  });
+
+  it('adds a version and returns it as currentVersion', () => {
+    const prompt = PromptAggregate.create({
+      templateCode: 'WRITING_EVAL',
+      displayName: 'Writing Evaluation',
+      questionTypeTarget: 'WRITING',
+    });
+
+    const version = new PromptVersion({
+      id: 'pv-1',
+      templateId: prompt.id,
+      versionNumber: 1,
+      systemPrompt: 'You are an expert IELTS examiner.',
+      userPromptTemplate: 'Evaluate the following essay: {{essay}}',
+      promptHash: new PromptHash('sha256-abc123'),
+      isCurrent: true,
+      createdAt: new Date(),
+    });
+
+    prompt.addVersion(version);
+    expect(prompt.versions).toHaveLength(1);
+    expect(prompt.currentVersion?.versionNumber).toBe(1);
+  });
+
+  it('throws when adding a version with mismatched templateId', () => {
+    const prompt = PromptAggregate.create({
+      templateCode: 'SPEAKING_EVAL',
+      displayName: 'Speaking Evaluation',
+      questionTypeTarget: 'SPEAKING',
+    });
+
+    const mismatchedVersion = new PromptVersion({
+      id: 'pv-wrong',
+      templateId: 'wrong-template-id',
+      versionNumber: 1,
+      systemPrompt: 'sys',
+      userPromptTemplate: 'user {{essay}}',
+      promptHash: new PromptHash('sha256-xyz'),
+      isCurrent: true,
+      createdAt: new Date(),
+    });
+
+    expect(() => prompt.addVersion(mismatchedVersion)).toThrow('does not match aggregate id');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// AI SAFETY TYPE TESTS
+// ═══════════════════════════════════════════════════════════════════
+
+describe('DEFAULT_SAFETY_POLICY', () => {
+  it('enables all safety controls by default', () => {
+    expect(DEFAULT_SAFETY_POLICY.enablePromptInjectionDetection).toBe(true);
+    expect(DEFAULT_SAFETY_POLICY.enablePiiDetection).toBe(true);
+    expect(DEFAULT_SAFETY_POLICY.enableToxicityFilter).toBe(true);
+    expect(DEFAULT_SAFETY_POLICY.enableOutputSchemaValidation).toBe(true);
+    expect(DEFAULT_SAFETY_POLICY.maxRetries).toBe(3);
+    expect(DEFAULT_SAFETY_POLICY.timeoutMs).toBe(30_000);
+    expect(DEFAULT_SAFETY_POLICY.fallbackOnViolation).toBe(true);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// NEW DOMAIN EVENT TESTS (EvaluationJobQueued / Failed / Archived)
+// ═══════════════════════════════════════════════════════════════════
+
+describe('New domain events', () => {
+  it('EvaluationJobQueued carries submissionId and questionType', () => {
+    const event = new EvaluationJobQueued('job-1', 'sub-1', 'ESSAY');
+    expect(event.eventName).toBe('EvaluationJobQueued');
+    expect(event.aggregateId).toBe('job-1');
+    expect(event.payload.submissionId).toBe('sub-1');
+    expect(event.payload.questionType).toBe('ESSAY');
+  });
+
+  it('EvaluationJobFailed carries errorMessage and attempts', () => {
+    const event = new EvaluationJobFailed('job-2', 'Timeout after 30s', 3);
+    expect(event.eventName).toBe('EvaluationJobFailed');
+    expect(event.payload.errorMessage).toBe('Timeout after 30s');
+    expect(event.payload.attempts).toBe(3);
+  });
+
+  it('EvaluationJobArchived carries only the job id', () => {
+    const event = new EvaluationJobArchived('job-3');
+    expect(event.eventName).toBe('EvaluationJobArchived');
+    expect(event.aggregateId).toBe('job-3');
+    expect(Object.keys(event.payload)).toHaveLength(0);
   });
 });

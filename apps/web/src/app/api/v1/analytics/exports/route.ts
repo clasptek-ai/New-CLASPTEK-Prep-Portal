@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getLearningAnalyticsContext } from '@/lib/learning-analytics-context';
 
@@ -9,7 +11,7 @@ export async function POST(req: NextRequest) {
     const ctx = await getLearningAnalyticsContext();
     const job = await ctx.exportAnalytics.execute({
       format,
-      generatedBy: 'admin'
+      generatedBy: 'admin',
     });
 
     return NextResponse.json(job);
@@ -34,7 +36,7 @@ export async function GET(req: NextRequest) {
       status: 'COMPLETED',
       downloadExpiry: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       generatedBy: 'admin',
-      downloadUrl: 'https://downloads.clasptek.com/exports/export.csv'
+      downloadUrl: 'https://downloads.clasptek.com/exports/export.csv',
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || String(err) }, { status: 500 });

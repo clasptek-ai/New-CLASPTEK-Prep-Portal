@@ -6,11 +6,11 @@ vi.mock('next/navigation', () => {
     usePathname: () => '/dashboard',
     useRouter: () => ({
       push: vi.fn(),
-      prefetch: vi.fn()
+      prefetch: vi.fn(),
     }),
     use: (promise: any) => {
       return { studentId: 'stud-active-123' };
-    }
+    },
   };
 });
 
@@ -19,8 +19,8 @@ vi.mock('../providers/theme-provider', () => {
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
     useTheme: () => ({
       theme: 'dark',
-      setTheme: vi.fn()
-    })
+      setTheme: vi.fn(),
+    }),
   };
 });
 
@@ -34,19 +34,16 @@ import { studentReadinessService } from '../services/student/readiness.service';
 import { studentProfileService } from '../services/student/profile.service';
 
 describe('Student Workspace Integration & Services Verification', () => {
-  test('Student Sidebar configuration contains all 10 required routes', () => {
+  test('Student Sidebar configuration contains all 7 required routes', () => {
     const ws = getWorkspace('STUDENT');
-    expect(ws.navigation.length).toBe(10);
+    expect(ws.navigation.length).toBe(7);
     expect(ws.navigation[0].name).toBe('Dashboard');
     expect(ws.navigation[1].name).toBe('My Learning');
     expect(ws.navigation[2].name).toBe('Practice');
-    expect(ws.navigation[3].name).toBe('Assignments');
-    expect(ws.navigation[4].name).toBe('Mock Exams');
-    expect(ws.navigation[5].name).toBe('Learning Resources');
-    expect(ws.navigation[6].name).toBe('AI Coach');
-    expect(ws.navigation[7].name).toBe('Readiness');
-    expect(ws.navigation[8].name).toBe('Notifications');
-    expect(ws.navigation[9].name).toBe('Profile');
+    expect(ws.navigation[3].name).toBe('Mock Exams');
+    expect(ws.navigation[4].name).toBe('Results');
+    expect(ws.navigation[5].name).toBe('Profile');
+    expect(ws.navigation[6].name).toBe('Settings');
   });
 
   test('Student Dashboard aggregated data returns correct stats and activities', async () => {
@@ -83,7 +80,10 @@ describe('Student Workspace Integration & Services Verification', () => {
     expect(list[0].grade).toBe(85);
     expect(list[0].aiEvaluation?.grammarScore).toBe(82);
 
-    const submitRes = await studentAssignmentsService.submitAssignment('as2', 'https://supabase.co/doc.pdf');
+    const submitRes = await studentAssignmentsService.submitAssignment(
+      'as2',
+      'https://supabase.co/doc.pdf'
+    );
     expect(submitRes).toBe(true);
   });
 

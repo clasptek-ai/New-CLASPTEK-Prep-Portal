@@ -31,6 +31,7 @@ export * from './events/IntegrationEvents';
 export * from './specifications/CanPublishExamProduct';
 export * from './specifications/HasUniqueVersion';
 export * from './specifications/BlueprintIsComplete';
+export * from './specifications/blueprint-validation.specification';
 export * from './specifications/SkillHierarchyValid';
 
 // 5. Factories

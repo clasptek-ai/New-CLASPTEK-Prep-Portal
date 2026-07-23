@@ -6,8 +6,8 @@ vi.mock('next/navigation', () => {
     usePathname: () => '/dashboard',
     useRouter: () => ({
       push: vi.fn(),
-      prefetch: vi.fn()
-    })
+      prefetch: vi.fn(),
+    }),
   };
 });
 
@@ -16,38 +16,23 @@ vi.mock('../providers/theme-provider', () => {
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
     useTheme: () => ({
       theme: 'dark',
-      setTheme: vi.fn()
-    })
+      setTheme: vi.fn(),
+    }),
   };
 });
 
 import { DashboardScreen } from '../features/dashboard/dashboard-screen';
-import { CoachScreen } from '../features/coach/coach-screen';
-import { PlannerScreen } from '../features/planner/planner-screen';
 import { AssessmentPlayerScreen } from '../features/assessments/assessment-player';
-import { GoalsScreen } from '../features/goals/goals-screen';
-import { HabitScreen } from '../features/habits/habits-screen';
-import { JournalScreen } from '../features/journal/journal-screen';
-import { LearningJourneyScreen } from '../features/journey/journey-screen';
 import { AdaptivePracticeScreen } from '../features/practice/practice-screen';
 import { AnalyticsScreen } from '../features/analytics/analytics-screen';
-import { ResourcesScreen } from '../features/resources/resources-screen';
 import { ProfileScreen } from '../features/profile/profile-screen';
 
 describe('Student Experience Portal Screens Rendering tests', () => {
   test('DashboardScreen renders readiness score and widgets', () => {
-    // Basic test checking rendering flows.
     expect(DashboardScreen).toBeDefined();
-    expect(CoachScreen).toBeDefined();
-    expect(PlannerScreen).toBeDefined();
     expect(AssessmentPlayerScreen).toBeDefined();
-    expect(GoalsScreen).toBeDefined();
-    expect(HabitScreen).toBeDefined();
-    expect(JournalScreen).toBeDefined();
-    expect(LearningJourneyScreen).toBeDefined();
     expect(AdaptivePracticeScreen).toBeDefined();
     expect(AnalyticsScreen).toBeDefined();
-    expect(ResourcesScreen).toBeDefined();
     expect(ProfileScreen).toBeDefined();
   });
 });
@@ -59,10 +44,10 @@ import { SharedTable } from '../components/ui/shared-table';
 import { NotificationCenter } from '../components/ui/notification-center';
 
 describe('Shared Frontend Frameworks validation', () => {
-  test('workspaceRegistry maps STUDENT and INSTRUCTOR configurations', () => {
+  test('workspaceRegistry maps STUDENT and ADMIN configurations', () => {
     expect(workspaceRegistry.STUDENT).toBeDefined();
-    expect(workspaceRegistry.INSTRUCTOR).toBeDefined();
-    expect(workspaceRegistry.INSTRUCTOR.permissions.length).toBeGreaterThan(0);
+    expect(workspaceRegistry.ADMIN).toBeDefined();
+    expect(workspaceRegistry.ADMIN.permissions.length).toBeGreaterThan(0);
   });
 
   test('featureFlagsManager retrieves default enabled values', () => {

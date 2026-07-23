@@ -1,0 +1,18 @@
+{
+  "name": "@clasptek/application-learning-assistant",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@clasptek/kernel": "workspace:*",
+    "@clasptek/domain-learning-assistant": "workspace:*",
+    "@clasptek/domain-ai-evaluation": "workspace:*",
+    "@clasptek/domain-prediction-engine": "workspace:*",
+    "@clasptek/domain-adaptive-practice": "workspace:*"
+  }
+}

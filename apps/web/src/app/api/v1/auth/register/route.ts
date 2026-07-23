@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth-context';
 import { loadEnvironment } from '@clasptek/configuration';
@@ -55,20 +57,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Synchronize user aggregate
-    await identitySynchronizer.syncUserCreated({
-      id: data.user.id,
+    // 2. Guarantee Domain User Aggregate and Security Profile exist atomically
+    const { ensureUserAggregateExistsService } = await getAuthContext();
+    await ensureUserAggregateExistsService.execute({
+      userId: data.user.id,
       email: data.user.email || email,
       firstName,
       lastName,
       provider: provider || 'LOCAL',
-    });
-
-    // 3. Setup security profile failed attempts tracker
-    await registerAuthPreferencesHandler.execute({
-      userId: data.user.id,
-      preferredMfa: undefined,
-      securityPreferences: {},
     });
 
     return NextResponse.json({ success: true, userId: data.user.id }, { status: 201 });

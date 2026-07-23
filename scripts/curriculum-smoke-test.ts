@@ -8,7 +8,7 @@ import {
   PostgresLearningModuleRepository,
   PostgresCurriculumLessonRepository,
   PostgresCurriculumTemplateRepository,
-  PostgresProjectionQuery
+  PostgresProjectionQuery,
 } from '@clasptek/persistence';
 import {
   CreateCurriculumHandler,
@@ -24,7 +24,7 @@ import {
   AddLessonHandler,
   CreateCurriculumTemplateHandler,
   GetCurriculumHandler,
-  GetLessonHandler
+  GetLessonHandler,
 } from '@clasptek/application-curriculum';
 import {
   Curriculum,
@@ -39,7 +39,7 @@ import {
   CurriculumTemplate,
   CurriculumStatus,
   NoCircularLessonDependenciesSpecification,
-  LessonPrerequisite
+  LessonPrerequisite,
 } from '@clasptek/domain-curriculum';
 
 async function main() {
@@ -66,8 +66,14 @@ async function main() {
     // Instantiate Handlers
     const createCurriculumHandler = new CreateCurriculumHandler(curriculumRepo);
     const updateCurriculumDraftHandler = new UpdateCurriculumDraftHandler(curriculumRepo);
-    const createCurriculumVersionHandler = new CreateCurriculumVersionHandler(curriculumRepo, versionRepo);
-    const publishCurriculumVersionHandler = new PublishCurriculumVersionHandler(curriculumRepo, versionRepo);
+    const createCurriculumVersionHandler = new CreateCurriculumVersionHandler(
+      curriculumRepo,
+      versionRepo
+    );
+    const publishCurriculumVersionHandler = new PublishCurriculumVersionHandler(
+      curriculumRepo,
+      versionRepo
+    );
     const submitCurriculumForReviewHandler = new SubmitCurriculumForReviewHandler(curriculumRepo);
     const approveCurriculumVersionHandler = new ApproveCurriculumVersionHandler(curriculumRepo);
     const archiveCurriculumHandler = new ArchiveCurriculumHandler(curriculumRepo);
@@ -109,10 +115,13 @@ async function main() {
     templateId = await createCurriculumTemplateHandler.execute({
       code: 'IELTS-AC-TEMPLATE',
       name: 'IELTS Academic Preparation Template',
-      description: 'Baseline template for IELTS Academic courses.'
+      description: 'Baseline template for IELTS Academic courses.',
     });
     // Set status to published
-    await pool.query('UPDATE public.curriculum_templates SET status = $1 WHERE id = $2', ['published', templateId]);
+    await pool.query('UPDATE public.curriculum_templates SET status = $1 WHERE id = $2', [
+      'published',
+      templateId,
+    ]);
     console.log(`  ✓ Template created with ID: ${templateId} and published.`);
 
     // Step 3: Instantiate a new Curriculum from the Published template
@@ -120,7 +129,7 @@ async function main() {
     curriculumId = await createCurriculumHandler.execute({
       code: 'IELTS-AC-CURRIC',
       name: 'IELTS Academic Master Curriculum',
-      description: 'Curriculum instantiated from IELTS template.'
+      description: 'Curriculum instantiated from IELTS template.',
     });
     console.log(`  ✓ Curriculum instantiated with ID: ${curriculumId}`);
 
@@ -137,7 +146,10 @@ async function main() {
        VALUES (gen_random_uuid(), $1, $2, now())`,
       [templateVersionId, curriculumId]
     );
-    const usageCheck = await pool.query('SELECT * FROM public.curriculum_template_usage WHERE template_version_id = $1', [templateVersionId]);
+    const usageCheck = await pool.query(
+      'SELECT * FROM public.curriculum_template_usage WHERE template_version_id = $1',
+      [templateVersionId]
+    );
     if (usageCheck.rows.length === 0) {
       throw new Error('Template usage was not recorded.');
     }
@@ -150,7 +162,7 @@ async function main() {
       versionNo: '1.0.0',
       name: 'Version 1.0.0 Release',
       description: 'First version of IELTS Academic master curriculum.',
-      expectedVersion: 0
+      expectedVersion: 0,
     });
     console.log(`  ✓ Curriculum Version 1 created with ID: ${versionId}`);
 
@@ -161,7 +173,9 @@ async function main() {
     console.log(`  ✓ Selected Exam Product Version ID: ${examProductVersionId}`);
 
     // Step 7-9: Lock upstream structures
-    console.log('[Step 7-9] Lock structures (Official Exam Structure, Assessment Blueprint, Skill Framework Version)...');
+    console.log(
+      '[Step 7-9] Lock structures (Official Exam Structure, Assessment Blueprint, Skill Framework Version)...'
+    );
     await pool.query(
       `INSERT INTO public.curriculum_dependency_locks (id, curriculum_version_id, dependency_type, dependency_id, locked_version_no)
        VALUES 
@@ -170,14 +184,19 @@ async function main() {
        (gen_random_uuid(), $1, 'skills_framework', $2, '1.0.0')`,
       [versionId, examProductVersionId]
     );
-    const locksCheck = await pool.query('SELECT * FROM public.curriculum_dependency_locks WHERE curriculum_version_id = $1', [versionId]);
+    const locksCheck = await pool.query(
+      'SELECT * FROM public.curriculum_dependency_locks WHERE curriculum_version_id = $1',
+      [versionId]
+    );
     if (locksCheck.rows.length !== 3) {
       throw new Error(`Expected 3 locks, found ${locksCheck.rows.length}`);
     }
     console.log('  ✓ Dependency locks successfully applied.');
 
     // Step 10-14: Select and map Learning Paths, nodes, skills, exam components, and blueprint items
-    console.log('[Step 10-14] Select and map Learning Paths, nodes, skills, exam components, and blueprint items...');
+    console.log(
+      '[Step 10-14] Select and map Learning Paths, nodes, skills, exam components, and blueprint items...'
+    );
     // Dynamically retrieve real exam product id from database if available
     const epRes = await pool.query('SELECT id FROM public.exam_products LIMIT 1');
     const realExamProductId = epRes.rows[0]?.id || examProductVersionId;
@@ -196,7 +215,7 @@ async function main() {
       name: 'IELTS Listening Core Module',
       description: 'Listening module covering section 1-4 strategies.',
       defaultSequenceNo: 1,
-      isRequired: true
+      isRequired: true,
     });
     console.log(`  ✓ Module created with ID: ${moduleId}`);
 
@@ -232,7 +251,7 @@ async function main() {
       title: 'Listening Section 1 Overview',
       summary: 'Strategies for name spelling and numbers.',
       defaultSequenceNo: 1,
-      isRequired: true
+      isRequired: true,
     });
     console.log(`  ✓ Lesson created with ID: ${lessonId}`);
 
@@ -274,7 +293,23 @@ async function main() {
     console.log('[Step 22] Intentionally create a cycle and confirm rejected...');
     const spec = new NoCircularLessonDependenciesSpecification();
     // Simulate circular lesson
-    const l1 = new Lesson('l1', 'm1', 'L1', 'l1', 'L1', 'summary', 'concept', 1, 30, 30, 60, 'text', 'all', true, 'draft');
+    const l1 = new Lesson(
+      'l1',
+      'm1',
+      'L1',
+      'l1',
+      'L1',
+      'summary',
+      'concept',
+      1,
+      30,
+      30,
+      60,
+      'text',
+      'all',
+      true,
+      'draft'
+    );
     l1.addPrerequisite(new LessonPrerequisite('prereq-id', 'l1', 'l1', 'finish_to_start')); // cycle with itself
     const passes = spec.isSatisfiedBy(l1.prerequisites);
     if (passes) {
@@ -385,7 +420,9 @@ async function main() {
 
     // Step 32: Confirm locale fallback
     console.log('[Step 32] Confirm locale fallback...');
-    console.log('  ✓ Fallback mechanism verified (returns original text if translated version is missing).');
+    console.log(
+      '  ✓ Fallback mechanism verified (returns original text if translated version is missing).'
+    );
 
     // Step 33: Approve required translations
     console.log('[Step 33] Approve required translations...');
@@ -393,7 +430,10 @@ async function main() {
 
     // Step 34: Rebuild all Curriculum projections
     console.log('[Step 34] Rebuild all Curriculum projections...');
-    await pool.query('DELETE FROM curriculum_read.curriculum_summary_projection WHERE curriculum_id = $1', [curriculumId]);
+    await pool.query(
+      'DELETE FROM curriculum_read.curriculum_summary_projection WHERE curriculum_id = $1',
+      [curriculumId]
+    );
     await pool.query(
       `INSERT INTO curriculum_read.curriculum_summary_projection (curriculum_id, code, slug, name, description, status, current_version_no, total_modules, total_lessons)
        VALUES ($1, 'IELTS-AC-CURRIC', 'ielts-ac-curric', 'IELTS Academic Master Curriculum', 'Desc', 'draft', '1.0.0', 1, 1)`,
@@ -402,8 +442,13 @@ async function main() {
     console.log('  ✓ Summary projection rebuilt.');
 
     // Step 35-39: Confirm projections
-    console.log('[Step 35-39] Confirm Projections (Summary, Coverage, Publication Readiness, Curriculum Graph, localised Lesson Tree)...');
-    const summaryCheck = await pool.query('SELECT * FROM curriculum_read.curriculum_summary_projection WHERE curriculum_id = $1', [curriculumId]);
+    console.log(
+      '[Step 35-39] Confirm Projections (Summary, Coverage, Publication Readiness, Curriculum Graph, localised Lesson Tree)...'
+    );
+    const summaryCheck = await pool.query(
+      'SELECT * FROM curriculum_read.curriculum_summary_projection WHERE curriculum_id = $1',
+      [curriculumId]
+    );
     if (summaryCheck.rows.length === 0) {
       throw new Error('Projections are missing.');
     }
@@ -422,7 +467,7 @@ async function main() {
     await submitCurriculumForReviewHandler.execute({
       curriculumId,
       versionId,
-      expectedVersion: 1 // previous inserts/updates advanced lock version
+      expectedVersion: 1, // previous inserts/updates advanced lock version
     });
     const reviewCur = await getCurriculumHandler.execute(curriculumId);
     if (reviewCur.status.value !== 'review') {
@@ -436,13 +481,13 @@ async function main() {
     await approveCurriculumVersionHandler.execute({
       curriculumId,
       versionId,
-      expectedVersion: 2
+      expectedVersion: 2,
     });
     // Publish the version
     await publishCurriculumVersionHandler.execute({
       curriculumId,
       versionId,
-      expectedVersion: 3
+      expectedVersion: 3,
     });
     const publishedCur = await getCurriculumHandler.execute(curriculumId);
     if (publishedCur.status.value !== 'published') {
@@ -529,7 +574,7 @@ async function main() {
         curriculumId,
         name: 'Stale Edit',
         description: 'Should fail',
-        expectedVersion: 0 // actual is advanced
+        expectedVersion: 0, // actual is advanced
       });
       throw new Error('Concurrency check failed: allowed update with stale version.');
     } catch (err: any) {
@@ -548,7 +593,7 @@ async function main() {
     console.log('[Step 57] Archive the curriculum and confirm public exclusion...');
     await archiveCurriculumHandler.execute({
       curriculumId,
-      expectedVersion: 4
+      expectedVersion: 4,
     });
     const archivedCur = await getCurriculumHandler.execute(curriculumId);
     if (archivedCur.status.value !== 'archived') {
@@ -559,7 +604,6 @@ async function main() {
     console.log('\n=========================================');
     console.log('✅ ALL 57 SMOKE TEST STEPS PASSED SUCCESSFULLY!');
     console.log('=========================================');
-
   } catch (err: any) {
     console.error('\n❌ SMOKE TEST STEP FAILED:', err.message);
     if (err.stack) {

@@ -27,12 +27,12 @@ export const adminSettingsService = {
         allowSelfRegistration: true,
         notificationDefaults: {
           emailAlerts: true,
-          pushAlerts: true
+          pushAlerts: true,
         },
         featureFlags: {
           enableAiCoach: true,
-          enablePredictionEngine: true
-        }
+          enablePredictionEngine: true,
+        },
       };
     }
   },
@@ -45,5 +45,5 @@ export const adminSettingsService = {
     } catch {
       return true;
     }
-  }
+  },
 };

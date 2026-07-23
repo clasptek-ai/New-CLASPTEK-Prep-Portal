@@ -1,4 +1,8 @@
-import { ReadinessFrameworkRepository, ReadinessFramework, ReadinessCriteria } from '@clasptek/domain-exam-product';
+import {
+  ReadinessFrameworkRepository,
+  ReadinessFramework,
+  ReadinessCriteria,
+} from '@clasptek/domain-exam-product';
 import { PostgresUnitOfWork } from './postgres-unit-of-work';
 
 export class PostgresReadinessFrameworkRepository implements ReadinessFrameworkRepository {
@@ -9,19 +13,28 @@ export class PostgresReadinessFrameworkRepository implements ReadinessFrameworkR
   }
 
   public async findById(id: string): Promise<ReadinessFramework | null> {
-    const res = await this.client.query('SELECT * FROM readiness_frameworks WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const res = await this.client.query(
+      'SELECT * FROM readiness_frameworks WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async findByCode(code: string): Promise<ReadinessFramework | null> {
-    const res = await this.client.query('SELECT * FROM readiness_frameworks WHERE code = $1 AND deleted_at IS NULL', [code]);
+    const res = await this.client.query(
+      'SELECT * FROM readiness_frameworks WHERE code = $1 AND deleted_at IS NULL',
+      [code]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async exists(code: string): Promise<boolean> {
-    const res = await this.client.query('SELECT 1 FROM readiness_frameworks WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
+    const res = await this.client.query(
+      'SELECT 1 FROM readiness_frameworks WHERE code = $1 AND deleted_at IS NULL LIMIT 1',
+      [code]
+    );
     return res.rows.length > 0;
   }
 
@@ -100,7 +113,10 @@ export class PostgresReadinessFrameworkRepository implements ReadinessFrameworkR
     );
 
     // Hydrate criteria
-    const critRes = await this.client.query('SELECT * FROM readiness_criteria WHERE readiness_framework_id = $1 AND deleted_at IS NULL', [framework.id]);
+    const critRes = await this.client.query(
+      'SELECT * FROM readiness_criteria WHERE readiness_framework_id = $1 AND deleted_at IS NULL',
+      [framework.id]
+    );
     framework.loadCriteria(
       critRes.rows.map(
         (c: any) =>

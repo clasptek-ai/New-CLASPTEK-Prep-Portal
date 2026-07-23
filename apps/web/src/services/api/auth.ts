@@ -10,6 +10,6 @@ export function setupAuthInterceptor(getToken: () => string | null) {
         return { ...config, headers };
       }
       return config;
-    }
+    },
   });
 }

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getCurriculumContext } from '@/lib/curriculum-context';
@@ -5,10 +7,7 @@ import { AccessControlGuard } from '@clasptek/infrastructure-access-control';
 import { PermissionCode } from '@clasptek/domain-authorization';
 import { ApplicationError } from '@clasptek/kernel';
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { updateCurriculumDraftHandler, logger } = await getCurriculumContext();
   try {
     const resolvedParams = await params;
@@ -36,22 +35,31 @@ export async function PATCH(
     const { name, description, expectedVersion } = body;
 
     if (!name || expectedVersion === undefined) {
-      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing name or expectedVersion' }, { status: 400 });
+      return NextResponse.json(
+        { code: 'VALIDATION_ERROR', message: 'Missing name or expectedVersion' },
+        { status: 400 }
+      );
     }
 
     await updateCurriculumDraftHandler.execute({
       curriculumId,
       name,
       description: description || '',
-      expectedVersion
+      expectedVersion,
     });
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err: unknown) {
-    logger.error('PATCH /api/v1/admin/curricula/[id] failure', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      'PATCH /api/v1/admin/curricula/[id] failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
     if (err instanceof ApplicationError) {
       return NextResponse.json({ code: err.name, message: err.message }, { status: 400 });
     }
-    return NextResponse.json({ code: 'INTERNAL_ERROR', message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

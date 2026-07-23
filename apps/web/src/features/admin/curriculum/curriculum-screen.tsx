@@ -31,17 +31,20 @@ export function CurriculumScreen() {
     nextModules[idx] = nextModules[idx - 1];
     nextModules[idx - 1] = temp;
     setModules(nextModules);
-    await adminCurriculumService.reorderModules('p1', nextModules.map(m => m.id));
+    await adminCurriculumService.reorderModules(
+      'p1',
+      nextModules.map((m) => m.id)
+    );
     showBanner('Module order resequenced successfully!');
   }
 
   async function handlePublishLesson(lessonId: string) {
     const success = await adminCurriculumService.publishLesson(lessonId);
     if (success) {
-      setModules(prev =>
-        prev.map(m => ({
+      setModules((prev) =>
+        prev.map((m) => ({
           ...m,
-          lessons: m.lessons.map(l => (l.id === lessonId ? { ...l, status: 'PUBLISHED' } : l))
+          lessons: m.lessons.map((l) => (l.id === lessonId ? { ...l, status: 'PUBLISHED' } : l)),
         }))
       );
       showBanner('Lesson status published successfully!');
@@ -64,12 +67,25 @@ export function CurriculumScreen() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
       <div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Academic Curriculum Sequencer</h1>
-        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>Reorder lesson structures, verify sequences, and publish lesson versions</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
+          Academic Curriculum Sequencer
+        </h1>
+        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+          Reorder lesson structures, verify sequences, and publish lesson versions
+        </p>
       </div>
 
       {banner && (
-        <div style={{ padding: '1rem', backgroundColor: '#10b98120', border: '1px solid #10b98140', borderRadius: '8px', color: '#10b981', fontSize: '0.85rem' }}>
+        <div
+          style={{
+            padding: '1rem',
+            backgroundColor: '#10b98120',
+            border: '1px solid #10b98140',
+            borderRadius: '8px',
+            color: '#10b981',
+            fontSize: '0.85rem',
+          }}
+        >
           {banner}
         </div>
       )}
@@ -81,15 +97,21 @@ export function CurriculumScreen() {
             title={`Module ${idx + 1}: ${mod.name}`}
             actions={
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <Button disabled={idx === 0} onClick={() => handleMoveModuleUp(idx)}>Move Up ▲</Button>
+                <Button disabled={idx === 0} onClick={() => handleMoveModuleUp(idx)}>
+                  Move Up ▲
+                </Button>
               </div>
             }
           >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}
+            >
               {mod.lessons.length === 0 ? (
-                <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>No lessons configured in this module yet.</p>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
+                  No lessons configured in this module yet.
+                </p>
               ) : (
-                mod.lessons.map(lesson => (
+                mod.lessons.map((lesson) => (
                   <div
                     key={lesson.id}
                     style={{
@@ -99,14 +121,18 @@ export function CurriculumScreen() {
                       padding: '0.75rem 1rem',
                       backgroundColor: '#111827',
                       borderRadius: '8px',
-                      border: '1px solid #1e293b'
+                      border: '1px solid #1e293b',
                     }}
                   >
                     <span style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>{lesson.title}</span>
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                      <Badge variant={lesson.status === 'PUBLISHED' ? 'success' : 'warning'}>{lesson.status}</Badge>
+                      <Badge variant={lesson.status === 'PUBLISHED' ? 'success' : 'warning'}>
+                        {lesson.status}
+                      </Badge>
                       {lesson.status !== 'PUBLISHED' && (
-                        <Button onClick={() => handlePublishLesson(lesson.id)}>Publish Lesson</Button>
+                        <Button onClick={() => handlePublishLesson(lesson.id)}>
+                          Publish Lesson
+                        </Button>
                       )}
                     </div>
                   </div>

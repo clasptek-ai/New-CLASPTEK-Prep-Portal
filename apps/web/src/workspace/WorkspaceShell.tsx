@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useContext, useEffect, useState } from 'react';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { WorkspaceContext } from './WorkspaceContext';
 import { WorkspaceId, workspaceRegistry } from './workspace-registry';
 import { RouteGuard } from '../components/auth/route-guard';
+import { TopNavigation } from '../shared/ui/navigation/TopNavigation';
+import { SidebarItem } from '../shared/ui/navigation/SidebarItem';
+import { Breadcrumb, BreadcrumbItem } from '../shared/ui/breadcrumb/Breadcrumb';
 
 interface WorkspaceShellProps {
   workspaceRole: WorkspaceId;
@@ -18,6 +20,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
   const router = useRouter();
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   if (!context) {
     throw new Error('WorkspaceShell must be wrapped in WorkspaceProvider context');
@@ -25,12 +28,23 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
 
   const { currentWorkspace, setWorkspaceId, preferences, updatePreferences } = context;
 
-  // Force active workspace synchronisation
   useEffect(() => {
     if (currentWorkspace.id !== workspaceRole) {
       setWorkspaceId(workspaceRole);
     }
   }, [workspaceRole, currentWorkspace.id, setWorkspaceId]);
+
+  // Global Cmd+K / Ctrl+K keyboard shortcut listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const activeTheme = preferences.theme;
   const collapsed = preferences.sidebarCollapsed;
@@ -38,196 +52,221 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
   const handleSwitch = (id: WorkspaceId) => {
     setWorkspaceId(id);
     setSwitcherOpen(false);
-    // Dynamic redirect mapping
     const target = workspaceRegistry[id];
     router.push(target.defaultRoute);
   };
 
   return (
-    <RouteGuard allowedRoles={workspaceRole === 'STUDENT' ? ['STUDENT'] : workspaceRole === 'ADMIN' ? ['ADMINISTRATOR'] : ['INSTRUCTOR', 'ADMINISTRATOR']}>
-      <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--background)', color: 'var(--text-main)', accentColor: currentWorkspace.themeAccent }}>
-        
-        {/* Dynamic Sidebar navigation */}
-        <aside
-          style={{
-            width: collapsed ? '80px' : '280px',
-            backgroundColor: '#0b0f19',
-            borderRight: '1px solid #1e293b',
-            display: 'flex',
-            flexDirection: 'column',
-            boxSizing: 'border-box',
-            transition: 'width 0.2s ease'
+    <RouteGuard
+      allowedRoles={
+        workspaceRole === 'STUDENT' ? ['STUDENT'] : ['ADMINISTRATOR', 'INSTRUCTOR', 'SYSTEM_ADMIN']
+      }
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          width: '100vw',
+          overflow: 'hidden',
+          backgroundColor: 'var(--bg-app, #0b0f19)',
+          color: 'var(--text-primary, #f8fafc)',
+        }}
+      >
+        <TopNavigation
+          user={{
+            name: currentWorkspace.name,
+            email: `${workspaceRole.toLowerCase()}@clasptek.com`,
+            role: workspaceRole,
           }}
-        >
-          {/* Brand header */}
-          <div style={{ padding: '1.25rem', borderBottom: '1px solid #1e293b', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            {!collapsed && (
-              <span
-                style={{
-                  fontSize: '1.1rem',
-                  fontWeight: 800,
-                  background: `linear-gradient(135deg, ${currentWorkspace.themeAccent}, #a855f7)`,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}
-              >
-                {currentWorkspace.name}
-              </span>
-            )}
-            <button
-              onClick={() => updatePreferences({ sidebarCollapsed: !collapsed })}
-              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '1rem', margin: collapsed ? '0 auto' : '0' }}
-            >
-              {collapsed ? '▶' : '◀'}
-            </button>
-          </div>
+          onSearch={(_q: string) => setSearchOpen(true)}
+          onToggleTheme={() =>
+            updatePreferences({ theme: activeTheme === 'dark' ? 'light' : 'dark' })
+          }
+        />
 
-          {/* Quick switcher panel */}
-          {!collapsed && (
-            <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid #1e293b', position: 'relative' }}>
-              <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Switch Workspace</label>
-              <button
-                onClick={() => setSwitcherOpen(!switcherOpen)}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  borderRadius: '6px',
-                  border: '1px solid #1e293b',
-                  backgroundColor: '#020617',
-                  color: '#cbd5e1',
-                  fontSize: '0.8rem',
-                  textAlign: 'left',
-                  cursor: 'pointer'
-                }}
-              >
-                {currentWorkspace.name} ▾
-              </button>
-
-              {switcherOpen && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '60px',
-                    left: '20px',
-                    right: '20px',
-                    backgroundColor: '#0f172a',
-                    border: '1px solid #1e293b',
-                    borderRadius: '8px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-                    zIndex: 100,
-                    padding: '0.5rem'
-                  }}
-                >
-                  {(Object.keys(workspaceRegistry) as WorkspaceId[]).map(id => (
-                    <button
-                      key={id}
-                      onClick={() => handleSwitch(id)}
-                      style={{
-                        width: '100%',
-                        padding: '0.5rem',
-                        borderRadius: '4px',
-                        border: 'none',
-                        backgroundColor: 'transparent',
-                        color: currentWorkspace.id === id ? currentWorkspace.themeAccent : '#cbd5e1',
-                        textAlign: 'left',
-                        fontSize: '0.8rem',
-                        cursor: 'pointer',
-                        fontWeight: 600
-                      }}
-                    >
-                      {workspaceRegistry[id].name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Nav link registry items */}
-          <nav style={{ flex: 1, padding: '1rem 0.5rem', display: 'flex', flexDirection: 'column', gap: '0.35rem', overflowY: 'auto' }}>
-            {currentWorkspace.navigation.map((item, idx) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={idx}
-                  href={item.href}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: collapsed ? 'center' : 'flex-start',
-                    gap: '0.75rem',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '8px',
-                    fontSize: '0.85rem',
-                    fontWeight: isActive ? 600 : 500,
-                    color: isActive ? '#f8fafc' : '#94a3b8',
-                    backgroundColor: isActive ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
-                    border: isActive ? `1px solid ${currentWorkspace.themeAccent}` : '1px solid transparent',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  <span>⚙</span>
-                  {!collapsed && <span>{item.name}</span>}
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-
-        {/* Main Work Surface */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-          {/* Header */}
-          <header
+        <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+          <aside
             style={{
-              height: '64px',
-              backgroundColor: '#0b0f19',
-              borderBottom: '1px solid #1e293b',
+              width: collapsed ? '72px' : '260px',
+              backgroundColor: 'var(--bg-surface-0, #111827)',
+              borderRight: '1px solid var(--border-default, #1e293b)',
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '0 2rem',
-              boxSizing: 'border-box'
+              flexDirection: 'column',
+              boxSizing: 'border-box',
+              transition: 'width 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+              overflowY: 'auto',
+              flexShrink: 0,
             }}
           >
-            {/* Breadcrumbs */}
-            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>
-              <span>Workspace</span>
-              <span>&rarr;</span>
-              <span style={{ color: '#cbd5e1' }}>
-                {pathname ? pathname.replace('/instructor/', '').replace('/admin/', '').replace('/authoring/', '').toUpperCase() : 'DASHBOARD'}
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <input
-                placeholder={`Search ${currentWorkspace.searchScope}...`}
-                onClick={() => setSearchOpen(true)}
-                readOnly
-                style={{
-                  padding: '0.4rem 0.8rem',
-                  borderRadius: '6px',
-                  border: '1px solid #1e293b',
-                  backgroundColor: '#020617',
-                  color: '#cbd5e1',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer'
-                }}
-              />
+            <div
+              style={{
+                padding: '0.875rem 1.0rem',
+                borderBottom: '1px solid var(--border-subtle, rgba(255,255,255,0.07))',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: collapsed ? 'center' : 'space-between',
+              }}
+            >
+              {!collapsed && (
+                <span
+                  style={{
+                    fontSize: '0.875rem',
+                    fontWeight: 800,
+                    color: currentWorkspace.themeAccent || 'var(--primary-500, #2563eb)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  {currentWorkspace.name}
+                </span>
+              )}
               <button
-                onClick={() => updatePreferences({ theme: activeTheme === 'dark' ? 'light' : 'dark' })}
-                style={{ background: 'none', border: 'none', color: '#cbd5e1', cursor: 'pointer', fontSize: '1rem' }}
+                onClick={() => updatePreferences({ sidebarCollapsed: !collapsed })}
+                aria-label={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-secondary, #cbd5e1)',
+                  cursor: 'pointer',
+                  padding: '0.35rem',
+                  fontSize: '0.875rem',
+                }}
               >
-                {activeTheme === 'dark' ? '☀️' : '🌙'}
+                {collapsed ? '➔' : '⬅'}
               </button>
             </div>
-          </header>
 
-          <main style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
-            {children}
+            {!collapsed && (
+              <div
+                style={{
+                  padding: '0.75rem 1.0rem',
+                  borderBottom: '1px solid var(--border-subtle, rgba(255,255,255,0.07))',
+                  position: 'relative',
+                }}
+              >
+                <button
+                  onClick={() => setSwitcherOpen(!switcherOpen)}
+                  style={{
+                    width: '100%',
+                    padding: '0.4rem 0.65rem',
+                    borderRadius: 'var(--radius-md, 8px)',
+                    border: '1px solid var(--border-default, #1e293b)',
+                    backgroundColor: 'var(--bg-surface-1, #161e2e)',
+                    color: 'var(--text-primary, #f8fafc)',
+                    fontSize: '0.8125rem',
+                    fontWeight: 600,
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <span>Workspace: {currentWorkspace.name}</span>
+                  <span>▾</span>
+                </button>
+
+                {switcherOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '48px',
+                      left: '16px',
+                      right: '16px',
+                      backgroundColor: 'var(--bg-surface-0, #111827)',
+                      border: '1px solid var(--border-default, #1e293b)',
+                      borderRadius: 'var(--radius-md, 8px)',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                      zIndex: 100,
+                      padding: '0.4rem',
+                    }}
+                  >
+                    {(Object.keys(workspaceRegistry) as WorkspaceId[]).map((id) => (
+                      <button
+                        key={id}
+                        onClick={() => handleSwitch(id)}
+                        style={{
+                          width: '100%',
+                          padding: '0.5rem',
+                          borderRadius: '4px',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          color:
+                            currentWorkspace.id === id
+                              ? 'var(--primary-500, #2563eb)'
+                              : 'var(--text-secondary, #cbd5e1)',
+                          textAlign: 'left',
+                          fontSize: '0.8125rem',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {workspaceRegistry[id].name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <nav
+              style={{
+                flex: 1,
+                padding: '0.75rem 0.5rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.25rem',
+                overflowY: 'auto',
+              }}
+            >
+              {currentWorkspace.navigation.map((item, idx) => {
+                const isActive = pathname === item.href;
+                return (
+                  <SidebarItem
+                    key={idx}
+                    icon="📌"
+                    label={item.name}
+                    href={item.href}
+                    isActive={isActive}
+                    isCollapsed={collapsed}
+                    onClick={() => router.push(item.href)}
+                  />
+                );
+              })}
+            </nav>
+          </aside>
+
+          <main
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              minWidth: 0,
+              overflowY: 'auto',
+              padding: '1.5rem 2.0rem',
+            }}
+          >
+            <div style={{ marginBottom: '1.0rem' }}>
+              <Breadcrumb>
+                <BreadcrumbItem href="/">Portal</BreadcrumbItem>
+                <BreadcrumbItem href="#">{currentWorkspace.name}</BreadcrumbItem>
+                <BreadcrumbItem isCurrent>
+                  {pathname
+                    ? pathname
+                        .replace('/instructor/', '')
+                        .replace('/admin/', '')
+                        .replace('/authoring/', '')
+                        .toUpperCase()
+                    : 'DASHBOARD'}
+                </BreadcrumbItem>
+              </Breadcrumb>
+            </div>
+
+            <div style={{ flex: 1 }}>{children}</div>
           </main>
         </div>
 
-        {/* Unified Search Command Palette Overlay */}
         {searchOpen && (
           <div
             style={{
@@ -236,12 +275,12 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(2, 6, 23, 0.7)',
+              backgroundColor: 'rgba(2, 6, 23, 0.75)',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'flex-start',
               paddingTop: '10vh',
-              zIndex: 1000
+              zIndex: 1000,
             }}
             onClick={() => setSearchOpen(false)}
           >
@@ -249,29 +288,46 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               style={{
                 maxWidth: '600px',
                 width: '100%',
-                backgroundColor: '#0f172a',
-                border: '1px solid #1e293b',
-                borderRadius: '8px',
-                padding: '1rem'
+                backgroundColor: 'var(--bg-surface-0, #111827)',
+                border: '1px solid var(--border-default, #1e293b)',
+                borderRadius: 'var(--radius-lg, 12px)',
+                padding: '1.25rem',
               }}
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <input
+                id="global-search-input"
                 autoFocus
-                placeholder={`Fuzzy search ${currentWorkspace.searchScope} registries...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={`Search ${currentWorkspace.searchScope} registries (Press ESC to close)...`}
                 style={{
                   width: '100%',
-                  padding: '0.75rem',
-                  borderRadius: '6px',
-                  border: '1px solid #1e293b',
-                  backgroundColor: '#020617',
-                  color: '#f8fafc',
-                  fontSize: '0.95rem',
-                  outline: 'none'
+                  padding: '0.75rem 1.0rem',
+                  borderRadius: 'var(--radius-md, 8px)',
+                  border: '1px solid var(--border-default, #1e293b)',
+                  backgroundColor: 'var(--bg-surface-1, #161e2e)',
+                  color: 'var(--text-primary, #f8fafc)',
+                  fontSize: '0.9375rem',
+                  outline: 'none',
+                  boxSizing: 'border-box',
                 }}
               />
-              <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#94a3b8' }}>
-                Searching workspace context: **{currentWorkspace.id}**
+              <div
+                style={{
+                  marginTop: '0.75rem',
+                  fontSize: '0.8125rem',
+                  color: 'var(--text-muted, #94a3b8)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <span>
+                  Active Scope: <strong>{currentWorkspace.name}</strong>
+                </span>
+                <span>
+                  Press <strong>ESC</strong> to close
+                </span>
               </div>
             </div>
           </div>
@@ -280,4 +336,5 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
     </RouteGuard>
   );
 }
+
 export default WorkspaceShell;

@@ -16,16 +16,30 @@ export interface OrgItem {
 export function OrganizationsScreen({ orgId }: { orgId?: string }) {
   const router = useRouter();
   const [selectedOrg, setSelectedOrg] = useState<OrgItem | null>(null);
-  const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'BRANDING' | 'USERS' | 'LICENSING'>('OVERVIEW');
+  const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'BRANDING' | 'USERS' | 'LICENSING'>(
+    'OVERVIEW'
+  );
 
   const list: OrgItem[] = [
-    { id: 'o1', name: 'Global Prep Institute', domain: 'globalprep.edu', status: 'ACTIVE', licenseExpiry: '2027-12-31' },
-    { id: 'o2', name: 'Pre-University Diagnostics Academy', domain: 'preuni.edu', status: 'ACTIVE', licenseExpiry: '2026-11-30' }
+    {
+      id: 'o1',
+      name: 'Global Prep Institute',
+      domain: 'globalprep.edu',
+      status: 'ACTIVE',
+      licenseExpiry: '2027-12-31',
+    },
+    {
+      id: 'o2',
+      name: 'Pre-University Diagnostics Academy',
+      domain: 'preuni.edu',
+      status: 'ACTIVE',
+      licenseExpiry: '2026-11-30',
+    },
   ];
 
   useEffect(() => {
     if (orgId) {
-      const match = list.find(o => o.id === orgId) || list[0];
+      const match = list.find((o) => o.id === orgId) || list[0];
       setSelectedOrg(match);
     }
   }, [orgId]);
@@ -35,16 +49,19 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
       id: 'name',
       header: 'Institution Name',
       cell: (info: any) => (
-        <span style={{ fontWeight: 600, color: '#60a5fa', cursor: 'pointer' }} onClick={() => router.push(`/admin/organizations/${info.row.id}`)}>
+        <span
+          style={{ fontWeight: 600, color: '#60a5fa', cursor: 'pointer' }}
+          onClick={() => router.push(`/admin/organizations/${info.row.id}`)}
+        >
           {info.row.name}
         </span>
       ),
-      sortable: true
+      sortable: true,
     },
     {
       id: 'domain',
       header: 'Domain Scope',
-      cell: (info: any) => <span>{info.row.domain}</span>
+      cell: (info: any) => <span>{info.row.domain}</span>,
     },
     {
       id: 'status',
@@ -53,7 +70,7 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
         <Badge variant={info.row.status === 'ACTIVE' ? 'success' : 'danger'}>
           {info.row.status}
         </Badge>
-      )
+      ),
     },
     {
       id: 'actions',
@@ -62,8 +79,8 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
         <Button onClick={() => router.push(`/admin/organizations/${info.row.id}`)}>
           Manage Tenant
         </Button>
-      )
-    }
+      ),
+    },
   ];
 
   if (selectedOrg) {
@@ -71,15 +88,28 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Tenant Workspace: {selectedOrg.name}</h1>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>Domain: {selectedOrg.domain}</p>
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
+              Tenant Workspace: {selectedOrg.name}
+            </h1>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+              Domain: {selectedOrg.domain}
+            </p>
           </div>
-          <Button variant="secondary" onClick={() => router.push('/admin/organizations')}>Back to Directory</Button>
+          <Button variant="secondary" onClick={() => router.push('/admin/organizations')}>
+            Back to Directory
+          </Button>
         </div>
 
         {/* Workspace tabs */}
-        <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid #1e293b', paddingBottom: '0.5rem' }}>
-          {(['OVERVIEW', 'BRANDING', 'USERS', 'LICENSING'] as const).map(tab => (
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.5rem',
+            borderBottom: '1px solid #1e293b',
+            paddingBottom: '0.5rem',
+          }}
+        >
+          {(['OVERVIEW', 'BRANDING', 'USERS', 'LICENSING'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -91,7 +121,7 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
                 borderRadius: '6px',
                 fontWeight: 600,
                 cursor: 'pointer',
-                fontSize: '0.85rem'
+                fontSize: '0.85rem',
               }}
             >
               {tab}
@@ -102,7 +132,8 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
         {activeTab === 'OVERVIEW' && (
           <Card title="Tenant Properties Summary">
             <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
-              Licensing Expiration: **{selectedOrg.licenseExpiry}**. Database partition status: **HEALTHY**.
+              Licensing Expiration: **{selectedOrg.licenseExpiry}**. Database partition status:
+              **HEALTHY**.
             </p>
           </Card>
         )}
@@ -110,7 +141,8 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
         {activeTab === 'BRANDING' && (
           <Card title="Tenant Custom Branding Options">
             <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
-              Custom Primary color: **#3b82f6**. Header Logo mapping configured to custom bucket storage logs.
+              Custom Primary color: **#3b82f6**. Header Logo mapping configured to custom bucket
+              storage logs.
             </p>
           </Card>
         )}
@@ -138,13 +170,12 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div>
         <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Tenant Organizations</h1>
-        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>Audit multi-tenant institutions billing states and domain parameters</p>
+        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+          Audit multi-tenant institutions billing states and domain parameters
+        </p>
       </div>
 
-      <SharedTable
-        data={list}
-        columns={columns}
-      />
+      <SharedTable data={list} columns={columns} />
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { CalendarScreen } from '../../../features/instructor/calendar/calendar-s
 
 export default function Page() {
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <CalendarScreen />
     </WorkspaceShell>
   );

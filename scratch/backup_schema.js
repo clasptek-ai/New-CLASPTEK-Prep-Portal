@@ -13,7 +13,7 @@ async function main() {
 
   const client = new Client({
     connectionString: dbUrl,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
   });
 
   try {
@@ -35,7 +35,7 @@ async function main() {
 
     let backupContent = '-- Clasptek Legacy Database Schema Backup\n\n';
     let currentTable = '';
-    schemaRes.rows.forEach(r => {
+    schemaRes.rows.forEach((r) => {
       const fullTableName = `${r.table_schema}.${r.table_name}`;
       if (fullTableName !== currentTable) {
         if (currentTable !== '') {

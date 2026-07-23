@@ -19,7 +19,36 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@clasptek/domain-diagnostic-placement": [
+        "../../packages/domain/diagnostic-placement/src/index.ts"
+      ],
+      "@clasptek/application-diagnostic-placement": [
+        "../../packages/application/diagnostic-placement/src/index.ts"
+      ],
+      "@clasptek/domain-mock-examination": ["../../packages/domain/mock-examination/src/index.ts"],
+      "@clasptek/application-mock-examination": [
+        "../../packages/application/mock-examination/src/index.ts"
+      ],
+      "@clasptek/design-tokens": ["../../packages/design-tokens/src/index.ts"],
+      "@clasptek/design-system": ["../../packages/design-system/src/index.ts"],
+      "@clasptek/infrastructure-ai-providers": [
+        "../../packages/infrastructure/ai-providers/src/index.ts"
+      ],
+      "@clasptek/domain-learning-analytics": [
+        "../../packages/domain/learning-analytics/src/index.ts"
+      ],
+      "@clasptek/application-learning-analytics": [
+        "../../packages/application/learning-analytics/src/index.ts"
+      ],
+      "@clasptek/domain-results": ["../../packages/domain/results/src/index.ts"],
+      "@clasptek/application-results": ["../../packages/application/results/src/index.ts"],
+      "@clasptek/domain-notification": ["../../packages/domain/notification/src/index.ts"],
+      "@clasptek/domain-announcement": ["../../packages/domain/announcement/src/index.ts"],
+      "@clasptek/application-notification": [
+        "../../packages/application/notification/src/index.ts"
+      ],
+      "@clasptek/application-announcement": ["../../packages/application/announcement/src/index.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
@@ -47,7 +76,24 @@
     { "path": "../../packages/validation" },
     { "path": "../../packages/domain/ai-evaluation" },
     { "path": "../../packages/application/ai-evaluation" },
+    { "path": "../../packages/infrastructure/ai-providers" },
     { "path": "../../packages/domain/prediction-engine" },
-    { "path": "../../packages/application/prediction-engine" }
+    { "path": "../../packages/application/prediction-engine" },
+    { "path": "../../packages/domain/diagnostic-placement" },
+    { "path": "../../packages/application/diagnostic-placement" },
+    { "path": "../../packages/domain/learning-assistant" },
+    { "path": "../../packages/application/learning-assistant" },
+    { "path": "../../packages/domain/mock-examination" },
+    { "path": "../../packages/application/mock-examination" },
+    { "path": "../../packages/design-tokens" },
+    { "path": "../../packages/design-system" },
+    { "path": "../../packages/domain/results" },
+    { "path": "../../packages/application/results" },
+    { "path": "../../packages/domain/learning-analytics" },
+    { "path": "../../packages/application/learning-analytics" },
+    { "path": "../../packages/domain/notification" },
+    { "path": "../../packages/domain/announcement" },
+    { "path": "../../packages/application/notification" },
+    { "path": "../../packages/application/announcement" }
   ]
 }

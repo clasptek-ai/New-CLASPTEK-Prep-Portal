@@ -1,27 +1,40 @@
 import { Pool } from 'pg';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
-import { 
-  ObjectStoragePort, 
-  MimeInspectionPort, 
-  ChecksumPort, 
-  SecurityScanPort, 
-  StorageQuotaPort 
+import {
+  ObjectStoragePort,
+  MimeInspectionPort,
+  ChecksumPort,
+  SecurityScanPort,
+  StorageQuotaPort,
 } from '@clasptek/application-learning-resources';
 
 export class SupabaseStorageAdapter implements ObjectStoragePort {
   private mockBucketStorage: Map<string, Set<string>> = new Map();
 
-  public async generateSignedUploadUrl(bucketName: string, objectPath: string, expiresInSeconds: number): Promise<string> {
+  public async generateSignedUploadUrl(
+    bucketName: string,
+    objectPath: string,
+    expiresInSeconds: number
+  ): Promise<string> {
     // Generate a secure signed URL pointing to the ingestion endpoint
     return `https://supabase.clasptek.internal/storage/v1/object/upload/sign/${bucketName}/${objectPath}?token=mock_sign_token_expires_${Date.now() + expiresInSeconds * 1000}`;
   }
 
-  public async generateSignedDownloadUrl(bucketName: string, objectPath: string, expiresInSeconds: number): Promise<string> {
+  public async generateSignedDownloadUrl(
+    bucketName: string,
+    objectPath: string,
+    expiresInSeconds: number
+  ): Promise<string> {
     return `https://supabase.clasptek.internal/storage/v1/object/download/sign/${bucketName}/${objectPath}?token=mock_read_token_expires_${Date.now() + expiresInSeconds * 1000}`;
   }
 
-  public async promote(sourceBucket: string, sourcePath: string, targetBucket: string, targetPath: string): Promise<void> {
+  public async promote(
+    sourceBucket: string,
+    sourcePath: string,
+    targetBucket: string,
+    targetPath: string
+  ): Promise<void> {
     if (!this.mockBucketStorage.has(targetBucket)) {
       this.mockBucketStorage.set(targetBucket, new Set());
     }
@@ -63,14 +76,17 @@ export class LocalChecksumAdapter implements ChecksumPort {
 }
 
 export class MockSecurityScanAdapter implements SecurityScanPort {
-  public async scanFile(_bucketName: string, objectPath: string): Promise<{ isClear: boolean; threats: string[]; scannerName: string }> {
+  public async scanFile(
+    _bucketName: string,
+    objectPath: string
+  ): Promise<{ isClear: boolean; threats: string[]; scannerName: string }> {
     const scannerName = 'ClasptekMalwareScannerV2';
     // Flag quarantine if file name or path matches target test values
     if (objectPath.includes('infected') || objectPath.endsWith('.infected')) {
       return {
         isClear: false,
         threats: ['EICAR-Test-Signature', 'MaliciousPayloadFound'],
-        scannerName
+        scannerName,
       };
     }
     return { isClear: true, threats: [], scannerName };
@@ -80,7 +96,10 @@ export class MockSecurityScanAdapter implements SecurityScanPort {
 export class PostgresStorageQuotaAdapter implements StorageQuotaPort {
   constructor(private readonly pool: Pool) {}
 
-  public async hasSufficientQuota(organizationId: string, requestedBytes: number): Promise<boolean> {
+  public async hasSufficientQuota(
+    organizationId: string,
+    requestedBytes: number
+  ): Promise<boolean> {
     const res = await this.pool.query(
       `SELECT total_allowed_bytes, total_used_bytes 
        FROM resource_read.resource_storage_health_projection 
@@ -90,10 +109,14 @@ export class PostgresStorageQuotaAdapter implements StorageQuotaPort {
     if (res.rows.length === 0) return true; // Default allow if no policy mapped yet
 
     const { total_allowed_bytes, total_used_bytes } = res.rows[0];
-    return (Number(total_used_bytes) + requestedBytes) <= Number(total_allowed_bytes);
+    return Number(total_used_bytes) + requestedBytes <= Number(total_allowed_bytes);
   }
 
-  public async reserveQuota(organizationId: string, uploadSessionId: string, requestedBytes: number): Promise<void> {
+  public async reserveQuota(
+    organizationId: string,
+    uploadSessionId: string,
+    requestedBytes: number
+  ): Promise<void> {
     // Record quota reservation
     await this.pool.query(
       `INSERT INTO public.storage_quota_reservations (id, organization_id, upload_session_id, reserved_bytes, expires_at)

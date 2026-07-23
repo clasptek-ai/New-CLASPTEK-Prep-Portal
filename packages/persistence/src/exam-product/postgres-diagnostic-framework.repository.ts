@@ -1,4 +1,8 @@
-import { DiagnosticFrameworkRepository, DiagnosticFramework, DiagnosticRule } from '@clasptek/domain-exam-product';
+import {
+  DiagnosticFrameworkRepository,
+  DiagnosticFramework,
+  DiagnosticRule,
+} from '@clasptek/domain-exam-product';
 import { PostgresUnitOfWork } from './postgres-unit-of-work';
 
 export class PostgresDiagnosticFrameworkRepository implements DiagnosticFrameworkRepository {
@@ -9,19 +13,28 @@ export class PostgresDiagnosticFrameworkRepository implements DiagnosticFramewor
   }
 
   public async findById(id: string): Promise<DiagnosticFramework | null> {
-    const res = await this.client.query('SELECT * FROM diagnostic_frameworks WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const res = await this.client.query(
+      'SELECT * FROM diagnostic_frameworks WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async findByCode(code: string): Promise<DiagnosticFramework | null> {
-    const res = await this.client.query('SELECT * FROM diagnostic_frameworks WHERE code = $1 AND deleted_at IS NULL', [code]);
+    const res = await this.client.query(
+      'SELECT * FROM diagnostic_frameworks WHERE code = $1 AND deleted_at IS NULL',
+      [code]
+    );
     if (res.rows.length === 0) return null;
     return this._hydrate(res.rows[0]);
   }
 
   public async exists(code: string): Promise<boolean> {
-    const res = await this.client.query('SELECT 1 FROM diagnostic_frameworks WHERE code = $1 AND deleted_at IS NULL LIMIT 1', [code]);
+    const res = await this.client.query(
+      'SELECT 1 FROM diagnostic_frameworks WHERE code = $1 AND deleted_at IS NULL LIMIT 1',
+      [code]
+    );
     return res.rows.length > 0;
   }
 
@@ -101,7 +114,10 @@ export class PostgresDiagnosticFrameworkRepository implements DiagnosticFramewor
     );
 
     // Hydrate rules
-    const ruleRes = await this.client.query('SELECT * FROM diagnostic_rules WHERE diagnostic_framework_id = $1 AND deleted_at IS NULL', [framework.id]);
+    const ruleRes = await this.client.query(
+      'SELECT * FROM diagnostic_rules WHERE diagnostic_framework_id = $1 AND deleted_at IS NULL',
+      [framework.id]
+    );
     framework.loadRules(
       ruleRes.rows.map(
         (r: any) =>

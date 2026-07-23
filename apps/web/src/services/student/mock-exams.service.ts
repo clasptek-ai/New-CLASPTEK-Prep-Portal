@@ -38,15 +38,15 @@ export const studentMockExamsService = {
           sectionScores: { listening: 8.0, reading: 7.5, writing: 7.0, speaking: 7.5 },
           weakObjectives: ['Relative Clauses modifiers', 'Coherence transitions'],
           recommendations: 'Dedicate 15 minutes daily to passive syntax voice logs.',
-          incorrectQuestions: [12, 24, 31, 39]
+          incorrectQuestions: [12, 24, 31, 39],
         },
         {
           id: 'exam2',
           title: 'IELTS Grammar Diagnostic Mock B',
           durationMinutes: 60,
           questionCount: 40,
-          status: 'AVAILABLE'
-        }
+          status: 'AVAILABLE',
+        },
       ];
     }
   },
@@ -57,5 +57,5 @@ export const studentMockExamsService = {
     } catch {
       return { success: true, sessionToken: 'token-' + id };
     }
-  }
+  },
 };

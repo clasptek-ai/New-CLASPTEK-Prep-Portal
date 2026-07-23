@@ -6,11 +6,11 @@ vi.mock('next/navigation', () => {
     usePathname: () => '/admin/observability',
     useRouter: () => ({
       push: vi.fn(),
-      prefetch: vi.fn()
+      prefetch: vi.fn(),
     }),
     use: (promise: any) => {
       return { incidentId: 'i1' };
-    }
+    },
   };
 });
 
@@ -19,12 +19,17 @@ vi.mock('../providers/theme-provider', () => {
     ThemeProvider: ({ children }: { children: React.ReactNode }) => children,
     useTheme: () => ({
       theme: 'dark',
-      setTheme: vi.fn()
-    })
+      setTheme: vi.fn(),
+    }),
   };
 });
 
-import { MetricCard, AlertCard, ServiceDependencyGraph, TraceSpanNode } from '../components/admin/observability/observability-components';
+import {
+  MetricCard,
+  AlertCard,
+  ServiceDependencyGraph,
+  TraceSpanNode,
+} from '../components/admin/observability/observability-components';
 import { OperationsDashboardScreen } from '../features/admin/observability/dashboard';
 import { MetricsExplorerScreen } from '../features/admin/observability/metrics-explorer';
 import { TracesViewScreen } from '../features/admin/observability/traces-view';

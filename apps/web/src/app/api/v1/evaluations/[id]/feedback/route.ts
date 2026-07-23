@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAiEvaluationContext } from '@/lib/ai-evaluation-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
@@ -8,10 +10,7 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
  * Only the student who owns the result (or admin) may access this.
  */
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const ctx = getAiEvaluationContext();
@@ -20,7 +19,8 @@ export async function GET(
     const studentId = session.userId;
 
     // Admins/reviewers may bypass student-scoped check
-    const isSpecialRole = session.roles.includes('ADMINISTRATOR') || session.roles.includes('INSTRUCTOR');
+    const isSpecialRole =
+      session.roles.includes('ADMINISTRATOR') || session.roles.includes('INSTRUCTOR');
     const scopedStudentId = isSpecialRole ? undefined : studentId;
 
     const feedback = await ctx.getFeedback.execute({
@@ -28,10 +28,11 @@ export async function GET(
       studentId: scopedStudentId,
     });
 
-    if (!feedback) return NextResponse.json({ error: 'Evaluation result not found' }, { status: 404 });
+    if (!feedback)
+      return NextResponse.json({ error: 'Evaluation result not found' }, { status: 404 });
 
     return NextResponse.json({
-      feedbackSections: feedback.sections.map(s => ({
+      feedbackSections: feedback.sections.map((s) => ({
         id: s.id,
         sectionType: s.sectionType,
         criterionCode: s.criterionCode,
@@ -39,7 +40,7 @@ export async function GET(
         severity: s.severity?.level,
         orderIndex: s.orderIndex,
       })),
-      recommendations: feedback.recommendations.map(r => ({
+      recommendations: feedback.recommendations.map((r) => ({
         id: r.id,
         recommendationType: r.recommendationType,
         priority: r.priority,
@@ -47,7 +48,7 @@ export async function GET(
         description: r.description,
         targetCompetencyCode: r.targetCompetencyCode,
       })),
-      evidenceReferences: feedback.evidenceRefs.map(ev => ({
+      evidenceReferences: feedback.evidenceRefs.map((ev) => ({
         id: ev.id,
         criterionCode: ev.criterionCode,
         textExcerpt: ev.textExcerpt,
@@ -56,7 +57,8 @@ export async function GET(
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    if (msg.includes('not been published')) return NextResponse.json({ error: msg }, { status: 403 });
+    if (msg.includes('not been published'))
+      return NextResponse.json({ error: msg }, { status: 403 });
     if (msg.includes('Access denied')) return NextResponse.json({ error: msg }, { status: 403 });
     return NextResponse.json({ error: msg }, { status: 500 });
   }

@@ -23,9 +23,21 @@ describe('QuestionEligibilityEngine', () => {
   const engine = new QuestionEligibilityEngine();
 
   const mkMockQuestions = () => [
-    { id: 'q-1', status: 'PUBLISHED', payload: { difficulty: 'Beginner', competencies: ['comp-1'] } },
-    { id: 'q-2', status: 'PUBLISHED', payload: { difficulty: 'Intermediate', competencies: ['comp-2'] } },
-    { id: 'q-3', status: 'PUBLISHED', payload: { difficulty: 'Advanced', competencies: ['comp-1'] } },
+    {
+      id: 'q-1',
+      status: 'PUBLISHED',
+      payload: { difficulty: 'Beginner', competencies: ['comp-1'] },
+    },
+    {
+      id: 'q-2',
+      status: 'PUBLISHED',
+      payload: { difficulty: 'Intermediate', competencies: ['comp-2'] },
+    },
+    {
+      id: 'q-3',
+      status: 'PUBLISHED',
+      payload: { difficulty: 'Advanced', competencies: ['comp-1'] },
+    },
     { id: 'q-4', status: 'DRAFT', payload: { difficulty: 'Beginner', competencies: ['comp-2'] } },
   ];
 
@@ -39,8 +51,8 @@ describe('QuestionEligibilityEngine', () => {
     };
     const eligible = engine.filterEligible(questions, [], config);
     expect(eligible).toHaveLength(2);
-    expect(eligible.map(q => q.id)).toContain('q-2');
-    expect(eligible.map(q => q.id)).toContain('q-3');
+    expect(eligible.map((q) => q.id)).toContain('q-2');
+    expect(eligible.map((q) => q.id)).toContain('q-3');
   });
 
   it('filters based on target competencies', () => {
@@ -130,8 +142,10 @@ describe('Command Handlers', () => {
   const mkMockPlanRepo = (): PracticePlanRepository => {
     const store = new Map<string, PracticePlan>();
     return {
-      save: vi.fn(async plan => { store.set(plan.id, plan); }),
-      findById: vi.fn(async id => store.get(id) ?? null),
+      save: vi.fn(async (plan) => {
+        store.set(plan.id, plan);
+      }),
+      findById: vi.fn(async (id) => store.get(id) ?? null),
       findByStudent: vi.fn(async () => []),
       nextIdentity: () => 'plan-uuid',
     };
@@ -140,8 +154,10 @@ describe('Command Handlers', () => {
   const mkMockSessionRepo = (): PracticeSessionRepository => {
     const store = new Map<string, PracticeSession>();
     return {
-      save: vi.fn(async session => { store.set(session.id, session); }),
-      findById: vi.fn(async id => store.get(id) ?? null),
+      save: vi.fn(async (session) => {
+        store.set(session.id, session);
+      }),
+      findById: vi.fn(async (id) => store.get(id) ?? null),
       findActive: vi.fn(async () => null),
       search: vi.fn(async () => []),
       archive: vi.fn(async () => {}),
@@ -192,5 +208,141 @@ describe('Command Handlers', () => {
 
     const saved = await repo.findById('sess-1');
     expect(saved?.status).toBe('ACTIVE');
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────
+// Sprint 2.6 Addendum Application Handler Tests
+// ─────────────────────────────────────────────────────────────────
+
+import {
+  SetPracticeGoalHandler,
+  UpdateRetentionHandler,
+  GenerateDailyGoalHandler,
+  AwardMotivationPointsHandler,
+  GetFocusAreaRecommendationsQueryHandler,
+  type PracticeGoalRepository,
+  type RetentionRepository,
+  type DailyGoalRepository,
+  type MotivationRepository,
+} from './index';
+import {
+  StudentPracticeGoal,
+  RetentionProfile,
+  StudentDailyGoal,
+  StudentMotivation,
+} from '@clasptek/domain-adaptive-practice';
+
+function mkGoalRepo(): PracticeGoalRepository {
+  const store = new Map<string, StudentPracticeGoal>();
+  return {
+    save: vi.fn(async (g) => {
+      store.set(g.id, g);
+    }),
+    findByStudent: vi.fn(async (id) =>
+      Array.from(store.values()).filter((g) => g.studentId === id)
+    ),
+    findActive: vi.fn(
+      async (id) =>
+        Array.from(store.values()).find((g) => g.studentId === id && g.status === 'ACTIVE') ?? null
+    ),
+    nextIdentity: () => 'goal-uuid',
+  };
+}
+
+function mkRetentionRepo(): RetentionRepository {
+  const store = new Map<string, RetentionProfile>();
+  return {
+    save: vi.fn(async (p) => {
+      store.set(`${p.studentId}:${p.competencyId}`, p);
+    }),
+    findByStudent: vi.fn(async (id) =>
+      Array.from(store.values()).filter((p) => p.studentId === id)
+    ),
+    findByStudentAndCompetency: vi.fn(async (sId, cId) => store.get(`${sId}:${cId}`) ?? null),
+    nextIdentity: () => 'retention-uuid',
+  };
+}
+
+function mkDailyGoalRepo(): DailyGoalRepository {
+  const store = new Map<string, StudentDailyGoal>();
+  return {
+    save: vi.fn(async (g) => {
+      store.set(`${g.studentId}:${g.targetDate}`, g);
+    }),
+    findByStudentAndDate: vi.fn(async (sId, d) => store.get(`${sId}:${d}`) ?? null),
+    nextIdentity: () => 'daily-uuid',
+  };
+}
+
+function mkMotivationRepo(): MotivationRepository {
+  const store = new Map<string, StudentMotivation>();
+  return {
+    save: vi.fn(async (m) => {
+      store.set(m.studentId, m);
+    }),
+    findByStudent: vi.fn(async (id) => store.get(id) ?? null),
+    nextIdentity: () => 'motivation-uuid',
+  };
+}
+
+describe('SetPracticeGoalHandler', () => {
+  it('sets practice goal for student', async () => {
+    const repo = mkGoalRepo();
+    const handler = new SetPracticeGoalHandler(repo);
+    const id = await handler.execute({
+      studentId: 's-1',
+      goalType: 'IMPROVE_GRAMMAR_ACCURACY',
+      goalTitle: 'Improve Grammar Accuracy',
+      targetValue: 85,
+    });
+    expect(id).toBe('goal-uuid');
+    const goals = await repo.findByStudent('s-1');
+    expect(goals).toHaveLength(1);
+    expect(goals[0].goalTitle).toBe('Improve Grammar Accuracy');
+  });
+});
+
+describe('UpdateRetentionHandler', () => {
+  it('updates spaced repetition retention profile', async () => {
+    const repo = mkRetentionRepo();
+    const handler = new UpdateRetentionHandler(repo);
+    const profile = await handler.execute({
+      studentId: 's-1',
+      competencyId: 'grammar',
+      wasCorrect: true,
+    });
+    expect(profile.retentionScore).toBeGreaterThan(100 - 1);
+  });
+});
+
+describe('GenerateDailyGoalHandler', () => {
+  it('generates adaptive daily goal', async () => {
+    const repo = mkDailyGoalRepo();
+    const handler = new GenerateDailyGoalHandler(repo);
+    const goal = await handler.execute({ studentId: 's-1', learningPace: 'Accelerated' });
+    expect(goal.targetQuestions).toBe(25);
+  });
+});
+
+describe('AwardMotivationPointsHandler', () => {
+  it('awards XP and practice points', async () => {
+    const repo = mkMotivationRepo();
+    const handler = new AwardMotivationPointsHandler(repo);
+    const motivation = await handler.execute({
+      studentId: 's-1',
+      accuracy: 90,
+      timeSpentMs: 12000,
+    });
+    expect(motivation.xp).toBeGreaterThan(0);
+    expect(motivation.practicePoints).toBeGreaterThan(0);
+  });
+});
+
+describe('GetFocusAreaRecommendationsQueryHandler', () => {
+  it('recommends focus area based on scores', async () => {
+    const handler = new GetFocusAreaRecommendationsQueryHandler();
+    const area = await handler.execute({ grammarAccuracy: 55, readingSpeedWpm: 220 });
+    expect(area).toBe('Grammar');
   });
 });

@@ -34,7 +34,7 @@ export const adminAuditService = {
           timestamp: new Date().toISOString(),
           ip: '127.0.0.1',
           details: 'Account suspended for policy violation logs.',
-          category: 'USER_SUSPENSION'
+          category: 'USER_SUSPENSION',
         },
         {
           id: 'aud2',
@@ -43,7 +43,7 @@ export const adminAuditService = {
           timestamp: new Date(Date.now() - 3600000).toISOString(),
           ip: '127.0.0.1',
           details: 'Syllabus advanced syntax lesson publish.',
-          category: 'CURRICULUM_PUBLISH'
+          category: 'CURRICULUM_PUBLISH',
         },
         {
           id: 'aud3',
@@ -52,9 +52,9 @@ export const adminAuditService = {
           timestamp: new Date(Date.now() - 7200000).toISOString(),
           ip: '127.0.0.1',
           details: 'Branding accent hex modified to #ec4899.',
-          category: 'SETTINGS_CHANGE'
-        }
+          category: 'SETTINGS_CHANGE',
+        },
       ];
     }
-  }
+  },
 };

@@ -3,7 +3,12 @@ import { IUnitOfWork } from '@clasptek/application-exam-product';
 
 export class PostgresUnitOfWork implements IUnitOfWork {
   private client: any = null;
-  private outboxEvents: { eventType: string; aggregateType: string; aggregateId: string; payload: any }[] = [];
+  private outboxEvents: {
+    eventType: string;
+    aggregateType: string;
+    aggregateId: string;
+    payload: any;
+  }[] = [];
 
   constructor(private readonly dbPool: DatabasePool) {}
 
@@ -53,7 +58,12 @@ export class PostgresUnitOfWork implements IUnitOfWork {
     }
   }
 
-  public registerOutbox(event: { eventType: string; aggregateType: string; aggregateId: string; payload: any }): void {
+  public registerOutbox(event: {
+    eventType: string;
+    aggregateType: string;
+    aggregateId: string;
+    payload: any;
+  }): void {
     this.outboxEvents.push(event);
   }
 }

@@ -34,46 +34,85 @@ const mockReviews = new Map<string, any>();
 vi.mock('pg', () => {
   const queryMock = vi.fn().mockImplementation(async (sql: string, params?: any[]) => {
     // 1. INSERT / SAVE
-    if (sql.includes('INSERT INTO questions')) {
+    if (sql.includes('INSERT INTO') && sql.includes('questions')) {
       if (params) {
-        const [id, code, exam_product_id, curriculum_module_id, status] = params;
-        mockQuestions.set(id, { id, code, exam_product_id, curriculum_module_id, status, lock_version: 0 });
+        const id = params[0];
+        const code = params[1];
+        const status = params.length > 5 ? params[4] : params[4];
+        mockQuestions.set(id, { id, code: code, status: status || 'draft', lock_version: 0 });
       }
       return { rowCount: 1 };
     }
-    if (sql.includes('INSERT INTO question_versions')) {
+    if (sql.includes('INSERT INTO') && sql.includes('question_versions')) {
       if (params) {
-        const [id, question_id, version_no, status, title, payload, digital_signature] = params;
-        mockVersions.set(id, { id, question_id, version_no, status, title, payload, digital_signature, lock_version: 0 });
+        const id = params[0];
+        const question_id = params[1];
+        const version_no = params[2];
+        const version_label = params[3];
+        const title = params[4];
+        const payload = params[5];
+        mockVersions.set(id, {
+          id,
+          question_id,
+          version_no,
+          version_label,
+          status: 'draft',
+          title,
+          payload,
+          lock_version: 0,
+        });
       }
       return { rowCount: 1 };
     }
-    if (sql.includes('INSERT INTO answer_options')) {
+    if (sql.includes('INSERT INTO') && sql.includes('answer_options')) {
       if (params) {
-        const [id, question_version_id, code, text_content, is_correct, display_order] = params;
-        mockOptions.set(id, { id, question_version_id, code, text_content, is_correct, display_order });
+        const id = params[0];
+        const question_version_id = params[1];
+        const code = params[2];
+        const text_content = params[3];
+        const is_correct = params[4];
+        const display_order = params[5];
+        mockOptions.set(id, {
+          id,
+          question_version_id,
+          code,
+          option_code: code,
+          text_content,
+          option_text: text_content,
+          is_correct,
+          display_order,
+        });
       }
       return { rowCount: 1 };
     }
-    if (sql.includes('INSERT INTO solutions')) {
+    if (sql.includes('INSERT INTO') && sql.includes('solutions')) {
       if (params) {
-        const [id, question_version_id, explanation, incorrect_explanation, hint, reference_url, teaching_note] = params;
-        mockSolutions.set(id, { id, question_version_id, explanation, incorrect_explanation, hint, reference_url, teaching_note });
+        const id = params[0];
+        const question_version_id = params[1];
+        const explanation = params[3];
+        mockSolutions.set(id, { id, question_version_id, explanation, hint: 'Hint' });
       }
       return { rowCount: 1 };
     }
-    if (sql.includes('INSERT INTO rubrics')) {
+    if (sql.includes('INSERT INTO') && sql.includes('rubrics')) {
       if (params) {
-        const [id, question_version_id, criteria, max_points, description] = params;
+        const id = params[0];
+        const question_version_id = params[1];
+        const criteria = params[2];
+        const max_points = params[3];
+        const description = params[4];
         mockRubrics.set(id, { id, question_version_id, criteria, max_points, description });
       }
       return { rowCount: 1 };
     }
-    if (sql.includes('INSERT INTO question_reviews')) {
+    if (sql.includes('INSERT INTO') && sql.includes('question_reviews')) {
       if (params) {
-        const [id, question_id, reviewer_id, reviewer_role, status] = params;
-        mockReviews.set(id, { id, question_id, reviewer_id, reviewer_role, status });
-        mockReviews.set(question_id, { id, question_id, reviewer_id, reviewer_role, status });
+        const id = params[0];
+        const question_id = params[1];
+        const reviewer_id = params[2];
+        const status = params[4];
+        mockReviews.set(id, { id, question_id, reviewer_id, status });
+        mockReviews.set(question_id, { id, question_id, reviewer_id, status });
       }
       return { rowCount: 1 };
     }
@@ -84,35 +123,54 @@ vi.mock('pg', () => {
     }
 
     // 3. SELECT / QUERY
-    if (sql.includes('SELECT 1 FROM questions') || sql.includes('SELECT 1 FROM question_versions')) {
+    if (
+      sql.includes('SELECT 1 FROM') &&
+      (sql.includes('questions') || sql.includes('question_versions'))
+    ) {
       return { rows: [], rowCount: 0 };
     }
-    if (sql.includes('SELECT lock_version FROM questions') || sql.includes('SELECT * FROM questions')) {
+    if (
+      sql.includes('SELECT lock_version FROM') ||
+      (sql.includes('SELECT') &&
+        sql.includes('questions') &&
+        !sql.includes('question_versions') &&
+        !sql.includes('question_media') &&
+        !sql.includes('question_reviews') &&
+        !sql.includes('question_dependencies') &&
+        !sql.includes('question_statistics') &&
+        !sql.includes('question_ownership'))
+    ) {
       const id = params ? params[0] : '';
       const q = mockQuestions.get(id);
       return { rows: q ? [q] : [], rowCount: q ? 1 : 0 };
     }
-    if (sql.includes('SELECT * FROM question_versions')) {
+    if (sql.includes('SELECT') && sql.includes('question_versions')) {
       const qId = params ? params[0] : '';
       const list = Array.from(mockVersions.values()).filter((v: any) => v.question_id === qId);
       return { rows: list, rowCount: list.length };
     }
-    if (sql.includes('SELECT * FROM answer_options')) {
+    if (sql.includes('SELECT') && sql.includes('answer_options')) {
       const vId = params ? params[0] : '';
-      const list = Array.from(mockOptions.values()).filter((o: any) => o.question_version_id === vId);
+      const list = Array.from(mockOptions.values()).filter(
+        (o: any) => o.question_version_id === vId
+      );
       return { rows: list, rowCount: list.length };
     }
-    if (sql.includes('SELECT * FROM solutions')) {
+    if (sql.includes('SELECT') && sql.includes('solutions')) {
       const vId = params ? params[0] : '';
-      const list = Array.from(mockSolutions.values()).filter((s: any) => s.question_version_id === vId);
+      const list = Array.from(mockSolutions.values()).filter(
+        (s: any) => s.question_version_id === vId
+      );
       return { rows: list, rowCount: list.length };
     }
-    if (sql.includes('SELECT * FROM rubrics')) {
+    if (sql.includes('SELECT') && sql.includes('rubrics')) {
       const vId = params ? params[0] : '';
-      const list = Array.from(mockRubrics.values()).filter((r: any) => r.question_version_id === vId);
+      const list = Array.from(mockRubrics.values()).filter(
+        (r: any) => r.question_version_id === vId
+      );
       return { rows: list, rowCount: list.length };
     }
-    if (sql.includes('SELECT * FROM question_reviews') || sql.includes('SELECT id FROM question_reviews')) {
+    if (sql.includes('SELECT') && sql.includes('question_reviews')) {
       const qId = params ? params[0] : '';
       const r = mockReviews.get(qId);
       return { rows: r ? [r] : [], rowCount: r ? 1 : 0 };
@@ -131,7 +189,7 @@ vi.mock('pg', () => {
         end: vi.fn().mockResolvedValue(undefined),
         query: queryMock,
       };
-    })
+    }),
   };
 });
 
@@ -153,8 +211,8 @@ describe('Question Bank REST API Controller Integration Tests', () => {
       body: JSON.stringify({
         code: 'IELTS-MCQ-1',
         examProductId: 'e-1',
-        curriculumModuleId: 'm-1'
-      })
+        curriculumModuleId: 'm-1',
+      }),
     });
     const createRes = await createQuestionApi(createReq);
     expect(createRes.status).toBe(201);
@@ -164,14 +222,17 @@ describe('Question Bank REST API Controller Integration Tests', () => {
     const questionId = createBody.id;
 
     // 2. Create Version
-    const verReq = new NextRequest(`http://localhost/api/v1/admin/questions/${questionId}/create-version`, {
-      method: 'POST',
-      body: JSON.stringify({
-        versionNo: '1.0.0',
-        title: 'Diagnostic Question 1',
-        payload: { prompt: 'What is the answer?' }
-      })
-    });
+    const verReq = new NextRequest(
+      `http://localhost/api/v1/admin/questions/${questionId}/create-version`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          versionNo: '1.0.0',
+          title: 'Diagnostic Question 1',
+          payload: { prompt: 'What is the answer?' },
+        }),
+      }
+    );
     const verRes = await createVersionApi(verReq, { params: Promise.resolve({ id: questionId }) });
     expect(verRes.status).toBe(200);
 
@@ -185,10 +246,12 @@ describe('Question Bank REST API Controller Integration Tests', () => {
         optCode: 'A',
         optText: 'Option Text',
         isCorrect: true,
-        displayOrder: 1
-      })
+        displayOrder: 1,
+      }),
     });
-    const patchRes = await updateQuestionApi(patchReq, { params: Promise.resolve({ id: questionId }) });
+    const patchRes = await updateQuestionApi(patchReq, {
+      params: Promise.resolve({ id: questionId }),
+    });
     expect(patchRes.status).toBe(200);
 
     // 4. Mock approval directly in review map (required for publish check)
@@ -197,19 +260,24 @@ describe('Question Bank REST API Controller Integration Tests', () => {
       question_id: questionId,
       reviewer_id: 'rev-99',
       reviewer_role: 'academic_reviewer',
-      status: 'APPROVED'
+      status: 'APPROVED',
     };
     mockReviews.set(questionId, mockReviewObj);
     mockReviews.set('rev-1', mockReviewObj);
 
     // 5. Publish Question version
-    const publishReq = new NextRequest(`http://localhost/api/v1/admin/questions/${questionId}/publish`, {
-      method: 'POST',
-      body: JSON.stringify({
-        versionNo: '1.0.0'
-      })
+    const publishReq = new NextRequest(
+      `http://localhost/api/v1/admin/questions/${questionId}/publish`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          versionNo: '1.0.0',
+        }),
+      }
+    );
+    const publishRes = await publishQuestionApi(publishReq, {
+      params: Promise.resolve({ id: questionId }),
     });
-    const publishRes = await publishQuestionApi(publishReq, { params: Promise.resolve({ id: questionId }) });
     expect(publishRes.status).toBe(200);
 
     // 6. Retrieve public details
@@ -228,9 +296,9 @@ describe('Question Bank REST API Controller Integration Tests', () => {
       body: JSON.stringify({
         payloads: [
           { code: 'IELTS-MCQ-2', title: 'Q2' },
-          { code: 'IELTS-MCQ-3', title: 'Q3' }
-        ]
-      })
+          { code: 'IELTS-MCQ-3', title: 'Q3' },
+        ],
+      }),
     });
     const importRes = await bulkImportApi(importReq);
     expect(importRes.status).toBe(200);

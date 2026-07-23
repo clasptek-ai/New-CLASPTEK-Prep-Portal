@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { getQuestionBankContext } from '@/lib/question-bank-context';
@@ -30,17 +32,26 @@ export async function POST(req: NextRequest) {
     const { payloads } = body;
 
     if (!payloads || !Array.isArray(payloads)) {
-      return NextResponse.json({ code: 'VALIDATION_ERROR', message: 'Missing payloads array' }, { status: 400 });
+      return NextResponse.json(
+        { code: 'VALIDATION_ERROR', message: 'Missing payloads array' },
+        { status: 400 }
+      );
     }
 
     const ids = await importQuestionsHandler.execute({ payloads });
 
     return NextResponse.json({ success: true, importedIds: ids });
   } catch (err: unknown) {
-    logger.error('POST /api/v1/admin/questions/bulk-import failure', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      'POST /api/v1/admin/questions/bulk-import failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
     if (err instanceof ApplicationError) {
       return NextResponse.json({ code: err.name, message: err.message }, { status: 400 });
     }
-    return NextResponse.json({ code: 'INTERNAL_ERROR', message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { code: 'INTERNAL_ERROR', message: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

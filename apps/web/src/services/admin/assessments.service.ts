@@ -25,7 +25,7 @@ export const adminAssessmentsService = {
           questionCount: 40,
           availableFrom: '2026-07-01T00:00:00Z',
           availableUntil: '2026-12-31T23:59:59Z',
-          status: 'PUBLISHED'
+          status: 'PUBLISHED',
         },
         {
           id: 'exam2',
@@ -33,15 +33,18 @@ export const adminAssessmentsService = {
           type: 'MOCK',
           durationMinutes: 60,
           questionCount: 40,
-          status: 'DRAFT'
-        }
+          status: 'DRAFT',
+        },
       ];
     }
   },
 
   async scheduleAssessment(id: string, fromDate: string, untilDate: string): Promise<boolean> {
     try {
-      await apiClient.patch(`/api/v1/admin/assessments/${id}/schedule`, { availableFrom: fromDate, availableUntil: untilDate });
+      await apiClient.patch(`/api/v1/admin/assessments/${id}/schedule`, {
+        availableFrom: fromDate,
+        availableUntil: untilDate,
+      });
       return true;
     } catch {
       return true;
@@ -55,5 +58,5 @@ export const adminAssessmentsService = {
     } catch {
       return true;
     }
-  }
+  },
 };

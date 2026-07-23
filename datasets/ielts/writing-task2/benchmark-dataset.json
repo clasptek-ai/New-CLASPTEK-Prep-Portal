@@ -1,0 +1,34 @@
+[
+  {
+    "id": "ielts-wt2-001",
+    "assessmentType": "IELTS",
+    "skillCode": "WRITING_TASK_2",
+    "content": "Some people believe that university education should be free for everyone. To what extent do you agree or disagree?",
+    "officialScore": 7.5,
+    "criteria": {
+      "TASK_RESPONSE": 7.0,
+      "COHERENCE": 8.0,
+      "LEXICAL": 7.5,
+      "GRAMMAR": 7.5
+    },
+    "examinerFeedback": "Well structured essay with clear line of reasoning.",
+    "source": "Cambridge IELTS 18 Test 1",
+    "verified": true
+  },
+  {
+    "id": "ielts-wt2-002",
+    "assessmentType": "IELTS",
+    "skillCode": "WRITING_TASK_2",
+    "content": "Computers are being used more and more in education. Some people say this is a positive development, while others argue it leads to negative consequences. Discuss both views and give your opinion.",
+    "officialScore": 6.5,
+    "criteria": {
+      "TASK_RESPONSE": 6.5,
+      "COHERENCE": 6.5,
+      "LEXICAL": 6.5,
+      "GRAMMAR": 6.5
+    },
+    "examinerFeedback": "Adequate coverage of both sides, but vocabulary is somewhat repetitive.",
+    "source": "Cambridge IELTS 17 Test 2",
+    "verified": true
+  }
+]

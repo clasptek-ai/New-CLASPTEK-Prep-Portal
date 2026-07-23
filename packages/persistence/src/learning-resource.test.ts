@@ -19,13 +19,13 @@ import {
   ResourceVersion,
   VersionStatus,
   ResourceCollection,
-  StorageAsset
+  StorageAsset,
 } from '@clasptek/domain-learning-resources';
 import {
   PostgresLearningResourceRepository,
   PostgresResourceVersionRepository,
   PostgresResourceCollectionRepository,
-  PostgresStorageAssetRepository
+  PostgresStorageAssetRepository,
 } from './index';
 
 // Initialize mutable mock variables on globalThis to bypass Vitest hoist closure isolation
@@ -43,126 +43,138 @@ vi.mock('pg', () => {
         return { rows: customRows };
       }
       return {
-        rows: [{
-          id: 'lr-123',
-          code: 'LR-CODE',
-          slug: 'lr-slug',
-          canonical_title: 'Title',
-          canonical_description: 'Desc',
-          resource_type_id: 'type-123',
-          primary_category_id: null,
-          sensitivity: 'normal',
-          visibility: 'authenticated',
-          owner_organization_id: null,
-          default_language_code: 'en',
-          current_default_variant_id: null,
-          status: 'draft',
-          lock_version: 0
-        }]
+        rows: [
+          {
+            id: 'lr-123',
+            code: 'LR-CODE',
+            slug: 'lr-slug',
+            canonical_title: 'Title',
+            canonical_description: 'Desc',
+            resource_type_id: 'type-123',
+            primary_category_id: null,
+            sensitivity: 'normal',
+            visibility: 'authenticated',
+            owner_organization_id: null,
+            default_language_code: 'en',
+            current_default_variant_id: null,
+            status: 'draft',
+            lock_version: 0,
+          },
+        ],
       };
     }
     if (sql.includes('SELECT') && sql.includes('resource_variants')) {
       return {
-        rows: [{
-          id: 'v-123',
-          learning_resource_id: 'lr-123',
-          code: 'VAR-CODE',
-          language_code: 'en',
-          region_code: null,
-          accessibility_profile: 'none',
-          variant_purpose: 'standard',
-          is_default: true,
-          current_published_version_id: null,
-          current_version_no: 1,
-          status: 'active'
-        }]
+        rows: [
+          {
+            id: 'v-123',
+            learning_resource_id: 'lr-123',
+            code: 'VAR-CODE',
+            language_code: 'en',
+            region_code: null,
+            accessibility_profile: 'none',
+            variant_purpose: 'standard',
+            is_default: true,
+            current_published_version_id: null,
+            current_version_no: 1,
+            status: 'active',
+          },
+        ],
       };
     }
     if (sql.includes('SELECT') && sql.includes('resource_versions')) {
       return {
-        rows: [{
-          id: 'rv-123',
-          resource_variant_id: 'v-123',
-          version_no: 1,
-          status: 'draft',
-          title: 'Title',
-          description: 'Desc',
-          resource_format_id: 'format-123',
-          version_label: null,
-          change_summary: null,
-          source_attribution: null,
-          copyright_owner: null,
-          copyright_year: null,
-          license_id: null,
-          estimated_study_minutes: 10,
-          requires_preview: false,
-          allows_download: true,
-          allows_streaming: false,
-          effective_from: null,
-          effective_to: null,
-          reviewed_at: null,
-          reviewed_by: null,
-          published_at: null,
-          published_by: null,
-          retired_at: null,
-          retired_by: null,
-          lock_version: 0,
-          created_at: new Date(),
-          updated_at: new Date(),
-          deleted_at: null
-        }]
+        rows: [
+          {
+            id: 'rv-123',
+            resource_variant_id: 'v-123',
+            version_no: 1,
+            status: 'draft',
+            title: 'Title',
+            description: 'Desc',
+            resource_format_id: 'format-123',
+            version_label: null,
+            change_summary: null,
+            source_attribution: null,
+            copyright_owner: null,
+            copyright_year: null,
+            license_id: null,
+            estimated_study_minutes: 10,
+            requires_preview: false,
+            allows_download: true,
+            allows_streaming: false,
+            effective_from: null,
+            effective_to: null,
+            reviewed_at: null,
+            reviewed_by: null,
+            published_at: null,
+            published_by: null,
+            retired_at: null,
+            retired_by: null,
+            lock_version: 0,
+            created_at: new Date(),
+            updated_at: new Date(),
+            deleted_at: null,
+          },
+        ],
       };
     }
     if (sql.includes('SELECT') && sql.includes('resource_collections')) {
       return {
-        rows: [{
-          id: 'rc-123',
-          code: 'RC-CODE',
-          name: 'Collection',
-          description: 'Desc',
-          parent_collection_id: null,
-          display_order: 1,
-          status: 'active',
-          lock_version: 0
-        }]
+        rows: [
+          {
+            id: 'rc-123',
+            code: 'RC-CODE',
+            name: 'Collection',
+            description: 'Desc',
+            parent_collection_id: null,
+            display_order: 1,
+            status: 'active',
+            lock_version: 0,
+          },
+        ],
       };
     }
     if (sql.includes('SELECT') && sql.includes('collection_resources')) {
       return {
-        rows: [{
-          id: 'mem-123',
-          resource_collection_id: 'rc-123',
-          learning_resource_id: 'lr-123',
-          display_order: 1
-        }]
+        rows: [
+          {
+            id: 'mem-123',
+            resource_collection_id: 'rc-123',
+            learning_resource_id: 'lr-123',
+            display_order: 1,
+          },
+        ],
       };
     }
     if (sql.includes('SELECT') && sql.includes('storage_objects')) {
       return {
-        rows: [{
-          id: 'so-123',
-          storage_provider: 'supabase_storage',
-          bucket_name: 'bucket',
-          object_path: 'key',
-          provider_object_id: null,
-          original_filename: 'test.png',
-          detected_mime_type: 'image/png',
-          detected_extension: 'png',
-          size_bytes: 100,
-          etag: null,
-          storage_class: 'STANDARD',
-          integrity_status: 'validated',
-          security_status: 'validated_clear',
-          availability_status: 'available',
-          uploaded_at: new Date(),
-          validated_at: null,
-          promoted_at: null,
-          retention_until: null,
-          lock_version: 0,
-          created_at: new Date(),
-          updated_at: new Date(),
-          deleted_at: null
-        }]
+        rows: [
+          {
+            id: 'so-123',
+            storage_provider: 'supabase_storage',
+            bucket_name: 'bucket',
+            object_path: 'key',
+            provider_object_id: null,
+            original_filename: 'test.png',
+            detected_mime_type: 'image/png',
+            detected_extension: 'png',
+            size_bytes: 100,
+            etag: null,
+            storage_class: 'STANDARD',
+            integrity_status: 'validated',
+            security_status: 'validated_clear',
+            availability_status: 'available',
+            uploaded_at: new Date(),
+            validated_at: null,
+            promoted_at: null,
+            retention_until: null,
+            lock_version: 0,
+            created_at: new Date(),
+            updated_at: new Date(),
+            deleted_at: null,
+          },
+        ],
       };
     }
     return { rows: [], rowCount: 0 };
@@ -178,7 +190,7 @@ vi.mock('pg', () => {
         end: vi.fn().mockResolvedValue(undefined),
         query: queryMock,
       };
-    })
+    }),
   };
 });
 
@@ -218,7 +230,9 @@ describe('Postgres Repository V2 Integration Tests', () => {
     resource.addVariant('v-123', 'VAR-CODE', 'en', new VariantPurpose('standard'), true);
 
     await resourceRepo.save(resource);
-    const hasVariantInsert = (globalThis as any).queriesRun.some((q: string) => q.includes('INSERT INTO public.resource_variants'));
+    const hasVariantInsert = (globalThis as any).queriesRun.some((q: string) =>
+      q.includes('INSERT INTO public.resource_variants')
+    );
     expect(hasVariantInsert).toBe(true);
 
     const retrieved = await resourceRepo.findById('lr-123');
@@ -262,7 +276,9 @@ describe('Postgres Repository V2 Integration Tests', () => {
     );
 
     await versionRepo.save(version);
-    const hasVersionInsert = (globalThis as any).queriesRun.some((q: string) => q.includes('INSERT INTO public.resource_versions'));
+    const hasVersionInsert = (globalThis as any).queriesRun.some((q: string) =>
+      q.includes('INSERT INTO public.resource_versions')
+    );
     expect(hasVersionInsert).toBe(true);
 
     const retrieved = await versionRepo.findById('rv-123');
@@ -288,7 +304,9 @@ describe('Postgres Repository V2 Integration Tests', () => {
     collection.addResource('lr-123');
 
     await collectionRepo.save(collection);
-    const hasMembershipInsert = (globalThis as any).queriesRun.some((q: string) => q.includes('INSERT INTO public.collection_resources'));
+    const hasMembershipInsert = (globalThis as any).queriesRun.some((q: string) =>
+      q.includes('INSERT INTO public.collection_resources')
+    );
     expect(hasMembershipInsert).toBe(true);
 
     const retrieved = await collectionRepo.findById('rc-123');
@@ -324,7 +342,9 @@ describe('Postgres Repository V2 Integration Tests', () => {
     );
 
     await storageRepo.save(asset);
-    const hasStorageInsert = (globalThis as any).queriesRun.some((q: string) => q.includes('INSERT INTO public.storage_objects'));
+    const hasStorageInsert = (globalThis as any).queriesRun.some((q: string) =>
+      q.includes('INSERT INTO public.storage_objects')
+    );
     expect(hasStorageInsert).toBe(true);
 
     const retrieved = await storageRepo.findById('so-123');
@@ -347,22 +367,24 @@ describe('Postgres Repository V2 Integration Tests', () => {
     );
 
     // Mock existing resource lock version in DB to be higher
-    (globalThis as any).mockRows = [{
-      id: 'lr-123',
-      code: 'LR-CODE',
-      slug: 'lr-slug',
-      canonical_title: 'Title',
-      canonical_description: 'Desc',
-      resource_type_id: 'type-123',
-      primary_category_id: null,
-      sensitivity: 'normal',
-      visibility: 'authenticated',
-      owner_organization_id: null,
-      default_language_code: 'en',
-      current_default_variant_id: null,
-      status: 'draft',
-      lock_version: 5 // different from resource.lockVersion = 0
-    }];
+    (globalThis as any).mockRows = [
+      {
+        id: 'lr-123',
+        code: 'LR-CODE',
+        slug: 'lr-slug',
+        canonical_title: 'Title',
+        canonical_description: 'Desc',
+        resource_type_id: 'type-123',
+        primary_category_id: null,
+        sensitivity: 'normal',
+        visibility: 'authenticated',
+        owner_organization_id: null,
+        default_language_code: 'en',
+        current_default_variant_id: null,
+        status: 'draft',
+        lock_version: 5, // different from resource.lockVersion = 0
+      },
+    ];
 
     await expect(resourceRepo.save(resource)).rejects.toThrow('Concurrency violation');
   });

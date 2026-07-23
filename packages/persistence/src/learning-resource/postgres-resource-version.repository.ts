@@ -1,5 +1,9 @@
 import { Pool } from 'pg';
-import { ResourceVersion, ResourceVersionRepository, VersionStatus } from '@clasptek/domain-learning-resources';
+import {
+  ResourceVersion,
+  ResourceVersionRepository,
+  VersionStatus,
+} from '@clasptek/domain-learning-resources';
 import { randomUUID } from 'crypto';
 
 export class PostgresResourceVersionRepository implements ResourceVersionRepository {
@@ -61,13 +65,15 @@ export class PostgresResourceVersionRepository implements ResourceVersionReposit
         version.publishedBy,
         version.retiredAt,
         version.retiredBy,
-        version.lockVersion
+        version.lockVersion,
       ]);
 
       // 2. Sync metadata map
       // Delete existing metadata
-      await client.query(`DELETE FROM public.resource_metadata WHERE resource_version_id = $1`, [version.id]);
-      
+      await client.query(`DELETE FROM public.resource_metadata WHERE resource_version_id = $1`, [
+        version.id,
+      ]);
+
       // Re-insert metadata entries
       for (const [key, val] of version.metadata.entries()) {
         // Query to find metadata_definition_id by namespace/key
@@ -114,7 +120,10 @@ export class PostgresResourceVersionRepository implements ResourceVersionReposit
     return this.mapToAggregate(res.rows[0]);
   }
 
-  public async findByVariantAndNo(variantId: string, versionNo: number): Promise<ResourceVersion | null> {
+  public async findByVariantAndNo(
+    variantId: string,
+    versionNo: number
+  ): Promise<ResourceVersion | null> {
     const res = await this.pool.query(
       `SELECT * FROM public.resource_versions WHERE resource_variant_id = $1 AND version_no = $2 AND deleted_at IS NULL`,
       [variantId, versionNo]
@@ -169,10 +178,13 @@ export class PostgresResourceVersionRepository implements ResourceVersionReposit
       row.deleted_at
     );
 
-    metaRes.rows.forEach(m => {
+    metaRes.rows.forEach((m) => {
       const fullKey = `${m.namespace}.${m.metadata_key}`;
-      const val = typeof m.metadata_value_json === 'string' ? m.metadata_value_json : JSON.stringify(m.metadata_value_json);
-      const cleanVal = (val.startsWith('"') && val.endsWith('"')) ? val.slice(1, -1) : val;
+      const val =
+        typeof m.metadata_value_json === 'string'
+          ? m.metadata_value_json
+          : JSON.stringify(m.metadata_value_json);
+      const cleanVal = val.startsWith('"') && val.endsWith('"') ? val.slice(1, -1) : val;
       version.metadata.set(fullKey, cleanVal);
     });
 

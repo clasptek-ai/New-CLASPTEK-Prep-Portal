@@ -54,26 +54,26 @@ This manifest acts as the central directory mapping the PostgreSQL schemas, rela
 
 ## 3. Row Level Security (RLS) Enforcements
 
-| Schema Table                  | Policy Name                               | Allowed Commands | Target Context         |
-| ----------------------------- | ----------------------------------------- | ---------------- | ---------------------- |
-| `users`                       | `select_own_user`                         | `SELECT`         | `id = auth.uid()`      |
-| `users`                       | `update_own_user`                         | `UPDATE`         | `id = auth.uid()`      |
-| `identities`                  | `select_own_identity`                     | `SELECT`         | `user_id = auth.uid()` |
-| `identities`                  | `update_own_identity`                     | `UPDATE`         | `user_id = auth.uid()` |
-| `profiles`                    | `select_own_profile`                      | `SELECT`         | `user_id = auth.uid()` |
-| `profiles`                    | `update_own_profile`                      | `UPDATE`         | `user_id = auth.uid()` |
-| `security_profiles`           | `select_own_profile`                      | `SELECT`         | `user_id = auth.uid()` |
-| `security_sessions`           | `select_own_session`                      | `SELECT`         | `user_id = auth.uid()` |
-| `trusted_devices`             | `select_own_device`                       | `SELECT`         | `user_id = auth.uid()` |
-| `user_roles`                  | `select_own_roles`                        | `SELECT`         | `user_id = auth.uid()` |
-| `exam_products`               | `select_public_exam_products`             | `SELECT`         | `status = 'PUBLISHED'` |
-| `exam_product_versions`       | `select_public_exam_product_versions`     | `SELECT`         | `status = 'PUBLISHED'` |
-| `official_exam_structures`    | `select_public_official_exam_structures`  | `SELECT`         | `status = 'ACTIVE'`    |
-| `official_exam_components`    | `select_public_official_exam_components`  | `SELECT`         | `status = 'ACTIVE'`    |
-| `exam_delivery_configurations`| `select_public_exam_delivery_config`      | `SELECT`         | `status = 'ACTIVE'`    |
-| `exam_regional_variants`      | `select_public_exam_regional_variants`    | `SELECT`         | `status = 'ACTIVE'`    |
-| `exam_board_metadata`         | `select_public_exam_board_metadata`       | `SELECT`         | `true`                 |
-| `clasptek_product_metadata`   | `select_public_clasptek_product_metadata` | `SELECT`         | `true`                 |
+| Schema Table                   | Policy Name                               | Allowed Commands | Target Context         |
+| ------------------------------ | ----------------------------------------- | ---------------- | ---------------------- |
+| `users`                        | `select_own_user`                         | `SELECT`         | `id = auth.uid()`      |
+| `users`                        | `update_own_user`                         | `UPDATE`         | `id = auth.uid()`      |
+| `identities`                   | `select_own_identity`                     | `SELECT`         | `user_id = auth.uid()` |
+| `identities`                   | `update_own_identity`                     | `UPDATE`         | `user_id = auth.uid()` |
+| `profiles`                     | `select_own_profile`                      | `SELECT`         | `user_id = auth.uid()` |
+| `profiles`                     | `update_own_profile`                      | `UPDATE`         | `user_id = auth.uid()` |
+| `security_profiles`            | `select_own_profile`                      | `SELECT`         | `user_id = auth.uid()` |
+| `security_sessions`            | `select_own_session`                      | `SELECT`         | `user_id = auth.uid()` |
+| `trusted_devices`              | `select_own_device`                       | `SELECT`         | `user_id = auth.uid()` |
+| `user_roles`                   | `select_own_roles`                        | `SELECT`         | `user_id = auth.uid()` |
+| `exam_products`                | `select_public_exam_products`             | `SELECT`         | `status = 'PUBLISHED'` |
+| `exam_product_versions`        | `select_public_exam_product_versions`     | `SELECT`         | `status = 'PUBLISHED'` |
+| `official_exam_structures`     | `select_public_official_exam_structures`  | `SELECT`         | `status = 'ACTIVE'`    |
+| `official_exam_components`     | `select_public_official_exam_components`  | `SELECT`         | `status = 'ACTIVE'`    |
+| `exam_delivery_configurations` | `select_public_exam_delivery_config`      | `SELECT`         | `status = 'ACTIVE'`    |
+| `exam_regional_variants`       | `select_public_exam_regional_variants`    | `SELECT`         | `status = 'ACTIVE'`    |
+| `exam_board_metadata`          | `select_public_exam_board_metadata`       | `SELECT`         | `true`                 |
+| `clasptek_product_metadata`    | `select_public_clasptek_product_metadata` | `SELECT`         | `true`                 |
 
 > **Service Role Strategy**: The administrative service client (`service_role`) bypasses all RLS checks automatically, enabling server-side background orchestration.
 

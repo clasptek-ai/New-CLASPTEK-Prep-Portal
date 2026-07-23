@@ -14,7 +14,9 @@ export interface ExamProductReadService {
 export class GetExamProductsHandler {
   constructor(private readonly readService: ExamProductReadService) {}
 
-  public async execute(query: GetExamProductsQuery): Promise<Result<ExamProductReadModel[], Error>> {
+  public async execute(
+    query: GetExamProductsQuery
+  ): Promise<Result<ExamProductReadModel[], Error>> {
     try {
       const results = await this.readService.getExamProducts(query);
       return Result.success(results);

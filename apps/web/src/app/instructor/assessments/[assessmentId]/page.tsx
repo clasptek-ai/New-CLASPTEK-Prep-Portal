@@ -10,7 +10,7 @@ export default function Page({ params }: PageProps) {
   const { assessmentId } = use(params);
 
   return (
-    <WorkspaceShell workspaceRole="INSTRUCTOR">
+    <WorkspaceShell workspaceRole="ADMIN">
       <AssessmentsScreen assessmentId={assessmentId} />
     </WorkspaceShell>
   );
