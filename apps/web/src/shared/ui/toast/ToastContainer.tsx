@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { ToastItem } from './toast.types';
 import { Toast } from './Toast';

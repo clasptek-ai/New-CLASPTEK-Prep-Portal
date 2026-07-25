@@ -15,12 +15,36 @@ export const studentProfileService = {
     try {
       return await apiClient.get<StudentProfileDetails>('/api/v1/student/profile');
     } catch {
+      let registeredName = 'Student';
+      let registeredEmail = 'student@clasptek.com';
+      let registeredPhone = '+1 (555) 019-2834';
+
+      if (typeof window !== 'undefined') {
+        try {
+          const raw = localStorage.getItem('clasptek_onboarding_data');
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed.firstName) {
+              registeredName = parsed.lastName ? `${parsed.firstName} ${parsed.lastName}` : parsed.firstName;
+            }
+            if (parsed.email) {
+              registeredEmail = parsed.email;
+            }
+            if (parsed.phone) {
+              registeredPhone = parsed.phone;
+            }
+          }
+        } catch {
+          // Ignore parse errors
+        }
+      }
+
       return {
-        id: 'stud-active-123',
-        name: 'Alex Mercer',
-        email: 'alex.mercer@student.clasptek.com',
-        avatarUrl: '/avatars/alex.png',
-        phone: '+1 (555) 019-2834',
+        id: 'CGA-2026-000245',
+        name: registeredName,
+        email: registeredEmail,
+        avatarUrl: undefined,
+        phone: registeredPhone,
         enrolledAt: '2026-01-15T09:00:00Z',
         loginHistory: [
           { ip: '127.0.0.1', device: 'Chrome / Windows', timestamp: new Date().toISOString() },
@@ -44,7 +68,6 @@ export const studentProfileService = {
   },
 
   async changePassword(): Promise<boolean> {
-    // Password changes use the authentication provider. We mimic this as a success verification.
     try {
       await apiClient.post('/api/v1/student/auth/password-reset', {});
       return true;

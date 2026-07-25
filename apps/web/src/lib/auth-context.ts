@@ -48,54 +48,68 @@ interface AuthContext {
 }
 
 let cachedAuthContext: AuthContext | null = null;
+let pendingAuthContextPromise: Promise<AuthContext> | null = null;
 
 export async function getAuthContext(): Promise<AuthContext> {
   if (cachedAuthContext) {
     return cachedAuthContext;
   }
 
-  const config = loadEnvironment(process.env);
-  const logger = new ConsoleLogger('AuthContextManager');
-  const dbPool = new DatabasePool(config, logger);
+  if (pendingAuthContextPromise) {
+    return pendingAuthContextPromise;
+  }
 
-  await dbPool.connect();
+  pendingAuthContextPromise = (async () => {
+    try {
+      const config = loadEnvironment(process.env);
+      const logger = new ConsoleLogger('AuthContextManager');
+      const dbPool = new DatabasePool(config, logger);
 
-  const securityProfileRepo = new PostgresSecurityProfileRepository(dbPool);
-  const sessionRepo = new PostgresSecuritySessionRepository(dbPool);
-  const methodRepo = new PostgresAuthenticationMethodRepository(dbPool);
-  const trustedDeviceRepo = new PostgresTrustedDeviceRepository(dbPool);
-  const roleRepo = new PostgresRoleRepository(dbPool);
-  const groupRepo = new PostgresPermissionGroupRepository(dbPool);
-  const userRoleRepo = new PostgresUserRoleRepository(dbPool);
+      await dbPool.connect();
 
-  const identityRepo = new PostgresIdentityRepository(dbPool);
-  const lookupService = new PostgresIdentityLookupService(dbPool);
+      const securityProfileRepo = new PostgresSecurityProfileRepository(dbPool);
+      const sessionRepo = new PostgresSecuritySessionRepository(dbPool);
+      const methodRepo = new PostgresAuthenticationMethodRepository(dbPool);
+      const trustedDeviceRepo = new PostgresTrustedDeviceRepository(dbPool);
+      const roleRepo = new PostgresRoleRepository(dbPool);
+      const groupRepo = new PostgresPermissionGroupRepository(dbPool);
+      const userRoleRepo = new PostgresUserRoleRepository(dbPool);
 
-  cachedAuthContext = {
-    dbPool,
-    logger,
-    securityProfileRepo,
-    sessionRepo,
-    methodRepo,
-    trustedDeviceRepo,
-    roleRepo,
-    groupRepo,
-    userRoleRepo,
+      const identityRepo = new PostgresIdentityRepository(dbPool);
+      const lookupService = new PostgresIdentityLookupService(dbPool);
 
-    registerAuthPreferencesHandler: new RegisterAuthPreferencesHandler(securityProfileRepo),
-    recordLoginSessionHandler: new RecordLoginSessionHandler(sessionRepo),
-    lockAccountHandler: new LockAccountHandler(securityProfileRepo),
-    unlockAccountHandler: new UnlockAccountHandler(securityProfileRepo),
-    revokeLoginSessionHandler: new RevokeLoginSessionHandler(sessionRepo),
-    assignUserRoleHandler: new AssignUserRoleHandler(roleRepo, userRoleRepo),
-    grantCapabilityHandler: new GrantCapabilityHandler(roleRepo, groupRepo),
-    identitySynchronizer: new IdentitySynchronizer(identityRepo, lookupService, logger),
-    ensureUserAggregateExistsService: new EnsureUserAggregateExistsService(
-      identityRepo,
-      securityProfileRepo,
-      logger
-    ),
-  };
+      cachedAuthContext = {
+        dbPool,
+        logger,
+        securityProfileRepo,
+        sessionRepo,
+        methodRepo,
+        trustedDeviceRepo,
+        roleRepo,
+        groupRepo,
+        userRoleRepo,
 
-  return cachedAuthContext;
+        registerAuthPreferencesHandler: new RegisterAuthPreferencesHandler(securityProfileRepo),
+        recordLoginSessionHandler: new RecordLoginSessionHandler(sessionRepo),
+        lockAccountHandler: new LockAccountHandler(securityProfileRepo),
+        unlockAccountHandler: new UnlockAccountHandler(securityProfileRepo),
+        revokeLoginSessionHandler: new RevokeLoginSessionHandler(sessionRepo),
+        assignUserRoleHandler: new AssignUserRoleHandler(roleRepo, userRoleRepo),
+        grantCapabilityHandler: new GrantCapabilityHandler(roleRepo, groupRepo),
+        identitySynchronizer: new IdentitySynchronizer(identityRepo, lookupService, logger),
+        ensureUserAggregateExistsService: new EnsureUserAggregateExistsService(
+          identityRepo,
+          securityProfileRepo,
+          logger
+        ),
+      };
+
+      return cachedAuthContext;
+    } catch (err) {
+      pendingAuthContextPromise = null;
+      throw err;
+    }
+  })();
+
+  return pendingAuthContextPromise;
 }

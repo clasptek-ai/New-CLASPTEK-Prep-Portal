@@ -13,7 +13,7 @@ export const adminWebhookService = {
   async getDeliveryLogs(): Promise<WebhookDeliveryLog[]> {
     try {
       return await apiClient.get<WebhookDeliveryLog[]>('/api/v1/admin/integrations/webhooks/logs');
-    } catch (_e) {
+    } catch {
       return [
         {
           id: 'wh1',
@@ -39,7 +39,7 @@ export const adminWebhookService = {
     try {
       await apiClient.post(`/api/v1/admin/integrations/webhooks/logs/${deliveryId}/replay`, {});
       return true;
-    } catch (_e) {
+    } catch {
       return true; // Mock replay indicator
     }
   },

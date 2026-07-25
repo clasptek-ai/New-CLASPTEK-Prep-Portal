@@ -12,7 +12,7 @@ export const adminMetricsService = {
   async getSystemMetrics(): Promise<ObservabilityMetric[]> {
     try {
       return await apiClient.get<ObservabilityMetric[]>('/api/v1/admin/observability/metrics');
-    } catch (_e) {
+    } catch {
       return [
         {
           name: 'API Error Rate',

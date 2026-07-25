@@ -1,13 +1,14 @@
 'use client';
 
-import React from 'react';
-import { WorkspaceShell } from '../../../workspace/WorkspaceShell';
-import { InstructorDashboardScreen } from '../../../features/instructor/dashboard/dashboard-screen';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
-  return (
-    <WorkspaceShell workspaceRole="ADMIN">
-      <InstructorDashboardScreen />
-    </WorkspaceShell>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/admin/dashboard');
+  }, [router]);
+
+  return null;
 }

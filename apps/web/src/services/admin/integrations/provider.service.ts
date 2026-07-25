@@ -26,7 +26,7 @@ export const adminProviderService = {
   async getProviders(): Promise<ProviderDefinition[]> {
     try {
       return await apiClient.get<ProviderDefinition[]>('/api/v1/admin/integrations/providers');
-    } catch (_e) {
+    } catch {
       return [
         {
           id: 'google',
@@ -79,7 +79,7 @@ export const adminProviderService = {
   async getConnections(): Promise<ConnectionInstance[]> {
     try {
       return await apiClient.get<ConnectionInstance[]>('/api/v1/admin/integrations/connections');
-    } catch (_e) {
+    } catch {
       return [
         {
           id: 'c1',

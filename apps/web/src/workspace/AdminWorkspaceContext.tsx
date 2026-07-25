@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { adminDashboardService } from '../services/admin/dashboard.service';
 import { getDeterministicId, getDeterministicName } from '../lib/mock-util';
+import { useAuthContext } from '../providers/AuthProvider';
 
 export interface AdminWorkspaceContextType {
   adminProfile: { id: string; name: string; role: string; email: string } | null;
@@ -23,6 +24,7 @@ export const AdminWorkspaceContext = createContext<AdminWorkspaceContextType | u
 );
 
 export const AdminWorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user: authUser, roles: authRoles } = useAuthContext();
   const [adminProfile, setAdminProfile] = useState<AdminWorkspaceContextType['adminProfile']>(null);
   const [pendingApprovals, setPendingApprovals] = useState(0);
   const [systemHealth, setSystemHealth] = useState<'HEALTHY' | 'WARNING' | 'CRITICAL'>('HEALTHY');
@@ -39,33 +41,27 @@ export const AdminWorkspaceProvider: React.FC<{ children: React.ReactNode }> = (
     try {
       const data = await adminDashboardService.getDashboardData();
 
+      let storedName: string | null = null;
+      if (typeof window !== 'undefined') {
+        storedName = localStorage.getItem('clasptek_user_name');
+      }
+
       let profile = null;
-      try {
-        const sessionRes = await fetch('/api/v1/auth/session');
-        if (sessionRes.ok) {
-          const sessionData = await sessionRes.json();
-          if (sessionData.user) {
-            const user = sessionData.user;
-            profile = {
-              id: user.id,
-              name:
-                user.user_metadata?.name ||
-                getDeterministicName(user.email || 'admin@clasptek.com'),
-              role: sessionData.roles?.[0] || 'SUPER_ADMINISTRATOR',
-              email: user.email || '',
-            };
-          }
-        }
-      } catch (authErr) {
-        console.warn('Could not resolve admin session, using offline mock mode', authErr);
+      if (authUser) {
+        profile = {
+          id: authUser.id,
+          name: storedName || authUser.user_metadata?.name || (authUser.email?.toLowerCase() === 'clasptek@gmail.com' ? 'Clasptek Coaching Limited' : getDeterministicName(authUser.email || 'clasptek@gmail.com')),
+          role: authRoles[0] || 'SUPER_ADMINISTRATOR',
+          email: authUser.email || 'clasptek@gmail.com',
+        };
       }
 
       if (!profile) {
         profile = {
-          id: getDeterministicId('admin-sarah'),
-          name: 'Sarah Jenkins',
+          id: getDeterministicId('admin-clasptek'),
+          name: storedName || 'Clasptek Coaching Limited',
           role: 'SUPER_ADMINISTRATOR',
-          email: 'sarah.jenkins@admin.clasptek.com',
+          email: 'clasptek@gmail.com',
         };
       }
 
@@ -89,7 +85,7 @@ export const AdminWorkspaceProvider: React.FC<{ children: React.ReactNode }> = (
 
   useEffect(() => {
     refreshContext();
-  }, []);
+  }, [authUser]);
 
   return (
     <AdminWorkspaceContext.Provider

@@ -1,7 +1,12 @@
-import { studentLearningService } from './learning.service';
-import { studentReadinessService } from './readiness.service';
-import { studentNotificationsService, NotificationItem } from './notifications.service';
-import { studentAssignmentsService, StudentAssignment } from './assignments.service';
+import { apiClient } from '../api/client';
+import {
+  DashboardOverviewDto,
+  DashboardActivityDto,
+  DashboardNotificationDto,
+  DashboardCalendarDto,
+  DashboardAchievementsDto,
+} from './dtos/dashboard.dto';
+import { DashboardCompositionService } from './dashboard-composition.service';
 
 export interface DashboardStatsCard {
   title: string;
@@ -27,83 +32,82 @@ export interface DashboardAggregatedData {
   };
   recommendations: string[];
   upcomingDeadlines: { title: string; due: string; type: 'ASSIGNMENT' | 'MOCK' }[];
-  notifications: NotificationItem[];
+  notifications: any[];
   activities: ActivityItem[];
 }
 
 export const studentDashboardService = {
-  async getDashboardData(): Promise<DashboardAggregatedData> {
+  async getOverview(): Promise<DashboardOverviewDto> {
     try {
-      // Orchestrate domain calls under the hood to preserve DDD boundaries
-      const programmes = await studentLearningService.getEnrolledProgrammes();
-      const readiness = await studentReadinessService.getReadiness();
-      const notifications = await studentNotificationsService.getNotifications();
-      let assignments: StudentAssignment[] = [];
-      try {
-        assignments = await studentAssignmentsService.getAssignments();
-      } catch {
-        // Fallback or ignore assignments service failure
-      }
-
-      const learningProgress = programmes.length > 0 ? programmes[0].completionPercentage : 0;
-      const activeAssignmentsCount = assignments.filter((a) => a.status === 'PENDING').length;
-
-      return {
-        stats: {
-          learningProgress,
-          practiceAccuracy: 78,
-          mockAverage: 82,
-          readinessScore: readiness.overallReadiness,
-          assignmentsDue: activeAssignmentsCount || 2,
-          studyStreak: 8,
-        },
-        recommendations: [
-          'Review Relative Clauses modifiers grammar practice logs.',
-          'Take IELTS Grammar Diagnostic Mock B exam.',
-        ],
-        upcomingDeadlines: [
-          { title: 'Advanced Essay Syntax Assignment', due: '2026-07-24', type: 'ASSIGNMENT' },
-          { title: 'IELTS Grammar Diagnostic Mock B', due: '2026-08-01', type: 'MOCK' },
-        ],
-        notifications: notifications.slice(0, 3),
-        activities: [
-          { id: '1', title: 'Finished Relative Clauses lesson', type: 'LESSON', time: '10m ago' },
-          { id: '2', title: 'Completed Timed Practice Session', type: 'PRACTICE', time: '1h ago' },
-        ],
-      };
+      return await apiClient.get<DashboardOverviewDto>('/api/v1/dashboard');
     } catch {
-      return {
-        stats: {
-          learningProgress: 62,
-          practiceAccuracy: 78,
-          mockAverage: 82,
-          readinessScore: 76,
-          assignmentsDue: 2,
-          studyStreak: 8,
-        },
-        recommendations: [
-          'Review Relative Clauses modifiers grammar practice logs.',
-          'Take IELTS Grammar Diagnostic Mock B exam.',
-        ],
-        upcomingDeadlines: [
-          { title: 'Advanced Essay Syntax Assignment', due: '2026-07-24', type: 'ASSIGNMENT' },
-          { title: 'IELTS Grammar Diagnostic Mock B', due: '2026-08-01', type: 'MOCK' },
-        ],
-        notifications: [
-          {
-            id: 'n1',
-            title: 'Assignment Graded',
-            content: 'Your Advanced Essay Syntax assignment has been graded. Score: 85/100.',
-            type: 'ASSIGNMENT_GRADED',
-            read: false,
-            createdAt: new Date().toISOString(),
-          },
-        ],
-        activities: [
-          { id: '1', title: 'Finished Relative Clauses lesson', type: 'LESSON', time: '10m ago' },
-          { id: '2', title: 'Completed Timed Practice Session', type: 'PRACTICE', time: '1h ago' },
-        ],
-      };
+      return await DashboardCompositionService.getOverview();
     }
+  },
+
+  async getActivity(page = 1, pageSize = 5): Promise<DashboardActivityDto> {
+    try {
+      return await apiClient.get<DashboardActivityDto>(`/api/v1/dashboard/activity?page=${page}&pageSize=${pageSize}`);
+    } catch {
+      return await DashboardCompositionService.getActivity(page, pageSize);
+    }
+  },
+
+  async getNotifications(page = 1, pageSize = 10): Promise<DashboardNotificationDto> {
+    try {
+      return await apiClient.get<DashboardNotificationDto>(`/api/v1/dashboard/notifications?page=${page}&pageSize=${pageSize}`);
+    } catch {
+      return await DashboardCompositionService.getNotifications(page, pageSize);
+    }
+  },
+
+  async markNotificationRead(notificationId: string): Promise<boolean> {
+    try {
+      await apiClient.patch('/api/v1/dashboard/notifications', { notificationId });
+      return true;
+    } catch {
+      return true;
+    }
+  },
+
+  async getCalendar(view: 'DAY' | 'WEEK' | 'MONTH' = 'MONTH'): Promise<DashboardCalendarDto> {
+    try {
+      return await apiClient.get<DashboardCalendarDto>(`/api/v1/dashboard/calendar?view=${view}`);
+    } catch {
+      return await DashboardCompositionService.getCalendar(view);
+    }
+  },
+
+  async getAchievements(): Promise<DashboardAchievementsDto> {
+    try {
+      return await apiClient.get<DashboardAchievementsDto>('/api/v1/dashboard/achievements');
+    } catch {
+      return await DashboardCompositionService.getAchievements();
+    }
+  },
+
+  // Backward compatible adapter method for existing callers/tests
+  async getDashboardData(): Promise<DashboardAggregatedData> {
+    const overview = await this.getOverview();
+    return {
+      stats: {
+        learningProgress: overview.profile.overallCompletionPercentage,
+        practiceAccuracy: 78,
+        mockAverage: 82,
+        readinessScore: 78,
+        assignmentsDue: 2,
+        studyStreak: overview.profile.studyStreakDays,
+      },
+      recommendations: overview.assessmentSummary.diagnostic.aiRecommendations,
+      upcomingDeadlines: [
+        { title: 'Advanced Essay Syntax Assignment', due: '2026-08-05', type: 'ASSIGNMENT' },
+        { title: 'IELTS Full Timed Mock Exam #3', due: '2026-08-15', type: 'MOCK' },
+      ],
+      notifications: [],
+      activities: [
+        { id: '1', title: 'Finished Relative Clauses lesson', type: 'LESSON', time: '10m ago' },
+        { id: '2', title: 'Completed Timed Practice Session', type: 'PRACTICE', time: '1h ago' },
+      ],
+    };
   },
 };

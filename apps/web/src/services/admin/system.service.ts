@@ -12,7 +12,7 @@ export const adminSystemService = {
   async getSystemHealth(): Promise<SystemHealthMetrics> {
     try {
       return await apiClient.get<SystemHealthMetrics>('/api/v1/admin/dashboard');
-    } catch (_e) {
+    } catch {
       return {
         databaseStatus: 'HEALTHY',
         apiLatencyMs: 42,

@@ -23,11 +23,13 @@ export interface AdminDashboardAggregatedData {
 export const adminDashboardService = {
   async getDashboardData(): Promise<AdminDashboardAggregatedData> {
     try {
-      // Orchestrate existing domains rather than duplicating business logic
-      const usersList = await adminUsersService.getUsers();
-      const programmesList = await adminProgrammesService.getProgrammes();
-      const assessmentsList = await adminAssessmentsService.getAssessments();
-      const auditLogs = await adminAuditService.getAuditLogs();
+      // Orchestrate domain calls in parallel to eliminate request waterfalls
+      const [usersList, programmesList, assessmentsList, auditLogs] = await Promise.all([
+        adminUsersService.getUsers().catch(() => []),
+        adminProgrammesService.getProgrammes().catch(() => []),
+        adminAssessmentsService.getAssessments().catch(() => []),
+        adminAuditService.getAuditLogs().catch(() => []),
+      ]);
 
       const students = usersList.filter((u) => u.role === 'STUDENT');
       const instructors = usersList.filter((u) => u.role === 'INSTRUCTOR');

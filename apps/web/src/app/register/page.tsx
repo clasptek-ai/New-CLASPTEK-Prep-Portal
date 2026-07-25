@@ -1,137 +1,86 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { AuthShell } from '../shell/AuthShell';
-import { Button } from '../../shared/ui/button/Button';
-import { Input } from '../../shared/ui/input/Input';
-import { Alert } from '../../shared/ui/alert/Alert';
+import { RegisterForm } from '@/features/auth/components/RegisterForm';
+import { LogoBadge } from '@/shared/ui/logo/LogoBadge';
+import { CheckCircle2 } from 'lucide-react';
 
 export default function RegisterPage() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const router = useRouter();
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long.');
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch('/api/v1/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, firstName, lastName, provider: 'LOCAL' }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Failed to register account');
-      }
-
-      setSuccess(true);
-      setTimeout(() => {
-        router.push('/login');
-      }, 2500);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
-    <AuthShell title="Create Account" subtitle="Start your preparation journey with Clasptek V2.">
-      {error && (
-        <Alert variant="error" title="Registration Error" style={{ marginBottom: '1.0rem' }}>
-          {error}
-        </Alert>
-      )}
-
-      {success && (
-        <Alert variant="success" title="Success" style={{ marginBottom: '1.0rem' }}>
-          🎉 Registration successful! Redirecting to login page...
-        </Alert>
-      )}
-
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
-      >
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.0rem' }}>
-          <Input
-            label="First Name"
-            name="given-name"
-            placeholder="John"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-          />
-          <Input
-            label="Last Name"
-            name="family-name"
-            placeholder="Doe"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-          />
-        </div>
-
-        <Input
-          label="Email Address"
-          type="email"
-          name="email"
-          placeholder="you@domain.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-
-        <Input
-          label="Password"
-          type="password"
-          name="new-password"
-          placeholder="Min 8 characters"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={loading}
-          style={{ width: '100%', marginTop: '0.5rem' }}
-        >
-          {loading ? 'Creating Profile...' : 'Register Account'}
-        </Button>
-      </form>
-
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#090d16',
+        color: '#f8fafc',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2rem 1.5rem',
+        boxSizing: 'border-box',
+        fontFamily: 'Inter, system-ui, sans-serif',
+      }}
+    >
       <div
         style={{
-          textAlign: 'center',
-          marginTop: '1.5rem',
-          fontSize: '0.8125rem',
-          color: 'var(--text-muted, #94a3b8)',
+          maxWidth: '1080px',
+          width: '100%',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+          gap: '2.5rem',
+          alignItems: 'center',
         }}
       >
-        Already have an account?{' '}
-        <Link
-          href="/login"
-          style={{ color: 'var(--primary-500, #3b82f6)', fontWeight: 700, textDecoration: 'none' }}
-        >
-          Sign In
-        </Link>
+        {/* Left Hero Panel: Purpose-driven registration messaging */}
+        <div style={{ padding: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <LogoBadge size="lg" />
+          </div>
+
+          <h1
+            style={{
+              fontSize: '2.35rem',
+              fontWeight: 800,
+              color: '#ffffff',
+              lineHeight: 1.25,
+              marginBottom: '1rem',
+              letterSpacing: '-0.03em',
+            }}
+          >
+            Prepare with Confidence. <br />
+            <span style={{ color: '#3b82f6' }}>Achieve Your Goals.</span>
+          </h1>
+
+          <p style={{ fontSize: '1.05rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '2rem' }}>
+            Join Clasptek Global and prepare for IELTS, TOEFL, SAT, CELPIP, and English Proficiency with personalized diagnostics, AI-powered study plans, expert guidance, and realistic mock examinations.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            {[
+              'Evidence-based Diagnostic Assessments for tailored level placement',
+              'AI Study Plans generated directly from actual skill gap metrics',
+              'Realistic examination environments matching official test specifications',
+            ].map((text, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.925rem', color: '#cbd5e1' }}>
+                <CheckCircle2 size={18} color="#10b981" style={{ flexShrink: 0 }} />
+                <span>{text}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', fontSize: '0.875rem', color: '#94a3b8' }}>
+            Already have an account?{' '}
+            <Link href="/login" style={{ color: '#3b82f6', fontWeight: 700, textDecoration: 'none' }}>
+              Sign In to Portal
+            </Link>
+          </div>
+        </div>
+
+        {/* Right Form Panel: Streamlined 2-Step Registration Form */}
+        <div>
+          <RegisterForm />
+        </div>
       </div>
-    </AuthShell>
+    </div>
   );
 }

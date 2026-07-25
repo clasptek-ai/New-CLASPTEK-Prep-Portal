@@ -16,5 +16,3 @@ export function createQueryClient(): QueryClient {
     },
   });
 }
-
-export const queryClient = createQueryClient();

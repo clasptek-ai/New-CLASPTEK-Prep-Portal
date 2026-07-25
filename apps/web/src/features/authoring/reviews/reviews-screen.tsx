@@ -48,7 +48,7 @@ export function ReviewsScreen() {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {reviews.map((r, i) => (
+        {reviews.map((r) => (
           <Card key={r.id} title={r.assetName} actions={<Badge>{r.type}</Badge>}>
             <div
               style={{

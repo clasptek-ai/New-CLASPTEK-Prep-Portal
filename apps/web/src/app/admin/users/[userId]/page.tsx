@@ -1,8 +1,7 @@
 'use client';
 
 import React, { use } from 'react';
-import { WorkspaceShell } from '../../../../workspace/WorkspaceShell';
-import { UsersScreen } from '../../../../features/admin/users/users-screen';
+import { UsersScreen } from '@/features/admin/users/users-screen';
 
 interface PageProps {
   params: Promise<{ userId: string }>;
@@ -11,9 +10,5 @@ interface PageProps {
 export default function Page({ params }: PageProps) {
   const { userId } = use(params);
 
-  return (
-    <WorkspaceShell workspaceRole="ADMIN">
-      <UsersScreen userId={userId} />
-    </WorkspaceShell>
-  );
+  return <UsersScreen userId={userId} />;
 }

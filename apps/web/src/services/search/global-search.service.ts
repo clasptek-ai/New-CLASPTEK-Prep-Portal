@@ -19,7 +19,7 @@ export const globalSearchService = {
       return await apiClient.get<SearchResultItem[]>(
         `/api/v1/search?query=${query}&${scopeParams}`
       );
-    } catch (_e) {
+    } catch {
       // Mock search fallbacks
       const allMockResults: SearchResultItem[] = [
         {

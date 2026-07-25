@@ -13,7 +13,7 @@ export const adminUserService = {
   async getUsers(): Promise<AdminUser[]> {
     try {
       return await apiClient.get<AdminUser[]>('/api/v1/admin/users');
-    } catch (_e) {
+    } catch {
       return [
         {
           id: 'u1',
@@ -49,7 +49,7 @@ export const adminUserService = {
         status: currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
       });
       return true;
-    } catch (_e) {
+    } catch {
       return true; // Local fallback feedback mock
     }
   },

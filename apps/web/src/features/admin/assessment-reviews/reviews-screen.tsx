@@ -1,18 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge, Table } from '../../../components/ui/ui-components';
+import { Card, Button, Badge } from '../../../components/ui/ui-components';
 import {
   adminAssessmentReviewsService,
   AssessmentReviewAttempt,
   CandidateReviewDetail,
-  ReviewQuestionItem,
 } from '../../../services/admin/assessment-reviews.service';
+import {
+  CheckCircle2,
+  XCircle,
+  FileText,
+  ArrowLeft,
+} from 'lucide-react';
 
 export function AssessmentReviewsScreen() {
   const [attempts, setAttempts] = useState<AssessmentReviewAttempt[]>([]);
   const [selectedDetail, setSelectedDetail] = useState<CandidateReviewDetail | null>(null);
-  const [noteText, setNoteText] = useState('');
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState<string | null>(null);
 
@@ -43,48 +47,6 @@ export function AssessmentReviewsScreen() {
     }
   }
 
-  async function handleAddNote(e: React.FormEvent) {
-    e.preventDefault();
-    if (!selectedDetail || !noteText.trim()) return;
-    const success = await adminAssessmentReviewsService.addAdministrativeNote(
-      selectedDetail.attempt.id,
-      noteText
-    );
-    if (success) {
-      showBanner('Administrative note successfully added to attempt timeline.');
-      setNoteText('');
-    }
-  }
-
-  async function handleFlagAttempt() {
-    if (!selectedDetail) return;
-    const success = await adminAssessmentReviewsService.flagAttempt(
-      selectedDetail.attempt.id,
-      'Flagged for quality audit checks.'
-    );
-    if (success) {
-      showBanner('Attempt successfully flagged for reviewer review.');
-      setSelectedDetail((prev) =>
-        prev
-          ? {
-              ...prev,
-              attempt: { ...prev.attempt, status: 'FLAGGED' },
-            }
-          : null
-      );
-    }
-  }
-
-  async function handleReRunAi() {
-    if (!selectedDetail) return;
-    const success = await adminAssessmentReviewsService.reRunAiEvaluation(
-      selectedDetail.attempt.id
-    );
-    if (success) {
-      showBanner('AI evaluation task dispatched successfully.');
-    }
-  }
-
   function showBanner(msg: string) {
     setBanner(msg);
     setTimeout(() => setBanner(null), 3000);
@@ -93,498 +55,309 @@ export function AssessmentReviewsScreen() {
   if (loading) {
     return (
       <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-        <h3>Loading student attempts files...</h3>
+        <h3>Loading student examination attempts...</h3>
       </div>
     );
   }
 
+  /* DETAILED EXAMINATION AUDIT VIEW */
   if (selectedDetail) {
-    const { attempt, lifecycle, questions, history, integrity } = selectedDetail;
+    const { attempt, questions } = selectedDetail;
+
+    const totalQuestions = questions.length;
+    const correctCount = questions.filter((q) => q.isCorrect).length;
+    const wrongCount = questions.filter((q) => !q.isCorrect && q.studentAnswer).length;
+    const unansweredCount = questions.filter((q) => !q.studentAnswer).length;
+    const percentage = attempt.score;
+    const isPassed = percentage >= 70;
+
+    const timeStartedStr = attempt.startedAt ? new Date(attempt.startedAt).toLocaleTimeString() : '10:00 AM';
+    const timeSubmittedStr = attempt.submittedAt ? new Date(attempt.submittedAt).toLocaleTimeString() : '10:45 AM';
+    const dateTakenStr = attempt.startedAt ? new Date(attempt.startedAt).toLocaleDateString() : 'July 16, 2026';
+    const durationMin = Math.floor(attempt.durationSeconds / 60);
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
+        {/* Header Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
-              Attempt Review: {attempt.studentName}
-            </h1>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
-              Assessment: {attempt.assessmentName} | ID: {attempt.id}
-            </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Button
+              variant="secondary"
+              onClick={() => setSelectedDetail(null)}
+              style={{ gap: '0.4rem', display: 'flex', alignItems: 'center' }}
+            >
+              <ArrowLeft size={16} /> Back to Attempts
+            </Button>
+            <div>
+              <h1 style={{ margin: 0, fontSize: '1.65rem', fontWeight: 800, color: '#f8fafc' }}>
+                Detailed Examination Audit — {attempt.studentName}
+              </h1>
+              <p style={{ margin: '0.2rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
+                Exam: {attempt.assessmentName} | Reg ID: {attempt.studentId}
+              </p>
+            </div>
           </div>
-          <Button variant="secondary" onClick={() => setSelectedDetail(null)}>
-            Back to Attempts
-          </Button>
+          <span>
+            <Badge variant={isPassed ? 'success' : 'danger'}>
+              {isPassed ? 'PASSED' : 'NEEDS IMPROVEMENT'}
+            </Badge>
+          </span>
         </div>
 
         {banner && (
           <div
             style={{
-              padding: '1rem',
-              backgroundColor: '#2563eb20',
-              border: '1px solid #2563eb40',
+              padding: '0.85rem 1.25rem',
+              backgroundColor: 'rgba(59, 130, 246, 0.15)',
+              border: '1px solid rgba(59, 130, 246, 0.35)',
               borderRadius: '8px',
               color: '#60a5fa',
-              fontSize: '0.85rem',
+              fontSize: '0.875rem',
             }}
           >
             {banner}
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '2rem' }}>
-          {/* Main review workspace */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            {/* Scorecard Overview */}
-            <Card
-              title="Score & Metrics Overview"
-              actions={
-                <Badge variant={attempt.status === 'FLAGGED' ? 'danger' : 'success'}>
-                  {attempt.status}
-                </Badge>
-              }
-            >
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '1.5rem',
-                  marginTop: '1rem',
-                }}
-              >
-                <div
-                  style={{
-                    padding: '1rem',
-                    backgroundColor: '#0b0f19',
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>
-                    Attempt Score
-                  </span>
-                  <strong style={{ fontSize: '1.75rem', color: '#10b981' }}>
-                    {attempt.score}%
-                  </strong>
-                </div>
-                <div
-                  style={{
-                    padding: '1rem',
-                    backgroundColor: '#0b0f19',
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>
-                    Readiness Score
-                  </span>
-                  <strong style={{ fontSize: '1.75rem', color: '#60a5fa' }}>
-                    {attempt.readinessScore}%
-                  </strong>
-                </div>
-                <div
-                  style={{
-                    padding: '1rem',
-                    backgroundColor: '#0b0f19',
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                  }}
-                >
-                  <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>
-                    Duration Spent
-                  </span>
-                  <strong style={{ fontSize: '1.75rem' }}>
-                    {Math.floor(attempt.durationSeconds / 60)}m
-                  </strong>
-                </div>
+        {/* FULL EXAMINATION TELEMETRY SUMMARY HEADER */}
+        <Card style={{ padding: '1.75rem', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '16px' }}>
+          <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#ffffff', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <FileText size={18} color="#38bdf8" />
+            Candidate & Examination Audit Telemetry
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Student Name</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>{attempt.studentName}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Registration Number</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#38bdf8', marginTop: '2px' }}>{attempt.studentId}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Examination Name</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>{attempt.assessmentName}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Programme / Subject</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>{attempt.programme}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Date Taken</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>{dateTakenStr}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Time Started / Submitted</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>{timeStartedStr} - {timeSubmittedStr}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Duration Used</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>{durationMin} mins</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Total Questions</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>{totalQuestions}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#34d399' }}>Correct Answers</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#34d399', marginTop: '2px' }}>{correctCount}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#f87171' }}>Wrong Answers</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f87171', marginTop: '2px' }}>{wrongCount}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#fbbf24' }}>Unanswered Questions</div>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fbbf24', marginTop: '2px' }}>{unansweredCount}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.75rem', color: '#38bdf8' }}>Final Score & Percentage</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 800, color: isPassed ? '#10b981' : '#f87171', marginTop: '2px' }}>
+                {percentage}% ({isPassed ? 'PASS' : 'FAIL'})
               </div>
-            </Card>
-
-            {/* Questions List Review */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>
-                Question-by-Question Audits
-              </h2>
-              {questions.map((q) => (
-                <Card
-                  key={q.questionId}
-                  title={`Question ID: ${q.questionId}`}
-                  actions={
-                    <Badge variant={q.isCorrect ? 'success' : 'danger'}>
-                      {q.marksAwarded} / {q.marksAllocated} Marks
-                    </Badge>
-                  }
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '0.75rem',
-                      marginTop: '0.5rem',
-                      fontSize: '0.85rem',
-                    }}
-                  >
-                    <p style={{ fontWeight: 600, fontSize: '0.95rem' }}>{q.questionText}</p>
-
-                    {q.options && (
-                      <div
-                        style={{
-                          paddingLeft: '1rem',
-                          borderLeft: '2px solid #232e48',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '0.4rem',
-                          color: '#cbd5e1',
-                        }}
-                      >
-                        {q.options.map((opt, i) => (
-                          <span
-                            key={i}
-                            style={{
-                              color:
-                                opt === q.correctAnswer
-                                  ? '#10b981'
-                                  : opt === q.studentAnswer
-                                    ? '#ef4444'
-                                    : 'inherit',
-                            }}
-                          >
-                            {opt} {opt === q.correctAnswer && '✓'}{' '}
-                            {opt === q.studentAnswer && '(Selected)'}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {!q.options && (
-                      <div
-                        style={{
-                          padding: '0.75rem',
-                          backgroundColor: '#0b0f19',
-                          borderRadius: '6px',
-                          border: '1px solid #1e293b',
-                        }}
-                      >
-                        <span
-                          style={{
-                            display: 'block',
-                            fontSize: '0.75rem',
-                            color: '#64748b',
-                            marginBottom: '0.25rem',
-                          }}
-                        >
-                          Candidate Input:
-                        </span>
-                        <p style={{ margin: 0, color: '#f8fafc' }}>{q.studentAnswer}</p>
-                      </div>
-                    )}
-
-                    {q.essayWriting && (
-                      <div
-                        style={{
-                          marginTop: '0.75rem',
-                          padding: '0.75rem',
-                          backgroundColor: '#111827',
-                          borderRadius: '6px',
-                          borderLeft: '3px solid #60a5fa',
-                        }}
-                      >
-                        <strong
-                          style={{ display: 'block', color: '#60a5fa', marginBottom: '0.5rem' }}
-                        >
-                          AI Rubric Grading Coherence
-                        </strong>
-                        <div
-                          style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr 1fr',
-                            gap: '0.5rem',
-                            fontSize: '0.75rem',
-                            color: '#cbd5e1',
-                            marginBottom: '0.5rem',
-                          }}
-                        >
-                          <div>
-                            AI Band Score: <strong>{q.essayWriting.aiBandScore}</strong>
-                          </div>
-                          <div>
-                            Coherence: <strong>{q.essayWriting.rubricCoherenceScore}</strong>
-                          </div>
-                        </div>
-                        <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-                          <p style={{ margin: '0 0 0.25rem 0' }}>
-                            Grammar Feedback: {q.essayWriting.grammarFeedback}
-                          </p>
-                          <p style={{ margin: '0 0 0.25rem 0' }}>
-                            Vocabulary: {q.essayWriting.vocabularyFeedback}
-                          </p>
-                          <p style={{ margin: 0 }}>
-                            Task: {q.essayWriting.taskAchievementFeedback}
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    <div
-                      style={{
-                        fontSize: '0.75rem',
-                        color: '#64748b',
-                        marginTop: '0.5rem',
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: '0.5rem',
-                      }}
-                    >
-                      <span>Type: {q.questionType}</span> |<span>Difficulty: {q.difficulty}</span> |
-                      <span>Topic: {q.topic}</span> |<span>Objective: {q.learningObjective}</span>
-                    </div>
-                  </div>
-                </Card>
-              ))}
             </div>
           </div>
+        </Card>
 
-          {/* Sidebar controls */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {/* Attempt Lifecycle Timeline */}
-            <Card title="Lifecycle Timeline">
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1rem',
-                  marginTop: '0.5rem',
-                }}
-              >
-                {lifecycle.map((ev, i) => (
-                  <div
-                    key={i}
+        {/* PER-QUESTION ITEMIZED AUDIT CARDS */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#ffffff' }}>
+            Itemized Question Performance Breakdown ({totalQuestions} Questions)
+          </h2>
+
+          {questions.map((q, idx) => (
+            <Card
+              key={q.questionId || idx}
+              style={{
+                padding: '1.5rem',
+                backgroundColor: '#151d30',
+                border: q.isCorrect ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '14px',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span
                     style={{
-                      borderLeft: '2px solid #2563eb',
-                      paddingLeft: '1rem',
-                      position: 'relative',
+                      fontSize: '0.8rem',
+                      fontWeight: 800,
+                      color: '#ffffff',
+                      backgroundColor: '#1e293b',
+                      padding: '0.25rem 0.65rem',
+                      borderRadius: '6px',
                     }}
                   >
-                    <div
-                      style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: '#2563eb',
-                        position: 'absolute',
-                        left: '-5px',
-                        top: '5px',
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontSize: '0.8rem',
-                        fontWeight: 600,
-                        color: '#f8fafc',
-                        display: 'block',
-                      }}
-                    >
-                      {ev.title}
-                    </span>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                      {new Date(ev.timestamp).toLocaleString()}
-                    </span>
+                    Question {idx + 1}
+                  </span>
+                  <span>
+                    <Badge variant={q.isCorrect ? 'success' : 'danger'}>
+                      {q.isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                    </Badge>
+                  </span>
+                </div>
+
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#94a3b8' }}>
+                  Marks Awarded: <strong style={{ color: q.isCorrect ? '#34d399' : '#f87171' }}>{q.marksAwarded} / {q.marksAllocated}</strong>
+                </div>
+              </div>
+
+              {/* Question Prompt */}
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', marginBottom: '1rem', lineHeight: 1.45 }}>
+                {q.questionText}
+              </div>
+
+              {/* Options & Candidate Answers */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', backgroundColor: '#0f172a', padding: '1rem', borderRadius: '10px', marginBottom: '1rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
+                    Student Selected Answer:
                   </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Assessment Integrity Metrics */}
-            <Card title="Integrity Diagnostics">
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                  fontSize: '0.8rem',
-                  color: '#cbd5e1',
-                  marginTop: '0.5rem',
-                }}
-              >
-                <div>
-                  Device:{' '}
-                  <strong
-                    style={{
-                      display: 'block',
-                      color: '#f8fafc',
-                      fontSize: '0.75rem',
-                      marginTop: '0.25rem',
-                    }}
-                  >
-                    {integrity.browserDevice}
-                  </strong>
-                </div>
-                <div>
-                  IP Address: <strong>{integrity.ipAddress}</strong>
-                </div>
-                <div>
-                  Pauses Count: <strong>{integrity.pausesCount}</strong>
-                </div>
-                <div>
-                  Auto-save Recoveries: <strong>{integrity.autoSaveRecoveries}</strong>
-                </div>
-              </div>
-            </Card>
-
-            {/* Candidate History summary Panel */}
-            <Card title="Previous Attempts">
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.5rem',
-                  marginTop: '0.5rem',
-                }}
-              >
-                {history.map((h, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      fontSize: '0.75rem',
-                      padding: '0.5rem',
-                      backgroundColor: '#0b0f19',
-                      borderRadius: '4px',
-                    }}
-                  >
-                    <span>
-                      Attempt {i + 1} ({new Date(h.date).toLocaleDateString()})
-                    </span>
-                    <strong style={{ color: '#10b981' }}>{h.score}%</strong>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 700, color: q.isCorrect ? '#34d399' : '#f87171' }}>
+                    {q.studentAnswer || '(Unanswered)'}
                   </div>
-                ))}
-                <div
-                  style={{
-                    borderTop: '1px solid #1e293b',
-                    paddingTop: '0.5rem',
-                    marginTop: '0.5rem',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  <span>Current Attempt:</span>
-                  <strong style={{ color: '#60a5fa' }}>{attempt.score}%</strong>
                 </div>
-                <div
-                  style={{
-                    textAlign: 'center',
-                    fontSize: '0.75rem',
-                    color: '#10b981',
-                    fontWeight: 600,
-                  }}
-                >
-                  ▲ Improving Trend Active
-                </div>
-              </div>
-            </Card>
 
-            {/* Administrative commands panel */}
-            <Card title="Platform Actions">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <Button variant="secondary" onClick={handleFlagAttempt}>
-                  Flag Attempt for Review
-                </Button>
-                <Button variant="secondary" onClick={handleReRunAi}>
-                  Re-run AI Evaluation
-                </Button>
-                <div
-                  style={{
-                    borderTop: '1px solid #1e293b',
-                    paddingTop: '1rem',
-                    marginTop: '0.5rem',
-                  }}
-                >
-                  <form
-                    onSubmit={handleAddNote}
-                    style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
-                  >
-                    <label style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Internal Notes:</label>
-                    <textarea
-                      value={noteText}
-                      onChange={(e) => setNoteText(e.target.value)}
-                      placeholder="Add administrative review logs..."
-                      style={{
-                        width: '100%',
-                        height: '80px',
-                        padding: '0.4rem',
-                        borderRadius: '6px',
-                        backgroundColor: '#0b0f19',
-                        color: '#f8fafc',
-                        border: '1px solid #232e48',
-                        fontSize: '0.8rem',
-                        boxSizing: 'border-box',
-                      }}
-                    />
-                    <Button type="submit">Save Notes</Button>
-                  </form>
+                <div>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
+                    Official Correct Answer:
+                  </div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#34d399' }}>
+                    {q.correctAnswer}
+                  </div>
                 </div>
               </div>
+
+              {/* Options List breakdown */}
+              {q.options && q.options.length > 0 && (
+                <div style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.2rem' }}>
+                    Answer Options Choice List:
+                  </div>
+                  {q.options.map((opt, optIdx) => {
+                    const isSelected = opt === q.studentAnswer;
+                    const isRight = opt === q.correctAnswer;
+                    return (
+                      <div
+                        key={optIdx}
+                        style={{
+                          padding: '0.5rem 0.85rem',
+                          borderRadius: '6px',
+                          backgroundColor: isRight
+                            ? 'rgba(16, 185, 129, 0.15)'
+                            : isSelected
+                            ? 'rgba(239, 68, 68, 0.15)'
+                            : '#0f172a',
+                          border: isRight
+                            ? '1px solid rgba(16, 185, 129, 0.35)'
+                            : isSelected
+                            ? '1px solid rgba(239, 68, 68, 0.35)'
+                            : '1px solid rgba(255, 255, 255, 0.05)',
+                          fontSize: '0.85rem',
+                          color: '#f8fafc',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <span>{opt}</span>
+                        {isRight && <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#34d399' }}>✓ Correct Answer</span>}
+                        {isSelected && !isRight && <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#f87171' }}>✗ Selected by Student</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Explanation Rationale */}
+              {q.explanation && (
+                <div style={{ padding: '0.85rem 1rem', borderRadius: '8px', backgroundColor: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)', fontSize: '0.85rem', color: '#cbd5e1' }}>
+                  <strong style={{ color: '#60a5fa', display: 'block', marginBottom: '0.25rem' }}>Explanation & Teaching Rationale:</strong>
+                  {q.explanation}
+                </div>
+              )}
             </Card>
-          </div>
+          ))}
         </div>
       </div>
     );
   }
 
+  /* LIST OF ATTEMPTS TABLE */
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
       <div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
-          Student Assessment Reviews
+        <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc' }}>
+          Student Examination Results Audit
         </h1>
-        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
-          Audit candidate mock results, review auto-save logs, and inspect AI evaluations
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
+          Comprehensive examination performance directory for itemized question audits and candidate scores.
         </p>
       </div>
 
-      <Table
-        data={attempts}
-        columns={[
-          {
-            header: 'Student Name',
-            render: (row) => (
-              <span
-                style={{ fontWeight: 600, color: '#60a5fa', cursor: 'pointer' }}
-                onClick={() => handleSelectAttempt(row.id)}
-              >
-                {row.studentName}
-              </span>
-            ),
-          },
-          { header: 'Assessment', render: (row) => <span>{row.assessmentName}</span> },
-          { header: 'Type', render: (row) => <Badge>{row.assessmentType}</Badge> },
-          {
-            header: 'Score',
-            render: (row) => <strong style={{ color: '#10b981' }}>{row.score}%</strong>,
-          },
-          {
-            header: 'Readiness',
-            render: (row) => <span style={{ color: '#60a5fa' }}>{row.readinessScore}%</span>,
-          },
-          {
-            header: 'Evaluation',
-            render: (row) => (
-              <Badge variant={row.aiEvaluationStatus === 'COMPLETED' ? 'success' : 'warning'}>
-                {row.aiEvaluationStatus}
-              </Badge>
-            ),
-          },
-          {
-            header: 'Actions',
-            render: (row) => (
-              <Button onClick={() => handleSelectAttempt(row.id)}>Audit Attempt</Button>
-            ),
-          },
-        ]}
-      />
+      <Card style={{ padding: '1.5rem', borderRadius: '16px', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem', color: '#f8fafc' }}>
+          <thead>
+            <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', textAlign: 'left' }}>
+              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Candidate</th>
+              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Programme</th>
+              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Assessment Name</th>
+              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Score</th>
+              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Status</th>
+              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {attempts.map((att) => (
+              <tr key={att.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
+                <td style={{ padding: '0.85rem 1rem' }}>
+                  <div style={{ fontWeight: 700, color: '#f8fafc' }}>{att.studentName}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>ID: {att.studentId}</div>
+                </td>
+                <td style={{ padding: '0.85rem 1rem' }}>{att.programme}</td>
+                <td style={{ padding: '0.85rem 1rem' }}>{att.assessmentName}</td>
+                <td style={{ padding: '0.85rem 1rem' }}>
+                  <strong style={{ color: att.score >= 70 ? '#34d399' : '#f87171' }}>{att.score}%</strong>
+                </td>
+                <td style={{ padding: '0.85rem 1rem' }}>
+                  <Badge variant={att.status === 'FLAGGED' ? 'danger' : 'success'}>{att.status}</Badge>
+                </td>
+                <td style={{ padding: '0.85rem 1rem' }}>
+                  <Button
+                    variant="primary"
+                    onClick={() => handleSelectAttempt(att.id)}
+                    style={{ backgroundColor: '#2563eb', color: '#ffffff' }}
+                  >
+                    Audit Detailed Results
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
     </div>
   );
 }
+
 export default AssessmentReviewsScreen;

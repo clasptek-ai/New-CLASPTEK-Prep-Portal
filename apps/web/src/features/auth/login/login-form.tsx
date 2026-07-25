@@ -17,7 +17,7 @@ export function LoginForm() {
   } = form;
 
   return (
-    <form onSubmit={onSubmit} noValidate className="w-full space-y-4">
+    <form method="POST" onSubmit={onSubmit} noValidate className="w-full space-y-4">
       {serverError && (
         <Alert variant="error" className="mb-4">
           <AlertDescription>{serverError}</AlertDescription>

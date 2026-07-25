@@ -44,7 +44,7 @@ export function DashboardHero({
           </div>
 
           <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-            Welcome back, {studentName} 👋
+            Welcome back, {studentName}
           </h1>
 
           <p className="text-sm md:text-base text-slate-300 leading-relaxed">

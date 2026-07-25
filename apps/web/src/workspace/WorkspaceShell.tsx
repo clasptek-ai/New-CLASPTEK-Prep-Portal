@@ -2,6 +2,25 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import {
+  LayoutDashboard,
+  GraduationCap,
+  Zap,
+  FileText,
+  BookOpen,
+  Sparkles,
+  Calendar,
+  TrendingUp,
+  User,
+  Settings,
+  Users,
+  Layers,
+  Shield,
+  Library,
+  LineChart,
+  FileBarChart,
+  Lock,
+} from 'lucide-react';
 import { WorkspaceContext } from './WorkspaceContext';
 import { WorkspaceId, workspaceRegistry } from './workspace-registry';
 import { RouteGuard } from '../components/auth/route-guard';
@@ -12,6 +31,50 @@ import { Breadcrumb, BreadcrumbItem } from '../shared/ui/breadcrumb/Breadcrumb';
 interface WorkspaceShellProps {
   workspaceRole: WorkspaceId;
   children: React.ReactNode;
+}
+
+function getNavIcon(iconName: string) {
+  const size = 18;
+  switch (iconName) {
+    case 'LayoutDashboard':
+      return <LayoutDashboard size={size} />;
+    case 'GraduationCap':
+      return <GraduationCap size={size} />;
+    case 'Zap':
+      return <Zap size={size} />;
+    case 'FileText':
+      return <FileText size={size} />;
+    case 'BookOpen':
+      return <BookOpen size={size} />;
+    case 'Sparkles':
+      return <Sparkles size={size} />;
+    case 'Calendar':
+      return <Calendar size={size} />;
+    case 'TrendingUp':
+      return <TrendingUp size={size} />;
+    case 'User':
+    case 'UserSettings':
+      return <User size={size} />;
+    case 'Settings':
+    case 'Sliders':
+      return <Settings size={size} />;
+    case 'Users':
+      return <Users size={size} />;
+    case 'Layers':
+      return <Layers size={size} />;
+    case 'Shield':
+      return <Shield size={size} />;
+    case 'Library':
+      return <Library size={size} />;
+    case 'LineChart':
+      return <LineChart size={size} />;
+    case 'FileBarChart':
+      return <FileBarChart size={size} />;
+    case 'Lock':
+      return <Lock size={size} />;
+    default:
+      return <LayoutDashboard size={size} />;
+  }
 }
 
 export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps) {
@@ -59,7 +122,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
   return (
     <RouteGuard
       allowedRoles={
-        workspaceRole === 'STUDENT' ? ['STUDENT'] : ['ADMINISTRATOR', 'INSTRUCTOR', 'SYSTEM_ADMIN']
+        workspaceRole === 'STUDENT' ? ['STUDENT'] : ['ADMINISTRATOR', 'SYSTEM_ADMIN']
       }
     >
       <div
@@ -182,29 +245,36 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                       padding: '0.4rem',
                     }}
                   >
-                    {(Object.keys(workspaceRegistry) as WorkspaceId[]).map((id) => (
-                      <button
-                        key={id}
-                        onClick={() => handleSwitch(id)}
-                        style={{
-                          width: '100%',
-                          padding: '0.5rem',
-                          borderRadius: '4px',
-                          border: 'none',
-                          backgroundColor: 'transparent',
-                          color:
-                            currentWorkspace.id === id
-                              ? 'var(--primary-500, #2563eb)'
-                              : 'var(--text-secondary, #cbd5e1)',
-                          textAlign: 'left',
-                          fontSize: '0.8125rem',
-                          cursor: 'pointer',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {workspaceRegistry[id].name}
-                      </button>
-                    ))}
+                    {(Object.keys(workspaceRegistry) as WorkspaceId[])
+                      .filter((id) => {
+                        if (id === 'ADMIN') {
+                          return workspaceRole === 'ADMIN';
+                        }
+                        return true;
+                      })
+                      .map((id) => (
+                        <button
+                          key={id}
+                          onClick={() => handleSwitch(id)}
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            borderRadius: '4px',
+                            border: 'none',
+                            backgroundColor: 'transparent',
+                            color:
+                              currentWorkspace.id === id
+                                ? 'var(--primary-500, #2563eb)'
+                                : 'var(--text-secondary, #cbd5e1)',
+                            textAlign: 'left',
+                            fontSize: '0.8125rem',
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                          }}
+                        >
+                          {workspaceRegistry[id].name}
+                        </button>
+                      ))}
                   </div>
                 )}
               </div>
@@ -225,7 +295,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                 return (
                   <SidebarItem
                     key={idx}
-                    icon="📌"
+                    icon={getNavIcon(item.icon)}
                     label={item.name}
                     href={item.href}
                     isActive={isActive}

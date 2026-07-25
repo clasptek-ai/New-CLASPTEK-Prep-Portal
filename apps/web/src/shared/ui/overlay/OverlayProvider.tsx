@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, useState, useCallback, useEffect } from 'react';
 import { OverlayContextValue } from './overlay.types';
 import { OverlayManager } from './OverlayManager';

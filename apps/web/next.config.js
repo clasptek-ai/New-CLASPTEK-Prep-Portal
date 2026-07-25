@@ -33,17 +33,15 @@ const getSecureHeaders = () => ({
 });
 
 module.exports = {
+  devIndicators: false,
   transpilePackages: clasptekPackages,
   eslint: {
     ignoreDuringBuilds: true,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/((?!_next/static|_next/image|favicon.ico|logo.png|manifest.json).*)',
         headers: Object.entries(getSecureHeaders()).map(([key, value]) => ({ key, value })),
       },
     ];

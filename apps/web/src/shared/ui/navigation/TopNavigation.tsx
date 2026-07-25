@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react';
 import { TopNavigationProps } from './navigation.types';
 import { Avatar } from '../avatar/Avatar';
 import { Input } from '../input/Input';
+import { LogoBadge } from '../logo/LogoBadge';
 
 export const TopNavigation = forwardRef<HTMLElement, TopNavigationProps>(function TopNavigation(
   { logo, user, onSearch, onToggleTheme, actions, children, style, ...props },
@@ -25,14 +26,8 @@ export const TopNavigation = forwardRef<HTMLElement, TopNavigationProps>(functio
       }}
       {...props}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.0rem' }}>
-        {logo || (
-          <div
-            style={{ fontSize: '1.125rem', fontWeight: 900, color: 'var(--primary-500, #3b82f6)' }}
-          >
-            Clasptek Portal
-          </div>
-        )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+        {logo || <LogoBadge size="sm" />}
       </div>
 
       {onSearch && (

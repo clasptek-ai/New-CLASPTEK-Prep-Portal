@@ -66,7 +66,7 @@ export async function getAuthenticatedSession(
       const userRoles = await authCtx.userRoleRepo.findByUserId(user.id);
       const roles = await Promise.all(userRoles.map((ur) => authCtx.roleRepo.findById(ur.roleId)));
       roleNames = roles.filter((r): r is any => r !== null).map((r) => r.name);
-    } catch (_dbErr) {
+    } catch {
       // Fallback role heuristics in case DB is offline/uninitialized in local dev
       if (user.email?.includes('admin')) {
         roleNames = ['ADMINISTRATOR'];
@@ -82,7 +82,7 @@ export async function getAuthenticatedSession(
       profileId: 'profile-' + user.id,
       roles: roleNames.length > 0 ? roleNames : ['STUDENT'],
     };
-  } catch (_err) {
+  } catch {
     // In dev / test fall back to headers
     if (process.env.NEXT_PUBLIC_DEV_MOCK_AUTH === 'true' || process.env.NODE_ENV === 'test') {
       const headerStudentId = req.headers.get('x-student-id');

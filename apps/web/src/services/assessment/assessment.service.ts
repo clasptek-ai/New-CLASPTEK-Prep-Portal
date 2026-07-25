@@ -12,7 +12,7 @@ export const assessmentService = {
   async getAssessments(): Promise<AssessmentItem[]> {
     try {
       return await apiClient.get<AssessmentItem[]>('/api/v1/analytics/assessments');
-    } catch (_e) {
+    } catch {
       return [
         {
           id: 'a1',
@@ -43,7 +43,7 @@ export const assessmentService = {
     try {
       await apiClient.post<any>('/api/v1/runtime/start', { assessmentId });
       return { success: true, message: 'Assessment session started' };
-    } catch (_e) {
+    } catch {
       return { success: true, message: 'Local assessment runner fallback active' };
     }
   },

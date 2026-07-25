@@ -13,6 +13,8 @@ function getSSLConfig(dbUrl: string): any {
   return { rejectUnauthorized: false };
 }
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export class DatabasePool {
   private pool: Pool | null = null;
   private isConnected = false;
@@ -32,28 +34,48 @@ export class DatabasePool {
     }
 
     this.logger.info('Initializing Postgres database connection pool singleton...');
-    try {
-      const cleanUrl = this.config.DATABASE_URL.replace('sslmode=verify-full', 'sslmode=no-verify');
-      const newPool = new Pool({
-        connectionString: cleanUrl,
-        max: 10,
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 2000,
-        ssl: getSSLConfig(cleanUrl),
-      });
 
-      // Acquire a client to verify database reachability
-      const client = await newPool.connect();
-      client.release();
+    const cleanUrl = this.config.DATABASE_URL.replace('sslmode=verify-full', 'sslmode=no-verify');
+    const maxRetries = 3;
+    let lastError: any = null;
 
-      globalThis.__globalPgPool = newPool;
-      this.pool = newPool;
-      this.isConnected = true;
-      this.logger.info('Postgres database connection pool singleton established successfully.');
-    } catch (err: any) {
-      this.logger.error('Failed to establish database connection pool singleton', err);
-      throw err;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const newPool = new Pool({
+          connectionString: cleanUrl,
+          max: 10,
+          idleTimeoutMillis: 30000,
+          connectionTimeoutMillis: 10000,
+          ssl: getSSLConfig(cleanUrl),
+        });
+
+        // Add error handler for idle clients to prevent unhandled node errors
+        newPool.on('error', (err) => {
+          this.logger.warn('Unexpected error on idle Postgres pool client:', err);
+        });
+
+        // Acquire a client to verify database reachability
+        const client = await newPool.connect();
+        client.release();
+
+        globalThis.__globalPgPool = newPool;
+        this.pool = newPool;
+        this.isConnected = true;
+        this.logger.info('Postgres database connection pool singleton established successfully.');
+        return;
+      } catch (err: any) {
+        lastError = err;
+        this.logger.warn(
+          `Database connection attempt ${attempt}/${maxRetries} failed: ${err.message || String(err)}`
+        );
+        if (attempt < maxRetries) {
+          await delay(300 * Math.pow(2, attempt - 1));
+        }
+      }
     }
+
+    this.logger.error('Failed to establish database connection pool singleton after retries', lastError);
+    throw lastError;
   }
 
   public async disconnect(): Promise<void> {

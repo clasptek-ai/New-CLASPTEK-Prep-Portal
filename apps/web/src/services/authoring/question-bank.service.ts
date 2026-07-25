@@ -14,7 +14,7 @@ export const authoringQuestionBankService = {
   async getQuestions(): Promise<AuthoringQuestion[]> {
     try {
       return await apiClient.get<AuthoringQuestion[]>('/api/v1/questions');
-    } catch (_e) {
+    } catch {
       return [
         {
           id: 'q1',
@@ -50,7 +50,7 @@ export const authoringQuestionBankService = {
   async getQuestion(id: string): Promise<AuthoringQuestion> {
     try {
       return await apiClient.get<AuthoringQuestion>(`/api/v1/questions/${id}`);
-    } catch (_e) {
+    } catch {
       const all = await this.getQuestions();
       return all.find((item) => item.id === id) || all[0];
     }

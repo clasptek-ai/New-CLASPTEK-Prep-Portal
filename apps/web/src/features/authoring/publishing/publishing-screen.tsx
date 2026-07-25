@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Button, Badge } from '../../../components/ui/ui-components';
+import { Card, Button } from '../../../components/ui/ui-components';
 import { PublishingPipelineVisualizer } from '../../../components/authoring/authoring-components';
 import { useNotification } from '../../../providers/notification-provider';
 

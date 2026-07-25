@@ -23,7 +23,10 @@ export const StudentWorkspaceContext = createContext<StudentWorkspaceContextType
   undefined
 );
 
+import { useAuthContext } from '../providers/AuthProvider';
+
 export const StudentWorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated, isLoading: authLoading } = useAuthContext();
   const [student, setStudent] = useState<StudentProfileDetails | null>(null);
   const [programme, setProgramme] = useState<EnrolledProgramme | null>(null);
   const [readiness, setReadiness] = useState<StudentReadinessInfo | null>(null);
@@ -33,14 +36,13 @@ export const StudentWorkspaceProvider: React.FC<{ children: React.ReactNode }> =
 
   const refreshContext = async () => {
     try {
-      // 1. Verify active authentication session before requesting authenticated student domain data
-      const sessionRes = await fetch('/api/v1/auth/session');
-      if (!sessionRes.ok) {
+      if (authLoading) return;
+      if (!isAuthenticated) {
         setLoading(false);
         return;
       }
 
-      // 2. Auth session verified — load student domain data concurrently
+      // Load student domain data concurrently
       const [studentData, readinessData, programmes, notifs] = await Promise.all([
         studentProfileService.getProfile().catch(() => null),
         studentReadinessService.getReadiness().catch(() => null),

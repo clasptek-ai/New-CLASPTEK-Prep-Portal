@@ -19,7 +19,7 @@ export const adminTraceService = {
   async getTraces(): Promise<TraceInstance[]> {
     try {
       return await apiClient.get<TraceInstance[]>('/api/v1/admin/observability/traces');
-    } catch (_e) {
+    } catch {
       return [
         {
           id: 't1',

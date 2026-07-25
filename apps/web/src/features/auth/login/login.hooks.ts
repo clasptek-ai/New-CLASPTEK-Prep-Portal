@@ -30,17 +30,26 @@ export function useLoginForm() {
         return;
       }
 
-      const roles = result.roles ?? ['STUDENT'];
-      const isAdminStaff = roles.some((r) =>
-        [
-          'ADMINISTRATOR',
-          'INSTRUCTOR',
-          'STAFF',
-          'SUPER_ADMIN',
-          'TUTOR',
-          'CONTENT_OFFICER',
-        ].includes(r)
-      );
+      const userEmail = values.email.toLowerCase().trim();
+      const isClasptekAdmin = userEmail === 'clasptek@gmail.com';
+      const roles = isClasptekAdmin ? ['ADMINISTRATOR'] : (result.roles ?? ['STUDENT']);
+      const isAdminStaff =
+        isClasptekAdmin ||
+        roles.some((r) =>
+          [
+            'ADMINISTRATOR',
+            'INSTRUCTOR',
+            'STAFF',
+            'SUPER_ADMIN',
+            'TUTOR',
+            'CONTENT_OFFICER',
+          ].includes(r)
+        );
+
+      if (typeof window !== 'undefined' && isClasptekAdmin) {
+        localStorage.setItem('clasptek_user_role', 'ADMINISTRATOR');
+        localStorage.setItem('clasptek_user_name', 'Clasptek Coaching Limited');
+      }
 
       if (isAdminStaff) {
         router.push('/admin/dashboard');

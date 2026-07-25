@@ -6,6 +6,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '../schemas/auth.schemas';
 import { useAuth } from '../hooks/useAuth';
 import { Input, Button, Card } from '../../../components/ui/ui-components';
+import { BrandConfig } from '@/config/brand.config';
+import { LogoBadge } from '../../../shared/ui/logo/LogoBadge';
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -40,9 +42,28 @@ export function LoginForm({ onSuccess, isExpiredSession = false }: LoginFormProp
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data);
+      const sessionUser = await login(data);
       setIsSuccess(true);
       onSuccess?.();
+
+      const userEmail = data.email.toLowerCase().trim();
+      const isClasptekAdmin = userEmail === 'clasptek@gmail.com';
+      const isAdminStaff = isClasptekAdmin || sessionUser?.roles?.some((r) =>
+        ['ADMINISTRATOR', 'INSTRUCTOR', 'STAFF', 'SUPER_ADMIN'].includes(r)
+      );
+
+      if (typeof window !== 'undefined' && isClasptekAdmin) {
+        localStorage.setItem('clasptek_user_role', 'ADMINISTRATOR');
+        localStorage.setItem('clasptek_user_name', 'Clasptek Coaching Limited');
+      }
+
+      setTimeout(() => {
+        if (isAdminStaff) {
+          window.location.href = '/admin/dashboard';
+        } else {
+          window.location.href = '/dashboard';
+        }
+      }, 500);
     } catch {
       // Error handled by useAuth state
     }
@@ -59,13 +80,16 @@ export function LoginForm({ onSuccess, isExpiredSession = false }: LoginFormProp
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <div>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '0.85rem', display: 'flex', justifyContent: 'center' }}>
+            <LogoBadge size="md" />
+          </div>
           <h2
-            style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}
+            style={{ margin: 0, fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-primary)' }}
           >
-            Sign In to Clasptek
+            Sign In — {BrandConfig.shortName}
           </h2>
-          <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <p style={{ margin: '0.35rem 0 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Enter your academic credentials to access your portal workspace.
           </p>
         </div>
@@ -126,6 +150,7 @@ export function LoginForm({ onSuccess, isExpiredSession = false }: LoginFormProp
               borderRadius: '6px',
               color: '#34d399',
               fontSize: '0.85rem',
+              textAlign: 'center',
             }}
           >
             Authentication verified successfully! Redirecting...
@@ -139,7 +164,7 @@ export function LoginForm({ onSuccess, isExpiredSession = false }: LoginFormProp
           <Input
             label="Email Address"
             type="email"
-            placeholder="student@clasptek.edu"
+            placeholder="student@clasptek.com"
             disabled={isLoading || isOffline}
             error={errors.email?.message}
             {...register('email')}

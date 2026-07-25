@@ -27,100 +27,50 @@ interface RouteGuardProps {
   children: React.ReactNode;
 }
 
-// Client-side cache to prevent duplicate session validation API calls
-let cachedSession: { roles: UserRole[] } | null = null;
+import { useAuthContext } from '../../providers/AuthProvider';
 
 export function RouteGuard({ allowedRoles, children }: RouteGuardProps) {
   const router = useRouter();
+  const { roles, isAuthenticated, isLoading: authLoading } = useAuthContext();
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
+    if (authLoading) return;
 
-    async function checkAuth() {
-      const checkAccess = (roles: string[]) => {
-        const normalized = roles.map(normalizeRole);
-        const isAdmin = normalized.includes('ADMINISTRATOR');
-        const matchesAllowed = normalized.some((role) =>
-          allowedRoles.map((a) => normalizeRole(a)).includes(role)
-        );
-        return isAdmin || matchesAllowed;
-      };
+    const checkAccess = (userRoles: string[]) => {
+      const normalized = userRoles.map(normalizeRole);
+      const isAdmin = normalized.includes('ADMINISTRATOR');
+      const matchesAllowed = normalized.some((role) =>
+        allowedRoles.map((a) => normalizeRole(a)).includes(role)
+      );
+      return isAdmin || matchesAllowed;
+    };
 
-      // 1. Resolve from cache if available
-      if (cachedSession) {
-        const hasAccess = checkAccess(cachedSession.roles);
-        if (active) {
-          if (!hasAccess) {
-            router.push('/error?code=UNAUTHORIZED');
-          } else {
-            setAuthorized(true);
-          }
-          setLoading(false);
-        }
-        return;
+    if (isAuthenticated && roles.length > 0) {
+      const hasAccess = checkAccess(roles);
+      if (!hasAccess) {
+        router.push('/error?code=UNAUTHORIZED');
+      } else {
+        setAuthorized(true);
       }
-
-      // 2. Fetch session from server endpoint
-      try {
-        const res = await fetch('/api/v1/auth/session');
-        if (res.ok) {
-          const data = await res.json();
-          const rawRoles = (data.roles || []) as string[];
-          const normalizedRoles = rawRoles.map(normalizeRole);
-          cachedSession = { roles: normalizedRoles };
-
-          const hasAccess = checkAccess(rawRoles);
-          if (active) {
-            if (!hasAccess) {
-              router.push('/error?code=UNAUTHORIZED');
-            } else {
-              setAuthorized(true);
-            }
-            setLoading(false);
-          }
-          return;
-        } else if (res.status === 401) {
-          // Unauthenticated session -> Redirect to login
-          if (active) {
-            router.push('/login');
-            setLoading(false);
-          }
-          return;
-        }
-      } catch (err) {
-        console.error('Session verification request failed', err);
-      }
-
-      // 3. Fallback logic for Dev/Test mode
+      setLoading(false);
+    } else {
       const isDevMock = process.env.NEXT_PUBLIC_DEV_MOCK_AUTH === 'true';
       if (isDevMock) {
         const userRole = (localStorage.getItem('user-role') as string) || 'STUDENT';
         const hasAccess = checkAccess([userRole]);
-        if (active) {
-          if (!hasAccess) {
-            router.push('/error?code=UNAUTHORIZED');
-          } else {
-            setAuthorized(true);
-          }
-          setLoading(false);
+        if (!hasAccess) {
+          router.push('/error?code=UNAUTHORIZED');
+        } else {
+          setAuthorized(true);
         }
       } else {
-        // Production mode: Treat as unauthenticated, redirect to login
-        if (active) {
-          router.push('/login');
-          setLoading(false);
-        }
+        router.push('/login');
       }
+      setLoading(false);
     }
-
-    checkAuth();
-
-    return () => {
-      active = false;
-    };
-  }, [allowedRoles, router]);
+  }, [allowedRoles, router, roles, isAuthenticated, authLoading]);
 
   if (loading) {
     return (

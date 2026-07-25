@@ -13,7 +13,7 @@ export const authoringCurriculumService = {
   async getProgrammes(): Promise<AuthoringProgramme[]> {
     try {
       return await apiClient.get<AuthoringProgramme[]>('/api/v1/curricula');
-    } catch (_e) {
+    } catch {
       return [
         {
           id: 'p1',
@@ -38,7 +38,7 @@ export const authoringCurriculumService = {
   async getProgramme(id: string): Promise<AuthoringProgramme> {
     try {
       return await apiClient.get<AuthoringProgramme>(`/api/v1/curricula/${id}`);
-    } catch (_e) {
+    } catch {
       const all = await this.getProgrammes();
       return all.find((item) => item.id === id) || all[0];
     }

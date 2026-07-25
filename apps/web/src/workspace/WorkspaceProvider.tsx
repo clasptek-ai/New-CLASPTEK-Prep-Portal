@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   WorkspaceContext,
   WorkspacePreferences,
@@ -18,8 +18,29 @@ const DEFAULT_PREFERENCES: WorkspacePreferences = {
 };
 
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
-  const [activeId, setActiveId] = useState<WorkspaceId>('STUDENT');
-  const [preferences, setPreferences] = useState<WorkspacePreferences>(DEFAULT_PREFERENCES);
+  const [activeId, setActiveId] = useState<WorkspaceId>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedId = localStorage.getItem('active-workspace-id') as WorkspaceId;
+        if (savedId && ['STUDENT', 'ADMIN'].includes(savedId)) return savedId;
+      } catch {
+        // Storage unavailable
+      }
+    }
+    return 'STUDENT';
+  });
+
+  const [preferences, setPreferences] = useState<WorkspacePreferences>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const item = localStorage.getItem('workspace-preferences');
+        if (item) return { ...DEFAULT_PREFERENCES, ...JSON.parse(item) };
+      } catch {
+        // Storage unavailable
+      }
+    }
+    return DEFAULT_PREFERENCES;
+  });
 
   // Event bus listener mappings
   const listenersRef = useRef<Record<string, Set<(p?: any) => void>>>({});
@@ -66,23 +87,6 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     }),
     []
   );
-
-  useEffect(() => {
-    // Initial hydration
-    try {
-      const savedId = localStorage.getItem('active-workspace-id') as WorkspaceId;
-      if (savedId && ['STUDENT', 'ADMIN'].includes(savedId)) {
-        setActiveId(savedId);
-      }
-      syncProvider.loadPreferences().then((saved) => {
-        if (saved) {
-          setPreferences({ ...DEFAULT_PREFERENCES, ...saved });
-        }
-      });
-    } catch {
-      // Ignore SSR logs
-    }
-  }, [syncProvider]);
 
   const setWorkspaceId = (id: WorkspaceId) => {
     setActiveId(id);

@@ -21,7 +21,7 @@ export const adminSettingsService = {
       return await apiClient.get<AdminPlatformSettings>('/api/v1/admin/settings');
     } catch {
       return {
-        portalName: 'Clasptek Prep Portal V2',
+        portalName: 'Clasptek Global Academy Portal',
         maintenanceMode: false,
         activeAcademicTerm: 'Summer-Fall 2026 Term',
         allowSelfRegistration: true,

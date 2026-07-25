@@ -2,6 +2,8 @@
 
 import React from 'react';
 import { Button } from '../../shared/ui/button/Button';
+import { BrandConfig } from '@/config/brand.config';
+import { LogoBadge } from '../../shared/ui/logo/LogoBadge';
 
 export function PublicShell({ children }: { children: React.ReactNode }) {
   return (
@@ -23,8 +25,8 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
           borderBottom: '1px solid var(--border-default, #1e293b)',
         }}
       >
-        <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--primary-500, #3b82f6)' }}>
-          Clasptek Prep Portal
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <LogoBadge size="md" />
         </div>
         <div style={{ display: 'flex', gap: '0.75rem' }}>
           <Button variant="ghost" onClick={() => (window.location.href = '/login')}>
@@ -47,7 +49,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
           fontSize: '0.875rem',
         }}
       >
-        © {new Date().getFullYear()} Clasptek Prep Portal V2. All rights reserved.
+        {BrandConfig.copyrightText}
       </footer>
     </div>
   );
