@@ -1,9 +1,5 @@
-'use client';
-
 import React from 'react';
 import Link from 'next/link';
-import { LogoBadge } from '../shared/ui/logo/LogoBadge';
-import { ArrowLeft, Home } from 'lucide-react';
 
 export default function NotFound() {
   return (
@@ -21,18 +17,10 @@ export default function NotFound() {
         fontFamily: 'Inter, sans-serif',
       }}
     >
-      <LogoBadge size="lg" />
-      <h1
-        style={{ fontSize: '4rem', fontWeight: 800, color: '#38bdf8', margin: '1.5rem 0 0.5rem' }}
-      >
-        404
-      </h1>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ffffff', margin: '0 0 1rem' }}>
-        Page Not Found
-      </h2>
+      <h1 style={{ fontSize: '4rem', fontWeight: 800, color: '#38bdf8', margin: '1.5rem 0 0.5rem' }}>404</h1>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ffffff', margin: '0 0 1rem' }}>Page Not Found</h2>
       <p style={{ color: '#94a3b8', maxWidth: '480px', marginBottom: '2rem' }}>
-        The requested resource or candidate page could not be located on the Clasptek Global Academy
-        Portal.
+        The requested resource or candidate page could not be located on the Clasptek Global Academy Portal.
       </p>
       <Link href="/">
         <button
@@ -45,13 +33,9 @@ export default function NotFound() {
             fontSize: '0.9rem',
             fontWeight: 700,
             cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
           }}
         >
-          <Home size={16} />
-          <span>Return to Homepage</span>
+          Return to Homepage
         </button>
       </Link>
     </div>
