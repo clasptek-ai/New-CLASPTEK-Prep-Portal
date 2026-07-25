@@ -58,10 +58,24 @@ export const DashboardWidget: React.FC<DashboardWidgetProps> = ({
       }}
     >
       {/* Widget Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: '1rem',
+        }}
+      >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary, #f8fafc)' }}>
+            <h3
+              style={{
+                margin: 0,
+                fontSize: '1.15rem',
+                fontWeight: 800,
+                color: 'var(--text-primary, #f8fafc)',
+              }}
+            >
               {title}
             </h3>
             {badge && (
@@ -80,7 +94,13 @@ export const DashboardWidget: React.FC<DashboardWidgetProps> = ({
             )}
           </div>
           {subtitle && (
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.825rem', color: 'var(--text-secondary, #94a3b8)' }}>
+            <p
+              style={{
+                margin: '0.25rem 0 0',
+                fontSize: '0.825rem',
+                color: 'var(--text-secondary, #94a3b8)',
+              }}
+            >
               {subtitle}
             </p>
           )}
@@ -92,7 +112,9 @@ export const DashboardWidget: React.FC<DashboardWidgetProps> = ({
       {/* 4-State UI Matrix Content Handler */}
       <div>
         {state === 'LOADING' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1rem 0' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1rem 0' }}
+          >
             <Skeleton height="24px" width="60%" />
             <Skeleton height="16px" width="90%" />
             <Skeleton height="16px" width="40%" />
@@ -102,10 +124,17 @@ export const DashboardWidget: React.FC<DashboardWidgetProps> = ({
         {state === 'ERROR' && (
           <Alert variant="error" className="my-2">
             <AlertTitle>Widget Loading Failure</AlertTitle>
-            <AlertDescription style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <AlertDescription
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
               <span>{errorMessage}</span>
               {onRetry && (
-                <Button variant="outline" size="sm" onClick={onRetry} style={{ gap: '0.4rem', marginTop: '0.5rem' }}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onRetry}
+                  style={{ gap: '0.4rem', marginTop: '0.5rem' }}
+                >
                   <RefreshCw size={12} /> Retry
                 </Button>
               )}

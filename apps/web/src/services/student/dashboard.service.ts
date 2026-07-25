@@ -47,7 +47,9 @@ export const studentDashboardService = {
 
   async getActivity(page = 1, pageSize = 5): Promise<DashboardActivityDto> {
     try {
-      return await apiClient.get<DashboardActivityDto>(`/api/v1/dashboard/activity?page=${page}&pageSize=${pageSize}`);
+      return await apiClient.get<DashboardActivityDto>(
+        `/api/v1/dashboard/activity?page=${page}&pageSize=${pageSize}`
+      );
     } catch {
       return await DashboardCompositionService.getActivity(page, pageSize);
     }
@@ -55,7 +57,9 @@ export const studentDashboardService = {
 
   async getNotifications(page = 1, pageSize = 10): Promise<DashboardNotificationDto> {
     try {
-      return await apiClient.get<DashboardNotificationDto>(`/api/v1/dashboard/notifications?page=${page}&pageSize=${pageSize}`);
+      return await apiClient.get<DashboardNotificationDto>(
+        `/api/v1/dashboard/notifications?page=${page}&pageSize=${pageSize}`
+      );
     } catch {
       return await DashboardCompositionService.getNotifications(page, pageSize);
     }

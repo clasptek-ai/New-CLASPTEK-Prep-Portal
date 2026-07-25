@@ -50,7 +50,12 @@ export const AdminWorkspaceProvider: React.FC<{ children: React.ReactNode }> = (
       if (authUser) {
         profile = {
           id: authUser.id,
-          name: storedName || authUser.user_metadata?.name || (authUser.email?.toLowerCase() === 'clasptek@gmail.com' ? 'Clasptek Coaching Limited' : getDeterministicName(authUser.email || 'clasptek@gmail.com')),
+          name:
+            storedName ||
+            authUser.user_metadata?.name ||
+            (authUser.email?.toLowerCase() === 'clasptek@gmail.com'
+              ? 'Clasptek Coaching Limited'
+              : getDeterministicName(authUser.email || 'clasptek@gmail.com')),
           role: authRoles[0] || 'SUPER_ADMINISTRATOR',
           email: authUser.email || 'clasptek@gmail.com',
         };

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, Clock, HelpCircle, CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
+import { ShieldCheck, Clock, HelpCircle, ArrowRight, Sparkles } from 'lucide-react';
 import { BrandConfig } from '@/config/brand.config';
 import { LogoBadge } from '@/shared/ui/logo/LogoBadge';
 import { getDiagnosticDefinition } from '../config/diagnostic-registry';
@@ -21,8 +21,13 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
 
   // State for post-login exam goals collection
   const [currentScore, setCurrentScore] = useState(onboardingData?.previousScore || '6.5');
-  const [targetScore, setTargetScore] = useState(onboardingData?.targetScore || (targetExam.includes('IELTS') ? '8.0 Band' : targetExam === 'SAT' ? '1450' : '105'));
-  const [plannedTestDate, setPlannedTestDate] = useState(onboardingData?.plannedExamDate || '2026-09-15');
+  const [targetScore, setTargetScore] = useState(
+    onboardingData?.targetScore ||
+      (targetExam.includes('IELTS') ? '8.0 Band' : targetExam === 'SAT' ? '1450' : '105')
+  );
+  const [plannedTestDate, setPlannedTestDate] = useState(
+    onboardingData?.plannedExamDate || '2026-09-15'
+  );
   const [learningGoal, setLearningGoal] = useState(onboardingData?.purpose || 'Study Abroad');
   const [currentLevel, setCurrentLevel] = useState('Intermediate');
 
@@ -126,7 +131,9 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               Welcome, {studentName}!
             </h1>
             <p style={{ fontSize: '1.05rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-              Welcome to <strong style={{ color: '#ffffff' }}>{BrandConfig.organizationName}</strong>. Let&apos;s personalize your learning experience before you begin.
+              Welcome to{' '}
+              <strong style={{ color: '#ffffff' }}>{BrandConfig.organizationName}</strong>.
+              Let&apos;s personalize your learning experience before you begin.
             </p>
           </div>
 
@@ -140,15 +147,39 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               marginBottom: '1.75rem',
             }}
           >
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <h3
+              style={{
+                fontSize: '0.95rem',
+                fontWeight: 700,
+                color: '#f8fafc',
+                marginBottom: '1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+              }}
+            >
               <Sparkles size={16} color="#3b82f6" />
               Complete Your {targetExam} Learning Goals
             </h3>
 
             {targetExam.includes('IELTS') ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '1rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Current Band (Optional)
                   </label>
                   <input
@@ -156,11 +187,29 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                     value={currentScore}
                     onChange={(e) => setCurrentScore(e.target.value)}
                     placeholder="e.g. 6.5"
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Target Band
                   </label>
                   <input
@@ -168,25 +217,67 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                     value={targetScore}
                     onChange={(e) => setTargetScore(e.target.value)}
                     placeholder="e.g. 8.0"
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Planned Test Date
                   </label>
                   <input
                     type="date"
                     value={plannedTestDate}
                     onChange={(e) => setPlannedTestDate(e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
               </div>
             ) : targetExam === 'SAT' ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '1rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Current SAT Score (Optional)
                   </label>
                   <input
@@ -194,11 +285,29 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                     value={currentScore}
                     onChange={(e) => setCurrentScore(e.target.value)}
                     placeholder="e.g. 1200"
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Target SAT Score
                   </label>
                   <input
@@ -206,25 +315,67 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                     value={targetScore}
                     onChange={(e) => setTargetScore(e.target.value)}
                     placeholder="e.g. 1450"
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Test Date
                   </label>
                   <input
                     type="date"
                     value={plannedTestDate}
                     onChange={(e) => setPlannedTestDate(e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
               </div>
             ) : targetExam === 'TOEFL iBT' ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '1rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Current TOEFL Score (Optional)
                   </label>
                   <input
@@ -232,11 +383,29 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                     value={currentScore}
                     onChange={(e) => setCurrentScore(e.target.value)}
                     placeholder="e.g. 85"
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Target TOEFL Score
                   </label>
                   <input
@@ -244,31 +413,83 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                     value={targetScore}
                     onChange={(e) => setTargetScore(e.target.value)}
                     placeholder="e.g. 105"
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Test Date
                   </label>
                   <input
                     type="date"
                     value={plannedTestDate}
                     onChange={(e) => setPlannedTestDate(e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   />
                 </div>
               </div>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '1rem',
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Current Proficiency Level
                   </label>
                   <select
                     value={currentLevel}
                     onChange={(e) => setCurrentLevel(e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
@@ -276,13 +497,31 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Learning Goal
                   </label>
                   <select
                     value={learningGoal}
                     onChange={(e) => setLearningGoal(e.target.value)}
-                    style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', border: '1px solid #1e293b', backgroundColor: '#090d16', color: '#fff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                    style={{
+                      width: '100%',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '8px',
+                      border: '1px solid #1e293b',
+                      backgroundColor: '#090d16',
+                      color: '#fff',
+                      fontSize: '0.875rem',
+                      outline: 'none',
+                      boxSizing: 'border-box',
+                    }}
                   >
                     <option value="Study Abroad">Study Abroad</option>
                     <option value="Employment">Employment & Work Visa</option>
@@ -304,7 +543,14 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               marginBottom: '2rem',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '1rem',
+              }}
+            >
               <div>
                 <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#ffffff' }}>
                   {diagnosticDef.title}
@@ -327,18 +573,61 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               </span>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '1.5rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                paddingTop: '1rem',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  fontSize: '0.85rem',
+                  color: '#cbd5e1',
+                }}
+              >
                 <Clock size={16} color="#3b82f6" />
-                <span>Duration: <strong style={{ color: '#ffffff' }}>{diagnosticDef.durationMinutes} mins</strong></span>
+                <span>
+                  Duration:{' '}
+                  <strong style={{ color: '#ffffff' }}>{diagnosticDef.durationMinutes} mins</strong>
+                </span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  fontSize: '0.85rem',
+                  color: '#cbd5e1',
+                }}
+              >
                 <HelpCircle size={16} color="#3b82f6" />
-                <span>Questions: <strong style={{ color: '#ffffff' }}>{diagnosticDef.questionCount} items</strong></span>
+                <span>
+                  Questions:{' '}
+                  <strong style={{ color: '#ffffff' }}>{diagnosticDef.questionCount} items</strong>
+                </span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.45rem',
+                  fontSize: '0.85rem',
+                  color: '#cbd5e1',
+                }}
+              >
                 <ShieldCheck size={16} color="#3b82f6" />
-                <span>Evaluates: <strong style={{ color: '#ffffff' }}>{diagnosticDef.skillsEvaluated.join(', ')}</strong></span>
+                <span>
+                  Evaluates:{' '}
+                  <strong style={{ color: '#ffffff' }}>
+                    {diagnosticDef.skillsEvaluated.join(', ')}
+                  </strong>
+                </span>
               </div>
             </div>
           </div>

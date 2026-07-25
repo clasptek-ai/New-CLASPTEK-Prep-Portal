@@ -122,7 +122,9 @@ export function useDashboardViewModel(): DashboardViewModel {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (parsed.firstName) {
-          registeredName = parsed.lastName ? `${parsed.firstName} ${parsed.lastName}` : parsed.firstName;
+          registeredName = parsed.lastName
+            ? `${parsed.firstName} ${parsed.lastName}`
+            : parsed.firstName;
         }
       }
     } catch {
@@ -135,7 +137,8 @@ export function useDashboardViewModel(): DashboardViewModel {
   const studyStreakDays = overview?.profile.studyStreakDays || 14;
   const completedTasksCount = overview?.progress.lessonCompletionCount || 17;
   const totalTasksCount = overview?.progress.totalLessonsCount || 25;
-  const activeNotificationsCount = notifications?.unreadCount || overview?.unreadNotificationsCount || 2;
+  const activeNotificationsCount =
+    notifications?.unreadCount || overview?.unreadNotificationsCount || 2;
 
   return {
     activeProgrammeId,

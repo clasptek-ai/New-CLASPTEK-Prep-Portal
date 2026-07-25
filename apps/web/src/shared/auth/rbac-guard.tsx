@@ -4,7 +4,7 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuthContext } from '../../providers/AuthProvider';
 import { Button } from '../ui/button/Button';
-import { ShieldAlert, ArrowLeft, Lock } from 'lucide-react';
+import { ShieldAlert, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export interface RBACGuardProps {
@@ -13,7 +13,7 @@ export interface RBACGuardProps {
 }
 
 export const RBACGuard: React.FC<RBACGuardProps> = ({ children, allowedRoles }) => {
-  const { session, roles, isLoading } = useAuthContext();
+  const { roles, isLoading } = useAuthContext();
   const pathname = usePathname();
 
   if (isLoading) {
@@ -33,27 +33,48 @@ export const RBACGuard: React.FC<RBACGuardProps> = ({ children, allowedRoles }) 
     );
   }
 
-  const isStudent = !roles || roles.length === 0 || roles.includes('STUDENT') && !roles.some(r => ['ADMINISTRATOR', 'SUPER_ADMIN', 'INSTRUCTOR', 'STAFF', 'PROGRAMME_MANAGER'].includes(r));
+  const isStudent =
+    !roles ||
+    roles.length === 0 ||
+    (roles.includes('STUDENT') &&
+      !roles.some((r) =>
+        ['ADMINISTRATOR', 'SUPER_ADMIN', 'INSTRUCTOR', 'STAFF', 'PROGRAMME_MANAGER'].includes(r)
+      ));
 
   // 1. Strict Security Rule: Students MUST NEVER access /admin/*
   if (isStudent && pathname.startsWith('/admin')) {
-    return <ForbiddenAccessScreen reason="Students do not have permission to access the Enterprise Administration Workspace." />;
+    return (
+      <ForbiddenAccessScreen reason="Students do not have permission to access the Enterprise Administration Workspace." />
+    );
   }
 
   // 2. Instructor Restricted Sections Check
-  const isInstructorOnly = roles.includes('INSTRUCTOR') && !roles.some(r => ['ADMINISTRATOR', 'SUPER_ADMIN', 'SUPER_ADMINISTRATOR'].includes(r));
-  const restrictedInstructorPaths = ['/admin/settings', '/admin/system', '/admin/audit', '/admin/permissions', '/admin/roles'];
-  const isRestrictedForInstructor = isInstructorOnly && restrictedInstructorPaths.some(p => pathname.startsWith(p));
+  const isInstructorOnly =
+    roles.includes('INSTRUCTOR') &&
+    !roles.some((r) => ['ADMINISTRATOR', 'SUPER_ADMIN', 'SUPER_ADMINISTRATOR'].includes(r));
+  const restrictedInstructorPaths = [
+    '/admin/settings',
+    '/admin/system',
+    '/admin/audit',
+    '/admin/permissions',
+    '/admin/roles',
+  ];
+  const isRestrictedForInstructor =
+    isInstructorOnly && restrictedInstructorPaths.some((p) => pathname.startsWith(p));
 
   if (isRestrictedForInstructor) {
-    return <ForbiddenAccessScreen reason="Instructor accounts are restricted from accessing System Settings, Audit Logs, and Security Administration." />;
+    return (
+      <ForbiddenAccessScreen reason="Instructor accounts are restricted from accessing System Settings, Audit Logs, and Security Administration." />
+    );
   }
 
   // 3. Custom allowedRoles check if specified
   if (allowedRoles && allowedRoles.length > 0) {
     const hasRole = roles.some((r) => allowedRoles.includes(r));
     if (!hasRole) {
-      return <ForbiddenAccessScreen reason="Your active account role lacks required permissions for this feature module." />;
+      return (
+        <ForbiddenAccessScreen reason="Your active account role lacks required permissions for this feature module." />
+      );
     }
   }
 
@@ -119,7 +140,14 @@ export const ForbiddenAccessScreen: React.FC<{ reason?: string }> = ({
           >
             HTTP 403 FORBIDDEN
           </span>
-          <h2 style={{ margin: '0.75rem 0 0.25rem', fontSize: '1.65rem', fontWeight: 800, color: '#f8fafc' }}>
+          <h2
+            style={{
+              margin: '0.75rem 0 0.25rem',
+              fontSize: '1.65rem',
+              fontWeight: 800,
+              color: '#f8fafc',
+            }}
+          >
             Access Denied
           </h2>
           <p style={{ margin: 0, fontSize: '0.875rem', color: '#cbd5e1', lineHeight: 1.5 }}>

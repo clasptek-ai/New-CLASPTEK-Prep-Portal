@@ -97,9 +97,10 @@ export async function POST(req: NextRequest) {
     const [roleResult] = await Promise.all([
       // A. Fast single JOIN query for roles
       pool
-        .query('SELECT r.name FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1', [
-          userId,
-        ])
+        .query(
+          'SELECT r.name FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1',
+          [userId]
+        )
         .then((res) => res.rows.map((row: any) => row.name))
         .catch(async () => {
           try {
@@ -107,11 +108,13 @@ export async function POST(req: NextRequest) {
             const roles = await Promise.all(
               userRoles.map((ur) => authContext.roleRepo.findById(ur.roleId))
             );
-            return roles
-              .filter((r): r is NonNullable<typeof r> => r !== null)
-              .map((r) => r.name);
+            return roles.filter((r): r is NonNullable<typeof r> => r !== null).map((r) => r.name);
           } catch {
-            if (userEmail.toLowerCase().includes('admin') || userEmail.toLowerCase() === 'clasptek@gmail.com') return ['ADMINISTRATOR'];
+            if (
+              userEmail.toLowerCase().includes('admin') ||
+              userEmail.toLowerCase() === 'clasptek@gmail.com'
+            )
+              return ['ADMINISTRATOR'];
             if (userEmail.toLowerCase().includes('instructor')) return ['INSTRUCTOR'];
             return ['STUDENT'];
           }
@@ -122,8 +125,14 @@ export async function POST(req: NextRequest) {
         .execute({
           userId,
           email: userEmail,
-          firstName: userEmail.toLowerCase() === 'clasptek@gmail.com' ? 'Clasptek Coaching' : (data.user.user_metadata?.first_name || 'Clasptek'),
-          lastName: userEmail.toLowerCase() === 'clasptek@gmail.com' ? 'Limited' : (data.user.user_metadata?.last_name || 'User'),
+          firstName:
+            userEmail.toLowerCase() === 'clasptek@gmail.com'
+              ? 'Clasptek Coaching'
+              : data.user.user_metadata?.first_name || 'Clasptek',
+          lastName:
+            userEmail.toLowerCase() === 'clasptek@gmail.com'
+              ? 'Limited'
+              : data.user.user_metadata?.last_name || 'User',
           provider: 'LOCAL',
         })
         .catch((err) => {

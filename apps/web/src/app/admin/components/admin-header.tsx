@@ -7,7 +7,8 @@ import { Avatar } from '../../../shared/ui/avatar/Avatar';
 import { Badge } from '../../../shared/ui/badge/Badge';
 
 export const AdminHeader: React.FC = () => {
-  const { adminProfile, systemHealth, academicTerm, unreadNotificationsCount } = useAdminWorkspace();
+  const { adminProfile, systemHealth, academicTerm, unreadNotificationsCount } =
+    useAdminWorkspace();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -78,7 +79,15 @@ export const AdminHeader: React.FC = () => {
         {/* System Status, Term Switcher & Profile Dropdown */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           {/* System Health Badge */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary, #94a3b8)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontSize: '0.8rem',
+              color: 'var(--text-secondary, #94a3b8)',
+            }}
+          >
             <ShieldCheck size={16} color="var(--success-500, #10b981)" />
             <span>System:</span>
             <Badge variant={systemHealth === 'HEALTHY' ? 'success' : 'warning'}>
@@ -121,13 +130,34 @@ export const AdminHeader: React.FC = () => {
 
           {/* Admin Profile Dropdown */}
           {adminProfile && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', paddingLeft: '0.5rem', borderLeft: '1px solid var(--border-subtle)' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                paddingLeft: '0.5rem',
+                borderLeft: '1px solid var(--border-subtle)',
+              }}
+            >
               <Avatar name={adminProfile.name} size="sm" />
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary, #f8fafc)', lineHeight: 1.2 }}>
+                <span
+                  style={{
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    color: 'var(--text-primary, #f8fafc)',
+                    lineHeight: 1.2,
+                  }}
+                >
                   {adminProfile.name}
                 </span>
-                <span style={{ fontSize: '0.7rem', color: 'var(--primary-400, #3b82f6)', fontWeight: 600 }}>
+                <span
+                  style={{
+                    fontSize: '0.7rem',
+                    color: 'var(--primary-400, #3b82f6)',
+                    fontWeight: 600,
+                  }}
+                >
                   {adminProfile.role}
                 </span>
               </div>

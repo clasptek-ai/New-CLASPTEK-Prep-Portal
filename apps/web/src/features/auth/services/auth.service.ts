@@ -45,7 +45,7 @@ export const authService = {
 
     const rawRoles = isClasptekAdmin ? ['ADMINISTRATOR'] : data.roles || [];
     const roles = rawRoles.map(normalizeRole);
-    
+
     if (typeof window !== 'undefined') {
       if (isClasptekAdmin) {
         localStorage.setItem('clasptek_user_role', 'ADMINISTRATOR');

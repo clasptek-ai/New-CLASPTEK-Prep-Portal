@@ -26,17 +26,23 @@ describe('Dashboard REST API Integration & RBAC Tests', () => {
   });
 
   test('GET /api/v1/dashboard returns 403 for unauthorized cross-student data access', async () => {
-    const req = new NextRequest('http://localhost:3000/api/v1/dashboard?studentId=other-student-456', {
-      headers: { authorization: 'Bearer mock-forbidden-student' },
-    });
+    const req = new NextRequest(
+      'http://localhost:3000/api/v1/dashboard?studentId=other-student-456',
+      {
+        headers: { authorization: 'Bearer mock-forbidden-student' },
+      }
+    );
     const res = await getOverview(req);
     expect(res.status).toBe(403);
   });
 
   test('GET /api/v1/dashboard returns 200 with valid DashboardOverviewDto for authenticated student', async () => {
-    const req = new NextRequest('http://localhost:3000/api/v1/dashboard?studentId=stud-active-123', {
-      headers: { authorization: 'Bearer mock-valid-token' },
-    });
+    const req = new NextRequest(
+      'http://localhost:3000/api/v1/dashboard?studentId=stud-active-123',
+      {
+        headers: { authorization: 'Bearer mock-valid-token' },
+      }
+    );
     const res = await getOverview(req);
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -47,9 +53,12 @@ describe('Dashboard REST API Integration & RBAC Tests', () => {
   });
 
   test('GET /api/v1/dashboard/activity returns 200 with paginated activities', async () => {
-    const req = new NextRequest('http://localhost:3000/api/v1/dashboard/activity?page=1&pageSize=5', {
-      headers: { authorization: 'Bearer mock-valid-token' },
-    });
+    const req = new NextRequest(
+      'http://localhost:3000/api/v1/dashboard/activity?page=1&pageSize=5',
+      {
+        headers: { authorization: 'Bearer mock-valid-token' },
+      }
+    );
     const res = await getActivity(req);
     expect(res.status).toBe(200);
     const body = await res.json();

@@ -51,8 +51,12 @@ export default function RegisterPage() {
             <span style={{ color: '#3b82f6' }}>Achieve Your Goals.</span>
           </h1>
 
-          <p style={{ fontSize: '1.05rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '2rem' }}>
-            Join Clasptek Global and prepare for IELTS, TOEFL, SAT, CELPIP, and English Proficiency with personalized diagnostics, AI-powered study plans, expert guidance, and realistic mock examinations.
+          <p
+            style={{ fontSize: '1.05rem', color: '#94a3b8', lineHeight: 1.6, marginBottom: '2rem' }}
+          >
+            Join Clasptek Global and prepare for IELTS, TOEFL, SAT, CELPIP, and English Proficiency
+            with personalized diagnostics, AI-powered study plans, expert guidance, and realistic
+            mock examinations.
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
@@ -61,16 +65,36 @@ export default function RegisterPage() {
               'AI Study Plans generated directly from actual skill gap metrics',
               'Realistic examination environments matching official test specifications',
             ].map((text, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.925rem', color: '#cbd5e1' }}>
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  fontSize: '0.925rem',
+                  color: '#cbd5e1',
+                }}
+              >
                 <CheckCircle2 size={18} color="#10b981" style={{ flexShrink: 0 }} />
                 <span>{text}</span>
               </div>
             ))}
           </div>
 
-          <div style={{ marginTop: '2.5rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', fontSize: '0.875rem', color: '#94a3b8' }}>
+          <div
+            style={{
+              marginTop: '2.5rem',
+              paddingTop: '1.5rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+              fontSize: '0.875rem',
+              color: '#94a3b8',
+            }}
+          >
             Already have an account?{' '}
-            <Link href="/login" style={{ color: '#3b82f6', fontWeight: 700, textDecoration: 'none' }}>
+            <Link
+              href="/login"
+              style={{ color: '#3b82f6', fontWeight: 700, textDecoration: 'none' }}
+            >
               Sign In to Portal
             </Link>
           </div>

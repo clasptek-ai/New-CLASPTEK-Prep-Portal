@@ -48,7 +48,13 @@ export const PerformanceZone: React.FC<PerformanceZoneProps> = ({ config }) => {
       </div>
 
       {/* Snapshot Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: '1rem',
+        }}
+      >
         <div
           style={{
             padding: '1rem',
@@ -75,7 +81,9 @@ export const PerformanceZone: React.FC<PerformanceZoneProps> = ({ config }) => {
             <BarChart3 size={20} />
           </div>
           <div>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>Diagnostic Mock #1</div>
+            <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>
+              Diagnostic Mock #1
+            </div>
             <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc' }}>6.5 Band</div>
           </div>
         </div>
@@ -106,7 +114,9 @@ export const PerformanceZone: React.FC<PerformanceZoneProps> = ({ config }) => {
             <BarChart3 size={20} />
           </div>
           <div>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>Diagnostic Mock #2</div>
+            <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600 }}>
+              Diagnostic Mock #2
+            </div>
             <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc' }}>7.0 Band</div>
           </div>
         </div>
@@ -137,8 +147,14 @@ export const PerformanceZone: React.FC<PerformanceZoneProps> = ({ config }) => {
             <ShieldCheck size={20} />
           </div>
           <div>
-            <div style={{ fontSize: '0.75rem', color: config.colorPalette.badgeText, fontWeight: 700 }}>Current Prediction</div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc' }}>{config.targetMetric.current} Band</div>
+            <div
+              style={{ fontSize: '0.75rem', color: config.colorPalette.badgeText, fontWeight: 700 }}
+            >
+              Current Prediction
+            </div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc' }}>
+              {config.targetMetric.current} Band
+            </div>
           </div>
         </div>
       </div>

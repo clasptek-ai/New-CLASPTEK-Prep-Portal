@@ -128,8 +128,13 @@ export const LearningZone: React.FC<LearningZoneProps> = ({
             const isNeedWork = skill.status === 'NEEDS_WORK';
 
             return (
-              <div key={skill.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
+              <div
+                key={skill.id}
+                style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}
+              >
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}
+                >
                   <span style={{ fontWeight: 600, color: '#cbd5e1' }}>{skill.name}</span>
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <span
@@ -138,7 +143,9 @@ export const LearningZone: React.FC<LearningZoneProps> = ({
                         fontWeight: 700,
                         padding: '0.1rem 0.4rem',
                         borderRadius: '4px',
-                        backgroundColor: isNeedWork ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)',
+                        backgroundColor: isNeedWork
+                          ? 'rgba(239, 68, 68, 0.15)'
+                          : 'rgba(16, 185, 129, 0.15)',
                         color: isNeedWork ? '#f87171' : '#34d399',
                       }}
                     >
@@ -173,11 +180,19 @@ export const LearningZone: React.FC<LearningZoneProps> = ({
       </div>
 
       {/* Continue Learning Course Cards */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
+      <div
+        style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}
+      >
         <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: '#e2e8f0' }}>
           Continue Active Lessons
         </h4>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.85rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '0.85rem',
+          }}
+        >
           {config.recommendedLessons.map((lesson) => (
             <div
               key={lesson.id}
@@ -218,7 +233,13 @@ export const LearningZone: React.FC<LearningZoneProps> = ({
               </div>
 
               <div style={{ textAlign: 'right' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: config.colorPalette.badgeText }}>
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: config.colorPalette.badgeText,
+                  }}
+                >
                   {lesson.completedPercent}%
                 </span>
               </div>

@@ -74,7 +74,10 @@ export class DatabasePool {
       }
     }
 
-    this.logger.error('Failed to establish database connection pool singleton after retries', lastError);
+    this.logger.error(
+      'Failed to establish database connection pool singleton after retries',
+      lastError
+    );
     throw lastError;
   }
 

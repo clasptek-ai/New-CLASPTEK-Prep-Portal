@@ -54,11 +54,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ viewModel }) => {
       />
 
       {/* Zone 2: Learning & Skills Mastery */}
-      <LearningProgressWidget
-        config={config}
-        state={widgetState}
-        onRetry={refetch}
-      />
+      <LearningProgressWidget config={config} state={widgetState} onRetry={refetch} />
 
       {/* Zone 3: Today's Learning & Recommended Practice */}
       <TodaysLearningWidget
@@ -78,7 +74,13 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ viewModel }) => {
       />
 
       {/* Zone 6 & Zone 7 Layout Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.75rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: '1.75rem',
+        }}
+      >
         {/* Zone 6: Activity Feed */}
         <ActivityFeedWidget
           notificationsCount={activeNotificationsCount}
@@ -87,11 +89,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ viewModel }) => {
         />
 
         {/* Zone 7: Academic Calendar */}
-        <AcademicCalendarWidget
-          config={config}
-          state={widgetState}
-          onRetry={refetch}
-        />
+        <AcademicCalendarWidget config={config} state={widgetState} onRetry={refetch} />
       </div>
 
       {/* Zone 8: Achievements & Badges */}

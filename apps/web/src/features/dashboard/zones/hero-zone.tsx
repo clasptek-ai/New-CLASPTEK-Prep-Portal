@@ -51,7 +51,14 @@ export const HeroZone: React.FC<HeroZoneProps> = ({ studentName, config, studySt
         }}
       >
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '0.35rem',
+            }}
+          >
             <span
               style={{
                 fontSize: '0.75rem',
@@ -68,11 +75,30 @@ export const HeroZone: React.FC<HeroZoneProps> = ({ studentName, config, studySt
             </span>
             <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>• Exam Date: Aug 28, 2026</span>
           </div>
-          <h1 style={{ margin: 0, fontSize: '1.85rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: '1.85rem',
+              fontWeight: 800,
+              color: '#f8fafc',
+              letterSpacing: '-0.02em',
+            }}
+          >
             Welcome back, {studentName}
           </h1>
-          <p style={{ margin: '0.35rem 0 0', fontSize: '0.9rem', color: '#cbd5e1', maxWidth: '560px' }}>
-            Your predictive model indicates a <strong style={{ color: config.colorPalette.badgeText }}>{config.targetMetric.current} {config.targetMetric.unit}</strong> readiness. Finish today’s recommended diagnostic drills to push towards your target.
+          <p
+            style={{
+              margin: '0.35rem 0 0',
+              fontSize: '0.9rem',
+              color: '#cbd5e1',
+              maxWidth: '560px',
+            }}
+          >
+            Your predictive model indicates a{' '}
+            <strong style={{ color: config.colorPalette.badgeText }}>
+              {config.targetMetric.current} {config.targetMetric.unit}
+            </strong>{' '}
+            readiness. Finish today’s recommended diagnostic drills to push towards your target.
           </p>
         </div>
 
@@ -91,10 +117,14 @@ export const HeroZone: React.FC<HeroZoneProps> = ({ studentName, config, studySt
           >
             <Flame size={22} color="#f59e0b" fill="#f59e0b" />
             <div>
-              <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fbbf24', lineHeight: 1 }}>
+              <div
+                style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fbbf24', lineHeight: 1 }}
+              >
                 {studyStreakDays} Days
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#d97706', fontWeight: 600, marginTop: '2px' }}>
+              <div
+                style={{ fontSize: '0.7rem', color: '#d97706', fontWeight: 600, marginTop: '2px' }}
+              >
                 Active Streak
               </div>
             </div>
@@ -120,14 +150,26 @@ export const HeroZone: React.FC<HeroZoneProps> = ({ studentName, config, studySt
             border: '1px solid rgba(255, 255, 255, 0.08)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8', fontSize: '0.8rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: '#94a3b8',
+              fontSize: '0.8rem',
+            }}
+          >
             <Target size={14} color={config.colorPalette.primary} />
             <span>Target Goal</span>
           </div>
-          <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f8fafc', marginTop: '0.35rem' }}>
+          <div
+            style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f8fafc', marginTop: '0.35rem' }}
+          >
             {config.targetMetric.target} {config.targetMetric.unit}
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#34d399', marginTop: '0.15rem', fontWeight: 600 }}>
+          <div
+            style={{ fontSize: '0.75rem', color: '#34d399', marginTop: '0.15rem', fontWeight: 600 }}
+          >
             {config.targetMetric.description}
           </div>
         </div>
@@ -140,14 +182,26 @@ export const HeroZone: React.FC<HeroZoneProps> = ({ studentName, config, studySt
             border: '1px solid rgba(255, 255, 255, 0.08)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#94a3b8', fontSize: '0.8rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: '#94a3b8',
+              fontSize: '0.8rem',
+            }}
+          >
             <Sparkles size={14} color="#a78bfa" />
             <span>AI Confidence Index</span>
           </div>
-          <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f8fafc', marginTop: '0.35rem' }}>
+          <div
+            style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f8fafc', marginTop: '0.35rem' }}
+          >
             92%
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#a78bfa', marginTop: '0.15rem', fontWeight: 600 }}>
+          <div
+            style={{ fontSize: '0.75rem', color: '#a78bfa', marginTop: '0.15rem', fontWeight: 600 }}
+          >
             High Predictive Precision
           </div>
         </div>

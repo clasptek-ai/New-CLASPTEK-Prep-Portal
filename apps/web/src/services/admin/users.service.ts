@@ -145,7 +145,12 @@ export const adminUsersService = {
     }
   },
 
-  async addStudent(newStudent: Omit<AdminUserRecord, 'id' | 'registrationNumber' | 'statusHistory' | 'registeredDate'>): Promise<AdminUserRecord> {
+  async addStudent(
+    newStudent: Omit<
+      AdminUserRecord,
+      'id' | 'registrationNumber' | 'statusHistory' | 'registeredDate'
+    >
+  ): Promise<AdminUserRecord> {
     const list = getStoredUsers();
     const created: AdminUserRecord = {
       ...newStudent,
@@ -167,7 +172,9 @@ export const adminUsersService = {
 
   async togglePracticeGate(id: string): Promise<boolean> {
     const list = getStoredUsers();
-    const updated = list.map((u) => (u.id === id ? { ...u, practiceUnlocked: !u.practiceUnlocked } : u));
+    const updated = list.map((u) =>
+      u.id === id ? { ...u, practiceUnlocked: !u.practiceUnlocked } : u
+    );
     saveStoredUsers(updated);
     return true;
   },

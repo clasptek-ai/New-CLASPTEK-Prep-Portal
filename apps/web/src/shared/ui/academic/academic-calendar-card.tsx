@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar as CalendarIcon, Clock, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ProgrammeUpcomingTest } from '../../../features/dashboard/models/programme-config';
 
 export interface AcademicCalendarCardProps {
@@ -21,7 +21,14 @@ export const AcademicCalendarCard: React.FC<AcademicCalendarCardProps> = ({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <CalendarIcon size={18} color={accentColor} />
-          <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary, #f8fafc)' }}>
+          <h4
+            style={{
+              margin: 0,
+              fontSize: '0.95rem',
+              fontWeight: 700,
+              color: 'var(--text-primary, #f8fafc)',
+            }}
+          >
             Academic Schedule — July 2026
           </h4>
         </div>
@@ -56,9 +63,24 @@ export const AcademicCalendarCard: React.FC<AcademicCalendarCardProps> = ({
       </div>
 
       {/* Mini Month Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.35rem', textAlign: 'center' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(7, 1fr)',
+          gap: '0.35rem',
+          textAlign: 'center',
+        }}
+      >
         {daysOfWeek.map((day, idx) => (
-          <div key={idx} style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748b', paddingBottom: '0.25rem' }}>
+          <div
+            key={idx}
+            style={{
+              fontSize: '0.7rem',
+              fontWeight: 700,
+              color: '#64748b',
+              paddingBottom: '0.25rem',
+            }}
+          >
             {day}
           </div>
         ))}
@@ -75,7 +97,11 @@ export const AcademicCalendarCard: React.FC<AcademicCalendarCardProps> = ({
                 fontSize: '0.75rem',
                 fontWeight: isToday ? 800 : 500,
                 color: isToday ? '#ffffff' : '#cbd5e1',
-                backgroundColor: isToday ? accentColor : hasEvent ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
+                backgroundColor: isToday
+                  ? accentColor
+                  : hasEvent
+                    ? 'rgba(59, 130, 246, 0.15)'
+                    : 'transparent',
                 border: hasEvent && !isToday ? `1px solid ${accentColor}` : '1px solid transparent',
                 position: 'relative',
               }}
@@ -101,8 +127,18 @@ export const AcademicCalendarCard: React.FC<AcademicCalendarCardProps> = ({
       </div>
 
       {/* Upcoming Test & Diagnostic Milestones List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}>
-        <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <div
+        style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.5rem' }}
+      >
+        <div
+          style={{
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            color: '#94a3b8',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
           Upcoming Milestones
         </div>
 
@@ -160,7 +196,14 @@ export const AcademicCalendarCard: React.FC<AcademicCalendarCardProps> = ({
                   >
                     {isDiagnostic ? 'DIAGNOSTIC' : 'FULL MOCK'}
                   </span>
-                  <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '4px', fontWeight: 600 }}>
+                  <div
+                    style={{
+                      fontSize: '0.75rem',
+                      color: '#cbd5e1',
+                      marginTop: '4px',
+                      fontWeight: 600,
+                    }}
+                  >
                     {test.date} • {test.time}
                   </div>
                 </div>

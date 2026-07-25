@@ -72,13 +72,24 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
           lineHeight: 1.1,
         }}
       >
-        <span style={{ fontSize: '2.25rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+        <span
+          style={{
+            fontSize: '2.25rem',
+            fontWeight: 800,
+            color: '#f8fafc',
+            letterSpacing: '-0.02em',
+          }}
+        >
           {score}
         </span>
-        <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginTop: '0.1rem' }}>
+        <span
+          style={{ fontSize: '0.75rem', fontWeight: 600, color: '#94a3b8', marginTop: '0.1rem' }}
+        >
           {label}
         </span>
-        <span style={{ fontSize: '0.7rem', color: strokeColor, fontWeight: 700, marginTop: '0.2rem' }}>
+        <span
+          style={{ fontSize: '0.7rem', color: strokeColor, fontWeight: 700, marginTop: '0.2rem' }}
+        >
           {targetText}
         </span>
       </div>

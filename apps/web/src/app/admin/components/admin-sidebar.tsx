@@ -246,9 +246,21 @@ export const AdminSidebar: React.FC = () => {
         </div>
 
         {/* Navigation Group Items */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 0.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '1rem 0.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.25rem',
+          }}
+        >
           {navGroups.map((group, groupIdx) => (
-            <div key={groupIdx} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <div
+              key={groupIdx}
+              style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}
+            >
               {!collapsed && (
                 <div
                   style={{
@@ -265,7 +277,10 @@ export const AdminSidebar: React.FC = () => {
               )}
 
               {group.items.map((item) => {
-                const isActive = pathname === item.href || (item.href !== '/admin/dashboard' && pathname.startsWith(item.href.split('?')[0]));
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== '/admin/dashboard' &&
+                    pathname.startsWith(item.href.split('?')[0]));
 
                 return (
                   <Link
@@ -279,7 +294,9 @@ export const AdminSidebar: React.FC = () => {
                       borderRadius: 'var(--radius-md, 8px)',
                       textDecoration: 'none',
                       backgroundColor: isActive ? 'rgba(59, 130, 246, 0.12)' : 'transparent',
-                      color: isActive ? 'var(--primary-400, #3b82f6)' : 'var(--text-secondary, #cbd5e1)',
+                      color: isActive
+                        ? 'var(--primary-400, #3b82f6)'
+                        : 'var(--text-secondary, #cbd5e1)',
                       fontWeight: isActive ? 600 : 500,
                       fontSize: '0.85rem',
                       position: 'relative',
@@ -302,7 +319,14 @@ export const AdminSidebar: React.FC = () => {
                     )}
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={{ color: isActive ? 'var(--primary-400, #3b82f6)' : 'var(--text-muted, #94a3b8)', display: 'flex' }}>
+                      <span
+                        style={{
+                          color: isActive
+                            ? 'var(--primary-400, #3b82f6)'
+                            : 'var(--text-muted, #94a3b8)',
+                          display: 'flex',
+                        }}
+                      >
                         {item.icon}
                       </span>
                       {!collapsed && <span>{item.label}</span>}

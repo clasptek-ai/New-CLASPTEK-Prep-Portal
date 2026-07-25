@@ -2,7 +2,7 @@ import { studentProfileService } from './profile.service';
 import { studentLearningService } from './learning.service';
 import { studentReadinessService } from './readiness.service';
 import { studentNotificationsService, NotificationItem } from './notifications.service';
-import { studentAssignmentsService, StudentAssignment } from './assignments.service';
+import { studentAssignmentsService } from './assignments.service';
 import { studentMockExamsService } from './mock-exams.service';
 import {
   DashboardOverviewDto,
@@ -22,7 +22,7 @@ import {
  */
 export const DashboardCompositionService = {
   async getOverview(studentId?: string): Promise<DashboardOverviewDto> {
-    const [profile, programmes, readiness, notifications, assignments, mockExams] = await Promise.all([
+    const [profile, programmes, readiness, notifications] = await Promise.all([
       studentProfileService.getProfile().catch(() => {
         let registeredName = 'Student';
         if (typeof window !== 'undefined') {
@@ -31,7 +31,9 @@ export const DashboardCompositionService = {
             if (raw) {
               const parsed = JSON.parse(raw);
               if (parsed.firstName) {
-                registeredName = parsed.lastName ? `${parsed.firstName} ${parsed.lastName}` : parsed.firstName;
+                registeredName = parsed.lastName
+                  ? `${parsed.firstName} ${parsed.lastName}`
+                  : parsed.firstName;
               }
             }
           } catch {
@@ -46,19 +48,19 @@ export const DashboardCompositionService = {
         } as any;
       }),
       studentLearningService.getEnrolledProgrammes().catch(() => []),
-      studentReadinessService.getReadiness().catch(() => ({ overallReadiness: 78 } as any)),
+      studentReadinessService.getReadiness().catch(() => ({ overallReadiness: 78 }) as any),
       studentNotificationsService.getNotifications().catch(() => []),
       studentAssignmentsService.getAssignments().catch(() => []),
       studentMockExamsService.getMockExams().catch(() => []),
     ]);
 
-    const activeProg: { id: string; name: string; completionPercentage: number } = programmes[0] || {
-      id: 'IELTS_ACADEMIC',
-      name: 'IELTS Academic Target Band 7.5+',
-      completionPercentage: 68,
-    };
+    const activeProg: { id: string; name: string; completionPercentage: number } =
+      programmes[0] || {
+        id: 'IELTS_ACADEMIC',
+        name: 'IELTS Academic Target Band 7.5+',
+        completionPercentage: 68,
+      };
 
-    const activeAssignments = assignments.filter((a: StudentAssignment) => a.status === 'PENDING');
     const unreadCount = notifications.filter((n: NotificationItem) => !n.read).length;
 
     return {
@@ -115,7 +117,8 @@ export const DashboardCompositionService = {
         topRecommendation: {
           category: 'Writing Task 2 Syntax',
           title: 'Coherence & Subordination Improvement',
-          subtitle: 'Your recent essay evaluation highlighted a 15% overuse of simple conjunctions. Practice complex clause subordination.',
+          subtitle:
+            'Your recent essay evaluation highlighted a 15% overuse of simple conjunctions. Practice complex clause subordination.',
           priority: 'HIGH',
           estMinutes: 20,
         },

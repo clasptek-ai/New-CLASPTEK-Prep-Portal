@@ -99,7 +99,13 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
       state={state}
       onRetry={onRetry}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: '1rem',
+        }}
+      >
         {actions.map((act) => (
           <button
             key={act.id}
@@ -139,10 +145,14 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
               {act.icon}
             </div>
             <div>
-              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.2 }}>
+              <div
+                style={{ fontSize: '0.9rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.2 }}
+              >
                 {act.title}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '3px', lineHeight: 1.3 }}>
+              <div
+                style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '3px', lineHeight: 1.3 }}
+              >
                 {act.subtitle}
               </div>
             </div>

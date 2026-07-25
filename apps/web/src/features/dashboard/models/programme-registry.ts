@@ -1,8 +1,4 @@
-import {
-  ProgrammeId,
-  ProgrammeConfiguration,
-  PROGRAMME_CONFIGURATIONS,
-} from './programme-config';
+import { ProgrammeId, ProgrammeConfiguration, PROGRAMME_CONFIGURATIONS } from './programme-config';
 
 export class ProgrammeRegistry {
   private static configurations: Map<ProgrammeId, ProgrammeConfiguration> = new Map(

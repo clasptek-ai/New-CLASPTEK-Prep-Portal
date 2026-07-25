@@ -33,22 +33,54 @@ export const CalendarWidget: React.FC<{ events?: CalendarEvent[] }> = ({ events 
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f8fafc', fontWeight: 700, fontSize: '0.95rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#f8fafc',
+            fontWeight: 700,
+            fontSize: '0.95rem',
+          }}
+        >
           <CalendarIcon size={18} color="#3b82f6" />
           <span>July 2026</span>
         </div>
         <div style={{ display: 'flex', gap: '0.25rem' }}>
-          <button style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '0.25rem' }}>
+          <button
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#94a3b8',
+              cursor: 'pointer',
+              padding: '0.25rem',
+            }}
+          >
             <ChevronLeft size={16} />
           </button>
-          <button style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '0.25rem' }}>
+          <button
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#94a3b8',
+              cursor: 'pointer',
+              padding: '0.25rem',
+            }}
+          >
             <ChevronRight size={16} />
           </button>
         </div>
       </div>
 
       {/* Days Header */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', gap: '0.25rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(7, 1fr)',
+          textAlign: 'center',
+          gap: '0.25rem',
+        }}
+      >
         {daysOfWeek.map((d, i) => (
           <span key={i} style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b' }}>
             {d}
@@ -57,7 +89,14 @@ export const CalendarWidget: React.FC<{ events?: CalendarEvent[] }> = ({ events 
       </div>
 
       {/* Month Days Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.35rem', textAlign: 'center' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(7, 1fr)',
+          gap: '0.35rem',
+          textAlign: 'center',
+        }}
+      >
         {Array.from({ length: daysInMonth }, (_, idx) => {
           const day = idx + 1;
           const isToday = day === currentDate.getDate();
@@ -76,8 +115,8 @@ export const CalendarWidget: React.FC<{ events?: CalendarEvent[] }> = ({ events 
                 backgroundColor: isToday
                   ? '#2563eb'
                   : hasEvent
-                  ? 'rgba(56, 189, 248, 0.12)'
-                  : 'transparent',
+                    ? 'rgba(56, 189, 248, 0.12)'
+                    : 'transparent',
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}

@@ -36,7 +36,13 @@ export function AdminDashboardScreen() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
         <Skeleton height="140px" width="100%" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.25rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '1.25rem',
+          }}
+        >
           <Skeleton height="100px" width="100%" />
           <Skeleton height="100px" width="100%" />
           <Skeleton height="100px" width="100%" />
@@ -48,7 +54,15 @@ export function AdminDashboardScreen() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2rem',
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
       {/* Top Banner & Profile Overview Header */}
       <div
         style={{
@@ -79,11 +93,20 @@ export function AdminDashboardScreen() {
           >
             ACADEMIC OPERATIONS CENTER
           </span>
-          <h1 style={{ margin: '0.5rem 0 0.25rem', fontSize: '1.95rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+          <h1
+            style={{
+              margin: '0.5rem 0 0.25rem',
+              fontSize: '1.95rem',
+              fontWeight: 800,
+              color: '#f8fafc',
+              letterSpacing: '-0.02em',
+            }}
+          >
             Enterprise Administration Console
           </h1>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#cbd5e1', maxWidth: '640px' }}>
-            Operational telemetry, admissions management, assessment runtime controls, and multi-programme analytics for {academicTerm}.
+            Operational telemetry, admissions management, assessment runtime controls, and
+            multi-programme analytics for {academicTerm}.
           </p>
         </div>
 
@@ -97,10 +120,19 @@ export function AdminDashboardScreen() {
               textAlign: 'right',
             }}
           >
-            <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#34d399', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                color: '#34d399',
+                textTransform: 'uppercase',
+              }}
+            >
               System Status
             </div>
-            <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+            <div
+              style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}
+            >
               {systemHealth}
             </div>
           </div>

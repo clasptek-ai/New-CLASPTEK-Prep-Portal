@@ -59,7 +59,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <Sparkles size={20} />
           </div>
           <div>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                color: '#94a3b8',
+                textTransform: 'uppercase',
+              }}
+            >
               Academic Workspace
             </div>
             <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
@@ -71,7 +78,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Programme Switcher Selector — Hidden if enrolled in 1 programme; enabled only for multiple enrolments */}
         {programmeIds && programmeIds.length > 1 ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ fontSize: '0.85rem', color: '#cbd5e1', fontWeight: 600 }}>Active Programme:</span>
+            <span style={{ fontSize: '0.85rem', color: '#cbd5e1', fontWeight: 600 }}>
+              Active Programme:
+            </span>
             <div style={{ position: 'relative' }}>
               <select
                 value={activeProgrammeId}
@@ -92,7 +101,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 {programmeIds.map((id) => {
                   const prog = ProgrammeRegistry.get(id);
                   return (
-                    <option key={id} value={id} style={{ backgroundColor: '#0f172a', color: '#f8fafc' }}>
+                    <option
+                      key={id}
+                      value={id}
+                      style={{ backgroundColor: '#0f172a', color: '#f8fafc' }}
+                    >
                       {prog.title}
                     </option>
                   );
@@ -112,16 +125,26 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </div>
           </div>
         ) : (
-          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '0.4rem 0.85rem', borderRadius: '8px' }}>
-            Programme: <strong style={{ color: '#3b82f6' }}>{ProgrammeRegistry.get(activeProgrammeId)?.title || 'IELTS Academic Preparation'}</strong>
+          <div
+            style={{
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              color: '#cbd5e1',
+              backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              padding: '0.4rem 0.85rem',
+              borderRadius: '8px',
+            }}
+          >
+            Programme:{' '}
+            <strong style={{ color: '#3b82f6' }}>
+              {ProgrammeRegistry.get(activeProgrammeId)?.title || 'IELTS Academic Preparation'}
+            </strong>
           </div>
         )}
       </div>
 
       {/* Main Composite Widgets Grid */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-        {children}
-      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>{children}</div>
     </div>
   );
 };

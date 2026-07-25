@@ -82,7 +82,9 @@ export const studentNotificationsService = {
     }
   },
 
-  async publishAnnouncement(announcement: Omit<NotificationItem, 'id' | 'read' | 'createdAt'>): Promise<boolean> {
+  async publishAnnouncement(
+    announcement: Omit<NotificationItem, 'id' | 'read' | 'createdAt'>
+  ): Promise<boolean> {
     const list = getStoredNotifications();
     const created: NotificationItem = {
       ...announcement,

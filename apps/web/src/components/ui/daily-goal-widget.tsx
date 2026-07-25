@@ -18,9 +18,32 @@ export function DailyGoalWidget({ goal }: { goal: DailyGoalData | null }) {
   const pct = Math.min(100, Math.round((goal.completedQuestions / goal.targetQuestions) * 100));
 
   return (
-    <Card style={{ padding: '1.5rem', borderRadius: '16px', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+    <Card
+      style={{
+        padding: '1.5rem',
+        borderRadius: '16px',
+        backgroundColor: '#151d30',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '1rem',
+        }}
+      >
+        <div
+          style={{
+            fontSize: '1rem',
+            fontWeight: 800,
+            color: '#f8fafc',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
           <Target size={18} color="#38bdf8" />
           Today's Adaptive Practice Target
         </div>
@@ -28,9 +51,17 @@ export function DailyGoalWidget({ goal }: { goal: DailyGoalData | null }) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '0.85rem',
+          }}
+        >
           <span style={{ color: '#cbd5e1' }}>
-            Progress: <strong>{goal.completedQuestions}</strong> of <strong>{goal.targetQuestions}</strong> Questions Completed
+            Progress: <strong>{goal.completedQuestions}</strong> of{' '}
+            <strong>{goal.targetQuestions}</strong> Questions Completed
           </span>
           <span style={{ fontWeight: 800, color: '#38bdf8' }}>{pct}%</span>
         </div>

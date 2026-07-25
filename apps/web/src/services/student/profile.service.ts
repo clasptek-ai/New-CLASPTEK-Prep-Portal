@@ -25,7 +25,9 @@ export const studentProfileService = {
           if (raw) {
             const parsed = JSON.parse(raw);
             if (parsed.firstName) {
-              registeredName = parsed.lastName ? `${parsed.firstName} ${parsed.lastName}` : parsed.firstName;
+              registeredName = parsed.lastName
+                ? `${parsed.firstName} ${parsed.lastName}`
+                : parsed.firstName;
             }
             if (parsed.email) {
               registeredEmail = parsed.email;

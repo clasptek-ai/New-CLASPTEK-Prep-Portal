@@ -57,7 +57,14 @@ export const AICoachWidget: React.FC<AICoachWidgetProps> = ({
             gap: '1rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '1rem' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              gap: '1rem',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <div
                 style={{
@@ -70,10 +77,24 @@ export const AICoachWidget: React.FC<AICoachWidgetProps> = ({
                 <Sparkles size={18} />
               </div>
               <div>
-                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#a78bfa', textTransform: 'uppercase' }}>
+                <span
+                  style={{
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    color: '#a78bfa',
+                    textTransform: 'uppercase',
+                  }}
+                >
                   Today's Top Recommendation ({topRec.category})
                 </span>
-                <h4 style={{ margin: '0.15rem 0 0', fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+                <h4
+                  style={{
+                    margin: '0.15rem 0 0',
+                    fontSize: '1.05rem',
+                    fontWeight: 800,
+                    color: '#f8fafc',
+                  }}
+                >
                   {topRec.title}
                 </h4>
               </div>
@@ -85,7 +106,10 @@ export const AICoachWidget: React.FC<AICoachWidgetProps> = ({
                 fontWeight: 700,
                 padding: '0.2rem 0.5rem',
                 borderRadius: '4px',
-                backgroundColor: topRec.priority === 'HIGH' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                backgroundColor:
+                  topRec.priority === 'HIGH'
+                    ? 'rgba(239, 68, 68, 0.15)'
+                    : 'rgba(245, 158, 11, 0.15)',
                 color: topRec.priority === 'HIGH' ? '#f87171' : '#fbbf24',
               }}
             >
@@ -97,8 +121,24 @@ export const AICoachWidget: React.FC<AICoachWidgetProps> = ({
             {topRec.subtitle}
           </p>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.5rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingTop: '0.5rem',
+              borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontSize: '0.8rem',
+                color: '#94a3b8',
+              }}
+            >
               <Lightbulb size={14} color="#fbbf24" />
               <span>Est. completion: {topRec.estMinutes} minutes</span>
             </div>

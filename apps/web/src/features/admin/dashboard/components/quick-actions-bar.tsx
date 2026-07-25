@@ -75,7 +75,9 @@ export const QuickActionsBar: React.FC = () => {
         gap: '1rem',
       }}
     >
-      <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.01em' }}>
+      <div
+        style={{ fontSize: '0.9rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.01em' }}
+      >
         Quick Administrative Workflows
       </div>
 

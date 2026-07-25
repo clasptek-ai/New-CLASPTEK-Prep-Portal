@@ -13,7 +13,14 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
   recentActivity,
 }) => {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.5rem', width: '100%' }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+        gap: '1.5rem',
+        width: '100%',
+      }}
+    >
       {/* Panel 1: Operational Platform Status */}
       <Card
         style={{
@@ -30,21 +37,57 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
           <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
             Platform Node Telemetry
           </h3>
-          <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.15rem 0.5rem', borderRadius: '4px', backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399' }}>
+          <span
+            style={{
+              fontSize: '0.7rem',
+              fontWeight: 700,
+              padding: '0.15rem 0.5rem',
+              borderRadius: '4px',
+              backgroundColor: 'rgba(52, 211, 153, 0.15)',
+              color: '#34d399',
+            }}
+          >
             OPERATIONAL
           </span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', backgroundColor: '#0f172a', display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              padding: '0.85rem 1rem',
+              borderRadius: '10px',
+              backgroundColor: '#0f172a',
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.85rem',
+            }}
+          >
             <span style={{ color: '#cbd5e1' }}>Concurrent Active Students:</span>
             <strong style={{ color: '#34d399' }}>1,842 Active Sessions</strong>
           </div>
-          <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', backgroundColor: '#0f172a', display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              padding: '0.85rem 1rem',
+              borderRadius: '10px',
+              backgroundColor: '#0f172a',
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.85rem',
+            }}
+          >
             <span style={{ color: '#cbd5e1' }}>Mock Examination Server:</span>
             <strong style={{ color: '#38bdf8' }}>4 Full Mocks In Progress</strong>
           </div>
-          <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', backgroundColor: '#0f172a', display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              padding: '0.85rem 1rem',
+              borderRadius: '10px',
+              backgroundColor: '#0f172a',
+              display: 'flex',
+              justifyContent: 'space-between',
+              fontSize: '0.85rem',
+            }}
+          >
             <span style={{ color: '#cbd5e1' }}>Diagnostic Submissions Queue:</span>
             <strong style={{ color: '#fbbf24' }}>14 Pending Evaluations</strong>
           </div>

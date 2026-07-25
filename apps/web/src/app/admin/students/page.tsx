@@ -120,7 +120,8 @@ export default function StudentDirectoryPage() {
     const matchesSearch =
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (s.registrationNumber && s.registrationNumber.toLowerCase().includes(searchQuery.toLowerCase()));
+      (s.registrationNumber &&
+        s.registrationNumber.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesProg = selectedProgramme === 'ALL' || s.programme === selectedProgramme;
     const matchesStatus = selectedStatus === 'ALL' || s.status === selectedStatus;
 
@@ -136,22 +137,53 @@ export default function StudentDirectoryPage() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2rem',
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
       {/* Top Header */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '1rem',
+        }}
+      >
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: '1.75rem',
+              fontWeight: 800,
+              color: '#f8fafc',
+              letterSpacing: '-0.02em',
+            }}
+          >
             Live Student Directory & Journey Controls
           </h1>
           <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
-            Audit candidate profiles, manage prep programme enrollments, and toggle diagnostic/mock access gates.
+            Audit candidate profiles, manage prep programme enrollments, and toggle diagnostic/mock
+            access gates.
           </p>
         </div>
 
         <Button
           variant="primary"
           onClick={() => setAddModalOpen(true)}
-          style={{ backgroundColor: '#2563eb', color: '#ffffff', gap: '0.5rem', display: 'flex', alignItems: 'center' }}
+          style={{
+            backgroundColor: '#2563eb',
+            color: '#ffffff',
+            gap: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+          }}
         >
           <Plus size={16} />
           <span>Register New Student</span>
@@ -179,25 +211,69 @@ export default function StudentDirectoryPage() {
       )}
 
       {/* Filter & Toolbar */}
-      <Card style={{ padding: '1.25rem', borderRadius: '14px', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px', padding: '0.45rem 0.85rem', flex: 1, minWidth: '240px' }}>
+      <Card
+        style={{
+          padding: '1.25rem',
+          borderRadius: '14px',
+          backgroundColor: '#151d30',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1rem',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              backgroundColor: '#0f172a',
+              border: '1px solid #1e293b',
+              borderRadius: '8px',
+              padding: '0.45rem 0.85rem',
+              flex: 1,
+              minWidth: '240px',
+            }}
+          >
             <Search size={16} color="#94a3b8" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by student name, email, or registration ID..."
-              style={{ background: 'none', border: 'none', color: '#f8fafc', outline: 'none', width: '100%', fontSize: '0.875rem' }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#f8fafc',
+                outline: 'none',
+                width: '100%',
+                fontSize: '0.875rem',
+              }}
             />
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>Programme:</span>
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>
+                Programme:
+              </span>
               <select
                 value={selectedProgramme}
                 onChange={(e) => setSelectedProgramme(e.target.value)}
-                style={{ padding: '0.45rem 0.75rem', borderRadius: '6px', backgroundColor: '#0f172a', border: '1px solid #1e293b', color: '#38bdf8', fontSize: '0.825rem', fontWeight: 700 }}
+                style={{
+                  padding: '0.45rem 0.75rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0f172a',
+                  border: '1px solid #1e293b',
+                  color: '#38bdf8',
+                  fontSize: '0.825rem',
+                  fontWeight: 700,
+                }}
               >
                 <option value="ALL">All Programmes</option>
                 <option value="IELTS Academic Intensive">IELTS Academic Intensive</option>
@@ -208,11 +284,20 @@ export default function StudentDirectoryPage() {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>Account Status:</span>
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>
+                Account Status:
+              </span>
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                style={{ padding: '0.45rem 0.75rem', borderRadius: '6px', backgroundColor: '#0f172a', border: '1px solid #1e293b', color: '#f8fafc', fontSize: '0.825rem' }}
+                style={{
+                  padding: '0.45rem 0.75rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#0f172a',
+                  border: '1px solid #1e293b',
+                  color: '#f8fafc',
+                  fontSize: '0.825rem',
+                }}
               >
                 <option value="ALL">All Statuses</option>
                 <option value="ACTIVE">Active</option>
@@ -224,8 +309,22 @@ export default function StudentDirectoryPage() {
       </Card>
 
       {/* Directory Data Table */}
-      <Card style={{ padding: '1.25rem', borderRadius: '16px', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem', color: '#f8fafc' }}>
+      <Card
+        style={{
+          padding: '1.25rem',
+          borderRadius: '16px',
+          backgroundColor: '#151d30',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+        }}
+      >
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontSize: '0.875rem',
+            color: '#f8fafc',
+          }}
+        >
           <thead>
             <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', textAlign: 'left' }}>
               <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Student & Reg Number</th>
@@ -233,7 +332,9 @@ export default function StudentDirectoryPage() {
               <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Enrolled Programme</th>
               <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Status</th>
               <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Access Gates</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8', textAlign: 'right' }}>Actions</th>
+              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8', textAlign: 'right' }}>
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -248,7 +349,14 @@ export default function StudentDirectoryPage() {
                 <tr key={s.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
                   <td style={{ padding: '0.85rem 1rem' }}>
                     <div style={{ fontWeight: 700, color: '#f8fafc' }}>{s.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#38bdf8', marginTop: '2px', fontWeight: 600 }}>
+                    <div
+                      style={{
+                        fontSize: '0.75rem',
+                        color: '#38bdf8',
+                        marginTop: '2px',
+                        fontWeight: 600,
+                      }}
+                    >
                       Reg ID: {s.registrationNumber || s.id}
                     </div>
                   </td>
@@ -259,7 +367,15 @@ export default function StudentDirectoryPage() {
                       <span>{s.email}</span>
                     </div>
                     {s.phone && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginTop: '2px', color: '#94a3b8' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          marginTop: '2px',
+                          color: '#94a3b8',
+                        }}
+                      >
                         <Phone size={12} color="#94a3b8" />
                         <span>{s.phone}</span>
                       </div>
@@ -282,9 +398,13 @@ export default function StudentDirectoryPage() {
                         style={{
                           padding: '0.3rem 0.55rem',
                           fontSize: '0.75rem',
-                          backgroundColor: s.practiceUnlocked ? 'rgba(52, 211, 153, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                          backgroundColor: s.practiceUnlocked
+                            ? 'rgba(52, 211, 153, 0.15)'
+                            : 'rgba(255, 255, 255, 0.05)',
                           color: s.practiceUnlocked ? '#34d399' : '#94a3b8',
-                          borderColor: s.practiceUnlocked ? 'rgba(52, 211, 153, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+                          borderColor: s.practiceUnlocked
+                            ? 'rgba(52, 211, 153, 0.3)'
+                            : 'rgba(255, 255, 255, 0.1)',
                           gap: '0.3rem',
                           display: 'flex',
                           alignItems: 'center',
@@ -300,9 +420,13 @@ export default function StudentDirectoryPage() {
                         style={{
                           padding: '0.3rem 0.55rem',
                           fontSize: '0.75rem',
-                          backgroundColor: s.mockUnlocked ? 'rgba(167, 139, 250, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                          backgroundColor: s.mockUnlocked
+                            ? 'rgba(167, 139, 250, 0.15)'
+                            : 'rgba(255, 255, 255, 0.05)',
                           color: s.mockUnlocked ? '#a78bfa' : '#94a3b8',
-                          borderColor: s.mockUnlocked ? 'rgba(167, 139, 250, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+                          borderColor: s.mockUnlocked
+                            ? 'rgba(167, 139, 250, 0.3)'
+                            : 'rgba(255, 255, 255, 0.1)',
                           gap: '0.3rem',
                           display: 'flex',
                           alignItems: 'center',
@@ -319,7 +443,13 @@ export default function StudentDirectoryPage() {
                       <Button
                         variant="secondary"
                         onClick={() => handleResetPassword(s.name, s.id)}
-                        style={{ padding: '0.35rem 0.6rem', fontSize: '0.75rem', gap: '0.3rem', display: 'flex', alignItems: 'center' }}
+                        style={{
+                          padding: '0.35rem 0.6rem',
+                          fontSize: '0.75rem',
+                          gap: '0.3rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
                       >
                         <KeyRound size={14} color="#60a5fa" /> Reset Pass
                       </Button>
@@ -331,7 +461,10 @@ export default function StudentDirectoryPage() {
                           padding: '0.35rem 0.6rem',
                           fontSize: '0.75rem',
                           color: s.status === 'ACTIVE' ? '#f87171' : '#34d399',
-                          borderColor: s.status === 'ACTIVE' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(52, 211, 153, 0.3)',
+                          borderColor:
+                            s.status === 'ACTIVE'
+                              ? 'rgba(239, 68, 68, 0.3)'
+                              : 'rgba(52, 211, 153, 0.3)',
                           gap: '0.3rem',
                           display: 'flex',
                           alignItems: 'center',
@@ -379,13 +512,31 @@ export default function StudentDirectoryPage() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={{ margin: '0 0 1.25rem', fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>
+            <h2
+              style={{
+                margin: '0 0 1.25rem',
+                fontSize: '1.35rem',
+                fontWeight: 800,
+                color: '#ffffff',
+              }}
+            >
               Register New Student Candidate
             </h2>
 
-            <form onSubmit={handleAddStudentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <form
+              onSubmit={handleAddStudentSubmit}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
+            >
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Full Candidate Name *
                 </label>
                 <input
@@ -393,12 +544,30 @@ export default function StudentDirectoryPage() {
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="e.g. David Miller"
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', backgroundColor: '#161e2e', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#161e2e',
+                    border: '1px solid #1e293b',
+                    color: '#ffffff',
+                    fontSize: '0.875rem',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Email Address *
                 </label>
                 <input
@@ -407,30 +576,75 @@ export default function StudentDirectoryPage() {
                   value={newEmail}
                   onChange={(e) => setNewEmail(e.target.value)}
                   placeholder="e.g. david.miller@example.com"
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', backgroundColor: '#161e2e', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#161e2e',
+                    border: '1px solid #1e293b',
+                    color: '#ffffff',
+                    fontSize: '0.875rem',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Phone Contact
                 </label>
                 <input
                   value={newPhone}
                   onChange={(e) => setNewPhone(e.target.value)}
                   placeholder="e.g. +44 7700 900123"
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', backgroundColor: '#161e2e', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#161e2e',
+                    border: '1px solid #1e293b',
+                    color: '#ffffff',
+                    fontSize: '0.875rem',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
                 />
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Enrolled Prep Programme *
                 </label>
                 <select
                   value={newProgramme}
                   onChange={(e) => setNewProgramme(e.target.value)}
-                  style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', backgroundColor: '#161e2e', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.875rem', outline: 'none' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#161e2e',
+                    border: '1px solid #1e293b',
+                    color: '#ffffff',
+                    fontSize: '0.875rem',
+                    outline: 'none',
+                  }}
                 >
                   <option value="IELTS Academic Intensive">IELTS Academic Intensive</option>
                   <option value="TOEFL iBT Mastery">TOEFL iBT Mastery</option>
@@ -439,9 +653,24 @@ export default function StudentDirectoryPage() {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <Button variant="secondary" type="button" onClick={() => setAddModalOpen(false)}>Cancel</Button>
-                <Button variant="primary" type="submit" style={{ backgroundColor: '#2563eb', color: '#ffffff' }}>Register Student</Button>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '0.75rem',
+                  marginTop: '0.5rem',
+                }}
+              >
+                <Button variant="secondary" type="button" onClick={() => setAddModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  style={{ backgroundColor: '#2563eb', color: '#ffffff' }}
+                >
+                  Register Student
+                </Button>
               </div>
             </form>
           </div>

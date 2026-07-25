@@ -72,9 +72,7 @@ const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
     'settings.manage',
     'audit.view',
   ],
-  SUPER_ADMINISTRATOR: [
-    '*:*',
-  ],
+  SUPER_ADMINISTRATOR: ['*:*'],
 };
 
 function resolveWorkspaces(roles: string[]): { workspaces: string[]; defaultWorkspace: string } {
@@ -168,7 +166,10 @@ export async function GET(_req: NextRequest) {
       roleNames = roleResult.rows.map((row: any) => row.name);
     } catch {
       // Fallback heuristics if DB pool query fails
-      if (user.email?.toLowerCase().includes('admin') || user.email?.toLowerCase() === 'clasptek@gmail.com') {
+      if (
+        user.email?.toLowerCase().includes('admin') ||
+        user.email?.toLowerCase() === 'clasptek@gmail.com'
+      ) {
         roleNames = ['ADMINISTRATOR'];
       } else if (user.email?.toLowerCase().includes('instructor')) {
         roleNames = ['INSTRUCTOR'];

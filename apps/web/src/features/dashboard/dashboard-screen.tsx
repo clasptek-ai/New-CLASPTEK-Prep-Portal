@@ -20,7 +20,11 @@ export function DashboardScreen() {
         return;
       }
       const state = localStorage.getItem('clasptek_onboarding_state');
-      if (state && state !== OnboardingState.ONBOARDING_COMPLETED && state !== OnboardingState.DIAGNOSTIC_COMPLETED) {
+      if (
+        state &&
+        state !== OnboardingState.ONBOARDING_COMPLETED &&
+        state !== OnboardingState.DIAGNOSTIC_COMPLETED
+      ) {
         router.push('/student/welcome');
       }
     }

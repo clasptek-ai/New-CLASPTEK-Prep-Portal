@@ -50,8 +50,12 @@ export const EmptyZone: React.FC<EmptyZoneProps> = ({
         <Icon size={20} />
       </div>
       <div>
-        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: '#e2e8f0' }}>{title}</h4>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', color: '#94a3b8', maxWidth: '320px' }}>
+        <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: '#e2e8f0' }}>
+          {title}
+        </h4>
+        <p
+          style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', color: '#94a3b8', maxWidth: '320px' }}
+        >
           {description}
         </p>
       </div>

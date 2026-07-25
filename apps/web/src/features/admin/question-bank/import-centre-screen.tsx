@@ -26,9 +26,13 @@ import { adminQuestionsService, AdminQuestion } from '../../../services/admin/qu
 export function QuestionBankImportCentreScreen() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeFormat, setActiveFormat] = useState<'CSV' | 'EXCEL' | 'ZIP' | 'FOLDER' | 'SINGLE'>('CSV');
+  const [activeFormat, setActiveFormat] = useState<'CSV' | 'EXCEL' | 'ZIP' | 'FOLDER' | 'SINGLE'>(
+    'CSV'
+  );
   const [selectedProgramme, setSelectedProgramme] = useState<string>('IELTS Academic');
-  const [selectedTargetCategory, setSelectedTargetCategory] = useState<'MOCK' | 'ASSESSMENT'>('MOCK');
+  const [selectedTargetCategory, setSelectedTargetCategory] = useState<'MOCK' | 'ASSESSMENT'>(
+    'MOCK'
+  );
   const [selectedFile, setSelectedFile] = useState<{
     name: string;
     size: string;
@@ -104,7 +108,15 @@ export function QuestionBankImportCentreScreen() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2rem',
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
       {/* Hidden Native File Input to Select File from PC */}
       <input
         type="file"
@@ -125,32 +137,81 @@ export function QuestionBankImportCentreScreen() {
             <ArrowLeft size={16} /> Back to Question Bank
           </Button>
           <div>
-            <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+            <h1
+              style={{
+                margin: 0,
+                fontSize: '1.75rem',
+                fontWeight: 800,
+                color: '#f8fafc',
+                letterSpacing: '-0.02em',
+              }}
+            >
               Question Bank Import Centre
             </h1>
             <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#cbd5e1' }}>
-              Select target programme, set assessment category (Mock vs Diagnostic Assessment), and import batch files.
+              Select target programme, set assessment category (Mock vs Diagnostic Assessment), and
+              import batch files.
             </p>
           </div>
         </div>
       </div>
 
       {/* Programme & Assessment Category Configuration Controls */}
-      <Card style={{ padding: '1.5rem', borderRadius: '16px', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-        <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <Card
+        style={{
+          padding: '1.5rem',
+          borderRadius: '16px',
+          backgroundColor: '#151d30',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+        }}
+      >
+        <div
+          style={{
+            fontSize: '1rem',
+            fontWeight: 800,
+            color: '#ffffff',
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
           <BookOpen size={18} color="#38bdf8" />
           Target Programme & Assessment Tagging
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '1.25rem',
+          }}
+        >
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                color: '#cbd5e1',
+                marginBottom: '0.35rem',
+              }}
+            >
               Target Prep Programme *
             </label>
             <select
               value={selectedProgramme}
               onChange={(e) => setSelectedProgramme(e.target.value)}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', backgroundColor: '#0f172a', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.875rem', outline: 'none' }}
+              style={{
+                width: '100%',
+                padding: '0.65rem 0.85rem',
+                borderRadius: '8px',
+                backgroundColor: '#0f172a',
+                border: '1px solid #1e293b',
+                color: '#ffffff',
+                fontSize: '0.875rem',
+                outline: 'none',
+              }}
             >
               <option value="General (All Programmes)">General (All Programmes)</option>
               <option value="IELTS Academic">IELTS Academic</option>
@@ -163,7 +224,15 @@ export function QuestionBankImportCentreScreen() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                color: '#cbd5e1',
+                marginBottom: '0.35rem',
+              }}
+            >
               Assessment Target Category *
             </label>
             <select
@@ -175,9 +244,20 @@ export function QuestionBankImportCentreScreen() {
                   setSelectedProgramme('General (All Programmes)');
                 }
               }}
-              style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', backgroundColor: '#0f172a', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.875rem', outline: 'none' }}
+              style={{
+                width: '100%',
+                padding: '0.65rem 0.85rem',
+                borderRadius: '8px',
+                backgroundColor: '#0f172a',
+                border: '1px solid #1e293b',
+                color: '#ffffff',
+                fontSize: '0.875rem',
+                outline: 'none',
+              }}
             >
-              <option value="ASSESSMENT">📝 Diagnostic & Skill Assessment Bank (General for All Programmes)</option>
+              <option value="ASSESSMENT">
+                📝 Diagnostic & Skill Assessment Bank (General for All Programmes)
+              </option>
               <option value="MOCK">🎓 Official Mock Exam Question Bank (Programme Specific)</option>
             </select>
           </div>
@@ -185,12 +265,38 @@ export function QuestionBankImportCentreScreen() {
       </Card>
 
       {/* Format Selection Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '1.25rem',
+        }}
+      >
         {[
-          { id: 'CSV', label: 'CSV Import', sub: 'Standard .csv batch schema', icon: <FileText size={20} color="#38bdf8" /> },
-          { id: 'EXCEL', label: 'Excel Import (.xlsx)', sub: 'Structured spreadsheet workbook', icon: <FileSpreadsheet size={20} color="#34d399" /> },
-          { id: 'ZIP', label: 'ZIP Archive', sub: 'Questions with audio & image assets', icon: <Archive size={20} color="#a78bfa" /> },
-          { id: 'FOLDER', label: 'Folder Import', sub: 'Directory tree question packages', icon: <FolderPlus size={20} color="#fbbf24" /> },
+          {
+            id: 'CSV',
+            label: 'CSV Import',
+            sub: 'Standard .csv batch schema',
+            icon: <FileText size={20} color="#38bdf8" />,
+          },
+          {
+            id: 'EXCEL',
+            label: 'Excel Import (.xlsx)',
+            sub: 'Structured spreadsheet workbook',
+            icon: <FileSpreadsheet size={20} color="#34d399" />,
+          },
+          {
+            id: 'ZIP',
+            label: 'ZIP Archive',
+            sub: 'Questions with audio & image assets',
+            icon: <Archive size={20} color="#a78bfa" />,
+          },
+          {
+            id: 'FOLDER',
+            label: 'Folder Import',
+            sub: 'Directory tree question packages',
+            icon: <FolderPlus size={20} color="#fbbf24" />,
+          },
         ].map((fmt) => (
           <button
             key={fmt.id}
@@ -199,7 +305,10 @@ export function QuestionBankImportCentreScreen() {
               padding: '1.25rem',
               borderRadius: '14px',
               backgroundColor: activeFormat === fmt.id ? 'rgba(56, 189, 248, 0.12)' : '#151d30',
-              border: activeFormat === fmt.id ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.08)',
+              border:
+                activeFormat === fmt.id
+                  ? '1px solid #38bdf8'
+                  : '1px solid rgba(255, 255, 255, 0.08)',
               display: 'flex',
               flexDirection: 'column',
               gap: '0.75rem',
@@ -213,17 +322,32 @@ export function QuestionBankImportCentreScreen() {
               {activeFormat === fmt.id && <Badge variant="info">SELECTED</Badge>}
             </div>
             <div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>{fmt.label}</div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>{fmt.sub}</div>
+              <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>
+                {fmt.label}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
+                {fmt.sub}
+              </div>
             </div>
           </button>
         ))}
       </div>
 
       {/* Upload Zone Container */}
-      <Card style={{ padding: '2rem', borderRadius: '16px', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <Card
+        style={{
+          padding: '2rem',
+          borderRadius: '16px',
+          backgroundColor: '#151d30',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.5rem',
+        }}
+      >
         <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
-          Batch File Upload & Schema Mapping ({activeFormat}) — [{selectedProgramme} / {selectedTargetCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'}]
+          Batch File Upload & Schema Mapping ({activeFormat}) — [{selectedProgramme} /{' '}
+          {selectedTargetCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'}]
         </div>
 
         {/* Drag & Drop File Zone */}
@@ -246,7 +370,14 @@ export function QuestionBankImportCentreScreen() {
             transition: 'all 200ms ease',
           }}
         >
-          <div style={{ padding: '1rem', borderRadius: '50%', backgroundColor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8' }}>
+          <div
+            style={{
+              padding: '1rem',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(56, 189, 248, 0.15)',
+              color: '#38bdf8',
+            }}
+          >
             <Upload size={36} />
           </div>
           <div>
@@ -254,7 +385,11 @@ export function QuestionBankImportCentreScreen() {
               Click to select a file from your computer PC
             </div>
             <div style={{ fontSize: '0.875rem', color: '#94a3b8', marginTop: '6px' }}>
-              Selected Programme: <strong style={{ color: '#38bdf8' }}>{selectedProgramme}</strong> | Target Category: <strong style={{ color: '#34d399' }}>{selectedTargetCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'}</strong>
+              Selected Programme: <strong style={{ color: '#38bdf8' }}>{selectedProgramme}</strong>{' '}
+              | Target Category:{' '}
+              <strong style={{ color: '#34d399' }}>
+                {selectedTargetCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'}
+              </strong>
             </div>
           </div>
 
@@ -265,7 +400,14 @@ export function QuestionBankImportCentreScreen() {
               triggerFileInput();
             }}
             disabled={isSimulating}
-            style={{ backgroundColor: '#2563eb', color: '#ffffff', gap: '0.5rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center' }}
+            style={{
+              backgroundColor: '#2563eb',
+              color: '#ffffff',
+              gap: '0.5rem',
+              marginTop: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+            }}
           >
             <FileText size={16} />
             <span>{isSimulating ? 'Validating Batch Schema...' : 'Browse PC & Select File'}</span>
@@ -274,12 +416,27 @@ export function QuestionBankImportCentreScreen() {
 
         {/* Display Currently Selected File Metadata */}
         {selectedFile && (
-          <div style={{ padding: '1rem 1.25rem', borderRadius: '10px', backgroundColor: '#0f172a', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div
+            style={{
+              padding: '1rem 1.25rem',
+              borderRadius: '10px',
+              backgroundColor: '#0f172a',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <FileCheck size={22} color="#34d399" />
               <div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc' }}>{selectedFile.name}</div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Size: {selectedFile.size} | Programme: {selectedProgramme} | Target: {selectedTargetCategory}</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc' }}>
+                  {selectedFile.name}
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                  Size: {selectedFile.size} | Programme: {selectedProgramme} | Target:{' '}
+                  {selectedTargetCategory}
+                </div>
               </div>
             </div>
             <Badge variant="success">FILE LOADED</Badge>
@@ -288,7 +445,17 @@ export function QuestionBankImportCentreScreen() {
 
         {/* Validation & Preview Output */}
         {importResult && (
-          <div style={{ padding: '1.5rem', borderRadius: '14px', backgroundColor: '#0f172a', border: '1px solid rgba(52, 211, 153, 0.3)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div
+            style={{
+              padding: '1.5rem',
+              borderRadius: '14px',
+              backgroundColor: '#0f172a',
+              border: '1px solid rgba(52, 211, 153, 0.3)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                 <CheckCircle2 size={20} color="#34d399" />
@@ -299,22 +466,42 @@ export function QuestionBankImportCentreScreen() {
               <Badge variant="success">VALIDATED</Badge>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                gap: '1rem',
+                paddingTop: '0.75rem',
+                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+              }}
+            >
               <div>
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Total Parsed</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc' }}>{importResult.totalParsed}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc' }}>
+                  {importResult.totalParsed}
+                </div>
               </div>
               <div>
                 <div style={{ fontSize: '0.75rem', color: '#34d399' }}>Valid Questions</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#34d399' }}>{importResult.validQuestions}</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#34d399' }}>
+                  {importResult.validQuestions}
+                </div>
               </div>
               <div>
                 <div style={{ fontSize: '0.75rem', color: '#38bdf8' }}>Programme Tag</div>
-                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#38bdf8', marginTop: '2px' }}>{selectedProgramme}</div>
+                <div
+                  style={{ fontSize: '1rem', fontWeight: 800, color: '#38bdf8', marginTop: '2px' }}
+                >
+                  {selectedProgramme}
+                </div>
               </div>
               <div>
                 <div style={{ fontSize: '0.75rem', color: '#a78bfa' }}>Category Tag</div>
-                <div style={{ fontSize: '1rem', fontWeight: 800, color: '#a78bfa', marginTop: '2px' }}>{selectedTargetCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'}</div>
+                <div
+                  style={{ fontSize: '1rem', fontWeight: 800, color: '#a78bfa', marginTop: '2px' }}
+                >
+                  {selectedTargetCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'}
+                </div>
               </div>
             </div>
 
@@ -323,7 +510,9 @@ export function QuestionBankImportCentreScreen() {
                 variant="primary"
                 onClick={async () => {
                   if (!importResult) return;
-                  const batchQuestions: AdminQuestion[] = Array.from({ length: importResult.validQuestions }).map((_, i) => ({
+                  const batchQuestions: AdminQuestion[] = Array.from({
+                    length: importResult.validQuestions,
+                  }).map((_, i) => ({
                     id: `q-imported-${Date.now()}-${i + 1}`,
                     text: `[Imported from ${importResult.fileName}] Question #${i + 1}: Select the correct syntax statement for objective #${i + 101}.`,
                     type: 'MCQ',
@@ -336,12 +525,21 @@ export function QuestionBankImportCentreScreen() {
                   }));
 
                   await adminQuestionsService.commitBatch(batchQuestions);
-                  alert(`Successfully committed ${batchQuestions.length} questions tagged under ${selectedProgramme} (${selectedTargetCategory}) into Question Bank!`);
+                  alert(
+                    `Successfully committed ${batchQuestions.length} questions tagged under ${selectedProgramme} (${selectedTargetCategory}) into Question Bank!`
+                  );
                   router.push('/admin/question-bank');
                 }}
-                style={{ backgroundColor: '#10b981', color: '#ffffff', gap: '0.5rem', display: 'flex', alignItems: 'center' }}
+                style={{
+                  backgroundColor: '#10b981',
+                  color: '#ffffff',
+                  gap: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
               >
-                <CheckCircle2 size={16} /> Commit {importResult.validQuestions} Questions to Question Bank
+                <CheckCircle2 size={16} /> Commit {importResult.validQuestions} Questions to
+                Question Bank
               </Button>
               <Button
                 variant="secondary"
@@ -349,7 +547,13 @@ export function QuestionBankImportCentreScreen() {
                   setImportResult(null);
                   setSelectedFile(null);
                 }}
-                style={{ color: '#f87171', borderColor: 'rgba(239, 68, 68, 0.4)', gap: '0.5rem', display: 'flex', alignItems: 'center' }}
+                style={{
+                  color: '#f87171',
+                  borderColor: 'rgba(239, 68, 68, 0.4)',
+                  gap: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
               >
                 <RotateCcw size={16} /> Rollback & Discard Batch
               </Button>

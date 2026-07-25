@@ -17,12 +17,25 @@ export function MotivationWidget({ motivation }: { motivation: MotivationData | 
   if (!motivation) return null;
 
   return (
-    <Card style={{ padding: '1.5rem', borderRadius: '16px', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+    <Card
+      style={{
+        padding: '1.5rem',
+        borderRadius: '16px',
+        backgroundColor: '#151d30',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+      }}
+    >
       <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '1rem' }}>
         Practice Motivation & Achievements
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+          gap: '1rem',
+        }}
+      >
         <div
           style={{
             textAlign: 'center',

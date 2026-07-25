@@ -25,7 +25,13 @@ export const TodaysLearningWidget: React.FC<TodaysLearningWidgetProps> = ({
       state={state}
       onRetry={onRetry}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '1.25rem',
+        }}
+      >
         {config.recommendedLessons.map((lesson) => (
           <div
             key={lesson.id}
@@ -42,7 +48,14 @@ export const TodaysLearningWidget: React.FC<TodaysLearningWidgetProps> = ({
             }}
           >
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '0.5rem',
+                }}
+              >
                 <span
                   style={{
                     fontSize: '0.7rem',
@@ -57,21 +70,49 @@ export const TodaysLearningWidget: React.FC<TodaysLearningWidgetProps> = ({
                 >
                   {lesson.module}
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    color: '#94a3b8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.3rem',
+                  }}
+                >
                   <Clock size={13} /> {lesson.duration} est
                 </span>
               </div>
 
-              <h4 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 700, color: '#f8fafc', lineHeight: 1.3 }}>
+              <h4
+                style={{
+                  margin: '0 0 0.5rem',
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  color: '#f8fafc',
+                  lineHeight: 1.3,
+                }}
+              >
                 {lesson.title}
               </h4>
 
               <div style={{ marginTop: '0.75rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.75rem',
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   <span>Progress</span>
                   <span style={{ fontWeight: 700 }}>{lesson.completedPercent}%</span>
                 </div>
-                <ProgressBar value={lesson.completedPercent} color={config.colorPalette.primary} style={{ height: '6px' }} />
+                <ProgressBar
+                  value={lesson.completedPercent}
+                  color={config.colorPalette.primary}
+                  style={{ height: '6px' }}
+                />
               </div>
             </div>
 

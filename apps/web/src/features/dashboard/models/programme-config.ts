@@ -1,9 +1,4 @@
-export type ProgrammeId =
-  | 'IELTS_ACADEMIC'
-  | 'IELTS_GENERAL'
-  | 'SAT'
-  | 'TOEFL'
-  | 'CELPIP';
+export type ProgrammeId = 'IELTS_ACADEMIC' | 'IELTS_GENERAL' | 'SAT' | 'TOEFL' | 'CELPIP';
 
 export interface ProgrammeSkill {
   id: string;
@@ -96,10 +91,38 @@ export const PROGRAMME_CONFIGURATIONS: Record<ProgrammeId, ProgrammeConfiguratio
       description: '0.5 Band away from target goal',
     },
     skills: [
-      { id: 'ielts-ac-reading', name: 'Academic Reading', score: 8.5, maxScore: 9.0, status: 'EXCELLENT', trend: '+0.5 Band' },
-      { id: 'ielts-ac-listening', name: 'Listening', score: 8.0, maxScore: 9.0, status: 'EXCELLENT', trend: 'Stable' },
-      { id: 'ielts-ac-writing', name: 'Academic Writing Task 2', score: 6.5, maxScore: 9.0, status: 'NEEDS_WORK', trend: '+0.5 Band' },
-      { id: 'ielts-ac-speaking', name: 'Speaking Part 3', score: 7.0, maxScore: 9.0, status: 'STABLE', trend: 'Stable' },
+      {
+        id: 'ielts-ac-reading',
+        name: 'Academic Reading',
+        score: 8.5,
+        maxScore: 9.0,
+        status: 'EXCELLENT',
+        trend: '+0.5 Band',
+      },
+      {
+        id: 'ielts-ac-listening',
+        name: 'Listening',
+        score: 8.0,
+        maxScore: 9.0,
+        status: 'EXCELLENT',
+        trend: 'Stable',
+      },
+      {
+        id: 'ielts-ac-writing',
+        name: 'Academic Writing Task 2',
+        score: 6.5,
+        maxScore: 9.0,
+        status: 'NEEDS_WORK',
+        trend: '+0.5 Band',
+      },
+      {
+        id: 'ielts-ac-speaking',
+        name: 'Speaking Part 3',
+        score: 7.0,
+        maxScore: 9.0,
+        status: 'STABLE',
+        trend: 'Stable',
+      },
     ],
     aiRecommendations: [
       {
@@ -180,10 +203,38 @@ export const PROGRAMME_CONFIGURATIONS: Record<ProgrammeId, ProgrammeConfiguratio
       description: 'Meets Express Entry CLB 9 threshold',
     },
     skills: [
-      { id: 'ielts-gt-reading', name: 'General Reading', score: 8.0, maxScore: 9.0, status: 'EXCELLENT', trend: 'Stable' },
-      { id: 'ielts-gt-listening', name: 'Listening', score: 8.5, maxScore: 9.0, status: 'EXCELLENT', trend: '+0.5 Band' },
-      { id: 'ielts-gt-writing', name: 'Formal & Informal Letter Writing', score: 7.0, maxScore: 9.0, status: 'STABLE', trend: '+0.5 Band' },
-      { id: 'ielts-gt-speaking', name: 'Speaking Interview', score: 7.5, maxScore: 9.0, status: 'STABLE', trend: 'Stable' },
+      {
+        id: 'ielts-gt-reading',
+        name: 'General Reading',
+        score: 8.0,
+        maxScore: 9.0,
+        status: 'EXCELLENT',
+        trend: 'Stable',
+      },
+      {
+        id: 'ielts-gt-listening',
+        name: 'Listening',
+        score: 8.5,
+        maxScore: 9.0,
+        status: 'EXCELLENT',
+        trend: '+0.5 Band',
+      },
+      {
+        id: 'ielts-gt-writing',
+        name: 'Formal & Informal Letter Writing',
+        score: 7.0,
+        maxScore: 9.0,
+        status: 'STABLE',
+        trend: '+0.5 Band',
+      },
+      {
+        id: 'ielts-gt-speaking',
+        name: 'Speaking Interview',
+        score: 7.5,
+        maxScore: 9.0,
+        status: 'STABLE',
+        trend: 'Stable',
+      },
     ],
     aiRecommendations: [
       {
@@ -248,10 +299,38 @@ export const PROGRAMME_CONFIGURATIONS: Record<ProgrammeId, ProgrammeConfiguratio
       description: 'Top 2% score threshold',
     },
     skills: [
-      { id: 'sat-math-alg', name: 'Advanced Algebra', score: 760, maxScore: 800, status: 'EXCELLENT', trend: '+20 pts' },
-      { id: 'sat-math-geom', name: 'Geometry & Trig', score: 740, maxScore: 800, status: 'STABLE', trend: 'Stable' },
-      { id: 'sat-reading-lit', name: 'Reading Passages', score: 680, maxScore: 800, status: 'NEEDS_WORK', trend: '+30 pts' },
-      { id: 'sat-writing-gram', name: 'Grammar & Conventions', score: 720, maxScore: 800, status: 'STABLE', trend: '+10 pts' },
+      {
+        id: 'sat-math-alg',
+        name: 'Advanced Algebra',
+        score: 760,
+        maxScore: 800,
+        status: 'EXCELLENT',
+        trend: '+20 pts',
+      },
+      {
+        id: 'sat-math-geom',
+        name: 'Geometry & Trig',
+        score: 740,
+        maxScore: 800,
+        status: 'STABLE',
+        trend: 'Stable',
+      },
+      {
+        id: 'sat-reading-lit',
+        name: 'Reading Passages',
+        score: 680,
+        maxScore: 800,
+        status: 'NEEDS_WORK',
+        trend: '+30 pts',
+      },
+      {
+        id: 'sat-writing-gram',
+        name: 'Grammar & Conventions',
+        score: 720,
+        maxScore: 800,
+        status: 'STABLE',
+        trend: '+10 pts',
+      },
     ],
     aiRecommendations: [
       {
@@ -325,10 +404,38 @@ export const PROGRAMME_CONFIGURATIONS: Record<ProgrammeId, ProgrammeConfiguratio
       description: 'Ivy League admission cutoff met',
     },
     skills: [
-      { id: 'toefl-reading', name: 'Reading', score: 28, maxScore: 30, status: 'EXCELLENT', trend: '+1 pt' },
-      { id: 'toefl-listening', name: 'Listening', score: 27, maxScore: 30, status: 'EXCELLENT', trend: 'Stable' },
-      { id: 'toefl-speaking', name: 'Speaking Task 2-4', score: 23, maxScore: 30, status: 'NEEDS_WORK', trend: '+2 pts' },
-      { id: 'toefl-writing', name: 'Writing Academic Discussion', score: 26, maxScore: 30, status: 'STABLE', trend: 'Stable' },
+      {
+        id: 'toefl-reading',
+        name: 'Reading',
+        score: 28,
+        maxScore: 30,
+        status: 'EXCELLENT',
+        trend: '+1 pt',
+      },
+      {
+        id: 'toefl-listening',
+        name: 'Listening',
+        score: 27,
+        maxScore: 30,
+        status: 'EXCELLENT',
+        trend: 'Stable',
+      },
+      {
+        id: 'toefl-speaking',
+        name: 'Speaking Task 2-4',
+        score: 23,
+        maxScore: 30,
+        status: 'NEEDS_WORK',
+        trend: '+2 pts',
+      },
+      {
+        id: 'toefl-writing',
+        name: 'Writing Academic Discussion',
+        score: 26,
+        maxScore: 30,
+        status: 'STABLE',
+        trend: 'Stable',
+      },
     ],
     aiRecommendations: [
       {
@@ -393,10 +500,38 @@ export const PROGRAMME_CONFIGURATIONS: Record<ProgrammeId, ProgrammeConfiguratio
       description: 'Permanent Residency (PR) maximum points threshold',
     },
     skills: [
-      { id: 'celpip-listening', name: 'Listening Conversations', score: 10, maxScore: 12, status: 'EXCELLENT', trend: '+1 Level' },
-      { id: 'celpip-reading', name: 'Reading Charts & Diagrams', score: 9, maxScore: 12, status: 'STABLE', trend: 'Stable' },
-      { id: 'celpip-writing', name: 'Writing Email & Survey Responses', score: 8, maxScore: 12, status: 'NEEDS_WORK', trend: '+1 Level' },
-      { id: 'celpip-speaking', name: 'Speaking Situation Tasks', score: 9, maxScore: 12, status: 'STABLE', trend: 'Stable' },
+      {
+        id: 'celpip-listening',
+        name: 'Listening Conversations',
+        score: 10,
+        maxScore: 12,
+        status: 'EXCELLENT',
+        trend: '+1 Level',
+      },
+      {
+        id: 'celpip-reading',
+        name: 'Reading Charts & Diagrams',
+        score: 9,
+        maxScore: 12,
+        status: 'STABLE',
+        trend: 'Stable',
+      },
+      {
+        id: 'celpip-writing',
+        name: 'Writing Email & Survey Responses',
+        score: 8,
+        maxScore: 12,
+        status: 'NEEDS_WORK',
+        trend: '+1 Level',
+      },
+      {
+        id: 'celpip-speaking',
+        name: 'Speaking Situation Tasks',
+        score: 9,
+        maxScore: 12,
+        status: 'STABLE',
+        trend: 'Stable',
+      },
     ],
     aiRecommendations: [
       {

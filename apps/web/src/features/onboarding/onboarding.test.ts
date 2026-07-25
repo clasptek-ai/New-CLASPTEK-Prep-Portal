@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { OnboardingState } from './types/onboarding-state';
-import { getDiagnosticDefinition, diagnosticRegistry } from './config/diagnostic-registry';
+import { getDiagnosticDefinition } from './config/diagnostic-registry';
 import { BrandConfig } from '@/config/brand.config';
 
 describe('Student Onboarding & Diagnostic Gateway Integration Tests', () => {

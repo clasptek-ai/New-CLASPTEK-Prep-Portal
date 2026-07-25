@@ -33,7 +33,14 @@ export const RadarSkillChart: React.FC<RadarSkillChartProps> = ({
   const gridLevels = [0.25, 0.5, 0.75, 1.0];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        position: 'relative',
+      }}
+    >
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         {/* Concentric grid webs */}
         {gridLevels.map((level, lvlIdx) => {
@@ -84,7 +91,15 @@ export const RadarSkillChart: React.FC<RadarSkillChartProps> = ({
 
         {/* Data points dots */}
         {dataPoints.map((p, i) => (
-          <circle key={`dot-${i}`} cx={p.x} cy={p.y} r="4" fill={accentColor} stroke="#0f172a" strokeWidth="2" />
+          <circle
+            key={`dot-${i}`}
+            cx={p.x}
+            cy={p.y}
+            r="4"
+            fill={accentColor}
+            stroke="#0f172a"
+            strokeWidth="2"
+          />
         ))}
 
         {/* Labels around the perimeter */}

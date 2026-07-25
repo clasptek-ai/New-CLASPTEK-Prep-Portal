@@ -8,9 +8,27 @@ export interface ActivityZoneProps {
 
 export const ActivityZone: React.FC<ActivityZoneProps> = ({ notificationsCount = 3 }) => {
   const activities = [
-    { id: 'act-1', title: 'Completed IELTS Academic Writing Task 2 Drill', time: '2 hours ago', icon: CheckCircle, color: '#10b981' },
-    { id: 'act-2', title: 'Achieved 8.5 Band in Reading Passage 3', time: 'Yesterday', icon: Star, color: '#f59e0b' },
-    { id: 'act-3', title: 'Maintained 14-Day Consecutive Study Streak', time: '2 days ago', icon: Zap, color: '#3b82f6' },
+    {
+      id: 'act-1',
+      title: 'Completed IELTS Academic Writing Task 2 Drill',
+      time: '2 hours ago',
+      icon: CheckCircle,
+      color: '#10b981',
+    },
+    {
+      id: 'act-2',
+      title: 'Achieved 8.5 Band in Reading Passage 3',
+      time: 'Yesterday',
+      icon: Star,
+      color: '#f59e0b',
+    },
+    {
+      id: 'act-3',
+      title: 'Maintained 14-Day Consecutive Study Streak',
+      time: '2 days ago',
+      icon: Zap,
+      color: '#3b82f6',
+    },
   ];
 
   return (
@@ -78,7 +96,14 @@ export const ActivityZone: React.FC<ActivityZoneProps> = ({ notificationsCount =
                     <IconComponent size={15} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.825rem', fontWeight: 600, color: '#e2e8f0', lineHeight: 1.3 }}>
+                    <div
+                      style={{
+                        fontSize: '0.825rem',
+                        fontWeight: 600,
+                        color: '#e2e8f0',
+                        lineHeight: 1.3,
+                      }}
+                    >
                       {act.title}
                     </div>
                     <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '2px' }}>
@@ -111,12 +136,17 @@ export const ActivityZone: React.FC<ActivityZoneProps> = ({ notificationsCount =
               Milestone Achievements
             </h4>
           </div>
-          <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 700 }}>
-            3 Unlocked
-          </span>
+          <span style={{ fontSize: '0.75rem', color: '#fbbf24', fontWeight: 700 }}>3 Unlocked</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', textAlign: 'center' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '0.75rem',
+            textAlign: 'center',
+          }}
+        >
           <div
             style={{
               padding: '0.85rem 0.5rem',
@@ -130,7 +160,9 @@ export const ActivityZone: React.FC<ActivityZoneProps> = ({ notificationsCount =
             }}
           >
             <Trophy size={20} color="#f59e0b" />
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>Band 8 Master</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>
+              Band 8 Master
+            </span>
           </div>
 
           <div
@@ -146,7 +178,9 @@ export const ActivityZone: React.FC<ActivityZoneProps> = ({ notificationsCount =
             }}
           >
             <Zap size={20} color="#3b82f6" />
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>14-Day Streak</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>
+              14-Day Streak
+            </span>
           </div>
 
           <div
@@ -162,7 +196,9 @@ export const ActivityZone: React.FC<ActivityZoneProps> = ({ notificationsCount =
             }}
           >
             <Star size={20} color="#10b981" />
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>Top 5% Drill</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f8fafc' }}>
+              Top 5% Drill
+            </span>
           </div>
         </div>
       </div>

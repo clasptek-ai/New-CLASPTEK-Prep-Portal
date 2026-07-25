@@ -83,7 +83,13 @@ export const AIZone: React.FC<AIZoneProps> = ({ config, onLaunchAssistant }) => 
           icon={Sparkles}
         />
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '1rem',
+          }}
+        >
           {recommendations.map((rec) => (
             <div
               key={rec.id}
@@ -97,7 +103,13 @@ export const AIZone: React.FC<AIZoneProps> = ({ config, onLaunchAssistant }) => 
                 gap: '0.75rem',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                }}
+              >
                 <span
                   style={{
                     fontSize: '0.7rem',
@@ -124,12 +136,26 @@ export const AIZone: React.FC<AIZoneProps> = ({ config, onLaunchAssistant }) => 
                 <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc' }}>
                   {rec.title}
                 </h4>
-                <p style={{ margin: '0.3rem 0 0', fontSize: '0.8rem', color: '#94a3b8', lineHeight: 1.4 }}>
+                <p
+                  style={{
+                    margin: '0.3rem 0 0',
+                    fontSize: '0.8rem',
+                    color: '#94a3b8',
+                    lineHeight: 1.4,
+                  }}
+                >
                   {rec.subtitle}
                 </p>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginTop: 'auto',
+                }}
+              >
                 <span style={{ fontSize: '0.75rem', color: '#a78bfa', fontWeight: 600 }}>
                   Category: {rec.category}
                 </span>
@@ -171,7 +197,8 @@ export const AIZone: React.FC<AIZoneProps> = ({ config, onLaunchAssistant }) => 
       >
         <Lightbulb size={18} color="#fbbf24" />
         <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
-          <strong>Pro Tip:</strong> Practicing Writing Task 2 for 15 minutes right after reviewing sample essays improves lexical retention by 38%.
+          <strong>Pro Tip:</strong> Practicing Writing Task 2 for 15 minutes right after reviewing
+          sample essays improves lexical retention by 38%.
         </span>
       </div>
     </div>

@@ -10,20 +10,31 @@ import { Input, Button, Card } from '../../../components/ui/ui-components';
 import { LogoBadge } from '../../../shared/ui/logo/LogoBadge';
 import { OnboardingState } from '@/features/onboarding/types/onboarding-state';
 import { adminUsersService } from '../../../services/admin/users.service';
-import { GraduationCap, BookOpen, Globe, Award, Sparkles, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
+import {
+  GraduationCap,
+  BookOpen,
+  Globe,
+  Award,
+  Sparkles,
+  CheckCircle2,
+  ArrowRight,
+  ArrowLeft,
+} from 'lucide-react';
 
-const registerStep1Schema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().email('Please enter a valid email address'),
-  phone: z.string().min(5, 'Phone number is required'),
-  country: z.string().min(1, 'Please select your country'),
-  password: z.string().min(8, 'Password must be at least 8 characters long'),
-  confirmPassword: z.string().min(8, 'Password confirmation is required'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword'],
-});
+const registerStep1Schema = z
+  .object({
+    firstName: z.string().min(1, 'First name is required'),
+    lastName: z.string().min(1, 'Last name is required'),
+    email: z.string().email('Please enter a valid email address'),
+    phone: z.string().min(5, 'Phone number is required'),
+    country: z.string().min(1, 'Please select your country'),
+    password: z.string().min(8, 'Password must be at least 8 characters long'),
+    confirmPassword: z.string().min(8, 'Password confirmation is required'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
 
 type Step1FormData = z.infer<typeof registerStep1Schema>;
 
@@ -36,12 +47,42 @@ export interface ProgrammeChoice {
 }
 
 export const PROGRAMME_OPTIONS: ProgrammeChoice[] = [
-  { id: 'IELTS_ACADEMIC', name: 'IELTS Academic', category: 'English Test Prep', icon: 'GraduationCap', badge: 'Popular' },
-  { id: 'IELTS_GENERAL', name: 'IELTS General Training', category: 'Immigration & Work', icon: 'BookOpen', badge: 'Standard' },
-  { id: 'TOEFL_IBT', name: 'TOEFL iBT', category: 'University Entrance', icon: 'Globe', badge: 'Intensive' },
+  {
+    id: 'IELTS_ACADEMIC',
+    name: 'IELTS Academic',
+    category: 'English Test Prep',
+    icon: 'GraduationCap',
+    badge: 'Popular',
+  },
+  {
+    id: 'IELTS_GENERAL',
+    name: 'IELTS General Training',
+    category: 'Immigration & Work',
+    icon: 'BookOpen',
+    badge: 'Standard',
+  },
+  {
+    id: 'TOEFL_IBT',
+    name: 'TOEFL iBT',
+    category: 'University Entrance',
+    icon: 'Globe',
+    badge: 'Intensive',
+  },
   { id: 'SAT', name: 'SAT', category: 'Undergraduate Admission', icon: 'Award', badge: 'Academic' },
-  { id: 'CELPIP', name: 'CELPIP', category: 'Canadian PR & Citizenship', icon: 'Sparkles', badge: 'Targeted' },
-  { id: 'ENGLISH_PROFICIENCY', name: 'English Proficiency', category: 'General Skill Building', icon: 'Globe', badge: 'Foundational' },
+  {
+    id: 'CELPIP',
+    name: 'CELPIP',
+    category: 'Canadian PR & Citizenship',
+    icon: 'Sparkles',
+    badge: 'Targeted',
+  },
+  {
+    id: 'ENGLISH_PROFICIENCY',
+    name: 'English Proficiency',
+    category: 'General Skill Building',
+    icon: 'Globe',
+    badge: 'Foundational',
+  },
 ];
 
 export function RegisterForm() {
@@ -103,7 +144,11 @@ export function RegisterForm() {
         country: data.country,
         targetExam: selectedProgObj?.name || 'IELTS Academic',
         selectedProgramme: selectedProgObj?.name || 'IELTS Academic',
-        targetScore: selectedProgramme.includes('IELTS') ? '8.0 Band' : selectedProgramme === 'SAT' ? '1450' : '105',
+        targetScore: selectedProgramme.includes('IELTS')
+          ? '8.0 Band'
+          : selectedProgramme === 'SAT'
+            ? '1450'
+            : '105',
         diagnosticCompleted: false,
       };
 
@@ -152,7 +197,15 @@ export function RegisterForm() {
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {/* Step Indicator with LogoBadge */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255, 255, 255, 0.07)', paddingBottom: '1rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
+            paddingBottom: '1rem',
+          }}
+        >
           <LogoBadge size="sm" />
           <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#94a3b8' }}>
             Step {step} of 2
@@ -171,7 +224,8 @@ export function RegisterForm() {
               fontSize: '0.85rem',
             }}
           >
-            {submitError || (typeof error === 'object' ? error?.message || JSON.stringify(error) : String(error))}
+            {submitError ||
+              (typeof error === 'object' ? error?.message || JSON.stringify(error) : String(error))}
           </div>
         )}
 
@@ -239,7 +293,15 @@ export function RegisterForm() {
                 {...register('phone')}
               />
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Country
                 </label>
                 <select
@@ -266,7 +328,14 @@ export function RegisterForm() {
                   <option value="Other">Other Country</option>
                 </select>
                 {errors.country?.message && (
-                  <span style={{ fontSize: '0.75rem', color: '#ef4444', marginTop: '0.25rem', display: 'block' }}>
+                  <span
+                    style={{
+                      fontSize: '0.75rem',
+                      color: '#ef4444',
+                      marginTop: '0.25rem',
+                      display: 'block',
+                    }}
+                  >
                     {errors.country.message}
                   </span>
                 )}
@@ -295,7 +364,14 @@ export function RegisterForm() {
             <Button
               type="button"
               onClick={handleNextStep}
-              style={{ marginTop: '0.5rem', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+              style={{
+                marginTop: '0.5rem',
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+              }}
             >
               <span>Continue</span>
               <ArrowRight size={16} />
@@ -314,7 +390,15 @@ export function RegisterForm() {
             </div>
 
             {/* Programme Cards Grid (6 Choices) */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem', maxHeight: '360px', overflowY: 'auto' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                gap: '0.75rem',
+                maxHeight: '360px',
+                overflowY: 'auto',
+              }}
+            >
               {PROGRAMME_OPTIONS.map((prog) => {
                 const isSelected = selectedProgramme === prog.id;
                 return (
@@ -325,19 +409,30 @@ export function RegisterForm() {
                       padding: '1rem',
                       borderRadius: '12px',
                       backgroundColor: isSelected ? 'rgba(37, 99, 235, 0.15)' : '#161e2e',
-                      border: isSelected ? '2px solid #2563eb' : '1px solid rgba(255, 255, 255, 0.08)',
+                      border: isSelected
+                        ? '2px solid #2563eb'
+                        : '1px solid rgba(255, 255, 255, 0.08)',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       position: 'relative',
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '0.4rem',
+                      }}
+                    >
                       <span
                         style={{
                           fontSize: '0.7rem',
                           fontWeight: 700,
                           color: isSelected ? '#3b82f6' : '#94a3b8',
-                          backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                          backgroundColor: isSelected
+                            ? 'rgba(59, 130, 246, 0.2)'
+                            : 'rgba(255, 255, 255, 0.05)',
                           padding: '0.15rem 0.5rem',
                           borderRadius: '4px',
                         }}
@@ -347,7 +442,9 @@ export function RegisterForm() {
                       {isSelected && <CheckCircle2 size={16} color="#3b82f6" />}
                     </div>
 
-                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#ffffff' }}>
+                    <h4
+                      style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#ffffff' }}
+                    >
                       {prog.name}
                     </h4>
                     <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.75rem', color: '#94a3b8' }}>
@@ -363,7 +460,13 @@ export function RegisterForm() {
                 type="button"
                 variant="secondary"
                 onClick={() => setStep(1)}
-                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.4rem',
+                }}
               >
                 <ArrowLeft size={16} />
                 <span>Back</span>
@@ -372,7 +475,13 @@ export function RegisterForm() {
                 type="button"
                 disabled={isLoading || isSuccess}
                 onClick={handleCompleteRegistration}
-                style={{ flex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                style={{
+                  flex: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                }}
               >
                 <span>{isLoading ? 'Creating Account...' : 'Create Account'}</span>
                 <CheckCircle2 size={16} />

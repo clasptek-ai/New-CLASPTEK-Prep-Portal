@@ -26,7 +26,13 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
       state={state}
       onRetry={onRetry}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.25rem',
+        }}
+      >
         {/* Module 1: Diagnostic Assessment Launcher Card */}
         <div
           style={{
@@ -41,7 +47,14 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
           }}
         >
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '0.5rem',
+              }}
+            >
               <span
                 style={{
                   fontSize: '0.7rem',
@@ -58,11 +71,19 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
               <FileText size={16} color="#38bdf8" />
             </div>
 
-            <h4 style={{ margin: '0 0 0.35rem', fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+            <h4
+              style={{
+                margin: '0 0 0.35rem',
+                fontSize: '1.05rem',
+                fontWeight: 800,
+                color: '#f8fafc',
+              }}
+            >
               Diagnostic Assessment
             </h4>
             <p style={{ margin: 0, fontSize: '0.825rem', color: '#cbd5e1', lineHeight: 1.4 }}>
-              Determines initial proficiency baseline and generates your personalized study plan before learning starts.
+              Determines initial proficiency baseline and generates your personalized study plan
+              before learning starts.
             </p>
           </div>
 
@@ -96,7 +117,14 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
           }}
         >
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '0.5rem',
+              }}
+            >
               <span
                 style={{
                   fontSize: '0.7rem',
@@ -113,11 +141,19 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
               <Award size={16} color="#a78bfa" />
             </div>
 
-            <h4 style={{ margin: '0 0 0.35rem', fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+            <h4
+              style={{
+                margin: '0 0 0.35rem',
+                fontSize: '1.05rem',
+                fontWeight: 800,
+                color: '#f8fafc',
+              }}
+            >
               Full Mock Examination
             </h4>
             <p style={{ margin: 0, fontSize: '0.825rem', color: '#cbd5e1', lineHeight: 1.4 }}>
-              Simulates the full timed examination environment under strict conditions to evaluate score readiness.
+              Simulates the full timed examination environment under strict conditions to evaluate
+              score readiness.
             </p>
           </div>
 

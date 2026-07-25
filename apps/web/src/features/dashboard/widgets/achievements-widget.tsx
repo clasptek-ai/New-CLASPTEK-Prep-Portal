@@ -61,7 +61,13 @@ export const AchievementsWidget: React.FC<AchievementsWidgetProps> = ({
       state={state}
       onRetry={onRetry}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: '1rem',
+        }}
+      >
         {achievements.map((ach) => (
           <div
             key={ach.id}
@@ -69,7 +75,9 @@ export const AchievementsWidget: React.FC<AchievementsWidgetProps> = ({
               padding: '1rem',
               borderRadius: '12px',
               backgroundColor: ach.unlocked ? 'rgba(15, 23, 42, 0.65)' : 'rgba(15, 23, 42, 0.3)',
-              border: ach.unlocked ? '1px solid rgba(255, 255, 255, 0.1)' : '1px dashed rgba(255, 255, 255, 0.08)',
+              border: ach.unlocked
+                ? '1px solid rgba(255, 255, 255, 0.1)'
+                : '1px dashed rgba(255, 255, 255, 0.08)',
               opacity: ach.unlocked ? 1 : 0.7,
               display: 'flex',
               flexDirection: 'column',
@@ -81,13 +89,21 @@ export const AchievementsWidget: React.FC<AchievementsWidgetProps> = ({
                 style={{
                   padding: '0.6rem',
                   borderRadius: '10px',
-                  backgroundColor: ach.unlocked ? 'rgba(245, 158, 11, 0.12)' : 'rgba(255, 255, 255, 0.05)',
+                  backgroundColor: ach.unlocked
+                    ? 'rgba(245, 158, 11, 0.12)'
+                    : 'rgba(255, 255, 255, 0.05)',
                 }}
               >
                 {ach.icon}
               </div>
               <div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 800, color: ach.unlocked ? '#f8fafc' : '#94a3b8' }}>
+                <div
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: 800,
+                    color: ach.unlocked ? '#f8fafc' : '#94a3b8',
+                  }}
+                >
                   {ach.title}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
@@ -98,11 +114,23 @@ export const AchievementsWidget: React.FC<AchievementsWidgetProps> = ({
 
             {!ach.unlocked && (
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: '#94a3b8', marginBottom: '0.25rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.7rem',
+                    color: '#94a3b8',
+                    marginBottom: '0.25rem',
+                  }}
+                >
                   <span>Milestone Progress</span>
                   <span>{ach.progress}%</span>
                 </div>
-                <ProgressBar value={ach.progress} color={config.colorPalette.primary} style={{ height: '4px' }} />
+                <ProgressBar
+                  value={ach.progress}
+                  color={config.colorPalette.primary}
+                  style={{ height: '4px' }}
+                />
               </div>
             )}
           </div>

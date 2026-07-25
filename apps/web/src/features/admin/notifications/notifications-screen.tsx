@@ -66,14 +66,31 @@ export function NotificationsScreen() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%', boxSizing: 'border-box' }}>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2rem',
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
       {/* Header Banner */}
       <div>
-        <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.02em' }}>
+        <h1
+          style={{
+            margin: 0,
+            fontSize: '1.75rem',
+            fontWeight: 800,
+            color: '#f8fafc',
+            letterSpacing: '-0.02em',
+          }}
+        >
           Platform Announcements & Communication Center
         </h1>
         <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
-          Publish live system announcements, mock availability alerts, and study notices directly to student dashboards.
+          Publish live system announcements, mock availability alerts, and study notices directly to
+          student dashboards.
         </p>
       </div>
 
@@ -99,15 +116,43 @@ export function NotificationsScreen() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '2rem' }}>
         {/* Left Column: Form to Compose Announcement */}
-        <Card style={{ padding: '1.75rem', borderRadius: '16px', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <Card
+          style={{
+            padding: '1.75rem',
+            borderRadius: '16px',
+            backgroundColor: '#151d30',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '1.1rem',
+              fontWeight: 800,
+              color: '#f8fafc',
+              marginBottom: '1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
             <Megaphone size={20} color="#38bdf8" />
             Compose Broadcast Announcement
           </div>
 
-          <form onSubmit={handlePublish} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <form
+            onSubmit={handlePublish}
+            style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
+          >
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: '#cbd5e1',
+                  marginBottom: '0.35rem',
+                }}
+              >
                 Announcement Headline / Title *
               </label>
               <input
@@ -115,19 +160,45 @@ export function NotificationsScreen() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. New Mock Examination Released for IELTS Prep"
-                style={{ width: '100%', padding: '0.65rem 0.85rem', borderRadius: '8px', backgroundColor: '#0f172a', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                style={{
+                  width: '100%',
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '8px',
+                  backgroundColor: '#0f172a',
+                  border: '1px solid #1e293b',
+                  color: '#ffffff',
+                  fontSize: '0.875rem',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Alert Type Category
                 </label>
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value as any)}
-                  style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', backgroundColor: '#0f172a', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.825rem' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.6rem 0.75rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#0f172a',
+                    border: '1px solid #1e293b',
+                    color: '#ffffff',
+                    fontSize: '0.825rem',
+                  }}
                 >
                   <option value="SYSTEM_ANNOUNCEMENT">System Announcement</option>
                   <option value="MOCK_AVAILABLE">Mock Exam Available</option>
@@ -137,13 +208,29 @@ export function NotificationsScreen() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Target Audience
                 </label>
                 <select
                   value={targetCohort}
                   onChange={(e) => setTargetCohort(e.target.value)}
-                  style={{ width: '100%', padding: '0.6rem 0.75rem', borderRadius: '8px', backgroundColor: '#0f172a', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.825rem' }}
+                  style={{
+                    width: '100%',
+                    padding: '0.6rem 0.75rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#0f172a',
+                    border: '1px solid #1e293b',
+                    color: '#ffffff',
+                    fontSize: '0.825rem',
+                  }}
                 >
                   <option value="All Enrolled Students">All Enrolled Students</option>
                   <option value="IELTS Academic Cohort">IELTS Academic Cohort</option>
@@ -155,7 +242,15 @@ export function NotificationsScreen() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: '#cbd5e1',
+                  marginBottom: '0.35rem',
+                }}
+              >
                 Announcement Body Content *
               </label>
               <textarea
@@ -164,14 +259,31 @@ export function NotificationsScreen() {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Enter detailed announcement message broadcast to student portals..."
-                style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', backgroundColor: '#0f172a', border: '1px solid #1e293b', color: '#ffffff', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  borderRadius: '8px',
+                  backgroundColor: '#0f172a',
+                  border: '1px solid #1e293b',
+                  color: '#ffffff',
+                  fontSize: '0.875rem',
+                  outline: 'none',
+                  boxSizing: 'border-box',
+                }}
               />
             </div>
 
             <Button
               type="submit"
               variant="primary"
-              style={{ backgroundColor: '#2563eb', color: '#ffffff', gap: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{
+                backgroundColor: '#2563eb',
+                color: '#ffffff',
+                gap: '0.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
             >
               <Send size={16} />
               <span>Broadcast Announcement to Student Portals</span>
@@ -180,13 +292,38 @@ export function NotificationsScreen() {
         </Card>
 
         {/* Right Column: Published Broadcast Feed */}
-        <Card style={{ padding: '1.5rem', borderRadius: '16px', backgroundColor: '#151d30', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-          <div style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <Card
+          style={{
+            padding: '1.5rem',
+            borderRadius: '16px',
+            backgroundColor: '#151d30',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '1rem',
+              fontWeight: 800,
+              color: '#f8fafc',
+              marginBottom: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
             <Bell size={18} color="#34d399" />
             Live Broadcast Feed ({announcements.length})
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', maxHeight: '480px', overflowY: 'auto' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.85rem',
+              maxHeight: '480px',
+              overflowY: 'auto',
+            }}
+          >
             {announcements.map((ann) => (
               <div
                 key={ann.id}
@@ -200,14 +337,20 @@ export function NotificationsScreen() {
                   gap: '0.4rem',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
                   <Badge variant="info">{ann.type}</Badge>
                   <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
                     {new Date(ann.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.9rem' }}>{ann.title}</div>
-                <div style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.4 }}>{ann.content}</div>
+                <div style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.9rem' }}>
+                  {ann.title}
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.4 }}>
+                  {ann.content}
+                </div>
                 <div style={{ fontSize: '0.7rem', color: '#38bdf8', marginTop: '0.2rem' }}>
                   Audience: {ann.targetCohort || 'All Enrolled Students'}
                 </div>

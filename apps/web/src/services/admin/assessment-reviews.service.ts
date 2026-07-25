@@ -1,5 +1,4 @@
 import { apiClient } from '../api/client';
-import { getDeterministicId } from '../../lib/mock-util';
 
 export interface AssessmentReviewAttempt {
   id: string;
@@ -127,9 +126,7 @@ const DEFAULT_ATTEMPTS: CandidateReviewDetail[] = [
         explanation: 'Demonstrated strong cohesion and task achievement.',
       },
     ],
-    history: [
-      { attemptId: 'att0', score: 58, date: '2026-06-10T11:00:00Z' },
-    ],
+    history: [{ attemptId: 'att0', score: 58, date: '2026-06-10T11:00:00Z' }],
     integrity: {
       browserDevice: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0',
       ipAddress: '12.45.98.11',

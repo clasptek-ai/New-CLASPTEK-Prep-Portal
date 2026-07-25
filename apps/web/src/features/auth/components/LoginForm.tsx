@@ -48,9 +48,11 @@ export function LoginForm({ onSuccess, isExpiredSession = false }: LoginFormProp
 
       const userEmail = data.email.toLowerCase().trim();
       const isClasptekAdmin = userEmail === 'clasptek@gmail.com';
-      const isAdminStaff = isClasptekAdmin || sessionUser?.roles?.some((r) =>
-        ['ADMINISTRATOR', 'INSTRUCTOR', 'STAFF', 'SUPER_ADMIN'].includes(r)
-      );
+      const isAdminStaff =
+        isClasptekAdmin ||
+        sessionUser?.roles?.some((r) =>
+          ['ADMINISTRATOR', 'INSTRUCTOR', 'STAFF', 'SUPER_ADMIN'].includes(r)
+        );
 
       if (typeof window !== 'undefined' && isClasptekAdmin) {
         localStorage.setItem('clasptek_user_role', 'ADMINISTRATOR');
@@ -85,7 +87,12 @@ export function LoginForm({ onSuccess, isExpiredSession = false }: LoginFormProp
             <LogoBadge size="md" />
           </div>
           <h2
-            style={{ margin: 0, fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-primary)' }}
+            style={{
+              margin: 0,
+              fontSize: '1.45rem',
+              fontWeight: 800,
+              color: 'var(--text-primary)',
+            }}
           >
             Sign In — {BrandConfig.shortName}
           </h2>

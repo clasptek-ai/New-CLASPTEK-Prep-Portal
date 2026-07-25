@@ -121,9 +121,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
 
   return (
     <RouteGuard
-      allowedRoles={
-        workspaceRole === 'STUDENT' ? ['STUDENT'] : ['ADMINISTRATOR', 'SYSTEM_ADMIN']
-      }
+      allowedRoles={workspaceRole === 'STUDENT' ? ['STUDENT'] : ['ADMINISTRATOR', 'SYSTEM_ADMIN']}
     >
       <div
         style={{

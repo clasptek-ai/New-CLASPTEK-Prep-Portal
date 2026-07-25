@@ -28,7 +28,14 @@ export const LearningProgressWidget: React.FC<LearningProgressWidgetProps> = ({
       state={state}
       onRetry={onRetry}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.5rem',
+          alignItems: 'center',
+        }}
+      >
         {/* Left: Overall Completion Circular Progress */}
         <div
           style={{
@@ -43,11 +50,7 @@ export const LearningProgressWidget: React.FC<LearningProgressWidgetProps> = ({
             textAlign: 'center',
           }}
         >
-          <CircularProgress
-            value={overallCompletion}
-            size={130}
-            strokeWidth={10}
-          />
+          <CircularProgress value={overallCompletion} size={130} strokeWidth={10} />
           <div style={{ marginTop: '1rem' }}>
             <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f8fafc' }}>
               {overallCompletion}% Curriculum Completed
@@ -60,23 +63,44 @@ export const LearningProgressWidget: React.FC<LearningProgressWidgetProps> = ({
 
         {/* Center: Skill Breakdown Bars */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ fontSize: '0.825rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div
+            style={{
+              fontSize: '0.825rem',
+              fontWeight: 700,
+              color: '#94a3b8',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}
+          >
             Skill Performance Distribution
           </div>
           {config.skills.map((skill) => {
             const percent = Math.round((skill.score / skill.maxScore) * 100);
             const statusColor =
-              skill.status === 'EXCELLENT' ? '#34d399' : skill.status === 'STABLE' ? '#38bdf8' : '#f59e0b';
+              skill.status === 'EXCELLENT'
+                ? '#34d399'
+                : skill.status === 'STABLE'
+                  ? '#38bdf8'
+                  : '#f59e0b';
 
             return (
-              <div key={skill.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+              <div
+                key={skill.id}
+                style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}
+              >
+                <div
+                  style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}
+                >
                   <span style={{ fontWeight: 700, color: '#f8fafc' }}>{skill.name}</span>
                   <span style={{ fontWeight: 700, color: statusColor }}>
                     {skill.score} / {skill.maxScore} ({skill.trend})
                   </span>
                 </div>
-                <ProgressBar value={percent} color={config.colorPalette.primary} style={{ height: '8px' }} />
+                <ProgressBar
+                  value={percent}
+                  color={config.colorPalette.primary}
+                  style={{ height: '8px' }}
+                />
               </div>
             );
           })}
@@ -92,7 +116,11 @@ export const LearningProgressWidget: React.FC<LearningProgressWidgetProps> = ({
             padding: '0.75rem',
           }}
         >
-          <RadarSkillChart skills={config.skills} accentColor={config.colorPalette.primary} size={220} />
+          <RadarSkillChart
+            skills={config.skills}
+            accentColor={config.colorPalette.primary}
+            size={220}
+          />
         </div>
       </div>
     </DashboardWidget>
