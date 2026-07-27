@@ -81,7 +81,7 @@ export class PostgresResourceVersionRepository implements ResourceVersionReposit
         const namespace = parts.length > 1 ? parts[0] : 'custom';
         const metaKey = parts.length > 1 ? parts.slice(1).join('.') : key;
 
-        let defRes = await client.query(
+        const defRes = await client.query(
           `SELECT id FROM public.resource_metadata_definitions WHERE namespace = $1 AND metadata_key = $2`,
           [namespace, metaKey]
         );

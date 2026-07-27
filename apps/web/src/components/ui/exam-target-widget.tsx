@@ -19,7 +19,7 @@ interface ExamTargetWidgetProps {
 export const ExamTargetWidget: React.FC<ExamTargetWidgetProps> = ({
   targetExamDate,
   daysRemaining = 95,
-  weeksRemaining = 14,
+  weeksRemaining: _weeksRemaining = 14,
   targetScore = 7.5,
   registrationStatus = 'REGISTERED',
   scheduleCalculations,

@@ -1,19 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  BookOpen,
-  Layers,
-  FileUp,
-  Award,
-  Database,
-  Upload,
-  UserCheck,
-  Bell,
-  GraduationCap,
-  FileSpreadsheet,
-  PlusCircle,
-  Play,
-} from 'lucide-react';
+import { BookOpen, Layers, FileUp, Award, Upload, Bell, Play } from 'lucide-react';
 
 export const QuickActionsBar: React.FC = () => {
   const router = useRouter();

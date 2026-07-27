@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card } from '../../../components/ui/ui-components';
+
 import { AlertCard } from '../../../components/admin/observability/observability-components';
 
 export function AlertCenterScreen() {

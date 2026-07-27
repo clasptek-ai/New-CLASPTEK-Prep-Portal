@@ -10,7 +10,6 @@ import {
   Inline,
   Select,
   Grid,
-  Badge,
 } from '@clasptek/design-system';
 
 export function AssessmentBuilder() {

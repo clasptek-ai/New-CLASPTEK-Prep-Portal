@@ -9,19 +9,14 @@ import {
   Layers,
   FileSpreadsheet,
   Award,
-  HelpCircle,
   Database,
   Upload,
   Users,
-  GraduationCap,
-  UserCheck,
   Bell,
   BarChart3,
   Settings,
   ShieldCheck,
   LifeBuoy,
-  ChevronRight,
-  ChevronDown,
   Menu,
   X,
 } from 'lucide-react';
@@ -45,7 +40,7 @@ export interface NavGroup {
 
 export const AdminSidebar: React.FC = () => {
   const pathname = usePathname();
-  const { pendingApprovals } = useAdminWorkspace();
+  const { pendingApprovals: _pendingApprovals } = useAdminWorkspace();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 

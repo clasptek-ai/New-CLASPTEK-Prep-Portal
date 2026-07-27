@@ -15,8 +15,8 @@ import { AssessmentSession, StudentAnswerSheet } from '@clasptek/domain-assessme
 
 describe('Assessment Application Command Handlers', () => {
   const mkMocks = () => {
-    let mockSessions = new Map<string, AssessmentSession>();
-    let mockSheets = new Map<string, StudentAnswerSheet>();
+    const mockSessions = new Map<string, AssessmentSession>();
+    const mockSheets = new Map<string, StudentAnswerSheet>();
 
     const sessionRepo: AssessmentSessionRepository = {
       save: vi.fn().mockImplementation(async (s: AssessmentSession) => {

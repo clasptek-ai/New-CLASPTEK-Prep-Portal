@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, ShieldCheck, User } from 'lucide-react';
+import { Search, Bell, ShieldCheck } from 'lucide-react';
 import { useAdminWorkspace } from '../../../workspace/AdminWorkspaceContext';
 import { Avatar } from '../../../shared/ui/avatar/Avatar';
 import { Badge } from '../../../shared/ui/badge/Badge';

@@ -5,28 +5,18 @@ import Link from 'next/link';
 import { LogoBadge } from '../shared/ui/logo/LogoBadge';
 import {
   BookOpen,
-  CheckCircle2,
   Award,
   Zap,
   Target,
-  Clock,
-  ShieldCheck,
   Sparkles,
   ArrowRight,
   ChevronDown,
-  UserCheck,
   BarChart3,
   BrainCircuit,
-  GraduationCap,
   Play,
-  HelpCircle,
-  Globe,
   FileText,
-  Lock,
-  Layers,
   Star,
   Users,
-  Check,
   TrendingUp,
 } from 'lucide-react';
 

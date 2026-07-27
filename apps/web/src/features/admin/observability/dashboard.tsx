@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, Button, Badge } from '../../../components/ui/ui-components';
+import { Card, Button } from '../../../components/ui/ui-components';
 import {
   MetricCard,
   ServiceDependencyGraph,

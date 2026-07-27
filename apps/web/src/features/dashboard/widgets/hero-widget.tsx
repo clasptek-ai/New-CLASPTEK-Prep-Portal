@@ -22,8 +22,8 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
   studyStreakDays,
   studentId = 'CGA-2026-000245',
   learningLevel = 'Intermediate',
-  state = 'SUCCESS',
-  onRetry,
+  state: _state = 'SUCCESS',
+  onRetry: _onRetry,
   onResumeLearning,
 }) => {
   return (

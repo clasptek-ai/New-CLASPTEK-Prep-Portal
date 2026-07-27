@@ -1,10 +1,10 @@
 import { jsx as _jsx, jsxs as _jsxs } from 'react/jsx-runtime';
 import { Button } from '../Button/Button';
-export const Modal = ({ id, isOpen, onClose, title, children, footer }) => {
+export const Modal = ({ id: _id, isOpen, onClose, title, children, footer }) => {
   if (!isOpen) return null;
   return _jsx('div', {
     className:
-      'fixed inset-0 z-[1300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4',
+      'fixed inset-0 z-1300 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4',
     children: _jsxs('div', {
       className:
         'w-full max-w-lg rounded-2xl bg-white border border-[#c3c6d2] shadow-2xl p-6 text-[#191c1e] animate-in fade-in zoom-in-95 duration-150',

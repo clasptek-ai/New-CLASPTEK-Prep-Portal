@@ -4,7 +4,6 @@ import React from 'react';
 import { ProgrammeId } from '../models/programme-config';
 import { ProgrammeRegistry } from '../models/programme-registry';
 import { ChevronDown, Sparkles } from 'lucide-react';
-import { BrandConfig } from '@/config/brand.config';
 
 export interface DashboardLayoutProps {
   activeProgrammeId: ProgrammeId;

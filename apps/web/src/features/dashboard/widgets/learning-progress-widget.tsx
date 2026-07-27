@@ -4,7 +4,6 @@ import { DashboardWidget, WidgetState } from '../../../shared/ui/academic/dashbo
 import { CircularProgress } from '../../../shared/ui/progress/CircularProgress';
 import { ProgressBar } from '../../../shared/ui/progress/ProgressBar';
 import { RadarSkillChart } from '../../../shared/ui/academic/radar-skill-chart';
-import { TrendingUp, Clock, Award, ShieldCheck } from 'lucide-react';
 
 export interface LearningProgressWidgetProps {
   config: ProgrammeConfiguration;

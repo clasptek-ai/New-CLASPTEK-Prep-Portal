@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge, Table } from '../../../components/ui/ui-components';
+import { Badge, Table } from '../../../components/ui/ui-components';
 import { adminAuditService, AuditLogRecord } from '../../../services/admin/audit.service';
 
 export function AuditScreen() {

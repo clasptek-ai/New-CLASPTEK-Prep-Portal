@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Badge, Button, Input } from '../ui/ui-components';
+import { Card, Input } from '../ui/ui-components';
 
 // ─── Rich Text Editor Abstraction Stub ──────────────────────────────
 export interface RichEditorProps {

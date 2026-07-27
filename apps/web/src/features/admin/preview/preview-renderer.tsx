@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Page, Container, Card, Button, Stack, Inline, Badge } from '@clasptek/design-system';
+import { Page, Container, Button, Stack, Inline, Badge } from '@clasptek/design-system';
 
 export type PreviewMode = 'DESKTOP' | 'TABLET' | 'EXAM_MODE';
 

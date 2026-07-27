@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Page, Container, Card, Button, Stack, Inline, Grid, Badge } from '@clasptek/design-system';
+import { Page, Container, Card, Button, Stack, Inline, Grid } from '@clasptek/design-system';
 
 export function AdminPracticeDashboard() {
   return (

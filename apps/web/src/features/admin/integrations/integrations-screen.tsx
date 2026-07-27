@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, Button, Badge } from '../../../components/ui/ui-components';
+import { Card, Button } from '../../../components/ui/ui-components';
 import {
   IntegrationCard,
   ConnectionWizard,
@@ -30,7 +30,7 @@ export function IntegrationsScreen() {
     load();
   }, []);
 
-  const handleSave = (credentials: any) => {
+  const handleSave = (_credentials: any) => {
     if (!activeConfigure) return;
     setConnections((prev) => [
       ...prev,

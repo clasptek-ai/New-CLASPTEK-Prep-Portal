@@ -147,7 +147,9 @@ export async function POST(req: NextRequest) {
             profile.resetFailedAttempts();
             await securityProfileRepo.save(profile);
           }
-        } catch {}
+        } catch {
+          // Ignore profile load failures during background reset
+        }
       })(),
 
       // D. Log active session info

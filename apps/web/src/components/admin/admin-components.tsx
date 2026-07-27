@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Badge, Button } from '../ui/ui-components';
+import { Card } from '../ui/ui-components';
 
 // ─── System Health Card ─────────────────────────────────────────────
 export function SystemHealthCard({

@@ -17,10 +17,17 @@ export default function NotFound() {
         fontFamily: 'Inter, sans-serif',
       }}
     >
-      <h1 style={{ fontSize: '4rem', fontWeight: 800, color: '#38bdf8', margin: '1.5rem 0 0.5rem' }}>404</h1>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ffffff', margin: '0 0 1rem' }}>Page Not Found</h2>
+      <h1
+        style={{ fontSize: '4rem', fontWeight: 800, color: '#38bdf8', margin: '1.5rem 0 0.5rem' }}
+      >
+        404
+      </h1>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ffffff', margin: '0 0 1rem' }}>
+        Page Not Found
+      </h2>
       <p style={{ color: '#94a3b8', maxWidth: '480px', marginBottom: '2rem' }}>
-        The requested resource or candidate page could not be located on the Clasptek Global Academy Portal.
+        The requested resource or candidate page could not be located on the Clasptek Global Academy
+        Portal.
       </p>
       <Link href="/">
         <button

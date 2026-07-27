@@ -1,12 +1,14 @@
 import React from 'react';
-import { Activity, Trophy, Bell, CheckCircle, Star, Zap } from 'lucide-react';
+import { Activity, Trophy, CheckCircle, Star, Zap } from 'lucide-react';
 import { EmptyZone } from '../../../shared/ui/academic/empty-zone';
 
 export interface ActivityZoneProps {
   notificationsCount?: number;
 }
 
-export const ActivityZone: React.FC<ActivityZoneProps> = ({ notificationsCount = 3 }) => {
+export const ActivityZone: React.FC<ActivityZoneProps> = ({
+  notificationsCount: _notificationsCount = 3,
+}) => {
   const activities = [
     {
       id: 'act-1',

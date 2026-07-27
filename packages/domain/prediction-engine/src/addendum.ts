@@ -702,7 +702,7 @@ export class PredictionStabilityEngine {
     const varianceVal = scores.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / n;
 
     let state: PredictionVolatilityState = 'STABLE';
-    let stabilityScoreVal = Math.max(0, 100 - varianceVal * 5);
+    const stabilityScoreVal = Math.max(0, 100 - varianceVal * 5);
 
     if (varianceVal > 15) {
       state = 'HIGHLY_VOLATILE';
@@ -887,11 +887,11 @@ export class ConfidenceAssessmentEngine {
     lastEvaluationScore: number;
   }): PredictionConfidenceReport {
     // Math to compute confidence
-    let coverage = Math.min(
+    const coverage = Math.min(
       100,
       (props.completedPracticeQuestions / 150) * 40 + (props.mockExamCount / 3) * 60
     );
-    let evidenceQuality = props.mockExamCount >= 3 ? 95 : props.mockExamCount >= 1 ? 80 : 50;
+    const evidenceQuality = props.mockExamCount >= 3 ? 95 : props.mockExamCount >= 1 ? 80 : 50;
 
     let computedScore = Math.round(
       props.stabilityScore * 0.4 + coverage * 0.4 + evidenceQuality * 0.2

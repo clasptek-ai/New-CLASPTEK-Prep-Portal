@@ -13,7 +13,7 @@ import { AdminSectionsGrid } from './components/admin-sections-grid';
 import { Skeleton } from '../../../shared/ui/skeleton/Skeleton';
 
 export function AdminDashboardScreen() {
-  const router = useRouter();
+  const _router = useRouter();
   const { adminProfile, pendingApprovals, systemHealth, academicTerm } = useAdminWorkspace();
   const [data, setData] = useState<AdminDashboardAggregatedData | null>(null);
   const [loading, setLoading] = useState(true);

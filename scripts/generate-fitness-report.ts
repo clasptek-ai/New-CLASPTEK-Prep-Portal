@@ -36,13 +36,13 @@ function main() {
 
   const circulars = violations.filter((v: any) => v.rule.name === 'no-circular').length;
   const dddViolations = violations.filter((v: any) => v.rule.name.includes('constraints')).length;
-  const crossDomain = violations.filter((v: any) => v.rule.name.includes('cross-domain')).length;
+  const _crossDomain = violations.filter((v: any) => v.rule.name.includes('cross-domain')).length;
   const serverLeakage = violations.filter(
     (v: any) =>
       v.rule.name.includes('domain-layer-boundaries') ||
       v.rule.name.includes('application-layer-boundaries')
   ).length;
-  const unauthorized =
+  const _unauthorized =
     violations.filter((v: any) => v.rule.name.includes('boundaries')).length - serverLeakage;
 
   // Scan package folders
@@ -68,13 +68,13 @@ function main() {
 
   // Technical Migrations count
   const migrationsPath = path.join(rootDir, 'database/migrations');
-  const migrationCount = fs.existsSync(migrationsPath)
+  const _migrationCount = fs.existsSync(migrationsPath)
     ? fs.readdirSync(migrationsPath).filter((f) => f.endsWith('.sql')).length
     : 0;
 
   // RLS Policies count
   const policiesPath = path.join(rootDir, 'database/policies');
-  const policyCount = fs.existsSync(policiesPath)
+  const _policyCount = fs.existsSync(policiesPath)
     ? fs.readdirSync(policiesPath).filter((f) => f.endsWith('.sql') || f !== '.gitkeep').length
     : 0;
 

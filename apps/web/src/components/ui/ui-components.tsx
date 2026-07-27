@@ -558,7 +558,11 @@ interface ClasptekLogoProps {
   style?: React.CSSProperties;
 }
 
-export function ClasptekLogo({ size = 'medium', theme = 'auto', style }: ClasptekLogoProps) {
+export function ClasptekLogo({
+  size = 'medium',
+  theme: _theme = 'auto',
+  style,
+}: ClasptekLogoProps) {
   const getDimensions = () => {
     switch (size) {
       case 'small':

@@ -11,7 +11,7 @@ function runCommand(command, desc, allowFailure = false) {
   console.log(`\n> Running: ${desc}...`);
   try {
     execSync(command, { cwd: rootDir, stdio: 'inherit' });
-  } catch (err) {
+  } catch (_err) {
     if (allowFailure) {
       console.warn(`\n⚠️ Warning: Verification script failed at: ${desc} (allowed)`);
     } else {

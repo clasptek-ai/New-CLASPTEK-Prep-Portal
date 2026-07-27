@@ -2,7 +2,7 @@ import React from 'react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 import { DashboardWidget, WidgetState } from '../../../shared/ui/academic/dashboard-widget';
 import { Button } from '../../../shared/ui/button/Button';
-import { Sparkles, MessageSquare, ArrowRight, Lightbulb, AlertTriangle } from 'lucide-react';
+import { Sparkles, MessageSquare, ArrowRight, Lightbulb } from 'lucide-react';
 
 export interface AICoachWidgetProps {
   config: ProgrammeConfiguration;

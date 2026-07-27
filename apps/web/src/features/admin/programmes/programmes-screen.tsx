@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge, Table } from '../../../components/ui/ui-components';
+import { Button, Badge, Table } from '../../../components/ui/ui-components';
 import { adminProgrammesService, AdminProgramme } from '../../../services/admin/programmes.service';
 
 export function ProgrammesScreen() {

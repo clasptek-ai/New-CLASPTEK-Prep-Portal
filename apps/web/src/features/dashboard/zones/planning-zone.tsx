@@ -1,7 +1,7 @@
 import React from 'react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 import { CalendarWidget } from '../../../shared/ui/academic/calendar-widget';
-import { Clock, Play, FileText, BarChart2 } from 'lucide-react';
+import { Clock, Play, BarChart2 } from 'lucide-react';
 import { EmptyZone } from '../../../shared/ui/academic/empty-zone';
 
 export interface PlanningZoneProps {

@@ -9,7 +9,6 @@ import {
   Clock,
   AlertCircle,
 } from 'lucide-react';
-import { StatCard } from '../../../../shared/ui/info-card/StatCard';
 
 export interface KPISummaryGridProps {
   stats: {

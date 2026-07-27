@@ -21,7 +21,7 @@ const PACE_HOURS: Record<LearningPaceType, number> = {
 
 export const LearningPaceSelector: React.FC<LearningPaceSelectorProps> = ({
   currentPace = 'Standard',
-  weeklyHours = 12,
+  weeklyHours: _weeklyHours = 12,
   estimatedCompletionDate,
   onPaceChange,
 }) => {

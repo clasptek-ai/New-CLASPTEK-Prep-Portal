@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 interface ResultItem {
   id: string;
@@ -30,7 +30,7 @@ interface ProgressSummary {
 }
 
 export default function StudentResultsDashboard() {
-  const [summary, setSummary] = useState<ProgressSummary | null>({
+  const [summary, _setSummary] = useState<ProgressSummary | null>({
     overallScore: 82.5,
     academicStatus: 'ON_TRACK',
     performanceTrend: 'IMPROVING',
@@ -43,7 +43,7 @@ export default function StudentResultsDashboard() {
     weakestSkills: ['Grammatical Accuracy', 'Coherence'],
   });
 
-  const [results, setResults] = useState<ResultItem[]>([
+  const [results, _setResults] = useState<ResultItem[]>([
     {
       id: 'res-001',
       resultType: 'WRITING_EVALUATION',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ProgrammeId, ProgrammeConfiguration } from '../models/programme-config';
 import { ProgressRing } from '../../../shared/ui/academic/progress-ring';
-import { PlayCircle, Award, CheckCircle2 } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
 
 export interface LearningZoneProps {
   activeProgrammeId: ProgrammeId;

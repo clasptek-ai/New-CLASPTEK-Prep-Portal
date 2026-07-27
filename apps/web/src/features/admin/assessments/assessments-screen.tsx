@@ -7,17 +7,7 @@ import {
   adminAssessmentsService,
   AdminAssessmentConfig,
 } from '../../../services/admin/assessments.service';
-import {
-  FileText,
-  BookOpen,
-  Plus,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  ShieldAlert,
-  Award,
-  Sparkles,
-} from 'lucide-react';
+import { Plus, CheckCircle2 } from 'lucide-react';
 
 export function AssessmentsScreen() {
   const searchParams = useSearchParams();

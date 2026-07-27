@@ -3,7 +3,7 @@ import { ProgrammeConfiguration } from '../models/programme-config';
 import { DashboardWidget, WidgetState } from '../../../shared/ui/academic/dashboard-widget';
 import { Button } from '../../../shared/ui/button/Button';
 import { ProgressBar } from '../../../shared/ui/progress/ProgressBar';
-import { PlayCircle, Clock, BookOpen, CheckCircle } from 'lucide-react';
+import { PlayCircle, Clock } from 'lucide-react';
 
 export interface TodaysLearningWidgetProps {
   config: ProgrammeConfiguration;

@@ -168,7 +168,7 @@ export function BulkTable<T extends { id: string }>({
                 </td>
               </tr>
             ) : (
-              data.map((row, rIndex) => (
+              data.map((row, _rIndex) => (
                 <tr
                   key={row.id}
                   style={{ borderBottom: '1px solid #232e48', transition: 'background-color 0.2s' }}

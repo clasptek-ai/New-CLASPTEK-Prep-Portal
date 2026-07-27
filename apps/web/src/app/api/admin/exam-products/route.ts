@@ -16,7 +16,7 @@ const createExamProductSchema = z.object({
 export async function POST(req: NextRequest) {
   const { createExamProductHandler, logger } = await getExamContext();
   try {
-    let token = req.headers.get('authorization')?.split(' ')[1] || null;
+    const token = req.headers.get('authorization')?.split(' ')[1] || null;
 
     if (process.env.NODE_ENV !== 'test' || token) {
       const principal = AccessControlGuard.authenticate(token);

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-interface PromptVersion {
+export interface PromptVersion {
   id: string;
   versionNumber: number;
   systemPrompt: string;
@@ -67,7 +67,7 @@ export default function PromptDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-6">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-extrabold tracking-tight bg-linear-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
               AI Prompt Quality Dashboard
             </h1>
             <p className="text-sm text-slate-400 mt-1">
@@ -85,7 +85,7 @@ export default function PromptDashboard() {
             <h2 className="text-lg font-bold text-slate-200 mb-4 border-b border-slate-800 pb-2">
               Select Experiment History
             </h2>
-            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+            <div className="space-y-3 max-h-100 overflow-y-auto pr-2">
               {experiments.map((e) => (
                 <button
                   key={e.id}
@@ -118,7 +118,7 @@ export default function PromptDashboard() {
                 {/* Metric Cards Row */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Agreement Card */}
-                  <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-xl p-5 relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-300">
+                  <div className="bg-linear-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-xl p-5 relative overflow-hidden group hover:border-emerald-500/30 transition-all duration-300">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-xl group-hover:bg-emerald-500/10 transition-all"></div>
                     <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       Human-AI Agreement
@@ -144,7 +144,7 @@ export default function PromptDashboard() {
                   </div>
 
                   {/* Calibration Card */}
-                  <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-xl p-5 relative overflow-hidden group hover:border-cyan-500/30 transition-all duration-300">
+                  <div className="bg-linear-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-xl p-5 relative overflow-hidden group hover:border-cyan-500/30 transition-all duration-300">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/5 rounded-full blur-xl group-hover:bg-cyan-500/10 transition-all"></div>
                     <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       Calibration Accuracy
@@ -164,7 +164,7 @@ export default function PromptDashboard() {
                   </div>
 
                   {/* Override Rate */}
-                  <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-xl p-5 relative overflow-hidden group hover:border-rose-500/30 transition-all duration-300">
+                  <div className="bg-linear-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-xl p-5 relative overflow-hidden group hover:border-rose-500/30 transition-all duration-300">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-full blur-xl group-hover:bg-rose-500/10 transition-all"></div>
                     <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                       Instructor Override Rate

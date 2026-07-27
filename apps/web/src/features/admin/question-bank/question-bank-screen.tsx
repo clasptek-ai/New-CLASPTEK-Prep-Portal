@@ -4,17 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, Button, Badge } from '../../../components/ui/ui-components';
 import { adminQuestionsService, AdminQuestion } from '../../../services/admin/questions.service';
-import {
-  Plus,
-  Upload,
-  CheckCircle2,
-  XCircle,
-  Eye,
-  Trash2,
-  Search,
-  BookOpen,
-  Award,
-} from 'lucide-react';
+import { Plus, Upload, CheckCircle2, Eye, Trash2, Search } from 'lucide-react';
 
 export function QuestionBankScreen() {
   const router = useRouter();
@@ -25,7 +15,7 @@ export function QuestionBankScreen() {
   // Filters state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('ALL');
-  const [selectedType, setSelectedType] = useState<string>('ALL');
+  const [selectedType, _setSelectedType] = useState<string>('ALL');
   const [selectedProgramme, setSelectedProgramme] = useState<string>('ALL');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Card, Button, EmptyState, ClasptekLogo } from '../../components/ui/ui-components';
+import { Button, EmptyState, ClasptekLogo } from '../../components/ui/ui-components';
 import { useNotification } from '../../providers/notification-provider';
 
 export default function CareersPage() {

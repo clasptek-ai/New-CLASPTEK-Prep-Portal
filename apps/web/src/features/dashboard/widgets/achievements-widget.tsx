@@ -1,7 +1,7 @@
 import React from 'react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 import { DashboardWidget, WidgetState } from '../../../shared/ui/academic/dashboard-widget';
-import { Flame, Award, ShieldCheck, Zap, Trophy, Medal } from 'lucide-react';
+import { Flame, ShieldCheck, Trophy, Medal } from 'lucide-react';
 import { ProgressBar } from '../../../shared/ui/progress/ProgressBar';
 
 export interface AchievementsWidgetProps {
@@ -13,7 +13,7 @@ export interface AchievementsWidgetProps {
 
 export const AchievementsWidget: React.FC<AchievementsWidgetProps> = ({
   config,
-  studyStreakDays,
+  studyStreakDays: _studyStreakDays,
   state = 'SUCCESS',
   onRetry,
 }) => {

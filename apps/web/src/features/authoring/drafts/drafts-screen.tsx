@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Button, Badge } from '../../../components/ui/ui-components';
+import { Button } from '../../../components/ui/ui-components';
 import { SharedTable } from '../../../components/ui/shared-table';
 import { useNotification } from '../../../providers/notification-provider';
 

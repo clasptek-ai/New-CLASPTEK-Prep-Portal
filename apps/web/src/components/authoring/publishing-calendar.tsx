@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, Badge } from '../ui/ui-components';
+import { Card } from '../ui/ui-components';
 
 export interface CalendarEventItem {
   id: string;

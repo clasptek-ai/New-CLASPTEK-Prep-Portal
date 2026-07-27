@@ -2,7 +2,7 @@ import React from 'react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 import { DashboardWidget, WidgetState } from '../../../shared/ui/academic/dashboard-widget';
 import { Button } from '../../../shared/ui/button/Button';
-import { FileText, Award, Play, Clock } from 'lucide-react';
+import { FileText, Award, Play } from 'lucide-react';
 
 export interface UpcomingAssessmentsWidgetProps {
   config: ProgrammeConfiguration;

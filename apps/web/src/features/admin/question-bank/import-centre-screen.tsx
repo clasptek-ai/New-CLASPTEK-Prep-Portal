@@ -12,14 +12,10 @@ import {
   FolderPlus,
   FileText,
   CheckCircle2,
-  AlertTriangle,
   RotateCcw,
   ArrowLeft,
-  Eye,
-  ShieldCheck,
   FileCheck,
   BookOpen,
-  Award,
 } from 'lucide-react';
 import { adminQuestionsService, AdminQuestion } from '../../../services/admin/questions.service';
 

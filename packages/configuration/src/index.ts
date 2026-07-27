@@ -35,7 +35,6 @@ export function loadEnvironment(customSource?: Record<string, any>): ServerEnvir
   const source = customSource || process.env;
   const result = serverEnvironmentSchema.safeParse(source);
   if (!result.success) {
-    // eslint-disable-next-line no-console
     console.error(
       'Configuration startup failure: Invalid environment parameters',
       result.error.format()
@@ -52,7 +51,6 @@ export function loadClientEnvironment(customSource?: Record<string, any>): Clien
   const source = customSource || process.env;
   const result = clientEnvironmentSchema.safeParse(source);
   if (!result.success) {
-    // eslint-disable-next-line no-console
     console.error(
       'Configuration browser startup failure: Invalid environment parameters',
       result.error.format()

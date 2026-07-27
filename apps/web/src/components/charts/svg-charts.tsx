@@ -108,7 +108,7 @@ export function RadarChart({ data }: RadarChartProps) {
     return { x, y };
   });
 
-  const pathD =
+  const _pathD =
     points.reduce((acc, p, idx) => {
       return idx === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`;
     }, '') + ' Z';

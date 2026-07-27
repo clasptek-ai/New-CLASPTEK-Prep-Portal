@@ -1618,7 +1618,6 @@ export class DeploymentDecisionEngine {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private addDomainEvent_internal(_event: DomainEvent): void {
     // Domain events published via integration layer
   }

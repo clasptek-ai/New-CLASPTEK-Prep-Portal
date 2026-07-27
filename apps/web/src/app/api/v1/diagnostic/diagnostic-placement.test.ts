@@ -5,7 +5,6 @@ dotenv.config({ path: path.resolve(process.cwd(), 'apps/web/.env.local') });
 
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
 import { randomUUID } from 'crypto';
-// @ts-ignore
 import { Pool } from 'pg';
 
 describe('Diagnostic Placement Endpoints Integration Tests', () => {

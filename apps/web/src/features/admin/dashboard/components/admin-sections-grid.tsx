@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '../../../../shared/ui/card/Card';
 import { Timeline, TimelineItem } from '../../../../shared/ui/timeline/Timeline';
-import { CheckCircle2, AlertTriangle, ShieldCheck, UserPlus, Bell, FileText } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Bell } from 'lucide-react';
 
 export interface AdminSectionsGridProps {
   notifications: Array<{ id: string; title: string; message: string; severity: string }>;

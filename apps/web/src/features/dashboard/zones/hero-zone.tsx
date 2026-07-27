@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Target, Sparkles, ArrowRight } from 'lucide-react';
+import { Flame, Target, Sparkles } from 'lucide-react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 
 export interface HeroZoneProps {

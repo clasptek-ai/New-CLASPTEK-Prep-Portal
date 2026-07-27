@@ -10,7 +10,7 @@ export interface ActivityFeedWidgetProps {
 }
 
 export const ActivityFeedWidget: React.FC<ActivityFeedWidgetProps> = ({
-  notificationsCount,
+  notificationsCount: _notificationsCount,
   state = 'SUCCESS',
   onRetry,
 }) => {

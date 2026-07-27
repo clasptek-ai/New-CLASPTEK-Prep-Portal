@@ -10,7 +10,6 @@ import {
   Inline,
   Input,
   Select,
-  Badge,
 } from '@clasptek/design-system';
 
 export function PracticeBuilder() {

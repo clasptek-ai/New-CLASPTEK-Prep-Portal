@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Card, Badge } from './ui-components';
-import { Flame, Zap, Award, ShieldCheck, Star } from 'lucide-react';
+import { Flame, Zap, Award, Star } from 'lucide-react';
 
 export interface MotivationData {
   dailyStreak: number;

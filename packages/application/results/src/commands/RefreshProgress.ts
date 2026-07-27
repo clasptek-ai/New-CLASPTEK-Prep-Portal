@@ -50,7 +50,7 @@ export class RefreshProgressHandler {
     else if (overallScore < 60) statusValue = 'AT_RISK';
     else if (overallScore < 70) statusValue = 'NEEDS_ATTENTION';
 
-    let trendValue: 'IMPROVING' | 'STABLE' | 'DECLINING' | 'VOLATILE' = 'STABLE';
+    const trendValue: 'IMPROVING' | 'STABLE' | 'DECLINING' | 'VOLATILE' = 'STABLE';
 
     const summary = new AcademicSummary({
       id: randomUUID(),

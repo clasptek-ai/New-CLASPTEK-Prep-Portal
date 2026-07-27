@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Card, Badge, ProgressBar } from './ui-components';
-import { Target, CheckCircle2 } from 'lucide-react';
+import { Target } from 'lucide-react';
 
 export interface DailyGoalData {
   targetQuestions: number;

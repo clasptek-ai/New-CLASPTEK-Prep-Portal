@@ -24,7 +24,7 @@ export class WrongAnswerQueueEngine {
     studentId: string,
     questionId: string
   ): Promise<{ isResolved: boolean }> {
-    let queue = this.queueRepo ? await this.queueRepo.findByStudentId(studentId) : null;
+    const queue = this.queueRepo ? await this.queueRepo.findByStudentId(studentId) : null;
     if (!queue) return { isResolved: false };
 
     const isResolved = queue.recordMastery(questionId);

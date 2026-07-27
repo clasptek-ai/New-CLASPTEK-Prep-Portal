@@ -6,7 +6,7 @@ import {
   studentNotificationsService,
   NotificationItem,
 } from '../../../services/student/notifications.service';
-import { Bell, Send, CheckCircle2, Megaphone, Users, ShieldCheck, Sparkles } from 'lucide-react';
+import { Bell, Send, CheckCircle2, Megaphone } from 'lucide-react';
 
 export function NotificationsScreen() {
   const [announcements, setAnnouncements] = useState<NotificationItem[]>([]);

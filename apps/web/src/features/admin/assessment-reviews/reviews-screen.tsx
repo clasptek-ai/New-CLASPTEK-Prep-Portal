@@ -7,7 +7,7 @@ import {
   AssessmentReviewAttempt,
   CandidateReviewDetail,
 } from '../../../services/admin/assessment-reviews.service';
-import { CheckCircle2, XCircle, FileText, ArrowLeft } from 'lucide-react';
+import { FileText, ArrowLeft } from 'lucide-react';
 
 export function AssessmentReviewsScreen() {
   const [attempts, setAttempts] = useState<AssessmentReviewAttempt[]>([]);
@@ -42,7 +42,7 @@ export function AssessmentReviewsScreen() {
     }
   }
 
-  function showBanner(msg: string) {
+  function _showBanner(msg: string) {
     setBanner(msg);
     setTimeout(() => setBanner(null), 3000);
   }

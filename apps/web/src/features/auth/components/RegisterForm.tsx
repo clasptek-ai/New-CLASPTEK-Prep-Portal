@@ -10,16 +10,7 @@ import { Input, Button, Card } from '../../../components/ui/ui-components';
 import { LogoBadge } from '../../../shared/ui/logo/LogoBadge';
 import { OnboardingState } from '@/features/onboarding/types/onboarding-state';
 import { adminUsersService } from '../../../services/admin/users.service';
-import {
-  GraduationCap,
-  BookOpen,
-  Globe,
-  Award,
-  Sparkles,
-  CheckCircle2,
-  ArrowRight,
-  ArrowLeft,
-} from 'lucide-react';
+import { CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
 
 const registerStep1Schema = z
   .object({
@@ -96,7 +87,7 @@ export function RegisterForm() {
   // Requirement: Registration Details MUST be 100% empty by default (no pre-filled or placeholder values)
   const {
     register,
-    handleSubmit,
+    handleSubmit: _handleSubmit,
     trigger,
     getValues,
     formState: { errors },

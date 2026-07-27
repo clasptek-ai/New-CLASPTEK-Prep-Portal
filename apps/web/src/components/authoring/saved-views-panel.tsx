@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Button } from '../ui/ui-components';
+import { Card } from '../ui/ui-components';
 
 export interface SavedViewItem {
   id: string;
@@ -10,7 +10,7 @@ export interface SavedViewItem {
 }
 
 export function SavedViewsPanel({ onSelectView }: { onSelectView: (view: SavedViewItem) => void }) {
-  const [views, setViews] = useState<SavedViewItem[]>([
+  const [views, _setViews] = useState<SavedViewItem[]>([
     { id: '1', name: 'My Active Drafts', filters: { author: 'me', status: 'DRAFT' } },
     { id: '2', name: 'Pending Peer Reviews', filters: { status: 'PENDING_REVIEW' } },
     { id: '3', name: 'Published This Week', filters: { status: 'PUBLISHED', date: '7d' } },

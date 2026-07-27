@@ -24,20 +24,11 @@ import {
   AddLessonHandler,
   CreateCurriculumTemplateHandler,
   GetCurriculumHandler,
-  GetLessonHandler,
 } from '@clasptek/application-curriculum';
 import {
-  Curriculum,
-  CurriculumCode,
   CurriculumVersion,
   DependencyVersion,
-  DependencyLock,
-  CurriculumLocale,
-  Translation,
-  LearningModule,
   Lesson,
-  CurriculumTemplate,
-  CurriculumStatus,
   NoCircularLessonDependenciesSpecification,
   LessonPrerequisite,
 } from '@clasptek/domain-curriculum';
@@ -61,7 +52,7 @@ async function main() {
     const moduleRepo = new PostgresLearningModuleRepository(dbPool);
     const lessonRepo = new PostgresCurriculumLessonRepository(dbPool);
     const templateRepo = new PostgresCurriculumTemplateRepository(dbPool);
-    const projectionQuery = new PostgresProjectionQuery(dbPool);
+    const _projectionQuery = new PostgresProjectionQuery(dbPool);
 
     // Instantiate Handlers
     const createCurriculumHandler = new CreateCurriculumHandler(curriculumRepo);
@@ -77,13 +68,13 @@ async function main() {
     const submitCurriculumForReviewHandler = new SubmitCurriculumForReviewHandler(curriculumRepo);
     const approveCurriculumVersionHandler = new ApproveCurriculumVersionHandler(curriculumRepo);
     const archiveCurriculumHandler = new ArchiveCurriculumHandler(curriculumRepo);
-    const restoreCurriculumHandler = new RestoreCurriculumHandler(curriculumRepo);
-    const duplicateCurriculumHandler = new DuplicateCurriculumHandler(curriculumRepo);
+    const _restoreCurriculumHandler = new RestoreCurriculumHandler(curriculumRepo);
+    const _duplicateCurriculumHandler = new DuplicateCurriculumHandler(curriculumRepo);
     const addLearningModuleHandler = new AddLearningModuleHandler(moduleRepo);
     const addLessonHandler = new AddLessonHandler(lessonRepo);
     const createCurriculumTemplateHandler = new CreateCurriculumTemplateHandler(templateRepo);
     const getCurriculumHandler = new GetCurriculumHandler(curriculumRepo);
-    const getLessonHandler = new GetLessonHandler(lessonRepo);
+    const _getLessonHandler = new GetLessonHandler(lessonRepo);
 
     // Cleanup old test data
     console.log('\nCleaning up old smoke test data...');

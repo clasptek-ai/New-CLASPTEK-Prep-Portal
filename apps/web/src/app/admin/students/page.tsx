@@ -4,21 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Badge } from '@/components/ui/ui-components';
 import { adminUsersService, AdminUserRecord } from '@/services/admin/users.service';
 import {
-  Users,
   Search,
   Plus,
   Lock,
   Unlock,
   CheckCircle2,
-  XCircle,
   KeyRound,
-  ShieldAlert,
   UserCheck,
   UserX,
   Mail,
   Phone,
-  BookOpen,
-  Filter,
 } from 'lucide-react';
 
 export default function StudentDirectoryPage() {
