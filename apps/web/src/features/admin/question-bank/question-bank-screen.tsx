@@ -3,106 +3,122 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, Button, Badge } from '../../../components/ui/ui-components';
-import { adminQuestionsService, AdminQuestion } from '../../../services/admin/questions.service';
-import { Plus, Upload, CheckCircle2, Eye, Trash2, Search } from 'lucide-react';
+import {
+  adminQuestionsService,
+  AdminQuestion,
+  QuestionWorkflowStatus,
+  ExamType,
+  SectionType,
+  QuestionType,
+  DifficultyLevel,
+  Passage,
+  MediaAsset,
+  generateQuestionHash,
+} from '../../../services/admin/questions.service';
+import {
+  Plus,
+  Upload,
+  CheckCircle2,
+  Eye,
+  Trash2,
+  Search,
+  BookOpen,
+  Filter,
+  ShieldCheck,
+  FileText,
+  Volume2,
+  Image as ImageIcon,
+  AlertCircle,
+  Clock,
+  Tag,
+  Copy,
+  Layers,
+  ArrowRight,
+  Send,
+  Archive,
+} from 'lucide-react';
 
 export function QuestionBankScreen() {
   const router = useRouter();
   const [questions, setQuestions] = useState<AdminQuestion[]>([]);
+  const [passages, setPassages] = useState<Passage[]>([]);
+  const [mediaList, setMediaList] = useState<MediaAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState<string | null>(null);
 
-  // Filters state
+  // Active View Tab
+  const [activeTab, setActiveTab] = useState<'QUESTIONS' | 'PASSAGES' | 'MEDIA'>('QUESTIONS');
+
+  // Question Workflow Filters
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('ALL');
-  const [selectedType, _setSelectedType] = useState<string>('ALL');
-  const [selectedProgramme, setSelectedProgramme] = useState<string>('ALL');
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [selectedStatus, setSelectedStatus] = useState<QuestionWorkflowStatus | 'ALL'>('ALL');
+  const [selectedExam, setSelectedExam] = useState<ExamType | 'ALL'>('ALL');
+  const [selectedSection, setSelectedSection] = useState<SectionType | 'ALL'>('ALL');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel | 'ALL'>('ALL');
 
-  // Modal states
+  // Modal States
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createPassageModalOpen, setCreatePassageModalOpen] = useState(false);
+  const [createMediaModalOpen, setCreateMediaModalOpen] = useState(false);
   const [previewQuestion, setPreviewQuestion] = useState<AdminQuestion | null>(null);
+  const [previewPassage, setPreviewPassage] = useState<Passage | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
 
-  // Create Form State
+  // Question Form State
+  const [newExam, setNewExam] = useState<ExamType>('IELTS Academic');
+  const [newSection, setNewSection] = useState<SectionType>('Reading');
+  const [newSkill, setNewSkill] = useState('Matching Headings');
+  const [newSubSkill, setNewSubSkill] = useState('');
+  const [newType, setNewType] = useState<QuestionType>('MCQ');
+  const [newDifficulty, setNewDifficulty] = useState<DifficultyLevel>('MEDIUM');
+  const [newEstimatedTime, setNewEstimatedTime] = useState('2 mins');
+  const [newOfficialSource, setNewOfficialSource] = useState('Cambridge 18 Test 1');
   const [newPrompt, setNewPrompt] = useState('');
-  const [newType, setNewType] = useState<'MCQ' | 'ESSAY' | 'SPEAKING'>('MCQ');
-  const [newDifficulty, setNewDifficulty] = useState<'EASY' | 'MEDIUM' | 'HARD'>('MEDIUM');
-  const [newTopic, setNewTopic] = useState('');
-  const [newObjective, setNewObjective] = useState('');
-  const [newProgramme, setNewProgramme] = useState('IELTS Academic');
-  const [newCategory, setNewCategory] = useState<'MOCK' | 'ASSESSMENT'>('MOCK');
+  const [newOptionA, setNewOptionA] = useState('');
+  const [newOptionB, setNewOptionB] = useState('');
+  const [newOptionC, setNewOptionC] = useState('');
+  const [newOptionD, setNewOptionD] = useState('');
+  const [newCorrectAnswer, setNewCorrectAnswer] = useState('');
+  const [newExplanation, setNewExplanation] = useState('');
+  const [newHints, setNewHints] = useState('');
+  const [newSelectedPassageId, setNewSelectedPassageId] = useState('');
+  const [newAudioUrl, setNewAudioUrl] = useState('');
+  const [newImageUrl, setNewImageUrl] = useState('');
+  const [newTags, setNewTags] = useState('IELTS, Reading, Headings');
+
+  // Passage Form State
+  const [pasTitle, setPasTitle] = useState('');
+  const [pasExam, setPasExam] = useState<ExamType>('IELTS Academic');
+  const [pasSection, setPasSection] = useState<SectionType>('Reading');
+  const [pasSource, setPasSource] = useState('Cambridge 18');
+  const [pasContent, setPasContent] = useState('');
+
+  // Media Form State
+  const [medTitle, setMedTitle] = useState('');
+  const [medType, setMedType] = useState<'IMAGE' | 'AUDIO' | 'PDF'>('AUDIO');
+  const [medUrl, setMedUrl] = useState('');
+  const [medExam, setMedExam] = useState<ExamType>('IELTS Academic');
+  const [medTags, setMedTags] = useState('Listening, Audio');
 
   useEffect(() => {
-    async function load() {
-      setLoading(true);
-      try {
-        const data = await adminQuestionsService.getPendingQuestions();
-        setQuestions(data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
+    loadData();
   }, []);
 
-  async function handleApprove(id: string) {
-    const success = await adminQuestionsService.approveQuestion(id);
-    if (success) {
-      setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, status: 'PUBLISHED' } : q)));
-      showBanner('Question approved & published to candidate banks!');
+  async function loadData() {
+    setLoading(true);
+    try {
+      const qData = await adminQuestionsService.getQuestions();
+      const pData = await adminQuestionsService.getPassages();
+      const mData = await adminQuestionsService.getMedia();
+      setQuestions(qData);
+      setPassages(pData);
+      setMediaList(mData);
+    } catch (e) {
+      console.error('Failed to load question bank datasets', e);
+    } finally {
+      setLoading(false);
     }
-  }
-
-  async function handleReject(id: string) {
-    const success = await adminQuestionsService.rejectQuestion(
-      id,
-      'Fails curriculum modifiers specifications.'
-    );
-    if (success) {
-      setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, status: 'ARCHIVED' } : q)));
-      showBanner('Question rejected & archived.');
-    }
-  }
-
-  function handleDelete(id: string) {
-    setQuestions((prev) => prev.filter((q) => q.id !== id));
-    setDeleteConfirmId(null);
-    if (previewQuestion?.id === id) setPreviewQuestion(null);
-    showBanner('Question removed from Question Bank database.');
-  }
-
-  async function handleCreateQuestion(e: React.FormEvent) {
-    e.preventDefault();
-    if (!newPrompt.trim() || !newTopic.trim()) return;
-
-    const created: AdminQuestion = {
-      id: `q-custom-${Date.now()}`,
-      text: newPrompt,
-      type: newType,
-      difficulty: newDifficulty,
-      status: 'APPROVED',
-      topic: newTopic,
-      learningObjective: newObjective || 'General Proficiency Assessment',
-      programmeName: newProgramme,
-      category: newCategory,
-    };
-
-    await adminQuestionsService.addQuestion(created);
-    setQuestions((prev) => [created, ...prev]);
-    setCreateModalOpen(false);
-    resetForm();
-    showBanner(
-      `New question created for ${newProgramme} (${newCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'})!`
-    );
-  }
-
-  function resetForm() {
-    setNewPrompt('');
-    setNewTopic('');
-    setNewObjective('');
   }
 
   function showBanner(msg: string) {
@@ -110,228 +126,495 @@ export function QuestionBankScreen() {
     setTimeout(() => setBanner(null), 3500);
   }
 
-  // Filtered List
-  const filteredQuestions = questions.filter((q) => {
-    const matchesSearch =
-      q.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      q.topic.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDifficulty = selectedDifficulty === 'ALL' || q.difficulty === selectedDifficulty;
-    const matchesType = selectedType === 'ALL' || q.type === selectedType;
-    const matchesProgramme = selectedProgramme === 'ALL' || q.programmeName === selectedProgramme;
-    const matchesCategory = selectedCategory === 'ALL' || q.category === selectedCategory;
+  // Question Workflow State Updates
+  async function handleStatusChange(id: string, newStatus: QuestionWorkflowStatus) {
+    await adminQuestionsService.updateQuestionStatus(id, newStatus);
+    setQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, status: newStatus } : q)));
+    showBanner(`Question status updated to ${newStatus}!`);
+  }
 
-    return matchesSearch && matchesDifficulty && matchesType && matchesProgramme && matchesCategory;
+  async function handleDeleteQuestion(id: string) {
+    await adminQuestionsService.deleteQuestion(id);
+    setQuestions((prev) => prev.filter((q) => q.id !== id));
+    setDeleteConfirmId(null);
+    if (previewQuestion?.id === id) setPreviewQuestion(null);
+    showBanner('Question deleted from Question Bank.');
+  }
+
+  // Duplicate Check on Prompt Change
+  function checkDuplicatePrompt(text: string, exam: ExamType, type: QuestionType) {
+    if (!text.trim()) {
+      setDuplicateWarning(null);
+      return;
+    }
+    const hash = generateQuestionHash(text, exam, type);
+    const exists = questions.find((q) => q.hash === hash);
+    if (exists) {
+      setDuplicateWarning(
+        `Duplicate Warning: A question with matching prompt already exists (${exists.code} - ${exists.exam}).`
+      );
+    } else {
+      setDuplicateWarning(null);
+    }
+  }
+
+  async function handleCreateQuestion(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newPrompt.trim() || !newCorrectAnswer.trim()) return;
+
+    const options = [newOptionA, newOptionB, newOptionC, newOptionD].filter(Boolean);
+    const distractors = options.filter((opt) => opt !== newCorrectAnswer);
+
+    const selectedPassage = passages.find((p) => p.id === newSelectedPassageId);
+
+    const res = await adminQuestionsService.addQuestion({
+      exam: newExam,
+      section: newSection,
+      skill: newSkill,
+      subSkill: newSubSkill,
+      type: newType,
+      difficulty: newDifficulty,
+      status: 'DRAFT',
+      estimatedTime: newEstimatedTime,
+      officialSource: newOfficialSource,
+      text: newPrompt,
+      options,
+      correctAnswer: newCorrectAnswer,
+      distractors,
+      explanation: newExplanation,
+      hints: newHints ? newHints.split(',').map((h) => h.trim()) : [],
+      passageId: newSelectedPassageId || undefined,
+      passageTitle: selectedPassage?.title || undefined,
+      audioUrl: newAudioUrl || undefined,
+      imageUrl: newImageUrl || undefined,
+      tags: newTags.split(',').map((t) => t.trim()),
+    });
+
+    if (res.duplicate) {
+      setDuplicateWarning('Cannot create: Duplicate question already exists in repository.');
+      return;
+    }
+
+    setCreateModalOpen(false);
+    resetQuestionForm();
+    await loadData();
+    showBanner(`New question created in DRAFT status!`);
+  }
+
+  async function handleCreatePassage(e: React.FormEvent) {
+    e.preventDefault();
+    if (!pasTitle.trim() || !pasContent.trim()) return;
+
+    await adminQuestionsService.addPassage({
+      title: pasTitle,
+      examType: pasExam,
+      section: pasSection,
+      source: pasSource,
+      content: pasContent,
+    });
+
+    setCreatePassageModalOpen(false);
+    setPasTitle('');
+    setPasContent('');
+    await loadData();
+    showBanner('New Passage added to repository!');
+  }
+
+  async function handleCreateMedia(e: React.FormEvent) {
+    e.preventDefault();
+    if (!medTitle.trim() || !medUrl.trim()) return;
+
+    await adminQuestionsService.addMedia({
+      title: medTitle,
+      type: medType,
+      url: medUrl,
+      examType: medExam,
+      tags: medTags.split(',').map((t) => t.trim()),
+    });
+
+    setCreateMediaModalOpen(false);
+    setMedTitle('');
+    setMedUrl('');
+    await loadData();
+    showBanner('New Media asset registered in Library!');
+  }
+
+  function resetQuestionForm() {
+    setNewPrompt('');
+    setNewOptionA('');
+    setNewOptionB('');
+    setNewOptionC('');
+    setNewOptionD('');
+    setNewCorrectAnswer('');
+    setNewExplanation('');
+    setNewHints('');
+    setNewSelectedPassageId('');
+    setNewAudioUrl('');
+    setNewImageUrl('');
+    setDuplicateWarning(null);
+  }
+
+  // Filtered Questions
+  const filteredQuestions = questions.filter((q) => {
+    const matchesStatus = selectedStatus === 'ALL' || q.status === selectedStatus;
+    const matchesExam =
+      selectedExam === 'ALL' || q.exam === selectedExam || q.programmeName === selectedExam;
+    const matchesSection = selectedSection === 'ALL' || q.section === selectedSection;
+    const matchesDifficulty = selectedDifficulty === 'ALL' || q.difficulty === selectedDifficulty;
+    const matchesSearch =
+      !searchQuery.trim() ||
+      q.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      q.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      q.skill.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (q.tags && q.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())));
+
+    return matchesStatus && matchesExam && matchesSection && matchesDifficulty && matchesSearch;
   });
 
-  if (loading) {
-    return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-        <h3>Loading Question Bank Registry...</h3>
-      </div>
-    );
-  }
+  // Workflow Status Counts
+  const counts = {
+    ALL: questions.length,
+    DRAFT: questions.filter((q) => q.status === 'DRAFT').length,
+    UNDER_REVIEW: questions.filter((q) => q.status === 'UNDER_REVIEW').length,
+    APPROVED: questions.filter((q) => q.status === 'APPROVED').length,
+    PUBLISHED: questions.filter((q) => q.status === 'PUBLISHED').length,
+    ARCHIVED: questions.filter((q) => q.status === 'ARCHIVED').length,
+  };
+
+  const getStatusBadgeVariant = (st: QuestionWorkflowStatus) => {
+    switch (st) {
+      case 'PUBLISHED':
+        return 'success';
+      case 'APPROVED':
+        return 'info';
+      case 'UNDER_REVIEW':
+        return 'warning';
+      case 'DRAFT':
+        return 'neutral';
+      case 'ARCHIVED':
+        return 'danger';
+      default:
+        return 'neutral';
+    }
+  };
 
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '2rem',
-        width: '100%',
-        boxSizing: 'border-box',
+        gap: '1.75rem',
+        color: '#f8fafc',
+        fontFamily: 'Inter, system-ui, sans-serif',
       }}
     >
-      {/* Top Header & Actions Bar */}
+      {/* Toast Banner */}
+      {banner && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            backgroundColor: '#10b981',
+            color: '#ffffff',
+            padding: '0.85rem 1.35rem',
+            borderRadius: '10px',
+            fontWeight: 700,
+            boxShadow: '0 10px 25px rgba(0,0,0,0.4)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+          }}
+        >
+          <CheckCircle2 size={18} />
+          {banner}
+        </div>
+      )}
+
+      {/* Header Bar */}
       <div
         style={{
           display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
           justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
           gap: '1rem',
         }}
       >
         <div>
-          <h1
+          <div
             style={{
-              margin: 0,
-              fontSize: '1.75rem',
-              fontWeight: 800,
-              color: '#f8fafc',
-              letterSpacing: '-0.02em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              marginBottom: '0.35rem',
             }}
           >
-            Question Bank Management
-          </h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
-            Author, audit, filter by Programme and Assessment Target (Mock vs Diagnostic), and
-            publish items.
+            <div
+              style={{
+                backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                padding: '0.5rem',
+                borderRadius: '8px',
+                color: '#3b82f6',
+              }}
+            >
+              <ShieldCheck size={24} />
+            </div>
+            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
+              Universal Question Bank
+            </h1>
+          </div>
+          <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: 0 }}>
+            Curate, review, and publish candidate exam items for IELTS, TOEFL, SAT, CELPIP & English
+            Proficiency.
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <Button
-            variant="secondary"
+            variant="outline"
             onClick={() => router.push('/admin/question-bank/import')}
-            style={{ gap: '0.5rem', display: 'flex', alignItems: 'center' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
-            <Upload size={16} color="#fbbf24" />
-            <span>Import Centre (CSV/ZIP)</span>
+            <Upload size={16} />
+            Bulk Import (CSV/JSON)
           </Button>
 
           <Button
             variant="primary"
             onClick={() => setCreateModalOpen(true)}
-            style={{
-              backgroundColor: '#2563eb',
-              color: '#ffffff',
-              gap: '0.5rem',
-              display: 'flex',
-              alignItems: 'center',
-            }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
             <Plus size={16} />
-            <span>Create New Question</span>
+            Add New Question
           </Button>
         </div>
       </div>
 
-      {banner && (
-        <div
+      {/* Repository Mode Selector: Questions | Passages | Media Library */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          paddingBottom: '0.5rem',
+        }}
+      >
+        <button
+          onClick={() => setActiveTab('QUESTIONS')}
           style={{
-            padding: '0.85rem 1.25rem',
-            backgroundColor: 'rgba(16, 185, 129, 0.15)',
-            border: '1px solid rgba(16, 185, 129, 0.35)',
+            padding: '0.6rem 1.2rem',
             borderRadius: '8px',
-            color: '#34d399',
+            border: 'none',
+            backgroundColor: activeTab === 'QUESTIONS' ? '#2563eb' : 'transparent',
+            color: activeTab === 'QUESTIONS' ? '#ffffff' : '#94a3b8',
+            fontWeight: 700,
             fontSize: '0.875rem',
-            fontWeight: 600,
+            cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
           }}
         >
-          <CheckCircle2 size={18} />
-          <span>{banner}</span>
-        </div>
-      )}
+          <Layers size={16} />
+          Question Repository ({questions.length})
+        </button>
 
-      {/* Filter & Search Toolbar with Programme & Category Selection */}
-      <Card
-        style={{
-          padding: '1.25rem',
-          borderRadius: '14px',
-          backgroundColor: '#151d30',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-        }}
-      >
-        <div
+        <button
+          onClick={() => setActiveTab('PASSAGES')}
           style={{
+            padding: '0.6rem 1.2rem',
+            borderRadius: '8px',
+            border: 'none',
+            backgroundColor: activeTab === 'PASSAGES' ? '#2563eb' : 'transparent',
+            color: activeTab === 'PASSAGES' ? '#ffffff' : '#94a3b8',
+            fontWeight: 700,
+            fontSize: '0.875rem',
+            cursor: 'pointer',
             display: 'flex',
-            flexWrap: 'wrap',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
+            gap: '0.5rem',
           }}
         >
+          <BookOpen size={16} />
+          Passage Manager ({passages.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('MEDIA')}
+          style={{
+            padding: '0.6rem 1.2rem',
+            borderRadius: '8px',
+            border: 'none',
+            backgroundColor: activeTab === 'MEDIA' ? '#2563eb' : 'transparent',
+            color: activeTab === 'MEDIA' ? '#ffffff' : '#94a3b8',
+            fontWeight: 700,
+            fontSize: '0.875rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
+          <Volume2 size={16} />
+          Media Library ({mediaList.length})
+        </button>
+      </div>
+
+      {/* VIEW TAB 1: QUESTION REPOSITORY */}
+      {activeTab === 'QUESTIONS' && (
+        <>
+          {/* Approval Workflow Tabs */}
           <div
             style={{
               display: 'flex',
-              alignItems: 'center',
-              gap: '0.6rem',
-              backgroundColor: '#0f172a',
-              border: '1px solid #1e293b',
-              borderRadius: '8px',
-              padding: '0.45rem 0.85rem',
-              flex: 1,
-              minWidth: '220px',
+              gap: '0.5rem',
+              overflowX: 'auto',
+              paddingBottom: '0.25rem',
             }}
           >
-            <Search size={16} color="#94a3b8" />
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search prompts, topics..."
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#f8fafc',
-                outline: 'none',
-                width: '100%',
-                fontSize: '0.875rem',
-              }}
-            />
+            {(['ALL', 'DRAFT', 'UNDER_REVIEW', 'APPROVED', 'PUBLISHED', 'ARCHIVED'] as const).map(
+              (st) => (
+                <button
+                  key={st}
+                  onClick={() => setSelectedStatus(st)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    borderRadius: '20px',
+                    border: '1px solid',
+                    borderColor: selectedStatus === st ? '#3b82f6' : 'rgba(255, 255, 255, 0.08)',
+                    backgroundColor: selectedStatus === st ? 'rgba(59, 130, 246, 0.15)' : '#111827',
+                    color: selectedStatus === st ? '#60a5fa' : '#94a3b8',
+                    fontSize: '0.8rem',
+                    fontWeight: selectedStatus === st ? 700 : 500,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <span>{st.replace('_', ' ')}</span>
+                  <span
+                    style={{
+                      padding: '0.1rem 0.45rem',
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    {counts[st]}
+                  </span>
+                </button>
+              )
+            )}
           </div>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.85rem' }}>
-            {/* Programme Filter */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>
-                Programme:
-              </span>
-              <select
-                value={selectedProgramme}
-                onChange={(e) => setSelectedProgramme(e.target.value)}
+          {/* Filter Toolbar */}
+          <Card
+            style={{
+              padding: '1rem 1.25rem',
+              backgroundColor: '#111827',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '12px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            {/* Search Input */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                flex: 1,
+                minWidth: '240px',
+              }}
+            >
+              <Search size={16} color="#94a3b8" />
+              <input
+                type="text"
+                placeholder="Search by text, code (e.g. IELTS-RD-001), skill, or tags..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
-                  padding: '0.45rem 0.75rem',
-                  borderRadius: '6px',
-                  backgroundColor: '#0f172a',
-                  border: '1px solid #1e293b',
-                  color: '#38bdf8',
-                  fontSize: '0.825rem',
-                  fontWeight: 700,
+                  width: '100%',
+                  backgroundColor: '#1e293b',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  padding: '0.5rem 0.75rem',
+                  color: '#ffffff',
+                  fontSize: '0.85rem',
+                  outline: 'none',
+                }}
+              />
+            </div>
+
+            {/* Dropdown Filters */}
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              {/* Exam Filter */}
+              <select
+                value={selectedExam}
+                onChange={(e) => setSelectedExam(e.target.value as ExamType | 'ALL')}
+                style={{
+                  backgroundColor: '#1e293b',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  padding: '0.5rem 0.75rem',
+                  color: '#ffffff',
+                  fontSize: '0.85rem',
+                  outline: 'none',
                 }}
               >
-                <option value="ALL">All Programmes</option>
-                <option value="General (All Programmes)">General (All Programmes)</option>
+                <option value="ALL">All Exams</option>
                 <option value="IELTS Academic">IELTS Academic</option>
-                <option value="IELTS General Training">IELTS General</option>
+                <option value="IELTS General Training">IELTS General Training</option>
                 <option value="TOEFL iBT">TOEFL iBT</option>
                 <option value="SAT">SAT</option>
                 <option value="CELPIP">CELPIP</option>
                 <option value="English Proficiency">English Proficiency</option>
               </select>
-            </div>
 
-            {/* Target Category Filter */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>
-                Target Category:
-              </span>
+              {/* Section Filter */}
               <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                value={selectedSection}
+                onChange={(e) => setSelectedSection(e.target.value as SectionType | 'ALL')}
                 style={{
-                  padding: '0.45rem 0.75rem',
-                  borderRadius: '6px',
-                  backgroundColor: '#0f172a',
-                  border: '1px solid #1e293b',
-                  color: '#a78bfa',
-                  fontSize: '0.825rem',
-                  fontWeight: 700,
+                  backgroundColor: '#1e293b',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  padding: '0.5rem 0.75rem',
+                  color: '#ffffff',
+                  fontSize: '0.85rem',
+                  outline: 'none',
                 }}
               >
-                <option value="ALL">All Categories</option>
-                <option value="MOCK">🎓 Official Mock Exams</option>
-                <option value="ASSESSMENT">📝 Skill Assessments</option>
+                <option value="ALL">All Sections</option>
+                <option value="Reading">Reading</option>
+                <option value="Listening">Listening</option>
+                <option value="Writing">Writing</option>
+                <option value="Speaking">Speaking</option>
+                <option value="Math">Math</option>
+                <option value="Grammar">Grammar</option>
               </select>
-            </div>
 
-            {/* Difficulty Filter */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>
-                Difficulty:
-              </span>
+              {/* Difficulty Filter */}
               <select
                 value={selectedDifficulty}
-                onChange={(e) => setSelectedDifficulty(e.target.value)}
+                onChange={(e) => setSelectedDifficulty(e.target.value as DifficultyLevel | 'ALL')}
                 style={{
-                  padding: '0.45rem 0.75rem',
-                  borderRadius: '6px',
-                  backgroundColor: '#0f172a',
-                  border: '1px solid #1e293b',
-                  color: '#f8fafc',
-                  fontSize: '0.825rem',
+                  backgroundColor: '#1e293b',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  padding: '0.5rem 0.75rem',
+                  color: '#ffffff',
+                  fontSize: '0.85rem',
+                  outline: 'none',
                 }}
               >
                 <option value="ALL">All Difficulties</option>
@@ -340,159 +623,363 @@ export function QuestionBankScreen() {
                 <option value="HARD">Hard</option>
               </select>
             </div>
-          </div>
-        </div>
-      </Card>
+          </Card>
 
-      {/* Question Table List */}
-      <Card
-        style={{
-          padding: '1.25rem',
-          borderRadius: '16px',
-          backgroundColor: '#151d30',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-        }}
-      >
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontSize: '0.875rem',
-            color: '#f8fafc',
-          }}
-        >
-          <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', textAlign: 'left' }}>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Question Prompt</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Programme</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Category</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Difficulty</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Status</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8', textAlign: 'right' }}>
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredQuestions.length === 0 ? (
-              <tr>
-                <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
-                  No questions match your programme & category filter criteria.
-                </td>
-              </tr>
-            ) : (
-              filteredQuestions.map((q) => (
-                <tr key={q.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
-                  <td style={{ padding: '0.85rem 1rem', maxWidth: '340px' }}>
-                    <div
-                      style={{
-                        fontWeight: 600,
-                        color: '#f8fafc',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      {q.text}
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
-                      Topic: {q.topic} | Type: {q.type}
-                    </div>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <Badge variant="info">{q.programmeName || 'IELTS Academic'}</Badge>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <Badge variant={q.category === 'MOCK' ? 'primary' : 'neutral'}>
-                      {q.category === 'MOCK' ? '🎓 MOCK' : '📝 ASSESSMENT'}
-                    </Badge>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <Badge
-                      variant={
-                        q.difficulty === 'HARD'
-                          ? 'danger'
-                          : q.difficulty === 'MEDIUM'
-                            ? 'warning'
-                            : 'success'
-                      }
-                    >
-                      {q.difficulty}
-                    </Badge>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <Badge
-                      variant={
-                        q.status === 'PUBLISHED' || q.status === 'APPROVED'
-                          ? 'success'
-                          : q.status === 'ARCHIVED'
-                            ? 'danger'
-                            : 'warning'
-                      }
-                    >
-                      {q.status}
-                    </Badge>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
-                    <div style={{ display: 'inline-flex', gap: '0.4rem' }}>
-                      <Button
-                        variant="secondary"
-                        onClick={() => setPreviewQuestion(q)}
+          {/* Question List Table */}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
+              Loading Question Bank datasets...
+            </div>
+          ) : filteredQuestions.length === 0 ? (
+            <Card style={{ padding: '3rem', textAlign: 'center', backgroundColor: '#111827' }}>
+              <AlertCircle size={36} color="#64748b" style={{ margin: '0 auto 1rem' }} />
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#ffffff' }}>
+                No questions found
+              </h3>
+              <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>
+                No question items match your selected workflow filters.
+              </p>
+            </Card>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {filteredQuestions.map((q) => (
+                <Card
+                  key={q.id}
+                  style={{
+                    padding: '1.25rem',
+                    backgroundColor: '#111827',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.85rem',
+                  }}
+                >
+                  {/* Top Line Meta: Code, Exam, Section, Status */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '0.5rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <span
                         style={{
-                          padding: '0.35rem 0.6rem',
+                          fontFamily: 'monospace',
+                          fontSize: '0.85rem',
+                          fontWeight: 700,
+                          backgroundColor: '#1e293b',
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '4px',
+                          color: '#38bdf8',
+                        }}
+                      >
+                        {q.code || q.id}
+                      </span>
+                      <Badge variant="info">{q.exam || q.programmeName || 'IELTS'}</Badge>
+                      <Badge variant="neutral">{q.section || 'General'}</Badge>
+                      <span
+                        style={{
                           fontSize: '0.75rem',
-                          gap: '0.3rem',
+                          color: '#94a3b8',
                           display: 'flex',
                           alignItems: 'center',
+                          gap: '0.3rem',
                         }}
+                      >
+                        <Clock size={12} /> {q.estimatedTime || '2 mins'}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <Badge variant={getStatusBadgeVariant(q.status)}>{q.status}</Badge>
+                      <Badge
+                        variant={
+                          q.difficulty === 'HARD'
+                            ? 'danger'
+                            : q.difficulty === 'MEDIUM'
+                              ? 'warning'
+                              : 'success'
+                        }
+                      >
+                        {q.difficulty}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {/* Question Prompt */}
+                  <div
+                    style={{
+                      fontSize: '0.95rem',
+                      fontWeight: 600,
+                      color: '#f8fafc',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {q.text}
+                  </div>
+
+                  {/* Passage Title if attached */}
+                  {q.passageTitle && (
+                    <div
+                      style={{
+                        fontSize: '0.8rem',
+                        color: '#cbd5e1',
+                        backgroundColor: '#161e2e',
+                        padding: '0.4rem 0.75rem',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                      }}
+                    >
+                      <BookOpen size={14} color="#38bdf8" />
+                      Attached Passage: <strong>{q.passageTitle}</strong>
+                    </div>
+                  )}
+
+                  {/* Footer Actions & Metadata */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '0.75rem',
+                      paddingTop: '0.5rem',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                    }}
+                  >
+                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      Skill: <strong>{q.skill || q.topic}</strong> | Source:{' '}
+                      <strong>{q.officialSource || 'Clasptek Bank'}</strong>
+                    </div>
+
+                    {/* Workflow Transition Buttons */}
+                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPreviewQuestion(q)}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}
                       >
                         <Eye size={14} /> Preview
                       </Button>
 
-                      {q.status === 'PENDING_REVIEW' && (
-                        <>
-                          <Button
-                            variant="primary"
-                            onClick={() => handleApprove(q.id)}
-                            style={{
-                              backgroundColor: '#10b981',
-                              padding: '0.35rem 0.6rem',
-                              fontSize: '0.75rem',
-                            }}
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            variant="secondary"
-                            onClick={() => handleReject(q.id)}
-                            style={{
-                              color: '#f87171',
-                              padding: '0.35rem 0.6rem',
-                              fontSize: '0.75rem',
-                            }}
-                          >
-                            Reject
-                          </Button>
-                        </>
+                      {q.status === 'DRAFT' && (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleStatusChange(q.id, 'UNDER_REVIEW')}
+                        >
+                          Submit for Review
+                        </Button>
+                      )}
+
+                      {q.status === 'UNDER_REVIEW' && (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => handleStatusChange(q.id, 'APPROVED')}
+                        >
+                          Approve Item
+                        </Button>
+                      )}
+
+                      {q.status === 'APPROVED' && (
+                        <Button
+                          variant="success"
+                          size="sm"
+                          onClick={() => handleStatusChange(q.id, 'PUBLISHED')}
+                        >
+                          Publish to Mocks
+                        </Button>
+                      )}
+
+                      {q.status !== 'ARCHIVED' && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleStatusChange(q.id, 'ARCHIVED')}
+                          style={{ color: '#ef4444' }}
+                        >
+                          Archive
+                        </Button>
                       )}
 
                       <Button
-                        variant="secondary"
+                        variant="ghost"
+                        size="sm"
                         onClick={() => setDeleteConfirmId(q.id)}
-                        style={{ color: '#ef4444', padding: '0.35rem 0.5rem' }}
+                        style={{ color: '#64748b' }}
                       >
                         <Trash2 size={14} />
                       </Button>
                     </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </Card>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </>
+      )}
 
-      {/* CREATE NEW QUESTION MODAL WITH PROGRAMME AND CATEGORY SELECTORS */}
+      {/* VIEW TAB 2: PASSAGE MANAGER */}
+      {activeTab === 'PASSAGES' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
+              Passage Repository (1 Passage ➔ Many Questions)
+            </h2>
+            <Button
+              variant="primary"
+              onClick={() => setCreatePassageModalOpen(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              <Plus size={16} /> Add New Passage
+            </Button>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '1rem',
+            }}
+          >
+            {passages.map((pas) => (
+              <Card
+                key={pas.id}
+                style={{
+                  padding: '1.25rem',
+                  backgroundColor: '#111827',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                  }}
+                >
+                  <span style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff' }}>
+                    {pas.title}
+                  </span>
+                  <Badge variant="info">{pas.examType}</Badge>
+                </div>
+
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                  Source: <strong>{pas.source || 'Standard'}</strong> | Words:{' '}
+                  <strong>{pas.wordCount}</strong>
+                </div>
+
+                <p
+                  style={{
+                    fontSize: '0.85rem',
+                    color: '#cbd5e1',
+                    lineHeight: 1.5,
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {pas.content}
+                </p>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPreviewPassage(pas)}
+                  style={{ marginTop: 'auto' }}
+                >
+                  View Passage Details
+                </Button>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* VIEW TAB 3: MEDIA LIBRARY */}
+      {activeTab === 'MEDIA' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
+              Reusable Media Library (Audio & Diagrams)
+            </h2>
+            <Button
+              variant="primary"
+              onClick={() => setCreateMediaModalOpen(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            >
+              <Plus size={16} /> Register Media Asset
+            </Button>
+          </div>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '1rem',
+            }}
+          >
+            {mediaList.map((med) => (
+              <Card
+                key={med.id}
+                style={{
+                  padding: '1.25rem',
+                  backgroundColor: '#111827',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  {med.type === 'AUDIO' ? (
+                    <Volume2 size={20} color="#38bdf8" />
+                  ) : (
+                    <ImageIcon size={20} color="#10b981" />
+                  )}
+                  <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff' }}>
+                    {med.title}
+                  </span>
+                </div>
+
+                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+                  Exam: <strong>{med.examType}</strong> | Size: <strong>{med.sizeMb}</strong>
+                </div>
+
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    fontFamily: 'monospace',
+                    color: '#60a5fa',
+                    backgroundColor: '#161e2e',
+                    padding: '0.4rem',
+                    borderRadius: '4px',
+                    wordBreak: 'break-all',
+                  }}
+                >
+                  {med.url}
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 1: CREATE UNIVERSAL QUESTION */}
       {createModalOpen && (
         <div
           style={{
@@ -501,83 +988,78 @@ export function QuestionBankScreen() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(2, 6, 23, 0.8)',
+            backgroundColor: 'rgba(0,0,0,0.8)',
             display: 'flex',
-            justifyContent: 'center',
             alignItems: 'center',
-            zIndex: 100,
-            padding: '1.5rem',
+            justifyContent: 'center',
+            zIndex: 999,
+            padding: '1rem',
           }}
-          onClick={() => setCreateModalOpen(false)}
         >
           <div
             style={{
+              maxWidth: '750px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
               backgroundColor: '#111827',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '16px',
-              maxWidth: '620px',
-              width: '100%',
-              padding: '2rem',
-              boxSizing: 'border-box',
+              padding: '1.75rem',
             }}
-            onClick={(e) => e.stopPropagation()}
           >
-            <div
+            <h2
               style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '1.5rem',
+                fontSize: '1.25rem',
+                fontWeight: 800,
+                color: '#ffffff',
+                marginBottom: '1.25rem',
               }}
             >
-              <h2 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>
-                Create New Assessment Question
-              </h2>
-              <button
-                onClick={() => setCreateModalOpen(false)}
+              Create Universal Question Item
+            </h2>
+
+            {duplicateWarning && (
+              <div
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#94a3b8',
-                  fontSize: '1.2rem',
-                  cursor: 'pointer',
+                  backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid #ef4444',
+                  color: '#fca5a5',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '8px',
+                  fontSize: '0.85rem',
+                  marginBottom: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
                 }}
               >
-                ✕
-              </button>
-            </div>
+                <AlertCircle size={16} />
+                {duplicateWarning}
+              </div>
+            )}
 
             <form
               onSubmit={handleCreateQuestion}
-              style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
             >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Target Programme *
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
+                    Target Exam
                   </label>
                   <select
-                    value={newProgramme}
-                    onChange={(e) => setNewProgramme(e.target.value)}
+                    value={newExam}
+                    onChange={(e) => setNewExam(e.target.value as ExamType)}
                     style={{
                       width: '100%',
-                      padding: '0.55rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#161e2e',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                      fontSize: '0.825rem',
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
                     }}
                   >
-                    <option value="General (All Programmes)">General (All Programmes)</option>
                     <option value="IELTS Academic">IELTS Academic</option>
                     <option value="IELTS General Training">IELTS General Training</option>
                     <option value="TOEFL iBT">TOEFL iBT</option>
@@ -588,131 +1070,90 @@ export function QuestionBankScreen() {
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Assessment Target Category *
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
+                    Section
                   </label>
                   <select
-                    value={newCategory}
-                    onChange={(e) => {
-                      const cat = e.target.value as 'MOCK' | 'ASSESSMENT';
-                      setNewCategory(cat);
-                      if (cat === 'ASSESSMENT') {
-                        setNewProgramme('General (All Programmes)');
-                      }
-                    }}
+                    value={newSection}
+                    onChange={(e) => setNewSection(e.target.value as SectionType)}
                     style={{
                       width: '100%',
-                      padding: '0.55rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#161e2e',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                      fontSize: '0.825rem',
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
                     }}
                   >
-                    <option value="ASSESSMENT">
-                      📝 Skill Assessment (General for All Programmes)
-                    </option>
-                    <option value="MOCK">🎓 Official Mock Exam (Programme Specific)</option>
+                    <option value="Reading">Reading</option>
+                    <option value="Listening">Listening</option>
+                    <option value="Writing">Writing</option>
+                    <option value="Speaking">Speaking</option>
+                    <option value="Math">Math</option>
+                    <option value="Grammar">Grammar</option>
                   </select>
                 </div>
-              </div>
 
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    color: '#cbd5e1',
-                    marginBottom: '0.35rem',
-                  }}
-                >
-                  Question Prompt Text *
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={newPrompt}
-                  onChange={(e) => setNewPrompt(e.target.value)}
-                  placeholder="Enter the full question prompt..."
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#161e2e',
-                    border: '1px solid #1e293b',
-                    color: '#ffffff',
-                    outline: 'none',
-                    fontSize: '0.875rem',
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.85rem' }}>
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Type
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
+                    Question Type
                   </label>
                   <select
                     value={newType}
-                    onChange={(e) => setNewType(e.target.value as any)}
+                    onChange={(e) => setNewType(e.target.value as QuestionType)}
                     style={{
                       width: '100%',
-                      padding: '0.55rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#161e2e',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                      fontSize: '0.825rem',
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
                     }}
                   >
-                    <option value="MCQ">MCQ</option>
-                    <option value="ESSAY">Essay</option>
-                    <option value="SPEAKING">Speaking</option>
+                    <option value="MCQ">Multiple Choice (MCQ)</option>
+                    <option value="FILL_IN_BLANK">Fill in Blank</option>
+                    <option value="ESSAY">Essay Response</option>
+                    <option value="SPEAKING">Speaking Prompt</option>
+                    <option value="TRUE_FALSE_NOT_GIVEN">True / False / Not Given</option>
                   </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
+                    Skill
+                  </label>
+                  <input
+                    type="text"
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                    placeholder="e.g. Matching Headings"
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
+                    }}
+                  />
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
                     Difficulty
                   </label>
                   <select
                     value={newDifficulty}
-                    onChange={(e) => setNewDifficulty(e.target.value as any)}
+                    onChange={(e) => setNewDifficulty(e.target.value as DifficultyLevel)}
                     style={{
                       width: '100%',
-                      padding: '0.55rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#161e2e',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                      fontSize: '0.825rem',
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
                     }}
                   >
                     <option value="EASY">Easy</option>
@@ -722,34 +1163,149 @@ export function QuestionBankScreen() {
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Topic
+                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
+                    Attach Passage
                   </label>
-                  <input
-                    required
-                    value={newTopic}
-                    onChange={(e) => setNewTopic(e.target.value)}
-                    placeholder="e.g. Grammar Syntax"
+                  <select
+                    value={newSelectedPassageId}
+                    onChange={(e) => setNewSelectedPassageId(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: '0.55rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#161e2e',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                      fontSize: '0.825rem',
-                      boxSizing: 'border-box',
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
+                    }}
+                  >
+                    <option value="">None (Independent Question)</option>
+                    {passages.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
+                  Question Prompt (Supports Markdown & LaTeX Math formatting like \(x^2 + y^2 =
+                  r^2\)) *
+                </label>
+                <textarea
+                  rows={3}
+                  value={newPrompt}
+                  onChange={(e) => {
+                    setNewPrompt(e.target.value);
+                    checkDuplicatePrompt(e.target.value, newExam, newType);
+                  }}
+                  placeholder="Type full question prompt text..."
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem',
+                    borderRadius: '6px',
+                    backgroundColor: '#1e293b',
+                    color: '#fff',
+                    border: '1px solid #334155',
+                    fontSize: '0.9rem',
+                  }}
+                />
+              </div>
+
+              {newType === 'MCQ' && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <input
+                    placeholder="Option A"
+                    value={newOptionA}
+                    onChange={(e) => setNewOptionA(e.target.value)}
+                    style={{
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
+                    }}
+                  />
+                  <input
+                    placeholder="Option B"
+                    value={newOptionB}
+                    onChange={(e) => setNewOptionB(e.target.value)}
+                    style={{
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
+                    }}
+                  />
+                  <input
+                    placeholder="Option C"
+                    value={newOptionC}
+                    onChange={(e) => setNewOptionC(e.target.value)}
+                    style={{
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
+                    }}
+                  />
+                  <input
+                    placeholder="Option D"
+                    value={newOptionD}
+                    onChange={(e) => setNewOptionD(e.target.value)}
+                    style={{
+                      padding: '0.5rem',
+                      borderRadius: '6px',
+                      backgroundColor: '#1e293b',
+                      color: '#fff',
+                      border: '1px solid #334155',
                     }}
                   />
                 </div>
+              )}
+
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
+                  Correct Answer *
+                </label>
+                <input
+                  type="text"
+                  value={newCorrectAnswer}
+                  onChange={(e) => setNewCorrectAnswer(e.target.value)}
+                  placeholder="Exact correct answer string..."
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    borderRadius: '6px',
+                    backgroundColor: '#1e293b',
+                    color: '#fff',
+                    border: '1px solid #334155',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#cbd5e1' }}>
+                  Detailed Rationale / Explanation
+                </label>
+                <textarea
+                  rows={2}
+                  value={newExplanation}
+                  onChange={(e) => setNewExplanation(e.target.value)}
+                  placeholder="Explain why the answer is correct..."
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    borderRadius: '6px',
+                    backgroundColor: '#1e293b',
+                    color: '#fff',
+                    border: '1px solid #334155',
+                  }}
+                />
               </div>
 
               <div
@@ -757,18 +1313,14 @@ export function QuestionBankScreen() {
                   display: 'flex',
                   justifyContent: 'flex-end',
                   gap: '0.75rem',
-                  marginTop: '0.5rem',
+                  marginTop: '1rem',
                 }}
               >
-                <Button variant="secondary" type="button" onClick={() => setCreateModalOpen(false)}>
+                <Button variant="ghost" onClick={() => setCreateModalOpen(false)}>
                   Cancel
                 </Button>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  style={{ backgroundColor: '#2563eb', color: '#ffffff' }}
-                >
-                  Save Question
+                <Button variant="primary" type="submit">
+                  Save as Draft
                 </Button>
               </div>
             </form>
@@ -776,7 +1328,122 @@ export function QuestionBankScreen() {
         </div>
       )}
 
-      {/* PREVIEW QUESTION DRAWER/MODAL */}
+      {/* MODAL 2: CREATE PASSAGE */}
+      {createPassageModalOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 999,
+            padding: '1rem',
+          }}
+        >
+          <div
+            style={{
+              maxWidth: '650px',
+              width: '100%',
+              backgroundColor: '#111827',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '16px',
+              padding: '1.75rem',
+            }}
+          >
+            <h2
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 800,
+                color: '#ffffff',
+                marginBottom: '1rem',
+              }}
+            >
+              Add Passage to Repository
+            </h2>
+            <form
+              onSubmit={handleCreatePassage}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+            >
+              <input
+                placeholder="Passage Title"
+                value={pasTitle}
+                onChange={(e) => setPasTitle(e.target.value)}
+                required
+                style={{
+                  padding: '0.65rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#1e293b',
+                  color: '#fff',
+                  border: '1px solid #334155',
+                }}
+              />
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <select
+                  value={pasExam}
+                  onChange={(e) => setPasExam(e.target.value as ExamType)}
+                  style={{
+                    padding: '0.5rem',
+                    borderRadius: '6px',
+                    backgroundColor: '#1e293b',
+                    color: '#fff',
+                    border: '1px solid #334155',
+                  }}
+                >
+                  <option value="IELTS Academic">IELTS Academic</option>
+                  <option value="TOEFL iBT">TOEFL iBT</option>
+                  <option value="SAT">SAT</option>
+                  <option value="CELPIP">CELPIP</option>
+                </select>
+
+                <input
+                  placeholder="Official Source (e.g. Cambridge 18)"
+                  value={pasSource}
+                  onChange={(e) => setPasSource(e.target.value)}
+                  style={{
+                    padding: '0.5rem',
+                    borderRadius: '6px',
+                    backgroundColor: '#1e293b',
+                    color: '#fff',
+                    border: '1px solid #334155',
+                  }}
+                />
+              </div>
+
+              <textarea
+                rows={6}
+                placeholder="Full reading/listening passage content..."
+                value={pasContent}
+                onChange={(e) => setPasContent(e.target.value)}
+                required
+                style={{
+                  padding: '0.65rem',
+                  borderRadius: '6px',
+                  backgroundColor: '#1e293b',
+                  color: '#fff',
+                  border: '1px solid #334155',
+                }}
+              />
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                <Button variant="ghost" onClick={() => setCreatePassageModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" type="submit">
+                  Save Passage
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: PREVIEW QUESTION DETAILS */}
       {previewQuestion && (
         <div
           style={{
@@ -785,138 +1452,81 @@ export function QuestionBankScreen() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(2, 6, 23, 0.8)',
+            backgroundColor: 'rgba(0,0,0,0.8)',
             display: 'flex',
-            justifyContent: 'center',
             alignItems: 'center',
-            zIndex: 100,
-            padding: '1.5rem',
+            justifyContent: 'center',
+            zIndex: 999,
+            padding: '1rem',
           }}
-          onClick={() => setPreviewQuestion(null)}
         >
           <div
             style={{
+              maxWidth: '650px',
+              width: '100%',
               backgroundColor: '#111827',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: '16px',
-              maxWidth: '560px',
-              width: '100%',
               padding: '1.75rem',
-              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem',
             }}
-            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '1rem',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Badge variant="info">{previewQuestion.programmeName || 'IELTS Academic'}</Badge>
-                <Badge variant={previewQuestion.category === 'MOCK' ? 'primary' : 'neutral'}>
-                  {previewQuestion.category || 'MOCK'}
-                </Badge>
-              </div>
-              <button
-                onClick={() => setPreviewQuestion(null)}
-                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
-              >
-                ✕
-              </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.85rem', fontFamily: 'monospace', color: '#38bdf8' }}>
+                {previewQuestion.code}
+              </span>
+              <Badge variant={getStatusBadgeVariant(previewQuestion.status)}>
+                {previewQuestion.status}
+              </Badge>
             </div>
 
-            <h3
-              style={{ margin: '0 0 1rem', fontSize: '1.15rem', color: '#ffffff', lineHeight: 1.4 }}
-            >
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#ffffff', margin: 0 }}>
               {previewQuestion.text}
             </h3>
 
-            <div
-              style={{
-                padding: '1rem',
-                backgroundColor: '#0f172a',
-                borderRadius: '10px',
-                fontSize: '0.85rem',
-                color: '#cbd5e1',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-              }}
-            >
-              <div>
-                <strong>Topic:</strong> {previewQuestion.topic}
+            {previewQuestion.options && previewQuestion.options.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {previewQuestion.options.map((opt, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      padding: '0.6rem 0.85rem',
+                      borderRadius: '6px',
+                      backgroundColor:
+                        opt === previewQuestion.correctAnswer
+                          ? 'rgba(16, 185, 129, 0.15)'
+                          : '#1e293b',
+                      border: '1px solid',
+                      borderColor: opt === previewQuestion.correctAnswer ? '#10b981' : '#334155',
+                      color: opt === previewQuestion.correctAnswer ? '#34d399' : '#cbd5e1',
+                      fontSize: '0.875rem',
+                    }}
+                  >
+                    {opt} {opt === previewQuestion.correctAnswer && '✓ (Correct)'}
+                  </div>
+                ))}
               </div>
-              <div>
-                <strong>Learning Objective:</strong> {previewQuestion.learningObjective}
-              </div>
-              <div>
-                <strong>Difficulty:</strong> {previewQuestion.difficulty}
-              </div>
-              <div>
-                <strong>Status:</strong> {previewQuestion.status}
-              </div>
-            </div>
+            )}
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
-              <Button variant="secondary" onClick={() => setPreviewQuestion(null)}>
-                Close Preview
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* CONFIRM DELETE MODAL */}
-      {deleteConfirmId && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(2, 6, 23, 0.8)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 110,
-            padding: '1.5rem',
-          }}
-          onClick={() => setDeleteConfirmId(null)}
-        >
-          <div
-            style={{
-              backgroundColor: '#111827',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: '16px',
-              maxWidth: '420px',
-              width: '100%',
-              padding: '1.5rem',
-              textAlign: 'center',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Trash2 size={36} color="#f87171" style={{ marginBottom: '0.75rem' }} />
-            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', color: '#ffffff' }}>
-              Confirm Question Deletion
-            </h3>
-            <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '1.25rem' }}>
-              Are you sure you want to delete this question? This action will remove it permanently
-              from the Question Bank.
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.85rem' }}>
-              <Button variant="secondary" onClick={() => setDeleteConfirmId(null)}>
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                onClick={() => handleDelete(deleteConfirmId)}
-                style={{ backgroundColor: '#ef4444', color: '#ffffff' }}
+            {previewQuestion.explanation && (
+              <div
+                style={{
+                  backgroundColor: '#161e2e',
+                  padding: '0.85rem',
+                  borderRadius: '8px',
+                  fontSize: '0.85rem',
+                  color: '#cbd5e1',
+                }}
               >
-                Delete Question
+                <strong>Explanation:</strong> {previewQuestion.explanation}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button variant="outline" onClick={() => setPreviewQuestion(null)}>
+                Close Preview
               </Button>
             </div>
           </div>

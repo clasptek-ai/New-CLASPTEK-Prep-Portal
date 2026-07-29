@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 
 // ─── Button Component ────────────────────────────────────────────────
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline' | 'success';
+  size?: 'sm' | 'md' | 'lg';
   children: React.ReactNode;
 }
 
@@ -77,7 +78,13 @@ export function ProgressBar({ value, max = 100 }: { value: number; max?: number 
   );
 }
 
-export function Button({ variant = 'primary', children, style, ...props }: ButtonProps) {
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  children,
+  style,
+  ...props
+}: ButtonProps) {
   const getColors = () => {
     switch (variant) {
       case 'secondary':
@@ -89,6 +96,15 @@ export function Button({ variant = 'primary', children, style, ...props }: Butto
         };
       case 'danger':
         return { bg: '#ba1a1a', hover: '#93000a', color: '#ffffff', border: 'none' };
+      case 'success':
+        return { bg: '#059669', hover: '#10b981', color: '#ffffff', border: 'none' };
+      case 'outline':
+        return {
+          bg: 'transparent',
+          hover: 'rgba(255, 255, 255, 0.08)',
+          color: '#f8fafc',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+        };
       case 'ghost':
         return {
           bg: 'transparent',
