@@ -15,6 +15,16 @@ function getSSLConfig(dbUrl: string): any {
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+function toErrorRecord(err: unknown): Record<string, any> {
+  if (err instanceof Error) {
+    return { name: err.name, message: err.message, stack: err.stack };
+  }
+  if (err && typeof err === 'object') {
+    return err as Record<string, any>;
+  }
+  return { error: String(err) };
+}
+
 export class DatabasePool {
   private pool: Pool | null = null;
   private isConnected = false;
@@ -58,10 +68,10 @@ export class DatabasePool {
           this.pool = globalThis.__globalPgPool;
           this.isConnected = true;
           return;
-        } catch (err) {
+        } catch (err: unknown) {
           this.logger.warn(
             'Cached Postgres pool failed health check, resetting singleton pool:',
-            err
+            toErrorRecord(err)
           );
           try {
             await globalThis.__globalPgPool.end();
@@ -91,8 +101,8 @@ export class DatabasePool {
         });
 
         // Add error handler for idle clients to prevent unhandled node errors
-        newPool.on('error', (err) => {
-          this.logger.warn('Unexpected error on idle Postgres pool client:', err);
+        newPool.on('error', (err: unknown) => {
+          this.logger.warn('Unexpected error on idle Postgres pool client:', toErrorRecord(err));
         });
 
         // Acquire a client to verify database reachability
@@ -115,9 +125,11 @@ export class DatabasePool {
       }
     }
 
+    const errToLog =
+      lastError instanceof Error ? lastError : new Error(String(lastError || 'Unknown error'));
     this.logger.error(
       'Failed to establish database connection pool singleton after retries',
-      lastError
+      errToLog
     );
     throw lastError;
   }
