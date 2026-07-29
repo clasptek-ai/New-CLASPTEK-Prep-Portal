@@ -7,6 +7,7 @@ import {
   adminAssessmentsService,
   AdminAssessmentConfig,
 } from '../../../services/admin/assessments.service';
+import { mockGeneratorService } from '../../mock-engine/application/mock-generator.service';
 import { Plus, CheckCircle2 } from 'lucide-react';
 
 export function AssessmentsScreen() {
@@ -76,24 +77,47 @@ export function AssessmentsScreen() {
     e.preventDefault();
     if (!newTitle.trim()) return;
 
-    const created: AdminAssessmentConfig = {
-      id: `exam-${Date.now()}`,
-      title: newTitle,
-      type: isMockView ? 'MOCK' : 'PRACTICE',
-      durationMinutes: Number(newDuration),
-      questionCount: Number(newQuestions),
-      availableFrom: new Date().toISOString(),
-      availableUntil: new Date(Date.now() + 180 * 86400000).toISOString(),
-      status: 'PUBLISHED',
-    };
+    // Use Mock Engine Generator Service for 1-Click Blueprint Assembly
+    try {
+      const generatedTmpl = await mockGeneratorService.generateMockExam('bp-ielts-acad');
+      const created: AdminAssessmentConfig = {
+        id: generatedTmpl.id,
+        title: newTitle || generatedTmpl.title,
+        type: isMockView ? 'MOCK' : 'PRACTICE',
+        durationMinutes: generatedTmpl.totalDurationMinutes,
+        questionCount: generatedTmpl.totalQuestions,
+        availableFrom: new Date().toISOString(),
+        availableUntil: new Date(Date.now() + 180 * 86400000).toISOString(),
+        status: 'PUBLISHED',
+      };
 
-    await adminAssessmentsService.createAssessment(created);
-    setAssessments((prev) => [created, ...prev]);
-    setCreateOpen(false);
-    setNewTitle('');
-    showBanner(
-      `New ${isMockView ? 'Mock Examination' : 'Skill Assessment'} created and published!`
-    );
+      await adminAssessmentsService.createAssessment(created);
+      setAssessments((prev) => [created, ...prev]);
+      setCreateOpen(false);
+      setNewTitle('');
+      showBanner(
+        `New ${isMockView ? 'Mock Examination' : 'Skill Assessment'} assembled from Published Question Bank!`
+      );
+    } catch {
+      const created: AdminAssessmentConfig = {
+        id: `exam-${Date.now()}`,
+        title: newTitle,
+        type: isMockView ? 'MOCK' : 'PRACTICE',
+        durationMinutes: Number(newDuration),
+        questionCount: Number(newQuestions),
+        availableFrom: new Date().toISOString(),
+        availableUntil: new Date(Date.now() + 180 * 86400000).toISOString(),
+        status: 'PUBLISHED',
+      };
+
+      await adminAssessmentsService.createAssessment(created);
+      setAssessments((prev) => [created, ...prev]);
+      setCreateOpen(false);
+      setNewTitle('');
+      showBanner(
+        `New ${isMockView ? 'Mock Examination' : 'Skill Assessment'} created and published!`
+      );
+    }
   }
 
   function showBanner(msg: string) {
