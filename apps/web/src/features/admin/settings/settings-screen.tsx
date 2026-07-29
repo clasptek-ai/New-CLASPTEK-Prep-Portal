@@ -6,6 +6,7 @@ import {
   adminSettingsService,
   AdminPlatformSettings,
 } from '../../../services/admin/settings.service';
+import { resetAllDemoData } from '@/lib/reset-demo-data';
 
 export function SettingsScreen() {
   const [settings, setSettings] = useState<AdminPlatformSettings | null>(null);
@@ -224,6 +225,35 @@ export function SettingsScreen() {
                   onChange={() => handleToggleFlag('enablePredictionEngine')}
                 />
               </div>
+            </div>
+          </Card>
+
+          {/* Reset Demo Data Action Card */}
+          <Card title="System Maintenance & Demo Data Reset">
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}
+            >
+              <p style={{ fontSize: '0.8rem', color: '#94a3b8', margin: 0, lineHeight: 1.5 }}>
+                Flush all client-side cached demo datasets, practice sessions, mock history, and
+                custom questions to restore the portal to its clean initial state.
+              </p>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  if (
+                    confirm(
+                      'Are you sure you want to reset all demo data? This will clear practice history, mock sessions, and cached bank items.'
+                    )
+                  ) {
+                    resetAllDemoData();
+                    alert('All demo data reset successfully. Reloading page...');
+                    window.location.reload();
+                  }
+                }}
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                Reset All Demo Data
+              </Button>
             </div>
           </Card>
         </div>
