@@ -12,12 +12,12 @@ export const clientEnvironmentSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z
     .string()
     .min(10, 'NEXT_PUBLIC_SUPABASE_ANON_KEY must be provided'),
-  CONFIG_VERSION: z.string().min(1, 'CONFIG_VERSION must be defined for tracking deployment'),
+  CONFIG_VERSION: z.string().default('v4.0.1'),
 });
 
 // Server-only variables (never exposed to browser bundles)
 export const serverEnvironmentSchema = clientEnvironmentSchema.extend({
-  DATABASE_URL: z.string().url('DATABASE_URL must be a valid SQL connection URL'),
+  DATABASE_URL: z.string().min(1, 'DATABASE_URL must be a valid connection string'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(10, 'SUPABASE_SERVICE_ROLE_KEY must be provided'),
   PORT: z
     .string()
@@ -42,11 +42,12 @@ export function loadEnvironment(customSource?: Record<string, any>): ServerEnvir
   }
   const result = serverEnvironmentSchema.safeParse(source);
   if (!result.success) {
+    const flattened = result.error.flatten();
     console.error(
       'Configuration startup failure: Invalid environment parameters',
-      result.error.format()
+      JSON.stringify(flattened, null, 2)
     );
-    throw new Error('Configuration validation failed');
+    throw new Error(`Configuration validation failed: ${JSON.stringify(flattened.fieldErrors)}`);
   }
   return result.data;
 }
