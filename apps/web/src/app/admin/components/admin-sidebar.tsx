@@ -46,7 +46,7 @@ export const AdminSidebar: React.FC = () => {
 
   const navGroups: NavGroup[] = [
     {
-      title: 'ADMINISTRATION',
+      title: 'OVERVIEW',
       items: [
         {
           id: 'dashboard',
@@ -57,34 +57,17 @@ export const AdminSidebar: React.FC = () => {
       ],
     },
     {
-      title: 'ACADEMIC OPERATIONS',
+      title: 'EXAM OPERATIONS',
       items: [
         {
           id: 'programmes',
-          label: 'Programmes',
+          label: 'Exams & Programmes',
           href: '/admin/programmes',
           icon: <BookOpen size={18} />,
         },
         {
-          id: 'curriculum',
-          label: 'Curriculum & Courses',
-          href: '/admin/curriculum',
-          icon: <Layers size={18} />,
-        },
-        {
-          id: 'resources',
-          label: 'Resource Library',
-          href: '/admin/resources',
-          icon: <FileSpreadsheet size={18} />,
-        },
-      ],
-    },
-    {
-      title: 'ASSESSMENT OPERATIONS',
-      items: [
-        {
           id: 'diagnostic-assessments',
-          label: 'Diagnostic Assessments',
+          label: 'Diagnostic Placement',
           href: '/admin/assessments?mode=assessment',
           icon: <Award size={18} />,
         },
@@ -96,7 +79,7 @@ export const AdminSidebar: React.FC = () => {
         },
         {
           id: 'results',
-          label: 'Results & Analytics',
+          label: 'Results & Performance',
           href: '/admin/results',
           icon: <BarChart3 size={18} />,
         },
@@ -107,22 +90,20 @@ export const AdminSidebar: React.FC = () => {
       items: [
         {
           id: 'questions',
-          label: 'Question Management',
+          label: 'Question Bank',
           href: '/admin/question-bank',
           icon: <Database size={18} />,
-          badge: 12,
-          badgeColor: '#fbbf24',
         },
         {
           id: 'import-centre',
-          label: 'Import Centre (CSV/XLS/ZIP)',
+          label: 'Bulk Import (CSV/JSON)',
           href: '/admin/question-bank/import',
           icon: <Upload size={18} />,
         },
       ],
     },
     {
-      title: 'MANAGEMENT',
+      title: 'STUDENTS & SYSTEM',
       items: [
         {
           id: 'students',
@@ -130,17 +111,6 @@ export const AdminSidebar: React.FC = () => {
           href: '/admin/students',
           icon: <Users size={18} />,
         },
-        {
-          id: 'announcements',
-          label: 'Announcements',
-          href: '/admin/notifications',
-          icon: <Bell size={18} />,
-        },
-      ],
-    },
-    {
-      title: 'PLATFORM',
-      items: [
         {
           id: 'settings',
           label: 'Platform Settings',
@@ -152,14 +122,6 @@ export const AdminSidebar: React.FC = () => {
           label: 'Audit & Event Logs',
           href: '/admin/audit',
           icon: <ShieldCheck size={18} />,
-        },
-        {
-          id: 'support',
-          label: 'Support Tickets',
-          href: '/admin/help',
-          icon: <LifeBuoy size={18} />,
-          badge: 3,
-          badgeColor: '#38bdf8',
         },
       ],
     },

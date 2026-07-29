@@ -14,7 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           style={{
             display: 'flex',
             minHeight: '100vh',
-            width: '100vw',
+            width: '100%',
             backgroundColor: 'var(--bg-app, #0b0f19)',
             color: 'var(--text-primary, #f8fafc)',
             overflowX: 'hidden',
