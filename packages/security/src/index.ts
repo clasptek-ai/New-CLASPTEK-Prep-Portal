@@ -9,6 +9,7 @@ export interface CSPDirectives {
   'default-src': string[];
   'script-src': string[];
   'style-src': string[];
+  'font-src'?: string[];
   'img-src': string[];
   'connect-src': string[];
   'frame-ancestors': string[];
@@ -18,6 +19,7 @@ export const defaultCSP: CSPDirectives = {
   'default-src': ["'self'"],
   'script-src': ["'self'", "'unsafe-inline'"],
   'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+  'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
   'img-src': ["'self'", 'data:'],
   'connect-src': ["'self'"],
   'frame-ancestors': ["'none'"],

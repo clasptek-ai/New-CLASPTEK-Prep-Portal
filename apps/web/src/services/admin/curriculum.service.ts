@@ -17,7 +17,10 @@ export interface AdminModule {
 export const adminCurriculumService = {
   async getModules(programmeId: string): Promise<AdminModule[]> {
     try {
-      return await apiClient.get<AdminModule[]>(`/api/v1/admin/programmes/${programmeId}/modules`);
+      const res = await apiClient.get<any>(`/api/v1/admin/programmes/${programmeId}/modules`);
+      if (res && res.success && Array.isArray(res.data)) return res.data;
+      if (Array.isArray(res)) return res;
+      return res?.data || [];
     } catch {
       return [
         {

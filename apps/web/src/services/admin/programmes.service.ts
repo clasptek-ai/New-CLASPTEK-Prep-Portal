@@ -13,7 +13,10 @@ export interface AdminProgramme {
 export const adminProgrammesService = {
   async getProgrammes(): Promise<AdminProgramme[]> {
     try {
-      return await apiClient.get<AdminProgramme[]>('/api/v1/admin/programmes');
+      const res = await apiClient.get<any>('/api/v1/admin/programmes');
+      if (res && res.success && Array.isArray(res.data)) return res.data;
+      if (Array.isArray(res)) return res;
+      return res?.data || [];
     } catch {
       return [
         {

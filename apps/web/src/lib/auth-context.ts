@@ -51,8 +51,27 @@ let cachedAuthContext: AuthContext | null = null;
 let pendingAuthContextPromise: Promise<AuthContext> | null = null;
 
 export async function getAuthContext(): Promise<AuthContext> {
+  if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('pooler.supabase.com:5432')) {
+    process.env.DATABASE_URL = process.env.DATABASE_URL.replace(
+      'pooler.supabase.com:5432',
+      'pooler.supabase.com:6543'
+    );
+  }
+
+  const config = loadEnvironment(process.env);
+
   if (cachedAuthContext) {
-    return cachedAuthContext;
+    const cachedConfigUrl = (cachedAuthContext.dbPool as any)?.config?.DATABASE_URL;
+    if (cachedConfigUrl === config.DATABASE_URL) {
+      try {
+        await cachedAuthContext.dbPool.connect();
+        return cachedAuthContext;
+      } catch {
+        cachedAuthContext = null;
+      }
+    } else {
+      cachedAuthContext = null;
+    }
   }
 
   if (pendingAuthContextPromise) {

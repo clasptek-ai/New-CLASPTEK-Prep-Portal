@@ -24,7 +24,10 @@ export const adminAuditService = {
         const query = new URLSearchParams(filters as any).toString();
         if (query) url += `?${query}`;
       }
-      return await apiClient.get<AuditLogRecord[]>(url);
+      const res = await apiClient.get<any>(url);
+      if (res && res.success && Array.isArray(res.data)) return res.data;
+      if (Array.isArray(res)) return res;
+      return res?.data || [];
     } catch {
       return [
         {

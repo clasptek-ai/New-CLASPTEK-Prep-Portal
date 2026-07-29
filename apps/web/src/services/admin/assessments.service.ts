@@ -67,7 +67,9 @@ function saveStored(list: AdminAssessmentConfig[]) {
 export const adminAssessmentsService = {
   async getAssessments(): Promise<AdminAssessmentConfig[]> {
     try {
-      const data = await apiClient.get<AdminAssessmentConfig[]>('/api/v1/admin/assessments');
+      const res = await apiClient.get<any>('/api/v1/admin/assessments');
+      const data =
+        res && res.success && Array.isArray(res.data) ? res.data : Array.isArray(res) ? res : [];
       if (data && data.length > 0) return data;
       return getStored();
     } catch {

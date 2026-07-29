@@ -137,7 +137,9 @@ function saveStoredUsers(users: AdminUserRecord[]) {
 export const adminUsersService = {
   async getUsers(): Promise<AdminUserRecord[]> {
     try {
-      const data = await apiClient.get<AdminUserRecord[]>('/api/v1/admin/users');
+      const res = await apiClient.get<any>('/api/v1/admin/users');
+      const data =
+        res && res.success && Array.isArray(res.data) ? res.data : Array.isArray(res) ? res : [];
       if (data && data.length > 0) return data;
       return getStoredUsers();
     } catch {

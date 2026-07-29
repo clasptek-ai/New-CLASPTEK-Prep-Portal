@@ -9,23 +9,31 @@ import { ApplicationError } from '@clasptek/kernel';
 import { SecurityProfile } from '@clasptek/domain-security';
 
 export async function POST(req: NextRequest) {
-  const authContext = await getAuthContext();
-  const {
-    dbPool,
-    securityProfileRepo,
-    recordLoginSessionHandler,
-    ensureUserAggregateExistsService,
-    logger,
-  } = authContext;
-
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body || !body.email || !body.password) {
+      return NextResponse.json(
+        { code: 'VALIDATION_ERROR', message: 'Email and password are required.' },
+        { status: 400 }
+      );
+    }
+
     const { email, password } = body;
+
+    const authContext = await getAuthContext();
+    const {
+      dbPool,
+      securityProfileRepo,
+      recordLoginSessionHandler,
+      ensureUserAggregateExistsService,
+      logger,
+    } = authContext;
 
     const userAgent = req.headers.get('user-agent') || 'Unknown';
     const ipAddress = req.headers.get('x-forwarded-for') || '127.0.0.1';
 
     const config = loadEnvironment(process.env);
+
     const cookieStore = await cookies();
     const supabase = createSupabaseServerClient(
       config.NEXT_PUBLIC_SUPABASE_URL,
@@ -48,6 +56,7 @@ export async function POST(req: NextRequest) {
 
     // 1. Pre-auth security profile lock check
     const pool = dbPool.getPool();
+
     let securityProfile: SecurityProfile | null = null;
     try {
       const identLookup = await pool.query(
@@ -58,8 +67,10 @@ export async function POST(req: NextRequest) {
         const uid = identLookup.rows[0].user_id;
         securityProfile = await securityProfileRepo.findByUserId(uid);
       }
-    } catch {
-      // Ignore pre-check lookup errors in fallback mode
+    } catch (dbErr) {
+      logger.warn('Pre-auth security profile lookup deferred:', {
+        error: dbErr instanceof Error ? dbErr.message : String(dbErr),
+      });
     }
 
     if (securityProfile && securityProfile.lockStatus === 'LOCKED') {
@@ -72,7 +83,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Perform Supabase SignIn
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -136,7 +146,9 @@ export async function POST(req: NextRequest) {
           provider: 'LOCAL',
         })
         .catch((err) => {
-          logger.warn('User aggregate sync deferred:', err);
+          logger.warn('User aggregate sync deferred:', {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }),
 
       // C. Reset failed attempts
@@ -164,16 +176,18 @@ export async function POST(req: NextRequest) {
           userAgent,
         })
         .catch((err) => {
-          logger.warn('Login session recording deferred:', err);
+          logger.warn('Login session recording deferred:', {
+            error: err instanceof Error ? err.message : String(err),
+          });
         }),
     ]);
 
     const roleNames = roleResult.length > 0 ? roleResult : ['STUDENT'];
 
-    logger.info(
-      'POST /api/v1/auth/login success',
-      new Error(`User ${userId} authenticated with roles: ${roleNames.join(', ')}`)
-    );
+    logger.info('POST /api/v1/auth/login success', {
+      userId,
+      roles: roleNames,
+    });
 
     return NextResponse.json({
       success: true,
@@ -181,15 +195,16 @@ export async function POST(req: NextRequest) {
       roles: roleNames,
     });
   } catch (err: unknown) {
-    logger.error(
-      'POST /api/v1/auth/login failure',
-      err instanceof Error ? err : new Error(String(err))
-    );
+    console.error('[AUTH_LOGIN_ERROR]', err);
     if (err instanceof ApplicationError) {
       return NextResponse.json(err.serialize(), { status: 400 });
     }
     return NextResponse.json(
-      { code: 'INTERNAL_ERROR', message: err instanceof Error ? err.message : String(err) },
+      {
+        success: false,
+        code: 'INTERNAL_ERROR',
+        message: err instanceof Error ? err.message : 'Unexpected server error',
+      },
       { status: 500 }
     );
   }

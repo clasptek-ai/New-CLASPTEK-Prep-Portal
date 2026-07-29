@@ -12,7 +12,10 @@ export interface AdminResource {
 export const adminResourcesService = {
   async getResources(): Promise<AdminResource[]> {
     try {
-      return await apiClient.get<AdminResource[]>('/api/v1/admin/resources');
+      const res = await apiClient.get<any>('/api/v1/admin/resources');
+      if (res && res.success && Array.isArray(res.data)) return res.data;
+      if (Array.isArray(res)) return res;
+      return res?.data || [];
     } catch {
       return [
         {

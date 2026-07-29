@@ -32,7 +32,14 @@ export type ServerEnvironment = z.infer<typeof serverEnvironmentSchema>;
  * Validates and returns server environment parameters. Fails fast if settings are missing.
  */
 export function loadEnvironment(customSource?: Record<string, any>): ServerEnvironment {
-  const source = customSource || process.env;
+  const rawSource = customSource || process.env;
+  const source = { ...rawSource };
+  if (source.DATABASE_URL && source.DATABASE_URL.includes('pooler.supabase.com:5432')) {
+    source.DATABASE_URL = source.DATABASE_URL.replace(
+      'pooler.supabase.com:5432',
+      'pooler.supabase.com:6543'
+    );
+  }
   const result = serverEnvironmentSchema.safeParse(source);
   if (!result.success) {
     console.error(

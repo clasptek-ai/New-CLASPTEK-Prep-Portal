@@ -25,17 +25,58 @@ export class DatabasePool {
   ) {}
 
   public async connect(): Promise<void> {
-    if (this.isConnected && this.pool) return;
+    if (this.pool) {
+      const options = (this.pool as any).options;
+      const connStr = (options && options.connectionString) || '';
+      if (!connStr.includes('pooler.supabase.com:5432')) {
+        try {
+          const client = await this.pool.connect();
+          client.release();
+          this.isConnected = true;
+          return;
+        } catch {}
+      }
+      this.isConnected = false;
+      this.pool = null;
+    }
 
     if (globalThis.__globalPgPool) {
-      this.pool = globalThis.__globalPgPool;
-      this.isConnected = true;
-      return;
+      const options = (globalThis.__globalPgPool as any).options;
+      const connStr = (options && options.connectionString) || '';
+      if (connStr.includes('pooler.supabase.com:5432')) {
+        this.logger.warn(
+          'Cached Postgres pool uses outdated port 5432, resetting singleton pool...'
+        );
+        try {
+          await globalThis.__globalPgPool.end();
+        } catch {}
+        globalThis.__globalPgPool = undefined;
+      } else {
+        try {
+          const client = await globalThis.__globalPgPool.connect();
+          client.release();
+          this.pool = globalThis.__globalPgPool;
+          this.isConnected = true;
+          return;
+        } catch (err) {
+          this.logger.warn(
+            'Cached Postgres pool failed health check, resetting singleton pool:',
+            err
+          );
+          try {
+            await globalThis.__globalPgPool.end();
+          } catch {}
+          globalThis.__globalPgPool = undefined;
+        }
+      }
     }
 
     this.logger.info('Initializing Postgres database connection pool singleton...');
 
-    const cleanUrl = this.config.DATABASE_URL.replace('sslmode=verify-full', 'sslmode=no-verify');
+    const cleanUrl = this.config.DATABASE_URL.replace(
+      'sslmode=verify-full',
+      'sslmode=no-verify'
+    ).replace('pooler.supabase.com:5432', 'pooler.supabase.com:6543');
     const maxRetries = 3;
     let lastError: any = null;
 
