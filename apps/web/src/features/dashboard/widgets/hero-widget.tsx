@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Target, Sparkles, Play, Shield } from 'lucide-react';
+import { Flame, Target, Sparkles, Play, Shield, RotateCcw } from 'lucide-react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 import { WidgetState } from '../../../shared/ui/academic/dashboard-widget';
 import { Button } from '../../../shared/ui/button/Button';
@@ -170,21 +170,36 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
             </div>
           </div>
 
-          {onResumeLearning && (
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             <Button
-              variant="primary"
+              variant="outline"
               size="lg"
-              onClick={onResumeLearning}
+              onClick={() => (window.location.href = '/student/assessments?mode=diagnostic')}
               style={{
-                backgroundColor: config.colorPalette.primary,
+                borderColor: 'rgba(255, 255, 255, 0.2)',
                 color: '#ffffff',
-                boxShadow: `0 4px 14px ${config.colorPalette.primary}50`,
                 gap: '0.5rem',
               }}
             >
-              <Play size={16} fill="#ffffff" /> Resume Learning
+              <RotateCcw size={16} /> Retake Diagnostic
             </Button>
-          )}
+
+            {onResumeLearning && (
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={onResumeLearning}
+                style={{
+                  backgroundColor: config.colorPalette.primary,
+                  color: '#ffffff',
+                  boxShadow: `0 4px 14px ${config.colorPalette.primary}50`,
+                  gap: '0.5rem',
+                }}
+              >
+                <Play size={16} fill="#ffffff" /> Practice Drills
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
