@@ -1,5 +1,5 @@
-import LearningAssistantScreen from '@/features/learning-assistant/learning-assistant-screen';
+import { AICoachScreen } from '@/features/learning-intelligence/presentation/ai-coach-screen';
 
 export default function LearningAssistantPage() {
-  return <LearningAssistantScreen />;
+  return <AICoachScreen />;
 }
