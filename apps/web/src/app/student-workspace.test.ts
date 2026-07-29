@@ -63,11 +63,32 @@ describe('Student Workspace Integration & Services Verification', () => {
     expect(stats.accuracy).toBe(74);
     expect(stats.weakTopics).toContain('Relative Clauses Syntax');
 
-    const question = await studentPracticeService.startPractice('ADAPTIVE');
-    expect(question.options.length).toBe(4);
+    const session = await studentPracticeService.createCustomSession({
+      exam: 'IELTS Academic',
+      section: 'Reading',
+      skill: 'Matching Headings',
+      questionType: 'MCQ',
+      difficulty: 'MEDIUM',
+      questionCount: 5,
+      isTimed: true,
+    });
+    expect(session.questions.length).toBe(5);
 
-    const submitRes = await studentPracticeService.submitAnswer(question.id, question.answer);
-    expect(submitRes.correct).toBe(true);
+    const q = session.questions[0];
+    const submitRes = await studentPracticeService.submitSession(
+      session.id,
+      {
+        [q.id]: {
+          questionId: q.id,
+          userAnswer: q.correctAnswer,
+          isCorrect: true,
+          timeSpentSeconds: 30,
+        },
+      },
+      45,
+      'IELTS Academic'
+    );
+    expect(submitRes.scoreResult?.rawScore).toBeGreaterThanOrEqual(1);
   });
 
   test('Assignments service processes submissions and views grades/AI diagnostics', async () => {
