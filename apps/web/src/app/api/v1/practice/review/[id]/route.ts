@@ -14,8 +14,11 @@ export async function GET(
       sessionId: id,
       exam: 'IELTS Academic',
       section: 'Reading',
-      status: 'ACTIVE',
-      createdAt: new Date().toISOString(),
+      overallScore: '8 / 10',
+      bandResult: 'Band 7.5',
+      timeSpentSeconds: 650,
+      weakSkills: ['Matching Headings'],
+      strongSkills: ['Main Idea Inferences'],
     },
     { status: 200 }
   );

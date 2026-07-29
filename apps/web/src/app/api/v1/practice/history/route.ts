@@ -1,27 +1,46 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthenticatedSession } from '@/lib/auth-util';
 
-export async function GET(req: NextRequest) {
-  try {
-    const session = await getAuthenticatedSession(req);
-    if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function GET(_req: NextRequest) {
+  const history = [
+    {
+      id: 'ps-101',
+      date: '2026-07-28T14:20:00Z',
+      exam: 'IELTS Academic',
+      section: 'Reading',
+      skill: 'Matching Headings',
+      score: '8 / 10',
+      percentage: 80,
+      bandScore: 'Band 7.5',
+      timeSpentSeconds: 650,
+      accuracy: 80,
+    },
+    {
+      id: 'ps-102',
+      date: '2026-07-25T11:00:00Z',
+      exam: 'TOEFL iBT',
+      section: 'Writing',
+      skill: 'Integrated Task',
+      score: '15 / 20',
+      percentage: 75,
+      bandScore: '105 / 120',
+      timeSpentSeconds: 1200,
+      accuracy: 75,
+    },
+    {
+      id: 'ps-103',
+      date: '2026-07-20T09:45:00Z',
+      exam: 'SAT',
+      section: 'Math',
+      skill: 'Quadratic Equations',
+      score: '9 / 10',
+      percentage: 90,
+      bandScore: '1450 / 1600',
+      timeSpentSeconds: 510,
+      accuracy: 90,
+    },
+  ];
 
-    return NextResponse.json({
-      studentId: session.userId,
-      history: [
-        {
-          sessionId: 'ses-prac-completed-1',
-          title: 'IELTS Academic Grammar Practice',
-          accuracyPercentage: 85.0,
-          timeTakenSeconds: 900,
-          completedAt: new Date(Date.now() - 43200000).toISOString(),
-        },
-      ],
-    });
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+  return NextResponse.json({ success: true, data: history }, { status: 200 });
 }

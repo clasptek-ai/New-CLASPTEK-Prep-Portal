@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
+export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
@@ -11,11 +11,9 @@ export async function GET(
   return NextResponse.json(
     {
       success: true,
-      sessionId: id,
-      exam: 'IELTS Academic',
-      section: 'Reading',
-      status: 'ACTIVE',
-      createdAt: new Date().toISOString(),
+      questionId: id,
+      bookmarked: false,
+      message: `Question ${id} removed from bookmarks.`,
     },
     { status: 200 }
   );
