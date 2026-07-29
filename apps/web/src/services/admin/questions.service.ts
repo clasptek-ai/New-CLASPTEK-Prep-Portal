@@ -15,6 +15,7 @@ export type QuestionType =
   'MCQ' | 'FILL_IN_BLANK' | 'ESSAY' | 'SPEAKING' | 'MATCHING' | 'TRUE_FALSE_NOT_GIVEN';
 
 export type DifficultyLevel = 'EASY' | 'MEDIUM' | 'HARD';
+export type QuestionUsage = 'DIAGNOSTIC' | 'PRACTICE' | 'MOCK';
 
 export interface Passage {
   id: string;
@@ -49,6 +50,7 @@ export interface AdminQuestion {
   type: QuestionType;
   difficulty: DifficultyLevel;
   status: QuestionWorkflowStatus;
+  usages: QuestionUsage[]; // Multi-select usage: Diagnostic, Practice, Mock
   estimatedTime: string;
   officialSource: string;
   version: string;
@@ -156,6 +158,7 @@ export const DEFAULT_UNIVERSAL_QUESTIONS: AdminQuestion[] = [
     type: 'MCQ',
     difficulty: 'HARD',
     status: 'PUBLISHED',
+    usages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
     estimatedTime: '2 mins',
     officialSource: 'Cambridge 18 Test 1',
     version: 'v1.2',
@@ -201,6 +204,7 @@ export const DEFAULT_UNIVERSAL_QUESTIONS: AdminQuestion[] = [
     type: 'ESSAY',
     difficulty: 'MEDIUM',
     status: 'UNDER_REVIEW',
+    usages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
     estimatedTime: '15 mins',
     officialSource: 'ETS Official Guide 2026',
     version: 'v1.0',
@@ -235,6 +239,7 @@ export const DEFAULT_UNIVERSAL_QUESTIONS: AdminQuestion[] = [
     type: 'MCQ',
     difficulty: 'HARD',
     status: 'APPROVED',
+    usages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
     estimatedTime: '1.5 mins',
     officialSource: 'CollegeBoard SAT Practice Test 4',
     version: 'v2.0',
@@ -269,6 +274,7 @@ export const DEFAULT_UNIVERSAL_QUESTIONS: AdminQuestion[] = [
     type: 'SPEAKING',
     difficulty: 'MEDIUM',
     status: 'DRAFT',
+    usages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
     estimatedTime: '1.5 mins',
     officialSource: 'Paragon CELPIP Study Pack',
     version: 'v1.0',
@@ -390,13 +396,19 @@ export const adminQuestionsService = {
     return all;
   },
 
-  async getPublishedQuestionsForCandidates(exam?: ExamType): Promise<AdminQuestion[]> {
-    const all = getStoredQuestions();
-    const published = all.filter((q) => q.status === 'PUBLISHED');
+  async getPublishedQuestionsForCandidates(
+    exam?: ExamType,
+    usage?: QuestionUsage
+  ): Promise<AdminQuestion[]> {
+    const all = await this.getQuestions({ status: 'PUBLISHED' });
+    let filtered = all;
     if (exam) {
-      return published.filter((q) => q.exam === exam || q.programmeName === exam);
+      filtered = filtered.filter((q) => q.exam === exam || q.programmeName === exam);
     }
-    return published;
+    if (usage) {
+      filtered = filtered.filter((q) => q.usages && q.usages.includes(usage));
+    }
+    return filtered;
   },
 
   async getPendingQuestions(): Promise<AdminQuestion[]> {
@@ -427,6 +439,7 @@ export const adminQuestionsService = {
       type: (q.type || 'MCQ') as QuestionType,
       difficulty: (q.difficulty || 'MEDIUM') as DifficultyLevel,
       status: q.status || 'DRAFT',
+      usages: q.usages && q.usages.length > 0 ? q.usages : ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
       estimatedTime: q.estimatedTime || '2 mins',
       officialSource: q.officialSource || 'Clasptek Question Bank',
       version: q.version || 'v1.0',

@@ -195,6 +195,7 @@ export const studentPracticeService = {
           ? params.difficulty
           : 'MEDIUM') as DifficultyLevel,
         status: 'PUBLISHED',
+        usages: ['PRACTICE'],
         estimatedTime: '2 mins',
         officialSource: 'Clasptek Question Bank Engine',
         version: 'v1.0',

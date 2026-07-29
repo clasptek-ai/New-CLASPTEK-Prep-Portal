@@ -1,20 +1,20 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
-  - 'packages/domain/*'
-  - 'packages/application/*'
-  - 'packages/infrastructure/*'
+  - "apps/*"
+  - "packages/*"
+  - "packages/domain/*"
+  - "packages/application/*"
+  - "packages/infrastructure/*"
 
 allowBuilds:
-  '@google/genai': true
-  esbuild: true
-  protobufjs: true
-  sharp: true
-  simple-git-hooks: true
+  '@google/genai': set this to true or false
+  esbuild: set this to true or false
+  protobufjs: set this to true or false
+  sharp: set this to true or false
+  simple-git-hooks: set this to true or false
 
 onlyBuiltDependencies:
-  - '@google/genai'
-  - 'esbuild'
-  - 'protobufjs'
-  - 'sharp'
-  - 'simple-git-hooks'
+  - "@google/genai"
+  - "esbuild"
+  - "protobufjs"
+  - "sharp"
+  - "simple-git-hooks"

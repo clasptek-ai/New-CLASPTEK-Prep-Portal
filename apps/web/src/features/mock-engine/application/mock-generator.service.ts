@@ -125,6 +125,7 @@ export const mockGeneratorService = {
           type: sec.questionTypes[idx % sec.questionTypes.length] || 'MCQ',
           difficulty: idx % 3 === 0 ? 'HARD' : idx % 2 === 0 ? 'MEDIUM' : 'EASY',
           status: 'PUBLISHED',
+          usages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
           estimatedTime: '2 mins',
           officialSource: `Official ${bp.exam} Mock Bank`,
           version: 'v1.0',

@@ -66,6 +66,12 @@ export const AdminSidebar: React.FC = () => {
           icon: <BookOpen size={18} />,
         },
         {
+          id: 'practice-sessions',
+          label: 'Practice Sessions',
+          href: '/admin/practice-sessions',
+          icon: <Layers size={18} />,
+        },
+        {
           id: 'diagnostic-assessments',
           label: 'Diagnostic Placement',
           href: '/admin/assessments?mode=assessment',

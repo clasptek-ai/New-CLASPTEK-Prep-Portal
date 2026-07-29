@@ -26,9 +26,11 @@ export function QuestionBankImportCentreScreen() {
     'CSV'
   );
   const [selectedProgramme, setSelectedProgramme] = useState<string>('IELTS Academic');
-  const [selectedTargetCategory, setSelectedTargetCategory] = useState<'MOCK' | 'ASSESSMENT'>(
-    'MOCK'
-  );
+  const [selectedUsages, setSelectedUsages] = useState<Array<'DIAGNOSTIC' | 'PRACTICE' | 'MOCK'>>([
+    'DIAGNOSTIC',
+    'PRACTICE',
+    'MOCK',
+  ]);
   const [selectedFile, setSelectedFile] = useState<{
     name: string;
     size: string;
@@ -267,33 +269,58 @@ export function QuestionBankImportCentreScreen() {
                 marginBottom: '0.35rem',
               }}
             >
-              Assessment Target Category *
+              Question Usage (Multi-Select) *
             </label>
-            <select
-              value={selectedTargetCategory}
-              onChange={(e) => {
-                const cat = e.target.value as 'MOCK' | 'ASSESSMENT';
-                setSelectedTargetCategory(cat);
-                if (cat === 'ASSESSMENT') {
-                  setSelectedProgramme('General (All Programmes)');
-                }
-              }}
+            <div
               style={{
-                width: '100%',
-                padding: '0.65rem 0.85rem',
-                borderRadius: '8px',
-                backgroundColor: '#0f172a',
-                border: '1px solid #1e293b',
-                color: '#ffffff',
-                fontSize: '0.875rem',
-                outline: 'none',
+                display: 'flex',
+                gap: '1rem',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                paddingTop: '0.25rem',
               }}
             >
-              <option value="ASSESSMENT">
-                📝 Diagnostic & Skill Assessment Bank (General for All Programmes)
-              </option>
-              <option value="MOCK">🎓 Official Mock Exam Question Bank (Programme Specific)</option>
-            </select>
+              {[
+                { id: 'DIAGNOSTIC', label: '📝 Diagnostic' },
+                { id: 'PRACTICE', label: '⚡ Practice' },
+                { id: 'MOCK', label: '🎓 Mock' },
+              ].map((u) => {
+                const isChecked = selectedUsages.includes(u.id as any);
+                return (
+                  <label
+                    key={u.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      color: isChecked ? '#38bdf8' : '#94a3b8',
+                      backgroundColor: isChecked ? 'rgba(56, 189, 248, 0.12)' : '#0f172a',
+                      padding: '0.5rem 0.85rem',
+                      borderRadius: '8px',
+                      border: '1px solid',
+                      borderColor: isChecked ? '#38bdf8' : '#1e293b',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedUsages((prev) => [...prev, u.id as any]);
+                        } else {
+                          setSelectedUsages((prev) => prev.filter((x) => x !== u.id));
+                        }
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    {u.label}
+                  </label>
+                );
+              })}
+            </div>
           </div>
         </div>
       </Card>
@@ -380,8 +407,7 @@ export function QuestionBankImportCentreScreen() {
         }}
       >
         <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
-          Batch File Upload & Schema Mapping ({activeFormat}) — [{selectedProgramme} /{' '}
-          {selectedTargetCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'}]
+          Batch File Upload & Schema Mapping ({activeFormat}) — [{selectedProgramme} / Usages: {selectedUsages.join(', ')}]
         </div>
 
         {/* Drag & Drop File Zone */}
@@ -418,11 +444,11 @@ export function QuestionBankImportCentreScreen() {
             <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f8fafc' }}>
               Click to select a file from your computer PC
             </div>
-            <div style={{ fontSize: '0.875rem', color: '#94a3b8', marginTop: '6px' }}>
-              Selected Programme: <strong style={{ color: '#38bdf8' }}>{selectedProgramme}</strong>{' '}
-              | Target Category:{' '}
+            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+              Target Exam: <strong style={{ color: '#ffffff' }}>{selectedProgramme}</strong>{' '}
+              | Usages:{' '}
               <strong style={{ color: '#34d399' }}>
-                {selectedTargetCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'}
+                {selectedUsages.join(', ')}
               </strong>
             </div>
           </div>
@@ -468,8 +494,8 @@ export function QuestionBankImportCentreScreen() {
                   {selectedFile.name}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                  Size: {selectedFile.size} | Programme: {selectedProgramme} | Target:{' '}
-                  {selectedTargetCategory}
+                  Size: {selectedFile.size} | Programme: {selectedProgramme} | Usages:{' '}
+                  {selectedUsages.join(', ')}
                 </div>
               </div>
             </div>
@@ -534,7 +560,7 @@ export function QuestionBankImportCentreScreen() {
                 <div
                   style={{ fontSize: '1rem', fontWeight: 800, color: '#a78bfa', marginTop: '2px' }}
                 >
-                  {selectedTargetCategory === 'MOCK' ? 'Mock Exam' : 'Skill Assessment'}
+                  {selectedUsages.join(', ')}
                 </div>
               </div>
             </div>
@@ -554,6 +580,7 @@ export function QuestionBankImportCentreScreen() {
                     skill: `${selectedProgramme} Reading Set #${Math.floor(i / 5) + 1}`,
                     type: 'MCQ',
                     status: 'APPROVED',
+                    usages: selectedUsages,
                     difficulty: i % 3 === 0 ? 'HARD' : i % 2 === 0 ? 'MEDIUM' : 'EASY',
                     estimatedTime: '2 mins',
                     officialSource: `Imported from ${importResult.fileName}`,
@@ -571,12 +598,12 @@ export function QuestionBankImportCentreScreen() {
                     topic: `${selectedProgramme} Reading Set #${Math.floor(i / 5) + 1}`,
                     learningObjective: 'Analyze key detail inferences in passage text',
                     programmeName: selectedProgramme,
-                    category: selectedTargetCategory,
+                    category: (selectedUsages[0] || 'MOCK') as any,
                   }));
 
                   await adminQuestionsService.commitBatch(batchQuestions);
                   alert(
-                    `Successfully committed ${batchQuestions.length} questions tagged under ${selectedProgramme} (${selectedTargetCategory}) into Question Bank!`
+                    `Successfully committed ${batchQuestions.length} questions tagged under ${selectedProgramme} (Usages: ${selectedUsages.join(', ')}) into Universal Question Bank!`
                   );
                   router.push('/admin/question-bank');
                 }}
