@@ -1,5 +1,6 @@
 import { apiClient } from '../api/client';
 import {
+  adminQuestionsService,
   AdminQuestion,
   ExamType,
   SectionType,
@@ -167,6 +168,24 @@ export const studentPracticeService = {
       // client-side fallback
     }
 
+    // Query Universal Question Bank for published PRACTICE questions
+    let bankQuestions: AdminQuestion[] = [];
+    try {
+      const published = await adminQuestionsService.getPublishedQuestionsForCandidates(
+        params.exam,
+        'PRACTICE'
+      );
+      if (published && published.length > 0) {
+        let matching = published.filter(
+          (q) => q.section === params.section || q.programmeName === params.exam
+        );
+        if (matching.length === 0) matching = published;
+        bankQuestions = matching.slice(0, params.questionCount);
+      }
+    } catch {
+      // Fallback below
+    }
+
     const timeAllowed = params.isTimed
       ? params.exam.includes('IELTS')
         ? 3600
@@ -175,52 +194,53 @@ export const studentPracticeService = {
           : 1800
       : 0;
 
-    const sampleQuestions: AdminQuestion[] = Array.from({ length: params.questionCount }).map(
-      (_, i) => ({
-        id: `pq-dyn-${Date.now()}-${i + 1}`,
-        code: `${params.exam.substring(0, 5).toUpperCase()}-${params.section.substring(0, 2).toUpperCase()}-${i + 101}`,
-        exam: params.exam,
-        section: params.section,
-        skill: params.skill || 'General Proficiency',
-        type: (params.questionType && params.questionType !== 'ANY'
-          ? params.questionType
-          : i % 4 === 0
-            ? 'MCQ'
-            : i % 4 === 1
-              ? 'TRUE_FALSE_NOT_GIVEN'
-              : i % 4 === 2
-                ? 'FILL_IN_BLANK'
-                : 'ESSAY') as QuestionType,
-        difficulty: (params.difficulty && params.difficulty !== 'ANY'
-          ? params.difficulty
-          : 'MEDIUM') as DifficultyLevel,
-        status: 'PUBLISHED',
-        usages: ['PRACTICE'],
-        estimatedTime: '2 mins',
-        officialSource: 'Clasptek Question Bank Engine',
-        version: 'v1.0',
-        language: 'en-US',
-        tags: [params.exam, params.section],
-        text: `[${params.exam} - ${params.section}] Question ${i + 1}: Select the statement that accurately reflects the core thesis in sentence ${i + 2}.`,
-        options: [
-          'Option A: Primary structural assertion holds under test conditions',
-          'Option B: Secondary variable fluctuates depending on sample size',
-          'Option C: Historical trend contradicts preliminary hypothesis',
-          'Option D: Result remains invariant across all environment models',
-        ],
-        correctAnswer: 'Option A: Primary structural assertion holds under test conditions',
-        distractors: [
-          'Option B: Secondary variable fluctuates depending on sample size',
-          'Option C: Historical trend contradicts preliminary hypothesis',
-          'Option D: Result remains invariant across all environment models',
-        ],
-        explanation:
-          'Option A correctly reflects the main argument presented in the passage section.',
-        hash: `dyn_hash_${i}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      })
-    );
+    const sampleQuestions: AdminQuestion[] =
+      bankQuestions.length > 0
+        ? bankQuestions
+        : Array.from({ length: params.questionCount }).map((_, i) => ({
+            id: `pq-dyn-${Date.now()}-${i + 1}`,
+            code: `${params.exam.substring(0, 5).toUpperCase()}-${params.section.substring(0, 2).toUpperCase()}-${i + 101}`,
+            exam: params.exam,
+            section: params.section,
+            skill: params.skill || 'General Proficiency',
+            type: (params.questionType && params.questionType !== 'ANY'
+              ? params.questionType
+              : i % 4 === 0
+                ? 'MCQ'
+                : i % 4 === 1
+                  ? 'TRUE_FALSE_NOT_GIVEN'
+                  : i % 4 === 2
+                    ? 'FILL_IN_BLANK'
+                    : 'ESSAY') as QuestionType,
+            difficulty: (params.difficulty && params.difficulty !== 'ANY'
+              ? params.difficulty
+              : 'MEDIUM') as DifficultyLevel,
+            status: 'PUBLISHED',
+            usages: ['PRACTICE'],
+            estimatedTime: '2 mins',
+            officialSource: 'Clasptek Question Bank Engine',
+            version: 'v1.0',
+            language: 'en-US',
+            tags: [params.exam, params.section],
+            text: `[${params.exam} - ${params.section}] Question ${i + 1}: Select the statement that accurately reflects the core thesis in sentence ${i + 2}.`,
+            options: [
+              'Option A: Primary structural assertion holds under test conditions',
+              'Option B: Secondary variable fluctuates depending on sample size',
+              'Option C: Historical trend contradicts preliminary hypothesis',
+              'Option D: Result remains invariant across all environment models',
+            ],
+            correctAnswer: 'Option A: Primary structural assertion holds under test conditions',
+            distractors: [
+              'Option B: Secondary variable fluctuates depending on sample size',
+              'Option C: Historical trend contradicts preliminary hypothesis',
+              'Option D: Result remains invariant across all environment models',
+            ],
+            explanation:
+              'Option A correctly reflects the main argument presented in the passage section.',
+            hash: `dyn_hash_${i}`,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }));
 
     const session: PracticeSession = {
       id: `ps-${Date.now()}`,

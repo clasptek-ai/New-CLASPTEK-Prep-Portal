@@ -105,7 +105,10 @@ export const mockGeneratorService = {
     const blueprints = getStoredBlueprints();
     const bp = blueprints.find((b) => b.id === blueprintId) || blueprints[0];
 
-    const allPublished = await adminQuestionsService.getPublishedQuestionsForCandidates(bp.exam);
+    const allPublished = await adminQuestionsService.getPublishedQuestionsForCandidates(
+      bp.exam,
+      'MOCK'
+    );
 
     const generatedSections = bp.sections.map((sec) => {
       const sectionQuestions = allPublished.filter(
