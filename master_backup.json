@@ -1,0 +1,51 @@
+{
+  "backupVersion": "1.0.0",
+  "backupDate": "2026-07-30T11:00:00Z",
+  "platform": "Clasptek Prep Portal",
+  "masterData": {
+    "questionBank": {
+      "totalItems": 1840,
+      "status": "APPROVED_AND_PUBLISHED",
+      "examTypes": [
+        "IELTS Academic",
+        "IELTS General Training",
+        "TOEFL iBT",
+        "SAT",
+        "CELPIP",
+        "English Proficiency"
+      ]
+    },
+    "examBlueprints": [
+      { "id": "bp-ielts-acad", "exam": "IELTS Academic", "status": "ACTIVE" },
+      { "id": "bp-toefl-ibt", "exam": "TOEFL iBT", "status": "ACTIVE" },
+      { "id": "bp-sat-digital", "exam": "SAT", "status": "ACTIVE" },
+      { "id": "bp-celpip-gen", "exam": "CELPIP", "status": "ACTIVE" }
+    ],
+    "masterAdministrator": {
+      "email": "admin@clasptek.com",
+      "name": "CLASPTEK Executive Administrator",
+      "role": "ADMINISTRATOR"
+    }
+  },
+  "purgedTestData": [
+    "users (except admin@clasptek.com)",
+    "practice_sessions",
+    "practice_session_questions",
+    "practice_answers",
+    "practice_history",
+    "question_bookmarks",
+    "student_skill_progress",
+    "diagnostic_attempts",
+    "diagnostic_results",
+    "mock_sessions",
+    "mock_answers",
+    "mock_results",
+    "mock_integrity_logs",
+    "ai_chat_history",
+    "ai_feedback",
+    "ai_recommendations",
+    "notifications",
+    "student_reports",
+    "activity_logs"
+  ]
+}

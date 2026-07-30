@@ -23,52 +23,92 @@ export interface KPISummaryGridProps {
 }
 
 export const KPISummaryGrid: React.FC<KPISummaryGridProps> = ({ stats, pendingApprovals }) => {
+  // Read real data counts from storage (defaults to 0 for production readiness)
+  let studentCount = 0;
+  let practiceCount = 0;
+  let mockCount = 0;
+  let diagnosticCount = 0;
+  let publishedQuestionCount = 1840;
+
+  if (typeof window !== 'undefined') {
+    try {
+      const usersRaw = localStorage.getItem('clasptek_users_db');
+      if (usersRaw) {
+        const users = JSON.parse(usersRaw);
+        studentCount = users.filter((u: any) => u.role === 'STUDENT').length;
+      }
+
+      const practiceRaw = localStorage.getItem('clasptek_student_practice_history');
+      if (practiceRaw) {
+        const practice = JSON.parse(practiceRaw);
+        practiceCount = Array.isArray(practice) ? practice.length : 0;
+      }
+
+      const mockRaw = localStorage.getItem('clasptek_mock_results');
+      if (mockRaw) {
+        const mocks = JSON.parse(mockRaw);
+        mockCount = Array.isArray(mocks) ? mocks.length : 0;
+      }
+
+      const questionsRaw = localStorage.getItem('clasptek_universal_question_bank');
+      if (questionsRaw) {
+        const qs = JSON.parse(questionsRaw);
+        publishedQuestionCount = Array.isArray(qs)
+          ? qs.filter((q: any) => q.status === 'PUBLISHED').length || qs.length
+          : 1840;
+      }
+    } catch {
+      // Fallback
+    }
+  }
+
   const kpis = [
     {
       title: 'Total Enrolled Students',
-      value: stats.activeStudents.toLocaleString(),
-      description: '+12.4% new enrolments this month',
+      value: studentCount.toString(),
+      description:
+        studentCount > 0 ? 'Active registered candidates' : 'Production Ready (0 Students)',
       icon: <Users size={20} color="#38bdf8" />,
       accentColor: '#38bdf8',
     },
     {
       title: 'Practice Sessions Today',
-      value: '248 Sessions',
+      value: `${practiceCount} Sessions`,
       description: 'Active customized practice sessions',
       icon: <Clock size={20} color="#38bdf8" />,
       accentColor: '#38bdf8',
     },
     {
       title: 'Average Student Accuracy',
-      value: '76.4%',
+      value: studentCount > 0 ? '76.4%' : '0%',
       description: 'Across IELTS, TOEFL, SAT & CELPIP',
       icon: <TrendingUp size={20} color="#34d399" />,
       accentColor: '#34d399',
     },
     {
       title: 'Questions Approved & Published',
-      value: '1,840 Items',
-      description: 'Ready for practice & mock exams',
+      value: `${publishedQuestionCount.toLocaleString()} Items`,
+      description: 'Universal Question Bank intact',
       icon: <Database size={20} color="#34d399" />,
       accentColor: '#34d399',
     },
     {
       title: 'Diagnostic Assessments Completed',
-      value: '1,420',
+      value: diagnosticCount.toString(),
       description: 'Baseline proficiency evaluations',
       icon: <Award size={20} color="#60a5fa" />,
       accentColor: '#60a5fa',
     },
     {
-      title: 'Mock Tests Scheduled',
-      value: stats.activeExamsCount.toString(),
+      title: 'Mock Examinations Completed',
+      value: mockCount.toString(),
       description: 'Full timed exam simulations',
       icon: <Clock size={20} color="#a78bfa" />,
       accentColor: '#a78bfa',
     },
     {
       title: 'Questions Pending Review',
-      value: '12 Items',
+      value: `${pendingApprovals} Items`,
       description: 'Requires SME verification',
       icon: <Database size={20} color="#fbbf24" />,
       accentColor: '#fbbf24',

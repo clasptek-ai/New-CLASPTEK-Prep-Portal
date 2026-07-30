@@ -7,6 +7,7 @@ import {
   AdminPlatformSettings,
 } from '../../../services/admin/settings.service';
 import { resetAllDemoData } from '@/lib/reset-demo-data';
+import { purgeDevelopmentData } from '@/lib/purge-development-data';
 
 export function SettingsScreen() {
   const [settings, setSettings] = useState<AdminPlatformSettings | null>(null);
@@ -242,6 +243,26 @@ export function SettingsScreen() {
                 onClick={() => {
                   if (
                     confirm(
+                      'Perform Development Data Purge?\n\nThis will REMOVE test student accounts, test practice sessions, mock history, and diagnostic logs while PRESERVING your Master Question Bank (1,840+ items), Exam Blueprints, and Master Admin Account (admin@clasptek.com).'
+                    )
+                  ) {
+                    const res = purgeDevelopmentData();
+                    alert(
+                      `Development Data Purge Complete!\n\n• Students Removed: ${res.clearedItems.studentsRemoved}\n• Test Practice Sessions Cleared: ${res.clearedItems.practiceSessionsCleared}\n• Test Mock Results Cleared: ${res.clearedItems.mockSessionsCleared}\n\nPreserved:\n• Approved Questions: ${res.preservedItems.approvedQuestionsCount}\n• Master Admin Account: ${res.preservedItems.masterAdminEmail}`
+                    );
+                    window.location.reload();
+                  }
+                }}
+                style={{ width: '100%', justifyContent: 'center', backgroundColor: '#dc2626' }}
+              >
+                Purge Development Data (Keep Master Question Bank & Admin)
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (
+                    confirm(
                       'Are you sure you want to reset all demo data? This will clear practice history, mock sessions, and cached bank items.'
                     )
                   ) {
@@ -250,7 +271,12 @@ export function SettingsScreen() {
                     window.location.reload();
                   }
                 }}
-                style={{ width: '100%', justifyContent: 'center' }}
+                style={{
+                  width: '100%',
+                  justifyContent: 'center',
+                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                  color: '#cbd5e1',
+                }}
               >
                 Reset All Demo Data
               </Button>
