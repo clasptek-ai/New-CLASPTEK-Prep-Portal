@@ -99,8 +99,6 @@ export function AdminDashboardScreen() {
               gap: '1rem',
             }}
           >
-            <span>{academicTerm}</span>
-            <span>•</span>
             <span style={{ color: '#34d399', fontWeight: 600 }}>System Status: Healthy 🟢</span>
             <span>•</span>
             <span>
