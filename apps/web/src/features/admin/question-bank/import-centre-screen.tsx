@@ -19,6 +19,48 @@ import {
 } from 'lucide-react';
 import { adminQuestionsService, AdminQuestion } from '../../../services/admin/questions.service';
 
+export function downloadEnterpriseCSVTemplate() {
+  const headers = [
+    'QuestionID',
+    'Exam',
+    'AssessmentUsage',
+    'Section',
+    'Skill',
+    'SubSkill',
+    'QuestionType',
+    'Difficulty',
+    'PassageID',
+    'QuestionText',
+    'OptionA',
+    'OptionB',
+    'OptionC',
+    'OptionD',
+    'CorrectAnswer',
+    'Explanation',
+    'EstimatedTime',
+    'AudioURL',
+    'ImageURL',
+    'Tags',
+    'Status',
+  ].join(',');
+
+  const sampleRows = [
+    'Q1001,IELTS Academic,Diagnostic|Practice,Reading,Matching Headings,Paragraph Synthesis,MCQ,MEDIUM,pas-001,"Select the heading that best summarizes Paragraph A.",Heading I,Heading II,Heading III,Heading IV,Heading I,"Heading I captures the core theme of urbanization.",2 mins,,,IELTS|Reading|Headings,PUBLISHED',
+    'Q1002,TOEFL iBT,Practice|Mock,Writing,Integrated Task,Lecture Counter-argument,ESSAY,HARD,pas-002,"Summarize the points made in the lecture regarding cognitive load.",,,,,Detailed essay response.,"Lecturer directly contrasts claims 1 and 2.",15 mins,,,TOEFL|Writing|Integrated,PUBLISHED',
+    'Q1003,SAT,Diagnostic|Practice|Mock,Math,Advanced Math,Quadratic Equations,MCQ,HARD,,"If f(x) = x^2 - 6x + 9 and g(x) = x - 3, find x where f(x) = g(x).",x=3 and x=4,x=2 and x=3,x=3 only,x=4 only,x=3 and x=4,"Subtracting (x-3) yields x^2-7x+12=0.",1.5 mins,,,SAT|Math|Algebra,PUBLISHED',
+    'Q1004,CELPIP,Practice|Mock,Speaking,Interactive Speaking,Giving Advice,SPEAKING,MEDIUM,,"Give advice to a friend choosing between downtown and suburban housing.",,,,,Spoken audio response.,"Structure with opening advice, 2 supporting points, and closing.",1.5 mins,https://assets.clasptek.com/audio/spk-prompt-1.mp3,,CELPIP|Speaking|Advice,PUBLISHED',
+  ].join('\n');
+
+  const blob = new Blob([`${headers}\n${sampleRows}`], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'clasptek_universal_question_import_template.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 export function QuestionBankImportCentreScreen() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -163,7 +205,15 @@ export function QuestionBankImportCentreScreen() {
       />
 
       {/* Top Header Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '1rem',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <Button
             variant="secondary"
@@ -178,18 +228,32 @@ export function QuestionBankImportCentreScreen() {
                 margin: 0,
                 fontSize: '1.75rem',
                 fontWeight: 800,
-                color: '#f8fafc',
+                color: '#ffffff',
                 letterSpacing: '-0.02em',
               }}
             >
-              Question Bank Import Centre
+              Universal Import Centre
             </h1>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#cbd5e1' }}>
-              Select target programme, set assessment category (Mock vs Diagnostic Assessment), and
-              import batch files.
+            <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+              Import batch items into Universal Question Bank with pipe-delimited usages
+              (Diagnostic|Practice|Mock)
             </p>
           </div>
         </div>
+
+        <Button
+          variant="outline"
+          onClick={downloadEnterpriseCSVTemplate}
+          style={{
+            borderColor: '#38bdf8',
+            color: '#38bdf8',
+            gap: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <FileText size={16} /> Download Universal Template (.CSV)
+        </Button>
       </div>
 
       {/* Programme & Assessment Category Configuration Controls */}
@@ -407,7 +471,8 @@ export function QuestionBankImportCentreScreen() {
         }}
       >
         <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
-          Batch File Upload & Schema Mapping ({activeFormat}) — [{selectedProgramme} / Usages: {selectedUsages.join(', ')}]
+          Batch File Upload & Schema Mapping ({activeFormat}) — [{selectedProgramme} / Usages:{' '}
+          {selectedUsages.join(', ')}]
         </div>
 
         {/* Drag & Drop File Zone */}
@@ -445,11 +510,8 @@ export function QuestionBankImportCentreScreen() {
               Click to select a file from your computer PC
             </div>
             <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-              Target Exam: <strong style={{ color: '#ffffff' }}>{selectedProgramme}</strong>{' '}
-              | Usages:{' '}
-              <strong style={{ color: '#34d399' }}>
-                {selectedUsages.join(', ')}
-              </strong>
+              Target Exam: <strong style={{ color: '#ffffff' }}>{selectedProgramme}</strong> |
+              Usages: <strong style={{ color: '#34d399' }}>{selectedUsages.join(', ')}</strong>
             </div>
           </div>
 
