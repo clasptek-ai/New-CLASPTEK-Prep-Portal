@@ -1,52 +1,48 @@
+'use client';
+
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { BookOpen, Layers, FileUp, Award, Upload, Bell, Play } from 'lucide-react';
+import { Upload, Layers, Award, Play, Bell, Users, Plus } from 'lucide-react';
 
 export const QuickActionsBar: React.FC = () => {
   const router = useRouter();
 
-  const operations = [
+  const actions = [
     {
-      id: 'create-programme',
-      label: 'Create Programme',
-      icon: <BookOpen size={16} color="#38bdf8" />,
-      onClick: () => router.push('/admin/programmes'),
-    },
-    {
-      id: 'create-course',
-      label: 'Create Course',
-      icon: <Layers size={16} color="#38bdf8" />,
-      onClick: () => router.push('/admin/curriculum'),
-    },
-    {
-      id: 'upload-resource',
-      label: 'Upload Resources',
-      icon: <FileUp size={16} color="#34d399" />,
-      onClick: () => router.push('/admin/resources'),
-    },
-    {
-      id: 'create-diagnostic',
-      label: 'Create Diagnostic',
-      icon: <Award size={16} color="#60a5fa" />,
-      onClick: () => router.push('/admin/assessments?action=create-diagnostic'),
-    },
-    {
-      id: 'create-mock',
-      label: 'Create Mock Test',
-      icon: <Play size={16} color="#a78bfa" />,
-      onClick: () => router.push('/admin/assessments?action=create-mock'),
-    },
-    {
-      id: 'question-import-centre',
-      label: 'Import Centre (CSV/ZIP)',
-      icon: <Upload size={16} color="#fbbf24" />,
+      label: '+ Import Questions',
+      sub: 'Bulk CSV/JSON importer',
+      icon: <Upload size={18} color="#38bdf8" />,
       onClick: () => router.push('/admin/question-bank/import'),
     },
     {
-      id: 'publish-announcement',
-      label: 'Publish Announcement',
-      icon: <Bell size={16} color="#38bdf8" />,
+      label: '+ Create Practice Session',
+      sub: 'Configure practice templates',
+      icon: <Layers size={18} color="#38bdf8" />,
+      onClick: () => router.push('/admin/practice-sessions'),
+    },
+    {
+      label: '+ Create Diagnostic',
+      sub: 'Baseline evaluation setup',
+      icon: <Award size={18} color="#38bdf8" />,
+      onClick: () => router.push('/admin/assessments?mode=assessment'),
+    },
+    {
+      label: '+ Create Mock Exam',
+      sub: 'Full timed blueprint test',
+      icon: <Play size={18} color="#38bdf8" />,
+      onClick: () => router.push('/admin/assessments?mode=mock'),
+    },
+    {
+      label: '+ Publish Announcement',
+      sub: 'Broadcast candidate updates',
+      icon: <Bell size={18} color="#38bdf8" />,
       onClick: () => router.push('/admin/notifications'),
+    },
+    {
+      label: '+ View Students',
+      sub: 'User directory management',
+      icon: <Users size={18} color="#38bdf8" />,
+      onClick: () => router.push('/admin/users'),
     },
   ];
 
@@ -62,49 +58,60 @@ export const QuickActionsBar: React.FC = () => {
         gap: '1rem',
       }}
     >
-      <div
-        style={{ fontSize: '0.9rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.01em' }}
-      >
-        Quick Administrative Workflows
-      </div>
+      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+        Quick Actions
+      </h3>
 
       <div
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '0.75rem',
+          gap: '0.85rem',
         }}
       >
-        {operations.map((op) => (
+        {actions.map((act, idx) => (
           <button
-            key={op.id}
-            onClick={op.onClick}
+            key={idx}
+            onClick={act.onClick}
             style={{
-              padding: '0.75rem 1rem',
-              borderRadius: '10px',
+              padding: '0.9rem 1rem',
+              borderRadius: '12px',
               backgroundColor: '#0f172a',
               border: '1px solid rgba(255, 255, 255, 0.08)',
-              color: '#f8fafc',
-              fontSize: '0.825rem',
-              fontWeight: 700,
+              color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.6rem',
-              cursor: 'pointer',
-              transition: 'all 150ms ease',
+              gap: '0.75rem',
               textAlign: 'left',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#1e293b';
-              e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+              e.currentTarget.style.borderColor = '#38bdf8';
+              e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.08)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#0f172a';
               e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+              e.currentTarget.style.backgroundColor = '#0f172a';
             }}
           >
-            {op.icon}
-            <span>{op.label}</span>
+            <div
+              style={{
+                padding: '0.5rem',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(56, 189, 248, 0.12)',
+              }}
+            >
+              {act.icon}
+            </div>
+            <div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#ffffff' }}>
+                {act.label}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
+                {act.sub}
+              </div>
+            </div>
           </button>
         ))}
       </div>

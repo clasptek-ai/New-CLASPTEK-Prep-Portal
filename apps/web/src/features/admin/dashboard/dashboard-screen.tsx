@@ -63,78 +63,49 @@ export function AdminDashboardScreen() {
         boxSizing: 'border-box',
       }}
     >
-      {/* Top Banner & Profile Overview Header */}
+      {/* Compact Enterprise Header */}
       <div
         style={{
-          padding: '2rem',
-          borderRadius: '20px',
-          background: 'linear-gradient(135deg, rgba(21, 29, 48, 0.95), rgba(15, 23, 42, 0.98))',
+          padding: '1.25rem 1.75rem',
+          borderRadius: '16px',
+          backgroundColor: '#151d30',
           border: '1px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '1.5rem',
+          gap: '1rem',
         }}
       >
         <div>
-          <span
-            style={{
-              fontSize: '0.75rem',
-              fontWeight: 800,
-              letterSpacing: '0.08em',
-              padding: '0.2rem 0.6rem',
-              borderRadius: '6px',
-              backgroundColor: 'rgba(56, 189, 248, 0.15)',
-              color: '#38bdf8',
-              textTransform: 'uppercase',
-            }}
-          >
-            ACADEMIC OPERATIONS CENTER
-          </span>
           <h1
             style={{
-              margin: '0.5rem 0 0.25rem',
-              fontSize: '1.95rem',
+              margin: 0,
+              fontSize: '1.5rem',
               fontWeight: 800,
-              color: '#f8fafc',
+              color: '#ffffff',
               letterSpacing: '-0.02em',
             }}
           >
-            Enterprise Administration Console
+            Good Morning, Administrator
           </h1>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#cbd5e1', maxWidth: '640px' }}>
-            Operational telemetry, admissions management, assessment runtime controls, and
-            multi-programme analytics for {academicTerm}.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div
             style={{
-              padding: '0.75rem 1.25rem',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(52, 211, 153, 0.1)',
-              border: '1px solid rgba(52, 211, 153, 0.25)',
-              textAlign: 'right',
+              fontSize: '0.85rem',
+              color: '#cbd5e1',
+              marginTop: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
             }}
           >
-            <div
-              style={{
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                color: '#34d399',
-                textTransform: 'uppercase',
-              }}
-            >
-              System Status
-            </div>
-            <div
-              style={{ fontSize: '1.15rem', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}
-            >
-              {systemHealth}
-            </div>
+            <span>{academicTerm}</span>
+            <span>•</span>
+            <span style={{ color: '#34d399', fontWeight: 600 }}>System Status: Healthy 🟢</span>
+            <span>•</span>
+            <span>
+              Last Sync: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
           </div>
         </div>
       </div>

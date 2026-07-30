@@ -46,25 +46,31 @@ export const AdminSidebar: React.FC = () => {
 
   const navGroups: NavGroup[] = [
     {
-      title: 'OVERVIEW',
+      title: 'CORE PLATFORM',
       items: [
         {
           id: 'dashboard',
-          label: 'Operations Dashboard',
+          label: 'Dashboard',
           href: '/admin/dashboard',
           icon: <LayoutDashboard size={18} />,
+        },
+        {
+          id: 'programmes',
+          label: 'Exams',
+          href: '/admin/programmes',
+          icon: <BookOpen size={18} />,
+        },
+        {
+          id: 'questions',
+          label: 'Question Bank',
+          href: '/admin/question-bank',
+          icon: <Database size={18} />,
         },
       ],
     },
     {
-      title: 'EXAM OPERATIONS',
+      title: 'ASSESSMENTS & PRACTICE',
       items: [
-        {
-          id: 'programmes',
-          label: 'Exams & Programmes',
-          href: '/admin/programmes',
-          icon: <BookOpen size={18} />,
-        },
         {
           id: 'practice-sessions',
           label: 'Practice Sessions',
@@ -73,38 +79,49 @@ export const AdminSidebar: React.FC = () => {
         },
         {
           id: 'diagnostic-assessments',
-          label: 'Diagnostic Placement',
+          label: 'Diagnostics',
           href: '/admin/assessments?mode=assessment',
           icon: <Award size={18} />,
         },
         {
           id: 'mock-tests',
-          label: 'Mock Examinations',
+          label: 'Mock Exams',
           href: '/admin/assessments?mode=mock',
           icon: <Award size={18} />,
         },
+      ],
+    },
+    {
+      title: 'USERS & ANALYTICS',
+      items: [
+        {
+          id: 'students',
+          label: 'Students',
+          href: '/admin/users',
+          icon: <Users size={18} />,
+        },
         {
           id: 'results',
-          label: 'Results & Performance',
+          label: 'Reports',
           href: '/admin/results',
           icon: <BarChart3 size={18} />,
         },
       ],
     },
     {
-      title: 'QUESTION BANK',
+      title: 'SYSTEM & SECURITY',
       items: [
         {
-          id: 'questions',
-          label: 'Question Bank',
-          href: '/admin/question-bank',
-          icon: <Database size={18} />,
+          id: 'settings',
+          label: 'Settings',
+          href: '/admin/settings',
+          icon: <Settings size={18} />,
         },
         {
-          id: 'import-centre',
-          label: 'Bulk Import (CSV/JSON)',
-          href: '/admin/question-bank/import',
-          icon: <Upload size={18} />,
+          id: 'audit',
+          label: 'Audit Logs',
+          href: '/admin/audit',
+          icon: <ShieldCheck size={18} />,
         },
       ],
     },
