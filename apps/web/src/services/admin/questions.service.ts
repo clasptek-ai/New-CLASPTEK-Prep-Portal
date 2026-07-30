@@ -17,6 +17,36 @@ export type QuestionType =
 export type DifficultyLevel = 'EASY' | 'MEDIUM' | 'HARD';
 export type QuestionUsage = 'DIAGNOSTIC' | 'PRACTICE' | 'MOCK';
 
+export interface QuestionGroup {
+  id: string;
+  title: string; // e.g. "Questions 1-5: Matching Headings"
+  passageId?: string;
+  audioUrl?: string;
+  instructions: string;
+  type: QuestionType;
+  questionIds: string[];
+}
+
+export interface WritingTaskSpec {
+  prompt: string;
+  instructions: string;
+  rubric: {
+    taskAchievement: string;
+    coherenceCoherence: string;
+    lexicalResource: string;
+    grammaticalAccuracy: string;
+  };
+  modelSampleAnswer: string;
+}
+
+export interface SpeakingTaskSpec {
+  prompt: string;
+  audioPromptUrl?: string;
+  prepTimeSeconds: number;
+  speakingTimeSeconds: number;
+  rubric: string;
+}
+
 export interface Passage {
   id: string;
   title: string;
@@ -25,6 +55,7 @@ export interface Passage {
   section: SectionType;
   source?: string;
   wordCount: number;
+  groupIds?: string[];
   questionIds: string[];
   createdAt: string;
 }
@@ -62,11 +93,14 @@ export interface AdminQuestion {
   distractors?: string[];
   explanation: string;
   hints?: string[];
+  groupId?: string;
   passageId?: string;
   passageTitle?: string;
   passageText?: string;
   audioUrl?: string;
   imageUrl?: string;
+  writingSpec?: WritingTaskSpec;
+  speakingSpec?: SpeakingTaskSpec;
   hash: string;
   createdAt: string;
   updatedAt: string;

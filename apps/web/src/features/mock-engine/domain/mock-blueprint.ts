@@ -7,10 +7,20 @@ import {
 } from '../../../services/admin/questions.service';
 import { BandScoreResult } from '../../../services/student/practice.service';
 
+export interface QuestionGroupBlueprint {
+  id: string;
+  groupTitle: string; // e.g. "Questions 1-5: Matching Headings"
+  questionType: QuestionType;
+  questionCount: number;
+  instructions: string;
+  passageRequired?: boolean;
+}
+
 export interface MockBlueprintSection {
   id: string;
   name: SectionType;
   questionTypes: QuestionType[];
+  questionGroups?: QuestionGroupBlueprint[];
   questionCount: number;
   timeLimitMinutes: number;
   passingScorePercent: number;
