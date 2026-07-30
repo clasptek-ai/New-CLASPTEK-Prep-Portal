@@ -31,6 +31,17 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
   const [learningGoal, setLearningGoal] = useState(onboardingData?.purpose || 'Study Abroad');
   const [currentLevel, setCurrentLevel] = useState('Intermediate');
 
+  // Sync state when onboardingData resolves on client mount
+  React.useEffect(() => {
+    if (onboardingData) {
+      if (onboardingData.previousScore) setCurrentScore(onboardingData.previousScore);
+      if (onboardingData.targetScore) setTargetScore(onboardingData.targetScore);
+      if (onboardingData.plannedExamDate) setPlannedTestDate(onboardingData.plannedExamDate);
+      if (onboardingData.purpose) setLearningGoal(onboardingData.purpose);
+      if (onboardingData.baselineLevel) setCurrentLevel(onboardingData.baselineLevel);
+    }
+  }, [onboardingData]);
+
   const diagnosticDef = getDiagnosticDefinition(targetExam);
 
   const handleStartDiagnostic = () => {
