@@ -7,7 +7,10 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || req.headers.get('x-student-id') || '00000000-0000-0000-0000-000000000001';
+    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    if (!studentId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { id: attemptId } = await params;
     const { dbPool } = await getDiagnosticContext();

@@ -19,11 +19,47 @@ export async function POST(req: NextRequest) {
     const blueprintId = body.blueprintId;
 
     const { dbPool } = await getDiagnosticContext();
-    const mockRepo = new PostgresCanonicalMockRepository(dbPool.getPool());
+    const pool = dbPool.getPool();
+    const mockRepo = new PostgresCanonicalMockRepository(pool);
+
+    // 0. Server-side Programme Authorization Check
+    const profileRes = await pool.query(
+      `SELECT COALESCE(spe.programme_id::text, p.target_programme, au.raw_user_meta_data->>'programme') as programme
+       FROM auth.users au
+       LEFT JOIN public.profiles p ON p.user_id = au.id
+       LEFT JOIN public.student_programme_enrollments spe ON spe.student_id = au.id
+       WHERE au.id = $1`,
+      [studentId]
+    );
+
+    const authorizedProgramme = profileRes.rows[0]?.programme;
+    if (authorizedProgramme) {
+      const normalizedAuth = authorizedProgramme.toUpperCase().replace(/[^A-Z]/g, '');
+      const normalizedReq = examType.toUpperCase().replace(/[^A-Z]/g, '');
+      
+      const match =
+        normalizedAuth === normalizedReq ||
+        (normalizedAuth.includes('IELTSAC') && normalizedReq.includes('IELTSAC')) ||
+        (normalizedAuth.includes('IELTSGT') && normalizedReq.includes('IELTSGT')) ||
+        (normalizedAuth.includes('TOEFL') && normalizedReq.includes('TOEFL')) ||
+        (normalizedAuth.includes('SAT') && normalizedReq.includes('SAT')) ||
+        (normalizedAuth.includes('CELPIP') && normalizedReq.includes('CELPIP')) ||
+        (normalizedAuth.includes('ENG') && normalizedReq.includes('ENG'));
+
+      if (!match) {
+        return NextResponse.json(
+          {
+            error: 'FORBIDDEN_PROGRAMME_ACCESS',
+            message: `You are registered for ${authorizedProgramme} and cannot access mock examinations for ${examType}.`,
+          },
+          { status: 403 }
+        );
+      }
+    }
 
     // 1. Load active blueprint
     let bp = blueprintId
-      ? await mockRepo.getSessionById(blueprintId) // check if ID passed is blueprint
+      ? await mockRepo.getSessionById(blueprintId)
       : null;
 
     if (!bp) {

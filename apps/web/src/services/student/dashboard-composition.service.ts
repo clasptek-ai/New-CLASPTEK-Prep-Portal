@@ -66,8 +66,8 @@ export const DashboardCompositionService = {
     return {
       profile: {
         id: profile.id || studentId || 'stud-active-123',
-        studentName: profile.name || 'Alex Mercer',
-        avatarUrl: profile.avatarUrl || '/avatars/alex.png',
+        studentName: profile.name || 'Student Candidate',
+        avatarUrl: profile.avatarUrl || '/avatars/default.png',
         currentProgrammeId: activeProg.id,
         currentProgrammeTitle: activeProg.name,
         studyStreakDays: 14,

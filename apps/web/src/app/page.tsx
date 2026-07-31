@@ -1171,7 +1171,7 @@ export default function HomePage() {
                     color: '#ffffff',
                   }}
                 >
-                  Welcome back, Alex Mercer 👋
+                  Welcome back, Student Candidate 👋
                 </h3>
               </div>
               <Badge variant="info">Enrolled: IELTS Academic Intensive</Badge>

@@ -19,9 +19,9 @@ export const DashboardAggregationService = {
         () =>
           ({
             id: studentId || 'stud-active-123',
-            name: 'Alex Mercer',
-            avatarUrl: '/avatars/alex.png',
-            enrolledAt: '2026-01-15T09:00:00Z',
+            name: 'Student Candidate',
+            avatarUrl: '/avatars/default.png',
+            enrolledAt: new Date().toISOString(),
           }) as any
       ),
       studentLearningService.getEnrolledProgrammes().catch(() => []),
@@ -43,8 +43,8 @@ export const DashboardAggregationService = {
     return {
       profile: {
         id: profile.id || studentId || 'stud-active-123',
-        studentName: profile.name || 'Alex Mercer',
-        avatarUrl: profile.avatarUrl || '/avatars/alex.png',
+        studentName: profile.name || 'Student Candidate',
+        avatarUrl: profile.avatarUrl || '/avatars/default.png',
         currentProgrammeId: activeProg.id,
         currentProgrammeTitle: activeProg.name,
         studyStreakDays: 14,

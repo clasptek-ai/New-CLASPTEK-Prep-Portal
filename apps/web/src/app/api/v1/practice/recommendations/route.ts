@@ -15,6 +15,17 @@ export async function GET(req: NextRequest) {
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
 
+    // 0. Query candidate's assigned target_programme
+    const profileRes = await pool.query(
+      `SELECT COALESCE(spe.programme_id::text, p.target_programme, au.raw_user_meta_data->>'programme', 'English Proficiency') as programme
+       FROM auth.users au
+       LEFT JOIN public.profiles p ON p.user_id = au.id
+       LEFT JOIN public.student_programme_enrollments spe ON spe.student_id = au.id
+       WHERE au.id = $1`,
+      [studentId]
+    );
+    const candidateProgramme = profileRes.rows[0]?.programme || 'English Proficiency';
+
     // 1. Query candidate's completed diagnostic placement results and section scores
     const diagRes = await pool.query(
       `SELECT pr.placement_stage, pr.confidence_percentage, dss.section_code, dss.section_name, dss.score_percentage
@@ -49,7 +60,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Default fallback if student has not taken Diagnostic yet
+    // Default baseline if student has not taken Diagnostic yet
     if (sectionScores.length === 0) {
       sectionScores.push(
         { skill: 'Grammar & Structure', score: 45, source: 'DEFAULT_BASELINE' },
@@ -72,7 +83,7 @@ export async function GET(req: NextRequest) {
         currentAccuracy: prioritySkill.score,
         status: prioritySkill.score < 50 ? 'NEEDS_IMPROVEMENT' : 'DEVELOPING',
         reasoning: `Based on your Diagnostic Baseline (${prioritySkill.score}%), targeted practice in ${prioritySkill.skill} is recommended to build foundational accuracy.`,
-        suggestedExam: 'English Proficiency',
+        suggestedExam: candidateProgramme,
         suggestedSection: prioritySkill.skill.includes('Grammar') ? 'Grammar' : prioritySkill.skill,
       },
       {
@@ -83,7 +94,7 @@ export async function GET(req: NextRequest) {
         currentAccuracy: secondarySkill.score,
         status: secondarySkill.score < 65 ? 'DEVELOPING' : 'MASTERED',
         reasoning: `Your score of ${secondarySkill.score}% in ${secondarySkill.skill} indicates opportunity for rapid score improvement with deliberate practice.`,
-        suggestedExam: 'English Proficiency',
+        suggestedExam: candidateProgramme,
         suggestedSection: secondarySkill.skill.includes('Writing') ? 'Writing' : secondarySkill.skill,
       },
     ];

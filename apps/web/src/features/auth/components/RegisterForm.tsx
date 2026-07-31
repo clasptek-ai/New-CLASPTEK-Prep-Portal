@@ -148,22 +148,6 @@ export function RegisterForm() {
         localStorage.setItem('clasptek_onboarding_data', JSON.stringify(onboardingData));
       }
 
-      // Sync into Admin Student Directory
-      try {
-        await adminUsersService.addStudent({
-          name: `${data.firstName} ${data.lastName}`,
-          email: data.email,
-          phone: data.phone || '+44 7700 900000',
-          role: 'STUDENT',
-          status: 'ACTIVE',
-          programme: selectedProgObj?.name || 'IELTS Academic',
-          practiceUnlocked: true,
-          mockUnlocked: true,
-        });
-      } catch (e) {
-        console.error('Failed sync to student directory', e);
-      }
-
       setIsSuccess(true);
       setTimeout(() => {
         router.push('/student/welcome');

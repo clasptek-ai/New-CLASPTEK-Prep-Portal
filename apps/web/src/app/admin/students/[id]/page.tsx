@@ -122,7 +122,6 @@ export default function StudentProfilePage() {
     { id: 'assessments', label: 'Assessments', icon: <Award size={16} /> },
     { id: 'practice', label: 'Practice', icon: <Layers size={16} /> },
     { id: 'diagnostics', label: 'Diagnostics', icon: <BarChart2 size={16} /> },
-    { id: 'payments', label: 'Payments', icon: <CreditCard size={16} /> },
     { id: 'activity', label: 'Activity Log', icon: <History size={16} /> },
     { id: 'certificates', label: 'Certificates', icon: <ShieldCheck size={16} /> },
   ];
@@ -230,18 +229,7 @@ export default function StudentProfilePage() {
                   {student.name}
                 </h1>
                 <Badge variant={student.status === 'ACTIVE' ? 'success' : 'danger'}>{student.status}</Badge>
-                <span
-                  style={{
-                    padding: '0.2rem 0.55rem',
-                    borderRadius: '6px',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    backgroundColor: student.paymentStatus === 'PAID' ? 'rgba(52, 211, 153, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                    color: student.paymentStatus === 'PAID' ? '#34d399' : '#fbbf24',
-                  }}
-                >
-                  Payment: {student.paymentStatus || 'PAID'}
-                </span>
+
               </div>
 
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem', marginTop: '0.6rem', fontSize: '0.85rem', color: '#94a3b8' }}>
@@ -502,30 +490,7 @@ export default function StudentProfilePage() {
           </Card>
         )}
 
-        {activeTab === 'payments' && (
-          <Card title="Candidate Billing & Payment Transactions">
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', color: '#f8fafc', marginTop: '0.5rem' }}>
-              <thead>
-                <tr style={{ backgroundColor: '#1F2937', textAlign: 'left' }}>
-                  <th style={{ padding: '0.75rem', color: '#94a3b8' }}>Invoice Ref</th>
-                  <th style={{ padding: '0.75rem', color: '#94a3b8' }}>Item Description</th>
-                  <th style={{ padding: '0.75rem', color: '#94a3b8' }}>Amount</th>
-                  <th style={{ padding: '0.75rem', color: '#94a3b8' }}>Date</th>
-                  <th style={{ padding: '0.75rem', color: '#94a3b8' }}>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <td style={{ padding: '0.75rem', fontWeight: 700, color: '#38bdf8' }}>INV-2026-091</td>
-                  <td style={{ padding: '0.75rem' }}>{student.programme} Enrollment Fee</td>
-                  <td style={{ padding: '0.75rem', fontWeight: 700 }}>$450.00</td>
-                  <td style={{ padding: '0.75rem', color: '#94a3b8' }}>{new Date(student.registeredDate).toLocaleDateString()}</td>
-                  <td style={{ padding: '0.75rem' }}><Badge variant="success">{student.paymentStatus || 'PAID'}</Badge></td>
-                </tr>
-              </tbody>
-            </table>
-          </Card>
-        )}
+
 
         {activeTab === 'activity' && (
           <Card title="Candidate Activity Audit Log">

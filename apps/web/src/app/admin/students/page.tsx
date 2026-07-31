@@ -197,7 +197,7 @@ export default function StudentDirectoryPage() {
             Student Directory
           </h1>
           <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
-            Live candidate database — audit registrations, cohort assignments, payment status, and access gates.
+            Live candidate database — audit registrations, cohort assignments, and access gates.
           </p>
         </div>
 
@@ -851,30 +851,7 @@ export default function StudentDirectoryPage() {
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
-                  Payment Status
-                </label>
-                <select
-                  value={newPaymentStatus}
-                  onChange={(e) => setNewPaymentStatus(e.target.value as any)}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#ffffff',
-                    fontSize: '0.875rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="PAID">Paid</option>
-                  <option value="PENDING">Pending Payment</option>
-                  <option value="COMPLETED">Completed</option>
-                  <option value="OVERDUE">Overdue</option>
-                </select>
-              </div>
+
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
                 <Button variant="secondary" type="button" onClick={() => setAddModalOpen(false)}>
@@ -1031,30 +1008,7 @@ export default function StudentDirectoryPage() {
                 </div>
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
-                  Payment Status
-                </label>
-                <select
-                  value={editingStudent.paymentStatus || 'PAID'}
-                  onChange={(e) => setEditingStudent({ ...editingStudent, paymentStatus: e.target.value as any })}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#ffffff',
-                    fontSize: '0.875rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="PAID">Paid</option>
-                  <option value="PENDING">Pending Payment</option>
-                  <option value="COMPLETED">Completed</option>
-                  <option value="OVERDUE">Overdue</option>
-                </select>
-              </div>
+
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
                 <Button variant="secondary" type="button" onClick={() => setEditingStudent(null)}>

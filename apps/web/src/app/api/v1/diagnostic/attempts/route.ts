@@ -8,7 +8,10 @@ import { randomUUID } from 'crypto';
 export async function GET(req: NextRequest) {
   try {
     const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || req.headers.get('x-student-id') || '00000000-0000-0000-0000-000000000001';
+    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    if (!studentId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
@@ -50,7 +53,10 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getAuthenticatedSession(req);
     const body = await req.json().catch(() => ({}));
-    const studentId = session?.userId || req.headers.get('x-student-id') || '00000000-0000-0000-0000-000000000001';
+    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    if (!studentId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const tenantId = session?.tenantId || '00000000-0000-0000-0000-000000000000';
 
     const { dbPool } = await getDiagnosticContext();
