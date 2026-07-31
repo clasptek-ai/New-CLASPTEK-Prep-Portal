@@ -16,12 +16,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const payload = await req.json();
+    const body = await req.json();
+    const jsonContent = body.payload || body;
+    const targetProgramme = body.targetProgramme || body.examType;
 
     const { dbPool } = await getDiagnosticContext();
     const importerRepo = new CanonicalJsonImporterRepository(dbPool.getPool());
 
-    const result = importerRepo.validateJsonPayload(payload);
+    const result = importerRepo.validateJsonPayload(jsonContent, targetProgramme);
 
     return NextResponse.json({
       success: true,

@@ -16,6 +16,10 @@ export interface JsonValidationResult {
   warningCount: number;
   invalidCount: number;
   duplicateCount: number;
+  passageCount: number;
+  foundationCount: number;
+  intermediateCount: number;
+  advancedCount: number;
   errors: ValidationErrorItem[];
   warnings: string[];
 }
@@ -49,7 +53,7 @@ export class CanonicalJsonImporterRepository {
 
   constructor(private readonly pool: Pool) {}
 
-  public validateJsonPayload(payload: any): JsonValidationResult {
+  public validateJsonPayload(payload: any, uiTargetProgramme?: string): JsonValidationResult {
     const errors: ValidationErrorItem[] = [];
     const warnings: string[] = [];
 
@@ -62,6 +66,10 @@ export class CanonicalJsonImporterRepository {
         warningCount: 0,
         invalidCount: 1,
         duplicateCount: 0,
+        passageCount: 0,
+        foundationCount: 0,
+        intermediateCount: 0,
+        advancedCount: 0,
         errors: [{ rowNumber: 0, itemCode: 'ROOT', field: 'payload', error: 'Invalid JSON payload format.', recommendation: 'Provide a valid JSON object.' }],
         warnings: [],
       };
@@ -73,12 +81,30 @@ export class CanonicalJsonImporterRepository {
     }
 
     const examType = payload.examType || 'English Proficiency';
+
+    // Target Programme Mismatch Check
+    if (uiTargetProgramme && uiTargetProgramme !== 'General (All Programmes)' && payload.examType) {
+      if (uiTargetProgramme.toLowerCase() !== payload.examType.toLowerCase()) {
+        errors.push({
+          rowNumber: 0,
+          itemCode: 'PROGRAMME_MISMATCH',
+          field: 'examType',
+          error: `PROGRAMME_MISMATCH: Selected Target Programme "${uiTargetProgramme}" conflicts with JSON examType "${payload.examType}".`,
+          recommendation: 'Align the target programme selector with the JSON package examType.',
+        });
+      }
+    }
+
+    const passages = Array.isArray(payload.passages) ? payload.passages : [];
     const questions = Array.isArray(payload.questions) ? payload.questions : [];
     const totalRecords = questions.length;
 
     let validCount = 0;
     let invalidCount = 0;
     let duplicateCount = 0;
+    let foundationCount = 0;
+    let intermediateCount = 0;
+    let advancedCount = 0;
 
     const seenCodes = new Set<string>();
 
@@ -132,7 +158,12 @@ export class CanonicalJsonImporterRepository {
         }
       }
 
-      // Proficiency Level Check (Grammar & Language)
+      // Proficiency & Difficulty Level Check (Grammar & Language)
+      const levelStr = (q.difficulty || q.proficiencyLevel || '').toUpperCase();
+      if (levelStr === 'FOUNDATION' || levelStr === 'EASY') foundationCount++;
+      else if (levelStr === 'INTERMEDIATE' || levelStr === 'MEDIUM') intermediateCount++;
+      else if (levelStr === 'ADVANCED' || levelStr === 'HARD') advancedCount++;
+
       if (q.proficiencyLevel) {
         const level = q.proficiencyLevel.toUpperCase();
         if (!['FOUNDATION', 'INTERMEDIATE', 'ADVANCED'].includes(level)) {
@@ -192,6 +223,10 @@ export class CanonicalJsonImporterRepository {
       warningCount: warnings.length,
       invalidCount,
       duplicateCount,
+      passageCount: passages.length,
+      foundationCount,
+      intermediateCount,
+      advancedCount,
       errors,
       warnings,
     };

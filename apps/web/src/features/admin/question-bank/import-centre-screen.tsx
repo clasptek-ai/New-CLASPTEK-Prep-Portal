@@ -16,8 +16,11 @@ import {
   ArrowLeft,
   FileCheck,
   BookOpen,
+  Code2,
+  AlertTriangle,
+  ChevronDown,
 } from 'lucide-react';
-import { adminQuestionsService, AdminQuestion } from '../../../services/admin/questions.service';
+import { adminQuestionsService } from '../../../services/admin/questions.service';
 
 export function downloadEnterpriseCSVTemplate() {
   const headers = [
@@ -61,11 +64,108 @@ export function downloadEnterpriseCSVTemplate() {
   document.body.removeChild(link);
 }
 
+export function downloadEnterpriseJSONTemplate() {
+  const jsonTemplate = {
+    schemaVersion: '1.0',
+    examType: 'IELTS Academic',
+    assessmentUsages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
+    metadata: {
+      exportedAt: new Date().toISOString(),
+      source: 'Clasptek Universal Question Bank Importer',
+    },
+    passages: [
+      {
+        passageCode: 'IELTS-READ-P001',
+        title: 'The Evolution of Maritime Trade Networks',
+        passageType: 'READING',
+        content: 'Maritime trade has served as the backbone of international commerce for over two millennia...',
+      },
+    ],
+    questions: [
+      {
+        questionCode: 'IELTS-GRAM-FND-001',
+        section: 'GRAMMAR',
+        skill: 'GRAMMAR',
+        topic: 'Subject-Verb Agreement',
+        difficulty: 'FOUNDATION',
+        questionType: 'MULTIPLE_CHOICE',
+        questionText: 'Select the sentence with correct subject-verb agreement:',
+        options: [
+          { code: 'A', text: 'The list of items are on the desk.' },
+          { code: 'B', text: 'The list of items is on the desk.' },
+          { code: 'C', text: 'The list of items were on the desk.' },
+          { code: 'D', text: 'The list of items have been on the desk.' },
+        ],
+        correctAnswer: 'B',
+        explanation: "The singular subject 'list' requires the singular verb 'is'.",
+        usages: ['DIAGNOSTIC', 'PRACTICE'],
+      },
+      {
+        questionCode: 'IELTS-GRAM-INT-001',
+        section: 'GRAMMAR',
+        skill: 'GRAMMAR',
+        topic: 'Past Perfect Tense',
+        difficulty: 'INTERMEDIATE',
+        questionType: 'MULTIPLE_CHOICE',
+        questionText: "Choose the correct verb tense: 'By the time we arrived, she _____ her presentation.'",
+        options: [
+          { code: 'A', text: 'has finished' },
+          { code: 'B', text: 'had finished' },
+          { code: 'C', text: 'finishes' },
+          { code: 'D', text: 'will finish' },
+        ],
+        correctAnswer: 'B',
+        explanation: "Past perfect 'had finished' expresses an action completed prior to another past moment.",
+        usages: ['PRACTICE', 'MOCK'],
+      },
+      {
+        questionCode: 'IELTS-READ-001',
+        section: 'READING',
+        skill: 'READING',
+        topic: 'Maritime History',
+        difficulty: 'ADVANCED',
+        questionType: 'MULTIPLE_CHOICE',
+        passageCode: 'IELTS-READ-P001',
+        questionText: 'What was the principal driver of early maritime trade expansion?',
+        options: [
+          { code: 'A', text: 'Development of celestial navigation and standardized trade routes' },
+          { code: 'B', text: 'Immediate invention of steam engines' },
+          { code: 'C', text: 'Reduction of agricultural subsidies' },
+          { code: 'D', text: 'Automated postal services' },
+        ],
+        correctAnswer: 'A',
+        explanation: 'Celestial navigation enabled long-distance open ocean travel.',
+        usages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
+      },
+      {
+        questionCode: 'IELTS-WRIT-T1-001',
+        section: 'WRITING',
+        skill: 'WRITING',
+        topic: 'Academic Task 1',
+        difficulty: 'INTERMEDIATE',
+        questionType: 'ESSAY',
+        questionText: 'Summarize the information by selecting and reporting the main features of the chart provided.',
+        explanation: 'Describe overall trend, highest/lowest data points, and key comparisons.',
+        usages: ['DIAGNOSTIC', 'PRACTICE'],
+      },
+    ],
+  };
+
+  const blob = new Blob([JSON.stringify(jsonTemplate, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'clasptek_universal_question_import_template.json');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 export function QuestionBankImportCentreScreen() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeFormat, setActiveFormat] = useState<'CSV' | 'EXCEL' | 'ZIP' | 'FOLDER' | 'SINGLE'>(
-    'CSV'
+  const [activeFormat, setActiveFormat] = useState<'CSV' | 'EXCEL' | 'JSON' | 'ZIP' | 'FOLDER'>(
+    'JSON'
   );
   const [selectedProgramme, setSelectedProgramme] = useState<string>('IELTS Academic');
   const [selectedUsages, setSelectedUsages] = useState<Array<'DIAGNOSTIC' | 'PRACTICE' | 'MOCK'>>([
@@ -78,15 +178,27 @@ export function QuestionBankImportCentreScreen() {
     size: string;
     type: string;
   } | null>(null);
+  const [templateMenuOpen, setTemplateMenuOpen] = useState(false);
   const [isSimulating, setIsSimulating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [parsedJsonPayload, setParsedJsonPayload] = useState<any>(null);
+
   const [importResult, setImportResult] = useState<{
     success: boolean;
+    batchId?: string;
     fileName: string;
+    jsonExamType?: string;
     totalParsed: number;
     validQuestions: number;
-    duplicatesFound: number;
-    errors: string[];
+    invalidCount: number;
+    duplicateCount: number;
+    passageCount: number;
+    foundationCount: number;
+    intermediateCount: number;
+    advancedCount: number;
+    programmeMismatch: boolean;
+    errors: any[];
+    warnings: string[];
   } | null>(null);
 
   const processFile = async (file: File) => {
@@ -99,61 +211,133 @@ export function QuestionBankImportCentreScreen() {
 
     setIsSimulating(true);
     setImportResult(null);
+    setParsedJsonPayload(null);
 
     try {
-      const res = await fetch('/api/v1/admin/questions/import', {
+      const text = await file.text();
+      let payload: any = null;
+
+      if (file.name.endsWith('.json') || activeFormat === 'JSON') {
+        try {
+          payload = JSON.parse(text);
+          setParsedJsonPayload(payload);
+        } catch {
+          setIsSimulating(false);
+          setImportResult({
+            success: false,
+            fileName: file.name,
+            totalParsed: 0,
+            validQuestions: 0,
+            invalidCount: 1,
+            duplicateCount: 0,
+            passageCount: 0,
+            foundationCount: 0,
+            intermediateCount: 0,
+            advancedCount: 0,
+            programmeMismatch: false,
+            errors: [
+              {
+                rowNumber: 0,
+                itemCode: 'SYNTAX',
+                field: 'json',
+                error: 'Invalid JSON syntax.',
+                recommendation: 'Check JSON formatting for syntax errors.',
+              },
+            ],
+            warnings: [],
+          });
+          return;
+        }
+      } else {
+        // Fallback for non-JSON CSV/Excel dummy preview
+        payload = {
+          schemaVersion: '1.0',
+          examType: selectedProgramme,
+          questions: Array.from({ length: 10 }).map((_, i) => ({
+            questionCode: `Q-${i + 1}`,
+            examType: selectedProgramme,
+            section: 'READING',
+            difficulty: i % 3 === 0 ? 'FOUNDATION' : i % 3 === 1 ? 'INTERMEDIATE' : 'ADVANCED',
+            questionType: 'MULTIPLE_CHOICE',
+            questionText: `Sample imported CSV/Excel item ${i + 1}`,
+            options: [
+              { code: 'A', text: 'Option A' },
+              { code: 'B', text: 'Option B' },
+            ],
+            correctAnswer: 'A',
+          })),
+        };
+        setParsedJsonPayload(payload);
+      }
+
+      // Invoke backend schema validation API
+      const res = await fetch('/api/v1/admin/questions/import/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          examType: selectedProgramme,
-          assessmentCode: `ASSESS-${Date.now().toString().slice(-4)}`,
-          questions: Array.from({ length: 50 }).map((_, i) => ({
-            code: `Q-${i + 1}`,
-            type:
-              i < 15
-                ? 'Grammar'
-                : i < 35
-                  ? 'Reading'
-                  : i < 40
-                    ? 'Listening'
-                    : i < 45
-                      ? 'SyntaxLogic'
-                      : 'Writing',
-            skill: selectedProgramme,
-            difficulty: i % 3 === 0 ? 'Easy' : i % 3 === 1 ? 'Medium' : 'Hard',
-            prompt: `Sample question item ${i + 1} imported from ${file.name}`,
-            options: ['Option A', 'Option B', 'Option C', 'Option D'],
-            correctAnswer: 'Option A',
-            explanation: `Explanation for question item ${i + 1}`,
-          })),
+          payload,
+          targetProgramme: selectedProgramme,
         }),
       });
-      const data = await res.json();
 
+      const data = await res.json();
+      setIsSimulating(false);
+
+      if (data.success && data.validation) {
+        const val = data.validation;
+        const mismatch = Boolean(
+          val.errors?.some((e: any) => e.itemCode === 'PROGRAMME_MISMATCH')
+        );
+
+        setImportResult({
+          success: val.isValid && !mismatch,
+          fileName: file.name,
+          jsonExamType: payload.examType || selectedProgramme,
+          totalParsed: val.totalRecords || 0,
+          validQuestions: val.validCount || 0,
+          invalidCount: val.invalidCount || 0,
+          duplicateCount: val.duplicateCount || 0,
+          passageCount: val.passageCount || 0,
+          foundationCount: val.foundationCount || 0,
+          intermediateCount: val.intermediateCount || 0,
+          advancedCount: val.advancedCount || 0,
+          programmeMismatch: mismatch,
+          errors: val.errors || [],
+          warnings: val.warnings || [],
+        });
+      } else {
+        setImportResult({
+          success: false,
+          fileName: file.name,
+          totalParsed: 0,
+          validQuestions: 0,
+          invalidCount: 1,
+          duplicateCount: 0,
+          passageCount: 0,
+          foundationCount: 0,
+          intermediateCount: 0,
+          advancedCount: 0,
+          programmeMismatch: false,
+          errors: [{ rowNumber: 0, itemCode: 'API_ERROR', field: 'validation', error: data.error || 'Validation failed', recommendation: 'Retry validation' }],
+          warnings: [],
+        });
+      }
+    } catch (err: any) {
       setIsSimulating(false);
       setImportResult({
-        success: data.success ?? true,
+        success: false,
         fileName: file.name,
-        totalParsed: data.importedCount || 50,
-        validQuestions: data.importedCount || 50,
-        duplicatesFound: 0,
-        errors: [
-          `Validated ${data.importedCount || 50} question items from ${file.name}.`,
-          `Successfully tagged and stored under target exam: ${selectedProgramme}.`,
-        ],
-      });
-    } catch {
-      setIsSimulating(false);
-      setImportResult({
-        success: true,
-        fileName: file.name,
-        totalParsed: 50,
-        validQuestions: 50,
-        duplicatesFound: 0,
-        errors: [
-          `Processed 50 question items from ${file.name}.`,
-          `Mapped to ${selectedProgramme} Question Bank.`,
-        ],
+        totalParsed: 0,
+        validQuestions: 0,
+        invalidCount: 1,
+        duplicateCount: 0,
+        passageCount: 0,
+        foundationCount: 0,
+        intermediateCount: 0,
+        advancedCount: 0,
+        programmeMismatch: false,
+        errors: [{ rowNumber: 0, itemCode: 'CLIENT_ERROR', field: 'file', error: err.message || 'Failed to read file', recommendation: 'Select a valid file' }],
+        warnings: [],
       });
     }
   };
@@ -185,6 +369,21 @@ export function QuestionBankImportCentreScreen() {
     fileInputRef.current?.click();
   };
 
+  const getAcceptedExtensions = () => {
+    switch (activeFormat) {
+      case 'JSON':
+        return '.json';
+      case 'CSV':
+        return '.csv';
+      case 'EXCEL':
+        return '.xlsx,.xls';
+      case 'ZIP':
+        return '.zip';
+      default:
+        return '.json,.csv,.xlsx,.xls,.zip';
+    }
+  };
+
   return (
     <div
       style={{
@@ -195,12 +394,12 @@ export function QuestionBankImportCentreScreen() {
         boxSizing: 'border-box',
       }}
     >
-      {/* Hidden Native File Input to Select File from PC */}
+      {/* Hidden Native File Input */}
       <input
         type="file"
         ref={fileInputRef}
         onChange={handleFileChange}
-        accept=".csv,.xlsx,.xls,.zip,.json"
+        accept={getAcceptedExtensions()}
         style={{ display: 'none' }}
       />
 
@@ -235,28 +434,96 @@ export function QuestionBankImportCentreScreen() {
               Universal Import Centre
             </h1>
             <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
-              Import batch items into Universal Question Bank with pipe-delimited usages
-              (Diagnostic|Practice|Mock)
+              Import batch question packages into Universal Question Bank with canonical usages
+              (DIAGNOSTIC, PRACTICE, MOCK)
             </p>
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          onClick={downloadEnterpriseCSVTemplate}
-          style={{
-            borderColor: '#38bdf8',
-            color: '#38bdf8',
-            gap: '0.5rem',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          <FileText size={16} /> Download Universal Template (.CSV)
-        </Button>
+        {/* Template Download Dropdown Button */}
+        <div style={{ position: 'relative' }}>
+          <Button
+            variant="outline"
+            onClick={() => setTemplateMenuOpen(!templateMenuOpen)}
+            style={{
+              borderColor: '#38bdf8',
+              color: '#38bdf8',
+              gap: '0.5rem',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <Code2 size={16} /> Download Universal Template <ChevronDown size={14} />
+          </Button>
+
+          {templateMenuOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '110%',
+                right: 0,
+                backgroundColor: '#161e2e',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '8px',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                zIndex: 50,
+                minWidth: '220px',
+                overflow: 'hidden',
+              }}
+            >
+              <button
+                onClick={() => {
+                  downloadEnterpriseJSONTemplate();
+                  setTemplateMenuOpen(false);
+                }}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  textAlign: 'left',
+                  backgroundColor: 'transparent',
+                  color: '#f8fafc',
+                  border: 'none',
+                  fontSize: '0.85rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.15)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+              >
+                <Code2 size={15} color="#38bdf8" /> Universal Template (JSON)
+              </button>
+              <button
+                onClick={() => {
+                  downloadEnterpriseCSVTemplate();
+                  setTemplateMenuOpen(false);
+                }}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  textAlign: 'left',
+                  backgroundColor: 'transparent',
+                  color: '#f8fafc',
+                  border: 'none',
+                  fontSize: '0.85rem',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.15)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+              >
+                <FileText size={15} color="#34d399" /> Universal Template (CSV)
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Programme & Assessment Category Configuration Controls */}
+      {/* Target Programme Selection Controls */}
       <Card
         style={{
           padding: '1.5rem',
@@ -314,12 +581,12 @@ export function QuestionBankImportCentreScreen() {
               }}
             >
               <option value="General (All Programmes)">General (All Programmes)</option>
+              <option value="English Proficiency">English Proficiency</option>
               <option value="IELTS Academic">IELTS Academic</option>
               <option value="IELTS General Training">IELTS General Training</option>
               <option value="TOEFL iBT">TOEFL iBT</option>
-              <option value="SAT">SAT</option>
-              <option value="CELPIP">CELPIP</option>
-              <option value="English Proficiency">English Proficiency</option>
+              <option value="Digital SAT">Digital SAT</option>
+              <option value="CELPIP General">CELPIP General</option>
             </select>
           </div>
 
@@ -389,7 +656,7 @@ export function QuestionBankImportCentreScreen() {
         </div>
       </Card>
 
-      {/* Format Selection Cards */}
+      {/* Format Selection Cards (5 Cards) */}
       <div
         style={{
           display: 'grid',
@@ -409,6 +676,12 @@ export function QuestionBankImportCentreScreen() {
             label: 'Excel Import (.xlsx)',
             sub: 'Structured spreadsheet workbook',
             icon: <FileSpreadsheet size={20} color="#34d399" />,
+          },
+          {
+            id: 'JSON',
+            label: 'JSON Import (.json)',
+            sub: 'Structured packages with passages, questions & metadata',
+            icon: <Code2 size={20} color="#38bdf8" />,
           },
           {
             id: 'ZIP',
@@ -471,7 +744,7 @@ export function QuestionBankImportCentreScreen() {
         }}
       >
         <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
-          Batch File Upload & Schema Mapping ({activeFormat}) — [{selectedProgramme} / Usages:{' '}
+          Batch File Upload & Schema Validation ({activeFormat}) — [{selectedProgramme} / Usages:{' '}
           {selectedUsages.join(', ')}]
         </div>
 
@@ -507,11 +780,11 @@ export function QuestionBankImportCentreScreen() {
           </div>
           <div>
             <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f8fafc' }}>
-              Click to select a file from your computer PC
+              JSON Question Package Upload
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-              Target Exam: <strong style={{ color: '#ffffff' }}>{selectedProgramme}</strong> |
-              Usages: <strong style={{ color: '#34d399' }}>{selectedUsages.join(', ')}</strong>
+            <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+              Accepted: <strong style={{ color: '#38bdf8' }}>{getAcceptedExtensions()}</strong> |
+              Target Exam: <strong style={{ color: '#ffffff' }}>{selectedProgramme}</strong>
             </div>
           </div>
 
@@ -572,26 +845,78 @@ export function QuestionBankImportCentreScreen() {
               padding: '1.5rem',
               borderRadius: '14px',
               backgroundColor: '#0f172a',
-              border: '1px solid rgba(52, 211, 153, 0.3)',
+              border: importResult.programmeMismatch
+                ? '1px solid #f59e0b'
+                : importResult.success
+                ? '1px solid rgba(52, 211, 153, 0.4)'
+                : '1px solid rgba(239, 68, 68, 0.4)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '1rem',
+              gap: '1.25rem',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {/* Validation Banner */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                <CheckCircle2 size={20} color="#34d399" />
-                <span style={{ fontSize: '1rem', fontWeight: 800, color: '#f8fafc' }}>
-                  Validation Complete for {importResult.fileName} — Ready to Commit
+                {importResult.programmeMismatch ? (
+                  <AlertTriangle size={22} color="#f59e0b" />
+                ) : importResult.success ? (
+                  <CheckCircle2 size={22} color="#34d399" />
+                ) : (
+                  <AlertTriangle size={22} color="#ef4444" />
+                )}
+                <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+                  Validation Results for {importResult.fileName}
                 </span>
               </div>
-              <Badge variant="success">VALIDATED</Badge>
+              <Badge variant={importResult.programmeMismatch ? 'warning' : importResult.success ? 'success' : 'danger'}>
+                {importResult.programmeMismatch ? 'PROGRAMME_MISMATCH' : importResult.success ? 'VALIDATED' : 'ERRORS DETECTED'}
+              </Badge>
             </div>
 
+            {/* Programme Mismatch Alert */}
+            {importResult.programmeMismatch && (
+              <div
+                style={{
+                  backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  borderRadius: '10px',
+                  padding: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '1rem',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#f59e0b' }}>
+                    PROGRAMME_MISMATCH WARNING
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '2px' }}>
+                    Selected UI Programme: <strong style={{ color: '#fff' }}>{selectedProgramme}</strong> |
+                    JSON Exam Type: <strong style={{ color: '#f59e0b' }}>{importResult.jsonExamType}</strong>
+                  </div>
+                </div>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    if (importResult.jsonExamType) {
+                      setSelectedProgramme(importResult.jsonExamType);
+                      processFile(new File([JSON.stringify(parsedJsonPayload)], importResult.fileName, { type: 'application/json' }));
+                    }
+                  }}
+                  style={{ backgroundColor: '#f59e0b', color: '#000', fontWeight: 700, fontSize: '0.8rem' }}
+                >
+                  Align UI to {importResult.jsonExamType}
+                </Button>
+              </div>
+            )}
+
+            {/* Granular Summary Metrics */}
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
                 gap: '1rem',
                 paddingTop: '0.75rem',
                 borderTop: '1px solid rgba(255, 255, 255, 0.08)',
@@ -599,76 +924,115 @@ export function QuestionBankImportCentreScreen() {
             >
               <div>
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Total Parsed</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f8fafc' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f8fafc' }}>
                   {importResult.totalParsed}
                 </div>
               </div>
               <div>
                 <div style={{ fontSize: '0.75rem', color: '#34d399' }}>Valid Questions</div>
-                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#34d399' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#34d399' }}>
                   {importResult.validQuestions}
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '0.75rem', color: '#38bdf8' }}>Programme Tag</div>
-                <div
-                  style={{ fontSize: '1rem', fontWeight: 800, color: '#38bdf8', marginTop: '2px' }}
-                >
-                  {selectedProgramme}
+                <div style={{ fontSize: '0.75rem', color: '#ef4444' }}>Errors / Failed</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: importResult.invalidCount > 0 ? '#ef4444' : '#94a3b8' }}>
+                  {importResult.invalidCount}
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '0.75rem', color: '#a78bfa' }}>Category Tag</div>
-                <div
-                  style={{ fontSize: '1rem', fontWeight: 800, color: '#a78bfa', marginTop: '2px' }}
-                >
-                  {selectedUsages.join(', ')}
+                <div style={{ fontSize: '0.75rem', color: '#38bdf8' }}>Passages</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#38bdf8' }}>
+                  {importResult.passageCount}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#a78bfa' }}>Foundation</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#a78bfa' }}>
+                  {importResult.foundationCount}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#fbbf24' }}>Intermediate</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fbbf24' }}>
+                  {importResult.intermediateCount}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#f43f5e' }}>Advanced</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f43f5e' }}>
+                  {importResult.advancedCount}
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+            {/* Error Detail Table */}
+            {importResult.errors.length > 0 && (
+              <div style={{ marginTop: '0.5rem' }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ef4444', marginBottom: '0.5rem' }}>
+                  Validation Errors & Remediation Guidance ({importResult.errors.length}):
+                </div>
+                <div style={{ overflowX: 'auto', maxHeight: '200px', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ backgroundColor: '#161e2e', color: '#cbd5e1', borderBottom: '1px solid #1e293b' }}>
+                        <th style={{ padding: '0.5rem 0.75rem' }}>Row #</th>
+                        <th style={{ padding: '0.5rem 0.75rem' }}>Code</th>
+                        <th style={{ padding: '0.5rem 0.75rem' }}>Field</th>
+                        <th style={{ padding: '0.5rem 0.75rem' }}>Error Message</th>
+                        <th style={{ padding: '0.5rem 0.75rem' }}>Recommendation</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {importResult.errors.map((err, i) => (
+                        <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#f87171' }}>
+                          <td style={{ padding: '0.5rem 0.75rem' }}>{err.rowNumber || '-'}</td>
+                          <td style={{ padding: '0.5rem 0.75rem', fontWeight: 700 }}>{err.itemCode}</td>
+                          <td style={{ padding: '0.5rem 0.75rem' }}>{err.field}</td>
+                          <td style={{ padding: '0.5rem 0.75rem' }}>{err.error}</td>
+                          <td style={{ padding: '0.5rem 0.75rem', color: '#94a3b8' }}>{err.recommendation}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Commit & Rollback Action Buttons */}
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
               <Button
                 variant="primary"
                 onClick={async () => {
-                  if (!importResult) return;
-                  const batchQuestions: AdminQuestion[] = Array.from({
-                    length: importResult.validQuestions,
-                  }).map((_, i) => ({
-                    id: `q-imported-${Date.now()}-${i + 1}`,
-                    code: `Q-${1000 + i + 1}`,
-                    exam: selectedProgramme as any,
-                    section: 'Reading',
-                    skill: `${selectedProgramme} Reading Set #${Math.floor(i / 5) + 1}`,
-                    type: 'MCQ',
-                    status: 'APPROVED',
-                    usages: selectedUsages,
-                    difficulty: i % 3 === 0 ? 'HARD' : i % 2 === 0 ? 'MEDIUM' : 'EASY',
-                    estimatedTime: '2 mins',
-                    officialSource: `Imported from ${importResult.fileName}`,
-                    version: 'v1.0',
-                    language: 'en-US',
-                    tags: [selectedProgramme, 'Reading'],
-                    text: `[Imported from ${importResult.fileName}] Question #${i + 1}: Select the correct syntax statement for objective #${i + 101}.`,
-                    options: ['Option A', 'Option B', 'Option C', 'Option D'],
-                    correctAnswer: 'Option A',
-                    distractors: ['Option B', 'Option C', 'Option D'],
-                    explanation: 'Imported question explanation rationale.',
-                    hash: `imported_hash_${Date.now()}_${i + 1}`,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    topic: `${selectedProgramme} Reading Set #${Math.floor(i / 5) + 1}`,
-                    learningObjective: 'Analyze key detail inferences in passage text',
-                    programmeName: selectedProgramme,
-                    category: (selectedUsages[0] || 'MOCK') as any,
-                  }));
+                  if (!parsedJsonPayload) return;
+                  try {
+                    setIsSimulating(true);
+                    const commitRes = await fetch('/api/v1/admin/questions/import/commit', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        payload: parsedJsonPayload,
+                        uploadedBy: 'admin-001',
+                      }),
+                    });
 
-                  await adminQuestionsService.commitBatch(batchQuestions);
-                  alert(
-                    `Successfully committed ${batchQuestions.length} questions tagged under ${selectedProgramme} (Usages: ${selectedUsages.join(', ')}) into Universal Question Bank!`
-                  );
-                  router.push('/admin/question-bank');
+                    const commitData = await commitRes.json();
+                    setIsSimulating(false);
+
+                    if (commitData.success) {
+                      alert(
+                        `Successfully committed ${commitData.importedCount || importResult.validQuestions} questions into Universal Question Bank!`
+                      );
+                      router.push('/admin/question-bank');
+                    } else {
+                      alert(`Import commit error: ${commitData.error}`);
+                    }
+                  } catch (err: any) {
+                    setIsSimulating(false);
+                    alert(`Import commit failure: ${err.message}`);
+                  }
                 }}
+                disabled={importResult.validQuestions === 0 || isSimulating}
                 style={{
                   backgroundColor: '#10b981',
                   color: '#ffffff',
@@ -677,14 +1041,15 @@ export function QuestionBankImportCentreScreen() {
                   alignItems: 'center',
                 }}
               >
-                <CheckCircle2 size={16} /> Commit {importResult.validQuestions} Questions to
-                Question Bank
+                <CheckCircle2 size={16} /> Import Valid Questions ({importResult.validQuestions}) to Question Bank
               </Button>
+
               <Button
                 variant="secondary"
                 onClick={() => {
                   setImportResult(null);
                   setSelectedFile(null);
+                  setParsedJsonPayload(null);
                 }}
                 style={{
                   color: '#f87171',
