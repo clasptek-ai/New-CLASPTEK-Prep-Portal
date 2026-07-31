@@ -307,10 +307,13 @@ export default function StudentDirectoryPage() {
                 }}
               >
                 <option value="ALL">All Programmes</option>
-                <option value="IELTS Academic Intensive">IELTS Academic</option>
-                <option value="TOEFL iBT Mastery">TOEFL iBT</option>
-                <option value="SAT Academic Preparation">SAT Prep</option>
-                <option value="CELPIP General Coaching">CELPIP Coaching</option>
+                <option value="IELTS Academic">IELTS Academic</option>
+                <option value="IELTS General Training">IELTS General Training</option>
+                <option value="TOEFL iBT">TOEFL iBT</option>
+                <option value="Digital SAT">Digital SAT</option>
+                <option value="CELPIP General">CELPIP General</option>
+                <option value="English Proficiency">English Proficiency</option>
+                <option value="UNASSIGNED">Unassigned</option>
               </select>
             </div>
 
@@ -396,319 +399,290 @@ export default function StudentDirectoryPage() {
             overflow: 'hidden',
           }}
         >
-          <table
-            style={{
-              width: '100%',
-              borderCollapse: 'collapse',
-              fontSize: '0.85rem',
-              color: '#f8fafc',
-            }}
-          >
-            <thead>
-              <tr
-                style={{
-                  backgroundColor: '#1F2937',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-                  textAlign: 'left',
-                }}
-              >
-                <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700 }}>Registration ID</th>
-                <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700 }}>Student & Progress</th>
-                <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700 }}>Contact Info</th>
-                <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700 }}>Programme & Cohort</th>
-                <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700 }}>Status</th>
-                <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700 }}>Payment</th>
-                <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700 }}>Gates</th>
-                <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={8} style={{ padding: '3rem 1rem', textAlign: 'center', color: '#94a3b8' }}>
-                    No student candidates match your current search or filter query.
-                  </td>
+          <div style={{ width: '100%', overflowX: 'auto' }}>
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                fontSize: '0.85rem',
+                color: '#f8fafc',
+              }}
+            >
+              <thead>
+                <tr
+                  style={{
+                    backgroundColor: '#1F2937',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                    textAlign: 'left',
+                  }}
+                >
+                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, width: '130px' }}>Registration ID</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, minWidth: '160px' }}>Student & Progress</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, minWidth: '180px' }}>Contact Info</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, minWidth: '160px' }}>Programme & Cohort</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, width: '100px' }}>Status</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, width: '170px' }}>Gates</th>
+                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, textAlign: 'right', width: '240px' }}>Actions</th>
                 </tr>
-              ) : (
-                filtered.map((s) => {
-                  const progress = s.progressPercent ?? 65;
-                  return (
-                    <tr
-                      key={s.id}
-                      style={{
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                        backgroundColor: '#111827',
-                        transition: 'background-color 150ms ease',
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1E293B')}
-                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#111827')}
-                    >
-                      {/* Registration ID */}
-                      <td style={{ padding: '1rem', fontWeight: 700, color: '#38bdf8', whiteSpace: 'nowrap' }}>
-                        {s.registrationNumber || s.id}
-                      </td>
+              </thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ padding: '3rem 1rem', textAlign: 'center', color: '#94a3b8' }}>
+                      No student candidates match your current search or filter query.
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((s) => {
+                    const progress = s.progressPercent ?? 0;
+                    return (
+                      <tr
+                        key={s.id}
+                        style={{
+                          borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+                          backgroundColor: '#111827',
+                          transition: 'background-color 150ms ease',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1E293B')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#111827')}
+                      >
+                        {/* Registration ID */}
+                        <td style={{ padding: '1rem', fontWeight: 700, color: '#38bdf8', whiteSpace: 'nowrap' }}>
+                          {s.registrationNumber || s.id}
+                        </td>
 
-                      {/* Student & Progress Bar */}
-                      <td style={{ padding: '1rem', minWidth: '180px' }}>
-                        <Link
-                          href={`/admin/students/${s.id}`}
-                          style={{
-                            fontWeight: 700,
-                            color: '#f8fafc',
-                            textDecoration: 'none',
-                            fontSize: '0.9rem',
-                          }}
-                        >
-                          {s.name}
-                        </Link>
-                        {/* Progress Bar Indicator */}
-                        <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <div
-                            style={{
-                              flex: 1,
-                              height: '6px',
-                              backgroundColor: '#1e293b',
-                              borderRadius: '3px',
-                              overflow: 'hidden',
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: `${progress}%`,
-                                height: '100%',
-                                backgroundColor: progress > 70 ? '#34d399' : progress > 40 ? '#60a5fa' : '#f59e0b',
-                                borderRadius: '3px',
-                              }}
-                            />
-                          </div>
-                          <span style={{ fontSize: '0.725rem', fontWeight: 700, color: '#94a3b8' }}>
-                            {progress}%
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Contact Info */}
-                      <td style={{ padding: '1rem', fontSize: '0.8rem', color: '#cbd5e1' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                          <Mail size={12} color="#94a3b8" />
-                          <span>{s.email}</span>
-                        </div>
-                        {s.phone && (
-                          <div
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '0.35rem',
-                              marginTop: '3px',
-                              color: '#94a3b8',
-                            }}
-                          >
-                            <Phone size={12} color="#94a3b8" />
-                            <span>{s.phone}</span>
-                          </div>
-                        )}
-                      </td>
-
-                      {/* Programme & Cohort */}
-                      <td style={{ padding: '1rem' }}>
-                        <div style={{ fontWeight: 600, color: '#f8fafc', fontSize: '0.825rem' }}>
-                          {s.programme || 'IELTS Academic Intensive'}
-                        </div>
-                        <div style={{ fontSize: '0.725rem', color: '#94a3b8', marginTop: '2px' }}>
-                          {s.cohort || '2026 Q3 Cohort A'}
-                        </div>
-                      </td>
-
-                      {/* Status */}
-                      <td style={{ padding: '1rem' }}>
-                        <Badge
-                          variant={
-                            s.status === 'ACTIVE' ? 'success' : s.status === 'SUSPENDED' ? 'danger' : 'warning'
-                          }
-                        >
-                          {s.status}
-                        </Badge>
-                      </td>
-
-                      {/* Payment Status */}
-                      <td style={{ padding: '1rem' }}>
-                        <span
-                          style={{
-                            padding: '0.2rem 0.55rem',
-                            borderRadius: '6px',
-                            fontSize: '0.725rem',
-                            fontWeight: 700,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.3rem',
-                            backgroundColor:
-                              s.paymentStatus === 'PAID' || s.paymentStatus === 'COMPLETED'
-                                ? 'rgba(52, 211, 153, 0.12)'
-                                : s.paymentStatus === 'PENDING'
-                                ? 'rgba(245, 158, 11, 0.12)'
-                                : 'rgba(239, 68, 68, 0.12)',
-                            color:
-                              s.paymentStatus === 'PAID' || s.paymentStatus === 'COMPLETED'
-                                ? '#34d399'
-                                : s.paymentStatus === 'PENDING'
-                                ? '#fbbf24'
-                                : '#f87171',
-                          }}
-                        >
-                          <CreditCard size={11} />
-                          {s.paymentStatus || 'PAID'}
-                        </span>
-                      </td>
-
-                      {/* Gate Controls */}
-                      <td style={{ padding: '1rem' }}>
-                        <div style={{ display: 'flex', gap: '0.35rem' }}>
-                          <button
-                            onClick={() => handleTogglePractice(s.id)}
-                            title="Toggle Practice Gate"
-                            style={{
-                              padding: '0.25rem 0.5rem',
-                              fontSize: '0.725rem',
-                              borderRadius: '6px',
-                              backgroundColor: s.practiceUnlocked
-                                ? 'rgba(52, 211, 153, 0.15)'
-                                : 'rgba(255, 255, 255, 0.05)',
-                              color: s.practiceUnlocked ? '#34d399' : '#94a3b8',
-                              border: `1px solid ${
-                                s.practiceUnlocked ? 'rgba(52, 211, 153, 0.3)' : 'rgba(255, 255, 255, 0.1)'
-                              }`,
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                            }}
-                          >
-                            {s.practiceUnlocked ? <Unlock size={11} /> : <Lock size={11} />}
-                            Practice
-                          </button>
-
-                          <button
-                            onClick={() => handleToggleMock(s.id)}
-                            title="Toggle Mock Exam Gate"
-                            style={{
-                              padding: '0.25rem 0.5rem',
-                              fontSize: '0.725rem',
-                              borderRadius: '6px',
-                              backgroundColor: s.mockUnlocked
-                                ? 'rgba(167, 139, 250, 0.15)'
-                                : 'rgba(255, 255, 255, 0.05)',
-                              color: s.mockUnlocked ? '#a78bfa' : '#94a3b8',
-                              border: `1px solid ${
-                                s.mockUnlocked ? 'rgba(167, 139, 250, 0.3)' : 'rgba(255, 255, 255, 0.1)'
-                              }`,
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                            }}
-                          >
-                            {s.mockUnlocked ? <Unlock size={11} /> : <Lock size={11} />}
-                            Mock
-                          </button>
-                        </div>
-                      </td>
-
-                      {/* Actions: View, Edit, Reset Password, Suspend */}
-                      <td style={{ padding: '1rem', textAlign: 'right' }}>
-                        <div style={{ display: 'inline-flex', gap: '0.35rem', alignItems: 'center' }}>
-                          {/* View Action -> Dedicated Full Page Route */}
+                        {/* Student & Progress Bar */}
+                        <td style={{ padding: '1rem', minWidth: '160px' }}>
                           <Link
                             href={`/admin/students/${s.id}`}
                             style={{
-                              padding: '0.35rem 0.6rem',
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              borderRadius: '6px',
-                              backgroundColor: '#1e293b',
-                              color: '#38bdf8',
-                              border: '1px solid rgba(56, 189, 248, 0.3)',
+                              fontWeight: 700,
+                              color: '#f8fafc',
                               textDecoration: 'none',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
+                              fontSize: '0.9rem',
                             }}
                           >
-                            <Eye size={12} />
-                            View
+                            {s.name}
                           </Link>
+                          {/* Progress Bar Indicator */}
+                          <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div
+                              style={{
+                                flex: 1,
+                                height: '6px',
+                                backgroundColor: '#1e293b',
+                                borderRadius: '3px',
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  width: `${progress}%`,
+                                  height: '100%',
+                                  backgroundColor: progress > 70 ? '#34d399' : progress > 40 ? '#60a5fa' : '#f59e0b',
+                                  borderRadius: '3px',
+                                }}
+                              />
+                            </div>
+                            <span style={{ fontSize: '0.725rem', fontWeight: 700, color: '#94a3b8' }}>
+                              {progress}%
+                            </span>
+                          </div>
+                        </td>
 
-                          {/* Edit Action */}
-                          <button
-                            onClick={() => setEditingStudent(s)}
-                            style={{
-                              padding: '0.35rem 0.6rem',
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              borderRadius: '6px',
-                              backgroundColor: '#1e293b',
-                              color: '#cbd5e1',
-                              border: '1px solid rgba(255, 255, 255, 0.1)',
-                              cursor: 'pointer',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                            }}
-                          >
-                            <Edit3 size={12} />
-                            Edit
-                          </button>
+                        {/* Contact Info */}
+                        <td style={{ padding: '1rem', fontSize: '0.8rem', color: '#cbd5e1', minWidth: '180px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                            <Mail size={12} color="#94a3b8" />
+                            <span>{s.email}</span>
+                          </div>
+                          {s.phone && (
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                marginTop: '3px',
+                                color: '#94a3b8',
+                              }}
+                            >
+                              <Phone size={12} color="#94a3b8" />
+                              <span>{s.phone}</span>
+                            </div>
+                          )}
+                        </td>
 
-                          {/* Reset Password */}
-                          <button
-                            onClick={() => handleResetPassword(s.name, s.id)}
-                            style={{
-                              padding: '0.35rem 0.6rem',
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              borderRadius: '6px',
-                              backgroundColor: '#1e293b',
-                              color: '#60a5fa',
-                              border: '1px solid rgba(96, 165, 250, 0.3)',
-                              cursor: 'pointer',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                            }}
-                          >
-                            <KeyRound size={12} />
-                            Reset
-                          </button>
+                        {/* Programme & Cohort */}
+                        <td style={{ padding: '1rem', minWidth: '160px' }}>
+                          <div style={{ fontWeight: 600, color: '#f8fafc', fontSize: '0.825rem' }}>
+                            {s.programme || 'UNASSIGNED'}
+                          </div>
+                          <div style={{ fontSize: '0.725rem', color: '#94a3b8', marginTop: '2px' }}>
+                            {s.cohort || 'UNASSIGNED'}
+                          </div>
+                        </td>
 
-                          {/* Suspend / Activate */}
-                          <button
-                            onClick={() => handleToggleStatus(s)}
-                            style={{
-                              padding: '0.35rem 0.6rem',
-                              fontSize: '0.75rem',
-                              fontWeight: 600,
-                              borderRadius: '6px',
-                              backgroundColor: '#1e293b',
-                              color: s.status === 'ACTIVE' ? '#f87171' : '#34d399',
-                              border: `1px solid ${
-                                s.status === 'ACTIVE' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(52, 211, 153, 0.3)'
-                              }`,
-                              cursor: 'pointer',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                            }}
+                        {/* Status */}
+                        <td style={{ padding: '1rem' }}>
+                          <Badge
+                            variant={
+                              s.status === 'ACTIVE' ? 'success' : s.status === 'SUSPENDED' ? 'danger' : 'warning'
+                            }
                           >
-                            {s.status === 'ACTIVE' ? <UserX size={12} /> : <UserCheck size={12} />}
-                            {s.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                            {s.status}
+                          </Badge>
+                        </td>
+
+                        {/* Gate Controls */}
+                        <td style={{ padding: '1rem' }}>
+                          <div style={{ display: 'flex', gap: '0.35rem' }}>
+                            <button
+                              onClick={() => handleTogglePractice(s.id)}
+                              title="Toggle Practice Gate"
+                              style={{
+                                padding: '0.25rem 0.45rem',
+                                fontSize: '0.725rem',
+                                borderRadius: '6px',
+                                backgroundColor: s.practiceUnlocked
+                                  ? 'rgba(52, 211, 153, 0.15)'
+                                  : 'rgba(255, 255, 255, 0.05)',
+                                color: s.practiceUnlocked ? '#34d399' : '#94a3b8',
+                                border: `1px solid ${
+                                  s.practiceUnlocked ? 'rgba(52, 211, 153, 0.3)' : 'rgba(255, 255, 255, 0.1)'
+                                }`,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.2rem',
+                              }}
+                            >
+                              {s.practiceUnlocked ? <Unlock size={11} /> : <Lock size={11} />}
+                              Practice
+                            </button>
+
+                            <button
+                              onClick={() => handleToggleMock(s.id)}
+                              title="Toggle Mock Exam Gate"
+                              style={{
+                                padding: '0.25rem 0.45rem',
+                                fontSize: '0.725rem',
+                                borderRadius: '6px',
+                                backgroundColor: s.mockUnlocked
+                                  ? 'rgba(167, 139, 250, 0.15)'
+                                  : 'rgba(255, 255, 255, 0.05)',
+                                color: s.mockUnlocked ? '#a78bfa' : '#94a3b8',
+                                border: `1px solid ${
+                                  s.mockUnlocked ? 'rgba(167, 139, 250, 0.3)' : 'rgba(255, 255, 255, 0.1)'
+                                }`,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.2rem',
+                              }}
+                            >
+                              {s.mockUnlocked ? <Unlock size={11} /> : <Lock size={11} />}
+                              Mock
+                            </button>
+                          </div>
+                        </td>
+
+                        {/* Actions: View, Edit, Reset Password, Suspend */}
+                        <td style={{ padding: '1rem', textAlign: 'right' }}>
+                          <div style={{ display: 'inline-flex', gap: '0.3rem', alignItems: 'center' }}>
+                            {/* View Action */}
+                            <Link
+                              href={`/admin/students/${s.id}`}
+                              style={{
+                                padding: '0.3rem 0.5rem',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                borderRadius: '6px',
+                                backgroundColor: '#1e293b',
+                                color: '#38bdf8',
+                                border: '1px solid rgba(56, 189, 248, 0.3)',
+                                textDecoration: 'none',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.2rem',
+                              }}
+                            >
+                              <Eye size={11} />
+                              View
+                            </Link>
+
+                            {/* Edit Action */}
+                            <button
+                              onClick={() => setEditingStudent(s)}
+                              style={{
+                                padding: '0.3rem 0.5rem',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                borderRadius: '6px',
+                                backgroundColor: '#1e293b',
+                                color: '#cbd5e1',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.2rem',
+                              }}
+                            >
+                              <Edit3 size={11} />
+                              Edit
+                            </button>
+
+                            {/* Reset Password */}
+                            <button
+                              onClick={() => handleResetPassword(s.name, s.id)}
+                              style={{
+                                padding: '0.3rem 0.5rem',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                borderRadius: '6px',
+                                backgroundColor: '#1e293b',
+                                color: '#60a5fa',
+                                border: '1px solid rgba(96, 165, 250, 0.3)',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.2rem',
+                              }}
+                            >
+                              <KeyRound size={11} />
+                              Reset
+                            </button>
+
+                            {/* Suspend / Activate */}
+                            <button
+                              onClick={() => handleToggleStatus(s)}
+                              style={{
+                                padding: '0.3rem 0.5rem',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                borderRadius: '6px',
+                                backgroundColor: '#1e293b',
+                                color: s.status === 'ACTIVE' ? '#f87171' : '#34d399',
+                                border: `1px solid ${
+                                  s.status === 'ACTIVE' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(52, 211, 153, 0.3)'
+                                }`,
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.2rem',
+                              }}
+                            >
+                              {s.status === 'ACTIVE' ? <UserX size={11} /> : <UserCheck size={11} />}
+                              {s.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
         </Card>
       )}
 
