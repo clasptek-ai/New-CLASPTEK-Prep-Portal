@@ -100,6 +100,16 @@ export const adminUsersService = {
     const list = getStoredUsers();
     const updated = list.map((u) => (u.id === id ? { ...u, ...updates } : u));
     saveStoredUsers(updated);
+    try {
+      await apiClient.patch('/api/v1/admin/users', {
+        userId: id,
+        phone: updates.phone,
+        programme: updates.programme,
+        status: updates.status,
+      });
+    } catch (err) {
+      console.error('updateStudent patch error:', err);
+    }
     return true;
   },
 
