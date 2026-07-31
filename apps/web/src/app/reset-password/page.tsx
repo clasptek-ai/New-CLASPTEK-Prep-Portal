@@ -1,19 +1,34 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const errParam = searchParams.get('error');
+    if (errParam === 'invalid_token') {
+      setError('This password reset link is invalid or has expired. Please request a new recovery link.');
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -30,13 +45,13 @@ export default function ResetPasswordPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.message || 'Failed to reset password');
+        throw new Error(data.message || 'Failed to reset password. Recovery session may be expired.');
       }
 
       setSuccess(true);
       setTimeout(() => {
         router.push('/login');
-      }, 3000);
+      }, 2500);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -49,10 +64,10 @@ export default function ResetPasswordPage() {
       className="shell-main"
       style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}
     >
-      <div className="card" style={{ maxWidth: '400px', width: '100%' }}>
-        <h2>Enter New Password</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '2rem' }}>
-          Choose a secure new password for your account.
+      <div className="card" style={{ maxWidth: '420px', width: '100%' }}>
+        <h2>Set New Password</h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+          Choose a secure new password for your Clasptek Prep Portal account.
         </p>
 
         {error && (
@@ -67,6 +82,13 @@ export default function ResetPasswordPage() {
             }}
           >
             {error}
+            {error.includes('expired') || error.includes('invalid') ? (
+              <div style={{ marginTop: '0.5rem' }}>
+                <Link href="/forgot-password" style={{ color: '#60a5fa', textDecoration: 'underline' }}>
+                  Request New Password Reset Link
+                </Link>
+              </div>
+            ) : null}
           </div>
         )}
 
@@ -81,7 +103,7 @@ export default function ResetPasswordPage() {
               fontSize: '0.875rem',
             }}
           >
-            Password successfully reset! Redirecting to login...
+            Password successfully reset! Redirecting to login page...
           </div>
         )}
 
@@ -98,7 +120,8 @@ export default function ResetPasswordPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              placeholder="Min 8 characters"
+              minLength={8}
+              placeholder="Minimum 8 characters"
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -119,7 +142,8 @@ export default function ResetPasswordPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              placeholder="Confirm Password"
+              minLength={8}
+              placeholder="Confirm New Password"
               style={{
                 width: '100%',
                 padding: '0.75rem',
@@ -132,7 +156,7 @@ export default function ResetPasswordPage() {
             />
           </div>
           <button type="submit" className="btn" disabled={loading} style={{ marginTop: '1rem' }}>
-            {loading ? 'Resetting...' : 'Reset Password'}
+            {loading ? 'Resetting Password...' : 'Update Password'}
           </button>
         </form>
         <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem' }}>
@@ -140,5 +164,13 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div style={{ textAlign: 'center', padding: '3rem', color: '#fff' }}>Loading Password Reset...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

@@ -13,7 +13,46 @@ export const clientEnvironmentSchema = z.object({
     .string()
     .min(10, 'NEXT_PUBLIC_SUPABASE_ANON_KEY must be provided'),
   CONFIG_VERSION: z.string().default('v4.0.1'),
+  NEXT_PUBLIC_APP_URL: z.string().optional(),
+  NEXT_PUBLIC_SITE_URL: z.string().optional(),
+  APP_URL: z.string().optional(),
+  SITE_URL: z.string().optional(),
 });
+
+/**
+ * Resolves the canonical application URL based on environment parameters.
+ * Environment resolution precedence:
+ * 1. Explicit NEXT_PUBLIC_APP_URL / NEXT_PUBLIC_SITE_URL / APP_URL / SITE_URL
+ * 2. Vercel deployment URL (NEXT_PUBLIC_VERCEL_URL / VERCEL_URL)
+ * 3. Fallback: http://localhost:3000
+ */
+export function getAppUrl(customSource?: Record<string, any>): string {
+  const env = customSource || (typeof process !== 'undefined' ? process.env : {});
+  const explicitUrl =
+    env.NEXT_PUBLIC_APP_URL ||
+    env.NEXT_PUBLIC_SITE_URL ||
+    env.APP_URL ||
+    env.SITE_URL;
+
+  if (explicitUrl) {
+    let url = String(explicitUrl).trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = `https://${url}`;
+    }
+    return url.replace(/\/+$/, '');
+  }
+
+  const vercelUrl = env.NEXT_PUBLIC_VERCEL_URL || env.VERCEL_URL;
+  if (vercelUrl) {
+    let url = String(vercelUrl).trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = `https://${url}`;
+    }
+    return url.replace(/\/+$/, '');
+  }
+
+  return 'http://localhost:3000';
+}
 
 // Server-only variables (never exposed to browser bundles)
 export const serverEnvironmentSchema = clientEnvironmentSchema.extend({

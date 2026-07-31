@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth-context';
-import { loadEnvironment } from '@clasptek/configuration';
+import { loadEnvironment, getAppUrl } from '@clasptek/configuration';
 import { createSupabaseServerClient } from '@clasptek/persistence';
 import { cookies } from 'next/headers';
 import { ApplicationError } from '@clasptek/kernel';
@@ -34,8 +34,11 @@ export async function POST(req: NextRequest) {
       }
     );
 
+    const appUrl = getAppUrl(process.env);
+    const redirectTo = `${appUrl}/auth/callback?next=/reset-password`;
+
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${config.NEXT_PUBLIC_SUPABASE_URL}/reset-password`,
+      redirectTo,
     });
 
     if (error) {
