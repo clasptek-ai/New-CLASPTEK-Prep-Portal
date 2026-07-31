@@ -9,6 +9,7 @@ import {
   PostgresPlacementRepository,
   PostgresSkillProfileRepository,
   PostgresExposureLedgerRepository,
+  PostgresCanonicalAssessmentRepository,
 } from '@clasptek/persistence';
 import {
   CreateDiagnosticHandler,
@@ -17,9 +18,10 @@ import {
   CalculatePlacementHandler,
 } from '@clasptek/application-diagnostic-placement';
 
-interface DiagnosticContext {
+export interface DiagnosticContext {
   dbPool: DatabasePool;
   logger: ConsoleLogger;
+  canonicalAssessmentRepo: PostgresCanonicalAssessmentRepository;
   createDiagnosticHandler: CreateDiagnosticHandler;
   startAttemptHandler: StartAttemptHandler;
   submitResponseHandler: SubmitResponseHandler;
@@ -39,6 +41,7 @@ export async function getDiagnosticContext(): Promise<DiagnosticContext> {
 
   await dbPool.connect();
 
+  const canonicalAssessmentRepo = new PostgresCanonicalAssessmentRepository(dbPool.getPool());
   const diagnosticRepo = new PostgresDiagnosticRepository(dbPool.getPool());
   const formRepo = new PostgresAssessmentFormRepository(dbPool.getPool());
   const attemptRepo = new PostgresAttemptRepository(dbPool.getPool());
@@ -50,6 +53,7 @@ export async function getDiagnosticContext(): Promise<DiagnosticContext> {
   cachedContext = {
     dbPool,
     logger,
+    canonicalAssessmentRepo,
     createDiagnosticHandler: new CreateDiagnosticHandler(diagnosticRepo),
     startAttemptHandler: new StartAttemptHandler(attemptRepo),
     submitResponseHandler: new SubmitResponseHandler(attemptRepo, responseRepo, exposureRepo),

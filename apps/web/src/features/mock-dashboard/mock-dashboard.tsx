@@ -79,7 +79,7 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
     setLoading(false);
   }
 
-  const currentSection = activeSession?.template.sections[currentSectionIndex];
+  const currentSection = activeSession?.template?.sections[currentSectionIndex];
   const currentQuestion = currentSection?.questions[currentQuestionIndex];
 
   return (
@@ -321,7 +321,7 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                   gap: '0.4rem',
                 }}
               >
-                <Clock size={18} /> {activeSession.template.totalDurationMinutes} Mins Allocated
+                <Clock size={18} /> {activeSession?.template?.totalDurationMinutes || 120} Mins Allocated
               </div>
 
               <Button variant="success" size="sm" onClick={handleSubmitMock}>
@@ -332,7 +332,7 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
 
           {/* Section Navigation Tabs */}
           <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto' }}>
-            {activeSession.template.sections.map((sec, idx) => (
+            {(activeSession?.template?.sections || []).map((sec, idx) => (
               <button
                 key={idx}
                 onClick={() => {

@@ -5,75 +5,6 @@ import { loadEnvironment } from '@clasptek/configuration';
 import { DatabasePool } from '@clasptek/persistence';
 import { ConsoleLogger } from '@clasptek/observability';
 
-const DEFAULT_USERS = [
-  {
-    id: 'u-101',
-    registrationNumber: 'CGA-2026-00101',
-    name: 'Alex Mercer',
-    email: 'alex.mercer@student.clasptek.com',
-    phone: '+44 7700 900077',
-    role: 'STUDENT',
-    status: 'ACTIVE',
-    programme: 'IELTS Academic Intensive',
-    practiceUnlocked: true,
-    mockUnlocked: true,
-    registeredDate: '2026-06-10T10:00:00Z',
-    lastLogin: new Date().toISOString(),
-    statusHistory: [
-      {
-        status: 'ACTIVE',
-        changedBy: 'Clasptek Admin System',
-        date: '2026-06-10T10:00:00Z',
-        reason: 'Initial enrollment',
-      },
-    ],
-  },
-  {
-    id: 'u-102',
-    registrationNumber: 'CGA-2026-00102',
-    name: 'Sarah Connor',
-    email: 'sarah.c@student.clasptek.com',
-    phone: '+1 555 019 2831',
-    role: 'STUDENT',
-    status: 'ACTIVE',
-    programme: 'TOEFL iBT Mastery',
-    practiceUnlocked: true,
-    mockUnlocked: false,
-    registeredDate: '2026-06-18T14:30:00Z',
-    lastLogin: new Date(Date.now() - 3600000).toISOString(),
-    statusHistory: [
-      {
-        status: 'ACTIVE',
-        changedBy: 'Clasptek Admin System',
-        date: '2026-06-18T14:30:00Z',
-        reason: 'Initial enrollment',
-      },
-    ],
-  },
-  {
-    id: 'u-103',
-    registrationNumber: 'CGA-2026-00103',
-    name: 'Michael Scott',
-    email: 'michael.scott@student.clasptek.com',
-    phone: '+1 555 014 9988',
-    role: 'STUDENT',
-    status: 'ACTIVE',
-    programme: 'SAT Academic Preparation',
-    practiceUnlocked: true,
-    mockUnlocked: true,
-    registeredDate: '2026-07-01T09:15:00Z',
-    lastLogin: new Date(Date.now() - 86400000).toISOString(),
-    statusHistory: [
-      {
-        status: 'ACTIVE',
-        changedBy: 'Clasptek Admin System',
-        date: '2026-07-01T09:15:00Z',
-        reason: 'Initial enrollment',
-      },
-    ],
-  },
-];
-
 export async function GET(_req: NextRequest) {
   try {
     const config = loadEnvironment(process.env);
@@ -107,9 +38,13 @@ export async function GET(_req: NextRequest) {
         registrationNumber: `CGA-2026-${r.id.substring(0, 5)}`,
         name: r.name?.trim() || r.email || 'User',
         email: r.email || 'user@clasptek.com',
+        phone: r.phone || '+234 800 000 0000',
         role: r.role || 'STUDENT',
         status: r.status === 'ARCHIVED' ? 'SUSPENDED' : 'ACTIVE',
+        paymentStatus: 'PAID',
         programme: 'IELTS Academic Intensive',
+        cohort: '2026 Q3 Cohort A',
+        progressPercent: 75,
         practiceUnlocked: true,
         mockUnlocked: true,
         registeredDate: r.registeredDate || new Date().toISOString(),
@@ -117,7 +52,7 @@ export async function GET(_req: NextRequest) {
       }));
       return NextResponse.json({ success: true, data: mapped }, { status: 200 });
     }
-    return NextResponse.json({ success: true, data: DEFAULT_USERS }, { status: 200 });
+    return NextResponse.json({ success: true, data: [] }, { status: 200 });
   } catch (err: unknown) {
     console.error('[GET_ADMIN_USERS_ERROR]', err);
     return NextResponse.json(

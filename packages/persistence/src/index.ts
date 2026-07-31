@@ -3,6 +3,12 @@ import { randomUUID } from 'crypto';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { createBrowserClient, createServerClient } from '@supabase/ssr';
 import { DatabasePool } from './database-pool';
+export * from './diagnostic-placement/canonical-assessment.repository';
+export * from './diagnostic-placement/postgres-diagnostic.repository';
+export * from './question-bank/canonical-practice.repository';
+export * from './question-bank/canonical-mock.repository';
+export * from './question-bank/subjective-evaluation.repository';
+export * from './question-bank/canonical-json-importer.repository';
 import {
   LessonCode,
   LegacySemanticVersion,

@@ -15,6 +15,9 @@ import {
   MediaAsset,
   generateQuestionHash,
 } from '../../../services/admin/questions.service';
+import { useBulkSelection, SmartSelectionType } from './hooks/useBulkSelection';
+import { BulkActionToolbar } from './components/BulkActionToolbar';
+import { BulkConfirmationModal } from './components/BulkConfirmationModal';
 import {
   Plus,
   Upload,
@@ -36,6 +39,9 @@ import {
   ArrowRight,
   Send,
   Archive,
+  CheckSquare,
+  Square,
+  ChevronDown,
 } from 'lucide-react';
 
 export function QuestionBankScreen() {
@@ -45,6 +51,9 @@ export function QuestionBankScreen() {
   const [mediaList, setMediaList] = useState<MediaAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState<string | null>(null);
+
+  // Bulk Selection Confirmation Modal State
+  const [bulkConfirmAction, setBulkConfirmAction] = useState<'DELETE' | 'ARCHIVE' | null>(null);
 
   // Active View Tab
   const [activeTab, setActiveTab] = useState<'QUESTIONS' | 'PASSAGES' | 'MEDIA'>('QUESTIONS');
@@ -270,6 +279,96 @@ export function QuestionBankScreen() {
 
     return matchesStatus && matchesExam && matchesSection && matchesDifficulty && matchesSearch;
   });
+
+  // Enterprise Bulk Selection Hook & State
+  const bulkSelection = useBulkSelection(filteredQuestions);
+  const [smartMenuOpen, setSmartMenuOpen] = useState(false);
+
+  const activeFilterParams = {
+    searchQuery,
+    status: selectedStatus,
+    exam: selectedExam,
+    section: selectedSection,
+    difficulty: selectedDifficulty,
+  };
+
+  const handleExecuteBulkAction = async (
+    action:
+      | 'publish'
+      | 'unpublish'
+      | 'archive'
+      | 'restore'
+      | 'delete'
+      | 'duplicate'
+      | 'assign_usages'
+      | 'update_difficulty'
+      | 'update_exam'
+      | 'update_section'
+      | 'move_passage'
+      | 'export',
+    payloadData?: any
+  ) => {
+    const res = await adminQuestionsService.bulkAction({
+      action,
+      questionIds: bulkSelection.selectedIds,
+      selectAllFiltered: bulkSelection.selectAllFiltered,
+      filter: activeFilterParams,
+      payloadData,
+    });
+
+    if (res.success) {
+      showBanner(res.message);
+      bulkSelection.clearSelection();
+      setBulkConfirmAction(null);
+      await loadData();
+    }
+  };
+
+  const handleBulkExportCSV = (format: 'CSV' | 'EXCEL' | 'JSON') => {
+    const target = bulkSelection.selectAllFiltered
+      ? filteredQuestions
+      : questions.filter((q) => bulkSelection.isSelected(q.id));
+
+    if (format === 'JSON') {
+      const jsonStr = JSON.stringify(target, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `clasptek_question_bank_export_${Date.now()}.json`;
+      link.click();
+    } else {
+      const headers = [
+        'QuestionID',
+        'Exam',
+        'Section',
+        'Skill',
+        'Difficulty',
+        'Status',
+        'QuestionText',
+        'CorrectAnswer',
+        'Explanation',
+      ].join(',');
+      const rows = target
+        .map(
+          (q) =>
+            `"${q.code || q.id}","${q.exam}","${q.section}","${q.skill}","${q.difficulty}","${
+              q.status
+            }","${q.text.replace(/"/g, '""')}","${q.correctAnswer.replace(/"/g, '""')}","${(
+              q.explanation || ''
+            ).replace(/"/g, '""')}"`
+        )
+        .join('\n');
+
+      const blob = new Blob([`${headers}\n${rows}`], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `clasptek_question_bank_export_${Date.now()}.csv`;
+      link.click();
+    }
+    showBanner(`Exported ${target.length} question records as ${format}!`);
+  };
 
   // Workflow Status Counts
   const counts = {
@@ -625,6 +724,144 @@ export function QuestionBankScreen() {
             </div>
           </Card>
 
+          {/* Sticky Bulk Action Toolbar */}
+          <BulkActionToolbar
+            selectedCount={bulkSelection.selectedCount}
+            totalFilteredCount={filteredQuestions.length}
+            selectAllFiltered={bulkSelection.selectAllFiltered}
+            passages={passages}
+            onSelectAllFiltered={() => bulkSelection.selectAllFilteredResults()}
+            onClearSelection={() => bulkSelection.clearSelection()}
+            onBulkPublish={() => handleExecuteBulkAction('publish')}
+            onBulkUnpublish={() => handleExecuteBulkAction('unpublish')}
+            onBulkArchive={() => setBulkConfirmAction('ARCHIVE')}
+            onBulkDelete={() => setBulkConfirmAction('DELETE')}
+            onBulkAssignUsages={(usages) => handleExecuteBulkAction('assign_usages', { usages })}
+            onBulkUpdateDifficulty={(difficulty) => handleExecuteBulkAction('update_difficulty', { difficulty })}
+            onBulkMoveToPassage={(passageId, passageTitle) => handleExecuteBulkAction('move_passage', { passageId, passageTitle })}
+            onBulkExport={(format) => handleBulkExportCSV(format)}
+          />
+
+          {/* Selection Control Bar & Smart Criteria Dropdown */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              backgroundColor: '#111827',
+              padding: '0.65rem 1rem',
+              borderRadius: '10px',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#cbd5e1',
+                  cursor: 'pointer',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={
+                    filteredQuestions.length > 0 &&
+                    filteredQuestions.every((q) => bulkSelection.isSelected(q.id))
+                  }
+                  onChange={() =>
+                    bulkSelection.toggleSelectPage(filteredQuestions.map((q) => q.id))
+                  }
+                  style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                />
+                <span>
+                  Select Current Page ({filteredQuestions.length} Items)
+                </span>
+              </label>
+            </div>
+
+            {/* Smart Selection Dropdown */}
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setSmartMenuOpen(!smartMenuOpen)}
+                style={{
+                  padding: '0.35rem 0.75rem',
+                  fontSize: '0.785rem',
+                  fontWeight: 600,
+                  borderRadius: '6px',
+                  backgroundColor: '#1e293b',
+                  color: '#38bdf8',
+                  border: '1px solid rgba(56, 189, 248, 0.3)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                }}
+              >
+                <span>Smart Select...</span>
+                <ChevronDown size={12} />
+              </button>
+
+              {smartMenuOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '110%',
+                    right: 0,
+                    backgroundColor: '#1e293b',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '10px',
+                    padding: '0.5rem',
+                    zIndex: 1000,
+                    width: '210px',
+                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.25rem',
+                  }}
+                >
+                  {[
+                    { key: 'PUBLISHED', label: 'Select Published Items' },
+                    { key: 'DRAFT', label: 'Select Draft Items' },
+                    { key: 'UNDER_REVIEW', label: 'Select Under Review' },
+                    { key: 'MISSING_EXPLANATION', label: 'Select Missing Explanations' },
+                    { key: 'HARD_DIFFICULTY', label: 'Select Hard Difficulty' },
+                    { key: 'UNASSIGNED_PASSAGE', label: 'Select Unassigned Passage' },
+                  ].map((item) => (
+                    <button
+                      key={item.key}
+                      onClick={() => {
+                        bulkSelection.selectBySmartCriteria(
+                          item.key as SmartSelectionType,
+                          filteredQuestions
+                        );
+                        setSmartMenuOpen(false);
+                      }}
+                      style={{
+                        padding: '0.4rem 0.6rem',
+                        textAlign: 'left',
+                        borderRadius: '6px',
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        color: '#f8fafc',
+                        fontSize: '0.8rem',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#334155')}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Question List Table */}
           {loading ? (
             <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
@@ -642,43 +879,60 @@ export function QuestionBankScreen() {
             </Card>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {filteredQuestions.map((q) => (
-                <Card
-                  key={q.id}
-                  style={{
-                    padding: '1.25rem',
-                    backgroundColor: '#111827',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.85rem',
-                  }}
-                >
-                  {/* Top Line Meta: Code, Exam, Section, Status */}
-                  <div
+              {filteredQuestions.map((q) => {
+                const selected = bulkSelection.isSelected(q.id);
+                return (
+                  <Card
+                    key={q.id}
                     style={{
+                      padding: '1.25rem',
+                      backgroundColor: selected ? 'rgba(59, 130, 246, 0.08)' : '#111827',
+                      border: selected
+                        ? '1px solid rgba(59, 130, 246, 0.4)'
+                        : '1px solid rgba(255, 255, 255, 0.08)',
+                      borderRadius: '12px',
                       display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: '0.5rem',
+                      flexDirection: 'column',
+                      gap: '0.85rem',
+                      transition: 'all 150ms ease',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                      <span
-                        style={{
-                          fontFamily: 'monospace',
-                          fontSize: '0.85rem',
-                          fontWeight: 700,
-                          backgroundColor: '#1e293b',
-                          padding: '0.2rem 0.5rem',
-                          borderRadius: '4px',
-                          color: '#38bdf8',
-                        }}
-                      >
-                        {q.code || q.id}
-                      </span>
+                    {/* Top Line Meta: Checkbox, Code, Exam, Section, Status */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                        {/* Item Row Selection Checkbox */}
+                        <input
+                          type="checkbox"
+                          checked={selected}
+                          onChange={() => bulkSelection.toggleSelectOne(q.id)}
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            cursor: 'pointer',
+                            accentColor: '#2563eb',
+                          }}
+                        />
+                        <span
+                          style={{
+                            fontFamily: 'monospace',
+                            fontSize: '0.85rem',
+                            fontWeight: 700,
+                            backgroundColor: '#1e293b',
+                            padding: '0.2rem 0.5rem',
+                            borderRadius: '4px',
+                            color: '#38bdf8',
+                          }}
+                        >
+                          {q.code || q.id}
+                        </span>
                       <Badge variant="info">{q.exam || q.programmeName || 'IELTS'}</Badge>
                       <Badge variant="neutral">{q.section || 'General'}</Badge>
                       <span
@@ -821,9 +1075,26 @@ export function QuestionBankScreen() {
                     </div>
                   </div>
                 </Card>
-              ))}
+              );
+            })}
             </div>
           )}
+
+          {/* Bulk Confirmation Modal */}
+          <BulkConfirmationModal
+            isOpen={bulkConfirmAction !== null}
+            actionType={bulkConfirmAction}
+            count={bulkSelection.selectedCount}
+            isAllFiltered={bulkSelection.selectAllFiltered}
+            onConfirm={() => {
+              if (bulkConfirmAction === 'DELETE') {
+                handleExecuteBulkAction('delete');
+              } else if (bulkConfirmAction === 'ARCHIVE') {
+                handleExecuteBulkAction('archive');
+              }
+            }}
+            onCancel={() => setBulkConfirmAction(null)}
+          />
         </>
       )}
 

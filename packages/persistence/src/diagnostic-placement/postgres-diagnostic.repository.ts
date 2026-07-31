@@ -349,7 +349,13 @@ export class PostgresPlacementRepository implements PlacementRepository {
     await this.pool.query(
       `INSERT INTO public.placement_results (id, attempt_id, student_id, placement_stage, confidence_percentage, reliability_score, blueprint_coverage, difficulty_coverage, questions_answered, tenant_id, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-       ON CONFLICT (id) DO NOTHING`,
+       ON CONFLICT (id) DO UPDATE SET
+         placement_stage = EXCLUDED.placement_stage,
+         confidence_percentage = EXCLUDED.confidence_percentage,
+         reliability_score = EXCLUDED.reliability_score,
+         blueprint_coverage = EXCLUDED.blueprint_coverage,
+         difficulty_coverage = EXCLUDED.difficulty_coverage,
+         questions_answered = EXCLUDED.questions_answered`,
       [
         placement.id,
         placement.attemptId,

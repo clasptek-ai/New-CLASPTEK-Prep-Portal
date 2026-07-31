@@ -2,670 +2,173 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, Button, Badge } from '../../../components/ui/ui-components';
-import {
-  adminQuestionsService,
-  ExamType,
-  SectionType,
-  DifficultyLevel,
-  AdminQuestion,
-} from '../../../services/admin/questions.service';
-import {
-  Layers,
-  Plus,
-  Zap,
-  CheckCircle2,
-  Clock,
-  BookOpen,
-  Filter,
-  Play,
-  Users,
-  Shield,
-  RotateCcw,
-} from 'lucide-react';
 
-export interface PracticeSessionTemplate {
+interface DbPracticeSession {
   id: string;
-  title: string;
-  exam: ExamType;
-  section: SectionType;
+  studentId: string;
+  studentEmail: string;
+  exam: string;
+  section: string;
   skill: string;
-  difficulty: DifficultyLevel | 'ADAPTIVE';
-  questionCount: number;
-  isTimed: boolean;
-  timeLimitMinutes: number;
-  availability: 'Everyone' | 'Premium' | 'Band 7+' | 'Specific Cohort';
+  status: string;
+  totalQuestions: number;
+  accuracy: number;
+  durationSeconds: number;
   createdAt: string;
+  completedAt?: string;
 }
 
-export const DEFAULT_PRACTICE_TEMPLATES: PracticeSessionTemplate[] = [
-  {
-    id: 'ptmpl-01',
-    title: 'IELTS Academic Reading Headings Warm-up',
-    exam: 'IELTS Academic',
-    section: 'Reading',
-    skill: 'Matching Headings',
-    difficulty: 'MEDIUM',
-    questionCount: 10,
-    isTimed: true,
-    timeLimitMinutes: 20,
-    availability: 'Everyone',
-    createdAt: '2026-06-01T10:00:00Z',
-  },
-  {
-    id: 'ptmpl-02',
-    title: 'TOEFL iBT Integrated Writing Drill',
-    exam: 'TOEFL iBT',
-    section: 'Writing',
-    skill: 'Integrated Task Synthesis',
-    difficulty: 'HARD',
-    questionCount: 5,
-    isTimed: true,
-    timeLimitMinutes: 15,
-    availability: 'Everyone',
-    createdAt: '2026-06-10T12:00:00Z',
-  },
-  {
-    id: 'ptmpl-03',
-    title: 'SAT Math Quadratic Equations Sprint',
-    exam: 'SAT',
-    section: 'Math',
-    skill: 'Quadratic Equations',
-    difficulty: 'ADAPTIVE',
-    questionCount: 15,
-    isTimed: true,
-    timeLimitMinutes: 25,
-    availability: 'Premium',
-    createdAt: '2026-06-15T09:00:00Z',
-  },
-];
-
 export function PracticeSessionsScreen() {
-  const [templates, setTemplates] = useState<PracticeSessionTemplate[]>(DEFAULT_PRACTICE_TEMPLATES);
-  const [availablePracticeQuestions, setAvailablePracticeQuestions] = useState<AdminQuestion[]>([]);
+  const [sessions, setSessions] = useState<DbPracticeSession[]>([]);
   const [loading, setLoading] = useState(true);
-  const [banner, setBanner] = useState<string | null>(null);
-
-  // New Template Modal State
-  const [modalOpen, setModalOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [exam, setExam] = useState<ExamType>('IELTS Academic');
-  const [section, setSection] = useState<SectionType>('Reading');
-  const [skill, setSkill] = useState('Matching Headings');
-  const [difficulty, setDifficulty] = useState<DifficultyLevel | 'ADAPTIVE'>('MEDIUM');
-  const [questionCount, setQuestionCount] = useState(10);
-  const [isTimed, setIsTimed] = useState(true);
-  const [timeLimitMinutes, setTimeLimitMinutes] = useState(20);
-  const [availability, setAvailability] = useState<
-    'Everyone' | 'Premium' | 'Band 7+' | 'Specific Cohort'
-  >('Everyone');
+  const [filterExam, setFilterExam] = useState<string>('ALL');
 
   useEffect(() => {
-    async function loadData() {
+    async function loadAdminSessions() {
       setLoading(true);
       try {
-        const practiceQuestions = await adminQuestionsService.getPublishedQuestionsForCandidates(
-          undefined,
-          'PRACTICE'
-        );
-        setAvailablePracticeQuestions(practiceQuestions);
-      } catch (e) {
-        console.error('Failed to load practice bank', e);
+        const url = filterExam !== 'ALL'
+          ? `/api/v1/admin/practice/sessions?exam=${encodeURIComponent(filterExam)}`
+          : '/api/v1/admin/practice/sessions';
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.sessions)) {
+          setSessions(data.sessions);
+        }
+      } catch {
+        // Fallback
       } finally {
         setLoading(false);
       }
     }
-    loadData();
-  }, []);
-
-  const handleCreateTemplate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) return;
-
-    const newTmpl: PracticeSessionTemplate = {
-      id: `ptmpl-${Date.now()}`,
-      title: title.trim(),
-      exam,
-      section,
-      skill,
-      difficulty,
-      questionCount,
-      isTimed,
-      timeLimitMinutes: isTimed ? timeLimitMinutes : 0,
-      availability,
-      createdAt: new Date().toISOString(),
-    };
-
-    setTemplates((prev) => [newTmpl, ...prev]);
-    setModalOpen(false);
-    setTitle('');
-    showBanner(`Practice Session Template "${newTmpl.title}" created successfully!`);
-  };
-
-  const showBanner = (msg: string) => {
-    setBanner(msg);
-    setTimeout(() => setBanner(null), 4000);
-  };
+    loadAdminSessions();
+  }, [filterExam]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.75rem',
-        color: '#f8fafc',
-        fontFamily: 'Inter, system-ui, sans-serif',
-        padding: '2rem',
-        backgroundColor: '#0b0f19',
-        minHeight: '100vh',
-        boxSizing: 'border-box',
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-        }}
-      >
+    <div className="p-8 bg-slate-950 min-h-screen text-white space-y-6 font-sans">
+      {/* Top Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
         <div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              marginBottom: '0.35rem',
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                padding: '0.5rem',
-                borderRadius: '8px',
-                color: '#3b82f6',
-              }}
-            >
-              <Layers size={24} />
-            </div>
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-              Practice Session Operations
-            </h1>
+          <div className="flex items-center space-x-3">
+            <span className="p-2 bg-sky-500/10 border border-sky-500/20 rounded-lg text-sky-400 font-bold text-lg">
+              📚
+            </span>
+            <h1 className="text-2xl font-extrabold text-white">Admin Practice Sessions Monitor</h1>
           </div>
-          <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: 0 }}>
-            Configure practice session templates and dynamic drills referencing Universal Question
-            Bank (`usage = PRACTICE`). Zero duplicate storage.
+          <p className="text-xs text-slate-400 mt-1">
+            Real-time inspection of candidate practice sessions, accuracy rates, and question bank snapshots.
           </p>
         </div>
 
-        <Button
-          variant="primary"
-          onClick={() => setModalOpen(true)}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-        >
-          <Plus size={18} /> Create Practice Template
-        </Button>
-      </div>
-
-      {banner && (
-        <div
-          style={{
-            padding: '1rem 1.25rem',
-            backgroundColor: 'rgba(52, 211, 153, 0.15)',
-            border: '1px solid rgba(52, 211, 153, 0.3)',
-            borderRadius: '10px',
-            color: '#34d399',
-            fontSize: '0.9rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          <CheckCircle2 size={18} /> {banner}
-        </div>
-      )}
-
-      {/* Dynamic Practice Generator Summary KPI Bar */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '1.25rem',
-        }}
-      >
-        <Card
-          style={{
-            padding: '1.25rem',
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '14px',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '0.8rem',
-              color: '#94a3b8',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              fontWeight: 700,
-            }}
+        {/* Exam Filter Selector */}
+        <div className="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
+          <span className="text-xs text-slate-400 font-semibold px-2">Filter Exam:</span>
+          <select
+            value={filterExam}
+            onChange={(e) => setFilterExam(e.target.value)}
+            className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xs text-white focus:outline-none"
           >
-            Active Practice Templates
-          </div>
-          <div
-            style={{ fontSize: '1.85rem', fontWeight: 800, color: '#ffffff', marginTop: '0.35rem' }}
-          >
-            {templates.length} Presets
-          </div>
-        </Card>
-
-        <Card
-          style={{
-            padding: '1.25rem',
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '14px',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '0.8rem',
-              color: '#94a3b8',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              fontWeight: 700,
-            }}
-          >
-            Available Practice Bank Questions
-          </div>
-          <div
-            style={{ fontSize: '1.85rem', fontWeight: 800, color: '#38bdf8', marginTop: '0.35rem' }}
-          >
-            {availablePracticeQuestions.length} Questions
-          </div>
-        </Card>
-
-        <Card
-          style={{
-            padding: '1.25rem',
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '14px',
-          }}
-        >
-          <div
-            style={{
-              fontSize: '0.8rem',
-              color: '#94a3b8',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              fontWeight: 700,
-            }}
-          >
-            Storage Efficiency
-          </div>
-          <div
-            style={{ fontSize: '1.85rem', fontWeight: 800, color: '#34d399', marginTop: '0.35rem' }}
-          >
-            100% Referenced
-          </div>
-        </Card>
-      </div>
-
-      {/* Configured Practice Session Templates */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-          Configured Practice Session Presets ({templates.length})
-        </h2>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-            gap: '1.25rem',
-          }}
-        >
-          {templates.map((tmpl) => (
-            <Card
-              key={tmpl.id}
-              style={{
-                padding: '1.5rem',
-                backgroundColor: '#111827',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '16px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: '1.25rem',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '0.75rem',
-                  }}
-                >
-                  <Badge variant="primary">{tmpl.exam}</Badge>
-                  <Badge variant={tmpl.availability === 'Premium' ? 'warning' : 'neutral'}>
-                    {tmpl.availability}
-                  </Badge>
-                </div>
-
-                <h3
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 700,
-                    color: '#ffffff',
-                    margin: '0 0 0.5rem',
-                    lineHeight: 1.3,
-                  }}
-                >
-                  {tmpl.title}
-                </h3>
-
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: 0 }}>
-                  Section: <strong>{tmpl.section}</strong> | Skill: <strong>{tmpl.skill}</strong>
-                </p>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '1rem',
-                    marginTop: '0.85rem',
-                    fontSize: '0.8rem',
-                    color: '#cbd5e1',
-                  }}
-                >
-                  <span>
-                    Count: <strong>{tmpl.questionCount} Qs</strong>
-                  </span>
-                  <span>
-                    Difficulty: <strong>{tmpl.difficulty}</strong>
-                  </span>
-                  <span>
-                    Timer: <strong>{tmpl.isTimed ? `${tmpl.timeLimitMinutes}m` : 'Untimed'}</strong>
-                  </span>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    alert(
-                      `Dynamic Generator Test: Assembled ${tmpl.questionCount} ${tmpl.exam} ${tmpl.section} items from Question Bank (usage = PRACTICE).`
-                    )
-                  }
-                  style={{ flex: 1, justifyContent: 'center' }}
-                >
-                  Test Assembly
-                </Button>
-              </div>
-            </Card>
-          ))}
+            <option value="ALL">All Programmes</option>
+            <option value="English Proficiency">English Proficiency</option>
+            <option value="IELTS Academic">IELTS Academic</option>
+            <option value="IELTS General Training">IELTS General Training</option>
+            <option value="TOEFL iBT">TOEFL iBT</option>
+            <option value="SAT">Digital SAT</option>
+            <option value="CELPIP">CELPIP</option>
+          </select>
         </div>
       </div>
 
-      {/* CREATE TEMPLATE MODAL */}
-      {modalOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.75)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 100,
-            padding: '1rem',
-          }}
-        >
-          <Card
-            style={{
-              width: '100%',
-              maxWidth: '580px',
-              padding: '2rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '16px',
-              color: '#ffffff',
-            }}
-          >
-            <h2 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0 0 1.25rem' }}>
-              Configure Practice Session Template
-            </h2>
-
-            <form
-              onSubmit={handleCreateTemplate}
-              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-            >
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#cbd5e1',
-                    marginBottom: '0.35rem',
-                  }}
-                >
-                  Template Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. IELTS Reading Headings Warm-up"
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#0f172a',
-                    border: '1px solid #1e293b',
-                    color: '#ffffff',
-                    outline: 'none',
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Exam
-                  </label>
-                  <select
-                    value={exam}
-                    onChange={(e) => setExam(e.target.value as ExamType)}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#0f172a',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                    }}
-                  >
-                    <option value="IELTS Academic">IELTS Academic</option>
-                    <option value="IELTS General Training">IELTS General Training</option>
-                    <option value="TOEFL iBT">TOEFL iBT</option>
-                    <option value="SAT">SAT</option>
-                    <option value="CELPIP">CELPIP</option>
-                    <option value="English Proficiency">English Proficiency</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Section
-                  </label>
-                  <select
-                    value={section}
-                    onChange={(e) => setSection(e.target.value as SectionType)}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#0f172a',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                    }}
-                  >
-                    <option value="Reading">Reading</option>
-                    <option value="Listening">Listening</option>
-                    <option value="Writing">Writing</option>
-                    <option value="Speaking">Speaking</option>
-                    <option value="Math">Math</option>
-                    <option value="Grammar">Grammar</option>
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Difficulty
-                  </label>
-                  <select
-                    value={difficulty}
-                    onChange={(e) => setDifficulty(e.target.value as any)}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#0f172a',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                    }}
-                  >
-                    <option value="EASY">Easy</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HARD">Hard</option>
-                    <option value="ADAPTIVE">Adaptive Mix</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Question Count
-                  </label>
-                  <select
-                    value={questionCount}
-                    onChange={(e) => setQuestionCount(Number(e.target.value))}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#0f172a',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                    }}
-                  >
-                    <option value={5}>5 Questions</option>
-                    <option value={10}>10 Questions</option>
-                    <option value={20}>20 Questions</option>
-                    <option value={40}>40 Questions</option>
-                  </select>
-                </div>
-              </div>
-
-              <div
-                style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '0.5rem' }}
-              >
-                <label
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    fontSize: '0.875rem',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={isTimed}
-                    onChange={(e) => setIsTimed(e.target.checked)}
-                  />
-                  Enable Timer
-                </label>
-
-                {isTimed && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <input
-                      type="number"
-                      value={timeLimitMinutes}
-                      onChange={(e) => setTimeLimitMinutes(Number(e.target.value))}
-                      style={{
-                        width: '70px',
-                        padding: '0.4rem 0.6rem',
-                        borderRadius: '6px',
-                        backgroundColor: '#0f172a',
-                        border: '1px solid #1e293b',
-                        color: '#ffffff',
-                      }}
-                    />
-                    <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Minutes</span>
-                  </div>
-                )}
-              </div>
-
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  gap: '0.75rem',
-                  marginTop: '1rem',
-                }}
-              >
-                <Button variant="outline" type="button" onClick={() => setModalOpen(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit">
-                  Save Practice Preset
-                </Button>
-              </div>
-            </form>
-          </Card>
+      {/* KPI Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
+          <div className="text-xs text-slate-400 uppercase tracking-wide">Total DB Sessions</div>
+          <div className="text-2xl font-black text-white mt-1">{sessions.length}</div>
         </div>
-      )}
+        <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
+          <div className="text-xs text-slate-400 uppercase tracking-wide">Active Sessions</div>
+          <div className="text-2xl font-black text-amber-400 mt-1">
+            {sessions.filter((s) => s.status === 'ACTIVE').length}
+          </div>
+        </div>
+        <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
+          <div className="text-xs text-slate-400 uppercase tracking-wide">Completed Sessions</div>
+          <div className="text-2xl font-black text-emerald-400 mt-1">
+            {sessions.filter((s) => s.status === 'COMPLETED').length}
+          </div>
+        </div>
+        <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
+          <div className="text-xs text-slate-400 uppercase tracking-wide">Avg Accuracy</div>
+          <div className="text-2xl font-black text-sky-400 mt-1">
+            {sessions.length > 0
+              ? `${Math.round(sessions.reduce((a, b) => a + b.accuracy, 0) / sessions.length)}%`
+              : '0%'}
+          </div>
+        </div>
+      </div>
+
+      {/* Candidate Sessions Table */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+        <div className="p-4 border-b border-slate-800 flex justify-between items-center">
+          <h2 className="text-sm font-bold text-slate-200">Candidate Practice Sessions</h2>
+          <span className="text-xs font-mono text-slate-400">Live DB Stream</span>
+        </div>
+
+        {loading ? (
+          <div className="p-8 text-center text-xs text-slate-400">Loading DB Sessions...</div>
+        ) : sessions.length === 0 ? (
+          <div className="p-12 text-center space-y-2">
+            <div className="text-2xl">📭</div>
+            <div className="text-sm font-bold text-white">No Practice Sessions Found</div>
+            <p className="text-xs text-slate-400 max-w-sm mx-auto">
+              Candidate practice sessions will appear here as students complete targeted practice drills.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-slate-300">
+              <thead className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase font-mono">
+                <tr>
+                  <th className="p-3.5">Candidate Email</th>
+                  <th className="p-3.5">Exam Product</th>
+                  <th className="p-3.5">Section / Skill</th>
+                  <th className="p-3.5">Status</th>
+                  <th className="p-3.5">Accuracy</th>
+                  <th className="p-3.5">Duration</th>
+                  <th className="p-3.5">Started At</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/50">
+                {sessions.map((s) => (
+                  <tr key={s.id} className="hover:bg-slate-800/30 transition-colors">
+                    <td className="p-3.5 font-semibold text-white">{s.studentEmail}</td>
+                    <td className="p-3.5">{s.exam}</td>
+                    <td className="p-3.5">
+                      <span className="text-sky-400 font-medium">{s.section}</span> / {s.skill}
+                    </td>
+                    <td className="p-3.5">
+                      <span
+                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                          s.status === 'COMPLETED'
+                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                        }`}
+                      >
+                        {s.status}
+                      </span>
+                    </td>
+                    <td className="p-3.5 font-mono font-bold text-white">{s.accuracy}%</td>
+                    <td className="p-3.5 font-mono">{s.durationSeconds}s</td>
+                    <td className="p-3.5 font-mono text-slate-400">
+                      {new Date(s.createdAt).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -107,16 +107,21 @@ export function AdaptivePracticeScreen() {
       isTimed,
     };
 
-    const session = await studentPracticeService.createCustomSession(params);
-    setActiveSession(session);
-    setCurrentIndex(0);
-    setSessionAnswers({});
-    setSelectedAnswer('');
-    setEssayAnswer('');
-    setSecondsRemaining(session.timeAllowedSeconds || 1800);
-    setItemTimeSeconds(0);
-    setStage('SESSION');
-    setLoading(false);
+    try {
+      const session = await studentPracticeService.createCustomSession(params);
+      setActiveSession(session);
+      setCurrentIndex(0);
+      setSessionAnswers({});
+      setSelectedAnswer('');
+      setEssayAnswer('');
+      setSecondsRemaining(session.timeAllowedSeconds || 1800);
+      setItemTimeSeconds(0);
+      setStage('SESSION');
+    } catch (err: any) {
+      showToast(err.message || 'Insufficient question inventory for selected criteria.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   const currentQuestion = activeSession?.questions[currentIndex];

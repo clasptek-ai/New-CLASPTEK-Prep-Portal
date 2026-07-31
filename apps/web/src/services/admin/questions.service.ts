@@ -332,6 +332,8 @@ export const DEFAULT_UNIVERSAL_QUESTIONS: AdminQuestion[] = [
   },
 ];
 
+import { RepositoryFactory } from '../../repositories/repository-factory';
+
 function getStoredQuestions(): AdminQuestion[] {
   if (typeof window === 'undefined') return DEFAULT_UNIVERSAL_QUESTIONS;
   const raw = localStorage.getItem(QUESTIONS_STORAGE_KEY);
@@ -400,8 +402,20 @@ export const adminQuestionsService = {
     difficulty?: DifficultyLevel | 'ALL';
     search?: string;
   }): Promise<AdminQuestion[]> {
-    let all = getStoredQuestions();
+    const repo = RepositoryFactory.getQuestionRepository();
+    const result = await repo.findBySpecification({
+      status: filter?.status,
+      exam: filter?.exam,
+      section: filter?.section,
+      difficulty: filter?.difficulty,
+      search: filter?.search,
+    });
 
+    if (result && result.data && result.data.length > 0) {
+      return result.data;
+    }
+
+    let all = getStoredQuestions();
     if (filter) {
       if (filter.status && filter.status !== 'ALL') {
         all = all.filter((q) => q.status === filter.status);
@@ -434,6 +448,10 @@ export const adminQuestionsService = {
     exam?: ExamType,
     usage?: QuestionUsage
   ): Promise<AdminQuestion[]> {
+    const repo = RepositoryFactory.getQuestionRepository();
+    const list = await repo.findForCandidates(exam, usage);
+    if (list && list.length > 0) return list;
+    
     const all = await this.getQuestions({ status: 'PUBLISHED' });
     let filtered = all;
     if (exam) {
@@ -450,7 +468,8 @@ export const adminQuestionsService = {
   },
 
   async addQuestion(q: Partial<AdminQuestion>): Promise<{ success: boolean; duplicate?: boolean }> {
-    const existing = getStoredQuestions();
+    const repo = RepositoryFactory.getQuestionRepository();
+    const existing = await repo.findAll();
     const hash = generateQuestionHash(
       q.text || '',
       q.exam || q.programmeName || 'IELTS Academic',
@@ -497,11 +516,14 @@ export const adminQuestionsService = {
       category: q.category || 'MOCK',
     };
 
+    await repo.save(fullQuestion);
     saveStoredQuestions([fullQuestion, ...existing]);
     return { success: true };
   },
 
   async updateQuestionStatus(id: string, newStatus: QuestionWorkflowStatus): Promise<boolean> {
+    const repo = RepositoryFactory.getQuestionRepository();
+    await repo.updateStatus(id, newStatus);
     const existing = getStoredQuestions();
     const updated = existing.map((q) =>
       q.id === id ? { ...q, status: newStatus, updatedAt: new Date().toISOString() } : q
@@ -528,6 +550,8 @@ export const adminQuestionsService = {
   },
 
   async deleteQuestion(id: string): Promise<boolean> {
+    const repo = RepositoryFactory.getQuestionRepository();
+    await repo.delete(id);
     const existing = getStoredQuestions();
     const updated = existing.filter((q) => q.id !== id);
     saveStoredQuestions(updated);
@@ -535,7 +559,8 @@ export const adminQuestionsService = {
   },
 
   async commitBatch(newQuestions: AdminQuestion[]): Promise<{ added: number; skipped: number }> {
-    const existing = getStoredQuestions();
+    const repo = RepositoryFactory.getQuestionRepository();
+    const existing = await repo.findAll();
     let added = 0;
     let skipped = 0;
     const toAdd: AdminQuestion[] = [];
@@ -553,17 +578,21 @@ export const adminQuestionsService = {
       }
     }
 
+    await repo.bulkUpsert(toAdd);
     saveStoredQuestions([...toAdd, ...existing]);
     return { added, skipped };
   },
 
   // Passage Management
   async getPassages(): Promise<Passage[]> {
+    const repo = RepositoryFactory.getPassageRepository();
+    const list = await repo.findAll();
+    if (list && list.length > 0) return list;
     return getStoredPassages();
   },
 
   async addPassage(passage: Partial<Passage>): Promise<Passage> {
-    const existing = getStoredPassages();
+    const repo = RepositoryFactory.getPassageRepository();
     const newPassage: Passage = {
       id: passage.id || `pas-${Date.now()}`,
       title: passage.title || 'Untitled Passage',
@@ -575,17 +604,22 @@ export const adminQuestionsService = {
       questionIds: passage.questionIds || [],
       createdAt: new Date().toISOString(),
     };
+    await repo.save(newPassage);
+    const existing = getStoredPassages();
     saveStoredPassages([newPassage, ...existing]);
     return newPassage;
   },
 
   // Media Library Management
   async getMedia(): Promise<MediaAsset[]> {
+    const repo = RepositoryFactory.getMediaRepository();
+    const list = await repo.findAll();
+    if (list && list.length > 0) return list;
     return getStoredMedia();
   },
 
   async addMedia(media: Partial<MediaAsset>): Promise<MediaAsset> {
-    const existing = getStoredMedia();
+    const repo = RepositoryFactory.getMediaRepository();
     const newMedia: MediaAsset = {
       id: media.id || `med-${Date.now()}`,
       title: media.title || 'Untitled Media Asset',
@@ -596,7 +630,128 @@ export const adminQuestionsService = {
       sizeMb: media.sizeMb || '1.0 MB',
       createdAt: new Date().toISOString(),
     };
+    await repo.save(newMedia);
+    const existing = getStoredMedia();
     saveStoredMedia([newMedia, ...existing]);
     return newMedia;
   },
+
+  // Question Group Management (Sprint 2A)
+  async getQuestionGroups(): Promise<QuestionGroup[]> {
+    const repo = RepositoryFactory.getQuestionGroupRepository();
+    return repo.findAll();
+  },
+
+  async addQuestionGroup(group: Partial<QuestionGroup>): Promise<QuestionGroup> {
+    const repo = RepositoryFactory.getQuestionGroupRepository();
+    const newGroup: QuestionGroup = {
+      id: group.id || `qgrp-${Date.now()}`,
+      title: group.title || 'Untitled Question Group',
+      passageId: group.passageId,
+      audioUrl: group.audioUrl,
+      instructions: group.instructions || 'Answer questions 1-5 based on the text.',
+      type: group.type || 'MCQ',
+      questionIds: group.questionIds || [],
+    };
+    await repo.save(newGroup);
+    return newGroup;
+  },
+
+  // Bulk Operations API (Enterprise Bulk Selection)
+  async bulkAction(payload: {
+    action:
+      | 'publish'
+      | 'unpublish'
+      | 'archive'
+      | 'restore'
+      | 'delete'
+      | 'duplicate'
+      | 'assign_usages'
+      | 'update_difficulty'
+      | 'update_exam'
+      | 'update_section'
+      | 'move_passage'
+      | 'export';
+    questionIds?: string[];
+    selectAllFiltered?: boolean;
+    filter?: any;
+    payloadData?: any;
+  }): Promise<{ success: boolean; affectedCount: number; message: string; exportUrl?: string }> {
+    try {
+      const res = await apiClient.post<any>('/api/v1/admin/questions/bulk', payload);
+      if (res && res.success) return res;
+    } catch {
+      // Local fallback for offline / mock repository
+    }
+
+    const all = await this.getQuestions();
+    let targetIds = payload.questionIds || [];
+
+    if (payload.selectAllFiltered && payload.filter) {
+      const f = payload.filter;
+      targetIds = all
+        .filter((q) => {
+          const matchesStatus = !f.status || f.status === 'ALL' || q.status === f.status;
+          const matchesExam = !f.exam || f.exam === 'ALL' || q.exam === f.exam;
+          const matchesSection = !f.section || f.section === 'ALL' || q.section === f.section;
+          const matchesDiff = !f.difficulty || f.difficulty === 'ALL' || q.difficulty === f.difficulty;
+          return matchesStatus && matchesExam && matchesSection && matchesDiff;
+        })
+        .map((q) => q.id);
+    }
+
+    const targetSet = new Set(targetIds);
+    let affectedCount = 0;
+
+    if (payload.action === 'delete') {
+      const updated = all.filter((q) => !targetSet.has(q.id));
+      affectedCount = all.length - updated.length;
+      saveStoredQuestions(updated);
+    } else if (payload.action === 'publish') {
+      const updated = all.map((q) => (targetSet.has(q.id) ? { ...q, status: 'PUBLISHED' as const } : q));
+      affectedCount = targetSet.size;
+      saveStoredQuestions(updated);
+    } else if (payload.action === 'unpublish' || payload.action === 'restore') {
+      const updated = all.map((q) => (targetSet.has(q.id) ? { ...q, status: 'DRAFT' as const } : q));
+      affectedCount = targetSet.size;
+      saveStoredQuestions(updated);
+    } else if (payload.action === 'archive') {
+      const updated = all.map((q) => (targetSet.has(q.id) ? { ...q, status: 'ARCHIVED' as const } : q));
+      affectedCount = targetSet.size;
+      saveStoredQuestions(updated);
+    } else if (payload.action === 'assign_usages' && payload.payloadData?.usages) {
+      const updated = all.map((q) =>
+        targetSet.has(q.id) ? { ...q, usages: payload.payloadData.usages } : q
+      );
+      affectedCount = targetSet.size;
+      saveStoredQuestions(updated);
+    } else if (payload.action === 'update_difficulty' && payload.payloadData?.difficulty) {
+      const updated = all.map((q) =>
+        targetSet.has(q.id) ? { ...q, difficulty: payload.payloadData.difficulty } : q
+      );
+      affectedCount = targetSet.size;
+      saveStoredQuestions(updated);
+    } else if (payload.action === 'move_passage') {
+      const updated = all.map((q) =>
+        targetSet.has(q.id)
+          ? {
+              ...q,
+              passageId: payload.payloadData?.passageId,
+              passageTitle: payload.payloadData?.passageTitle,
+            }
+          : q
+      );
+      affectedCount = targetSet.size;
+      saveStoredQuestions(updated);
+    } else {
+      affectedCount = targetSet.size;
+    }
+
+    return {
+      success: true,
+      affectedCount,
+      message: `Successfully executed bulk ${payload.action} on ${affectedCount} question records.`,
+    };
+  },
 };
+

@@ -34,7 +34,7 @@ export function UsersScreen({ userId }: { userId?: string }) {
     load();
   }, [userId]);
 
-  const handleToggleStatus = async (id: string, currentStatus: 'ACTIVE' | 'SUSPENDED') => {
+  const handleToggleStatus = async (id: string, currentStatus: AdminUserRecord['status']) => {
     const nextStatus = currentStatus === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
     const reason =
       nextStatus === 'SUSPENDED'

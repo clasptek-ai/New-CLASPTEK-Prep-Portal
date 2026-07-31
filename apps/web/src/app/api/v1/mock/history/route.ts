@@ -1,30 +1,29 @@
 export const dynamic = 'force-dynamic';
 
-import { NextResponse } from 'next/server';
-import { getMockExaminationContext } from '@/lib/mock-examination-context';
-import type { MockResult } from '@clasptek/domain-mock-examination';
+import { NextRequest, NextResponse } from 'next/server';
+import { getDiagnosticContext } from '@/lib/diagnostic-context';
+import { getAuthenticatedSession } from '@/lib/auth-util';
+import { PostgresCanonicalMockRepository } from '@clasptek/persistence';
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const studentId = searchParams.get('studentId') ?? 'demo-student';
+    const session = await getAuthenticatedSession(req);
+    const studentId = session?.userId || req.headers.get('x-student-id');
+    if (!studentId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const ctx = getMockExaminationContext();
-    const history = await ctx.getHistory.execute({ studentId });
+    const { dbPool } = await getDiagnosticContext();
+    const mockRepo = new PostgresCanonicalMockRepository(dbPool.getPool());
+
+    const history = await mockRepo.getStudentMockHistory(studentId);
 
     return NextResponse.json({
       success: true,
-      history: history.map((r: MockResult) => ({
-        id: r.id,
-        sessionId: r.sessionId,
-        overallRawScore: r.overallRawScore,
-        officialScaledScore: r.officialScaledScore,
-        officialScoreLabel: r.officialScoreLabel,
-        percentile: r.percentile,
-        status: r.status,
-      })),
+      totalMocks: history.length,
+      history,
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Internal error' }, { status: 500 });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

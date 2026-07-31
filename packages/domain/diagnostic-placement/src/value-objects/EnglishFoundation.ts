@@ -1,7 +1,11 @@
 import { ValueObject } from '@clasptek/kernel';
 
 export type FoundationSkill =
-  'Grammar' | 'Vocabulary' | 'Sentence Structure' | 'Reading Mechanics' | 'Writing Mechanics';
+  | 'Grammar'
+  | 'Reading'
+  | 'Writing'
+  | 'Listening'
+  | 'Speaking';
 
 export class EnglishFoundation extends ValueObject<{ skill: FoundationSkill }> {
   constructor(skill: FoundationSkill) {
@@ -13,13 +17,7 @@ export class EnglishFoundation extends ValueObject<{ skill: FoundationSkill }> {
   }
 
   public static values(): FoundationSkill[] {
-    return [
-      'Grammar',
-      'Vocabulary',
-      'Sentence Structure',
-      'Reading Mechanics',
-      'Writing Mechanics',
-    ];
+    return ['Grammar', 'Reading', 'Writing', 'Listening', 'Speaking'];
   }
 
   public static isValid(value: string): value is FoundationSkill {

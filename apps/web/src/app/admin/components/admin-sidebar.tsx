@@ -69,7 +69,7 @@ export const AdminSidebar: React.FC = () => {
       ],
     },
     {
-      title: 'ASSESSMENTS & PRACTICE',
+      title: 'ASSESSMENTS',
       items: [
         {
           id: 'practice-sessions',
@@ -92,12 +92,12 @@ export const AdminSidebar: React.FC = () => {
       ],
     },
     {
-      title: 'USERS & ANALYTICS',
+      title: 'STUDENTS',
       items: [
         {
           id: 'students',
           label: 'Students',
-          href: '/admin/users',
+          href: '/admin/students',
           icon: <Users size={18} />,
         },
         {
@@ -109,7 +109,7 @@ export const AdminSidebar: React.FC = () => {
       ],
     },
     {
-      title: 'SYSTEM & SECURITY',
+      title: 'ADMINISTRATION',
       items: [
         {
           id: 'settings',
@@ -120,29 +120,6 @@ export const AdminSidebar: React.FC = () => {
         {
           id: 'audit',
           label: 'Audit Logs',
-          href: '/admin/audit',
-          icon: <ShieldCheck size={18} />,
-        },
-      ],
-    },
-    {
-      title: 'STUDENTS & SYSTEM',
-      items: [
-        {
-          id: 'students',
-          label: 'Student Directory',
-          href: '/admin/students',
-          icon: <Users size={18} />,
-        },
-        {
-          id: 'settings',
-          label: 'Platform Settings',
-          href: '/admin/settings',
-          icon: <Settings size={18} />,
-        },
-        {
-          id: 'audit',
-          label: 'Audit & Event Logs',
           href: '/admin/audit',
           icon: <ShieldCheck size={18} />,
         },

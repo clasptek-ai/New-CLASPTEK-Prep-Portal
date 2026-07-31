@@ -1,23 +1,26 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { DatabasePool } from '@clasptek/persistence';
-import { loadEnvironment } from '@clasptek/configuration';
+import { getDiagnosticContext } from '@/lib/diagnostic-context';
+import { CanonicalJsonImporterRepository } from '@clasptek/persistence';
 import { ConsoleLogger } from '@clasptek/observability';
 
 interface QuestionImportPayload {
-  examType: string;
+  examType?: string;
   assessmentCode?: string;
   questions: Array<{
+    questionCode?: string;
     code?: string;
     passageCode?: string;
     type?: string;
+    questionType?: string;
     skill?: string;
     difficulty?: string;
     prompt: string;
-    options?: string[];
+    options?: any[];
     correctAnswer: string;
     explanation?: string;
+    usages?: string[];
   }>;
 }
 
@@ -37,45 +40,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const examType = body.examType || 'IELTS Academic';
-    const importedCount = body.questions.length;
+    const { dbPool } = await getDiagnosticContext();
+    const importerRepo = new CanonicalJsonImporterRepository(dbPool.getPool());
 
-    try {
-      const env = loadEnvironment(process.env);
-      const dbPool = new DatabasePool(env, logger);
-      await dbPool.connect();
-      const pool = dbPool.getPool();
+    // Normalize payload to canonical contract
+    const canonicalPayload = {
+      schemaVersion: '1.0',
+      examType: body.examType || 'English Proficiency',
+      questions: body.questions.map((q) => ({
+        questionCode: q.questionCode || q.code,
+        questionType: q.questionType || q.type || 'MCQ',
+        difficulty: q.difficulty || 'MEDIUM',
+        prompt: q.prompt,
+        options: q.options || [],
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation || '',
+        usages: q.usages || ['PRACTICE'],
+      })),
+    };
 
-      for (const q of body.questions) {
-        await pool.query(
-          `INSERT INTO questions (exam_type, question_code, skill_tag, difficulty, prompt, options, correct_answer, explanation)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-           ON CONFLICT DO NOTHING;`,
-          [
-            examType,
-            q.code || `Q-${Math.random().toString(36).substring(2, 7)}`,
-            q.skill || 'General',
-            q.difficulty || 'Medium',
-            q.prompt,
-            JSON.stringify(q.options || []),
-            q.correctAnswer,
-            q.explanation || '',
-          ]
-        );
-      }
-    } catch (dbErr) {
-      logger.warn('Database insert bypassed in demo mode, returning processed count', {
-        error: String(dbErr),
-      });
-    }
+    const importRes = await importerRepo.importJsonBatch(canonicalPayload, 'admin-legacy-import');
 
     return NextResponse.json(
       {
         success: true,
-        examType,
-        assessmentCode: body.assessmentCode || 'ASSESS-001',
-        importedCount,
-        message: `Successfully processed ${importedCount} questions for ${examType}.`,
+        examType: body.examType || 'English Proficiency',
+        batchId: importRes.batchId,
+        batchCode: importRes.batchCode,
+        importedCount: importRes.importedCount,
+        message: `Successfully processed ${importRes.importedCount} questions.`,
       },
       { status: 200 }
     );

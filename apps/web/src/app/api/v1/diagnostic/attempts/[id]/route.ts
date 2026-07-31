@@ -1,0 +1,56 @@
+export const dynamic = 'force-dynamic';
+
+import { NextRequest, NextResponse } from 'next/server';
+import { getDiagnosticContext } from '@/lib/diagnostic-context';
+import { getAuthenticatedSession } from '@/lib/auth-util';
+
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const session = await getAuthenticatedSession(req);
+    const studentId = session?.userId || req.headers.get('x-student-id');
+    if (!studentId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id: attemptId } = await params;
+    const { dbPool } = await getDiagnosticContext();
+    const pool = dbPool.getPool();
+
+    const attemptRes = await pool.query(
+      'SELECT * FROM public.diagnostic_attempts WHERE id = $1 AND student_id = $2 AND deleted_at IS NULL',
+      [attemptId, studentId]
+    );
+
+    if (attemptRes.rows.length === 0) {
+      return NextResponse.json({ error: 'Attempt not found or unauthorized' }, { status: 404 });
+    }
+
+    const attempt = attemptRes.rows[0];
+
+    const responsesRes = await pool.query(
+      'SELECT question_id, question_version_id, response_payload, time_spent_ms, is_correct FROM public.diagnostic_responses WHERE attempt_id = $1',
+      [attemptId]
+    );
+
+    const savedAnswers: Record<string, any> = {};
+    responsesRes.rows.forEach((r) => {
+      savedAnswers[r.question_id] = r.response_payload;
+    });
+
+    return NextResponse.json({
+      success: true,
+      attempt: {
+        id: attempt.id,
+        studentId: attempt.student_id,
+        catalogId: attempt.catalog_id,
+        status: attempt.status,
+        startedAt: attempt.started_at,
+        score: attempt.score,
+      },
+      savedAnswers,
+      responseCount: responsesRes.rows.length,
+    });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}

@@ -14,7 +14,8 @@ export function AssessmentsScreen() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const rawMode = searchParams.get('mode') || searchParams.get('type');
-  const isMockView = rawMode === 'mock' || rawMode === 'MOCK';
+  const isDiagnosticView = rawMode === 'diagnostic' || rawMode === 'DIAGNOSTIC';
+  const isMockView = !isDiagnosticView && (rawMode === 'mock' || rawMode === 'MOCK');
 
   const [assessments, setAssessments] = useState<AdminAssessmentConfig[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,8 +24,9 @@ export function AssessmentsScreen() {
   // Modal State
   const [createOpen, setCreateOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
-  const [newDuration, setNewDuration] = useState(isMockView ? 180 : 45);
-  const [newQuestions, setNewQuestions] = useState(isMockView ? 80 : 25);
+  const [selectedExamType, setSelectedExamType] = useState('English Proficiency');
+  const [newDuration, setNewDuration] = useState(isDiagnosticView ? 30 : isMockView ? 180 : 45);
+  const [newQuestions, setNewQuestions] = useState(isDiagnosticView ? 30 : isMockView ? 80 : 25);
 
   useEffect(() => {
     async function load() {

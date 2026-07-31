@@ -9,7 +9,6 @@ import {
   ExposureLedger,
   SelectionAudit,
   Recommendation,
-  StageName,
   PlacementEngine,
 } from '@clasptek/domain-diagnostic-placement';
 
@@ -170,26 +169,29 @@ export class CalculatePlacementHandler {
     const form = await this.formRepo.findById(cmd.formId);
     if (!form) throw new Error(`Assessment Form ${cmd.formId} not found`);
 
-    // Detach current active attempt calculations
     const result = PlacementEngine.calculate(attempt, form);
     await this.placementRepo.save(result);
 
-    // Update Student Skill Profiles for evaluated categories
-    const accuracy =
-      attempt.responses.filter((r) => r.isCorrect).length / (attempt.responses.length || 1);
-    const mockStage: StageName = result.placementStage;
+    // Save real per-section SkillProfiles for all evaluated categories
+    const sectionScores = PlacementEngine.calculateSectionScores(attempt);
+    for (const [skillCode, summary] of sectionScores.entries()) {
+      const profile = new SkillProfile(
+        randomUUID(),
+        attempt.studentId,
+        skillCode,
+        summary.percentage,
+        result.placementStage,
+        attempt.tenantId
+      );
+      await this.skillRepo.save(profile);
+    }
 
-    const profile = new SkillProfile(
-      randomUUID(),
-      attempt.studentId,
-      'Grammar',
-      accuracy * 100,
-      mockStage,
-      attempt.tenantId
-    );
-    await this.skillRepo.save(profile);
+    const overallAccuracy =
+      attempt.responses.length > 0
+        ? (attempt.responses.filter((r) => r.isCorrect).length / attempt.responses.length) * 100
+        : 0;
 
-    attempt.submit(accuracy * 100);
+    attempt.submit(overallAccuracy);
     await this.attemptRepo.save(attempt);
 
     return result.id;

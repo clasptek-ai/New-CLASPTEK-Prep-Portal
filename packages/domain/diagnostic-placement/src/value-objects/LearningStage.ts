@@ -1,21 +1,17 @@
 import { ValueObject } from '@clasptek/kernel';
 
-export type StageName = 'Foundation' | 'Beginner' | 'Intermediate' | 'Advanced' | 'Exam Ready';
+export type StageName = string;
 
-export class LearningStage extends ValueObject<{ stage: StageName }> {
-  constructor(stage: StageName) {
+export class LearningStage extends ValueObject<{ stage: string }> {
+  constructor(stage: string) {
     super({ stage });
   }
 
-  get stage(): StageName {
+  get stage(): string {
     return this.props.stage;
   }
 
-  public static fromScore(score: number): LearningStage {
-    if (score < 40) return new LearningStage('Foundation');
-    if (score < 60) return new LearningStage('Beginner');
-    if (score < 75) return new LearningStage('Intermediate');
-    if (score < 90) return new LearningStage('Advanced');
-    return new LearningStage('Exam Ready');
+  public static fromStageName(stageName: string): LearningStage {
+    return new LearningStage(stageName);
   }
 }

@@ -140,50 +140,65 @@ export function calculateBandOrScaleScore(
   };
 }
 
+import { RepositoryFactory } from '../../repositories/repository-factory';
+
 export const studentPracticeService = {
   async getPracticeStats(): Promise<PracticeSessionStats> {
     try {
-      return await apiClient.get<PracticeSessionStats>('/api/v1/practice/stats');
+      const res = await fetch('/api/v1/practice/history');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.history) && data.history.length > 0) {
+        const history = data.history;
+        const total = history.reduce((acc: number, h: any) => acc + (h.scorePercentage || 0), 0);
+        const accuracy = Math.round(total / history.length);
+
+        return {
+          accuracy,
+          attemptedCount: history.length,
+          weakTopics: ['Grammar', 'Writing'],
+          strongTopics: ['Reading', 'Listening'],
+          averageTimeSeconds: 45,
+          history: history.map((h: any) => ({
+            date: h.completedAt ? new Date(h.completedAt).toISOString().split('T')[0] : '2026-07-31',
+            score: h.scorePercentage || 0,
+            exam: h.exam || 'English Proficiency',
+          })),
+        };
+      }
     } catch {
-      return {
-        accuracy: 76,
-        attemptedCount: 185,
-        weakTopics: ['Matching Headings', 'Integrated Writing Logic', 'Quadratic Inequalities'],
-        strongTopics: ['Subject-Verb Agreement', 'Reading Inferences', 'Vocabulary in Context'],
-        averageTimeSeconds: 42,
-        history: [
-          { date: '2026-07-20', score: 82, exam: 'IELTS Academic' },
-          { date: '2026-07-25', score: 78, exam: 'TOEFL iBT' },
-          { date: '2026-07-28', score: 88, exam: 'SAT' },
-        ],
-      };
+      // Empty state
     }
+    return {
+      accuracy: 0,
+      attemptedCount: 0,
+      weakTopics: [],
+      strongTopics: [],
+      averageTimeSeconds: 0,
+      history: [],
+    };
   },
 
   async createCustomSession(params: CustomSessionParams): Promise<PracticeSession> {
-    try {
-      const data = await apiClient.post<PracticeSession>('/api/v1/practice/start', params);
-      if (data && data.id) return data;
-    } catch {
-      // client-side fallback
-    }
+    const res = await fetch('/api/v1/practice/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        exam: params.exam,
+        section: params.section,
+        skill: params.skill,
+        difficulty: params.difficulty,
+        questionCount: params.questionCount,
+        isTimed: params.isTimed,
+      }),
+    });
 
-    // Query Universal Question Bank for published PRACTICE questions
-    let bankQuestions: AdminQuestion[] = [];
-    try {
-      const published = await adminQuestionsService.getPublishedQuestionsForCandidates(
-        params.exam,
-        'PRACTICE'
-      );
-      if (published && published.length > 0) {
-        let matching = published.filter(
-          (q) => q.section === params.section || q.programmeName === params.exam
-        );
-        if (matching.length === 0) matching = published;
-        bankQuestions = matching.slice(0, params.questionCount);
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      if (data.error === 'INSUFFICIENT_QUESTION_INVENTORY') {
+        throw new Error(`INSUFFICIENT_QUESTION_INVENTORY: ${data.message}`);
       }
-    } catch {
-      // Fallback below
+      throw new Error(data.error || 'Failed to start practice session');
     }
 
     const timeAllowed = params.isTimed
@@ -194,70 +209,20 @@ export const studentPracticeService = {
           : 1800
       : 0;
 
-    const sampleQuestions: AdminQuestion[] =
-      bankQuestions.length > 0
-        ? bankQuestions
-        : Array.from({ length: params.questionCount }).map((_, i) => ({
-            id: `pq-dyn-${Date.now()}-${i + 1}`,
-            code: `${params.exam.substring(0, 5).toUpperCase()}-${params.section.substring(0, 2).toUpperCase()}-${i + 101}`,
-            exam: params.exam,
-            section: params.section,
-            skill: params.skill || 'General Proficiency',
-            type: (params.questionType && params.questionType !== 'ANY'
-              ? params.questionType
-              : i % 4 === 0
-                ? 'MCQ'
-                : i % 4 === 1
-                  ? 'TRUE_FALSE_NOT_GIVEN'
-                  : i % 4 === 2
-                    ? 'FILL_IN_BLANK'
-                    : 'ESSAY') as QuestionType,
-            difficulty: (params.difficulty && params.difficulty !== 'ANY'
-              ? params.difficulty
-              : 'MEDIUM') as DifficultyLevel,
-            status: 'PUBLISHED',
-            usages: ['PRACTICE'],
-            estimatedTime: '2 mins',
-            officialSource: 'Clasptek Question Bank Engine',
-            version: 'v1.0',
-            language: 'en-US',
-            tags: [params.exam, params.section],
-            text: `[${params.exam} - ${params.section}] Question ${i + 1}: Select the statement that accurately reflects the core thesis in sentence ${i + 2}.`,
-            options: [
-              'Option A: Primary structural assertion holds under test conditions',
-              'Option B: Secondary variable fluctuates depending on sample size',
-              'Option C: Historical trend contradicts preliminary hypothesis',
-              'Option D: Result remains invariant across all environment models',
-            ],
-            correctAnswer: 'Option A: Primary structural assertion holds under test conditions',
-            distractors: [
-              'Option B: Secondary variable fluctuates depending on sample size',
-              'Option C: Historical trend contradicts preliminary hypothesis',
-              'Option D: Result remains invariant across all environment models',
-            ],
-            explanation:
-              'Option A correctly reflects the main argument presented in the passage section.',
-            hash: `dyn_hash_${i}`,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          }));
-
-    const session: PracticeSession = {
-      id: `ps-${Date.now()}`,
-      exam: params.exam,
-      section: params.section,
-      skill: params.skill || 'General Practice',
-      difficulty: params.difficulty || 'ANY',
-      totalQuestions: params.questionCount,
-      questions: sampleQuestions,
+    return {
+      id: data.session.id,
+      exam: data.session.exam,
+      section: data.session.section,
+      skill: data.session.skill,
+      difficulty: data.session.difficulty,
+      totalQuestions: data.session.totalQuestions,
+      questions: data.session.questions,
       answers: {},
       isCompleted: false,
       timeAllowedSeconds: timeAllowed,
       timeSpentSeconds: 0,
       createdAt: new Date().toISOString(),
     };
-
-    return session;
   },
 
   async submitSession(
@@ -266,6 +231,7 @@ export const studentPracticeService = {
     timeSpentSeconds: number,
     exam: ExamType
   ): Promise<PracticeSession> {
+    const practiceRepo = RepositoryFactory.getPracticeRepository();
     let rawScore = 0;
     const total = Object.keys(answers).length;
 
@@ -291,6 +257,8 @@ export const studentPracticeService = {
       createdAt: new Date().toISOString(),
       completedAt: new Date().toISOString(),
     };
+
+    await practiceRepo.saveSession(session);
 
     // Save to localStorage history
     if (typeof window !== 'undefined') {
@@ -341,6 +309,10 @@ export const studentPracticeService = {
   },
 
   async getStudentSkillProgress(): Promise<StudentSkillProgress[]> {
+    const practiceRepo = RepositoryFactory.getPracticeRepository();
+    const list = await practiceRepo.getSkillProgress();
+    if (list && list.length > 0) return list;
+
     try {
       const data = await apiClient.get<StudentSkillProgress[]>('/api/v1/student/progress');
       if (data && data.length > 0) return data;
@@ -388,3 +360,4 @@ export const studentPracticeService = {
     ];
   },
 };
+

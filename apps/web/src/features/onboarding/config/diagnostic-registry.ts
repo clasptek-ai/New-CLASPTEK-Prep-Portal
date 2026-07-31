@@ -9,9 +9,25 @@ export interface DiagnosticDefinition {
 }
 
 export const diagnosticRegistry: Record<string, DiagnosticDefinition> = {
+  'English Proficiency': {
+    examType: 'English Proficiency',
+    title: 'English Proficiency Diagnostic Assessment',
+    durationMinutes: 30,
+    questionCount: 30,
+    skillsEvaluated: [
+      'Grammar',
+      'Reading',
+      'Writing',
+      'Listening',
+      'Speaking',
+    ],
+    description:
+      'Determines your core English language proficiency level to place you into Foundation or Intermediate pathways.',
+    estimatedTimelineWeeks: 8,
+  },
   'IELTS Academic': {
     examType: 'IELTS Academic',
-    title: 'IELTS Academic Placement Diagnostic',
+    title: 'IELTS Academic Diagnostic',
     durationMinutes: 25,
     questionCount: 30,
     skillsEvaluated: [
@@ -21,7 +37,7 @@ export const diagnosticRegistry: Record<string, DiagnosticDefinition> = {
       'Grammatical Accuracy',
     ],
     description:
-      'Evaluates your current academic English proficiency against official IELTS 9-band scale standards.',
+      'Evaluates your current academic readiness to begin an official IELTS 9-band preparation programme.',
     estimatedTimelineWeeks: 8,
   },
   'IELTS General Training': {
@@ -40,7 +56,7 @@ export const diagnosticRegistry: Record<string, DiagnosticDefinition> = {
   },
   'TOEFL iBT': {
     examType: 'TOEFL iBT',
-    title: 'TOEFL iBT Proficiency Diagnostic',
+    title: 'TOEFL iBT Diagnostic',
     durationMinutes: 35,
     questionCount: 35,
     skillsEvaluated: [
@@ -49,12 +65,12 @@ export const diagnosticRegistry: Record<string, DiagnosticDefinition> = {
       'Speaking Delivery',
       'Writing Structure',
     ],
-    description: 'Evaluates academic university entrance readiness on the 120-point TOEFL scale.',
+    description: 'Evaluates academic readiness on the TOEFL preparation pathway.',
     estimatedTimelineWeeks: 10,
   },
   SAT: {
     examType: 'SAT',
-    title: 'SAT Digital Assessment Diagnostic',
+    title: 'Digital SAT Diagnostic',
     durationMinutes: 45,
     questionCount: 40,
     skillsEvaluated: [
@@ -64,7 +80,7 @@ export const diagnosticRegistry: Record<string, DiagnosticDefinition> = {
       'Data Analysis',
     ],
     description:
-      'Assesses digital SAT performance across Math and Evidence-Based Reading & Writing.',
+      'Assesses digital SAT readiness across Math and Evidence-Based Reading & Writing.',
     estimatedTimelineWeeks: 12,
   },
   CELPIP: {
@@ -79,31 +95,8 @@ export const diagnosticRegistry: Record<string, DiagnosticDefinition> = {
       'Interactive Speaking',
     ],
     description:
-      'Evaluates functional language ability for Canadian permanent residency and citizenship.',
+      'Evaluates functional language ability for Canadian permanent residency preparation.',
     estimatedTimelineWeeks: 6,
-  },
-  'PTE Academic': {
-    examType: 'PTE Academic',
-    title: 'PTE Academic Computer Diagnostic',
-    durationMinutes: 30,
-    questionCount: 35,
-    skillsEvaluated: [
-      'Speaking & Writing Combo',
-      'Reading Fill-in-Blanks',
-      'Summarize Spoken Text',
-      'Vocabulary',
-    ],
-    description: 'Evaluates automated AI-scanned PTE test readiness.',
-    estimatedTimelineWeeks: 8,
-  },
-  'Duolingo English Test': {
-    examType: 'Duolingo English Test',
-    title: 'Duolingo English Test Diagnostic',
-    durationMinutes: 20,
-    questionCount: 25,
-    skillsEvaluated: ['Literacy', 'Comprehension', 'Conversation', 'Production'],
-    description: 'Measures subscore performance on the 160-point Duolingo adaptive scale.',
-    estimatedTimelineWeeks: 4,
   },
 };
 
@@ -111,5 +104,5 @@ export function getDiagnosticDefinition(examType?: string): DiagnosticDefinition
   if (examType && diagnosticRegistry[examType]) {
     return diagnosticRegistry[examType];
   }
-  return diagnosticRegistry['IELTS Academic'];
+  return diagnosticRegistry['English Proficiency'];
 }

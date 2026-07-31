@@ -247,43 +247,19 @@ export function StudentAssessmentDashboard() {
         >
           <div
             style={{
-              padding: '1rem',
+              padding: '2rem',
               borderRadius: '12px',
               backgroundColor: '#0f172a',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
+              border: '1px dashed rgba(255, 255, 255, 0.1)',
+              textAlign: 'center',
+              gridColumn: '1 / -1',
             }}
           >
-            <div
-              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}
-            >
-              <span style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.9rem' }}>
-                IELTS Practice Set #3
-              </span>
-              <Badge variant="success">PASSED (85%)</Badge>
+            <div style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '0.5rem' }}>
+              No assessment attempts recorded yet.
             </div>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-              Submitted 2 days ago · Duration: 28 mins
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: '1rem',
-              borderRadius: '12px',
-              backgroundColor: '#0f172a',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
-            }}
-          >
-            <div
-              style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}
-            >
-              <span style={{ fontWeight: 700, color: '#ffffff', fontSize: '0.9rem' }}>
-                TOEFL iBT Reading Mock
-              </span>
-              <Badge variant="success">PASSED (78%)</Badge>
-            </div>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-              Submitted 5 days ago · Duration: 54 mins
+            <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
+              Complete a Diagnostic Assessment or Practice Set above to generate your historical attempt record.
             </div>
           </div>
         </div>

@@ -7,14 +7,17 @@ export interface AdminUserRecord {
   email: string;
   phone?: string;
   role: 'STUDENT' | 'INSTRUCTOR' | 'ADMINISTRATOR' | 'STAFF';
-  status: 'ACTIVE' | 'SUSPENDED';
+  status: 'ACTIVE' | 'SUSPENDED' | 'PENDING';
+  paymentStatus: 'PAID' | 'PENDING' | 'COMPLETED' | 'OVERDUE';
   programme: string;
+  cohort: string;
+  progressPercent: number;
   practiceUnlocked: boolean;
   mockUnlocked: boolean;
   registeredDate: string;
   lastLogin?: string;
   statusHistory: {
-    status: 'ACTIVE' | 'SUSPENDED';
+    status: 'ACTIVE' | 'SUSPENDED' | 'PENDING';
     changedBy: string;
     date: string;
     reason: string;
@@ -23,36 +26,12 @@ export interface AdminUserRecord {
 
 const STORAGE_KEY = 'clasptek_users_db';
 
-const DEFAULT_STUDENTS: AdminUserRecord[] = [
-  {
-    id: 'u-admin-001',
-    registrationNumber: 'CGA-ADMIN-00001',
-    name: 'CLASPTEK Executive Administrator',
-    email: 'admin@clasptek.com',
-    phone: '+1 800 555 0100',
-    role: 'ADMINISTRATOR',
-    status: 'ACTIVE',
-    programme: 'Platform Governance & Exam Operations',
-    practiceUnlocked: true,
-    mockUnlocked: true,
-    registeredDate: '2026-01-01T00:00:00Z',
-    lastLogin: new Date().toISOString(),
-    statusHistory: [
-      {
-        status: 'ACTIVE',
-        changedBy: 'System Bootstrapper',
-        date: '2026-01-01T00:00:00Z',
-        reason: 'Master Administrator Provisioning',
-      },
-    ],
-  },
-];
+const DEFAULT_STUDENTS: AdminUserRecord[] = [];
 
 function getStoredUsers(): AdminUserRecord[] {
   if (typeof window === 'undefined') return DEFAULT_STUDENTS;
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_STUDENTS));
     return DEFAULT_STUDENTS;
   }
   try {
@@ -81,29 +60,48 @@ export const adminUsersService = {
     }
   },
 
+  async getUserById(id: string): Promise<AdminUserRecord | null> {
+    const users = await this.getUsers();
+    return users.find((u) => u.id === id || u.registrationNumber === id) || null;
+  },
+
   async addStudent(
-    newStudent: Omit<
-      AdminUserRecord,
-      'id' | 'registrationNumber' | 'statusHistory' | 'registeredDate'
-    >
+    newStudent: Partial<AdminUserRecord> & { name: string; email: string }
   ): Promise<AdminUserRecord> {
     const list = getStoredUsers();
     const created: AdminUserRecord = {
-      ...newStudent,
       id: `u-${Date.now()}`,
       registrationNumber: `CGA-2026-${Math.floor(10000 + Math.random() * 90000)}`,
+      name: newStudent.name,
+      email: newStudent.email,
+      phone: newStudent.phone || '+234 803 000 0000',
+      role: 'STUDENT',
+      status: newStudent.status || 'ACTIVE',
+      paymentStatus: newStudent.paymentStatus || 'PAID',
+      programme: newStudent.programme || 'IELTS Academic Intensive',
+      cohort: newStudent.cohort || '2026 Q3 Cohort A',
+      progressPercent: newStudent.progressPercent ?? 0,
+      practiceUnlocked: newStudent.practiceUnlocked ?? true,
+      mockUnlocked: newStudent.mockUnlocked ?? true,
       registeredDate: new Date().toISOString(),
       statusHistory: [
         {
-          status: newStudent.status,
-          changedBy: 'Admin Portal',
+          status: newStudent.status || 'ACTIVE',
+          changedBy: 'Admin Operations',
           date: new Date().toISOString(),
-          reason: 'Manual registration by administrator',
+          reason: 'Operational candidate registration',
         },
       ],
     };
     saveStoredUsers([created, ...list]);
     return created;
+  },
+
+  async updateStudent(id: string, updates: Partial<AdminUserRecord>): Promise<boolean> {
+    const list = getStoredUsers();
+    const updated = list.map((u) => (u.id === id ? { ...u, ...updates } : u));
+    saveStoredUsers(updated);
+    return true;
   },
 
   async togglePracticeGate(id: string): Promise<boolean> {
@@ -124,7 +122,7 @@ export const adminUsersService = {
 
   async updateUserStatus(
     id: string,
-    status: 'ACTIVE' | 'SUSPENDED',
+    status: 'ACTIVE' | 'SUSPENDED' | 'PENDING',
     reason: string
   ): Promise<boolean> {
     const list = getStoredUsers();
@@ -135,7 +133,7 @@ export const adminUsersService = {
           status,
           statusHistory: [
             { status, changedBy: 'Administrator', date: new Date().toISOString(), reason },
-            ...u.statusHistory,
+            ...(u.statusHistory || []),
           ],
         };
       }

@@ -7,7 +7,15 @@ export interface AuditLogRecord {
   timestamp: string;
   ip: string;
   details: string;
-  category: 'AUTHENTICATION' | 'CURRICULUM_PUBLISH' | 'USER_SUSPENSION' | 'SETTINGS_CHANGE';
+  category:
+    | 'AUTHENTICATION'
+    | 'CURRICULUM_PUBLISH'
+    | 'USER_SUSPENSION'
+    | 'SETTINGS_CHANGE'
+    | 'EVENT'
+    | 'STUDENT_REGISTRATION'
+    | 'GATE_ACCESS'
+    | 'SYSTEM';
 }
 
 export const adminAuditService = {
