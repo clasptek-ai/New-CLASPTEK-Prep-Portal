@@ -69,7 +69,7 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ viewModel }) => {
         config={config}
         state={widgetState}
         onRetry={refetch}
-        onLaunchDiagnostic={() => router.push('/student/assessments')}
+        onLaunchDiagnostic={() => router.push('/student/welcome')}
         onLaunchMock={() => router.push('/student/mock')}
       />
 

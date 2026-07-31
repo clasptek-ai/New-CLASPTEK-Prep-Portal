@@ -174,7 +174,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
             <Button
               variant="outline"
               size="lg"
-              onClick={() => (window.location.href = '/student/assessments?mode=diagnostic')}
+              onClick={() => (window.location.href = '/student/welcome')}
               style={{
                 borderColor: 'rgba(255, 255, 255, 0.2)',
                 color: '#ffffff',

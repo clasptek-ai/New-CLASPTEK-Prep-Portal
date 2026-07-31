@@ -29,7 +29,7 @@ export const workspaceRegistry: Record<WorkspaceId, WorkspaceDefinition> = {
     navigation: [
       { name: 'Dashboard', href: '/dashboard', icon: 'LayoutDashboard' },
       { name: 'Practice', href: '/practice', icon: 'Zap' },
-      { name: 'Diagnostics', href: '/student/assessments?mode=diagnostic', icon: 'FileText' },
+      { name: 'Diagnostics', href: '/student/welcome', icon: 'FileText' },
       { name: 'Mock Exams', href: '/student/mock', icon: 'BookOpen' },
       { name: 'AI Coach', href: '/learning-assistant', icon: 'Sparkles' },
       { name: 'Readiness', href: '/readiness', icon: 'Target' },
