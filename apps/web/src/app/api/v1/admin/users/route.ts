@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { loadEnvironment } from '@clasptek/configuration';
 import { DatabasePool } from '@clasptek/persistence';
 import { ConsoleLogger } from '@clasptek/observability';
+import { randomUUID } from 'crypto';
 
 export async function GET(_req: NextRequest) {
   try {
@@ -51,7 +52,7 @@ export async function GET(_req: NextRequest) {
         AND (p.phone IS NULL OR p.target_programme IS NULL)
     `);
 
-    // Query canonical database records, excluding Admin/Staff roles
+    // Query canonical database records joining profiles and programme enrollments, excluding Admin/Staff roles
     const res = await pool.query(`
       SELECT 
         u.id,
@@ -59,12 +60,14 @@ export async function GET(_req: NextRequest) {
         p.last_name,
         au.email,
         COALESCE(p.phone, au.phone, au.raw_user_meta_data->>'phone', 'NOT RECORDED') as phone,
-        COALESCE(p.target_programme, au.raw_user_meta_data->>'programme', 'UNASSIGNED') as programme,
+        COALESCE(spe.programme_id::text, p.target_programme, au.raw_user_meta_data->>'programme', 'UNASSIGNED') as programme,
+        COALESCE(spe.cohort_id::text, 'UNASSIGNED') as cohort,
         u.status,
         u.created_at as "registeredDate"
       FROM public.users u
       JOIN auth.users au ON au.id = u.id
       LEFT JOIN public.profiles p ON p.user_id = u.id
+      LEFT JOIN public.student_programme_enrollments spe ON spe.student_id = u.id
       WHERE u.deleted_at IS NULL
         AND NOT EXISTS (
           SELECT 1 
@@ -91,7 +94,7 @@ export async function GET(_req: NextRequest) {
         status: r.status === 'ARCHIVED' || r.status === 'SUSPENDED' ? 'SUSPENDED' : 'ACTIVE',
         paymentStatus: 'NOT RECORDED',
         programme: r.programme || 'UNASSIGNED',
-        cohort: 'UNASSIGNED',
+        cohort: r.cohort || 'UNASSIGNED',
         progressPercent: 0,
         practiceUnlocked: true,
         mockUnlocked: true,
@@ -117,7 +120,7 @@ export async function GET(_req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
-    const { userId, phone, programme, status } = body;
+    const { userId, phone, programme, cohort, status } = body;
 
     if (!userId) {
       return NextResponse.json({ success: false, message: 'Missing userId' }, { status: 400 });
@@ -129,6 +132,7 @@ export async function PATCH(req: NextRequest) {
     await dbPool.connect();
     const pool = dbPool.getPool();
 
+    // 1. Update public.profiles
     if (phone !== undefined || programme !== undefined) {
       await pool.query(
         `UPDATE public.profiles
@@ -140,6 +144,33 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    // 2. Upsert into public.student_programme_enrollments if programme or cohort updated
+    if (programme !== undefined || cohort !== undefined) {
+      const existingEnroll = await pool.query(
+        `SELECT id FROM public.student_programme_enrollments WHERE student_id = $1`,
+        [userId]
+      );
+
+      if (existingEnroll.rows.length > 0) {
+        await pool.query(
+          `UPDATE public.student_programme_enrollments
+           SET programme_id = COALESCE($1, programme_id),
+               cohort_id = COALESCE($2, cohort_id),
+               updated_at = now()
+           WHERE student_id = $3`,
+          [programme || null, cohort || null, userId]
+        );
+      } else {
+        await pool.query(
+          `INSERT INTO public.student_programme_enrollments
+           (id, student_id, programme_id, cohort_id, enrollment_status, enrolled_at, created_at, updated_at)
+           VALUES ($1, $2, $3, $4, 'ACTIVE', now(), now(), now())`,
+          [randomUUID(), userId, programme || null, cohort || null]
+        );
+      }
+    }
+
+    // 3. Update public.users status
     if (status !== undefined) {
       await pool.query(
         `UPDATE public.users

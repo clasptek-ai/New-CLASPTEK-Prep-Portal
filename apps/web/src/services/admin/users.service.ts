@@ -105,6 +105,7 @@ export const adminUsersService = {
         userId: id,
         phone: updates.phone,
         programme: updates.programme,
+        cohort: updates.cohort,
         status: updates.status,
       });
     } catch (err) {
