@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const payload = await req.json();
+    const body = await req.json();
+    const payload = body.payload || body;
 
     const { dbPool } = await getDiagnosticContext();
     const importerRepo = new CanonicalJsonImporterRepository(dbPool.getPool());
@@ -30,6 +31,15 @@ export async function POST(req: NextRequest) {
       importedCount: result.importedCount,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('[IMPORT COMMIT FAILED]:', err);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'The Question Bank could not complete this import. No questions were committed.',
+        referenceCode: 'IMPORT_COMMIT_FAILED',
+        details: process.env.NODE_ENV === 'development' ? err.message : undefined,
+      },
+      { status: 500 }
+    );
   }
 }

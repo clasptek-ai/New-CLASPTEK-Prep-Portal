@@ -9,6 +9,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trg_update_diagnostic_catalogs_updated_at ON diagnostic_catalogs;
+DROP TRIGGER IF EXISTS trg_update_assessment_forms_updated_at ON assessment_forms;
+DROP TRIGGER IF EXISTS trg_update_diagnostic_attempts_updated_at ON diagnostic_attempts;
+DROP TRIGGER IF EXISTS trg_update_diagnostic_responses_updated_at ON diagnostic_responses;
+DROP TRIGGER IF EXISTS trg_update_student_skill_profiles_updated_at ON student_skill_profiles;
+
 -- diagnostic_catalogs trigger
 CREATE TRIGGER trg_update_diagnostic_catalogs_updated_at
   BEFORE UPDATE ON diagnostic_catalogs

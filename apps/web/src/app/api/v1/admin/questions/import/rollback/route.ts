@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const { dbPool } = await getDiagnosticContext();
     const importerRepo = new CanonicalJsonImporterRepository(dbPool.getPool());
 
-    await importerRepo.rollbackBatch(batchId);
+    await importerRepo.rollbackImportBatch(batchId);
 
     return NextResponse.json({
       success: true,

@@ -38,8 +38,13 @@ ALTER TABLE public.question_groups ADD COLUMN IF NOT EXISTS listening_section_id
 ALTER TABLE public.listening_tracks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.listening_sections ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS select_listening_tracks ON public.listening_tracks;
+DROP POLICY IF EXISTS manage_listening_tracks ON public.listening_tracks;
+DROP POLICY IF EXISTS select_listening_sections ON public.listening_sections;
+DROP POLICY IF EXISTS manage_listening_sections ON public.listening_sections;
+
 CREATE POLICY select_listening_tracks ON public.listening_tracks FOR SELECT USING (true);
 CREATE POLICY manage_listening_tracks ON public.listening_tracks FOR ALL USING (true);
 
 CREATE POLICY select_listening_sections ON public.listening_sections FOR SELECT USING (true);
-CREATE POLICY manage_listening_sections FOR ALL USING (true);
+CREATE POLICY manage_listening_sections ON public.listening_sections FOR ALL USING (true);

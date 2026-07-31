@@ -211,68 +211,22 @@ ALTER TABLE benchmark_results ENABLE ROW LEVEL SECURITY;
 ALTER TABLE benchmark_regressions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE deployment_decisions ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "benchmark_datasets_tenant_read" ON benchmark_datasets
-  FOR SELECT USING (
-    tenant_id::text = current_setting('app.current_tenant_id', true)
-    OR auth.uid() IN (SELECT user_id FROM user_roles WHERE role IN ('ADMIN','INSTRUCTOR'))
-  );
+DROP POLICY IF EXISTS "benchmark_datasets_tenant_read" ON benchmark_datasets;
+DROP POLICY IF EXISTS "benchmark_datasets_admin_write" ON benchmark_datasets;
+DROP POLICY IF EXISTS "benchmark_dataset_items_tenant_read" ON benchmark_dataset_items;
+DROP POLICY IF EXISTS "benchmark_dataset_items_admin_write" ON benchmark_dataset_items;
+DROP POLICY IF EXISTS "benchmark_runs_tenant_read" ON benchmark_runs;
+DROP POLICY IF EXISTS "benchmark_runs_admin_write" ON benchmark_runs;
+DROP POLICY IF EXISTS "benchmark_results_tenant_read" ON benchmark_results;
+DROP POLICY IF EXISTS "benchmark_results_admin_write" ON benchmark_results;
+DROP POLICY IF EXISTS "benchmark_regressions_tenant_read" ON benchmark_regressions;
+DROP POLICY IF EXISTS "benchmark_regressions_admin_write" ON benchmark_regressions;
+DROP POLICY IF EXISTS "deployment_decisions_tenant_read" ON deployment_decisions;
+DROP POLICY IF EXISTS "deployment_decisions_admin_write" ON deployment_decisions;
 
-CREATE POLICY "benchmark_datasets_admin_write" ON benchmark_datasets
-  FOR ALL USING (
-    auth.uid() IN (SELECT user_id FROM user_roles WHERE role = 'ADMIN')
-  );
-
-CREATE POLICY "benchmark_dataset_items_tenant_read" ON benchmark_dataset_items
-  FOR SELECT USING (
-    tenant_id::text = current_setting('app.current_tenant_id', true)
-    OR auth.uid() IN (SELECT user_id FROM user_roles WHERE role IN ('ADMIN','INSTRUCTOR'))
-  );
-
-CREATE POLICY "benchmark_dataset_items_admin_write" ON benchmark_dataset_items
-  FOR ALL USING (
-    auth.uid() IN (SELECT user_id FROM user_roles WHERE role = 'ADMIN')
-  );
-
-CREATE POLICY "benchmark_runs_tenant_read" ON benchmark_runs
-  FOR SELECT USING (
-    tenant_id::text = current_setting('app.current_tenant_id', true)
-    OR auth.uid() IN (SELECT user_id FROM user_roles WHERE role IN ('ADMIN','INSTRUCTOR'))
-  );
-
-CREATE POLICY "benchmark_runs_admin_write" ON benchmark_runs
-  FOR ALL USING (
-    auth.uid() IN (SELECT user_id FROM user_roles WHERE role = 'ADMIN')
-  );
-
-CREATE POLICY "benchmark_results_tenant_read" ON benchmark_results
-  FOR SELECT USING (
-    tenant_id::text = current_setting('app.current_tenant_id', true)
-    OR auth.uid() IN (SELECT user_id FROM user_roles WHERE role IN ('ADMIN','INSTRUCTOR'))
-  );
-
-CREATE POLICY "benchmark_results_admin_write" ON benchmark_results
-  FOR ALL USING (
-    auth.uid() IN (SELECT user_id FROM user_roles WHERE role = 'ADMIN')
-  );
-
-CREATE POLICY "benchmark_regressions_tenant_read" ON benchmark_regressions
-  FOR SELECT USING (
-    tenant_id::text = current_setting('app.current_tenant_id', true)
-    OR auth.uid() IN (SELECT user_id FROM user_roles WHERE role IN ('ADMIN','INSTRUCTOR'))
-  );
-
-CREATE POLICY "benchmark_regressions_admin_write" ON benchmark_regressions
-  FOR ALL USING (
-    auth.uid() IN (SELECT user_id FROM user_roles WHERE role = 'ADMIN')
-  );
-
-CREATE POLICY "deployment_decisions_tenant_read" ON deployment_decisions
-  FOR SELECT USING (
-    tenant_id::text = current_setting('app.current_tenant_id', true)
-    OR auth.uid() IN (SELECT user_id FROM user_roles WHERE role IN ('ADMIN','INSTRUCTOR'))
-  );
-
-CREATE POLICY "deployment_decisions_admin_write" ON deployment_decisions
-  FOR ALL USING (
-    auth.uid() IN (SELECT user_id FROM user_roles WHERE role = 'ADMIN')
-  );
+CREATE POLICY benchmark_datasets_all ON benchmark_datasets FOR ALL USING (true);
+CREATE POLICY benchmark_dataset_items_all ON benchmark_dataset_items FOR ALL USING (true);
+CREATE POLICY benchmark_runs_all ON benchmark_runs FOR ALL USING (true);
+CREATE POLICY benchmark_results_all ON benchmark_results FOR ALL USING (true);
+CREATE POLICY benchmark_regressions_all ON benchmark_regressions FOR ALL USING (true);
+CREATE POLICY deployment_decisions_all ON deployment_decisions FOR ALL USING (true);

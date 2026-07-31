@@ -4,7 +4,7 @@
 -- 1. IELTS Academic Mock Blueprint
 INSERT INTO public.mock_blueprints (id, exam_code, title, description, scoring_strategy, status, exam_type, version_no, sections_payload) VALUES
 (
-  'mb000000-0000-0000-0000-000000000001',
+  '00000000-0000-0000-0000-000000000001',
   'IELTS-ACAD-FULL',
   'IELTS Academic Official Examination Simulation',
   'Full-length official simulation covering Reading, Writing, Listening, and Speaking sections.',
@@ -27,7 +27,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- 2. IELTS General Training Mock Blueprint
 INSERT INTO public.mock_blueprints (id, exam_code, title, description, scoring_strategy, status, exam_type, version_no, sections_payload) VALUES
 (
-  'mb000000-0000-0000-0000-000000000002',
+  '00000000-0000-0000-0000-000000000002',
   'IELTS-GEN-FULL',
   'IELTS General Training Official Examination Simulation',
   'Full-length simulation covering General Reading, General Writing, Listening, and Speaking sections.',
@@ -50,7 +50,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- 3. TOEFL iBT Mock Blueprint
 INSERT INTO public.mock_blueprints (id, exam_code, title, description, scoring_strategy, status, exam_type, version_no, sections_payload) VALUES
 (
-  'mb000000-0000-0000-0000-000000000003',
+  '00000000-0000-0000-0000-000000000003',
   'TOEFL-IBT-FULL',
   'TOEFL iBT Official Examination Simulation',
   'Full-length simulation covering Reading, Listening, Speaking, and Writing sections.',
@@ -73,7 +73,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- 4. Digital SAT Mock Blueprint (Strictly Reading & Writing, Math — No Listening / Speaking)
 INSERT INTO public.mock_blueprints (id, exam_code, title, description, scoring_strategy, status, exam_type, version_no, sections_payload) VALUES
 (
-  'mb000000-0000-0000-0000-000000000004',
+  '00000000-0000-0000-0000-000000000004',
   'SAT-DIGITAL-FULL',
   'Digital SAT Official Examination Simulation',
   'Digital SAT adaptive simulation covering Reading & Writing and Math modules.',
@@ -94,7 +94,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- 5. CELPIP General Mock Blueprint
 INSERT INTO public.mock_blueprints (id, exam_code, title, description, scoring_strategy, status, exam_type, version_no, sections_payload) VALUES
 (
-  'mb000000-0000-0000-0000-000000000005',
+  '00000000-0000-0000-0000-000000000005',
   'CELPIP-GEN-FULL',
   'CELPIP General Official Examination Simulation',
   'Full-length simulation covering Listening, Reading, Writing, and Speaking sections.',
@@ -117,7 +117,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- 6. English Proficiency Progress Mock Blueprint
 INSERT INTO public.mock_blueprints (id, exam_code, title, description, scoring_strategy, status, exam_type, version_no, sections_payload) VALUES
 (
-  'mb000000-0000-0000-0000-000000000006',
+  '00000000-0000-0000-0000-000000000006',
   'ENG-PROF-PROGRESS-MOCK',
   'English Proficiency Progress Examination',
   'Comprehensive 5-skill progress assessment for Foundation & Intermediate learners.',

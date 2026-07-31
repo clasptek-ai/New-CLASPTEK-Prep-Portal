@@ -159,10 +159,14 @@ export class CanonicalJsonImporterRepository {
       }
 
       // Proficiency & Difficulty Level Check (Grammar & Language)
-      const levelStr = (q.difficulty || q.proficiencyLevel || '').toUpperCase();
-      if (levelStr === 'FOUNDATION' || levelStr === 'EASY') foundationCount++;
-      else if (levelStr === 'INTERMEDIATE' || levelStr === 'MEDIUM') intermediateCount++;
-      else if (levelStr === 'ADVANCED' || levelStr === 'HARD') advancedCount++;
+      const levelStr = (q.proficiencyLevel || q.proficiency_level || q.difficulty || q.level || '').toString().toUpperCase();
+      if (levelStr === 'FOUNDATION' || levelStr === 'EASY' || levelStr.includes('FOUND') || levelStr.includes('EASY')) {
+        foundationCount++;
+      } else if (levelStr === 'ADVANCED' || levelStr === 'HARD' || levelStr.includes('ADV') || levelStr.includes('HARD')) {
+        advancedCount++;
+      } else {
+        intermediateCount++;
+      }
 
       if (q.proficiencyLevel) {
         const level = q.proficiencyLevel.toUpperCase();
@@ -248,6 +252,8 @@ export class CanonicalJsonImporterRepository {
     try {
       await client.query('BEGIN');
 
+      const validUuidUser = (uploadedBy && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uploadedBy)) ? uploadedBy : null;
+
       // 1. Insert import batch record
       await client.query(
         `INSERT INTO public.question_import_batches
@@ -256,40 +262,62 @@ export class CanonicalJsonImporterRepository {
         [
           batchId,
           batchCode,
-          payload.metadata?.title || 'json-import.json',
+          payload.metadata?.title || payload.metadata?.source || 'json-import.json',
           payload.schemaVersion || '1.0',
           payload.examType || 'English Proficiency',
-          uploadedBy,
+          validUuidUser,
           validation.totalRecords,
           validation.warnings.length,
         ]
       );
 
+      // 2. Persist Reading Passages if present
+      if (Array.isArray(payload.passages)) {
+        for (const p of payload.passages) {
+          const passageCode = p.passageCode || p.code || `PAS-${randomUUID().slice(0, 8)}`;
+          await client.query(
+            `INSERT INTO public.reading_passages (id, code, title, content, exam_type, status, created_at)
+             VALUES (gen_random_uuid(), $1, $2, $3, $4, 'published', now())
+             ON CONFLICT (code) DO UPDATE SET title = EXCLUDED.title, content = EXCLUDED.content`,
+            [passageCode, p.title || 'Untitled Passage', p.content || '', payload.examType || 'English Proficiency']
+          );
+        }
+      }
+
+      // 3. Persist Questions, Versions, and Answer Options
       const questions = Array.isArray(payload.questions) ? payload.questions : [];
       let importedCount = 0;
 
       for (const q of questions) {
         const qId = randomUUID();
         const qvId = randomUUID();
-        const code = q.questionCode || `Q-${Date.now()}-${importedCount}`;
+        const code = q.questionCode || q.code || `Q-${Date.now()}-${importedCount}`;
         const examType = q.examType || payload.examType || 'English Proficiency';
         const section = q.section || 'Reading';
-        const itemType = q.questionType || 'MCQ';
-        const usages = Array.isArray(q.usages) ? q.usages : ['PRACTICE'];
-        const proficiencyLevel = q.proficiencyLevel ? q.proficiencyLevel.toUpperCase() : null;
+        const itemType = (q.questionType || 'MCQ').toUpperCase();
+        const usages = Array.isArray(q.usages) && q.usages.length > 0 
+          ? q.usages 
+          : (Array.isArray(payload.assessmentUsages) ? payload.assessmentUsages : ['DIAGNOSTIC', 'PRACTICE']);
+        
+        const proficiencyLevel = (q.proficiencyLevel || q.proficiency_level || '').toUpperCase() || null;
+        const promptText = q.prompt || q.questionText || q.text || 'Imported question prompt';
 
-        // Insert into public.questions
+        // Upsert into public.questions
         await client.query(
           `INSERT INTO public.questions (id, code, created_at, import_batch_id)
            VALUES ($1, $2, now(), $3)
-           ON CONFLICT (code) DO NOTHING`,
+           ON CONFLICT (code) DO UPDATE SET import_batch_id = EXCLUDED.import_batch_id`,
           [qId, code, batchId]
         );
+
+        // Fetch the actual question ID (in case ON CONFLICT triggered)
+        const qRes = await client.query(`SELECT id FROM public.questions WHERE code = $1`, [code]);
+        const actualQId = qRes.rows[0]?.id || qId;
 
         // Build version payload
         const versionPayload = {
           type: itemType,
-          difficulty: q.difficulty || 'MEDIUM',
+          difficulty: q.difficulty || proficiencyLevel || 'MEDIUM',
           usages,
           tags: q.tags || [examType, section],
           explanation: q.explanation || '',
@@ -304,18 +332,18 @@ export class CanonicalJsonImporterRepository {
            VALUES ($1, $2, 1, 'published', $3, $4, now(), $5, $6, $7, $8)`,
           [
             qvId,
-            qId,
-            q.prompt || 'Imported question prompt',
+            actualQId,
+            promptText,
             JSON.stringify(versionPayload),
             batchId,
             proficiencyLevel,
-            q.grammarTopic || null,
-            q.grammarSubtopic || null,
+            q.grammarTopic || q.topic || null,
+            q.grammarSubtopic || q.subtopic || null,
           ]
         );
 
         // Insert answer_options if MCQ
-        if (Array.isArray(q.options)) {
+        if (Array.isArray(q.options) && (itemType === 'MCQ' || itemType === 'MULTIPLE_RESPONSE' || itemType === 'MULTIPLE_CHOICE')) {
           for (let optIdx = 0; optIdx < q.options.length; optIdx++) {
             const opt = q.options[optIdx];
             const optCode = typeof opt === 'string' ? String.fromCharCode(65 + optIdx) : opt.code;
@@ -359,50 +387,30 @@ export class CanonicalJsonImporterRepository {
       SELECT q.code as question_code, qv.id as question_version_id, qv.prompt, qv.status,
              qv.proficiency_level, qv.grammar_topic, qv.grammar_subtopic, qv.payload
       FROM public.questions q
-      JOIN public.question_versions qv ON q.id = qv.question_id
-      WHERE qv.status IS NOT NULL
+      JOIN public.question_versions qv ON qv.question_id = q.id
+      WHERE qv.status = 'published'
     `;
-    const params: any[] = [];
 
-    if (filters?.examType) {
-      params.push(`%${filters.examType}%`);
-      query += ` AND (qv.payload->'tags' @> jsonb_build_array($${params.length}) OR q.code ILIKE $${params.length})`;
+    const params: any[] = [];
+    if (filters?.examType && filters.examType !== 'General (All Programmes)') {
+      params.push(filters.examType);
+      query += ` AND (qv.payload->>'tags' LIKE '%' || $1 || '%' OR qv.payload->>'examType' = $1)`;
     }
 
-    query += ` ORDER BY q.created_at DESC LIMIT 500`;
-
     const res = await this.pool.query(query, params);
-
-    const questionsPayload = await Promise.all(
-      res.rows.map(async (r) => {
-        const payload = r.payload || {};
-        const optRes = await this.pool.query(
-          `SELECT option_code, option_text, is_correct FROM public.answer_options 
-           WHERE question_version_id = $1 ORDER BY display_order ASC`,
-          [r.question_version_id]
-        );
-
-        const options = optRes.rows.map((o) => ({ code: o.option_code, text: o.option_text }));
-        const correctOpt = optRes.rows.find((o) => o.is_correct === true);
-
-        return {
-          questionCode: r.question_code,
-          examType: filters?.examType || 'English Proficiency',
-          section: payload.tags ? payload.tags[1] || 'READING' : 'READING',
-          proficiencyLevel: r.proficiency_level || 'INTERMEDIATE',
-          grammarTopic: r.grammar_topic || undefined,
-          grammarSubtopic: r.grammar_subtopic || undefined,
-          questionType: payload.type || 'MCQ',
-          difficulty: payload.difficulty || 'MEDIUM',
-          prompt: r.prompt,
-          options,
-          correctAnswer: correctOpt ? correctOpt.option_code : 'A',
-          explanation: payload.explanation || '',
-          usages: payload.usages || ['PRACTICE'],
-          status: r.status,
-        };
-      })
-    );
+    const questions = res.rows.map((r) => {
+      const payload = typeof r.payload === 'string' ? JSON.parse(r.payload) : r.payload || {};
+      return {
+        questionCode: r.question_code,
+        prompt: r.prompt,
+        proficiencyLevel: r.proficiency_level,
+        grammarTopic: r.grammar_topic,
+        grammarSubtopic: r.grammar_subtopic,
+        difficulty: payload.difficulty || 'MEDIUM',
+        usages: payload.usages || ['DIAGNOSTIC', 'PRACTICE'],
+        questionType: payload.type || 'MCQ',
+      };
+    });
 
     return {
       schemaVersion: '1.0',
@@ -410,15 +418,15 @@ export class CanonicalJsonImporterRepository {
       assessmentUsages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
       metadata: {
         exportedAt: new Date().toISOString(),
-        totalQuestions: questionsPayload.length,
-        source: 'Clasptek Universal Question Bank',
+        totalQuestions: questions.length,
+        source: 'Clasptek Universal Question Bank Importer',
       },
       passages: [],
       listeningTracks: [],
       writingTasks: [],
       speakingTasks: [],
       mediaAssets: [],
-      questions: questionsPayload,
+      questions,
     };
   }
 
@@ -426,33 +434,20 @@ export class CanonicalJsonImporterRepository {
     const res = await this.pool.query(
       `SELECT * FROM public.question_import_batches ORDER BY created_at DESC LIMIT 50`
     );
-    return res.rows.map((r) => ({
-      batchId: r.id,
-      batchCode: r.batch_code,
-      fileName: r.file_name,
-      schemaVersion: r.schema_version,
-      examType: r.exam_type,
-      status: r.status,
-      totalRecords: r.total_records,
-      successfulRecords: r.successful_records,
-      failedRecords: r.failed_records,
-      warningCount: r.warning_count,
-      createdAt: r.created_at,
-      completedAt: r.completed_at,
-    }));
+    return res.rows;
   }
 
-  public async rollbackBatch(batchId: string): Promise<void> {
+  public async rollbackImportBatch(batchId: string): Promise<boolean> {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
-      await client.query(`DELETE FROM public.question_versions WHERE import_batch_id = $1`, [batchId]);
       await client.query(`DELETE FROM public.questions WHERE import_batch_id = $1`, [batchId]);
       await client.query(
         `UPDATE public.question_import_batches SET status = 'ROLLED_BACK', rolled_back_at = now() WHERE id = $1`,
         [batchId]
       );
       await client.query('COMMIT');
+      return true;
     } catch (err) {
       await client.query('ROLLBACK');
       throw err;

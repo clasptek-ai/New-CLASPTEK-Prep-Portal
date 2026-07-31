@@ -1025,11 +1025,15 @@ export function QuestionBankImportCentreScreen() {
                       );
                       router.push('/admin/question-bank');
                     } else {
-                      alert(`Import commit error: ${commitData.error}`);
+                      alert(
+                        `Import Failed\n\nThe Question Bank could not complete this import.\nNo questions were committed.\n\nReference: ${commitData.referenceCode || 'IMPORT_COMMIT_FAILED'}`
+                      );
                     }
                   } catch (err: any) {
                     setIsSimulating(false);
-                    alert(`Import commit failure: ${err.message}`);
+                    alert(
+                      `Import Failed\n\nThe Question Bank could not complete this import.\nNo questions were committed.\n\nReference: IMPORT_COMMIT_FAILED`
+                    );
                   }
                 }}
                 disabled={importResult.validQuestions === 0 || isSimulating}

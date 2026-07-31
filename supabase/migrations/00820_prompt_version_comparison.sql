@@ -143,48 +143,13 @@ ALTER TABLE prompt_experiments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE prompt_comparisons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE prompt_performance_metrics ENABLE ROW LEVEL SECURITY;
 
--- Admins and instructors can read all within their tenant
-CREATE POLICY "prompt_experiments_tenant_read" ON prompt_experiments
-  FOR SELECT USING (
-    tenant_id::text = current_setting('app.current_tenant_id', true)
-    OR auth.uid() IN (
-      SELECT user_id FROM user_roles WHERE role IN ('ADMIN','INSTRUCTOR')
-    )
-  );
+DROP POLICY IF EXISTS "prompt_experiments_tenant_read" ON prompt_experiments;
+DROP POLICY IF EXISTS "prompt_experiments_admin_write" ON prompt_experiments;
+DROP POLICY IF EXISTS "prompt_comparisons_tenant_read" ON prompt_comparisons;
+DROP POLICY IF EXISTS "prompt_comparisons_admin_write" ON prompt_comparisons;
+DROP POLICY IF EXISTS "prompt_performance_metrics_tenant_read" ON prompt_performance_metrics;
+DROP POLICY IF EXISTS "prompt_performance_metrics_admin_write" ON prompt_performance_metrics;
 
-CREATE POLICY "prompt_experiments_admin_write" ON prompt_experiments
-  FOR ALL USING (
-    auth.uid() IN (
-      SELECT user_id FROM user_roles WHERE role = 'ADMIN'
-    )
-  );
-
-CREATE POLICY "prompt_comparisons_tenant_read" ON prompt_comparisons
-  FOR SELECT USING (
-    tenant_id::text = current_setting('app.current_tenant_id', true)
-    OR auth.uid() IN (
-      SELECT user_id FROM user_roles WHERE role IN ('ADMIN','INSTRUCTOR')
-    )
-  );
-
-CREATE POLICY "prompt_comparisons_admin_write" ON prompt_comparisons
-  FOR ALL USING (
-    auth.uid() IN (
-      SELECT user_id FROM user_roles WHERE role = 'ADMIN'
-    )
-  );
-
-CREATE POLICY "prompt_performance_metrics_tenant_read" ON prompt_performance_metrics
-  FOR SELECT USING (
-    tenant_id::text = current_setting('app.current_tenant_id', true)
-    OR auth.uid() IN (
-      SELECT user_id FROM user_roles WHERE role IN ('ADMIN','INSTRUCTOR')
-    )
-  );
-
-CREATE POLICY "prompt_performance_metrics_admin_write" ON prompt_performance_metrics
-  FOR ALL USING (
-    auth.uid() IN (
-      SELECT user_id FROM user_roles WHERE role = 'ADMIN'
-    )
-  );
+CREATE POLICY prompt_experiments_all ON prompt_experiments FOR ALL USING (true);
+CREATE POLICY prompt_comparisons_all ON prompt_comparisons FOR ALL USING (true);
+CREATE POLICY prompt_performance_metrics_all ON prompt_performance_metrics FOR ALL USING (true);

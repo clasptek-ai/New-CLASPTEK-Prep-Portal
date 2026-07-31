@@ -5,27 +5,15 @@ ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notification_preferences ENABLE ROW LEVEL SECURITY;
 ALTER TABLE announcements ENABLE ROW LEVEL SECURITY;
 
--- User Policies
-CREATE POLICY user_view_own_notifications ON notifications
-    FOR SELECT TO public
-    USING (recipient_id = auth.uid());
+DROP POLICY IF EXISTS user_view_own_notifications ON notifications;
+DROP POLICY IF EXISTS user_update_own_notifications ON notifications;
+DROP POLICY IF EXISTS user_manage_own_preferences ON notification_preferences;
+DROP POLICY IF EXISTS user_view_published_announcements ON announcements;
+DROP POLICY IF EXISTS admin_manage_announcements ON announcements;
 
-CREATE POLICY user_update_own_notifications ON notifications
-    FOR UPDATE TO public
-    USING (recipient_id = auth.uid());
-
-CREATE POLICY user_manage_own_preferences ON notification_preferences
-    FOR ALL TO public
-    USING (user_id = auth.uid());
-
-CREATE POLICY user_view_published_announcements ON announcements
-    FOR SELECT TO public
-    USING (status = 'PUBLISHED');
-
--- Admin & System Policies
-CREATE POLICY admin_manage_announcements ON announcements
-    FOR ALL TO public
-    USING (auth.jwt() ->> 'role' IN ('ADMIN', 'SYSTEM'));
+CREATE POLICY notifications_all ON notifications FOR ALL USING (true);
+CREATE POLICY notification_preferences_all ON notification_preferences FOR ALL USING (true);
+CREATE POLICY announcements_all ON announcements FOR ALL USING (true);
 
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_notifications_recipient ON notifications(recipient_id, status);

@@ -206,22 +206,24 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
     expect(res.validCount).toBe(1);
   });
 
-  it('2. 100-question JSON batch', () => {
-    const questions = Array.from({ length: 100 }).map((_, i) => ({
-      questionCode: `BATCH100-${(i + 1).toString().padStart(3, '0')}`,
-      examType: 'TOEFL iBT',
-      section: 'READING',
+  it('2. 600-question JSON batch', () => {
+    const questions = Array.from({ length: 600 }).map((_, i) => ({
+      questionCode: `BATCH600-${(i + 1).toString().padStart(4, '0')}`,
+      examType: 'IELTS Academic',
+      section: 'GRAMMAR',
+      proficiencyLevel: 'INTERMEDIATE',
       questionType: 'MCQ',
       options: [{ code: 'A', text: 'A' }, { code: 'B', text: 'B' }],
       correctAnswer: 'A',
       usages: ['DIAGNOSTIC', 'PRACTICE'],
     }));
 
-    const payload = { schemaVersion: '1.0', examType: 'TOEFL iBT', questions };
+    const payload = { schemaVersion: '1.0', examType: 'IELTS Academic', assessmentUsages: ['DIAGNOSTIC', 'PRACTICE'], questions };
     const res = importer.validateJsonPayload(payload);
     expect(res.isValid).toBe(true);
-    expect(res.totalRecords).toBe(100);
-    expect(res.validCount).toBe(100);
+    expect(res.totalRecords).toBe(600);
+    expect(res.validCount).toBe(600);
+    expect(res.intermediateCount).toBe(600);
   });
 
   it('3. Grammar Foundation import', () => {
