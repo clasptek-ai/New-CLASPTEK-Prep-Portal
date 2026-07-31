@@ -13,52 +13,79 @@ export async function GET(_req: NextRequest) {
     await dbPool.connect();
 
     const pool = dbPool.getPool();
-    const res = await pool
-      .query(
-        `
+
+    // Reconcile/backfill missing public.users or public.profiles from auth.users idempotently
+    await pool.query(`
+      INSERT INTO public.users (id, status, version, created_at, updated_at)
+      SELECT id, 'ACTIVE', 1, created_at, now()
+      FROM auth.users au
+      WHERE NOT EXISTS (SELECT 1 FROM public.users u WHERE u.id = au.id)
+      ON CONFLICT (id) DO NOTHING
+    `);
+
+    await pool.query(`
+      INSERT INTO public.profiles (id, user_id, first_name, last_name, locale, time_zone, version, created_at, updated_at)
+      SELECT 
+        gen_random_uuid(),
+        au.id,
+        COALESCE(au.raw_user_meta_data->>'first_name', split_part(au.email, '@', 1)),
+        COALESCE(au.raw_user_meta_data->>'last_name', 'Student'),
+        'en',
+        'UTC',
+        1,
+        au.created_at,
+        now()
+      FROM auth.users au
+      WHERE NOT EXISTS (SELECT 1 FROM public.profiles p WHERE p.user_id = au.id)
+    `);
+
+    // Query canonical database records joining public.users, auth.users, and public.profiles
+    const res = await pool.query(`
       SELECT 
         u.id,
-        COALESCE(u.id, 'u-100') as "registrationNumber",
-        CONCAT(p.first_name, ' ', p.last_name) as name,
-        i.email,
+        p.first_name,
+        p.last_name,
+        au.email,
         u.status,
-        u.created_at as "registeredDate",
-        COALESCE((SELECT name FROM roles r JOIN user_roles ur ON r.id = ur.role_id WHERE ur.user_id = u.id LIMIT 1), 'STUDENT') as role
-      FROM users u
-      LEFT JOIN identities i ON u.id = i.user_id
-      LEFT JOIN profiles p ON u.id = p.user_id
+        u.created_at as "registeredDate"
+      FROM public.users u
+      JOIN auth.users au ON au.id = u.id
+      LEFT JOIN public.profiles p ON p.user_id = u.id
       WHERE u.deleted_at IS NULL
-    `
-      )
-      .catch(() => null);
+      ORDER BY u.created_at DESC
+    `);
 
-    if (res && res.rows && res.rows.length > 0) {
-      const mapped = res.rows.map((r: any) => ({
+    const mapped = res.rows.map((r: any) => {
+      const fullName = [r.first_name, r.last_name].filter(Boolean).join(' ').trim();
+      const displayName = fullName || r.email;
+      const regId = `CGA-2026-${r.id.replace(/[^a-zA-Z0-9]/g, '').substring(0, 5).toUpperCase()}`;
+
+      return {
         id: r.id,
-        registrationNumber: `CGA-2026-${r.id.substring(0, 5)}`,
-        name: r.name?.trim() || r.email || 'User',
-        email: r.email || 'user@clasptek.com',
-        phone: r.phone || '+234 800 000 0000',
-        role: r.role || 'STUDENT',
-        status: r.status === 'ARCHIVED' ? 'SUSPENDED' : 'ACTIVE',
-        paymentStatus: 'PAID',
-        programme: 'IELTS Academic Intensive',
-        cohort: '2026 Q3 Cohort A',
-        progressPercent: 75,
+        registrationNumber: regId,
+        name: displayName,
+        email: r.email,
+        phone: 'NOT RECORDED',
+        role: 'STUDENT',
+        status: r.status === 'ARCHIVED' || r.status === 'SUSPENDED' ? 'SUSPENDED' : 'ACTIVE',
+        paymentStatus: 'NOT RECORDED',
+        programme: 'English Proficiency',
+        cohort: 'UNASSIGNED',
+        progressPercent: 0,
         practiceUnlocked: true,
         mockUnlocked: true,
         registeredDate: r.registeredDate || new Date().toISOString(),
         statusHistory: [],
-      }));
-      return NextResponse.json({ success: true, data: mapped }, { status: 200 });
-    }
-    return NextResponse.json({ success: true, data: [] }, { status: 200 });
+      };
+    });
+
+    return NextResponse.json({ success: true, data: mapped }, { status: 200 });
   } catch (err: unknown) {
     console.error('[GET_ADMIN_USERS_ERROR]', err);
     return NextResponse.json(
       {
         success: false,
-        message: 'Failed to retrieve users.',
+        message: 'Failed to retrieve registered students.',
         error: err instanceof Error ? err.message : String(err),
       },
       { status: 500 }

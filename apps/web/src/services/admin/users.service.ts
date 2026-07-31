@@ -8,7 +8,7 @@ export interface AdminUserRecord {
   phone?: string;
   role: 'STUDENT' | 'INSTRUCTOR' | 'ADMINISTRATOR' | 'STAFF';
   status: 'ACTIVE' | 'SUSPENDED' | 'PENDING';
-  paymentStatus: 'PAID' | 'PENDING' | 'COMPLETED' | 'OVERDUE';
+  paymentStatus: 'PAID' | 'PENDING' | 'COMPLETED' | 'OVERDUE' | 'NOT RECORDED';
   programme: string;
   cohort: string;
   progressPercent: number;
@@ -26,18 +26,14 @@ export interface AdminUserRecord {
 
 const STORAGE_KEY = 'clasptek_users_db';
 
-const DEFAULT_STUDENTS: AdminUserRecord[] = [];
-
 function getStoredUsers(): AdminUserRecord[] {
-  if (typeof window === 'undefined') return DEFAULT_STUDENTS;
+  if (typeof window === 'undefined') return [];
   const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    return DEFAULT_STUDENTS;
-  }
+  if (!raw) return [];
   try {
     return JSON.parse(raw);
   } catch {
-    return DEFAULT_STUDENTS;
+    return [];
   }
 }
 
@@ -51,13 +47,16 @@ export const adminUsersService = {
   async getUsers(): Promise<AdminUserRecord[]> {
     try {
       const res = await apiClient.get<any>('/api/v1/admin/users');
-      const data =
-        res && res.success && Array.isArray(res.data) ? res.data : Array.isArray(res) ? res : [];
-      if (data && data.length > 0) return data;
-      return getStoredUsers();
-    } catch {
-      return getStoredUsers();
+      if (res && res.success && Array.isArray(res.data)) {
+        return res.data;
+      }
+      if (Array.isArray(res)) {
+        return res;
+      }
+    } catch (err) {
+      console.error('adminUsersService.getUsers error:', err);
     }
+    return getStoredUsers();
   },
 
   async getUserById(id: string): Promise<AdminUserRecord | null> {
@@ -74,12 +73,12 @@ export const adminUsersService = {
       registrationNumber: `CGA-2026-${Math.floor(10000 + Math.random() * 90000)}`,
       name: newStudent.name,
       email: newStudent.email,
-      phone: newStudent.phone || '+234 803 000 0000',
+      phone: newStudent.phone || 'NOT RECORDED',
       role: 'STUDENT',
       status: newStudent.status || 'ACTIVE',
-      paymentStatus: newStudent.paymentStatus || 'PAID',
-      programme: newStudent.programme || 'IELTS Academic Intensive',
-      cohort: newStudent.cohort || '2026 Q3 Cohort A',
+      paymentStatus: newStudent.paymentStatus || 'NOT RECORDED',
+      programme: newStudent.programme || 'English Proficiency',
+      cohort: newStudent.cohort || 'UNASSIGNED',
       progressPercent: newStudent.progressPercent ?? 0,
       practiceUnlocked: newStudent.practiceUnlocked ?? true,
       mockUnlocked: newStudent.mockUnlocked ?? true,
@@ -148,24 +147,18 @@ export const adminUsersService = {
     return true;
   },
 
-  async assignRole(
-    id: string,
-    role: 'STUDENT' | 'INSTRUCTOR' | 'ADMINISTRATOR' | 'STAFF'
-  ): Promise<boolean> {
-    const list = getStoredUsers();
-    const updated = list.map((u) => (u.id === id ? { ...u, role } : u));
-    saveStoredUsers(updated);
+  async initiatePasswordReset(id: string): Promise<boolean> {
     try {
-      await apiClient.patch(`/api/v1/admin/users/${id}/role`, { role });
+      await apiClient.post(`/api/v1/admin/users/${id}/reset-password`, {});
     } catch {
       // fallback
     }
     return true;
   },
 
-  async initiatePasswordReset(id: string): Promise<boolean> {
+  async assignRole(id: string, role: string): Promise<boolean> {
     try {
-      await apiClient.post(`/api/v1/admin/users/${id}/password-reset`, {});
+      await apiClient.patch(`/api/v1/admin/users/${id}/role`, { role });
     } catch {
       // fallback
     }
