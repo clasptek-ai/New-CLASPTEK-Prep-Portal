@@ -251,6 +251,7 @@ export class CanonicalJsonImporterRepository {
 
     try {
       await client.query('BEGIN');
+      await client.query('SET LOCAL statement_timeout = 300000');
 
       const validUuidUser = (uploadedBy && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uploadedBy)) ? uploadedBy : null;
 
@@ -284,82 +285,148 @@ export class CanonicalJsonImporterRepository {
         }
       }
 
-      // 3. Persist Questions, Versions, and Answer Options
+      // 3. Persist Questions, Versions, and Answer Options in batch chunks of 25
       const questions = Array.isArray(payload.questions) ? payload.questions : [];
       let importedCount = 0;
+      const chunkSize = 25;
 
-      for (const q of questions) {
-        const qId = randomUUID();
-        const qvId = randomUUID();
-        const code = q.questionCode || q.code || `Q-${Date.now()}-${importedCount}`;
-        const examType = q.examType || payload.examType || 'English Proficiency';
-        const section = q.section || 'Reading';
-        const itemType = (q.questionType || 'MCQ').toUpperCase();
-        const usages = Array.isArray(q.usages) && q.usages.length > 0 
-          ? q.usages 
-          : (Array.isArray(payload.assessmentUsages) ? payload.assessmentUsages : ['DIAGNOSTIC', 'PRACTICE']);
-        
-        const proficiencyLevel = (q.proficiencyLevel || q.proficiency_level || '').toUpperCase() || null;
-        const promptText = q.prompt || q.questionText || q.text || 'Imported question prompt';
+      for (let i = 0; i < questions.length; i += chunkSize) {
+        const chunk = questions.slice(i, i + chunkSize);
 
-        // Upsert into public.questions
-        await client.query(
-          `INSERT INTO public.questions (id, code, created_at, import_batch_id)
-           VALUES ($1, $2, now(), $3)
-           ON CONFLICT (code) DO UPDATE SET import_batch_id = EXCLUDED.import_batch_id`,
-          [qId, code, batchId]
+        const qClauses: string[] = [];
+        const qParams: any[] = [];
+        const preparedItems: any[] = [];
+
+        chunk.forEach((q: any, idx: number) => {
+          const qId = randomUUID();
+          const qvId = randomUUID();
+          const code = q.questionCode || q.code || `Q-${Date.now()}-${i + idx}`;
+          const examType = q.examType || payload.examType || 'English Proficiency';
+          const section = q.section || 'Reading';
+          const itemType = (q.questionType || 'MCQ').toUpperCase();
+          const usages = Array.isArray(q.usages) && q.usages.length > 0 
+            ? q.usages 
+            : (Array.isArray(payload.assessmentUsages) ? payload.assessmentUsages : ['DIAGNOSTIC', 'PRACTICE']);
+          
+          const proficiencyLevel = (q.proficiencyLevel || q.proficiency_level || '').toUpperCase() || null;
+          const promptText = q.prompt || q.questionText || q.text || 'Imported question prompt';
+
+          const base = qParams.length;
+          qClauses.push(`($${base + 1}, $${base + 2}, now(), $${base + 3}, '00000000-0000-0000-0000-000000000000'::uuid)`);
+          qParams.push(qId, code, batchId);
+
+          preparedItems.push({
+            qId,
+            qvId,
+            code,
+            examType,
+            section,
+            itemType,
+            usages,
+            proficiencyLevel,
+            promptText,
+            grammarTopic: q.grammarTopic || q.topic || null,
+            grammarSubtopic: q.grammarSubtopic || q.subtopic || null,
+            difficulty: q.difficulty || proficiencyLevel || 'MEDIUM',
+            explanation: q.explanation || '',
+            passageCode: q.passageCode || null,
+            mediaCode: q.mediaCode || null,
+            options: Array.isArray(q.options) ? q.options : [],
+            correctAnswer: q.correctAnswer,
+          });
+        });
+
+        const qRes = await client.query(
+          `INSERT INTO public.questions (id, code, created_at, import_batch_id, tenant_id)
+           VALUES ${qClauses.join(', ')}
+           ON CONFLICT (code) WHERE deleted_at IS NULL 
+           DO UPDATE SET import_batch_id = EXCLUDED.import_batch_id, updated_at = now()
+           RETURNING id, code`,
+          qParams
         );
 
-        // Fetch the actual question ID (in case ON CONFLICT triggered)
-        const qRes = await client.query(`SELECT id FROM public.questions WHERE code = $1`, [code]);
-        const actualQId = qRes.rows[0]?.id || qId;
+        const codeToIdMap = new Map<string, string>();
+        qRes.rows.forEach((r) => codeToIdMap.set(r.code, r.id));
 
-        // Build version payload
-        const versionPayload = {
-          type: itemType,
-          difficulty: q.difficulty || proficiencyLevel || 'MEDIUM',
-          usages,
-          tags: q.tags || [examType, section],
-          explanation: q.explanation || '',
-          passageCode: q.passageCode || null,
-          mediaCode: q.mediaCode || null,
-        };
+        const qvClauses: string[] = [];
+        const qvParams: any[] = [];
+        const optClauses: string[] = [];
+        const optParams: any[] = [];
 
-        // Insert into public.question_versions
-        await client.query(
-          `INSERT INTO public.question_versions
-           (id, question_id, version_no, status, prompt, payload, created_at, import_batch_id, proficiency_level, grammar_topic, grammar_subtopic)
-           VALUES ($1, $2, 1, 'published', $3, $4, now(), $5, $6, $7, $8)`,
-          [
-            qvId,
+        preparedItems.forEach((item) => {
+          const actualQId = codeToIdMap.get(item.code) || item.qId;
+          const versionPayload = {
+            type: item.itemType,
+            difficulty: item.difficulty,
+            usages: item.usages,
+            tags: [item.examType, item.section],
+            explanation: item.explanation,
+            passageCode: item.passageCode,
+            mediaCode: item.mediaCode,
+          };
+
+          const qvBase = qvParams.length;
+          qvClauses.push(`($${qvBase + 1}, $${qvBase + 2}, 1, 'published', $${qvBase + 3}, $${qvBase + 4}, now(), $${qvBase + 5}, $${qvBase + 6}, $${qvBase + 7}, $${qvBase + 8})`);
+          qvParams.push(
+            item.qvId,
             actualQId,
-            promptText,
+            item.promptText,
             JSON.stringify(versionPayload),
             batchId,
-            proficiencyLevel,
-            q.grammarTopic || q.topic || null,
-            q.grammarSubtopic || q.subtopic || null,
-          ]
+            item.proficiencyLevel,
+            item.grammarTopic,
+            item.grammarSubtopic
+          );
+        });
+
+        const qvRes = await client.query(
+          `INSERT INTO public.question_versions
+           (id, question_id, version_no, status, prompt, payload, created_at, import_batch_id, proficiency_level, grammar_topic, grammar_subtopic)
+           VALUES ${qvClauses.join(', ')}
+           ON CONFLICT (question_id, version_no) DO NOTHING
+           RETURNING id, question_id`,
+          qvParams
         );
 
-        // Insert answer_options if MCQ
-        if (Array.isArray(q.options) && (itemType === 'MCQ' || itemType === 'MULTIPLE_RESPONSE' || itemType === 'MULTIPLE_CHOICE')) {
-          for (let optIdx = 0; optIdx < q.options.length; optIdx++) {
-            const opt = q.options[optIdx];
-            const optCode = typeof opt === 'string' ? String.fromCharCode(65 + optIdx) : opt.code;
-            const optText = typeof opt === 'string' ? opt : opt.text;
-            const isCorrect = q.correctAnswer ? optCode === q.correctAnswer : optIdx === 0;
+        const qidToQvIdMap = new Map<string, string>();
+        qvRes.rows.forEach((r) => qidToQvIdMap.set(r.question_id, r.id));
 
-            await client.query(
-              `INSERT INTO public.answer_options
-               (id, question_version_id, option_code, option_text, is_correct, display_order)
-               VALUES (gen_random_uuid(), $1, $2, $3, $4, $5)`,
-              [qvId, optCode, optText, isCorrect, optIdx + 1]
-            );
+        // For options, fetch version IDs for existing versions if ON CONFLICT DO NOTHING returned empty for those rows
+        const allQIds = preparedItems.map((item) => codeToIdMap.get(item.code) || item.qId);
+        const existingVersionsRes = await client.query(
+          `SELECT id, question_id FROM public.question_versions WHERE question_id = ANY($1::uuid[]) AND version_no = 1`,
+          [allQIds]
+        );
+        existingVersionsRes.rows.forEach((r) => qidToQvIdMap.set(r.question_id, r.id));
+
+        preparedItems.forEach((item) => {
+          const actualQId = codeToIdMap.get(item.code) || item.qId;
+          const actualQvId = qidToQvIdMap.get(actualQId) || item.qvId;
+
+          if (item.options.length > 0 && (item.itemType === 'MCQ' || item.itemType === 'MULTIPLE_RESPONSE' || item.itemType === 'MULTIPLE_CHOICE')) {
+            item.options.forEach((opt: any, optIdx: number) => {
+              const optCode = typeof opt === 'string' ? String.fromCharCode(65 + optIdx) : opt.code;
+              const optText = typeof opt === 'string' ? opt : opt.text;
+              const isCorrect = item.correctAnswer ? optCode === item.correctAnswer : optIdx === 0;
+
+              const optBase = optParams.length;
+              optClauses.push(`(gen_random_uuid(), $${optBase + 1}, $${optBase + 2}, $${optBase + 3}, $${optBase + 4}, $${optBase + 5})`);
+              optParams.push(actualQvId, optCode, optText, isCorrect, optIdx + 1);
+            });
           }
+        });
+
+        if (optClauses.length > 0) {
+          await client.query(
+            `INSERT INTO public.answer_options
+             (id, question_version_id, option_code, option_text, is_correct, display_order)
+             VALUES ${optClauses.join(', ')}
+             ON CONFLICT (question_version_id, option_code) DO NOTHING`,
+            optParams
+          );
         }
 
-        importedCount++;
+        importedCount += chunk.length;
       }
 
       // Update import batch status to COMPLETED
