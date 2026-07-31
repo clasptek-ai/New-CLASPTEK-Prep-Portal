@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, Clock, HelpCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { ShieldCheck, Clock, HelpCircle, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 import { BrandConfig } from '@/config/brand.config';
 import { LogoBadge } from '@/shared/ui/logo/LogoBadge';
-import { getDiagnosticDefinition } from '../config/diagnostic-registry';
 import { OnboardingState, StudentOnboardingData } from '../types/onboarding-state';
 
 interface WelcomeGatewayScreenProps {
@@ -15,24 +14,22 @@ interface WelcomeGatewayScreenProps {
 export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onboardingData }) => {
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
+  const [hasActiveAttempt, setHasActiveAttempt] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const studentName = onboardingData?.firstName || 'Student';
-  const targetExam = onboardingData?.targetExam || 'IELTS Academic';
 
   // State for post-login exam goals collection
   const [currentScore, setCurrentScore] = useState(onboardingData?.previousScore || '6.5');
-  const [targetScore, setTargetScore] = useState(
-    onboardingData?.targetScore ||
-      (targetExam.includes('IELTS') ? '8.0 Band' : targetExam === 'SAT' ? '1450' : '105')
-  );
+  const [targetScore, setTargetScore] = useState(onboardingData?.targetScore || '8.0 Band');
   const [plannedTestDate, setPlannedTestDate] = useState(
     onboardingData?.plannedExamDate || '2026-09-15'
   );
   const [learningGoal, setLearningGoal] = useState(onboardingData?.purpose || 'Study Abroad');
   const [currentLevel, setCurrentLevel] = useState('Intermediate');
 
-  // Sync state when onboardingData resolves on client mount
-  React.useEffect(() => {
+  // Sync state when onboardingData resolves on client mount & check active attempt
+  useEffect(() => {
     if (onboardingData) {
       if (onboardingData.previousScore) setCurrentScore(onboardingData.previousScore);
       if (onboardingData.targetScore) setTargetScore(onboardingData.targetScore);
@@ -40,14 +37,26 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
       if (onboardingData.purpose) setLearningGoal(onboardingData.purpose);
       if (onboardingData.baselineLevel) setCurrentLevel(onboardingData.baselineLevel);
     }
+
+    async function checkActiveAttempt() {
+      try {
+        const res = await fetch('/api/v1/diagnostic/attempts');
+        const data = await res.json();
+        if (data.success && data.hasActiveAttempt) {
+          setHasActiveAttempt(true);
+        }
+      } catch (e) {
+        console.error('Error checking active attempt:', e);
+      }
+    }
+    checkActiveAttempt();
   }, [onboardingData]);
 
-  const diagnosticDef = getDiagnosticDefinition(targetExam);
-
-  const handleStartDiagnostic = () => {
+  const handleStartDiagnostic = async () => {
     setIsStarting(true);
+    setErrorMessage(null);
 
-    // Save complete learning profile and set state = DIAGNOSTIC_IN_PROGRESS
+    // Save complete learning profile
     const updatedData: Partial<StudentOnboardingData> = {
       ...onboardingData,
       state: OnboardingState.DIAGNOSTIC_IN_PROGRESS,
@@ -63,9 +72,39 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
       localStorage.setItem('clasptek_onboarding_data', JSON.stringify(updatedData));
     }
 
-    setTimeout(() => {
-      router.push(`/student/assessments/player?examType=${encodeURIComponent(targetExam)}`);
-    }, 600);
+    try {
+      const res = await fetch('/api/v1/diagnostic/attempts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ examType: 'English Proficiency' }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        if (data.error === 'DIAGNOSTIC_INSUFFICIENT_INVENTORY') {
+          setErrorMessage(
+            data.message ||
+              'The diagnostic assessment is temporarily unavailable. Please contact your administrator.'
+          );
+        } else {
+          setErrorMessage(data.error || 'Failed to start diagnostic assessment.');
+        }
+        setIsStarting(false);
+        return;
+      }
+
+      // DIRECT CONNECTION: Route straight to Universal Assessment Player with attemptId
+      router.push(
+        `/student/assessments/player?attemptId=${encodeURIComponent(
+          data.attemptId
+        )}&examType=English%20Proficiency`
+      );
+    } catch (err: any) {
+      console.error('Error starting diagnostic assessment:', err);
+      setErrorMessage('Network error occurred. Please try again.');
+      setIsStarting(false);
+    }
   };
 
   return (
@@ -121,38 +160,61 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               gap: '0.35rem',
             }}
           >
-            <Sparkles size={13} />
-            Learning Profile & Placement Gateway
+            <Sparkles size={12} /> OFFICIAL PLACEMENT ASSESSMENT
           </span>
         </div>
 
-        {/* Main Content Body */}
-        <div style={{ padding: '2.25rem 2rem' }}>
-          {/* Personalized Welcome Banner */}
-          <div style={{ marginBottom: '1.75rem' }}>
-            <h1
+        {/* Welcome & Intro Section */}
+        <div style={{ padding: '2rem' }}>
+          <h1
+            style={{
+              fontSize: '1.75rem',
+              fontWeight: 800,
+              margin: '0 0 0.5rem',
+              color: '#ffffff',
+              lineHeight: 1.25,
+            }}
+          >
+            Welcome, {studentName}!
+          </h1>
+          <p
+            style={{
+              color: '#94a3b8',
+              fontSize: '0.95rem',
+              lineHeight: 1.6,
+              margin: '0 0 1.75rem',
+            }}
+          >
+            Determines your English proficiency level for placement into the appropriate English
+            learning pathway.
+          </p>
+
+          {/* Error Banner if Inventory Insufficient or API Error */}
+          {errorMessage && (
+            <div
               style={{
-                fontSize: '1.85rem',
-                fontWeight: 800,
-                color: '#ffffff',
-                marginBottom: '0.5rem',
-                letterSpacing: '-0.02em',
+                marginBottom: '1.5rem',
+                padding: '1rem 1.25rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '10px',
+                color: '#fca5a5',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                fontSize: '0.9rem',
               }}
             >
-              Welcome, {studentName}!
-            </h1>
-            <p style={{ fontSize: '1.05rem', color: '#94a3b8', lineHeight: 1.5, margin: 0 }}>
-              Welcome to{' '}
-              <strong style={{ color: '#ffffff' }}>{BrandConfig.organizationName}</strong>.
-              Let&apos;s personalize your learning experience before you begin.
-            </p>
-          </div>
+              <AlertCircle size={20} color="#ef4444" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
 
-          {/* Dynamic Diagnostic Metadata Box */}
+          {/* Diagnostic Assessment Details Box */}
           <div
             style={{
-              backgroundColor: '#161e2e',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
+              backgroundColor: '#1a2333',
+              border: '1px solid rgba(59, 130, 246, 0.25)',
               borderRadius: '12px',
               padding: '1.5rem',
               marginBottom: '2rem',
@@ -161,30 +223,32 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
             <div
               style={{
                 display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'space-between',
-                alignItems: 'flex-start',
                 marginBottom: '1rem',
               }}
             >
-              <div>
-                <h4 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#ffffff' }}>
-                  {diagnosticDef.title}
-                </h4>
-                <p style={{ margin: '0.35rem 0 0 0', fontSize: '0.9rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                  {diagnosticDef.description}
-                </p>
-              </div>
+              <h2
+                style={{
+                  fontSize: '1.1rem',
+                  fontWeight: 700,
+                  margin: 0,
+                  color: '#ffffff',
+                }}
+              >
+                English Proficiency Diagnostic Assessment
+              </h2>
               <span
                 style={{
                   fontSize: '0.75rem',
+                  color: '#34d399',
                   fontWeight: 700,
-                  color: '#10b981',
-                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                  padding: '0.25rem 0.6rem',
-                  borderRadius: '6px',
+                  padding: '0.2rem 0.5rem',
+                  backgroundColor: 'rgba(52, 211, 153, 0.12)',
+                  borderRadius: '4px',
                 }}
               >
-                Placement Gate
+                {hasActiveAttempt ? 'RESUME ATTEMPT' : 'MANDATORY PRE-ASSESSMENT'}
               </span>
             </div>
 
@@ -192,9 +256,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '1.25rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                paddingTop: '1rem',
+                gap: '1rem',
               }}
             >
               <div
@@ -208,8 +270,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               >
                 <Clock size={16} color="#3b82f6" />
                 <span>
-                  Duration:{' '}
-                  <strong style={{ color: '#ffffff' }}>{diagnosticDef.durationMinutes} mins</strong>
+                  Duration: <strong style={{ color: '#ffffff' }}>45 mins</strong> (Server Timer)
                 </span>
               </div>
               <div
@@ -223,8 +284,8 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               >
                 <HelpCircle size={16} color="#3b82f6" />
                 <span>
-                  Assessment Items:{' '}
-                  <strong style={{ color: '#ffffff' }}>{diagnosticDef.questionCount}</strong>
+                  Assessment:{' '}
+                  <strong style={{ color: '#ffffff' }}>Grammar, Reading & Writing</strong>
                 </span>
               </div>
               <div
@@ -238,10 +299,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               >
                 <ShieldCheck size={16} color="#3b82f6" />
                 <span>
-                  Evaluates:{' '}
-                  <strong style={{ color: '#ffffff' }}>
-                    Grammar, Reading & Writing
-                  </strong>
+                  Purpose: <strong style={{ color: '#ffffff' }}>Level Placement</strong>
                 </span>
               </div>
             </div>
@@ -253,12 +311,102 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                 borderTop: '1px dashed rgba(255, 255, 255, 0.08)',
                 fontSize: '0.85rem',
                 color: '#94a3b8',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.35rem',
               }}
             >
-              Grammar:{' '}
-              <strong style={{ color: '#38bdf8' }}>
-                Foundation • Intermediate • Advanced
-              </strong>
+              <div>
+                Grammar:{' '}
+                <strong style={{ color: '#38bdf8' }}>
+                  30 Objective Questions (Foundation • Intermediate • Advanced)
+                </strong>
+              </div>
+              <div>
+                Reading:{' '}
+                <strong style={{ color: '#34d399' }}>
+                  1 Reading Passage & Comprehension Set
+                </strong>
+              </div>
+              <div>
+                Writing:{' '}
+                <strong style={{ color: '#a78bfa' }}>
+                  2 Writing Tasks (1 Essay Writing • 1 Letter Writing)
+                </strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Goal & Level Selectors */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '1rem',
+              marginBottom: '2rem',
+            }}
+          >
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  color: '#94a3b8',
+                  marginBottom: '0.4rem',
+                }}
+              >
+                Self-Assessed Level
+              </label>
+              <select
+                value={currentLevel}
+                onChange={(e) => setCurrentLevel(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.65rem',
+                  backgroundColor: '#1e293b',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  color: '#ffffff',
+                  fontSize: '0.9rem',
+                }}
+              >
+                <option value="Foundation">Foundation</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  color: '#94a3b8',
+                  marginBottom: '0.4rem',
+                }}
+              >
+                Primary Goal
+              </label>
+              <select
+                value={learningGoal}
+                onChange={(e) => setLearningGoal(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.65rem',
+                  backgroundColor: '#1e293b',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  color: '#ffffff',
+                  fontSize: '0.9rem',
+                }}
+              >
+                <option value="Study Abroad">Study Abroad</option>
+                <option value="Career Advancement">Career Advancement</option>
+                <option value="General Proficiency">General Proficiency</option>
+                <option value="Immigration">Immigration</option>
+              </select>
             </div>
           </div>
 
@@ -284,7 +432,13 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
             }}
           >
-            <span>{isStarting ? 'Launching Assessment...' : 'Start Diagnostic Assessment'}</span>
+            <span>
+              {isStarting
+                ? 'Launching Assessment...'
+                : hasActiveAttempt
+                ? 'Continue Diagnostic Assessment'
+                : 'Start Diagnostic Assessment'}
+            </span>
             <ArrowRight size={18} />
           </button>
         </div>
