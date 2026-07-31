@@ -75,6 +75,7 @@ export class SupabaseQuestionRepository implements IQuestionRepository {
             page: json.page || spec.page || 1,
             pageSize: json.pageSize || spec.pageSize || 20,
             totalPages: json.totalPages || 1,
+            counts: json.counts,
           };
         }
       }

@@ -395,6 +395,45 @@ export function saveStoredMedia(media: MediaAsset[]) {
 }
 
 export const adminQuestionsService = {
+  async getQuestionsWithPagination(filter?: {
+    status?: QuestionWorkflowStatus | 'ALL';
+    exam?: ExamType | 'ALL';
+    section?: SectionType | 'ALL';
+    difficulty?: DifficultyLevel | 'ALL';
+    search?: string;
+    page?: number;
+    pageSize?: number;
+  }) {
+    const repo = RepositoryFactory.getQuestionRepository();
+    const result = await repo.findBySpecification({
+      status: filter?.status,
+      exam: filter?.exam,
+      section: filter?.section,
+      difficulty: filter?.difficulty,
+      search: filter?.search,
+      page: filter?.page || 1,
+      pageSize: filter?.pageSize || 50,
+    });
+
+    if (result && result.data && result.data.length > 0) {
+      return result;
+    }
+
+    const all = await this.getQuestions(filter);
+    return {
+      data: all,
+      total: all.length,
+      page: 1,
+      pageSize: all.length || 50,
+      totalPages: 1,
+      counts: {
+        all: all.length,
+        published: all.filter((q) => q.status === 'PUBLISHED').length,
+        draft: all.filter((q) => q.status === 'DRAFT').length,
+      },
+    };
+  },
+
   async getQuestions(filter?: {
     status?: QuestionWorkflowStatus | 'ALL';
     exam?: ExamType | 'ALL';

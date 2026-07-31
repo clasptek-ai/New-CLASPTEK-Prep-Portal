@@ -26,6 +26,7 @@ export interface PaginatedResult<T> {
   page: number;
   pageSize: number;
   totalPages: number;
+  counts?: Record<string, number>;
 }
 
 export interface IQuestionRepository {

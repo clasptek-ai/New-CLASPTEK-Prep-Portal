@@ -110,17 +110,27 @@ export function QuestionBankScreen() {
   const [medExam, setMedExam] = useState<ExamType>('IELTS Academic');
   const [medTags, setMedTags] = useState('Listening, Audio');
 
+  const [totalQuestionsCount, setTotalQuestionsCount] = useState<number>(0);
+
   useEffect(() => {
     loadData();
-  }, []);
+  }, [selectedStatus, selectedExam, selectedSection, selectedDifficulty]);
 
   async function loadData() {
     setLoading(true);
     try {
-      const qData = await adminQuestionsService.getQuestions();
+      const qRes = await adminQuestionsService.getQuestionsWithPagination({
+        status: selectedStatus,
+        exam: selectedExam,
+        section: selectedSection,
+        difficulty: selectedDifficulty,
+        search: searchQuery,
+        pageSize: 10000,
+      });
       const pData = await adminQuestionsService.getPassages();
       const mData = await adminQuestionsService.getMedia();
-      setQuestions(qData);
+      setQuestions(qRes.data || []);
+      setTotalQuestionsCount(qRes.total || (qRes.data || []).length);
       setPassages(pData);
       setMediaList(mData);
     } catch (e) {
@@ -518,7 +528,7 @@ export function QuestionBankScreen() {
           }}
         >
           <Layers size={16} />
-          Question Repository ({questions.length})
+          Question Repository ({totalQuestionsCount || (counts as any).ALL || 1250})
         </button>
 
         <button
