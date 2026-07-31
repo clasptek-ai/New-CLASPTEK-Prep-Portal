@@ -50,7 +50,7 @@ export class RepositoryFactory {
     if (!this.questionRepo) {
       this.questionRepo = new SupabaseQuestionRepository();
     }
-    return this.questionRepo;
+    return this.questionRepo!;
   }
 
   public static getPassageRepository(): IPassageRepository {

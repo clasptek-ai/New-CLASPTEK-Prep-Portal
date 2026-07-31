@@ -9,10 +9,8 @@ import {
   QuestionUsage,
   QuestionWorkflowStatus,
 } from '../../services/admin/questions.service';
-import { getSupabaseBrowserClient } from '../../lib/supabase-browser';
 
 const STORAGE_KEY = 'clasptek_universal_question_bank';
-const DEFAULT_TENANT_ID = '00000000-0000-0000-0000-000000000000';
 
 function getLocalQuestions(): AdminQuestion[] {
   if (typeof window === 'undefined') return [];
@@ -32,28 +30,58 @@ function saveLocalQuestions(questions: AdminQuestion[]) {
 }
 
 export class SupabaseQuestionRepository implements IQuestionRepository {
-  private get supabase() {
-    return getSupabaseBrowserClient();
-  }
-
   async findAll(): Promise<AdminQuestion[]> {
     try {
-      const { data, error } = await this.supabase
-        .from('materialized_questions')
-        .select('*')
-        .order('updated_at', { ascending: false });
-
-      if (!error && data && data.length > 0) {
-        return data.map((row: any) => this.mapRowToQuestion(row));
+      const res = await fetch('/api/v1/admin/questions?pageSize=10000', {
+        headers: { 'Cache-Control': 'no-cache' },
+      });
+      if (res.ok) {
+        const json = await res.json();
+        const items = json.items || json.data;
+        if (items && Array.isArray(items) && items.length > 0) {
+          return items;
+        }
       }
-    } catch {
-      // Fallback
+    } catch (err) {
+      console.error('SupabaseQuestionRepository.findAll fallback error:', err);
     }
 
     return getLocalQuestions();
   }
 
   async findBySpecification(spec: QuestionSpecification): Promise<PaginatedResult<AdminQuestion>> {
+    try {
+      const params = new URLSearchParams();
+      if (spec.page) params.set('page', spec.page.toString());
+      if (spec.pageSize) params.set('pageSize', spec.pageSize.toString());
+      if (spec.status) params.set('status', spec.status);
+      if (spec.exam) params.set('exam', spec.exam);
+      if (spec.section) params.set('section', spec.section);
+      if (spec.difficulty) params.set('difficulty', spec.difficulty);
+      if (spec.usage) params.set('usage', spec.usage);
+      if (spec.search) params.set('search', spec.search);
+
+      const res = await fetch(`/api/v1/admin/questions?${params.toString()}`, {
+        headers: { 'Cache-Control': 'no-cache' },
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && (json.items || json.data)) {
+          const data = json.items || json.data;
+          return {
+            data,
+            total: json.total || data.length,
+            page: json.page || spec.page || 1,
+            pageSize: json.pageSize || spec.pageSize || 20,
+            totalPages: json.totalPages || 1,
+          };
+        }
+      }
+    } catch (err) {
+      console.error('SupabaseQuestionRepository.findBySpecification fallback error:', err);
+    }
+
     const page = spec.page || 1;
     const pageSize = spec.pageSize || 20;
 
@@ -109,98 +137,35 @@ export class SupabaseQuestionRepository implements IQuestionRepository {
     return list.find((q) => q.code === code) || null;
   }
 
-  async findForCandidates(exam?: ExamType, usage?: QuestionUsage): Promise<AdminQuestion[]> {
+  async findByExamAndSection(exam?: ExamType, section?: QuestionWorkflowStatus): Promise<AdminQuestion[]> {
     const list = await this.findAll();
     return list.filter((q) => {
-      if (q.status !== 'PUBLISHED') return false;
       if (exam && q.exam !== exam) return false;
-      if (usage && !q.usages.includes(usage)) return false;
+      if (section && q.section !== (section as any)) return false;
       return true;
     });
   }
 
-  /**
-   * CANONICAL WRITE MODEL:
-   * Writes target public.questions and public.question_versions.
-   * PostgreSQL trigger trg_sync_materialized_question automatically populates
-   * question_read.materialized_questions when question_versions status is 'published'.
-   */
   async save(question: AdminQuestion): Promise<AdminQuestion> {
     const localList = getLocalQuestions();
-    const existingIndex = localList.findIndex((q) => q.id === question.id);
-    if (existingIndex >= 0) {
-      localList[existingIndex] = question;
+    const idx = localList.findIndex((q) => q.id === question.id);
+    if (idx >= 0) {
+      localList[idx] = question;
     } else {
       localList.unshift(question);
     }
     saveLocalQuestions(localList);
-
-    try {
-      const dbStatus = question.status.toLowerCase();
-
-      // 1. Upsert root question entity into canonical table public.questions
-      const { data: qData, error: qErr } = await this.supabase
-        .from('questions')
-        .upsert({
-          id: question.id,
-          code: question.code,
-          status: dbStatus,
-          tenant_id: DEFAULT_TENANT_ID,
-          updated_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (!qErr) {
-        // 2. Upsert canonical question version into public.question_versions
-        await this.supabase.from('question_versions').upsert({
-          question_id: question.id,
-          version_no: 1,
-          version_label: question.version || 'v1.0',
-          prompt: question.text,
-          payload: question,
-          explanation: question.explanation,
-          status: dbStatus,
-        });
-      }
-
-      // Also update materialized_questions directly for dev resilience if trigger hasn't fired
-      await this.supabase.from('materialized_questions').upsert({
-        id: question.id,
-        code: question.code,
-        prompt: question.text,
-        payload: question,
-        explanation: question.explanation,
-        tags: question.tags,
-        difficulty_rating: question.difficulty.toLowerCase(),
-        tenant_id: DEFAULT_TENANT_ID,
-        updated_at: new Date().toISOString(),
-      });
-    } catch {
-      // client-side fallback saved above
-    }
 
     return question;
   }
 
   async updateStatus(id: string, status: QuestionWorkflowStatus): Promise<boolean> {
     const localList = getLocalQuestions();
-    const updated = localList.map((q) => (q.id === id ? { ...q, status } : q));
-    saveLocalQuestions(updated);
-
-    try {
-      const dbStatus = status.toLowerCase();
-      // Update canonical root
-      await this.supabase.from('questions').update({ status: dbStatus }).eq('id', id);
-      // Update canonical version
-      await this.supabase
-        .from('question_versions')
-        .update({ status: dbStatus })
-        .eq('question_id', id);
-    } catch {
-      // client-side fallback saved above
+    const q = localList.find((item) => item.id === id);
+    if (q) {
+      q.status = status;
+      saveLocalQuestions(localList);
     }
-
     return true;
   }
 
@@ -208,56 +173,26 @@ export class SupabaseQuestionRepository implements IQuestionRepository {
     const localList = getLocalQuestions();
     const filtered = localList.filter((q) => q.id !== id);
     saveLocalQuestions(filtered);
-
-    try {
-      // Soft-delete in canonical questions table
-      await this.supabase
-        .from('questions')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', id);
-      await this.supabase.from('materialized_questions').delete().eq('id', id);
-    } catch {
-      // fallback saved
-    }
-
     return true;
   }
 
-  async bulkUpsert(questions: AdminQuestion[]): Promise<number> {
-    for (const q of questions) {
-      await this.save(q);
-    }
-    return questions.length;
+  async findForCandidates(exam?: ExamType, usage?: QuestionUsage): Promise<AdminQuestion[]> {
+    const list = await this.findAll();
+    return list.filter((q) => {
+      if (exam && q.exam !== exam) return false;
+      if (usage && (!q.usages || !q.usages.includes(usage))) return false;
+      return q.status === 'PUBLISHED';
+    });
   }
 
-  private mapRowToQuestion(row: any): AdminQuestion {
-    return {
-      id: row.id,
-      code: row.code,
-      exam: row.payload?.exam || 'IELTS Academic',
-      section: row.payload?.section || 'Reading',
-      skill: row.payload?.skill || 'General',
-      subSkill: row.payload?.subSkill,
-      type: row.payload?.type || 'MCQ',
-      difficulty: row.payload?.difficulty || 'MEDIUM',
-      status: (row.status?.toUpperCase() as QuestionWorkflowStatus) || 'PUBLISHED',
-      usages: row.payload?.usages || ['PRACTICE'],
-      estimatedTime: row.payload?.estimatedTime || '2 mins',
-      officialSource: row.payload?.officialSource || 'Official',
-      version: row.payload?.version || '1.0',
-      language: row.payload?.language || 'en',
-      tags: Array.isArray(row.tags) ? row.tags : [],
-      text: row.prompt || row.payload?.text || '',
-      options: row.payload?.options || [],
-      correctAnswer: row.payload?.correctAnswer || '',
-      explanation: row.explanation || row.payload?.explanation || '',
-      passageId: row.payload?.passageId,
-      groupId: row.payload?.groupId,
-      audioUrl: row.payload?.audioUrl,
-      imageUrl: row.payload?.imageUrl,
-      hash: row.payload?.hash || `hash_${row.id}`,
-      createdAt: row.created_at || new Date().toISOString(),
-      updatedAt: row.updated_at || new Date().toISOString(),
-    };
+  async bulkUpsert(questions: AdminQuestion[]): Promise<number> {
+    const localList = getLocalQuestions();
+    questions.forEach((q) => {
+      const idx = localList.findIndex((item) => item.id === q.id || item.code === q.code);
+      if (idx >= 0) localList[idx] = q;
+      else localList.unshift(q);
+    });
+    saveLocalQuestions(localList);
+    return questions.length;
   }
 }

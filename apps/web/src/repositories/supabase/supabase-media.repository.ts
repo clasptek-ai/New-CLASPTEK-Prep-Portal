@@ -1,6 +1,5 @@
 import { IMediaRepository } from '../interfaces/media.repository';
 import { MediaAsset, ExamType } from '../../services/admin/questions.service';
-import { getSupabaseBrowserClient } from '../../lib/supabase-browser';
 
 const MEDIA_STORAGE_KEY = 'clasptek_media_assets';
 
@@ -22,27 +21,19 @@ function saveLocalMedia(media: MediaAsset[]) {
 }
 
 export class SupabaseMediaRepository implements IMediaRepository {
-  private get supabase() {
-    return getSupabaseBrowserClient();
-  }
-
   async findAll(): Promise<MediaAsset[]> {
     try {
-      const { data, error } = await this.supabase.from('media_assets').select('*');
-      if (!error && data && data.length > 0) {
-        return data.map((row: any) => ({
-          id: row.id,
-          title: row.title,
-          type: row.type,
-          url: row.url,
-          examType: row.exam_type,
-          tags: row.tags || [],
-          sizeMb: row.size_mb,
-          createdAt: row.created_at,
-        }));
+      const res = await fetch('/api/v1/admin/media', {
+        headers: { 'Cache-Control': 'no-cache' },
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          return json.data;
+        }
       }
-    } catch {
-      // fallback
+    } catch (err) {
+      console.error('SupabaseMediaRepository.findAll fallback error:', err);
     }
     return getLocalMedia();
   }
@@ -66,22 +57,6 @@ export class SupabaseMediaRepository implements IMediaRepository {
       localList.unshift(media);
     }
     saveLocalMedia(localList);
-
-    try {
-      await this.supabase.from('media_assets').upsert({
-        id: media.id,
-        title: media.title,
-        type: media.type,
-        url: media.url,
-        exam_type: media.examType,
-        tags: media.tags,
-        size_mb: media.sizeMb,
-        created_at: media.createdAt,
-      });
-    } catch {
-      // fallback saved
-    }
-
     return media;
   }
 
@@ -89,13 +64,6 @@ export class SupabaseMediaRepository implements IMediaRepository {
     const localList = getLocalMedia();
     const filtered = localList.filter((m) => m.id !== id);
     saveLocalMedia(filtered);
-
-    try {
-      await this.supabase.from('media_assets').delete().eq('id', id);
-    } catch {
-      // fallback saved
-    }
-
     return true;
   }
 }

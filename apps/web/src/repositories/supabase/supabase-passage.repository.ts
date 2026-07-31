@@ -1,6 +1,5 @@
 import { IPassageRepository } from '../interfaces/passage.repository';
 import { Passage, ExamType, SectionType } from '../../services/admin/questions.service';
-import { getSupabaseBrowserClient } from '../../lib/supabase-browser';
 
 const PASSAGE_STORAGE_KEY = 'clasptek_reading_passages';
 
@@ -22,28 +21,19 @@ function saveLocalPassages(passages: Passage[]) {
 }
 
 export class SupabasePassageRepository implements IPassageRepository {
-  private get supabase() {
-    return getSupabaseBrowserClient();
-  }
-
   async findAll(): Promise<Passage[]> {
     try {
-      const { data, error } = await this.supabase.from('reading_passages').select('*');
-      if (!error && data && data.length > 0) {
-        return data.map((row: any) => ({
-          id: row.id,
-          title: row.title,
-          content: row.content,
-          examType: row.exam_type,
-          section: row.section || 'Reading',
-          source: row.source,
-          wordCount: row.word_count || 0,
-          questionIds: row.question_ids || [],
-          createdAt: row.created_at,
-        }));
+      const res = await fetch('/api/v1/admin/passages', {
+        headers: { 'Cache-Control': 'no-cache' },
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          return json.data;
+        }
       }
-    } catch {
-      // fallback to localStorage
+    } catch (err) {
+      console.error('SupabasePassageRepository.findAll fallback error:', err);
     }
     return getLocalPassages();
   }
@@ -71,22 +61,6 @@ export class SupabasePassageRepository implements IPassageRepository {
       localList.unshift(passage);
     }
     saveLocalPassages(localList);
-
-    try {
-      await this.supabase.from('reading_passages').upsert({
-        id: passage.id,
-        title: passage.title,
-        content: passage.content,
-        exam_type: passage.examType,
-        section: passage.section,
-        source: passage.source,
-        word_count: passage.wordCount,
-        created_at: passage.createdAt,
-      });
-    } catch {
-      // client fallback saved above
-    }
-
     return passage;
   }
 
@@ -94,13 +68,6 @@ export class SupabasePassageRepository implements IPassageRepository {
     const localList = getLocalPassages();
     const filtered = localList.filter((p) => p.id !== id);
     saveLocalPassages(filtered);
-
-    try {
-      await this.supabase.from('reading_passages').delete().eq('id', id);
-    } catch {
-      // fallback saved
-    }
-
     return true;
   }
 }
