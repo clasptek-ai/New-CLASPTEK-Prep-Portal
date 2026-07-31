@@ -12,17 +12,13 @@ export const diagnosticRegistry: Record<string, DiagnosticDefinition> = {
   'English Proficiency': {
     examType: 'English Proficiency',
     title: 'English Proficiency Diagnostic Assessment',
-    durationMinutes: 30,
-    questionCount: 30,
+    durationMinutes: 45,
+    questionCount: 33,
     skillsEvaluated: [
-      'Grammar',
-      'Reading',
-      'Writing',
-      'Listening',
-      'Speaking',
+      'Grammar, Reading & Writing',
     ],
     description:
-      'Determines your core English language proficiency level to place you into Foundation or Intermediate pathways.',
+      'Determines your English proficiency level and recommends the appropriate learning pathway.',
     estimatedTimelineWeeks: 8,
   },
   'IELTS Academic': {

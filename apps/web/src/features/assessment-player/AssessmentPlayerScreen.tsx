@@ -59,39 +59,73 @@ export function AssessmentPlayerScreen({
   const currentQuestions = currentSection?.questions || [];
   const currentQuestion = currentQuestions[currentQuestionIdx];
 
-  // Resume session state restoration
+  // Resume session state restoration & server-authoritative timer calculation
   useEffect(() => {
     async function restoreSession() {
       if (!attemptId) return;
+
+      // Check or establish server-authoritative expiration timestamp
+      let expiresAtMs: number | null = null;
+      const storageKey = `clasptek_assessment_expires_${attemptId}`;
+
       try {
+        const cachedExpires = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
+        if (cachedExpires) {
+          expiresAtMs = parseInt(cachedExpires, 10);
+        }
+
         const res = await fetch(`/api/v1/diagnostic/attempts/${attemptId}`);
         const data = await res.json();
-        if (data.success && data.savedAnswers && Object.keys(data.savedAnswers).length > 0) {
-          setAnswers(data.savedAnswers);
-          setSectionStarted(true);
+        if (data.success) {
+          if (data.savedAnswers && Object.keys(data.savedAnswers).length > 0) {
+            setAnswers(data.savedAnswers);
+          }
+
+          if (data.attempt?.expiresAt) {
+            expiresAtMs = new Date(data.attempt.expiresAt).getTime();
+          } else if (data.attempt?.startedAt) {
+            expiresAtMs = new Date(data.attempt.startedAt).getTime() + 45 * 60 * 1000;
+          }
         }
       } catch {
-        // Resume restoration fallback
+        // Fallback
+      }
+
+      if (!expiresAtMs) {
+        expiresAtMs = Date.now() + 45 * 60 * 1000;
+      }
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(storageKey, expiresAtMs.toString());
+      }
+
+      const remainingSecs = Math.max(0, Math.floor((expiresAtMs - Date.now()) / 1000));
+      setSecondsRemaining(remainingSecs);
+      setSectionStarted(true);
+
+      if (remainingSecs <= 0) {
+        handleSubmitFinal();
       }
     }
+
     restoreSession();
   }, [attemptId]);
 
-  // Section timer countdown
+  // Server-authoritative timer countdown
   useEffect(() => {
     if (!sectionStarted) return;
     const timer = setInterval(() => {
       setSecondsRemaining((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          handleNextSection();
+          handleSubmitFinal();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [currentSectionIdx, sectionStarted]);
+  }, [sectionStarted]);
 
   function handleSelectOption(qId: string, optionCode: string) {
     setAnswers((prev) => ({

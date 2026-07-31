@@ -45,6 +45,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         catalogId: attempt.catalog_id,
         status: attempt.status,
         startedAt: attempt.started_at,
+        expiresAt: attempt.expires_at || new Date(new Date(attempt.started_at || Date.now()).getTime() + 45 * 60 * 1000).toISOString(),
         score: attempt.score,
       },
       savedAnswers,

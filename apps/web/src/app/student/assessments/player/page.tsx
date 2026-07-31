@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { AssessmentPlayerScreen, PlayerSection } from '@/features/assessment-player/AssessmentPlayerScreen';
+import { AssessmentPlayerScreen, PlayerSection, PlayerQuestion } from '@/features/assessment-player/AssessmentPlayerScreen';
 
 function AssessmentPlayerContent() {
   const searchParams = useSearchParams();
@@ -23,110 +23,127 @@ function AssessmentPlayerContent() {
           
           const contentAssets = data.contentAssets || {};
           const dbPassage = contentAssets.readingPassage;
-          const dbAudio = contentAssets.listeningTrack;
           const dbWriting = contentAssets.writingTask;
-          const dbSpeaking = contentAssets.speakingTask;
 
-          const mappedSections: PlayerSection[] = data.sections.map((sec: any) => {
-            let questions = [];
+          if (examType === 'English Proficiency') {
+            // Generate exact 33 items: 30 Grammar (10 Foundation, 10 Intermediate, 10 Advanced) + 1 Reading + 2 Writing
+            const foundationGrammar: PlayerQuestion[] = Array.from({ length: 10 }).map((_, i) => ({
+              id: `q-g-fnd-${i + 1}`,
+              versionId: `qv-g-fnd-${i + 1}`,
+              code: `ENG-G-FND-${(i + 1).toString().padStart(2, '0')}`,
+              prompt: `[Foundation Grammar Item ${i + 1}] Select the sentence that uses basic articles and subject-verb agreement correctly:`,
+              itemType: 'MCQ' as const,
+              options: [
+                { code: 'A', text: 'An apple falls from the tree.' },
+                { code: 'B', text: 'A apple fall from the tree.' },
+                { code: 'C', text: 'The apple falling from tree.' },
+                { code: 'D', text: 'An apple fall from a tree.' },
+              ],
+              sectionCode: 'GRAMMAR',
+            }));
 
-            if (sec.name.includes('Grammar') || sec.code.includes('GRAMMAR')) {
-              questions = [
-                {
-                  id: 'q-g1',
-                  versionId: 'qv-g1',
-                  code: 'ENG-G1',
-                  prompt: 'Select the sentence with correct subject-verb agreement:',
-                  itemType: 'MCQ' as const,
-                  options: [
-                    { code: 'A', text: 'The list of items are on the desk.' },
-                    { code: 'B', text: 'The list of items is on the desk.' },
-                    { code: 'C', text: 'The list of items were on the desk.' },
-                    { code: 'D', text: 'The list of items have been on the desk.' },
-                  ],
-                  sectionCode: sec.code,
-                },
-                {
-                  id: 'q-g2',
-                  versionId: 'qv-g2',
-                  code: 'ENG-G2',
-                  prompt: 'Choose the correct tense: "By the time we arrived, she _____ her presentation."',
-                  itemType: 'MCQ' as const,
-                  options: [
-                    { code: 'A', text: 'has finished' },
-                    { code: 'B', text: 'had finished' },
-                    { code: 'C', text: 'finishes' },
-                    { code: 'D', text: 'will finish' },
-                  ],
-                  sectionCode: sec.code,
-                },
-              ];
-            } else if (sec.name.includes('Reading') || sec.code.includes('READING')) {
-              questions = [
-                {
-                  id: 'q-r1',
-                  versionId: 'qv-r1',
-                  code: 'ENG-R1',
-                  prompt: 'What is the main topic of the passage?',
-                  itemType: 'MCQ' as const,
-                  options: [
-                    { code: 'A', text: 'The historical development of global trade networks' },
-                    { code: 'B', text: 'Agricultural techniques in ancient civilisations' },
-                    { code: 'C', text: 'Modern transport logistics' },
-                    { code: 'D', text: 'Urbanisation patterns' },
-                  ],
-                  passageTitle: dbPassage?.title || 'The Evolution of Maritime Trade',
-                  passageContent: dbPassage?.content || 'Maritime trade has served as the backbone of international commerce for over two millennia...',
-                  sectionCode: sec.code,
-                },
-              ];
-            } else if (sec.name.includes('Writing') || sec.code.includes('WRITING')) {
-              questions = [
-                {
-                  id: 'q-w1',
-                  versionId: 'qv-w1',
-                  code: 'ENG-W1',
-                  prompt: dbWriting?.prompt || 'Write an essay (minimum 150 words) discussing whether remote learning is as effective as traditional classroom education.',
-                  itemType: 'ESSAY' as const,
-                  sectionCode: sec.code,
-                },
-              ];
-            } else if (sec.name.includes('Listening') || sec.code.includes('LISTENING')) {
-              questions = [
-                {
-                  id: 'q-l1',
-                  versionId: 'qv-l1',
-                  code: 'ENG-L1',
-                  prompt: 'According to the speaker, what is the primary reason for the schedule adjustment?',
-                  itemType: 'MCQ' as const,
-                  options: [
-                    { code: 'A', text: 'Unfavourable weather forecast' },
-                    { code: 'B', text: 'Maintenance works on venue facilities' },
-                    { code: 'C', text: 'Speaker unavailability' },
-                    { code: 'D', text: 'Budget reallocations' },
-                  ],
-                  audioUrl: dbAudio?.url || 'https://cdn.clasptek.com/audio/eng-prof-diagnostic-track-1.mp3',
-                  sectionCode: sec.code,
-                },
-              ];
-            } else if (sec.name.includes('Speaking') || sec.code.includes('SPEAKING')) {
-              questions = [
-                {
-                  id: 'q-s1',
-                  versionId: 'qv-s1',
-                  code: 'ENG-S1',
-                  prompt: dbSpeaking?.prompt || 'Describe a memorable journey you have taken. Speak for 1-2 minutes.',
-                  itemType: 'SPEAKING_PROMPT' as const,
-                  cueCardPoints: [
-                    'Where you went and who you were with',
-                    'How you traveled there',
-                    'What made the trip memorable',
-                  ],
-                  sectionCode: sec.code,
-                },
-              ];
-            } else {
-              questions = [
+            const intermediateGrammar: PlayerQuestion[] = Array.from({ length: 10 }).map((_, i) => ({
+              id: `q-g-int-${i + 1}`,
+              versionId: `qv-g-int-${i + 1}`,
+              code: `ENG-G-INT-${(i + 1).toString().padStart(2, '0')}`,
+              prompt: `[Intermediate Grammar Item ${i + 1}] Choose the correct verb form for present perfect context:`,
+              itemType: 'MCQ' as const,
+              options: [
+                { code: 'A', text: 'She has completed her assignments.' },
+                { code: 'B', text: 'She have completed her assignments.' },
+                { code: 'C', text: 'She completing her assignments.' },
+                { code: 'D', text: 'She had complete her assignments.' },
+              ],
+              sectionCode: 'GRAMMAR',
+            }));
+
+            const advancedGrammar: PlayerQuestion[] = Array.from({ length: 10 }).map((_, i) => ({
+              id: `q-g-adv-${i + 1}`,
+              versionId: `qv-g-adv-${i + 1}`,
+              code: `ENG-G-ADV-${(i + 1).toString().padStart(2, '0')}`,
+              prompt: `[Advanced Grammar Item ${i + 1}] Select the sentence with appropriate inverted structure or complex clause:`,
+              itemType: 'MCQ' as const,
+              options: [
+                { code: 'A', text: 'Seldom have I seen such dedication to research.' },
+                { code: 'B', text: 'Seldom I have seen such dedication to research.' },
+                { code: 'C', text: 'Seldom saw I such dedication to research.' },
+                { code: 'D', text: 'Seldom have I see such dedication to research.' },
+              ],
+              sectionCode: 'GRAMMAR',
+            }));
+
+            const readingQuestion: PlayerQuestion = {
+              id: 'q-r1',
+              versionId: 'qv-r1',
+              code: 'ENG-READ-01',
+              prompt: 'Based on the passage, what is the principal benefit of sustainable urban planning?',
+              itemType: 'MCQ' as const,
+              options: [
+                { code: 'A', text: 'Reduction of long-term environmental impact and improved resource efficiency' },
+                { code: 'B', text: 'Immediate elimination of public transit costs' },
+                { code: 'C', text: 'Unlimited urban expansion into rural agricultural zones' },
+                { code: 'D', text: 'Automated architectural construction without human oversight' },
+              ],
+              passageTitle: dbPassage?.title || 'Sustainable Urban Development and Ecology',
+              passageContent: dbPassage?.content || 'Sustainable urban planning integrates ecological conservation with modern infrastructure...',
+              sectionCode: 'READING',
+            };
+
+            const writingTask1: PlayerQuestion = {
+              id: 'q-w1',
+              versionId: 'qv-w1',
+              code: 'ENG-WRIT-T1',
+              prompt: 'Task 1 (Letter Writing): Write a formal letter (minimum 150 words) to your local council requesting improved street lighting in your residential area.',
+              itemType: 'ESSAY' as const,
+              sectionCode: 'WRITING',
+            };
+
+            const writingTask2: PlayerQuestion = {
+              id: 'q-w2',
+              versionId: 'qv-w2',
+              code: 'ENG-WRIT-T2',
+              prompt: dbWriting?.prompt || 'Task 2 (Essay Writing): Write an essay (minimum 250 words) discussing whether artificial intelligence in education benefits or hinders critical thinking skills.',
+              itemType: 'ESSAY' as const,
+              sectionCode: 'WRITING',
+            };
+
+            const englishProficiencySections: PlayerSection[] = [
+              {
+                id: 'sec-grammar',
+                code: 'GRAMMAR',
+                name: 'Grammar (Foundation, Intermediate & Advanced)',
+                timeLimitMinutes: 20,
+                instructions: 'Complete all 30 Grammar assessment items covering Foundation, Intermediate, and Advanced proficiency levels.',
+                questions: [...foundationGrammar, ...intermediateGrammar, ...advancedGrammar],
+              },
+              {
+                id: 'sec-reading',
+                code: 'READING',
+                name: 'Reading Passage',
+                timeLimitMinutes: 10,
+                instructions: 'Read the passage carefully and answer the comprehension question.',
+                questions: [readingQuestion],
+              },
+              {
+                id: 'sec-writing',
+                code: 'WRITING',
+                name: 'Writing Tasks',
+                timeLimitMinutes: 15,
+                instructions: 'Complete both Task 1 (Letter Writing) and Task 2 (Essay Writing).',
+                questions: [writingTask1, writingTask2],
+              },
+            ];
+
+            setSections(englishProficiencySections);
+          } else {
+            // General exam product configuration mapping
+            const mappedSections: PlayerSection[] = data.sections.map((sec: any) => ({
+              id: sec.id,
+              code: sec.code,
+              name: sec.name,
+              timeLimitMinutes: sec.timeLimitMinutes || 10,
+              instructions: sec.instructions || `Complete all items in the ${sec.name} section.`,
+              questions: [
                 {
                   id: `q-${sec.id}-1`,
                   versionId: `qv-${sec.id}-1`,
@@ -140,23 +157,14 @@ function AssessmentPlayerContent() {
                   ],
                   sectionCode: sec.code,
                 },
-              ];
-            }
+              ],
+            }));
 
-            return {
-              id: sec.id,
-              code: sec.code,
-              name: sec.name,
-              timeLimitMinutes: sec.timeLimitMinutes || 10,
-              instructions: sec.instructions || `Complete all items in the ${sec.name} section.`,
-              questions,
-            };
-          });
-
-          setSections(mappedSections);
+            setSections(mappedSections);
+          }
         }
       } catch {
-        // Fallback error handling
+        // Fallback handling
       } finally {
         setLoading(false);
       }
