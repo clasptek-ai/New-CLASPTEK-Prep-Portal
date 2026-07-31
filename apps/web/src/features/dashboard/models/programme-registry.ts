@@ -10,23 +10,24 @@ export class ProgrammeRegistry {
    */
   public static get(id: string): ProgrammeConfiguration {
     const raw = (id || '').toUpperCase().trim();
+    const configs = PROGRAMME_CONFIGURATIONS as Record<string, ProgrammeConfiguration>;
     if (raw.includes('ENGLISH') || raw.includes('ENG-PROF') || raw.includes('FOUNDATION')) {
-      return PROGRAMME_CONFIGURATIONS.ENGLISH_PROFICIENCY || PROGRAMME_CONFIGURATIONS.IELTS_ACADEMIC;
+      return configs.ENGLISH_PROFICIENCY || configs.IELTS_ACADEMIC;
     }
     if (raw.includes('GENERAL') && raw.includes('IELTS')) {
-      return PROGRAMME_CONFIGURATIONS.IELTS_GENERAL;
+      return configs.IELTS_GENERAL;
     }
     if (raw.includes('IELTS')) {
-      return PROGRAMME_CONFIGURATIONS.IELTS_ACADEMIC;
+      return configs.IELTS_ACADEMIC;
     }
     if (raw.includes('TOEFL')) {
-      return PROGRAMME_CONFIGURATIONS.TOEFL_IBT || PROGRAMME_CONFIGURATIONS.TOEFL || PROGRAMME_CONFIGURATIONS.IELTS_ACADEMIC;
+      return configs.TOEFL_IBT || configs.TOEFL || configs.IELTS_ACADEMIC;
     }
     if (raw.includes('SAT')) {
-      return PROGRAMME_CONFIGURATIONS.DIGITAL_SAT || PROGRAMME_CONFIGURATIONS.SAT || PROGRAMME_CONFIGURATIONS.IELTS_ACADEMIC;
+      return configs.DIGITAL_SAT || configs.SAT || configs.IELTS_ACADEMIC;
     }
     if (raw.includes('CELPIP')) {
-      return PROGRAMME_CONFIGURATIONS.CELPIP_GENERAL || PROGRAMME_CONFIGURATIONS.CELPIP || PROGRAMME_CONFIGURATIONS.IELTS_ACADEMIC;
+      return configs.CELPIP_GENERAL || configs.CELPIP || configs.IELTS_ACADEMIC;
     }
 
     const config = this.configurations.get(id as ProgrammeId);
