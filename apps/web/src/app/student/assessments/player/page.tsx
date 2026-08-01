@@ -8,6 +8,8 @@ import {
   PlayerQuestion,
 } from '@/features/assessment-player/AssessmentPlayerScreen';
 
+import { authFetch } from '@/lib/api-fetch';
+
 function AssessmentPlayerContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -30,7 +32,7 @@ function AssessmentPlayerContent() {
 
       setLoading(true);
       try {
-        const res = await fetch(
+        const res = await authFetch(
           `/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/questions`
         );
         const json = await res.json();

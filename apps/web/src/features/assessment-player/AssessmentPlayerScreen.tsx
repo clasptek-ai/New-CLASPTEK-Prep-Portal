@@ -16,6 +16,7 @@ import {
 import { BottomSheet } from '@/shared/ui/bottom-sheet/BottomSheet';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { authFetch } from '@/lib/api-fetch';
 
 export interface PlayerQuestion {
   id: string;
@@ -140,7 +141,7 @@ export function AssessmentPlayerScreen({
         setSaveState('offline');
         return;
       }
-      await fetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/answers`, {
+      await authFetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/answers`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -181,7 +182,7 @@ export function AssessmentPlayerScreen({
       for (const [qId, ans] of Object.entries(answers)) {
         if (ans.textResponse || ans.audioRecordingUrl) {
           const isAudio = Boolean(ans.audioRecordingUrl);
-          await fetch('/api/v1/evaluations/enqueue', {
+          await authFetch('/api/v1/evaluations/enqueue', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -196,7 +197,7 @@ export function AssessmentPlayerScreen({
         }
       }
 
-      await fetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/submit`, {
+      await authFetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ examType }),

@@ -1,5 +1,6 @@
 import { APIError } from './errors';
 import { interceptors } from './interceptors';
+import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 export interface RequestOptions extends RequestInit {
   retries?: number;
@@ -9,11 +10,26 @@ export const apiClient = {
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const { retries = 2, ...fetchOptions } = options;
 
+    const reqHeaders = new Headers(fetchOptions.headers || {});
+    if (!reqHeaders.has('Content-Type')) {
+      reqHeaders.set('Content-Type', 'application/json');
+    }
+
+    if (!reqHeaders.has('Authorization') && typeof window !== 'undefined') {
+      try {
+        const supabase = getSupabaseBrowserClient();
+        const { data } = await supabase.auth.getSession();
+        if (data.session?.access_token) {
+          reqHeaders.set('Authorization', `Bearer ${data.session.access_token}`);
+        }
+      } catch {
+        // Ignore session fetch error
+      }
+    }
+
     let config: RequestInit = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
       ...fetchOptions,
+      headers: reqHeaders,
     };
 
     // Apply request interceptors

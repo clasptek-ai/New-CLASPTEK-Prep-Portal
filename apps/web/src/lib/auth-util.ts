@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import { createSupabaseServerClient } from '@clasptek/persistence';
 import { cookies } from 'next/headers';
-import { loadEnvironment } from '@clasptek/configuration';
 import { getAuthContext } from './auth-context';
 
 export interface AuthenticatedSession {
@@ -24,11 +23,35 @@ export async function getAuthenticatedSession(
 
     const cookieStore = await cookies();
 
-    // Extract Bearer token from headers if passed by SPA / mobile client
+    // 1. Extract Bearer token from headers (Authorization / x-supabase-auth)
+    let bearerToken: string | null = null;
     const authHeader = req.headers.get('authorization') || req.headers.get('x-supabase-auth');
-    const bearerToken = authHeader?.startsWith('Bearer ')
-      ? authHeader.substring(7).trim()
-      : authHeader?.trim();
+    if (authHeader?.startsWith('Bearer ')) {
+      bearerToken = authHeader.substring(7).trim();
+    } else if (authHeader) {
+      bearerToken = authHeader.trim();
+    }
+
+    // 2. Fallback for Mobile WebKit / Chrome Mobile chunked cookies
+    if (!bearerToken) {
+      const allCookies = cookieStore.getAll();
+      const tokenCookies = allCookies
+        .filter((c) => c.name.includes('-auth-token'))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      if (tokenCookies.length > 0) {
+        try {
+          const rawCookieValue = tokenCookies.map((c) => c.value).join('');
+          const parsed = JSON.parse(decodeURIComponent(rawCookieValue));
+          bearerToken = parsed?.access_token || parsed?.[0] || null;
+        } catch {
+          const rawStr = tokenCookies.map((c) => c.value).join('');
+          if (rawStr.startsWith('ey')) {
+            bearerToken = rawStr;
+          }
+        }
+      }
+    }
 
     // Create Supabase server client using the standard helper from persistence package
     const supabase = createSupabaseServerClient(supabaseUrl, supabaseAnonKey, {
@@ -38,7 +61,12 @@ export async function getAuthenticatedSession(
       setAll(cookiesToSet) {
         try {
           cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
+            cookieStore.set(name, value, {
+              ...options,
+              sameSite: 'lax',
+              secure: process.env.NODE_ENV === 'production',
+              path: '/',
+            });
           });
         } catch {
           // Handled if cookies are immutable
@@ -94,8 +122,8 @@ export async function getAuthenticatedSession(
       profileId: 'profile-' + user.id,
       roles: roleNames.length > 0 ? roleNames : ['STUDENT'],
     };
-  } catch {
-    // In dev / test fall back to headers
+  } catch (err: any) {
+    console.error('getAuthenticatedSession error:', err);
     if (process.env.NEXT_PUBLIC_DEV_MOCK_AUTH === 'true' || process.env.NODE_ENV === 'test') {
       const headerStudentId = req.headers.get('x-student-id');
       const headerRole = req.headers.get('x-user-role') || 'STUDENT';

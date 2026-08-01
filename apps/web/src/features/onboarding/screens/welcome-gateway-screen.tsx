@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ShieldCheck, Clock, HelpCircle, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 import { LogoBadge } from '@/shared/ui/logo/LogoBadge';
 import { OnboardingState, StudentOnboardingData } from '../types/onboarding-state';
+import { authFetch } from '@/lib/api-fetch';
 
 interface WelcomeGatewayScreenProps {
   onboardingData?: Partial<StudentOnboardingData>;
@@ -48,7 +49,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
 
     async function loadCurrentAssessment() {
       try {
-        const res = await fetch('/api/v1/student/current-assessment');
+        const res = await authFetch('/api/v1/student/current-assessment');
         const json = await res.json();
         if (json.success && json.data) {
           const { assessment, hasActiveAttempt: active, activeAttemptId: attId } = json.data;
@@ -90,7 +91,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
     }
 
     try {
-      const res = await fetch('/api/v1/assessment-attempts', {
+      const res = await authFetch('/api/v1/assessment-attempts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ assessmentId: assessmentConfig.id }),
