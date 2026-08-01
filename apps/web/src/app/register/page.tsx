@@ -64,8 +64,8 @@ export default function RegisterPage() {
           maxWidth: '1140px',
           width: '100%',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-          gap: '3rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '2.5rem',
           alignItems: 'center',
         }}
       >
