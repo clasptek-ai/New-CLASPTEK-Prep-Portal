@@ -61,24 +61,25 @@ function AssessmentPlayerContent() {
           sectionCode: 'GRAMMAR',
         }));
 
-        const readingQuestion: PlayerQuestion | null = readingPassage
-          ? {
-              id: readingPassage.id || 'q-reading-01',
-              versionId: 'qv-reading-01',
-              code: readingPassage.code || 'ENG-READ-01',
-              prompt: 'Based on the passage, select the statement that best reflects the primary thesis.',
-              itemType: 'MCQ' as const,
-              options: [
-                { code: 'A', text: 'Offshore renewable grid expansion significantly lowers operational lifecycle emissions.' },
-                { code: 'B', text: 'Urban densification completely eliminates public transportation demands.' },
-                { code: 'C', text: 'Historical building materials should be replaced entirely with synthetic compounds.' },
-                { code: 'D', text: 'Energy market regulations hinder technological adoption.' },
-              ],
-              passageTitle: readingPassage.title || 'Sustainable Infrastructure & Ecology',
-              passageContent: readingPassage.content || 'Sustainable urban planning integrates ecological conservation with modern infrastructure...',
-              sectionCode: 'READING',
-            }
-          : null;
+        // RC1 Phase 4: Reading questions served from snapshot — never hardcoded
+        // readingPassage.comprehensionQuestions is frozen at attempt creation time
+        const readingCompQs: PlayerQuestion[] = (readingPassage?.comprehensionQuestions || []).map(
+          (cq: any, cIdx: number) => ({
+            id: cq.id || `comp-${cIdx}`,
+            versionId: cq.versionId || `compv-${cIdx}`,
+            code: cq.code || `ENG-READ-${(cIdx + 1).toString().padStart(2, '0')}`,
+            prompt: cq.prompt || 'Based on the passage, answer the following question.',
+            itemType: 'MCQ' as const,
+            options: cq.options || [],
+            passageTitle: readingPassage?.title || 'Reading Passage',
+            passageContent: readingPassage?.content || '',
+            sectionCode: 'READING',
+          })
+        );
+
+        // Maintain a single top-level readingQuestion reference for backward compat
+        const readingQuestion: PlayerQuestion | null =
+          readingPassage && readingCompQs.length > 0 ? readingCompQs[0] : null;
 
         const writingSectionQuestions: PlayerQuestion[] = (writingTasks || []).map((w: any, idx: number) => ({
           id: w.id || `q-w-${idx + 1}`,

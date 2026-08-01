@@ -343,17 +343,19 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                   </div>
                 ))
               ) : (
-                <>
-                  <div>
-                    Grammar: <strong style={{ color: '#38bdf8' }}>30 Objective Questions (Balanced Distribution)</strong>
-                  </div>
-                  <div>
-                    Reading: <strong style={{ color: '#34d399' }}>1 Reading Passage & Comprehension Set</strong>
-                  </div>
-                  <div>
-                    Writing: <strong style={{ color: '#a78bfa' }}>2 Writing Tasks (1 Essay • 1 Letter)</strong>
-                  </div>
-                </>
+                // RC1 Phase 4: Never show hardcoded section counts — show loading skeleton
+                [1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    style={{
+                      height: '1rem',
+                      background: 'rgba(255,255,255,0.06)',
+                      borderRadius: '4px',
+                      width: i === 1 ? '70%' : i === 2 ? '55%' : '60%',
+                      animation: 'pulse 1.5s ease-in-out infinite',
+                    }}
+                  />
+                ))
               )}
             </div>
           </div>

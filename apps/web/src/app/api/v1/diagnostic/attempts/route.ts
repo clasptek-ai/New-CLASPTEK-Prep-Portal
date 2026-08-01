@@ -1,147 +1,60 @@
 export const dynamic = 'force-dynamic';
 
+/**
+ * RC1 Phase 5 — Legacy Compatibility Layer
+ *
+ * These routes are DEPRECATED in favour of the Universal Assessment Engine:
+ *   GET  /api/v1/assessment-attempts    (active attempt lookup)
+ *   POST /api/v1/assessment-attempts    (create attempt)
+ *
+ * This compatibility shim proxies legacy callers to the universal engine.
+ * It is retained ONLY for backward compatibility with pre-RC1 mobile/web clients.
+ *
+ * CLASSIFICATION: REDIRECT (not remove, not duplicate logic)
+ * Deprecation target: RC2 release.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
-import { getDiagnosticContext } from '@/lib/diagnostic-context';
-import { getAuthenticatedSession } from '@/lib/auth-util';
-import { randomUUID } from 'crypto';
 
 export async function GET(req: NextRequest) {
-  try {
-    const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
-    if (!studentId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { dbPool } = await getDiagnosticContext();
-    const pool = dbPool.getPool();
-
-    const activeRes = await pool.query(
-      `SELECT * FROM public.diagnostic_attempts 
-       WHERE student_id = $1 
-         AND status = 'IN_PROGRESS' 
-         AND (expires_at IS NULL OR expires_at > NOW())
-         AND deleted_at IS NULL
-       ORDER BY started_at DESC LIMIT 1`,
-      [studentId]
-    );
-
-    if (activeRes.rows.length > 0) {
-      const active = activeRes.rows[0];
-      return NextResponse.json({
-        success: true,
-        hasActiveAttempt: true,
-        attempt: {
-          id: active.id,
-          status: active.status,
-          startedAt: active.started_at,
-          expiresAt: active.expires_at,
-        },
-      });
-    }
-
-    return NextResponse.json({
-      success: true,
-      hasActiveAttempt: false,
-    });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
-  }
+  // Redirect to universal engine — active attempt check
+  const url = new URL('/api/v1/assessment-attempts', req.url);
+  return NextResponse.redirect(url, { status: 308 });
 }
 
 export async function POST(req: NextRequest) {
+  // Proxy POST body to the universal engine endpoint
+  const url = new URL('/api/v1/assessment-attempts', req.url);
+  let body: any;
   try {
-    const session = await getAuthenticatedSession(req);
-    const body = await req.json().catch(() => ({}));
-    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
-    if (!studentId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-    const tenantId = session?.tenantId || '00000000-0000-0000-0000-000000000000';
-
-    const { dbPool } = await getDiagnosticContext();
-    const pool = dbPool.getPool();
-
-    // 1. Database Inventory Pre-Check
-    const grammarCountRes = await pool.query(`
-      SELECT count(DISTINCT q.id) as cnt
-      FROM public.questions q
-      JOIN public.question_versions qv ON qv.question_id = q.id
-      WHERE q.deleted_at IS NULL
-    `);
-    const grammarCount = parseInt(grammarCountRes.rows[0]?.cnt || '0', 10);
-
-    const passageCountRes = await pool.query(`
-      SELECT count(*) as cnt FROM public.reading_passages WHERE status = 'published' OR status IS NOT NULL
-    `);
-    const passageCount = parseInt(passageCountRes.rows[0]?.cnt || '0', 10);
-
-    const writingCountRes = await pool.query(`
-      SELECT count(*) as cnt FROM public.writing_tasks WHERE exam_type = 'English Proficiency' OR exam_type IS NOT NULL
-    `);
-    const writingCount = parseInt(writingCountRes.rows[0]?.cnt || '0', 10);
-
-    if (grammarCount < 30 || passageCount < 1 || writingCount < 2) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'DIAGNOSTIC_INSUFFICIENT_INVENTORY',
-          code: 'INSUFFICIENT_DIAGNOSTIC_INVENTORY',
-          message: 'The diagnostic assessment is temporarily unavailable due to insufficient question inventory.',
-          requirements: { grammar: 30, passages: 1, writing: 2 },
-          available: { grammar: grammarCount, passages: passageCount, writing: writingCount },
-        },
-        { status: 422 }
-      );
-    }
-
-    // 2. Check existing active attempt for student
-    const activeRes = await pool.query(
-      `SELECT * FROM public.diagnostic_attempts 
-       WHERE student_id = $1 
-         AND status = 'IN_PROGRESS' 
-         AND (expires_at IS NULL OR expires_at > NOW())
-         AND deleted_at IS NULL
-       ORDER BY started_at DESC LIMIT 1`,
-      [studentId]
-    );
-
-    if (activeRes.rows.length > 0) {
-      const active = activeRes.rows[0];
-      return NextResponse.json({
-        success: true,
-        attemptId: active.id,
-        resumed: true,
-        startedAt: active.started_at,
-        expiresAt: active.expires_at,
-      });
-    }
-
-    // 3. Create new 45-minute Diagnostic Attempt
-    const attemptId = randomUUID();
-    const catalogId = body.catalogId || 'd0000000-0000-0000-0000-000000000001';
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + 45 * 60 * 1000);
-
-    await pool.query(
-      `INSERT INTO public.diagnostic_attempts (
-        id, student_id, catalog_id, status, started_at, expires_at, duration_minutes, tenant_id, created_at, updated_at
-      ) VALUES ($1, $2, $3, 'IN_PROGRESS', $4, $5, 45, $6, $4, $4)`,
-      [attemptId, studentId, catalogId, now.toISOString(), expiresAt.toISOString(), tenantId]
-    );
-
-    return NextResponse.json(
-      {
-        success: true,
-        attemptId,
-        resumed: false,
-        startedAt: now.toISOString(),
-        expiresAt: expiresAt.toISOString(),
-      },
-      { status: 201 }
-    );
-  } catch (err: any) {
-    console.error('POST /api/v1/diagnostic/attempts error:', err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    body = await req.json();
+  } catch {
+    body = {};
   }
+
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      // Forward session cookies for auth
+      cookie: req.headers.get('cookie') || '',
+      authorization: req.headers.get('authorization') || '',
+    },
+    body: JSON.stringify(body),
+  });
+
+  const json = await response.json().catch(() => ({}));
+
+  // Emit deprecation header so clients know to upgrade
+  return NextResponse.json(
+    { ...json, _deprecation: 'This endpoint is deprecated. Use POST /api/v1/assessment-attempts' },
+    {
+      status: response.status,
+      headers: {
+        'X-Deprecated': 'true',
+        'X-Replacement': '/api/v1/assessment-attempts',
+        'Sunset': 'Sat, 01 Nov 2026 00:00:00 GMT',
+      },
+    }
+  );
 }

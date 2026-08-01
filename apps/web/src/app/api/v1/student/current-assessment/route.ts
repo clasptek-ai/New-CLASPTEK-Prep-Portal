@@ -6,6 +6,8 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
 
 export async function GET(req: NextRequest) {
   try {
+    const requestId = require('crypto').randomUUID();
+
     const session = await getAuthenticatedSession(req);
     const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
 
