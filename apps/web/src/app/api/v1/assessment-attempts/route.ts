@@ -6,6 +6,62 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
 import { randomUUID } from 'crypto';
 
 /**
+ * GET /api/v1/assessment-attempts
+ * Returns active IN_PROGRESS attempt for authenticated candidate
+ */
+export async function GET(req: NextRequest) {
+  const requestId = randomUUID();
+
+  try {
+    const session = await getAuthenticatedSession(req);
+    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    if (!studentId) {
+      return NextResponse.json({ success: false, error: 'Unauthorized', requestId }, { status: 401 });
+    }
+
+    const { dbPool } = await getDiagnosticContext();
+    const pool = dbPool.getPool();
+
+    const activeRes = await pool.query(
+      `SELECT id, status, started_at, expires_at, catalog_id FROM public.assessment_attempts
+       WHERE student_id = $1
+         AND status = 'IN_PROGRESS'
+         AND (expires_at IS NULL OR expires_at > NOW())
+         AND deleted_at IS NULL
+       ORDER BY started_at DESC LIMIT 1`,
+      [studentId]
+    );
+
+    if (activeRes.rows.length > 0) {
+      const active = activeRes.rows[0];
+      return NextResponse.json({
+        success: true,
+        hasActiveAttempt: true,
+        data: {
+          attemptId: active.id,
+          status: active.status,
+          startedAt: active.started_at,
+          expiresAt: active.expires_at,
+          catalogId: active.catalog_id,
+        },
+        attemptId: active.id, // Backward-compat top-level fallback
+        meta: { timestamp: new Date().toISOString(), version: 1, requestId },
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      hasActiveAttempt: false,
+      data: null,
+      meta: { timestamp: new Date().toISOString(), version: 1, requestId },
+    });
+  } catch (err: any) {
+    console.error(`[${requestId}] GET /api/v1/assessment-attempts error:`, err);
+    return NextResponse.json({ success: false, error: err.message, requestId }, { status: 500 });
+  }
+}
+
+/**
  * POST /api/v1/assessment-attempts
  *
  * RC1 Production Hardening:
@@ -116,6 +172,7 @@ export async function POST(req: NextRequest) {
             startedAt: active.started_at,
             expiresAt: active.expires_at,
           },
+          attemptId: active.id, // Backward-compat top-level fallback
           meta: { timestamp: new Date().toISOString(), version: 1, requestId },
         });
       }
@@ -440,6 +497,7 @@ export async function POST(req: NextRequest) {
             expiresAt: expiresAt.toISOString(),
             durationMinutes: durationMins,
           },
+          attemptId, // Backward-compat top-level fallback
           meta: { timestamp: now.toISOString(), version: 1, requestId },
         },
         { status: 201 }

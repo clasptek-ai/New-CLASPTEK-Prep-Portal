@@ -116,7 +116,24 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
         return;
       }
 
-      const attemptId = json.data?.attemptId;
+      const attemptId =
+        json.data?.attemptId ||
+        json.attemptId ||
+        json.data?.id ||
+        json.id;
+
+      // UUID Validation Guard: Prevent navigation with "undefined", null, or invalid strings
+      const isUuid =
+        typeof attemptId === 'string' &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(attemptId);
+
+      if (!isUuid) {
+        console.error('Invalid attemptId received from server:', { json, attemptId });
+        setErrorMessage('Failed to start assessment: Server returned an invalid attempt session.');
+        setIsStarting(false);
+        return;
+      }
+
       router.push(`/student/assessments/player?attemptId=${encodeURIComponent(attemptId)}`);
     } catch (err: any) {
       console.error('Error starting assessment attempt:', err);
