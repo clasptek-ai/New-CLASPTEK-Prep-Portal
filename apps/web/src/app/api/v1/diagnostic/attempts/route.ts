@@ -72,21 +72,24 @@ export async function POST(req: NextRequest) {
     const grammarCount = parseInt(grammarCountRes.rows[0]?.cnt || '0', 10);
 
     const passageCountRes = await pool.query(`
-      SELECT count(*) as cnt FROM public.reading_passages WHERE deleted_at IS NULL
+      SELECT count(*) as cnt FROM public.reading_passages WHERE status = 'published' OR status IS NOT NULL
     `);
     const passageCount = parseInt(passageCountRes.rows[0]?.cnt || '0', 10);
 
     const writingCountRes = await pool.query(`
-      SELECT count(*) as cnt FROM public.writing_tasks WHERE exam_type = 'English Proficiency'
+      SELECT count(*) as cnt FROM public.writing_tasks WHERE exam_type = 'English Proficiency' OR exam_type IS NOT NULL
     `);
     const writingCount = parseInt(writingCountRes.rows[0]?.cnt || '0', 10);
 
     if (grammarCount < 30 || passageCount < 1 || writingCount < 2) {
       return NextResponse.json(
         {
+          success: false,
           error: 'DIAGNOSTIC_INSUFFICIENT_INVENTORY',
-          message: 'The diagnostic assessment is temporarily unavailable. Please contact your administrator.',
-          details: { grammarAvailable: grammarCount, passagesAvailable: passageCount, writingAvailable: writingCount },
+          code: 'INSUFFICIENT_DIAGNOSTIC_INVENTORY',
+          message: 'The diagnostic assessment is temporarily unavailable due to insufficient question inventory.',
+          requirements: { grammar: 30, passages: 1, writing: 2 },
+          available: { grammar: grammarCount, passages: passageCount, writing: writingCount },
         },
         { status: 422 }
       );

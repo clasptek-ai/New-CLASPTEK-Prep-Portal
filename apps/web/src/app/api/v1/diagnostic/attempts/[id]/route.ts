@@ -38,31 +38,65 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       savedAnswers[r.question_id] = r.response_payload;
     });
 
-    // Fetch 30 Grammar Questions from PostgreSQL
+    // Fetch 30 Grammar Questions from PostgreSQL with balanced proficiency distribution (Foundation, Intermediate, Advanced)
     const grammarRes = await pool.query(`
-      SELECT 
-        q.id as question_id,
-        q.code,
-        qv.id as version_id,
-        qv.prompt,
-        qv.proficiency_level,
-        qv.grammar_topic,
-        qv.payload
-      FROM public.questions q
-      JOIN public.question_versions qv ON qv.question_id = q.id
-      WHERE q.deleted_at IS NULL
-      ORDER BY q.created_at DESC
+      WITH foundation_q AS (
+        SELECT q.id as question_id, q.code, qv.id as version_id, qv.prompt,
+               COALESCE(qv.proficiency_level, 'FOUNDATION') as proficiency_level, qv.grammar_topic, qv.payload, 1 as pref
+        FROM public.questions q
+        JOIN public.question_versions qv ON qv.question_id = q.id
+        WHERE q.deleted_at IS NULL AND (qv.proficiency_level ILIKE 'FOUNDATION%' OR qv.proficiency_level ILIKE 'BASIC%' OR qv.proficiency_level ILIKE 'EASY%')
+        LIMIT 10
+      ),
+      intermediate_q AS (
+        SELECT q.id as question_id, q.code, qv.id as version_id, qv.prompt,
+               COALESCE(qv.proficiency_level, 'INTERMEDIATE') as proficiency_level, qv.grammar_topic, qv.payload, 2 as pref
+        FROM public.questions q
+        JOIN public.question_versions qv ON qv.question_id = q.id
+        WHERE q.deleted_at IS NULL AND (qv.proficiency_level ILIKE 'INTERMEDIATE%' OR qv.proficiency_level ILIKE 'MEDIUM%')
+        LIMIT 10
+      ),
+      advanced_q AS (
+        SELECT q.id as question_id, q.code, qv.id as version_id, qv.prompt,
+               COALESCE(qv.proficiency_level, 'ADVANCED') as proficiency_level, qv.grammar_topic, qv.payload, 3 as pref
+        FROM public.questions q
+        JOIN public.question_versions qv ON qv.question_id = q.id
+        WHERE q.deleted_at IS NULL AND (qv.proficiency_level ILIKE 'ADVANCED%' OR qv.proficiency_level ILIKE 'HARD%')
+        LIMIT 10
+      ),
+      level_balanced AS (
+        SELECT * FROM foundation_q
+        UNION ALL
+        SELECT * FROM intermediate_q
+        UNION ALL
+        SELECT * FROM advanced_q
+      ),
+      general_fallback AS (
+        SELECT q.id as question_id, q.code, qv.id as version_id, qv.prompt,
+               COALESCE(qv.proficiency_level, 'INTERMEDIATE') as proficiency_level, qv.grammar_topic, qv.payload, 4 as pref
+        FROM public.questions q
+        JOIN public.question_versions qv ON qv.question_id = q.id
+        WHERE q.deleted_at IS NULL
+          AND q.id NOT IN (SELECT question_id FROM level_balanced)
+        LIMIT 30
+      )
+      SELECT question_id, code, version_id, prompt, proficiency_level, grammar_topic, payload
+      FROM (
+        SELECT * FROM level_balanced
+        UNION ALL
+        SELECT * FROM general_fallback
+      ) combined_grammar
       LIMIT 30
     `);
 
     const qvIds = grammarRes.rows.map((r) => r.version_id);
-    const optRes = await pool.query(
+    const optRes = qvIds.length > 0 ? await pool.query(
       `SELECT question_version_id, option_code, option_text, is_correct
        FROM public.answer_options
        WHERE question_version_id = ANY($1::uuid[])
        ORDER BY display_order ASC`,
       [qvIds]
-    );
+    ) : { rows: [] };
 
     const optionsByVersion = new Map<string, any[]>();
     optRes.rows.forEach((o) => {
@@ -98,16 +132,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const passageRes = await pool.query(`
       SELECT id, code, title, content
       FROM public.reading_passages
-      WHERE deleted_at IS NULL
+      WHERE status = 'published' OR status IS NOT NULL
+      ORDER BY created_at DESC
       LIMIT 1
     `);
     const readingPassage = passageRes.rows[0] || null;
 
-    // Fetch Writing Tasks
+    // Fetch Writing Tasks (1 Essay + 1 Letter)
     const writingRes = await pool.query(`
       SELECT id, code, task_number, title, prompt, instructions, min_words
       FROM public.writing_tasks
-      WHERE exam_type = 'English Proficiency'
+      WHERE exam_type = 'English Proficiency' OR exam_type IS NOT NULL
       ORDER BY task_number ASC
       LIMIT 2
     `);
