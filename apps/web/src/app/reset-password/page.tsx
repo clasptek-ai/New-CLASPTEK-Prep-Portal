@@ -3,6 +3,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { authFetch } from '@/lib/api-fetch';
+import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 function ResetPasswordForm() {
   const [password, setPassword] = useState('');
@@ -10,6 +12,7 @@ function ResetPasswordForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [hasValidSession, setHasValidSession] = useState(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,6 +22,34 @@ function ResetPasswordForm() {
     if (errParam === 'invalid_token') {
       setError('This password reset link is invalid or has expired. Please request a new recovery link.');
     }
+
+    // Check for active Supabase recovery session on load
+    async function checkRecoverySession() {
+      try {
+        const supabase = getSupabaseBrowserClient();
+        
+        // Listen for PASSWORD_RECOVERY event if URL hash fragment contains token
+        const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
+            setHasValidSession(true);
+            setError(null);
+          }
+        });
+
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          setHasValidSession(true);
+        }
+
+        return () => {
+          authListener.subscription.unsubscribe();
+        };
+      } catch (err) {
+        console.error('Error checking recovery session:', err);
+      }
+    }
+
+    checkRecoverySession();
   }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -37,21 +68,28 @@ function ResetPasswordForm() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/v1/auth/reset-password', {
+      // 1. Primary: Submit to server API endpoint via authFetch with Bearer token
+      const res = await authFetch('/api/v1/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password }),
       });
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Failed to reset password. Recovery session may be expired.');
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.success) {
+        // 2. Client-side fallback: Call Supabase browser client updateUser directly
+        const supabase = getSupabaseBrowserClient();
+        const { error: clientError } = await supabase.auth.updateUser({ password });
+        if (clientError) {
+          throw new Error(data.message || clientError.message || 'Failed to reset password. Recovery session may be expired.');
+        }
       }
 
       setSuccess(true);
       setTimeout(() => {
         router.push('/login');
-      }, 2500);
+      }, 2000);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -62,26 +100,30 @@ function ResetPasswordForm() {
   return (
     <main
       className="shell-main"
-      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}
+      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh', padding: '1rem' }}
     >
-      <div className="card" style={{ maxWidth: '420px', width: '100%' }}>
-        <h2>Set New Password</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+      <div className="card" style={{ maxWidth: '440px', width: '100%', backgroundColor: '#111827', border: '1px solid rgba(59, 130, 246, 0.25)', borderRadius: '16px', padding: '2rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ffffff', margin: '0 0 0.5rem 0' }}>
+          Set New Password
+        </h2>
+        <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
           Choose a secure new password for your Clasptek Prep Portal account.
         </p>
 
         {error && (
           <div
             style={{
-              backgroundColor: '#7f1d1d',
+              backgroundColor: 'rgba(239, 68, 68, 0.15)',
+              border: '1px solid rgba(239, 68, 68, 0.35)',
               color: '#f87171',
-              padding: '0.75rem',
-              borderRadius: '6px',
+              padding: '0.85rem',
+              borderRadius: '10px',
               marginBottom: '1rem',
-              fontSize: '0.875rem',
+              fontSize: '0.85rem',
+              fontWeight: 600,
             }}
           >
-            {error}
+            ⚠️ {error}
             {error.includes('expired') || error.includes('invalid') ? (
               <div style={{ marginTop: '0.5rem' }}>
                 <Link href="/forgot-password" style={{ color: '#60a5fa', textDecoration: 'underline' }}>
@@ -95,24 +137,27 @@ function ResetPasswordForm() {
         {success && (
           <div
             style={{
-              backgroundColor: '#064e3b',
+              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+              border: '1px solid rgba(16, 185, 129, 0.35)',
               color: '#34d399',
-              padding: '0.75rem',
-              borderRadius: '6px',
+              padding: '0.85rem',
+              borderRadius: '10px',
               marginBottom: '1rem',
-              fontSize: '0.875rem',
+              fontSize: '0.85rem',
+              textAlign: 'center',
+              fontWeight: 700,
             }}
           >
-            Password successfully reset! Redirecting to login page...
+            🎉 Password successfully reset! Redirecting to login page...
           </div>
         )}
 
         <form
           onSubmit={handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+          style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}
         >
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1' }}>
               New Password
             </label>
             <input
@@ -124,18 +169,20 @@ function ResetPasswordForm() {
               placeholder="Minimum 8 characters"
               style={{
                 width: '100%',
-                padding: '0.75rem',
-                borderRadius: '6px',
-                border: '1px solid var(--card-border)',
-                backgroundColor: 'var(--background)',
-                color: 'var(--text-main)',
+                padding: '0.75rem 0.85rem',
+                borderRadius: '8px',
+                border: '1px solid #1e293b',
+                backgroundColor: '#161e2e',
+                color: '#f8fafc',
+                fontSize: '0.875rem',
+                outline: 'none',
                 boxSizing: 'border-box',
               }}
             />
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
-              Confirm Password
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1' }}>
+              Confirm New Password
             </label>
             <input
               type="password"
@@ -143,24 +190,44 @@ function ResetPasswordForm() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               minLength={8}
-              placeholder="Confirm New Password"
+              placeholder="Re-enter new password"
               style={{
                 width: '100%',
-                padding: '0.75rem',
-                borderRadius: '6px',
-                border: '1px solid var(--card-border)',
-                backgroundColor: 'var(--background)',
-                color: 'var(--text-main)',
+                padding: '0.75rem 0.85rem',
+                borderRadius: '8px',
+                border: '1px solid #1e293b',
+                backgroundColor: '#161e2e',
+                color: '#f8fafc',
+                fontSize: '0.875rem',
+                outline: 'none',
                 boxSizing: 'border-box',
               }}
             />
           </div>
-          <button type="submit" className="btn" disabled={loading} style={{ marginTop: '1rem' }}>
-            {loading ? 'Resetting Password...' : 'Update Password'}
+          <button
+            type="submit"
+            disabled={loading || success}
+            style={{
+              marginTop: '0.5rem',
+              width: '100%',
+              padding: '0.85rem',
+              backgroundColor: '#2563eb',
+              color: '#ffffff',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+              borderRadius: '10px',
+              border: 'none',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1,
+            }}
+          >
+            {loading ? 'Updating Password...' : 'Update Password'}
           </button>
         </form>
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem' }}>
-          <Link href="/login">Return to Sign In</Link>
+        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem' }}>
+          <Link href="/login" style={{ color: '#60a5fa', fontWeight: 600, textDecoration: 'none' }}>
+            Return to Sign In
+          </Link>
         </div>
       </div>
     </main>
