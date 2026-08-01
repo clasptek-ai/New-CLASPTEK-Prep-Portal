@@ -30,9 +30,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     // 1. Fetch Attempt Record
     const attemptRes = await pool.query(
-      `SELECT aa.*, p.email as student_email, p.full_name as student_name
+      `SELECT 
+        aa.*, 
+        au.email as student_email, 
+        COALESCE(p.first_name || ' ' || p.last_name, au.raw_user_meta_data->>'first_name', split_part(au.email, '@', 1)) as student_name
        FROM public.assessment_attempts aa
-       LEFT JOIN public.profiles p ON p.user_id = aa.student_id OR p.id = aa.student_id
+       LEFT JOIN auth.users au ON (au.id::text = aa.student_id::text)
+       LEFT JOIN public.profiles p ON (p.user_id = aa.student_id OR p.id = aa.student_id)
        WHERE aa.id = $1`,
       [attemptId]
     );
