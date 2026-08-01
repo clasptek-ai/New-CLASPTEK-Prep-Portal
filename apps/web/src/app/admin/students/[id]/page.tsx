@@ -96,8 +96,9 @@ export default function StudentProfilePage() {
     async function fetchHistory() {
       setHistoryLoading(true);
       try {
+        const targetId = student?.email || student?.id || studentId;
         const res = await fetch(
-          `/api/v1/admin/students/${encodeURIComponent(studentId)}/assessment-history`
+          `/api/v1/admin/students/${encodeURIComponent(targetId)}/assessment-history`
         );
         const json = await res.json();
         if (json.data?.attempts) {
@@ -110,7 +111,7 @@ export default function StudentProfilePage() {
       }
     }
     fetchHistory();
-  }, [studentId]);
+  }, [studentId, student?.email, student?.id]);
 
   const handleTogglePractice = async () => {
     if (!student) return;
