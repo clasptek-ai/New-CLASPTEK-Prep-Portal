@@ -18,14 +18,15 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
   const [activeAttemptId, setActiveAttemptId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Dynamic Diagnostic Definition Config from DB
-  const [diagnosticConfig, setDiagnosticConfig] = useState<{
+  // Dynamic Assessment Definition Config from DB
+  const [assessmentConfig, setAssessmentConfig] = useState<{
     id?: string;
     title?: string;
+    description?: string;
     durationMinutes?: number;
     instructions?: string;
     sections?: any[];
-    assignedProgramme?: string;
+    programme?: { id: string; name: string };
   }>({});
 
   const studentName = onboardingData?.firstName || 'Student';
@@ -39,7 +40,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
   const [learningGoal, setLearningGoal] = useState(onboardingData?.purpose || 'Study Abroad');
   const [currentLevel, setCurrentLevel] = useState('Intermediate');
 
-  // Sync state when onboardingData resolves on client mount & check active attempt
+  // Load published assessment metadata and check active attempt from universal endpoint
   useEffect(() => {
     if (onboardingData) {
       if (onboardingData.previousScore) setCurrentScore(onboardingData.previousScore);
@@ -49,37 +50,33 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
       if (onboardingData.baselineLevel) setCurrentLevel(onboardingData.baselineLevel);
     }
 
-    async function loadDiagnosticConfig() {
+    async function loadCurrentAssessment() {
       try {
-        const res = await fetch('/api/v1/student/diagnostic');
-        const data = await res.json();
-        if (data.success && data.data) {
-          setDiagnosticConfig(data.data);
+        const res = await fetch('/api/v1/student/current-assessment');
+        const json = await res.json();
+        if (json.success && json.data) {
+          const { assessment, hasActiveAttempt: active, activeAttemptId: attId } = json.data;
+          setAssessmentConfig(assessment || {});
+          if (active && attId) {
+            setHasActiveAttempt(true);
+            setActiveAttemptId(attId);
+          }
         }
       } catch (err) {
-        console.error('Failed to load dynamic diagnostic config:', err);
+        console.error('Failed to load current assessment metadata:', err);
       }
     }
-    loadDiagnosticConfig();
-
-    async function checkActiveAttempt() {
-      try {
-        const res = await fetch('/api/v1/diagnostic/attempts');
-        const data = await res.json();
-        if (data.success && data.hasActiveAttempt) {
-          setHasActiveAttempt(true);
-          setActiveAttemptId(data.attempt.id);
-        }
-      } catch (err) {
-        console.error('Error checking active attempt:', err);
-      }
-    }
-    checkActiveAttempt();
+    loadCurrentAssessment();
   }, [onboardingData]);
 
   const handleStartDiagnostic = async () => {
     setIsStarting(true);
     setErrorMessage(null);
+
+    if (hasActiveAttempt && activeAttemptId) {
+      router.push(`/student/assessments/player?attemptId=${encodeURIComponent(activeAttemptId)}`);
+      return;
+    }
 
     // Save complete learning profile
     const updatedData: Partial<StudentOnboardingData> = {
@@ -98,35 +95,31 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
     }
 
     try {
-      const res = await fetch('/api/v1/student/diagnostic/start', {
+      const res = await fetch('/api/v1/assessment-attempts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ examType: diagnosticConfig.assignedProgramme || 'English Proficiency' }),
+        body: JSON.stringify({ assessmentId: assessmentConfig.id }),
       });
 
-      const data = await res.json();
+      const json = await res.json();
 
-      if (!res.ok || !data.success) {
-        if (data.error === 'DIAGNOSTIC_INSUFFICIENT_INVENTORY') {
+      if (!res.ok || !json.success) {
+        if (json.error === 'DIAGNOSTIC_INSUFFICIENT_INVENTORY') {
           setErrorMessage(
-            data.message ||
-              'The diagnostic assessment is temporarily unavailable. Please contact your administrator.'
+            json.message ||
+              'The assessment is temporarily unavailable due to question inventory constraints.'
           );
         } else {
-          setErrorMessage(data.error || 'Failed to start diagnostic assessment.');
+          setErrorMessage(json.error || json.message || 'Failed to start assessment.');
         }
         setIsStarting(false);
         return;
       }
 
-      // DIRECT CONNECTION: Route straight to Universal Assessment Player with attemptId
-      router.push(
-        `/student/assessments/player?attemptId=${encodeURIComponent(
-          data.attemptId
-        )}&examType=${encodeURIComponent(diagnosticConfig.assignedProgramme || 'English Proficiency')}`
-      );
+      const attemptId = json.data?.attemptId;
+      router.push(`/student/assessments/player?attemptId=${encodeURIComponent(attemptId)}`);
     } catch (err: any) {
-      console.error('Error starting diagnostic assessment:', err);
+      console.error('Error starting assessment attempt:', err);
       setErrorMessage('Network error occurred. Please try again.');
       setIsStarting(false);
     }
@@ -261,7 +254,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                   color: '#ffffff',
                 }}
               >
-                {diagnosticConfig.title || 'English Proficiency Placement Assessment'}
+                {assessmentConfig.title || 'Placement Assessment'}
               </h2>
               <span
                 style={{
@@ -273,7 +266,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                   borderRadius: '4px',
                 }}
               >
-                {hasActiveAttempt ? 'RESUME ATTEMPT' : 'OFFICIAL PLACEMENT DIAGNOSTIC'}
+                {hasActiveAttempt ? 'RESUME ATTEMPT' : 'OFFICIAL PLACEMENT ASSESSMENT'}
               </span>
             </div>
 
@@ -295,7 +288,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               >
                 <Clock size={16} color="#3b82f6" />
                 <span>
-                  Duration: <strong style={{ color: '#ffffff' }}>{diagnosticConfig.durationMinutes || 45} mins</strong> (Server Timer)
+                  Duration: <strong style={{ color: '#ffffff' }}>{assessmentConfig.durationMinutes || 45} mins</strong> (Server Timer)
                 </span>
               </div>
               <div
@@ -309,7 +302,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               >
                 <HelpCircle size={16} color="#3b82f6" />
                 <span>
-                  Programme: <strong style={{ color: '#ffffff' }}>{diagnosticConfig.assignedProgramme || 'English Proficiency'}</strong>
+                  Programme: <strong style={{ color: '#ffffff' }}>{assessmentConfig.programme?.name || 'English Proficiency'}</strong>
                 </span>
               </div>
               <div
@@ -340,10 +333,10 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                 gap: '0.35rem',
               }}
             >
-              {diagnosticConfig.sections ? (
-                diagnosticConfig.sections.map((sec: any, idx: number) => (
-                  <div key={sec.code || idx}>
-                    {sec.name || sec.code}:{' '}
+              {assessmentConfig.sections ? (
+                assessmentConfig.sections.map((sec: any, idx: number) => (
+                  <div key={sec.name || idx}>
+                    {sec.name}:{' '}
                     <strong style={{ color: idx === 0 ? '#38bdf8' : idx === 1 ? '#34d399' : '#a78bfa' }}>
                       {sec.questionCount ? `${sec.questionCount} Questions (${sec.selection || 'BALANCED'})` : sec.passages ? `${sec.passages} Reading Passage & Comprehension Set` : sec.tasks ? `${sec.tasks.length} Writing Tasks (${sec.tasks.join(' • ')})` : 'Configured Section'}
                     </strong>

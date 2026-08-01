@@ -32,6 +32,8 @@ export interface AssessmentPlayerProps {
   examType: string;
   sections: PlayerSection[];
   attemptId: string;
+  initialRemainingTime?: number;
+  initialSavedAnswers?: Record<string, any>;
   onComplete?: () => void;
 }
 
@@ -41,75 +43,32 @@ export function AssessmentPlayerScreen({
   examType,
   sections,
   attemptId,
+  initialRemainingTime,
+  initialSavedAnswers,
   onComplete,
 }: AssessmentPlayerProps) {
   const router = useRouter();
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [answers, setAnswers] = useState<Record<string, any>>(initialSavedAnswers || {});
   const [flagged, setFlagged] = useState<Set<string>>(new Set());
   const [secondsRemaining, setSecondsRemaining] = useState(
-    (sections[0]?.timeLimitMinutes || 10) * 60
+    initialRemainingTime !== undefined ? initialRemainingTime : (sections[0]?.timeLimitMinutes || 10) * 60
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [sectionStarted, setSectionStarted] = useState(false);
+  const [sectionStarted, setSectionStarted] = useState(true);
 
   const currentSection = sections[currentSectionIdx] || sections[0];
   const currentQuestions = currentSection?.questions || [];
   const currentQuestion = currentQuestions[currentQuestionIdx];
 
-  // Resume session state restoration & server-authoritative timer calculation
+  // Sync initialSavedAnswers if updated externally on mount
   useEffect(() => {
-    async function restoreSession() {
-      if (!attemptId) return;
-
-      // Check or establish server-authoritative expiration timestamp
-      let expiresAtMs: number | null = null;
-      const storageKey = `clasptek_assessment_expires_${attemptId}`;
-
-      try {
-        const cachedExpires = typeof window !== 'undefined' ? localStorage.getItem(storageKey) : null;
-        if (cachedExpires) {
-          expiresAtMs = parseInt(cachedExpires, 10);
-        }
-
-        const res = await fetch(`/api/v1/diagnostic/attempts/${attemptId}`);
-        const data = await res.json();
-        if (data.success) {
-          if (data.savedAnswers && Object.keys(data.savedAnswers).length > 0) {
-            setAnswers(data.savedAnswers);
-          }
-
-          if (data.attempt?.expiresAt) {
-            expiresAtMs = new Date(data.attempt.expiresAt).getTime();
-          } else if (data.attempt?.startedAt) {
-            expiresAtMs = new Date(data.attempt.startedAt).getTime() + 45 * 60 * 1000;
-          }
-        }
-      } catch {
-        // Fallback
-      }
-
-      if (!expiresAtMs) {
-        expiresAtMs = Date.now() + 45 * 60 * 1000;
-      }
-
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(storageKey, expiresAtMs.toString());
-      }
-
-      const remainingSecs = Math.max(0, Math.floor((expiresAtMs - Date.now()) / 1000));
-      setSecondsRemaining(remainingSecs);
-      setSectionStarted(true);
-
-      if (remainingSecs <= 0) {
-        handleSubmitFinal();
-      }
+    if (initialSavedAnswers && Object.keys(initialSavedAnswers).length > 0) {
+      setAnswers((prev) => ({ ...initialSavedAnswers, ...prev }));
     }
-
-    restoreSession();
-  }, [attemptId]);
+  }, [initialSavedAnswers]);
 
   // Server-authoritative timer countdown
   useEffect(() => {
@@ -144,16 +103,15 @@ export function AssessmentPlayerScreen({
   }
 
   async function autosaveResponse(qId: string, payload: any) {
-    if (!currentQuestion) return;
+    if (!currentQuestion || !attemptId) return;
     try {
-      await fetch(`/api/v1/diagnostic/attempts/${attemptId}/response`, {
-        method: 'PUT',
+      await fetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/answers`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           questionId: currentQuestion.id,
           questionVersionId: currentQuestion.versionId,
-          payload,
-          itemType: currentQuestion.itemType,
+          answer: payload,
           timeSpentMs: 5000,
         }),
       });
@@ -176,8 +134,6 @@ export function AssessmentPlayerScreen({
       const nextIdx = currentSectionIdx + 1;
       setCurrentSectionIdx(nextIdx);
       setCurrentQuestionIdx(0);
-      setSecondsRemaining((sections[nextIdx]?.timeLimitMinutes || 10) * 60);
-      setSectionStarted(false);
     } else {
       setConfirmOpen(true);
     }
@@ -194,11 +150,7 @@ export function AssessmentPlayerScreen({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              assessmentType: examType.toUpperCase().includes('MOCK')
-                ? 'MOCK'
-                : examType.toUpperCase().includes('PRACTICE')
-                ? 'PRACTICE'
-                : 'DIAGNOSTIC',
+              assessmentType: 'DIAGNOSTIC',
               sessionId: attemptId,
               responseId: qId,
               skill: isAudio ? 'Speaking' : 'Writing',
@@ -209,15 +161,15 @@ export function AssessmentPlayerScreen({
         }
       }
 
-      await fetch(`/api/v1/diagnostic/attempts/${attemptId}/placement`, {
+      await fetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ examType }),
       });
       if (onComplete) onComplete();
-      else router.push(`/student/results?attemptId=${attemptId}`);
+      else router.push(`/student/results?attemptId=${encodeURIComponent(attemptId)}`);
     } catch {
-      router.push(`/student/results?attemptId=${attemptId}`);
+      router.push(`/student/results?attemptId=${encodeURIComponent(attemptId)}`);
     } finally {
       setIsSubmitting(false);
     }
