@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-interface AttemptSummary {
+export interface AttemptSummary {
   attemptId: string;
   studentId: string;
   studentName: string;
@@ -19,7 +19,7 @@ interface AttemptSummary {
   submittedAt: string | null;
 }
 
-interface AttemptDetailBundle {
+export interface AttemptDetailBundle {
   attempt: {
     id: string;
     studentId: string;
@@ -70,22 +70,424 @@ interface AttemptDetailBundle {
   }>;
 }
 
+export function AttemptInspectorModal({
+  attemptId,
+  onClose,
+}: {
+  attemptId: string;
+  onClose: () => void;
+}) {
+  const [detailBundle, setDetailBundle] = useState<AttemptDetailBundle | null>(null);
+  const [detailLoading, setDetailLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<
+    'OVERVIEW' | 'QUESTIONS' | 'READING' | 'WRITING' | 'SPEAKING' | 'RESULTS' | 'AUDIT'
+  >('OVERVIEW');
+
+  useEffect(() => {
+    async function fetchDetail() {
+      setDetailLoading(true);
+      try {
+        const res = await fetch(`/api/v1/admin/assessment-attempts/${attemptId}`);
+        const data = await res.json();
+        if (data.data) {
+          setDetailBundle(data.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch attempt detail:', err);
+      } finally {
+        setDetailLoading(false);
+      }
+    }
+    fetchDetail();
+  }, [attemptId]);
+
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+        {/* Modal Header */}
+        <div className="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-950">
+          <div>
+            <span className="text-[10px] font-bold text-sky-400 uppercase tracking-widest">
+              Immutable Paper Snapshot Inspector
+            </span>
+            <h2 className="text-lg font-bold text-white mt-0.5">
+              {detailBundle?.attempt.studentName || 'Candidate Attempt'} (
+              {detailBundle?.attempt.studentEmail})
+            </h2>
+            <div className="text-xs text-slate-400 font-mono mt-0.5">Attempt ID: {attemptId}</div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* 7 Modal Navigation Tabs */}
+        <div className="flex border-b border-slate-800 bg-slate-950/80 px-4 space-x-2 overflow-x-auto">
+          {[
+            { id: 'OVERVIEW', label: '1. Overview' },
+            { id: 'QUESTIONS', label: '2. Questions' },
+            { id: 'READING', label: '3. Reading' },
+            { id: 'WRITING', label: '4. Writing' },
+            { id: 'SPEAKING', label: '5. Speaking' },
+            { id: 'RESULTS', label: '6. Results' },
+            { id: 'AUDIT', label: '7. Audit Timeline' },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id as any)}
+              className={`py-3 px-3 text-xs font-bold border-b-2 transition-colors shrink-0 ${
+                activeTab === t.id
+                  ? 'border-sky-400 text-sky-400'
+                  : 'border-transparent text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Modal Content Body */}
+        <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+          {detailLoading ? (
+            <div className="p-12 text-center text-slate-400 space-y-2">
+              <div className="w-6 h-6 border-2 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto" />
+              <div>Deserializing frozen paper snapshot & audit events...</div>
+            </div>
+          ) : !detailBundle ? (
+            <div className="text-center text-rose-400 p-8">Failed to load attempt details.</div>
+          ) : (
+            <>
+              {/* TAB 1: OVERVIEW */}
+              {activeTab === 'OVERVIEW' && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                      <div className="text-[10px] text-slate-400 uppercase">Overall Score</div>
+                      <div className="text-2xl font-black text-sky-400 mt-1">
+                        {detailBundle.result?.overallScore || detailBundle.attempt.score}%
+                      </div>
+                    </div>
+                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                      <div className="text-[10px] text-slate-400 uppercase">CEFR Level</div>
+                      <div className="text-xl font-bold text-indigo-400 mt-1">
+                        {detailBundle.result?.cefrLevel || 'B1'}
+                      </div>
+                    </div>
+                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                      <div className="text-[10px] text-slate-400 uppercase">Predicted Band</div>
+                      <div className="text-xl font-bold text-purple-400 mt-1">
+                        {detailBundle.result?.predictedBand || 'Band 6.5'}
+                      </div>
+                    </div>
+                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
+                      <div className="text-[10px] text-slate-400 uppercase">Placement</div>
+                      <div className="text-base font-bold text-emerald-400 mt-1.5">
+                        {detailBundle.result?.placementLevel || 'FOUNDATION'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3">
+                    <div className="font-bold text-slate-200 uppercase tracking-wider">
+                      Candidate & Execution Details
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-300 font-mono">
+                      <div>
+                        Candidate Name:{' '}
+                        <strong className="text-white">{detailBundle.attempt.studentName}</strong>
+                      </div>
+                      <div>
+                        Candidate Email:{' '}
+                        <strong className="text-white">{detailBundle.attempt.studentEmail}</strong>
+                      </div>
+                      <div>
+                        Attempt Status:{' '}
+                        <strong className="text-emerald-400">{detailBundle.attempt.status}</strong>
+                      </div>
+                      <div>
+                        Started At:{' '}
+                        <strong className="text-white">
+                          {new Date(detailBundle.attempt.startedAt).toLocaleString()}
+                        </strong>
+                      </div>
+                      <div>
+                        Submitted At:{' '}
+                        <strong className="text-white">
+                          {detailBundle.attempt.submittedAt
+                            ? new Date(detailBundle.attempt.submittedAt).toLocaleString()
+                            : 'N/A'}
+                        </strong>
+                      </div>
+                      <div>
+                        Recommended Course:{' '}
+                        <strong className="text-sky-400">
+                          {detailBundle.result?.recommendedCourse} (
+                          {detailBundle.result?.recommendedDuration})
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: QUESTIONS */}
+              {activeTab === 'QUESTIONS' && (
+                <div className="space-y-4">
+                  <div className="font-bold text-slate-200 uppercase">
+                    Frozen Objective Questions (
+                    {detailBundle.paperSnapshot.grammarQuestions?.length || 0} Items)
+                  </div>
+
+                  <div className="space-y-3">
+                    {detailBundle.paperSnapshot.grammarQuestions?.map((q: any, idx: number) => {
+                      const ansObj = detailBundle.answers[q.id];
+                      const selectedCode =
+                        ansObj?.responsePayload?.selectedOptionCode ||
+                        ansObj?.responsePayload ||
+                        '-';
+                      const isCorrect = ansObj?.isCorrect;
+
+                      return (
+                        <div
+                          key={q.id || idx}
+                          className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="font-semibold text-slate-200">
+                              Q{idx + 1}. {q.prompt}
+                            </div>
+                            <span
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                                isCorrect === true
+                                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                                  : isCorrect === false
+                                    ? 'bg-rose-500/20 text-rose-400 border-rose-500/30'
+                                    : 'bg-slate-800 text-slate-400 border-slate-700'
+                              }`}
+                            >
+                              {isCorrect === true
+                                ? '✓ Correct (1/1)'
+                                : isCorrect === false
+                                  ? '✗ Incorrect (0/1)'
+                                  : 'Unanswered'}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-900 font-mono text-[11px]">
+                            <div>
+                              <span className="text-slate-500">Correct Code: </span>
+                              <span className="text-emerald-400 font-bold">
+                                {q.correctOptionCode || 'A'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-slate-500">Candidate Selected: </span>
+                              <span
+                                className={
+                                  isCorrect
+                                    ? 'text-emerald-400 font-bold'
+                                    : 'text-rose-400 font-bold'
+                                }
+                              >
+                                {String(selectedCode)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: READING */}
+              {activeTab === 'READING' && (
+                <div className="space-y-4">
+                  <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3">
+                    <div className="font-bold text-sky-400 uppercase">
+                      Reading Passage:{' '}
+                      {detailBundle.paperSnapshot.readingPassage?.title ||
+                        'Academic Reading Passage'}
+                    </div>
+                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-300 leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap font-sans">
+                      {detailBundle.paperSnapshot.readingPassage?.content ||
+                        'No reading passage recorded.'}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {detailBundle.paperSnapshot.readingPassage?.comprehensionQuestions?.map(
+                      (cq: any, idx: number) => {
+                        const ansObj = detailBundle.answers[cq.id];
+                        const selectedCode = ansObj?.responsePayload?.selectedOptionCode || '-';
+                        const isCorrect = ansObj?.isCorrect;
+
+                        return (
+                          <div
+                            key={cq.id || idx}
+                            className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2"
+                          >
+                            <div className="flex justify-between items-start font-semibold text-slate-200">
+                              <div>
+                                Reading Q{idx + 1}: {cq.prompt}
+                              </div>
+                              <span
+                                className={`px-2 py-0.5 rounded text-[10px] font-bold border ${isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}
+                              >
+                                {isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                              </span>
+                            </div>
+                            <div className="flex gap-4 font-mono text-[11px] pt-1">
+                              <div>
+                                Correct:{' '}
+                                <span className="text-emerald-400 font-bold">
+                                  {cq.correctOptionCode || 'B'}
+                                </span>
+                              </div>
+                              <div>
+                                Student Choice:{' '}
+                                <span
+                                  className={
+                                    isCorrect
+                                      ? 'text-emerald-400 font-bold'
+                                      : 'text-rose-400 font-bold'
+                                  }
+                                >
+                                  {String(selectedCode)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: WRITING */}
+              {activeTab === 'WRITING' && (
+                <div className="space-y-4">
+                  {detailBundle.paperSnapshot.writingTasks?.map((wt: any, idx: number) => {
+                    const ansObj = detailBundle.answers[wt.id];
+                    const essayText =
+                      ansObj?.responsePayload?.text ||
+                      ansObj?.responsePayload ||
+                      'No essay response recorded.';
+
+                    return (
+                      <div
+                        key={wt.id || idx}
+                        className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3"
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-sky-400 uppercase">
+                            Writing Task {wt.taskNumber || idx + 1}: {wt.title}
+                          </span>
+                          <span className="text-slate-400 font-mono">
+                            Min {wt.minWords || 150} Words
+                          </span>
+                        </div>
+
+                        <p className="text-slate-300 font-medium bg-slate-900 p-3 rounded-lg border border-slate-800">
+                          {wt.prompt}
+                        </p>
+
+                        <div className="space-y-1">
+                          <div className="text-slate-400 font-semibold uppercase text-[10px]">
+                            Candidate Essay Response:
+                          </div>
+                          <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200 font-mono leading-relaxed whitespace-pre-wrap">
+                            {String(essayText)}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* TAB 5: SPEAKING */}
+              {activeTab === 'SPEAKING' && (
+                <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3 text-center text-slate-400">
+                  <div className="font-bold text-sky-400 uppercase">Oral & Speaking Evaluation</div>
+                  <p>Audio recording & transcript evaluation pipeline active.</p>
+                </div>
+              )}
+
+              {/* TAB 6: RESULTS */}
+              {activeTab === 'RESULTS' && (
+                <div className="space-y-4">
+                  {detailBundle.result?.aiFeedback?.summary && (
+                    <div className="bg-sky-950/30 border border-sky-800/40 p-4 rounded-xl space-y-1">
+                      <div className="font-bold text-sky-400 uppercase">
+                        AI Diagnostic Evaluation
+                      </div>
+                      <p className="text-slate-300 leading-relaxed">
+                        {detailBundle.result.aiFeedback.summary}
+                      </p>
+                    </div>
+                  )}
+                  {detailBundle.result?.strengths && (
+                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                      <div className="font-bold text-emerald-400 uppercase">
+                        Strongest Competencies
+                      </div>
+                      <ul className="list-disc list-inside text-slate-300">
+                        {detailBundle.result.strengths.map((s, i) => (
+                          <li key={i}>{s}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 7: AUDIT TIMELINE */}
+              {activeTab === 'AUDIT' && (
+                <div className="space-y-3">
+                  <div className="font-bold text-slate-200 uppercase">
+                    Immutable Audit Timeline ({detailBundle.auditTimeline.length} Events)
+                  </div>
+
+                  <div className="space-y-2 border-l-2 border-slate-800 pl-4">
+                    {detailBundle.auditTimeline.map((evt) => (
+                      <div key={evt.id} className="relative space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <span className="px-2 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded font-bold font-mono text-[10px]">
+                            {evt.eventType}
+                          </span>
+                          <span className="text-slate-500 font-mono text-[10px]">
+                            {new Date(evt.timestamp).toLocaleString()}
+                          </span>
+                        </div>
+                        <pre className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-[10px] text-slate-400 overflow-x-auto">
+                          {JSON.stringify(evt.payload, null, 2)}
+                        </pre>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AttemptReviewConsole() {
   const [attempts, setAttempts] = useState<AttemptSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [cefrFilter, setCefrFilter] = useState('');
-
-  // Selected attempt detail modal state
   const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
-  const [detailBundle, setDetailBundle] = useState<AttemptDetailBundle | null>(null);
-  const [detailLoading, setDetailLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'QUESTIONS' | 'WRITING' | 'AUDIT'>(
-    'OVERVIEW'
-  );
 
-  // Load attempts list
   useEffect(() => {
     async function fetchAttempts() {
       setLoading(true);
@@ -109,47 +511,21 @@ export function AttemptReviewConsole() {
     fetchAttempts();
   }, [search, statusFilter, cefrFilter]);
 
-  // Load attempt detail bundle when attempt is selected
-  useEffect(() => {
-    if (!selectedAttemptId) {
-      setDetailBundle(null);
-      return;
-    }
-
-    async function fetchDetail() {
-      setDetailLoading(true);
-      try {
-        const res = await fetch(`/api/v1/admin/assessment-attempts/${selectedAttemptId}`);
-        const data = await res.json();
-        if (data.data) {
-          setDetailBundle(data.data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch attempt detail:', err);
-      } finally {
-        setDetailLoading(false);
-      }
-    }
-    fetchDetail();
-  }, [selectedAttemptId]);
-
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 text-white font-sans">
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
         <div>
           <span className="text-xs font-bold text-sky-400 uppercase tracking-wider">
-            Assessment Management Console
+            Assessment Audit Console
           </span>
           <h1 className="text-2xl font-bold text-white mt-1">Student Attempt Review Console</h1>
           <p className="text-xs text-slate-400 mt-1">
-            Audit frozen paper snapshots, candidate answer logs, scoring rubrics, and event
+            Inspect frozen paper snapshots, candidate answer logs, scoring rubrics, and event
             timelines.
           </p>
         </div>
       </div>
 
-      {/* Filter Toolbar */}
       <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="w-full md:w-80">
           <input
@@ -187,7 +563,6 @@ export function AttemptReviewConsole() {
         </div>
       </div>
 
-      {/* Table List */}
       <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-xs text-slate-400 space-y-2">
@@ -254,7 +629,7 @@ export function AttemptReviewConsole() {
                         onClick={() => setSelectedAttemptId(att.attemptId)}
                         className="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-lg text-xs transition-colors"
                       >
-                        Inspect Paper Snapshot →
+                        View Attempt →
                       </button>
                     </td>
                   </tr>
@@ -265,299 +640,11 @@ export function AttemptReviewConsole() {
         )}
       </div>
 
-      {/* Frozen Paper Snapshot Review Modal */}
       {selectedAttemptId && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
-            {/* Modal Header */}
-            <div className="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-950">
-              <div>
-                <span className="text-[10px] font-bold text-sky-400 uppercase tracking-widest">
-                  Attempt Audit & Paper Snapshot
-                </span>
-                <h2 className="text-lg font-bold text-white mt-0.5">
-                  {detailBundle?.attempt.studentName} ({detailBundle?.attempt.studentEmail})
-                </h2>
-                <div className="text-xs text-slate-400 font-mono mt-0.5">
-                  Attempt ID: {selectedAttemptId}
-                </div>
-              </div>
-              <button
-                onClick={() => setSelectedAttemptId(null)}
-                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-sm font-bold"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Modal Navigation Tabs */}
-            <div className="flex border-b border-slate-800 bg-slate-950/60 px-5 space-x-4">
-              <button
-                onClick={() => setActiveTab('OVERVIEW')}
-                className={`py-3 text-xs font-bold border-b-2 transition-colors ${
-                  activeTab === 'OVERVIEW'
-                    ? 'border-sky-400 text-sky-400'
-                    : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                1. Overview & Result
-              </button>
-              <button
-                onClick={() => setActiveTab('QUESTIONS')}
-                className={`py-3 text-xs font-bold border-b-2 transition-colors ${
-                  activeTab === 'QUESTIONS'
-                    ? 'border-sky-400 text-sky-400'
-                    : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                2. Questions & Answers
-              </button>
-              <button
-                onClick={() => setActiveTab('WRITING')}
-                className={`py-3 text-xs font-bold border-b-2 transition-colors ${
-                  activeTab === 'WRITING'
-                    ? 'border-sky-400 text-sky-400'
-                    : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                3. Essay & Writing Response
-              </button>
-              <button
-                onClick={() => setActiveTab('AUDIT')}
-                className={`py-3 text-xs font-bold border-b-2 transition-colors ${
-                  activeTab === 'AUDIT'
-                    ? 'border-sky-400 text-sky-400'
-                    : 'border-transparent text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                4. Audit Event Timeline
-              </button>
-            </div>
-
-            {/* Modal Content Area */}
-            <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
-              {detailLoading ? (
-                <div className="p-12 text-center text-slate-400 space-y-2">
-                  <div className="w-6 h-6 border-2 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto" />
-                  <div>Deserializing frozen paper snapshot & audit events...</div>
-                </div>
-              ) : !detailBundle ? (
-                <div className="text-center text-rose-400">Failed to load attempt details.</div>
-              ) : (
-                <>
-                  {/* TAB 1: OVERVIEW & RESULT */}
-                  {activeTab === 'OVERVIEW' && (
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-                          <div className="text-[10px] text-slate-400 uppercase">Overall Score</div>
-                          <div className="text-2xl font-black text-sky-400 mt-1">
-                            {detailBundle.result?.overallScore || detailBundle.attempt.score}%
-                          </div>
-                        </div>
-                        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-                          <div className="text-[10px] text-slate-400 uppercase">CEFR Level</div>
-                          <div className="text-xl font-bold text-indigo-400 mt-1">
-                            {detailBundle.result?.cefrLevel || 'B1'}
-                          </div>
-                        </div>
-                        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-                          <div className="text-[10px] text-slate-400 uppercase">Predicted Band</div>
-                          <div className="text-xl font-bold text-purple-400 mt-1">
-                            {detailBundle.result?.predictedBand || 'Band 6.5'}
-                          </div>
-                        </div>
-                        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-                          <div className="text-[10px] text-slate-400 uppercase">Placement</div>
-                          <div className="text-base font-bold text-emerald-400 mt-1.5">
-                            {detailBundle.result?.placementLevel || 'FOUNDATION'}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Section Scores */}
-                      {detailBundle.result?.sectionScores && (
-                        <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3">
-                          <div className="font-bold text-slate-200 uppercase tracking-wider">
-                            Section Breakdown
-                          </div>
-                          <div className="space-y-3">
-                            {detailBundle.result.sectionScores.map((sec) => (
-                              <div key={sec.sectionCode} className="space-y-1">
-                                <div className="flex justify-between font-semibold">
-                                  <span>{sec.sectionName || sec.sectionCode}</span>
-                                  <span className="text-sky-400">{sec.scorePercentage}%</span>
-                                </div>
-                                <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
-                                  <div
-                                    className="bg-sky-500 h-full rounded-full"
-                                    style={{ width: `${sec.scorePercentage}%` }}
-                                  />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* AI Feedback */}
-                      {detailBundle.result?.aiFeedback?.summary && (
-                        <div className="bg-sky-950/30 border border-sky-800/40 p-4 rounded-xl space-y-1">
-                          <div className="font-bold text-sky-400 uppercase">
-                            AI Learning Feedback
-                          </div>
-                          <p className="text-slate-300 leading-relaxed">
-                            {detailBundle.result.aiFeedback.summary}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* TAB 2: QUESTIONS & ANSWERS */}
-                  {activeTab === 'QUESTIONS' && (
-                    <div className="space-y-4">
-                      <div className="font-bold text-slate-200 uppercase">
-                        Frozen Paper Snapshot Items (
-                        {detailBundle.paperSnapshot.grammarQuestions?.length || 0} Questions)
-                      </div>
-
-                      <div className="space-y-3">
-                        {detailBundle.paperSnapshot.grammarQuestions?.map((q: any, idx: number) => {
-                          const ansObj = detailBundle.answers[q.id];
-                          const selectedCode =
-                            ansObj?.responsePayload?.selectedOptionCode ||
-                            ansObj?.responsePayload ||
-                            '-';
-                          const isCorrect = ansObj?.isCorrect;
-
-                          return (
-                            <div
-                              key={q.id || idx}
-                              className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2"
-                            >
-                              <div className="flex justify-between items-start">
-                                <div className="font-semibold text-slate-200">
-                                  Q{idx + 1}. {q.prompt}
-                                </div>
-                                <span
-                                  className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                                    isCorrect === true
-                                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                                      : isCorrect === false
-                                        ? 'bg-rose-500/20 text-rose-400 border-rose-500/30'
-                                        : 'bg-slate-800 text-slate-400 border-slate-700'
-                                  }`}
-                                >
-                                  {isCorrect === true
-                                    ? '✓ Correct (1/1)'
-                                    : isCorrect === false
-                                      ? '✗ Incorrect (0/1)'
-                                      : 'Unanswered'}
-                                </span>
-                              </div>
-
-                              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-900 font-mono text-[11px]">
-                                <div>
-                                  <span className="text-slate-500">Correct Code: </span>
-                                  <span className="text-emerald-400 font-bold">
-                                    {q.correctOptionCode || 'A'}
-                                  </span>
-                                </div>
-                                <div>
-                                  <span className="text-slate-500">Candidate Answer: </span>
-                                  <span
-                                    className={
-                                      isCorrect
-                                        ? 'text-emerald-400 font-bold'
-                                        : 'text-rose-400 font-bold'
-                                    }
-                                  >
-                                    {String(selectedCode)}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* TAB 3: WRITING */}
-                  {activeTab === 'WRITING' && (
-                    <div className="space-y-4">
-                      {detailBundle.paperSnapshot.writingTasks?.map((wt: any, idx: number) => {
-                        const ansObj = detailBundle.answers[wt.id];
-                        const essayText =
-                          ansObj?.responsePayload?.text ||
-                          ansObj?.responsePayload ||
-                          'No essay response recorded.';
-
-                        return (
-                          <div
-                            key={wt.id || idx}
-                            className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3"
-                          >
-                            <div className="flex justify-between items-center">
-                              <span className="font-bold text-sky-400 uppercase">
-                                Writing Task {wt.taskNumber || idx + 1}: {wt.title}
-                              </span>
-                              <span className="text-slate-400 font-mono">
-                                Min {wt.minWords || 150} Words
-                              </span>
-                            </div>
-
-                            <p className="text-slate-300 font-medium bg-slate-900 p-3 rounded-lg border border-slate-800">
-                              {wt.prompt}
-                            </p>
-
-                            <div className="space-y-1">
-                              <div className="text-slate-400 font-semibold uppercase text-[10px]">
-                                Candidate Essay Response:
-                              </div>
-                              <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200 font-mono leading-relaxed whitespace-pre-wrap">
-                                {String(essayText)}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* TAB 4: AUDIT LOG TIMELINE */}
-                  {activeTab === 'AUDIT' && (
-                    <div className="space-y-3">
-                      <div className="font-bold text-slate-200 uppercase">
-                        Immutable Attempt Audit Event Log ({detailBundle.auditTimeline.length}{' '}
-                        Events)
-                      </div>
-
-                      <div className="space-y-2 border-l-2 border-slate-800 pl-4">
-                        {detailBundle.auditTimeline.map((evt) => (
-                          <div key={evt.id} className="relative space-y-1">
-                            <div className="flex items-center space-x-2">
-                              <span className="px-2 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded font-bold font-mono text-[10px]">
-                                {evt.eventType}
-                              </span>
-                              <span className="text-slate-500 font-mono text-[10px]">
-                                {new Date(evt.timestamp).toLocaleString()}
-                              </span>
-                            </div>
-                            <pre className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-[10px] text-slate-400 overflow-x-auto">
-                              {JSON.stringify(evt.payload, null, 2)}
-                            </pre>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
-        </div>
+        <AttemptInspectorModal
+          attemptId={selectedAttemptId}
+          onClose={() => setSelectedAttemptId(null)}
+        />
       )}
     </div>
   );
