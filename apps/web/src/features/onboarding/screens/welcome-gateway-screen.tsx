@@ -15,7 +15,18 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
   const router = useRouter();
   const [isStarting, setIsStarting] = useState(false);
   const [hasActiveAttempt, setHasActiveAttempt] = useState(false);
+  const [activeAttemptId, setActiveAttemptId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Dynamic Diagnostic Definition Config from DB
+  const [diagnosticConfig, setDiagnosticConfig] = useState<{
+    id?: string;
+    title?: string;
+    durationMinutes?: number;
+    instructions?: string;
+    sections?: any[];
+    assignedProgramme?: string;
+  }>({});
 
   const studentName = onboardingData?.firstName || 'Student';
 
@@ -38,15 +49,29 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
       if (onboardingData.baselineLevel) setCurrentLevel(onboardingData.baselineLevel);
     }
 
+    async function loadDiagnosticConfig() {
+      try {
+        const res = await fetch('/api/v1/student/diagnostic');
+        const data = await res.json();
+        if (data.success && data.data) {
+          setDiagnosticConfig(data.data);
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic diagnostic config:', err);
+      }
+    }
+    loadDiagnosticConfig();
+
     async function checkActiveAttempt() {
       try {
         const res = await fetch('/api/v1/diagnostic/attempts');
         const data = await res.json();
         if (data.success && data.hasActiveAttempt) {
           setHasActiveAttempt(true);
+          setActiveAttemptId(data.attempt.id);
         }
-      } catch (e) {
-        console.error('Error checking active attempt:', e);
+      } catch (err) {
+        console.error('Error checking active attempt:', err);
       }
     }
     checkActiveAttempt();
@@ -73,10 +98,10 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
     }
 
     try {
-      const res = await fetch('/api/v1/diagnostic/attempts', {
+      const res = await fetch('/api/v1/student/diagnostic/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ examType: 'English Proficiency' }),
+        body: JSON.stringify({ examType: diagnosticConfig.assignedProgramme || 'English Proficiency' }),
       });
 
       const data = await res.json();
@@ -98,7 +123,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
       router.push(
         `/student/assessments/player?attemptId=${encodeURIComponent(
           data.attemptId
-        )}&examType=English%20Proficiency`
+        )}&examType=${encodeURIComponent(diagnosticConfig.assignedProgramme || 'English Proficiency')}`
       );
     } catch (err: any) {
       console.error('Error starting diagnostic assessment:', err);
@@ -236,7 +261,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                   color: '#ffffff',
                 }}
               >
-                English Proficiency Diagnostic Assessment
+                {diagnosticConfig.title || 'English Proficiency Placement Assessment'}
               </h2>
               <span
                 style={{
@@ -248,7 +273,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                   borderRadius: '4px',
                 }}
               >
-                {hasActiveAttempt ? 'RESUME ATTEMPT' : 'MANDATORY PRE-ASSESSMENT'}
+                {hasActiveAttempt ? 'RESUME ATTEMPT' : 'OFFICIAL PLACEMENT DIAGNOSTIC'}
               </span>
             </div>
 
@@ -270,7 +295,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               >
                 <Clock size={16} color="#3b82f6" />
                 <span>
-                  Duration: <strong style={{ color: '#ffffff' }}>45 mins</strong> (Server Timer)
+                  Duration: <strong style={{ color: '#ffffff' }}>{diagnosticConfig.durationMinutes || 45} mins</strong> (Server Timer)
                 </span>
               </div>
               <div
@@ -284,8 +309,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               >
                 <HelpCircle size={16} color="#3b82f6" />
                 <span>
-                  Assessment:{' '}
-                  <strong style={{ color: '#ffffff' }}>Grammar, Reading & Writing</strong>
+                  Programme: <strong style={{ color: '#ffffff' }}>{diagnosticConfig.assignedProgramme || 'English Proficiency'}</strong>
                 </span>
               </div>
               <div
@@ -299,7 +323,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               >
                 <ShieldCheck size={16} color="#3b82f6" />
                 <span>
-                  Purpose: <strong style={{ color: '#ffffff' }}>Level Placement</strong>
+                  Purpose: <strong style={{ color: '#ffffff' }}>Placement & Skill Baseline</strong>
                 </span>
               </div>
             </div>
@@ -316,24 +340,28 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
                 gap: '0.35rem',
               }}
             >
-              <div>
-                Grammar:{' '}
-                <strong style={{ color: '#38bdf8' }}>
-                  30 Objective Questions (Foundation • Intermediate • Advanced)
-                </strong>
-              </div>
-              <div>
-                Reading:{' '}
-                <strong style={{ color: '#34d399' }}>
-                  1 Reading Passage & Comprehension Set
-                </strong>
-              </div>
-              <div>
-                Writing:{' '}
-                <strong style={{ color: '#a78bfa' }}>
-                  2 Writing Tasks (1 Essay Writing • 1 Letter Writing)
-                </strong>
-              </div>
+              {diagnosticConfig.sections ? (
+                diagnosticConfig.sections.map((sec: any, idx: number) => (
+                  <div key={sec.code || idx}>
+                    {sec.name || sec.code}:{' '}
+                    <strong style={{ color: idx === 0 ? '#38bdf8' : idx === 1 ? '#34d399' : '#a78bfa' }}>
+                      {sec.questionCount ? `${sec.questionCount} Questions (${sec.selection || 'BALANCED'})` : sec.passages ? `${sec.passages} Reading Passage & Comprehension Set` : sec.tasks ? `${sec.tasks.length} Writing Tasks (${sec.tasks.join(' • ')})` : 'Configured Section'}
+                    </strong>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div>
+                    Grammar: <strong style={{ color: '#38bdf8' }}>30 Objective Questions (Balanced Distribution)</strong>
+                  </div>
+                  <div>
+                    Reading: <strong style={{ color: '#34d399' }}>1 Reading Passage & Comprehension Set</strong>
+                  </div>
+                  <div>
+                    Writing: <strong style={{ color: '#a78bfa' }}>2 Writing Tasks (1 Essay • 1 Letter)</strong>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 

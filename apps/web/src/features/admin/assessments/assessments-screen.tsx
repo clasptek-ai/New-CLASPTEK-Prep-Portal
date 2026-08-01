@@ -14,7 +14,7 @@ export function AssessmentsScreen() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const rawMode = searchParams.get('mode') || searchParams.get('type');
-  const isDiagnosticView = rawMode === 'diagnostic' || rawMode === 'DIAGNOSTIC';
+  const isDiagnosticView = rawMode === 'diagnostic' || rawMode === 'DIAGNOSTIC' || !rawMode || rawMode === 'assessment';
   const isMockView = !isDiagnosticView && (rawMode === 'mock' || rawMode === 'MOCK');
 
   const [assessments, setAssessments] = useState<AdminAssessmentConfig[]>([]);
@@ -25,15 +25,38 @@ export function AssessmentsScreen() {
   const [createOpen, setCreateOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [selectedExamType, setSelectedExamType] = useState('English Proficiency');
-  const [newDuration, setNewDuration] = useState(isDiagnosticView ? 30 : isMockView ? 180 : 45);
-  const [newQuestions, setNewQuestions] = useState(isDiagnosticView ? 30 : isMockView ? 80 : 25);
+  const [newDuration, setNewDuration] = useState(isDiagnosticView ? 45 : 180);
+  const [newQuestions, setNewQuestions] = useState(33);
+
+  // Inventory Validation Modal State
+  const [inventoryCheckModal, setInventoryCheckModal] = useState<any | null>(null);
 
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        const data = await adminAssessmentsService.getAssessments();
-        setAssessments(data);
+        if (isDiagnosticView) {
+          const res = await fetch('/api/v1/admin/diagnostics');
+          const json = await res.json();
+          if (json.success && json.data) {
+            const mapped: AdminAssessmentConfig[] = json.data.map((d: any) => ({
+              id: d.id,
+              title: d.title,
+              type: d.assessmentType || 'DIAGNOSTIC',
+              durationMinutes: d.durationMinutes || 45,
+              questionCount: 33,
+              status: d.status || 'PUBLISHED',
+              availableFrom: d.publishedAt || d.createdAt,
+            }));
+            setAssessments(mapped);
+          } else {
+            const data = await adminAssessmentsService.getAssessments();
+            setAssessments(data);
+          }
+        } else {
+          const data = await adminAssessmentsService.getAssessments();
+          setAssessments(data);
+        }
       } catch (e) {
         console.error(e);
       } finally {
@@ -41,15 +64,43 @@ export function AssessmentsScreen() {
       }
     }
     load();
-  }, []);
+  }, [isDiagnosticView]);
 
   async function handlePublish(id: string) {
+    if (isDiagnosticView) {
+      // Run pre-publish inventory check first!
+      try {
+        const invRes = await fetch(`/api/v1/admin/diagnostics/${id}/inventory-check`);
+        const invData = await invRes.json();
+        if (invData.success && invData.inventoryCheck) {
+          if (!invData.isReady) {
+            setInventoryCheckModal({ id, check: invData.inventoryCheck, isReady: false });
+            return;
+          }
+        }
+
+        const res = await fetch(`/api/v1/admin/diagnostics/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'PUBLISHED' }),
+        });
+        const json = await res.json();
+        if (json.success) {
+          setAssessments((prev) => prev.map((a) => (a.id === id ? { ...a, status: 'PUBLISHED' } : a)));
+          showBanner('Diagnostic Placement Assessment published live to student portals!');
+        } else if (json.error === 'INVENTORY_VALIDATION_FAILED') {
+          setInventoryCheckModal({ id, check: json.inventory, isReady: false });
+        }
+      } catch (err) {
+        console.error('Publish error:', err);
+      }
+      return;
+    }
+
     const success = await adminAssessmentsService.publishAssessment(id);
     if (success) {
       setAssessments((prev) => prev.map((a) => (a.id === id ? { ...a, status: 'PUBLISHED' } : a)));
-      showBanner(
-        `${isMockView ? 'Mock Examination' : 'Skill Assessment'} published live to student portals!`
-      );
+      showBanner(`${isMockView ? 'Mock Examination' : 'Placement Assessment'} published live!`);
     }
   }
 
@@ -79,7 +130,40 @@ export function AssessmentsScreen() {
     e.preventDefault();
     if (!newTitle.trim()) return;
 
-    // Use Mock Engine Generator Service for 1-Click Blueprint Assembly
+    if (isDiagnosticView) {
+      try {
+        const res = await fetch('/api/v1/admin/diagnostics', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: newTitle,
+            examType: selectedExamType,
+            durationMinutes: newDuration,
+            assignedProgramme: selectedExamType,
+          }),
+        });
+        const json = await res.json();
+        if (json.success) {
+          const created: AdminAssessmentConfig = {
+            id: json.data.id,
+            title: json.data.title,
+            type: 'DIAGNOSTIC',
+            durationMinutes: json.data.durationMinutes,
+            questionCount: 33,
+            status: json.data.status,
+            availableFrom: new Date().toISOString(),
+          };
+          setAssessments((prev) => [created, ...prev]);
+          setCreateOpen(false);
+          setNewTitle('');
+          showBanner('New Diagnostic Assessment created successfully!');
+        }
+      } catch (err) {
+        console.error('Create diagnostic error:', err);
+      }
+      return;
+    }
+
     try {
       const generatedTmpl = await mockGeneratorService.generateMockExam('bp-ielts-acad');
       const created: AdminAssessmentConfig = {
@@ -97,9 +181,7 @@ export function AssessmentsScreen() {
       setAssessments((prev) => [created, ...prev]);
       setCreateOpen(false);
       setNewTitle('');
-      showBanner(
-        `New ${isMockView ? 'Mock Examination' : 'Skill Assessment'} assembled from Published Question Bank!`
-      );
+      showBanner(`New ${isMockView ? 'Mock Examination' : 'Diagnostic Assessment'} created!`);
     } catch {
       const created: AdminAssessmentConfig = {
         id: `exam-${Date.now()}`,
@@ -116,9 +198,7 @@ export function AssessmentsScreen() {
       setAssessments((prev) => [created, ...prev]);
       setCreateOpen(false);
       setNewTitle('');
-      showBanner(
-        `New ${isMockView ? 'Mock Examination' : 'Skill Assessment'} created and published!`
-      );
+      showBanner(`New ${isMockView ? 'Mock Examination' : 'Diagnostic Assessment'} created!`);
     }
   }
 
@@ -127,16 +207,15 @@ export function AssessmentsScreen() {
     setTimeout(() => setBanner(null), 3500);
   }
 
-  // Filter based on view mode: MOCK view shows MOCK exams, ASSESSMENT view shows PRACTICE/DIAGNOSTIC
   const filteredList = assessments.filter((a) => {
     if (isMockView) return a.type === 'MOCK';
-    return a.type === 'PRACTICE' || a.type !== 'MOCK';
+    return a.type === 'DIAGNOSTIC' || a.type === 'PRACTICE' || a.type !== 'MOCK';
   });
 
   if (loading) {
     return (
       <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-        <h3>Loading {isMockView ? 'Mock Examinations' : 'Skill Assessments'}...</h3>
+        <h3>Loading {isMockView ? 'Mock Examinations' : 'Diagnostic Assessments'}...</h3>
       </div>
     );
   }
@@ -183,7 +262,7 @@ export function AssessmentsScreen() {
                 textTransform: 'uppercase',
               }}
             >
-              {isMockView ? 'FULL-LENGTH SIMULATION' : 'SECTIONAL DIAGNOSTICS & QUIZZES'}
+              {isMockView ? 'FULL-LENGTH SIMULATION' : 'OFFICIAL PLACEMENT ASSESSMENTS'}
             </span>
           </div>
           <h1
@@ -197,12 +276,12 @@ export function AssessmentsScreen() {
           >
             {isMockView
               ? 'Official Mock Examinations Center'
-              : 'Diagnostic & Skill Assessments Center'}
+              : 'Diagnostic Assessments'}
           </h1>
           <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
             {isMockView
               ? 'Configure full-length examination simulations, proctoring security rules, timed availability windows, and official score scaling.'
-              : 'Configure placement diagnostics, sectional skill evaluations, module quizzes, and targeted practice sets.'}
+              : 'Configure placement diagnostics, section blueprints, duration rules, and programme assignments.'}
           </p>
         </div>
 
@@ -230,7 +309,7 @@ export function AssessmentsScreen() {
                 cursor: 'pointer',
               }}
             >
-              Skill Assessments
+              Diagnostic Assessments
             </button>
             <button
               onClick={() => router.push('/admin/assessments?mode=mock')}
@@ -261,7 +340,7 @@ export function AssessmentsScreen() {
             }}
           >
             <Plus size={16} />
-            <span>{isMockView ? 'Create Mock Exam' : 'Create Assessment'}</span>
+            <span>{isMockView ? 'Create Mock Exam' : 'Create Diagnostic'}</span>
           </Button>
         </div>
       </div>
@@ -318,7 +397,7 @@ export function AssessmentsScreen() {
             >
               {isMockView
                 ? 'Full-length 3-hour official simulation'
-                : 'Targeted 15–45 min skill check'}
+                : 'Official Placement Assessments'}
             </div>
           </div>
           <div>
@@ -337,7 +416,7 @@ export function AssessmentsScreen() {
             >
               {isMockView
                 ? 'Strict auto-submit timer & focus detection'
-                : 'Flexible or untimed self-paced practice'}
+                : 'Server Timed Assessments'}
             </div>
           </div>
           <div>
@@ -356,7 +435,7 @@ export function AssessmentsScreen() {
             >
               {isMockView
                 ? 'Scaled Official Band Score (e.g. Band 8.0)'
-                : 'Diagnostic Objective % breakdown'}
+                : 'Placement Recommendation'}
             </div>
           </div>
         </div>
