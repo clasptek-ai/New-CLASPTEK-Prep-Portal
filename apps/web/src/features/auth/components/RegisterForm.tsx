@@ -9,8 +9,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Input, Button, Card } from '../../../components/ui/ui-components';
 import { LogoBadge } from '../../../shared/ui/logo/LogoBadge';
 import { OnboardingState } from '@/features/onboarding/types/onboarding-state';
-import { adminUsersService } from '../../../services/admin/users.service';
-import { CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ArrowLeft, Sparkles, ShieldCheck } from 'lucide-react';
 
 const registerStep1Schema = z
   .object({
@@ -84,7 +83,6 @@ export function RegisterForm() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Requirement: Registration Details MUST be 100% empty by default (no pre-filled or placeholder values)
   const {
     register,
     handleSubmit: _handleSubmit,
@@ -161,44 +159,58 @@ export function RegisterForm() {
     <Card
       style={{
         width: '100%',
-        maxWidth: '520px',
+        maxWidth: '540px',
         margin: '0 auto',
         backgroundColor: '#111827',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '16px',
+        border: '1px solid rgba(59, 130, 246, 0.25)',
+        borderRadius: '20px',
         padding: '2rem',
         boxSizing: 'border-box',
+        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)',
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {/* Step Indicator with LogoBadge */}
+        {/* Step Indicator Bar */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             paddingBottom: '1rem',
           }}
         >
           <LogoBadge size="sm" />
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#94a3b8' }}>
-            Step {step} of 2
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                color: step === 1 ? '#38bdf8' : '#34d399',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                padding: '0.2rem 0.6rem',
+                borderRadius: '6px',
+              }}
+            >
+              Step {step} of 2: {step === 1 ? 'Personal Profile' : 'Target Programme'}
+            </span>
+          </div>
         </div>
 
         {(error || submitError) && (
           <div
             role="alert"
             style={{
-              padding: '0.75rem 1rem',
+              padding: '0.85rem 1rem',
               backgroundColor: 'rgba(239, 68, 68, 0.12)',
               border: '1px solid rgba(239, 68, 68, 0.35)',
-              borderRadius: '8px',
+              borderRadius: '10px',
               color: '#f87171',
               fontSize: '0.85rem',
+              fontWeight: 600,
             }}
           >
+            ⚠️{' '}
             {submitError ||
               (typeof error === 'object' ? error?.message || JSON.stringify(error) : String(error))}
           </div>
@@ -207,44 +219,44 @@ export function RegisterForm() {
         {isSuccess && (
           <div
             style={{
-              padding: '0.85rem 1rem',
+              padding: '1rem',
               backgroundColor: 'rgba(16, 185, 129, 0.15)',
               border: '1px solid rgba(16, 185, 129, 0.35)',
-              borderRadius: '8px',
+              borderRadius: '10px',
               color: '#34d399',
-              fontSize: '0.875rem',
+              fontSize: '0.9rem',
               textAlign: 'center',
-              fontWeight: 600,
+              fontWeight: 700,
             }}
           >
-            🎉 Account created successfully! Redirecting to your learning gateway...
+            🎉 Account created successfully! Launching your placement gateway...
           </div>
         )}
 
         {step === 1 ? (
-          /* STEP 1: CREATE YOUR ACCOUNT (All Inputs Empty by Default) */
+          /* STEP 1: CREATE YOUR ACCOUNT */
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div>
-              <h2 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 800, color: '#ffffff' }}>
-                Create Your Account
+              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: '#ffffff' }}>
+                Candidate Registration
               </h2>
               <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
-                Enter your personal information to get started.
+                Registration takes less than 2 minutes. Fill in your details below.
               </p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
               <Input
                 label="First Name"
-                autoComplete="off"
-                placeholder=""
+                autoComplete="given-name"
+                placeholder="First name"
                 error={errors.firstName?.message}
                 {...register('firstName')}
               />
               <Input
                 label="Last Name"
-                autoComplete="off"
-                placeholder=""
+                autoComplete="family-name"
+                placeholder="Last name"
                 error={errors.lastName?.message}
                 {...register('lastName')}
               />
@@ -253,8 +265,8 @@ export function RegisterForm() {
             <Input
               label="Email Address"
               type="email"
-              autoComplete="off"
-              placeholder=""
+              autoComplete="email"
+              placeholder="name@domain.com"
               error={errors.email?.message}
               {...register('email')}
             />
@@ -262,13 +274,14 @@ export function RegisterForm() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
               <Input
                 label="Phone Number"
-                autoComplete="off"
-                placeholder=""
+                autoComplete="tel"
+                placeholder="+44 7000 000000"
                 error={errors.phone?.message}
                 {...register('phone')}
               />
               <div>
                 <label
+                  htmlFor="country-select"
                   style={{
                     display: 'block',
                     fontSize: '0.85rem',
@@ -280,6 +293,7 @@ export function RegisterForm() {
                   Country
                 </label>
                 <select
+                  id="country-select"
                   {...register('country')}
                   style={{
                     width: '100%',
@@ -321,16 +335,16 @@ export function RegisterForm() {
               <Input
                 label="Password"
                 type="password"
-                autoComplete="off"
-                placeholder=""
+                autoComplete="new-password"
+                placeholder="At least 8 chars"
                 error={errors.password?.message}
                 {...register('password')}
               />
               <Input
                 label="Confirm Password"
                 type="password"
-                autoComplete="off"
-                placeholder=""
+                autoComplete="new-password"
+                placeholder="Re-enter password"
                 error={errors.confirmPassword?.message}
                 {...register('confirmPassword')}
               />
@@ -342,29 +356,34 @@ export function RegisterForm() {
               style={{
                 marginTop: '0.5rem',
                 width: '100%',
+                padding: '0.85rem',
+                backgroundColor: '#2563eb',
+                fontWeight: 700,
+                fontSize: '0.95rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.5rem',
+                borderRadius: '10px',
               }}
             >
-              <span>Continue</span>
-              <ArrowRight size={16} />
+              <span>Continue to Programme Selection</span>
+              <ArrowRight size={18} />
             </Button>
           </div>
         ) : (
           /* STEP 2: CHOOSE YOUR PROGRAMME */
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div>
-              <h2 style={{ margin: 0, fontSize: '1.45rem', fontWeight: 800, color: '#ffffff' }}>
-                Choose Your Programme
+              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: '#ffffff' }}>
+                Select Examination Target
               </h2>
               <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
-                Select the programme you want to prepare for.
+                Your diagnostic assessment will be tailored to this target examination.
               </p>
             </div>
 
-            {/* Programme Cards Grid (6 Choices) */}
+            {/* Programme Options Grid */}
             <div
               style={{
                 display: 'grid',
@@ -441,6 +460,7 @@ export function RegisterForm() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '0.4rem',
+                  borderRadius: '10px',
                 }}
               >
                 <ArrowLeft size={16} />
@@ -452,14 +472,19 @@ export function RegisterForm() {
                 onClick={handleCompleteRegistration}
                 style={{
                   flex: 2,
+                  padding: '0.85rem',
+                  backgroundColor: '#2563eb',
+                  fontWeight: 700,
+                  fontSize: '0.95rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '0.5rem',
+                  borderRadius: '10px',
                 }}
               >
-                <span>{isLoading ? 'Creating Account...' : 'Create Account'}</span>
-                <CheckCircle2 size={16} />
+                <span>{isLoading ? 'Creating Profile...' : 'Complete & Start Assessment'}</span>
+                <CheckCircle2 size={18} />
               </Button>
             </div>
           </div>
