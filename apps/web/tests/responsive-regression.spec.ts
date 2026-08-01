@@ -46,7 +46,11 @@ export interface PageMock {
  * Playwright E2E Runner Execution Schema
  * Run with: `npx playwright test tests/responsive-regression.spec.ts`
  */
-export async function runResponsiveRegressionCheck(page: PageMock, bp: BreakpointConfig, route: RouteConfig) {
+export async function runResponsiveRegressionCheck(
+  page: PageMock,
+  bp: BreakpointConfig,
+  route: RouteConfig
+) {
   await page.goto(route.path, { waitUntil: 'domcontentloaded' });
 
   // 1. Verify document width matches window inner width (Zero Horizontal Overflow)
@@ -68,7 +72,9 @@ export async function runResponsiveRegressionCheck(page: PageMock, bp: Breakpoin
       }).length;
     });
     if (undersizedTargets > 0) {
-      throw new Error(`${undersizedTargets} interactive elements failed minimum 44px touch target on ${route.name}`);
+      throw new Error(
+        `${undersizedTargets} interactive elements failed minimum 44px touch target on ${route.name}`
+      );
     }
   }
 
@@ -77,7 +83,9 @@ export async function runResponsiveRegressionCheck(page: PageMock, bp: Breakpoin
     const bottomNav = page.locator('nav[aria-label="Student Mobile Bottom Navigation"]');
     const isHidden = await bottomNav.toBeHidden();
     if (!isHidden) {
-      throw new Error(`Distraction-Free Exam Mode failed: Bottom Nav was visible during active test session`);
+      throw new Error(
+        `Distraction-Free Exam Mode failed: Bottom Nav was visible during active test session`
+      );
     }
   }
 }

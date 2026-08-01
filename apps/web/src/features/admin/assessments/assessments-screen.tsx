@@ -15,7 +15,8 @@ export function AssessmentsScreen() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const rawMode = searchParams.get('mode') || searchParams.get('type');
-  const isDiagnosticView = rawMode === 'diagnostic' || rawMode === 'DIAGNOSTIC' || !rawMode || rawMode === 'assessment';
+  const isDiagnosticView =
+    rawMode === 'diagnostic' || rawMode === 'DIAGNOSTIC' || !rawMode || rawMode === 'assessment';
   const isMockView = !isDiagnosticView && (rawMode === 'mock' || rawMode === 'MOCK');
 
   const [assessments, setAssessments] = useState<AdminAssessmentConfig[]>([]);
@@ -87,7 +88,9 @@ export function AssessmentsScreen() {
         });
         const json = await res.json();
         if (json.success) {
-          setAssessments((prev) => prev.map((a) => (a.id === id ? { ...a, status: 'PUBLISHED' } : a)));
+          setAssessments((prev) =>
+            prev.map((a) => (a.id === id ? { ...a, status: 'PUBLISHED' } : a))
+          );
           showBanner('Diagnostic Placement Assessment published live to student portals!');
         } else if (json.error === 'INVENTORY_VALIDATION_FAILED') {
           setInventoryCheckModal({ id, check: json.inventory, isReady: false });
@@ -275,9 +278,7 @@ export function AssessmentsScreen() {
               letterSpacing: '-0.02em',
             }}
           >
-            {isMockView
-              ? 'Official Mock Examinations Center'
-              : 'Diagnostic Assessments'}
+            {isMockView ? 'Official Mock Examinations Center' : 'Diagnostic Assessments'}
           </h1>
           <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
             {isMockView
@@ -456,7 +457,9 @@ export function AssessmentsScreen() {
           {
             key: 'type',
             header: 'Type',
-            render: (item) => <Badge variant={item.type === 'MOCK' ? 'info' : 'neutral'}>{item.type}</Badge>,
+            render: (item) => (
+              <Badge variant={item.type === 'MOCK' ? 'info' : 'neutral'}>{item.type}</Badge>
+            ),
           },
           {
             key: 'durationMinutes',

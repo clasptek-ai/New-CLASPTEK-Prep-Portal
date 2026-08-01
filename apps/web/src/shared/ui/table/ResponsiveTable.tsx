@@ -72,8 +72,13 @@ export function ResponsiveTable<T>({
             className="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2.5 shadow-sm"
           >
             {columns.map((col) => (
-              <div key={col.key} className="flex justify-between items-start text-xs border-b border-slate-800/40 pb-2 last:border-b-0 last:pb-0">
-                <span className="font-semibold text-slate-400 uppercase tracking-wider">{col.header}:</span>
+              <div
+                key={col.key}
+                className="flex justify-between items-start text-xs border-b border-slate-800/40 pb-2 last:border-b-0 last:pb-0"
+              >
+                <span className="font-semibold text-slate-400 uppercase tracking-wider">
+                  {col.header}:
+                </span>
                 <span className="text-slate-200 text-right font-medium">
                   {col.render ? col.render(item) : (item as any)[col.key]}
                 </span>

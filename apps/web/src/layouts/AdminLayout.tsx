@@ -85,7 +85,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </div>
 
           {/* Nav Items */}
-          <nav className="flex-1 p-3 space-y-1 overflow-y-auto" aria-label="Admin Navigation Console">
+          <nav
+            className="flex-1 p-3 space-y-1 overflow-y-auto"
+            aria-label="Admin Navigation Console"
+          >
             {adminLinks.map((link) => {
               const Icon = link.icon;
               const isActive =

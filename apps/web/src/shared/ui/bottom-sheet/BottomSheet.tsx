@@ -36,7 +36,10 @@ export function BottomSheet({ isOpen, onClose, title, children }: BottomSheetPro
         className="w-full bg-slate-900 border-t border-slate-800 rounded-t-2xl max-h-[85vh] flex flex-col shadow-2xl animate-slideUp overflow-hidden"
       >
         {/* Touch Drag Indicator Handle */}
-        <div className="w-full flex justify-center py-2.5 cursor-grab active:cursor-grabbing" onClick={onClose}>
+        <div
+          className="w-full flex justify-center py-2.5 cursor-grab active:cursor-grabbing"
+          onClick={onClose}
+        >
           <div className="w-12 h-1.5 bg-slate-700 rounded-full" />
         </div>
 

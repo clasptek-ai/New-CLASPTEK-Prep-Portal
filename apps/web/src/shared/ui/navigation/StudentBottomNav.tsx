@@ -29,8 +29,7 @@ export function StudentBottomNav() {
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive =
-          pathname === item.href ||
-          (item.href !== '/student' && pathname?.startsWith(item.href));
+          pathname === item.href || (item.href !== '/student' && pathname?.startsWith(item.href));
 
         return (
           <Link

@@ -3,7 +3,20 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronLeft, ChevronRight, Home, BookOpen, Award, User, Bell, LayoutDashboard, Zap, GraduationCap } from 'lucide-react';
+import {
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Home,
+  BookOpen,
+  Award,
+  User,
+  Bell,
+  LayoutDashboard,
+  Zap,
+  GraduationCap,
+} from 'lucide-react';
 import { StudentBottomNav } from '@/shared/ui/navigation/StudentBottomNav';
 import { MobileNavDrawer } from '@/shared/ui/navigation/MobileNavDrawer';
 import { LogoBadge } from '@/shared/ui/logo/LogoBadge';
@@ -66,7 +79,10 @@ export function StudentLayout({ children }: StudentLayoutProps) {
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 p-3 space-y-1 overflow-y-auto" aria-label="Student Desktop Navigation">
+          <nav
+            className="flex-1 p-3 space-y-1 overflow-y-auto"
+            aria-label="Student Desktop Navigation"
+          >
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive =

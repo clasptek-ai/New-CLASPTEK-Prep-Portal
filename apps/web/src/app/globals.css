@@ -124,7 +124,7 @@
     --spacing-card: var(--space-3);
     --text-heading-xl: 1.4rem;
     --text-heading-l: 1.2rem;
-    --text-heading-m: 1.0rem;
+    --text-heading-m: 1rem;
   }
 }
 
@@ -222,7 +222,9 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .btn:hover {
@@ -232,4 +234,3 @@ a:hover {
 .btn:active {
   transform: scale(0.98);
 }
-

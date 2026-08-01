@@ -73,7 +73,10 @@ export function MobileNavDrawer({
           </div>
 
           {/* Navigation Items */}
-          <nav className="px-3 space-y-1 overflow-y-auto max-h-[60vh]" aria-label="Mobile Drawer Navigation">
+          <nav
+            className="px-3 space-y-1 overflow-y-auto max-h-[60vh]"
+            aria-label="Mobile Drawer Navigation"
+          >
             {links.map((link) => {
               const Icon = link.icon;
               return (

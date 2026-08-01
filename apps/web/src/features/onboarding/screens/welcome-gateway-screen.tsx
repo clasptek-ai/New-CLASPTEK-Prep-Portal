@@ -31,7 +31,9 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
 
   const [currentScore, setCurrentScore] = useState(onboardingData?.previousScore || '6.5');
   const [targetScore, setTargetScore] = useState(onboardingData?.targetScore || '8.0 Band');
-  const [plannedTestDate, setPlannedTestDate] = useState(onboardingData?.plannedExamDate || '2026-09-15');
+  const [plannedTestDate, setPlannedTestDate] = useState(
+    onboardingData?.plannedExamDate || '2026-09-15'
+  );
   const [learningGoal, setLearningGoal] = useState(onboardingData?.purpose || 'Study Abroad');
   const [currentLevel, setCurrentLevel] = useState('Intermediate');
 
@@ -136,9 +138,12 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
         {/* Body Content */}
         <div className="p-6 md:p-8 space-y-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-extrabold text-white">Welcome, {studentName}!</h1>
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">
+              Welcome, {studentName}!
+            </h1>
             <p className="text-xs md:text-sm text-slate-400 mt-1 leading-relaxed">
-              Determines your English proficiency baseline level for diagnostic placement into your pathway.
+              Determines your English proficiency baseline level for diagnostic placement into your
+              pathway.
             </p>
           </div>
 
@@ -163,15 +168,27 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs text-slate-300">
               <div className="flex items-center space-x-2">
                 <Clock size={16} className="text-sky-400 shrink-0" />
-                <span>Duration: <strong className="text-white">{assessmentConfig.durationMinutes || 45} mins</strong></span>
+                <span>
+                  Duration:{' '}
+                  <strong className="text-white">
+                    {assessmentConfig.durationMinutes || 45} mins
+                  </strong>
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <HelpCircle size={16} className="text-sky-400 shrink-0" />
-                <span>Programme: <strong className="text-white">{assessmentConfig.programme?.name || 'English Proficiency'}</strong></span>
+                <span>
+                  Programme:{' '}
+                  <strong className="text-white">
+                    {assessmentConfig.programme?.name || 'English Proficiency'}
+                  </strong>
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <ShieldCheck size={16} className="text-sky-400 shrink-0" />
-                <span>Type: <strong className="text-white">Diagnostic Baseline</strong></span>
+                <span>
+                  Type: <strong className="text-white">Diagnostic Baseline</strong>
+                </span>
               </div>
             </div>
 
@@ -195,7 +212,9 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
           {/* Goal Selectors Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-300">Self-Assessed Level</label>
+              <label className="block text-xs font-semibold text-slate-300">
+                Self-Assessed Level
+              </label>
               <select
                 value={currentLevel}
                 onChange={(e) => setCurrentLevel(e.target.value)}
@@ -208,7 +227,9 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-300">Primary Candidate Goal</label>
+              <label className="block text-xs font-semibold text-slate-300">
+                Primary Candidate Goal
+              </label>
               <select
                 value={learningGoal}
                 onChange={(e) => setLearningGoal(e.target.value)}
@@ -232,8 +253,8 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = ({ onbo
               {isStarting
                 ? 'Launching Assessment...'
                 : hasActiveAttempt
-                ? 'Continue Diagnostic Assessment'
-                : 'Start Diagnostic Assessment'}
+                  ? 'Continue Diagnostic Assessment'
+                  : 'Start Diagnostic Assessment'}
             </span>
             <ArrowRight size={18} />
           </button>

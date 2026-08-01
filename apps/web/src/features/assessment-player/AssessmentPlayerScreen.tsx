@@ -2,7 +2,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Grid, Clock, Flag, ArrowLeft, ArrowRight, CheckCircle2, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import {
+  Grid,
+  Clock,
+  Flag,
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Wifi,
+  WifiOff,
+  RefreshCw,
+} from 'lucide-react';
 import { BottomSheet } from '@/shared/ui/bottom-sheet/BottomSheet';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
@@ -60,7 +70,9 @@ export function AssessmentPlayerScreen({
   const [answers, setAnswers] = useState<Record<string, any>>(initialSavedAnswers || {});
   const [flagged, setFlagged] = useState<Set<string>>(new Set());
   const [secondsRemaining, setSecondsRemaining] = useState(
-    initialRemainingTime !== undefined ? initialRemainingTime : (sections[0]?.timeLimitMinutes || 10) * 60
+    initialRemainingTime !== undefined
+      ? initialRemainingTime
+      : (sections[0]?.timeLimitMinutes || 10) * 60
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -219,7 +231,9 @@ export function AssessmentPlayerScreen({
   // Progress Calculations
   const totalQuestionsAllSections = sections.reduce((acc, s) => acc + s.questions.length, 0);
   const answeredCountAll = Object.keys(answers).length;
-  const progressPercent = Math.round((answeredCountAll / Math.max(1, totalQuestionsAllSections)) * 100);
+  const progressPercent = Math.round(
+    (answeredCountAll / Math.max(1, totalQuestionsAllSections)) * 100
+  );
 
   // Visual Block Progress Indicator (e.g. ■■■■□□□□)
   const renderVisualBlocks = () => {
@@ -297,7 +311,9 @@ export function AssessmentPlayerScreen({
       {/* Top Header Bar */}
       <header className="px-4 md:px-6 py-3 bg-slate-900 border-b border-slate-800 flex justify-between items-center sticky top-0 z-30 shadow-sm">
         <div className="flex items-center space-x-3">
-          <h1 className="text-xs md:text-sm font-bold text-white truncate max-w-35 sm:max-w-none">{title}</h1>
+          <h1 className="text-xs md:text-sm font-bold text-white truncate max-w-35 sm:max-w-none">
+            {title}
+          </h1>
           <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
             {currentSection.name}
           </span>
@@ -328,7 +344,9 @@ export function AssessmentPlayerScreen({
           </div>
 
           {/* Color shifting timer pill */}
-          <div className={`px-3 py-1.5 rounded-lg border text-xs font-mono font-bold flex items-center space-x-1.5 transition-all ${getTimerStyles()}`}>
+          <div
+            className={`px-3 py-1.5 rounded-lg border text-xs font-mono font-bold flex items-center space-x-1.5 transition-all ${getTimerStyles()}`}
+          >
             <Clock size={14} />
             <span>⏱ {formatTime(secondsRemaining)}</span>
           </div>
@@ -370,7 +388,9 @@ export function AssessmentPlayerScreen({
                 }`}
               >
                 <Flag size={14} />
-                <span>{currentQuestion && flagged.has(currentQuestion.id) ? 'Flagged' : 'Flag'}</span>
+                <span>
+                  {currentQuestion && flagged.has(currentQuestion.id) ? 'Flagged' : 'Flag'}
+                </span>
               </button>
             </div>
 
@@ -425,7 +445,9 @@ export function AssessmentPlayerScreen({
                 <textarea
                   rows={8}
                   value={answers[currentQuestion?.id || '']?.textResponse || ''}
-                  onChange={(e) => currentQuestion && handleTextChange(currentQuestion.id, e.target.value)}
+                  onChange={(e) =>
+                    currentQuestion && handleTextChange(currentQuestion.id, e.target.value)
+                  }
                   placeholder="Type your response here..."
                   inputMode="text"
                   enterKeyHint="enter"
@@ -433,10 +455,12 @@ export function AssessmentPlayerScreen({
                 />
                 <div className="text-right text-[11px] text-slate-400 font-mono">
                   Word Count:{' '}
-                  {(answers[currentQuestion?.id || '']?.textResponse || '')
-                    .trim()
-                    .split(/\s+/)
-                    .filter(Boolean).length}
+                  {
+                    (answers[currentQuestion?.id || '']?.textResponse || '')
+                      .trim()
+                      .split(/\s+/)
+                      .filter(Boolean).length
+                  }
                 </div>
               </div>
             )}
@@ -489,7 +513,8 @@ export function AssessmentPlayerScreen({
               Overall Progress
             </h4>
             <div className="font-mono text-sm font-bold text-sky-400 tracking-wider">
-              {renderVisualBlocks()} <span className="text-xs text-white">({progressPercent}%)</span>
+              {renderVisualBlocks()}{' '}
+              <span className="text-xs text-white">({progressPercent}%)</span>
             </div>
             <div className="flex justify-between text-xs text-slate-400 font-mono">
               <span>Answered: {answeredCountAll}</span>
@@ -514,7 +539,9 @@ export function AssessmentPlayerScreen({
           onClick={() => setPaletteOpenMobile(true)}
           className="px-3 py-2 bg-slate-950 border border-slate-800 text-sky-400 text-xs font-mono font-bold rounded-xl min-h-11 flex items-center space-x-1"
         >
-          <span>Q{currentQuestionIdx + 1}/{currentQuestions.length}</span>
+          <span>
+            Q{currentQuestionIdx + 1}/{currentQuestions.length}
+          </span>
           <Grid size={14} />
         </button>
 
@@ -564,7 +591,8 @@ export function AssessmentPlayerScreen({
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
             <h3 className="text-lg font-bold text-white">Submit Diagnostic Assessment?</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              You have completed {answeredCountAll} of {totalQuestionsAllSections} questions. Submitting will compute your placement assessment outcome.
+              You have completed {answeredCountAll} of {totalQuestionsAllSections} questions.
+              Submitting will compute your placement assessment outcome.
             </p>
             <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
               <button
