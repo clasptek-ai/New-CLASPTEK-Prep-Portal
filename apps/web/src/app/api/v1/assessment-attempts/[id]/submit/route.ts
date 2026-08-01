@@ -24,11 +24,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try {
     const session = await getAuthenticatedSession(req);
     const studentId =
-      session?.userId ||
-      (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
 
     if (!studentId) {
-      return NextResponse.json({ success: false, error: 'Unauthorized', requestId }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized', requestId },
+        { status: 401 }
+      );
     }
 
     const { id: attemptId } = await params;
@@ -50,7 +52,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       if (attemptRes.rows.length === 0) {
         await client.query('ROLLBACK');
         return NextResponse.json(
-          { success: false, error: 'Attempt not active, not found, or already submitted', requestId },
+          {
+            success: false,
+            error: 'Attempt not active, not found, or already submitted',
+            requestId,
+          },
           { status: 404 }
         );
       }
@@ -85,7 +91,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       let grammarCorrect = 0;
       let grammarTotal = 0;
 
-      const grammarScoreMap: Record<string, { correct: boolean; selectedCode: string | null; correctCode: string }> = {};
+      const grammarScoreMap: Record<
+        string,
+        { correct: boolean; selectedCode: string | null; correctCode: string }
+      > = {};
 
       grammarQs.forEach((q: any) => {
         grammarTotal += q.marks || 1;
@@ -94,8 +103,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           raw === null || raw === undefined
             ? null
             : typeof raw === 'string'
-            ? raw
-            : raw?.selectedOptionCode || raw?.code || raw?.answer || null;
+              ? raw
+              : raw?.selectedOptionCode || raw?.code || raw?.answer || null;
 
         const isCorrect =
           selectedCode !== null && q.correctOptionCode && selectedCode === q.correctOptionCode;
@@ -124,8 +133,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           raw === null || raw === undefined
             ? null
             : typeof raw === 'string'
-            ? raw
-            : raw?.selectedOptionCode || raw?.code || raw?.answer || null;
+              ? raw
+              : raw?.selectedOptionCode || raw?.code || raw?.answer || null;
 
         const isCorrect =
           selectedCode !== null && q.correctOptionCode && selectedCode === q.correctOptionCode;
@@ -152,7 +161,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         placementThresholds: { ADVANCED: 80, INTERMEDIATE: 50, FOUNDATION: 0 },
       };
 
-      const thresholds = scoringConfig.placementThresholds || { ADVANCED: 80, INTERMEDIATE: 50, FOUNDATION: 0 };
+      const thresholds = scoringConfig.placementThresholds || {
+        ADVANCED: 80,
+        INTERMEDIATE: 50,
+        FOUNDATION: 0,
+      };
 
       // Adjust weights if writing is pending (redistribute to objective sections)
       let weightedScore: number;
@@ -176,6 +189,100 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       if (totalScore >= thresholds.ADVANCED) computedLevel = 'ADVANCED';
       else if (totalScore >= thresholds.INTERMEDIATE) computedLevel = 'INTERMEDIATE';
 
+      // --- Dynamic CEFR & Predicted Band Calculation (Coherent Scoring Model) ---
+      let cefrLevel = 'A1';
+      let predictedBand = 'Band 3.5';
+
+      if (totalScore >= 85) {
+        cefrLevel = 'C1';
+        predictedBand = 'Band 8.0';
+      } else if (totalScore >= 75) {
+        cefrLevel = 'C1';
+        predictedBand = 'Band 7.5';
+      } else if (totalScore >= 65) {
+        cefrLevel = 'B2';
+        predictedBand = 'Band 7.0';
+      } else if (totalScore >= 55) {
+        cefrLevel = 'B2';
+        predictedBand = 'Band 6.5';
+      } else if (totalScore >= 45) {
+        cefrLevel = 'B1';
+        predictedBand = 'Band 6.0';
+      } else if (totalScore >= 35) {
+        cefrLevel = 'B1';
+        predictedBand = 'Band 5.5';
+      } else if (totalScore >= 25) {
+        cefrLevel = 'A2';
+        predictedBand = 'Band 5.0';
+      } else if (totalScore >= 15) {
+        cefrLevel = 'A2';
+        predictedBand = 'Band 4.5';
+      } else {
+        cefrLevel = 'A1';
+        predictedBand = 'Band 3.5';
+      }
+
+      // Dynamic Strengths & Focus Areas based on section breakdown
+      const strengths: string[] = [];
+      const weaknesses: string[] = [];
+
+      if (grammarRaw >= 75) strengths.push('Grammar Modifier Accuracy & Syntax');
+      else weaknesses.push('Grammar Structure & Complex Modifiers');
+
+      if (readingRaw >= 75) strengths.push('Reading Passage Inference & Contextual Vocabulary');
+      else weaknesses.push('Reading Inference & Passage Detail Extraction');
+
+      if (strengths.length === 0) strengths.push('Baseline Question Completion');
+      if (weaknesses.length === 0) weaknesses.push('Advanced Lexical Cohesion');
+
+      // Dynamic Course Recommendation & Duration
+      let recommendedCourse = 'IELTS Academic Masterclass';
+      let recommendedDuration = '5 Weeks';
+
+      if (computedLevel === 'ADVANCED') {
+        recommendedCourse = 'Advanced Band 8+ Masterclass';
+        recommendedDuration = '5 Weeks';
+      } else if (computedLevel === 'INTERMEDIATE') {
+        recommendedCourse = 'Comprehensive Band 7 Prep';
+        recommendedDuration = '5 Weeks';
+      } else {
+        recommendedCourse = 'English Proficiency Core Foundation';
+        recommendedDuration = '8 Weeks';
+      }
+
+      const sectionScoresList = [
+        {
+          sectionCode: 'Grammar',
+          sectionName: 'Grammar & Syntax',
+          scorePercentage: Math.round(grammarRaw * 100) / 100,
+          computedLevel,
+        },
+        {
+          sectionCode: 'Reading',
+          sectionName: 'Reading Comprehension',
+          scorePercentage: Math.round(readingRaw * 100) / 100,
+          computedLevel,
+        },
+        {
+          sectionCode: 'Writing',
+          sectionName: 'Writing & Essay',
+          scorePercentage: writingRaw,
+          evaluationState: writingPending ? 'PENDING_RUBRIC_EVALUATION' : 'COMPLETED',
+        },
+      ];
+
+      const aiFeedback = {
+        summary: `Diagnostic evaluation complete with ${totalScore}% overall proficiency (${cefrLevel} / ${predictedBand}). Demonstrates strengths in ${strengths.join(', ')}.`,
+        strengths,
+        weaknesses,
+        nextSteps: `Enroll in ${recommendedCourse} (${recommendedDuration}) to target key focus areas.`,
+        recommendedModules: [
+          'Grammar Modifier Logic',
+          'Academic Reading Speed',
+          'Essay Task 2 Syntax',
+        ],
+      };
+
       const scoreBreakdown = {
         grammar: {
           correct: grammarCorrect,
@@ -193,7 +300,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         },
         weighted: totalScore,
         placementLevel: computedLevel,
+        cefrLevel,
+        predictedBand,
         writingPending,
+        sectionScores: sectionScoresList,
       };
 
       // 5. Update assessment_attempt_answers.is_correct for MCQ/Reading items
@@ -207,7 +317,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         );
       }
 
-      // 6. Lock attempt as SUBMITTED and store score breakdown
+      // 6. Lock attempt as SUBMITTED and store score
       await client.query(
         `UPDATE public.assessment_attempts
          SET status = 'SUBMITTED',
@@ -218,7 +328,44 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         [totalScore, attemptId]
       );
 
-      // 7. Log SUBMITTED event with full scoring evidence
+      // 7. Persist Result into public.assessment_results
+      await client.query(
+        `INSERT INTO public.assessment_results (
+          attempt_id, student_id, assessment_category,
+          overall_score, placement_level, cefr_level, predicted_band,
+          section_scores, strengths, weaknesses, recommended_course,
+          recommended_duration, ai_feedback, generated_at, updated_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW(), NOW())
+        ON CONFLICT (attempt_id) DO UPDATE SET
+          overall_score = EXCLUDED.overall_score,
+          placement_level = EXCLUDED.placement_level,
+          cefr_level = EXCLUDED.cefr_level,
+          predicted_band = EXCLUDED.predicted_band,
+          section_scores = EXCLUDED.section_scores,
+          strengths = EXCLUDED.strengths,
+          weaknesses = EXCLUDED.weaknesses,
+          recommended_course = EXCLUDED.recommended_course,
+          recommended_duration = EXCLUDED.recommended_duration,
+          ai_feedback = EXCLUDED.ai_feedback,
+          updated_at = NOW()`,
+        [
+          attemptId,
+          studentId,
+          'DIAGNOSTIC',
+          totalScore,
+          computedLevel,
+          cefrLevel,
+          predictedBand,
+          JSON.stringify(sectionScoresList),
+          JSON.stringify(strengths),
+          JSON.stringify(weaknesses),
+          recommendedCourse,
+          recommendedDuration,
+          JSON.stringify(aiFeedback),
+        ]
+      );
+
+      // 8. Log SUBMITTED & RESULT_GENERATED events
       await client.query(
         `INSERT INTO public.assessment_attempt_events (attempt_id, event_type, event_payload, created_at)
          VALUES ($1, 'SUBMITTED', $2, NOW())`,
@@ -232,6 +379,23 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         ]
       );
 
+      await client.query(
+        `INSERT INTO public.assessment_attempt_events (attempt_id, event_type, event_payload, created_at)
+         VALUES ($1, 'RESULT_GENERATED', $2, NOW())`,
+        [
+          attemptId,
+          JSON.stringify({
+            requestId,
+            totalScore,
+            computedLevel,
+            cefrLevel,
+            predictedBand,
+            recommendedCourse,
+            generatedAt: new Date().toISOString(),
+          }),
+        ]
+      );
+
       await client.query('COMMIT');
 
       return NextResponse.json({
@@ -241,6 +405,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           status: 'SUBMITTED',
           score: totalScore,
           computedLevel,
+          cefrLevel,
+          predictedBand,
+          recommendedCourse,
+          recommendedDuration,
           scoreBreakdown,
           submittedAt: new Date().toISOString(),
         },
@@ -248,8 +416,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       });
     } catch (innerErr: any) {
       await client.query('ROLLBACK');
-      console.error(`[${requestId}] POST /api/v1/assessment-attempts/${attemptId}/submit transaction error:`, innerErr);
-      return NextResponse.json({ success: false, error: innerErr.message, requestId }, { status: 500 });
+      console.error(
+        `[${requestId}] POST /api/v1/assessment-attempts/${attemptId}/submit transaction error:`,
+        innerErr
+      );
+      return NextResponse.json(
+        { success: false, error: innerErr.message, requestId },
+        { status: 500 }
+      );
     } finally {
       client.release();
     }

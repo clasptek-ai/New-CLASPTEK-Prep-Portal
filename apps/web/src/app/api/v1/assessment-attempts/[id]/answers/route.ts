@@ -7,7 +7,8 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    const studentId =
+      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
     if (!studentId) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -33,9 +34,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     // Process batch or single answer
-    const answerItems = answers && Array.isArray(answers) 
-      ? answers 
-      : (questionId ? [{ questionId, questionVersionId, answer, timeSpentMs }] : []);
+    const answerItems =
+      answers && Array.isArray(answers)
+        ? answers
+        : questionId
+          ? [{ questionId, questionVersionId, answer, timeSpentMs }]
+          : [];
 
     for (const item of answerItems) {
       const qId = item.questionId;
@@ -53,11 +57,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     // Append-only event log for autosave
-    await pool.query(
-      `INSERT INTO public.assessment_attempt_events (attempt_id, event_type, event_payload, created_at)
+    await pool
+      .query(
+        `INSERT INTO public.assessment_attempt_events (attempt_id, event_type, event_payload, created_at)
        VALUES ($1, 'AUTO_SAVE', $2, NOW())`,
-      [attemptId, JSON.stringify({ itemCount: answerItems.length })]
-    ).catch(() => null);
+        [attemptId, JSON.stringify({ itemCount: answerItems.length })]
+      )
+      .catch(() => null);
 
     return NextResponse.json({
       success: true,

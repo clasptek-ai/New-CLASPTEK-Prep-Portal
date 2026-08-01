@@ -18,9 +18,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
   try {
     const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    const studentId =
+      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
     if (!studentId) {
-      return NextResponse.json({ success: false, error: 'Unauthorized', requestId }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized', requestId },
+        { status: 401 }
+      );
     }
 
     const { id: attemptId } = await params;
@@ -54,22 +58,29 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     });
 
     // 3. Read EXCLUSIVELY from frozen paper snapshot
-    const paperSnapshot = typeof attempt.paper_snapshot === 'string'
-      ? JSON.parse(attempt.paper_snapshot)
-      : (attempt.paper_snapshot || {});
+    const paperSnapshot =
+      typeof attempt.paper_snapshot === 'string'
+        ? JSON.parse(attempt.paper_snapshot)
+        : attempt.paper_snapshot || {};
 
     // 4. Compute backend-owned server remaining time
     const startedAt = attempt.started_at || new Date();
     const durationMinutes = attempt.duration_minutes || paperSnapshot.durationMinutes || 45;
-    const expiresAt = attempt.expires_at || new Date(new Date(startedAt).getTime() + durationMinutes * 60 * 1000);
-    const remainingTime = Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000));
+    const expiresAt =
+      attempt.expires_at || new Date(new Date(startedAt).getTime() + durationMinutes * 60 * 1000);
+    const remainingTime = Math.max(
+      0,
+      Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)
+    );
 
     // 5. Append-only event log for question reading
-    await pool.query(
-      `INSERT INTO public.assessment_attempt_events (attempt_id, event_type, event_payload, created_at)
+    await pool
+      .query(
+        `INSERT INTO public.assessment_attempt_events (attempt_id, event_type, event_payload, created_at)
        VALUES ($1, 'QUESTION_OPENED', $2, NOW())`,
-      [attemptId, JSON.stringify({ remainingTime, requestId })]
-    ).catch(() => null);
+        [attemptId, JSON.stringify({ remainingTime, requestId })]
+      )
+      .catch(() => null);
 
     // =======================================================================
     // 6. CLIENT DTO SANITIZATION — NEVER SERIALIZE correctOptionCode
@@ -134,7 +145,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const totalQuestions =
       sanitizedGrammarQs.length +
-      (sanitizedReadingPassage?.comprehensionQuestions?.length || (sanitizedReadingPassage ? 1 : 0)) +
+      (sanitizedReadingPassage?.comprehensionQuestions?.length ||
+        (sanitizedReadingPassage ? 1 : 0)) +
       sanitizedWritingTasks.length;
 
     return NextResponse.json({

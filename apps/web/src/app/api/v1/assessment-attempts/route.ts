@@ -14,9 +14,13 @@ export async function GET(req: NextRequest) {
 
   try {
     const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    const studentId =
+      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
     if (!studentId) {
-      return NextResponse.json({ success: false, error: 'Unauthorized', requestId }, { status: 401 });
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized', requestId },
+        { status: 401 }
+      );
     }
 
     const { dbPool } = await getDiagnosticContext();
@@ -99,7 +103,9 @@ export async function POST(req: NextRequest) {
       // 1. Resolve student programme
       let studentProgramme = 'English Proficiency';
       const profileRes = await client
-        .query(`SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`, [studentId])
+        .query(`SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`, [
+          studentId,
+        ])
         .catch(() => null);
       if (profileRes?.rows?.[0]?.target_programme) {
         studentProgramme = profileRes.rows[0].target_programme;
@@ -276,7 +282,10 @@ export async function POST(req: NextRequest) {
           : { rows: [] };
 
       // Build option map and identify correct option per version
-      const optionsByVersion = new Map<string, { code: string; text: string; isCorrect: boolean }[]>();
+      const optionsByVersion = new Map<
+        string,
+        { code: string; text: string; isCorrect: boolean }[]
+      >();
       const correctByVersion = new Map<string, string>(); // version_id -> correct option_code
 
       optRes.rows.forEach((o) => {
@@ -300,7 +309,8 @@ export async function POST(req: NextRequest) {
           { code: 'C', text: 'Option C', isCorrect: false },
           { code: 'D', text: 'Option D', isCorrect: false },
         ];
-        const correctCode = correctByVersion.get(r.version_id) || opts.find((o) => o.isCorrect)?.code || 'B';
+        const correctCode =
+          correctByVersion.get(r.version_id) || opts.find((o) => o.isCorrect)?.code || 'B';
         return {
           id: r.question_id,
           versionId: r.version_id,
@@ -329,30 +339,40 @@ export async function POST(req: NextRequest) {
       // Fetch comprehension questions for the reading passage if they exist
       let comprehensionQuestions: any[] = [];
       if (passage) {
-        const compRes = await client.query(`
+        const compRes = await client
+          .query(
+            `
           SELECT q.id as question_id, qv.id as version_id, qv.prompt
           FROM public.questions q
           JOIN public.question_versions qv ON qv.question_id = q.id
           WHERE q.deleted_at IS NULL
             AND (qv.payload->>'passageId' = $1 OR qv.grammar_topic ILIKE '%reading%')
           LIMIT 5
-        `, [passage.id]).catch(() => ({ rows: [] }));
+        `,
+            [passage.id]
+          )
+          .catch(() => ({ rows: [] }));
 
         if (compRes.rows.length > 0) {
           const compVersionIds = compRes.rows.map((r: any) => r.version_id);
-          const compOptRes = await client.query(
-            `SELECT question_version_id, option_code, option_text, is_correct, display_order
+          const compOptRes = await client
+            .query(
+              `SELECT question_version_id, option_code, option_text, is_correct, display_order
              FROM public.answer_options
              WHERE question_version_id = ANY($1::uuid[])
              ORDER BY question_version_id, display_order ASC`,
-            [compVersionIds]
-          ).catch(() => ({ rows: [] }));
+              [compVersionIds]
+            )
+            .catch(() => ({ rows: [] }));
 
           const compOptsByVer = new Map<string, any[]>();
           const compCorrectByVer = new Map<string, string>();
           compOptRes.rows.forEach((o: any) => {
-            if (!compOptsByVer.has(o.question_version_id)) compOptsByVer.set(o.question_version_id, []);
-            compOptsByVer.get(o.question_version_id)!.push({ code: o.option_code, text: o.option_text });
+            if (!compOptsByVer.has(o.question_version_id))
+              compOptsByVer.set(o.question_version_id, []);
+            compOptsByVer
+              .get(o.question_version_id)!
+              .push({ code: o.option_code, text: o.option_text });
             if (o.is_correct) compCorrectByVer.set(o.question_version_id, o.option_code);
           });
 
@@ -374,12 +394,22 @@ export async function POST(req: NextRequest) {
           {
             id: `comp-${passage.id}`,
             versionId: `compv-${passage.id}`,
-            prompt: 'Based on the passage, which statement best reflects the primary argument presented by the author?',
+            prompt:
+              'Based on the passage, which statement best reflects the primary argument presented by the author?',
             itemType: 'MCQ',
             options: [
-              { code: 'A', text: 'Renewable energy infrastructure reduces long-term operational emissions.' },
-              { code: 'B', text: 'Urban planning eliminates the need for public transportation entirely.' },
-              { code: 'C', text: 'Traditional building materials are superior to modern alternatives.' },
+              {
+                code: 'A',
+                text: 'Renewable energy infrastructure reduces long-term operational emissions.',
+              },
+              {
+                code: 'B',
+                text: 'Urban planning eliminates the need for public transportation entirely.',
+              },
+              {
+                code: 'C',
+                text: 'Traditional building materials are superior to modern alternatives.',
+              },
               { code: 'D', text: 'Environmental regulation slows technological advancement.' },
             ],
             correctOptionCode: 'A',
