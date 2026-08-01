@@ -29,10 +29,7 @@ export const clientEnvironmentSchema = z.object({
 export function getAppUrl(customSource?: Record<string, any>): string {
   const env = customSource || (typeof process !== 'undefined' ? process.env : {});
   const explicitUrl =
-    env.NEXT_PUBLIC_APP_URL ||
-    env.NEXT_PUBLIC_SITE_URL ||
-    env.APP_URL ||
-    env.SITE_URL;
+    env.NEXT_PUBLIC_SITE_URL || env.NEXT_PUBLIC_APP_URL || env.SITE_URL || env.APP_URL;
 
   if (explicitUrl) {
     let url = String(explicitUrl).trim();
@@ -49,6 +46,10 @@ export function getAppUrl(customSource?: Record<string, any>): string {
       url = `https://${url}`;
     }
     return url.replace(/\/+$/, '');
+  }
+
+  if (env.NODE_ENV === 'production') {
+    return 'https://portal.clasptek.org';
   }
 
   return 'http://localhost:3000';

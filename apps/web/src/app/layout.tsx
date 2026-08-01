@@ -9,7 +9,11 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      'https://portal.clasptek.org'
+  ),
   title: `${BrandConfig.portalName} — Enterprise Academic Workspace`,
   description:
     'AI-powered adaptive learning, mock examination runtime, and exam readiness analytics platform.',

@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthContext } from '@/lib/auth-context';
-import { loadEnvironment } from '@clasptek/configuration';
+import { loadEnvironment, getAppUrl } from '@clasptek/configuration';
 import { createSupabaseServerClient, DatabasePool } from '@clasptek/persistence';
 import { ConsoleLogger } from '@clasptek/observability';
 import { cookies } from 'next/headers';
@@ -36,10 +36,14 @@ export async function POST(req: NextRequest) {
       }
     );
 
+    const appUrl = getAppUrl(process.env);
+    const emailRedirectTo = `${appUrl}/auth/callback?next=/student/welcome`;
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        emailRedirectTo,
         data: {
           first_name: firstName,
           last_name: lastName,
