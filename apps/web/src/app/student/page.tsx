@@ -139,7 +139,7 @@ export default function StudentLearningDashboardPage() {
   return (
     <div className="max-w-7xl mx-auto my-6 p-6 md:p-8 text-white space-y-8 font-sans">
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-sky-900/40 via-slate-900 to-purple-900/30 border border-sky-500/20 p-6 md:p-8 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl">
+      <div className="bg-linear-to-r from-sky-900/40 via-slate-900 to-purple-900/30 border border-sky-500/20 p-6 md:p-8 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl">
         <div className="space-y-2 max-w-2xl">
           <div className="flex items-center space-x-2">
             <span className="px-2.5 py-0.5 bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-md text-[10px] font-bold uppercase tracking-wider">
