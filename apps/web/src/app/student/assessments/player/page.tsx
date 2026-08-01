@@ -2,7 +2,11 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { AssessmentPlayerScreen, PlayerSection, PlayerQuestion } from '@/features/assessment-player/AssessmentPlayerScreen';
+import {
+  AssessmentPlayerScreen,
+  PlayerSection,
+  PlayerQuestion,
+} from '@/features/assessment-player/AssessmentPlayerScreen';
 
 function AssessmentPlayerContent() {
   const searchParams = useSearchParams();
@@ -26,8 +30,17 @@ function AssessmentPlayerContent() {
 
       setLoading(true);
       try {
-        const res = await fetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/questions`);
+        const res = await fetch(
+          `/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/questions`
+        );
         const json = await res.json();
+
+        if (res.status === 401 || json.error === 'Unauthorized' || json.error === 'Forbidden') {
+          router.push(
+            `/login?redirect=${encodeURIComponent(`/student/assessments/player?attemptId=${attemptId}`)}`
+          );
+          return;
+        }
 
         if (!res.ok || !json.success || !json.data) {
           setErrorMessage(json.error || json.message || 'Failed to load attempt questions.');
@@ -51,15 +64,17 @@ function AssessmentPlayerContent() {
         }
 
         // Build generic player section models dynamically from snapshot
-        const grammarSectionQuestions: PlayerQuestion[] = (grammarQuestions || []).map((q: any, i: number) => ({
-          id: q.id,
-          versionId: q.versionId || q.id,
-          code: q.code || `Q-${i + 1}`,
-          prompt: q.prompt,
-          itemType: 'MCQ' as const,
-          options: q.options || [],
-          sectionCode: 'GRAMMAR',
-        }));
+        const grammarSectionQuestions: PlayerQuestion[] = (grammarQuestions || []).map(
+          (q: any, i: number) => ({
+            id: q.id,
+            versionId: q.versionId || q.id,
+            code: q.code || `Q-${i + 1}`,
+            prompt: q.prompt,
+            itemType: 'MCQ' as const,
+            options: q.options || [],
+            sectionCode: 'GRAMMAR',
+          })
+        );
 
         // RC1 Phase 4: Reading questions served from snapshot — never hardcoded
         // readingPassage.comprehensionQuestions is frozen at attempt creation time
@@ -81,14 +96,16 @@ function AssessmentPlayerContent() {
         const readingQuestion: PlayerQuestion | null =
           readingPassage && readingCompQs.length > 0 ? readingCompQs[0] : null;
 
-        const writingSectionQuestions: PlayerQuestion[] = (writingTasks || []).map((w: any, idx: number) => ({
-          id: w.id || `q-w-${idx + 1}`,
-          versionId: `qv-w-${idx + 1}`,
-          code: w.code || `ENG-WRIT-T${idx + 1}`,
-          prompt: `${w.title || `Task ${idx + 1}`}: ${w.prompt}\n\n${w.instructions || ''}`,
-          itemType: 'ESSAY' as const,
-          sectionCode: 'WRITING',
-        }));
+        const writingSectionQuestions: PlayerQuestion[] = (writingTasks || []).map(
+          (w: any, idx: number) => ({
+            id: w.id || `q-w-${idx + 1}`,
+            versionId: `qv-w-${idx + 1}`,
+            code: w.code || `ENG-WRIT-T${idx + 1}`,
+            prompt: `${w.title || `Task ${idx + 1}`}: ${w.prompt}\n\n${w.instructions || ''}`,
+            itemType: 'ESSAY' as const,
+            sectionCode: 'WRITING',
+          })
+        );
 
         const canonicalSections: PlayerSection[] = [];
 
@@ -184,7 +201,13 @@ function AssessmentPlayerContent() {
 
 export default function AssessmentPlayerPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 text-white p-8">Loading Universal Assessment Player...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-950 text-white p-8">
+          Loading Universal Assessment Player...
+        </div>
+      }
+    >
       <AssessmentPlayerContent />
     </Suspense>
   );

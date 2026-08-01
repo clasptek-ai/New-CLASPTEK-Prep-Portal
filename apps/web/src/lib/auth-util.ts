@@ -15,46 +15,58 @@ export async function getAuthenticatedSession(
   req: NextRequest
 ): Promise<AuthenticatedSession | null> {
   try {
-    const config = loadEnvironment(process.env);
+    const supabaseUrl =
+      process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      process.env.SUPABASE_URL ||
+      'https://mock.supabase.co';
+    const supabaseAnonKey =
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || 'mock-key';
+
     const cookieStore = await cookies();
 
-    // Create Supabase server client using the standard helper from persistence package
-    const supabase = createSupabaseServerClient(
-      config.NEXT_PUBLIC_SUPABASE_URL || 'https://mock.supabase.co',
-      config.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-key',
-      {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              cookieStore.set(name, value, options);
-            });
-          } catch {
-            // Handled if cookies are immutable
-          }
-        },
-      }
-    );
+    // Extract Bearer token from headers if passed by SPA / mobile client
+    const authHeader = req.headers.get('authorization') || req.headers.get('x-supabase-auth');
+    const bearerToken = authHeader?.startsWith('Bearer ')
+      ? authHeader.substring(7).trim()
+      : authHeader?.trim();
 
+    // Create Supabase server client using the standard helper from persistence package
+    const supabase = createSupabaseServerClient(supabaseUrl, supabaseAnonKey, {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options);
+          });
+        } catch {
+          // Handled if cookies are immutable
+        }
+      },
+    });
+
+    // Validate user token from Bearer header or cookie session
     const {
       data: { user },
       error,
-    } = await supabase.auth.getUser();
+    } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
 
     if (error || !user) {
-      // In development fallback mode, check headers for testing or mock access
-      if (process.env.NEXT_PUBLIC_DEV_MOCK_AUTH === 'true' || process.env.NODE_ENV === 'test') {
-        const headerStudentId = req.headers.get('x-student-id');
-        const headerRole = req.headers.get('x-user-role') || 'STUDENT';
-        if (headerStudentId) {
-          return {
-            userId: headerStudentId,
-            profileId: 'profile-' + headerStudentId,
-            roles: [headerRole],
-          };
-        }
+      // Check for development / mock auth fallback headers
+      const headerStudentId = req.headers.get('x-student-id');
+      const headerRole = req.headers.get('x-user-role') || 'STUDENT';
+      if (
+        headerStudentId &&
+        (process.env.NEXT_PUBLIC_DEV_MOCK_AUTH === 'true' ||
+          process.env.NODE_ENV === 'test' ||
+          process.env.NODE_ENV === 'development')
+      ) {
+        return {
+          userId: headerStudentId,
+          profileId: 'profile-' + headerStudentId,
+          roles: [headerRole],
+        };
       }
       return null;
     }
