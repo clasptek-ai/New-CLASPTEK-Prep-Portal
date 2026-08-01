@@ -9,6 +9,7 @@ import {
 } from '../../../services/admin/assessments.service';
 import { mockGeneratorService } from '../../mock-engine/application/mock-generator.service';
 import { Plus, CheckCircle2 } from 'lucide-react';
+import { ResponsiveTable } from '@/shared/ui/table/ResponsiveTable';
 
 export function AssessmentsScreen() {
   const searchParams = useSearchParams();
@@ -442,92 +443,74 @@ export function AssessmentsScreen() {
       </Card>
 
       {/* Assessment Table List */}
-      <Card
-        style={{
-          padding: '1.5rem',
-          borderRadius: '16px',
-          backgroundColor: '#151d30',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-        }}
-      >
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontSize: '0.875rem',
-            color: '#f8fafc',
-          }}
-        >
-          <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)', textAlign: 'left' }}>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>
-                {isMockView ? 'Mock Exam Title' : 'Assessment Title'}
-              </th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Type</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Duration</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Questions</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Available Window</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>Status</th>
-              <th style={{ padding: '0.75rem 1rem', color: '#94a3b8', textAlign: 'right' }}>
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredList.length === 0 ? (
-              <tr>
-                <td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
-                  No {isMockView ? 'Mock Examinations' : 'Skill Assessments'} configured yet. Click
-                  "Create" to add one.
-                </td>
-              </tr>
-            ) : (
-              filteredList.map((row) => (
-                <tr key={row.id} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.04)' }}>
-                  <td style={{ padding: '0.85rem 1rem', fontWeight: 700, color: '#f8fafc' }}>
-                    {row.title}
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <Badge variant={row.type === 'MOCK' ? 'info' : 'neutral'}>{row.type}</Badge>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem', color: '#cbd5e1' }}>
-                    {row.durationMinutes} mins
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem', color: '#cbd5e1' }}>
-                    {row.questionCount} Qs
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem', fontSize: '0.75rem', color: '#cbd5e1' }}>
-                    {row.availableFrom
-                      ? `${new Date(row.availableFrom).toLocaleDateString()} - ${new Date(row.availableUntil!).toLocaleDateString()}`
-                      : 'Unscheduled'}
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem' }}>
-                    <Badge variant={row.status === 'PUBLISHED' ? 'success' : 'warning'}>
-                      {row.status}
-                    </Badge>
-                  </td>
-                  <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
-                    <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
-                      {row.status === 'DRAFT' && (
-                        <Button
-                          variant="primary"
-                          onClick={() => handlePublish(row.id)}
-                          style={{ backgroundColor: '#10b981', color: '#ffffff' }}
-                        >
-                          Publish
-                        </Button>
-                      )}
-                      <Button variant="secondary" onClick={() => handleSchedule(row.id)}>
-                        Reschedule
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </Card>
+      <ResponsiveTable<AdminAssessmentConfig>
+        data={filteredList}
+        keyExtractor={(item) => item.id}
+        emptyMessage={`No ${isMockView ? 'Mock Examinations' : 'Skill Assessments'} configured yet. Click Create to add one.`}
+        columns={[
+          {
+            key: 'title',
+            header: isMockView ? 'Mock Exam Title' : 'Assessment Title',
+            render: (item) => <span className="font-bold text-white">{item.title}</span>,
+          },
+          {
+            key: 'type',
+            header: 'Type',
+            render: (item) => <Badge variant={item.type === 'MOCK' ? 'info' : 'neutral'}>{item.type}</Badge>,
+          },
+          {
+            key: 'durationMinutes',
+            header: 'Duration',
+            render: (item) => <span>{item.durationMinutes} mins</span>,
+          },
+          {
+            key: 'questionCount',
+            header: 'Questions',
+            render: (item) => <span>{item.questionCount} Qs</span>,
+          },
+          {
+            key: 'availableFrom',
+            header: 'Available Window',
+            hideOnTablet: true,
+            render: (item) => (
+              <span className="text-xs text-slate-400">
+                {item.availableFrom
+                  ? `${new Date(item.availableFrom).toLocaleDateString()} - ${new Date(item.availableUntil!).toLocaleDateString()}`
+                  : 'Unscheduled'}
+              </span>
+            ),
+          },
+          {
+            key: 'status',
+            header: 'Status',
+            render: (item) => (
+              <Badge variant={item.status === 'PUBLISHED' ? 'success' : 'warning'}>
+                {item.status}
+              </Badge>
+            ),
+          },
+          {
+            key: 'actions',
+            header: 'Actions',
+            render: (item) => (
+              <div className="flex items-center space-x-2">
+                {item.status === 'DRAFT' && (
+                  <Button
+                    variant="primary"
+                    onClick={() => handlePublish(item.id)}
+                    style={{ backgroundColor: '#10b981', color: '#ffffff' }}
+                  >
+                    Publish
+                  </Button>
+                )}
+                <Button variant="secondary" onClick={() => handleSchedule(item.id)}>
+                  Schedule
+                </Button>
+              </div>
+            ),
+          },
+        ]}
+      />
 
       {/* CREATE MODAL */}
       {createOpen && (

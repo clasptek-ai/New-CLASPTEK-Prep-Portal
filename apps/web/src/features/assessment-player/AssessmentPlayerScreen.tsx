@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Grid, Clock, Flag, ArrowLeft, ArrowRight, CheckCircle2, Wifi, WifiOff, RefreshCw } from 'lucide-react';
+import { BottomSheet } from '@/shared/ui/bottom-sheet/BottomSheet';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 export interface PlayerQuestion {
   id: string;
@@ -48,6 +52,9 @@ export function AssessmentPlayerScreen({
   onComplete,
 }: AssessmentPlayerProps) {
   const router = useRouter();
+  const { isMobile, isTablet } = useBreakpoint();
+  const { isOnline, wasOffline } = useNetworkStatus();
+
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>(initialSavedAnswers || {});
@@ -58,12 +65,14 @@ export function AssessmentPlayerScreen({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [sectionStarted, setSectionStarted] = useState(true);
+  const [paletteOpenMobile, setPaletteOpenMobile] = useState(false);
+  const [saveState, setSaveState] = useState<'saved' | 'saving' | 'offline'>('saved');
 
   const currentSection = sections[currentSectionIdx] || sections[0];
   const currentQuestions = currentSection?.questions || [];
   const currentQuestion = currentQuestions[currentQuestionIdx];
 
-  // Sync initialSavedAnswers if updated externally on mount
+  // Sync initialSavedAnswers on load
   useEffect(() => {
     if (initialSavedAnswers && Object.keys(initialSavedAnswers).length > 0) {
       setAnswers((prev) => ({ ...initialSavedAnswers, ...prev }));
@@ -86,6 +95,15 @@ export function AssessmentPlayerScreen({
     return () => clearInterval(timer);
   }, [sectionStarted]);
 
+  // Update saveState based on network status
+  useEffect(() => {
+    if (!isOnline) {
+      setSaveState('offline');
+    } else if (wasOffline && saveState === 'offline') {
+      setSaveState('saved');
+    }
+  }, [isOnline, wasOffline]);
+
   function handleSelectOption(qId: string, optionCode: string) {
     setAnswers((prev) => ({
       ...prev,
@@ -104,7 +122,12 @@ export function AssessmentPlayerScreen({
 
   async function autosaveResponse(qId: string, payload: any) {
     if (!currentQuestion || !attemptId) return;
+    setSaveState('saving');
     try {
+      if (!isOnline) {
+        setSaveState('offline');
+        return;
+      }
       await fetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/answers`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -115,8 +138,9 @@ export function AssessmentPlayerScreen({
           timeSpentMs: 5000,
         }),
       });
+      setSaveState('saved');
     } catch {
-      // Background autosave failure retry handled silently
+      setSaveState('offline');
     }
   }
 
@@ -142,7 +166,6 @@ export function AssessmentPlayerScreen({
   async function handleSubmitFinal() {
     setIsSubmitting(true);
     try {
-      // Enqueue subjective evaluation jobs for Writing essays and Speaking audio
       for (const [qId, ans] of Object.entries(answers)) {
         if (ans.textResponse || ans.audioRecordingUrl) {
           const isAudio = Boolean(ans.audioRecordingUrl);
@@ -181,39 +204,87 @@ export function AssessmentPlayerScreen({
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  // Timer Color-Shifting Logic
+  const getTimerStyles = () => {
+    if (secondsRemaining <= 60) {
+      return 'bg-rose-500/20 text-rose-300 border-rose-500 animate-pulse font-extrabold shadow-lg shadow-rose-500/20';
+    } else if (secondsRemaining <= 300) {
+      return 'bg-rose-500/10 text-rose-400 border-rose-500/40';
+    } else if (secondsRemaining <= 600) {
+      return 'bg-amber-500/10 text-amber-400 border-amber-500/40';
+    }
+    return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+  };
+
+  // Progress Calculations
   const totalQuestionsAllSections = sections.reduce((acc, s) => acc + s.questions.length, 0);
   const answeredCountAll = Object.keys(answers).length;
+  const progressPercent = Math.round((answeredCountAll / Math.max(1, totalQuestionsAllSections)) * 100);
+
+  // Visual Block Progress Indicator (e.g. ■■■■□□□□)
+  const renderVisualBlocks = () => {
+    const totalBlocks = 8;
+    const filledBlocks = Math.round((progressPercent / 100) * totalBlocks);
+    return '■'.repeat(filledBlocks) + '□'.repeat(totalBlocks - filledBlocks);
+  };
+
+  // Question Matrix Item Render Helper
+  const renderQuestionMatrix = () => (
+    <div className="grid grid-cols-5 gap-2">
+      {currentQuestions.map((q, idx) => {
+        const isCurrent = idx === currentQuestionIdx;
+        const isAnswered = !!answers[q.id];
+        const isFlagged = flagged.has(q.id);
+
+        let bgClass = 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700';
+        if (isCurrent) bgClass = 'bg-sky-500 border-sky-400 text-slate-950 font-bold';
+        else if (isAnswered) bgClass = 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400';
+        if (isFlagged && !isCurrent) bgClass = 'bg-amber-500/20 border-amber-500/40 text-amber-400';
+
+        return (
+          <button
+            key={q.id}
+            onClick={() => {
+              setCurrentQuestionIdx(idx);
+              setPaletteOpenMobile(false);
+            }}
+            className={`min-h-11 h-10 rounded-xl border text-xs font-mono transition-all flex items-center justify-center relative touch-target ${bgClass}`}
+          >
+            {idx + 1}
+            {isFlagged && (
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 border border-slate-900" />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
 
   if (!sectionStarted) {
     return (
-      <div className="max-w-4xl mx-auto p-8 bg-slate-900 border border-slate-800 rounded-2xl text-white space-y-6">
+      <div className="max-w-4xl mx-auto p-6 md:p-8 bg-slate-900 border border-slate-800 rounded-2xl text-white space-y-6">
         <div className="flex justify-between items-center border-b border-slate-800 pb-4">
           <div>
             <span className="text-xs uppercase font-bold text-sky-400 tracking-wider">
               {examType} Diagnostic • Section {currentSectionIdx + 1} of {sections.length}
             </span>
-            <h1 className="text-2xl font-bold text-white mt-1">{currentSection.name}</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-white mt-1">{currentSection.name}</h1>
           </div>
           <div className="px-3 py-1 bg-slate-800 rounded-full text-xs font-semibold text-slate-300">
-            ⏱ {currentSection.timeLimitMinutes} minutes
+            ⏱ {currentSection.timeLimitMinutes} mins
           </div>
         </div>
 
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800/80 space-y-4">
-          <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wide">
+        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4">
+          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
             Section Instructions
           </h2>
-          <p className="text-slate-300 leading-relaxed">{currentSection.instructions}</p>
-          <ul className="text-xs text-slate-400 space-y-2 list-disc list-inside">
-            <li>Ensure your audio and input peripherals are connected.</li>
-            <li>Questions in this section carry equal weight toward section placement.</li>
-            <li>Autosave is enabled throughout your evaluation.</li>
-          </ul>
+          <p className="text-sm text-slate-300 leading-relaxed">{currentSection.instructions}</p>
         </div>
 
         <button
           onClick={() => setSectionStarted(true)}
-          className="w-full py-4 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl text-base transition-colors shadow-lg shadow-sky-500/20"
+          className="w-full min-h-12 py-4 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl text-base transition-colors shadow-lg shadow-sky-500/20"
         >
           Begin {currentSection.name} Section →
         </button>
@@ -222,139 +293,145 @@ export function AssessmentPlayerScreen({
   }
 
   return (
-    <div className="max-w-6xl mx-auto bg-slate-950 min-h-screen text-white flex flex-col font-sans">
+    <div className="max-w-7xl mx-auto bg-slate-950 min-h-screen text-white flex flex-col font-sans">
       {/* Top Header Bar */}
-      <header className="px-6 py-4 bg-slate-900 border-b border-slate-800 flex justify-between items-center sticky top-0 z-30">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-sm font-bold text-white">{title}</h1>
-          <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
+      <header className="px-4 md:px-6 py-3 bg-slate-900 border-b border-slate-800 flex justify-between items-center sticky top-0 z-30 shadow-sm">
+        <div className="flex items-center space-x-3">
+          <h1 className="text-xs md:text-sm font-bold text-white truncate max-w-35 sm:max-w-none">{title}</h1>
+          <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
             {currentSection.name}
           </span>
         </div>
 
-        {/* Section Tabs */}
-        <div className="hidden md:flex space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
-          {sections.map((sec, idx) => (
-            <button
-              key={sec.id}
-              onClick={() => {
-                if (idx <= currentSectionIdx) {
-                  setCurrentSectionIdx(idx);
-                  setCurrentQuestionIdx(0);
-                }
-              }}
-              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                idx === currentSectionIdx
-                  ? 'bg-sky-500 text-slate-950 font-bold'
-                  : idx < currentSectionIdx
-                  ? 'text-emerald-400 hover:bg-slate-900'
-                  : 'text-slate-500 cursor-not-allowed'
-              }`}
-            >
-              {sec.name}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center space-x-4">
-          <div className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-lg border border-amber-500/20">
-            ⏱ {formatTime(secondsRemaining)}
+        {/* Dynamic Color-Shift Timer & Autosave Status */}
+        <div className="flex items-center space-x-3">
+          {/* Autosave Status Pill */}
+          <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-400">
+            {saveState === 'saving' && (
+              <>
+                <RefreshCw size={12} className="animate-spin text-sky-400" />
+                <span>Saving...</span>
+              </>
+            )}
+            {saveState === 'saved' && (
+              <>
+                <Wifi size={12} className="text-emerald-400" />
+                <span className="text-emerald-400 font-semibold">Saved</span>
+              </>
+            )}
+            {saveState === 'offline' && (
+              <>
+                <WifiOff size={12} className="text-rose-400 animate-pulse" />
+                <span className="text-rose-400 font-semibold">Offline</span>
+              </>
+            )}
           </div>
+
+          {/* Color shifting timer pill */}
+          <div className={`px-3 py-1.5 rounded-lg border text-xs font-mono font-bold flex items-center space-x-1.5 transition-all ${getTimerStyles()}`}>
+            <Clock size={14} />
+            <span>⏱ {formatTime(secondsRemaining)}</span>
+          </div>
+
+          {/* Mobile Palette Drawer Trigger Button */}
+          <button
+            onClick={() => setPaletteOpenMobile(true)}
+            className="lg:hidden p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white min-h-11 touch-target"
+            aria-label="Open Question Palette"
+          >
+            <Grid size={18} />
+          </button>
+
           <button
             onClick={() => setConfirmOpen(true)}
-            className="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-lg transition-colors"
+            className="hidden sm:inline-flex px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-lg transition-colors min-h-10 items-center"
           >
             Submit Diagnostic
           </button>
         </div>
       </header>
 
-      {/* Main Question Runner Layout */}
-      <div className="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-6xl w-full mx-auto">
-        {/* Left Side: Question Content */}
-        <main className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+      {/* Main Single-Component Layout */}
+      <div className="flex-1 p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl w-full mx-auto pb-24 md:pb-6">
+        {/* Left / Primary Column: Question Container */}
+        <main className="lg:col-span-8 bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-6 flex flex-col justify-between shadow-lg">
           <div>
-            <div className="flex justify-between items-center mb-4">
+            {/* Top Question Header Bar */}
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-slate-800/80">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                 Question {currentQuestionIdx + 1} of {currentQuestions.length}
               </span>
               <button
                 onClick={() => currentQuestion && toggleFlag(currentQuestion.id)}
-                className={`text-xs font-semibold px-2.5 py-1 rounded-md border ${
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all flex items-center space-x-1.5 min-h-11 touch-target ${
                   currentQuestion && flagged.has(currentQuestion.id)
                     ? 'bg-amber-500/20 border-amber-500 text-amber-400'
                     : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
                 }`}
               >
-                🚩 {currentQuestion && flagged.has(currentQuestion.id) ? 'Flagged' : 'Flag for Review'}
+                <Flag size={14} />
+                <span>{currentQuestion && flagged.has(currentQuestion.id) ? 'Flagged' : 'Flag'}</span>
               </button>
             </div>
 
-            {/* Reading Passage Panel (if present) */}
+            {/* Passage Content (if present) */}
             {currentQuestion?.passageContent && (
-              <div className="mb-6 bg-slate-950 p-4 rounded-xl border border-slate-800 max-h-48 overflow-y-auto">
+              <div className="mb-5 bg-slate-950 p-4 rounded-xl border border-slate-800 max-h-56 overflow-y-auto">
                 <h4 className="text-xs font-bold text-sky-400 uppercase tracking-wide mb-2">
                   📖 {currentQuestion.passageTitle || 'Reading Passage'}
                 </h4>
-                <p className="text-xs text-slate-300 leading-relaxed whitespace-pre-line">
+                <p className="text-xs md:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
                   {currentQuestion.passageContent}
                 </p>
               </div>
             )}
 
-            {/* Listening Audio Track (if present) */}
-            {currentQuestion?.audioUrl && (
-              <div className="mb-6 bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center space-x-4">
-                <span className="text-lg">🎧</span>
-                <audio controls src={currentQuestion.audioUrl} className="w-full" />
-              </div>
-            )}
-
             {/* Question Prompt */}
-            <h3 className="text-base font-semibold text-white mb-6 leading-relaxed">
+            <h2 className="text-sm md:text-base font-semibold text-white mb-6 leading-relaxed">
               {currentQuestion?.prompt}
-            </h3>
+            </h2>
 
             {/* MCQ Options */}
             {currentQuestion?.options && currentQuestion.options.length > 0 && (
               <div className="space-y-3">
                 {currentQuestion.options.map((opt) => {
-                  const isSelected =
-                    answers[currentQuestion.id]?.selectedOptionCode === opt.code;
+                  const isSelected = answers[currentQuestion.id]?.selectedOptionCode === opt.code;
                   return (
                     <button
                       key={opt.code}
                       onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
-                      className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between ${
+                      className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
                         isSelected
                           ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
                           : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
                       }`}
                     >
-                      <span className="text-sm flex items-center space-x-3">
+                      <span className="text-xs md:text-sm flex items-center space-x-3">
                         <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
                           {opt.code}
                         </span>
                         <span>{opt.text}</span>
                       </span>
-                      {isSelected && <span className="text-sky-400 text-sm">✓</span>}
+                      {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
                     </button>
                   );
                 })}
               </div>
             )}
 
-            {/* Writing Response Textarea */}
+            {/* Essay Input Textarea */}
             {(currentQuestion?.itemType === 'ESSAY' || currentSection.code.includes('WRITING')) && (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <textarea
                   rows={8}
                   value={answers[currentQuestion?.id || '']?.textResponse || ''}
                   onChange={(e) => currentQuestion && handleTextChange(currentQuestion.id, e.target.value)}
-                  placeholder="Type your essay response here..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-200 focus:outline-none focus:border-sky-500"
+                  placeholder="Type your response here..."
+                  inputMode="text"
+                  enterKeyHint="enter"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500"
                 />
-                <div className="text-right text-xs text-slate-400 font-mono">
+                <div className="text-right text-[11px] text-slate-400 font-mono">
                   Word Count:{' '}
                   {(answers[currentQuestion?.id || '']?.textResponse || '')
                     .trim()
@@ -363,116 +440,56 @@ export function AssessmentPlayerScreen({
                 </div>
               </div>
             )}
-
-            {/* Speaking Cue Card & Microphone Audio Recorder */}
-            {(currentQuestion?.itemType === 'SPEAKING_PROMPT' || currentSection.code.includes('SPEAKING')) && (
-              <div className="space-y-4">
-                {currentQuestion?.cueCardPoints && (
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <h4 className="text-xs font-bold text-amber-400 mb-2 uppercase tracking-wide">
-                      Cue Card Topic & Points:
-                    </h4>
-                    <ul className="list-disc list-inside text-xs text-slate-300 space-y-1">
-                      {currentQuestion.cueCardPoints.map((pt, idx) => (
-                        <li key={idx}>{pt}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <SpeakingAudioRecorder
-                  questionId={currentQuestion?.id || ''}
-                  existingAudioUrl={answers[currentQuestion?.id || '']?.audioBlobUrl}
-                  onAudioRecorded={(audioUrl) => {
-                    if (!currentQuestion) return;
-                    setAnswers((prev) => ({
-                      ...prev,
-                      [currentQuestion.id]: {
-                        ...prev[currentQuestion.id],
-                        audioBlobUrl: audioUrl,
-                        sectionCode: currentSection.name,
-                      },
-                    }));
-                    autosaveResponse(currentQuestion.id, {
-                      audioBlobUrl: audioUrl,
-                      sectionCode: currentSection.name,
-                    });
-                  }}
-                />
-              </div>
-            )}
           </div>
 
-          {/* Question Navigation Controls */}
-          <div className="flex justify-between items-center border-t border-slate-800 pt-6 mt-8">
+          {/* Desktop & Tablet Bottom Navigation Controls */}
+          <div className="hidden md:flex justify-between items-center border-t border-slate-800 pt-5 mt-6">
             <button
               onClick={() => setCurrentQuestionIdx((prev) => Math.max(0, prev - 1))}
               disabled={currentQuestionIdx === 0}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 text-xs font-semibold rounded-lg transition-colors"
+              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-300 text-xs font-semibold rounded-xl transition-colors min-h-11 flex items-center space-x-2"
             >
-              ← Previous Question
+              <ArrowLeft size={16} />
+              <span>Previous</span>
             </button>
 
             {currentQuestionIdx < currentQuestions.length - 1 ? (
               <button
                 onClick={() => setCurrentQuestionIdx((prev) => prev + 1)}
-                className="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold rounded-lg transition-colors"
+                className="px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold rounded-xl transition-colors min-h-11 flex items-center space-x-2 shadow-md shadow-sky-500/20"
               >
-                Next Question →
+                <span>Next Question</span>
+                <ArrowRight size={16} />
               </button>
             ) : (
               <button
                 onClick={handleNextSection}
-                className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-lg transition-colors"
+                className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl transition-colors min-h-11 flex items-center space-x-2 shadow-md shadow-emerald-500/20"
               >
-                Complete {currentSection.name} →
+                <span>Complete Section</span>
+                <ArrowRight size={16} />
               </button>
             )}
           </div>
         </main>
 
-        {/* Right Side: Section Question Matrix */}
-        <aside className="lg:col-span-4 space-y-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
+        {/* Desktop / Tablet Right Side Panel: Question Matrix & Visual Progress */}
+        <aside className="hidden lg:block lg:col-span-4 space-y-5">
+          {/* Question Palette Box */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-lg">
             <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wide">
-              {currentSection.name} Questions
+              {currentSection.name} Question Matrix
             </h3>
-            <div className="grid grid-cols-5 gap-2">
-              {currentQuestions.map((q, idx) => {
-                const isCurrent = idx === currentQuestionIdx;
-                const isAnswered = !!answers[q.id];
-                const isFlagged = flagged.has(q.id);
-
-                let bgClass = 'bg-slate-950 border-slate-800 text-slate-400';
-                if (isCurrent) bgClass = 'bg-sky-500 border-sky-400 text-slate-950 font-bold';
-                else if (isAnswered) bgClass = 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400';
-                if (isFlagged && !isCurrent) bgClass = 'bg-amber-500/20 border-amber-500/40 text-amber-400';
-
-                return (
-                  <button
-                    key={q.id}
-                    onClick={() => setCurrentQuestionIdx(idx)}
-                    className={`h-9 rounded-lg border text-xs font-mono transition-all flex items-center justify-center relative ${bgClass}`}
-                  >
-                    {idx + 1}
-                    {isFlagged && (
-                      <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+            {renderQuestionMatrix()}
           </div>
 
-          {/* Diagnostic Progress Summary */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide">Overall Progress</h4>
-            <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
-              <div
-                className="bg-sky-500 h-full transition-all duration-300"
-                style={{
-                  width: `${(answeredCountAll / Math.max(1, totalQuestionsAllSections)) * 100}%`,
-                }}
-              />
+          {/* Visual Progress Box */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-lg">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide">
+              Overall Progress
+            </h4>
+            <div className="font-mono text-sm font-bold text-sky-400 tracking-wider">
+              {renderVisualBlocks()} <span className="text-xs text-white">({progressPercent}%)</span>
             </div>
             <div className="flex justify-between text-xs text-slate-400 font-mono">
               <span>Answered: {answeredCountAll}</span>
@@ -482,163 +499,89 @@ export function AssessmentPlayerScreen({
         </aside>
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Sticky Bottom Action Bar for Mobile (<768px) */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 p-3 flex items-center justify-between shadow-2xl">
+        <button
+          onClick={() => setCurrentQuestionIdx((prev) => Math.max(0, prev - 1))}
+          disabled={currentQuestionIdx === 0}
+          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 text-slate-300 text-xs font-semibold rounded-xl min-h-11 flex items-center space-x-1"
+        >
+          <ArrowLeft size={16} />
+          <span>Prev</span>
+        </button>
+
+        <button
+          onClick={() => setPaletteOpenMobile(true)}
+          className="px-3 py-2 bg-slate-950 border border-slate-800 text-sky-400 text-xs font-mono font-bold rounded-xl min-h-11 flex items-center space-x-1"
+        >
+          <span>Q{currentQuestionIdx + 1}/{currentQuestions.length}</span>
+          <Grid size={14} />
+        </button>
+
+        {currentQuestionIdx < currentQuestions.length - 1 ? (
+          <button
+            onClick={() => setCurrentQuestionIdx((prev) => prev + 1)}
+            className="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold rounded-xl min-h-11 flex items-center space-x-1 shadow-md shadow-sky-500/20"
+          >
+            <span>Next</span>
+            <ArrowRight size={16} />
+          </button>
+        ) : (
+          <button
+            onClick={handleNextSection}
+            className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl min-h-11 flex items-center space-x-1 shadow-md shadow-emerald-500/20"
+          >
+            <span>Submit</span>
+            <ArrowRight size={16} />
+          </button>
+        )}
+      </div>
+
+      {/* Mobile Native Bottom Sheet for Question Palette */}
+      <BottomSheet
+        isOpen={paletteOpenMobile}
+        onClose={() => setPaletteOpenMobile(false)}
+        title={`${currentSection.name} — Question Palette`}
+      >
+        <div className="space-y-4">
+          {renderQuestionMatrix()}
+
+          <div className="pt-3 border-t border-slate-800 space-y-2">
+            <div className="text-xs font-mono text-sky-400 font-bold">
+              Progress: {renderVisualBlocks()} ({progressPercent}%)
+            </div>
+            <div className="flex justify-between text-xs text-slate-400 font-mono">
+              <span>Answered: {answeredCountAll}</span>
+              <span>Total Questions: {totalQuestionsAllSections}</span>
+            </div>
+          </div>
+        </div>
+      </BottomSheet>
+
+      {/* Submission Modal */}
       {confirmOpen && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
             <h3 className="text-lg font-bold text-white">Submit Diagnostic Assessment?</h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              You have answered {answeredCountAll} of {totalQuestionsAllSections} questions across all 5 sections. Submitting will complete your diagnostic attempt and compute your placement outcome.
+              You have completed {answeredCountAll} of {totalQuestionsAllSections} questions. Submitting will compute your placement assessment outcome.
             </p>
             <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
               <button
                 onClick={() => setConfirmOpen(false)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-lg"
+                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl min-h-11"
               >
                 Return to Test
               </button>
               <button
                 onClick={handleSubmitFinal}
                 disabled={isSubmitting}
-                className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-lg"
+                className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl min-h-11"
               >
                 {isSubmitting ? 'Submitting...' : 'Confirm Submission'}
               </button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-interface SpeakingAudioRecorderProps {
-  questionId: string;
-  existingAudioUrl?: string;
-  onAudioRecorded: (audioUrl: string) => void;
-}
-
-function SpeakingAudioRecorder({
-  questionId,
-  existingAudioUrl,
-  onAudioRecorded,
-}: SpeakingAudioRecorderProps) {
-  const [recording, setRecording] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(existingAudioUrl || null);
-  const [recordTime, setRecordTime] = useState(0);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [micError, setMicError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let timer: any;
-    if (recording) {
-      timer = setInterval(() => setRecordTime((t) => t + 1), 1000);
-    } else {
-      setRecordTime(0);
-    }
-    return () => clearInterval(timer);
-  }, [recording]);
-
-  async function startRecording() {
-    setMicError(null);
-    try {
-      if (!navigator?.mediaDevices?.getUserMedia) {
-        throw new Error('MediaDevices microphone API is not supported in this browser context.');
-      }
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      const chunks: Blob[] = [];
-
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunks.push(e.data);
-      };
-
-      recorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        try {
-          const formData = new FormData();
-          formData.append('file', blob, `speaking-${questionId}-${Date.now()}.webm`);
-
-          const uploadRes = await fetch('/api/v1/media/upload', {
-            method: 'POST',
-            body: formData,
-          });
-          const uploadData = await uploadRes.json();
-          const permanentUrl = uploadData.mediaUrl || URL.createObjectURL(blob);
-
-          setAudioUrl(permanentUrl);
-          onAudioRecorded(permanentUrl);
-        } catch {
-          const fallbackUrl = URL.createObjectURL(blob);
-          setAudioUrl(fallbackUrl);
-          onAudioRecorded(fallbackUrl);
-        } finally {
-          stream.getTracks().forEach((track) => track.stop());
-        }
-      };
-
-      recorder.start(200);
-      setMediaRecorder(recorder);
-      setRecording(true);
-    } catch (err: any) {
-      setMicError(err.message || 'Microphone access denied or unavailable.');
-    }
-  }
-
-  function stopRecording() {
-    if (mediaRecorder && recording) {
-      mediaRecorder.stop();
-      setRecording(false);
-    }
-  }
-
-  return (
-    <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 text-center space-y-4">
-      <div className="flex justify-center items-center space-x-3">
-        <div className="w-12 h-12 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center text-xl">
-          🎙️
-        </div>
-      </div>
-
-      <div className="text-xs text-slate-300 font-semibold">
-        {recording ? (
-          <span className="text-amber-400 font-mono animate-pulse">
-            🔴 Recording Oral Response: {recordTime}s
-          </span>
-        ) : audioUrl ? (
-          <span className="text-emerald-400 font-semibold">✓ Oral Response Audio Recorded</span>
-        ) : (
-          <span>Microphone MediaRecorder Ready</span>
-        )}
-      </div>
-
-      {micError && (
-        <div className="text-xs text-rose-400 bg-rose-500/10 p-2.5 rounded-lg border border-rose-500/20">
-          ⚠️ {micError}
-        </div>
-      )}
-
-      <div className="flex justify-center space-x-3">
-        {!recording ? (
-          <button
-            onClick={startRecording}
-            className="px-5 py-2.5 bg-rose-500 hover:bg-rose-400 text-slate-950 text-xs font-bold rounded-xl transition-colors shadow-lg shadow-rose-500/20"
-          >
-            ● Record Oral Response
-          </button>
-        ) : (
-          <button
-            onClick={stopRecording}
-            className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl transition-colors"
-          >
-            ■ Stop & Save Recording
-          </button>
-        )}
-      </div>
-
-      {audioUrl && (
-        <div className="pt-3 border-t border-slate-900 flex justify-center">
-          <audio controls src={audioUrl} className="max-w-md w-full" />
         </div>
       )}
     </div>

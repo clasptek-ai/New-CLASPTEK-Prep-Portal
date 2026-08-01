@@ -9,41 +9,14 @@ export interface AuthShellProps {
 
 export function AuthShell({ title, subtitle, children }: AuthShellProps) {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        width: '100vw',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'var(--bg-app, #0f172a)',
-        padding: '1.5rem',
-        boxSizing: 'border-box',
-      }}
-    >
-      <Card
-        style={{
-          width: '100%',
-          maxWidth: '440px',
-          padding: '2.25rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.25rem',
-        }}
-      >
-        <div style={{ textAlign: 'center' }}>
-          <h2
-            style={{
-              margin: '0 0 0.35rem 0',
-              fontSize: '1.5rem',
-              fontWeight: 800,
-              color: 'var(--text-primary, #f8fafc)',
-            }}
-          >
+    <div className="min-h-screen w-full flex items-center justify-center bg-slate-950 p-4 sm:p-6 font-sans">
+      <Card className="w-full max-w-md p-6 sm:p-8 flex flex-col gap-5 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl cq-container">
+        <div className="text-center">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
             {title}
-          </h2>
+          </h1>
           {subtitle && (
-            <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-secondary, #cbd5e1)' }}>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1.5 leading-relaxed">
               {subtitle}
             </p>
           )}

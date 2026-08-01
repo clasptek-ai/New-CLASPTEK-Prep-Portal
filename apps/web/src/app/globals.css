@@ -90,11 +90,42 @@
   --z-tooltip: 1100;
 
   /* Dimensions */
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  /* Dimensions & Spacing Scale Tokens */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Semantic Responsive Tokens */
+  --spacing-page: var(--space-6);
+  --spacing-section: var(--space-8);
+  --spacing-card: var(--space-4);
+  --spacing-input: var(--space-3);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
   --icon-size-md: 18px;
   --active-indicator-width: 3px;
+
+  /* Accessible Touch & Layout Standards */
+  --touch-target-min: 44px;
+}
+
+/* Fluid Responsive Typography Scale */
+@media (max-width: 767px) {
+  :root {
+    --spacing-page: var(--space-4);
+    --spacing-section: var(--space-6);
+    --spacing-card: var(--space-3);
+    --text-heading-xl: 1.4rem;
+    --text-heading-l: 1.2rem;
+    --text-heading-m: 1.0rem;
+  }
 }
 
 body {
@@ -105,6 +136,28 @@ body {
   padding: 0;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Accessible Focus Ring */
+*:focus-visible {
+  outline: 2px solid var(--primary-400);
+  outline-offset: 2px;
+}
+
+/* Touch-optimized Interactive Targets */
+.touch-target {
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container Query Wrappers */
+.cq-container {
+  container-type: inline-size;
+  width: 100%;
 }
 
 a {
@@ -135,7 +188,7 @@ a:hover {
 
 .shell-main {
   flex: 1;
-  padding: 2rem;
+  padding: var(--spacing-page);
   max-width: 1440px;
   margin: 0 auto;
   width: 100%;
@@ -146,7 +199,7 @@ a:hover {
   background-color: var(--bg-surface-0);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
-  padding: 1.25rem;
+  padding: var(--spacing-card);
   box-shadow: var(--shadow-surface);
   transition: border-color var(--transition-fast);
 }
@@ -158,13 +211,18 @@ a:hover {
 .btn {
   background-color: var(--primary-500);
   color: #ffffff;
-  padding: 0.5rem 1rem;
+  min-height: var(--touch-target-min);
+  padding: 0.6rem 1.25rem;
   border: none;
   border-radius: var(--radius-md);
   font-weight: 600;
   font-size: var(--text-body);
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .btn:hover {
@@ -174,3 +232,4 @@ a:hover {
 .btn:active {
   transform: scale(0.98);
 }
+
