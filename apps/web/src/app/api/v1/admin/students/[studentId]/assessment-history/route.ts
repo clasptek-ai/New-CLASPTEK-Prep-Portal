@@ -35,19 +35,15 @@ export async function GET(
     const studentId = decodeURIComponent(rawStudentId || '').trim();
 
     if (!studentId) {
-      return NextResponse.json(
-        { success: false, error: 'Student ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Student ID is required' }, { status: 400 });
     }
 
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
 
     // 1. Fetch student info from auth.users, profiles, or public.users
-    const studentInfoQuery = await pool
-      .query(
-        `SELECT 
+    const studentInfoQuery = await pool.query(
+      `SELECT 
         au.id as auth_id,
         au.email,
         COALESCE(p.first_name || ' ' || p.last_name, au.raw_user_meta_data->>'first_name', split_part(au.email, '@', 1)) as name,
@@ -59,9 +55,8 @@ export async function GET(
           OR p.id::text = $1
           OR p.user_id::text = $1
        LIMIT 1`,
-        [studentId]
-      )
-      .catch(() => null);
+      [studentId]
+    ).catch(() => null);
 
     const studentRecord = studentInfoQuery?.rows?.[0] || {
       auth_id: studentId,
@@ -76,9 +71,9 @@ export async function GET(
         att.id AS attempt_id,
         att.student_id,
         att.catalog_id AS assessment_id,
-        COALESCE(cat.title, att.exam_type, 'English Proficiency Diagnostic Assessment') AS assessment_title,
+        COALESCE(ad.title, 'English Proficiency Diagnostic Assessment') AS assessment_title,
         COALESCE(res.assessment_category, 'DIAGNOSTIC') AS category,
-        COALESCE(res.exam_type, att.exam_type, 'English Proficiency') AS exam_type,
+        COALESCE(ad.exam_type, 'English Proficiency') AS exam_type,
         att.status,
         COALESCE(res.overall_score, att.score, 0) AS score,
         COALESCE(res.cefr_level, 'B1') AS cefr,
@@ -90,7 +85,7 @@ export async function GET(
         COALESCE(res.time_taken_seconds, 2700) / 60 AS duration_minutes,
         att.created_at AS started_at
       FROM public.assessment_attempts att
-      LEFT JOIN public.assessment_catalogs cat ON att.catalog_id = cat.id
+      LEFT JOIN public.assessment_definitions ad ON att.catalog_id = ad.id
       LEFT JOIN public.assessment_results res ON att.id = res.attempt_id
       LEFT JOIN public.profiles p ON (att.student_id::text = p.id::text OR att.student_id::text = p.user_id::text)
       LEFT JOIN auth.users au ON (att.student_id::text = au.id::text OR p.user_id = au.id)
@@ -111,9 +106,9 @@ export async function GET(
           att.id AS attempt_id,
           att.student_id,
           att.catalog_id AS assessment_id,
-          COALESCE(cat.title, att.exam_type, 'English Proficiency Diagnostic Assessment') AS assessment_title,
+          COALESCE(ad.title, 'English Proficiency Diagnostic Assessment') AS assessment_title,
           COALESCE(res.assessment_category, 'DIAGNOSTIC') AS category,
-          COALESCE(res.exam_type, att.exam_type, 'English Proficiency') AS exam_type,
+          COALESCE(ad.exam_type, 'English Proficiency') AS exam_type,
           att.status,
           COALESCE(res.overall_score, att.score, 0) AS score,
           COALESCE(res.cefr_level, 'B1') AS cefr,
@@ -125,7 +120,7 @@ export async function GET(
           COALESCE(res.time_taken_seconds, 2700) / 60 AS duration_minutes,
           att.created_at AS started_at
         FROM public.assessment_attempts att
-        LEFT JOIN public.assessment_catalogs cat ON att.catalog_id = cat.id
+        LEFT JOIN public.assessment_definitions ad ON att.catalog_id = ad.id
         LEFT JOIN public.assessment_results res ON att.id = res.attempt_id
         ORDER BY att.created_at DESC
         LIMIT 10`
