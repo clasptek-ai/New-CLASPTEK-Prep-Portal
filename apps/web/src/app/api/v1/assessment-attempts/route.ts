@@ -67,12 +67,7 @@ export async function GET(req: NextRequest) {
 
 /**
  * POST /api/v1/assessment-attempts
- *
- * RC1 Production Hardening:
- * - All writes wrapped in a single PostgreSQL transaction (BEGIN/COMMIT/ROLLBACK)
- * - Snapshot includes correctOptionCode for every MCQ question for offline scoring
- * - Active attempt resume check prevents duplicate attempt creation
- * - Returns idempotent response if active attempt exists
+ * Creates a brand new assessment attempt and generates a complete, frozen paper snapshot
  */
 export async function POST(req: NextRequest) {
   const requestId = randomUUID();
@@ -156,7 +151,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // 3. Idempotency: return existing active attempt (prevents double-start on rapid clicks)
+      // 3. Idempotency: return existing active attempt if IN_PROGRESS
       const activeRes = await client.query(
         `SELECT id, started_at, expires_at FROM public.assessment_attempts
          WHERE student_id = $1
@@ -178,7 +173,7 @@ export async function POST(req: NextRequest) {
             startedAt: active.started_at,
             expiresAt: active.expires_at,
           },
-          attemptId: active.id, // Backward-compat top-level fallback
+          attemptId: active.id,
           meta: { timestamp: new Date().toISOString(), version: 1, requestId },
         });
       }
@@ -220,7 +215,7 @@ export async function POST(req: NextRequest) {
       }
 
       // 5. Generate immutable paper snapshot with correctOptionCode for each MCQ
-      // Grammar questions: balanced by proficiency_level (FOUNDATION/INTERMEDIATE/ADVANCED)
+      // Fetch 30 level-balanced Grammar questions
       const grammarRes = await client.query(`
         WITH foundation_q AS (
           SELECT q.id as question_id, q.code, qv.id as version_id, qv.prompt,
@@ -268,7 +263,6 @@ export async function POST(req: NextRequest) {
         LIMIT 30
       `);
 
-      // Fetch answer options WITH is_correct flag for snapshot scoring support
       const qvIds = grammarRes.rows.map((r) => r.version_id);
       const optRes =
         qvIds.length > 0
@@ -281,12 +275,11 @@ export async function POST(req: NextRequest) {
             )
           : { rows: [] };
 
-      // Build option map and identify correct option per version
       const optionsByVersion = new Map<
         string,
         { code: string; text: string; isCorrect: boolean }[]
       >();
-      const correctByVersion = new Map<string, string>(); // version_id -> correct option_code
+      const correctByVersion = new Map<string, string>();
 
       optRes.rows.forEach((o) => {
         if (!optionsByVersion.has(o.question_version_id)) {
@@ -319,15 +312,14 @@ export async function POST(req: NextRequest) {
           section: 'Grammar',
           itemType: 'MCQ',
           proficiencyLevel: r.proficiency_level || 'INTERMEDIATE',
-          // Expose sanitized options (without isCorrect) for display; correctOptionCode stored separately
           options: opts.map((o) => ({ code: o.code, text: o.text })),
-          correctOptionCode: correctCode, // frozen in snapshot — scoring engine reads this
+          correctOptionCode: correctCode,
           marks: 1,
           order: i + 1,
         };
       });
 
-      // Reading passage with comprehension questions from DB
+      // Reading passage with ALL linked comprehension questions from DB
       const passageRes = await client.query(`
         SELECT id, code, title, content
         FROM public.reading_passages
@@ -336,86 +328,59 @@ export async function POST(req: NextRequest) {
       `);
       const passage = passageRes.rows[0] || null;
 
-      // Fetch comprehension questions for the reading passage if they exist
       let comprehensionQuestions: any[] = [];
       if (passage) {
-        const compRes = await client
-          .query(
-            `
-          SELECT q.id as question_id, qv.id as version_id, qv.prompt
-          FROM public.questions q
-          JOIN public.question_versions qv ON qv.question_id = q.id
-          WHERE q.deleted_at IS NULL
-            AND (qv.payload->>'passageId' = $1 OR qv.grammar_topic ILIKE '%reading%')
-          LIMIT 5
-        `,
-            [passage.id]
-          )
-          .catch(() => ({ rows: [] }));
+        const compRes = await client.query(
+          `SELECT q.id as question_id, q.code as question_code, qv.id as version_id, qv.prompt, qv.proficiency_level, qv.payload
+           FROM public.questions q
+           JOIN public.question_versions qv ON qv.question_id = q.id
+           WHERE q.deleted_at IS NULL
+             AND (qv.payload->>'passageCode' = $1 OR qv.payload->>'passageCode' = $2 OR q.code ILIKE $3)
+           ORDER BY q.code ASC`,
+          [passage.code, passage.id, `%${passage.code}%`]
+        );
 
         if (compRes.rows.length > 0) {
           const compVersionIds = compRes.rows.map((r: any) => r.version_id);
-          const compOptRes = await client
-            .query(
-              `SELECT question_version_id, option_code, option_text, is_correct, display_order
+          const compOptRes = await client.query(
+            `SELECT question_version_id, option_code, option_text, is_correct, display_order
              FROM public.answer_options
              WHERE question_version_id = ANY($1::uuid[])
              ORDER BY question_version_id, display_order ASC`,
-              [compVersionIds]
-            )
-            .catch(() => ({ rows: [] }));
+            [compVersionIds]
+          );
 
           const compOptsByVer = new Map<string, any[]>();
           const compCorrectByVer = new Map<string, string>();
           compOptRes.rows.forEach((o: any) => {
-            if (!compOptsByVer.has(o.question_version_id))
+            if (!compOptsByVer.has(o.question_version_id)) {
               compOptsByVer.set(o.question_version_id, []);
+            }
             compOptsByVer
               .get(o.question_version_id)!
               .push({ code: o.option_code, text: o.option_text });
-            if (o.is_correct) compCorrectByVer.set(o.question_version_id, o.option_code);
+            if (o.is_correct) {
+              compCorrectByVer.set(o.question_version_id, o.option_code);
+            }
           });
 
-          comprehensionQuestions = compRes.rows.map((r: any) => ({
-            id: r.question_id,
-            versionId: r.version_id,
-            prompt: r.prompt,
-            itemType: 'MCQ',
-            options: compOptsByVer.get(r.version_id) || [],
-            correctOptionCode: compCorrectByVer.get(r.version_id) || null,
-            marks: 1,
-          }));
+          comprehensionQuestions = compRes.rows.map((r: any, idx: number) => {
+            const opts = compOptsByVer.get(r.version_id) || [];
+            const correctCode = compCorrectByVer.get(r.version_id) || opts[0]?.code || 'A';
+            return {
+              id: r.question_id,
+              versionId: r.version_id,
+              code: r.question_code || `ENG-READ-${(idx + 1).toString().padStart(2, '0')}`,
+              prompt: r.prompt,
+              proficiencyLevel: r.proficiency_level || 'INTERMEDIATE',
+              itemType: 'MCQ',
+              options: opts,
+              correctOptionCode: correctCode,
+              marks: 1,
+              order: idx + 1,
+            };
+          });
         }
-      }
-
-      // Fallback comprehension question if no DB-sourced ones
-      if (comprehensionQuestions.length === 0 && passage) {
-        comprehensionQuestions = [
-          {
-            id: `comp-${passage.id}`,
-            versionId: `compv-${passage.id}`,
-            prompt:
-              'Based on the passage, which statement best reflects the primary argument presented by the author?',
-            itemType: 'MCQ',
-            options: [
-              {
-                code: 'A',
-                text: 'Renewable energy infrastructure reduces long-term operational emissions.',
-              },
-              {
-                code: 'B',
-                text: 'Urban planning eliminates the need for public transportation entirely.',
-              },
-              {
-                code: 'C',
-                text: 'Traditional building materials are superior to modern alternatives.',
-              },
-              { code: 'D', text: 'Environmental regulation slows technological advancement.' },
-            ],
-            correctOptionCode: 'A',
-            marks: 1,
-          },
-        ];
       }
 
       const readingSnapshot = passage
@@ -478,7 +443,7 @@ export async function POST(req: NextRequest) {
         },
       };
 
-      // 6. Atomic attempt creation — all writes inside the same transaction
+      // 6. Atomic attempt creation
       const attemptId = randomUUID();
 
       await client.query(
@@ -508,13 +473,13 @@ export async function POST(req: NextRequest) {
             requestId,
             assessmentId: definition.id,
             durationMinutes: durationMins,
-            questionCount: grammarSnapshot.length,
+            grammarCount: grammarSnapshot.length,
+            readingQuestionCount: comprehensionQuestions.length,
             snapshotVersion: 1,
           }),
         ]
       );
 
-      // COMMIT — both writes succeed atomically or neither does
       await client.query('COMMIT');
 
       return NextResponse.json(
@@ -527,7 +492,7 @@ export async function POST(req: NextRequest) {
             expiresAt: expiresAt.toISOString(),
             durationMinutes: durationMins,
           },
-          attemptId, // Backward-compat top-level fallback
+          attemptId,
           meta: { timestamp: now.toISOString(), version: 1, requestId },
         },
         { status: 201 }

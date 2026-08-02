@@ -8,7 +8,8 @@ import { randomUUID } from 'crypto';
 export async function POST(req: NextRequest) {
   try {
     const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    const studentId =
+      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
     if (!studentId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -19,10 +20,11 @@ export async function POST(req: NextRequest) {
 
     // 1. Resolve student target programme & active assigned diagnostic definition
     let studentProgramme = 'English Proficiency';
-    const profileRes = await pool.query(
-      `SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`,
-      [studentId]
-    ).catch(() => null);
+    const profileRes = await pool
+      .query(`SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`, [
+        studentId,
+      ])
+      .catch(() => null);
     if (profileRes && profileRes.rows.length > 0 && profileRes.rows[0].target_programme) {
       studentProgramme = profileRes.rows[0].target_programme;
     }
@@ -50,7 +52,11 @@ export async function POST(req: NextRequest) {
 
     if (!definition) {
       return NextResponse.json(
-        { success: false, error: 'NO_PUBLISHED_DIAGNOSTIC', message: 'No published diagnostic assessment found.' },
+        {
+          success: false,
+          error: 'NO_PUBLISHED_DIAGNOSTIC',
+          message: 'No published diagnostic assessment found.',
+        },
         { status: 404 }
       );
     }
@@ -102,7 +108,8 @@ export async function POST(req: NextRequest) {
           success: false,
           error: 'DIAGNOSTIC_INSUFFICIENT_INVENTORY',
           code: 'INSUFFICIENT_DIAGNOSTIC_INVENTORY',
-          message: 'The diagnostic assessment is temporarily unavailable due to insufficient question inventory.',
+          message:
+            'The diagnostic assessment is temporarily unavailable due to insufficient question inventory.',
           requirements: { grammar: 30, passages: 1, writing: 2 },
           available: { grammar: grammarCount, passages: passageCount, writing: writingCount },
         },
@@ -154,15 +161,20 @@ export async function POST(req: NextRequest) {
     `);
 
     const qvIds = grammarRes.rows.map((r) => r.version_id);
-    const optRes = qvIds.length > 0 ? await pool.query(
-      `SELECT question_version_id, option_code, option_text
+    const optRes =
+      qvIds.length > 0
+        ? await pool.query(
+            `SELECT question_version_id, option_code, option_text, is_correct
        FROM public.answer_options
        WHERE question_version_id = ANY($1::uuid[])
-       ORDER BY display_order ASC`,
-      [qvIds]
-    ) : { rows: [] };
+       ORDER BY question_version_id, display_order ASC`,
+            [qvIds]
+          )
+        : { rows: [] };
 
     const optionsByVersion = new Map<string, any[]>();
+    const correctByVersion = new Map<string, string>();
+
     optRes.rows.forEach((o) => {
       if (!optionsByVersion.has(o.question_version_id)) {
         optionsByVersion.set(o.question_version_id, []);
@@ -171,6 +183,9 @@ export async function POST(req: NextRequest) {
         code: o.option_code || 'A',
         text: o.option_text,
       });
+      if (o.is_correct) {
+        correctByVersion.set(o.question_version_id, o.option_code);
+      }
     });
 
     const grammarSnapshot = grammarRes.rows.map((r, i) => ({
@@ -185,16 +200,84 @@ export async function POST(req: NextRequest) {
         { code: 'C', text: 'Option C' },
         { code: 'D', text: 'Option D' },
       ],
+      correctOptionCode: correctByVersion.get(r.version_id) || 'B',
+      marks: 1,
+      order: i + 1,
     }));
 
-    // Fetch Reading Passage
+    // Fetch Reading Passage & linked comprehension questions
     const passageRes = await pool.query(`
       SELECT id, code, title, content
       FROM public.reading_passages
       WHERE status = 'published' OR status IS NOT NULL
       ORDER BY created_at DESC LIMIT 1
     `);
-    const readingSnapshot = passageRes.rows[0] || null;
+    const passage = passageRes.rows[0] || null;
+
+    let comprehensionQuestions: any[] = [];
+    if (passage) {
+      const compRes = await pool.query(
+        `SELECT q.id as question_id, q.code as question_code, qv.id as version_id, qv.prompt, qv.proficiency_level, qv.payload
+         FROM public.questions q
+         JOIN public.question_versions qv ON qv.question_id = q.id
+         WHERE q.deleted_at IS NULL
+           AND (qv.payload->>'passageCode' = $1 OR qv.payload->>'passageCode' = $2 OR q.code ILIKE $3)
+         ORDER BY q.code ASC`,
+        [passage.code, passage.id, `%${passage.code}%`]
+      );
+
+      if (compRes.rows.length > 0) {
+        const compVersionIds = compRes.rows.map((r: any) => r.version_id);
+        const compOptRes = await pool.query(
+          `SELECT question_version_id, option_code, option_text, is_correct, display_order
+           FROM public.answer_options
+           WHERE question_version_id = ANY($1::uuid[])
+           ORDER BY question_version_id, display_order ASC`,
+          [compVersionIds]
+        );
+
+        const compOptsByVer = new Map<string, any[]>();
+        const compCorrectByVer = new Map<string, string>();
+        compOptRes.rows.forEach((o: any) => {
+          if (!compOptsByVer.has(o.question_version_id)) {
+            compOptsByVer.set(o.question_version_id, []);
+          }
+          compOptsByVer
+            .get(o.question_version_id)!
+            .push({ code: o.option_code, text: o.option_text });
+          if (o.is_correct) {
+            compCorrectByVer.set(o.question_version_id, o.option_code);
+          }
+        });
+
+        comprehensionQuestions = compRes.rows.map((r: any, idx: number) => {
+          const opts = compOptsByVer.get(r.version_id) || [];
+          const correctCode = compCorrectByVer.get(r.version_id) || opts[0]?.code || 'A';
+          return {
+            id: r.question_id,
+            versionId: r.version_id,
+            code: r.question_code || `ENG-READ-${(idx + 1).toString().padStart(2, '0')}`,
+            prompt: r.prompt,
+            proficiencyLevel: r.proficiency_level || 'INTERMEDIATE',
+            itemType: 'MCQ',
+            options: opts,
+            correctOptionCode: correctCode,
+            marks: 1,
+            order: idx + 1,
+          };
+        });
+      }
+    }
+
+    const readingSnapshot = passage
+      ? {
+          id: passage.id,
+          code: passage.code,
+          title: passage.title,
+          content: passage.content,
+          comprehensionQuestions,
+        }
+      : null;
 
     // Fetch Writing Tasks
     const writingRes = await pool.query(`
@@ -227,7 +310,16 @@ export async function POST(req: NextRequest) {
       `INSERT INTO public.diagnostic_attempts (
         id, student_id, catalog_id, status, started_at, expires_at, duration_minutes, paper_snapshot, tenant_id, created_at, updated_at
       ) VALUES ($1, $2, $3, 'IN_PROGRESS', $4, $5, $6, $7, $8, $4, $4)`,
-      [attemptId, studentId, catalogId, now.toISOString(), expiresAt.toISOString(), durationMins, JSON.stringify(paperSnapshot), tenantId]
+      [
+        attemptId,
+        studentId,
+        catalogId,
+        now.toISOString(),
+        expiresAt.toISOString(),
+        durationMins,
+        JSON.stringify(paperSnapshot),
+        tenantId,
+      ]
     );
 
     return NextResponse.json(

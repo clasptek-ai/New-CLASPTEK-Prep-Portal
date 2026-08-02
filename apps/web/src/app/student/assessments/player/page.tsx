@@ -78,8 +78,7 @@ function AssessmentPlayerContent() {
           })
         );
 
-        // RC1 Phase 4: Reading questions served from snapshot — never hardcoded
-        // readingPassage.comprehensionQuestions is frozen at attempt creation time
+        // Map ALL child comprehension questions for the reading passage
         const readingCompQs: PlayerQuestion[] = (readingPassage?.comprehensionQuestions || []).map(
           (cq: any, cIdx: number) => ({
             id: cq.id || `comp-${cIdx}`,
@@ -93,10 +92,6 @@ function AssessmentPlayerContent() {
             sectionCode: 'READING',
           })
         );
-
-        // Maintain a single top-level readingQuestion reference for backward compat
-        const readingQuestion: PlayerQuestion | null =
-          readingPassage && readingCompQs.length > 0 ? readingCompQs[0] : null;
 
         const writingSectionQuestions: PlayerQuestion[] = (writingTasks || []).map(
           (w: any, idx: number) => ({
@@ -122,14 +117,15 @@ function AssessmentPlayerContent() {
           });
         }
 
-        if (readingQuestion) {
+        if (readingCompQs.length > 0) {
           canonicalSections.push({
             id: 'sec-reading',
             code: 'READING',
-            name: 'Reading Comprehension',
-            timeLimitMinutes: 10,
-            instructions: 'Read the passage carefully and analyze the core arguments.',
-            questions: [readingQuestion],
+            name: `Reading Comprehension (${readingCompQs.length} Items)`,
+            timeLimitMinutes: 15,
+            instructions:
+              'Read the passage carefully and answer all linked comprehension questions.',
+            questions: readingCompQs,
           });
         }
 
