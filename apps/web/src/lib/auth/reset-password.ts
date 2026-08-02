@@ -1,4 +1,3 @@
-import { authFetch } from '@/lib/api-fetch';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 export interface PasswordValidationResult {
@@ -41,41 +40,26 @@ export function validatePasswordStrength(password: string): PasswordValidationRe
   };
 }
 
+/**
+ * Updates the user's password using the active Supabase Auth recovery session directly.
+ */
 export async function updateUserPassword(
   newPassword: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = getSupabaseBrowserClient();
 
-    // 1. Primary: Direct Supabase Auth browser client password update
-    const { error: clientError } = await supabase.auth.updateUser({ password: newPassword });
+    // Call Supabase Auth browser client updateUser directly with the established recovery session
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
 
-    if (!clientError) {
-      return { success: true };
+    if (error) {
+      return {
+        success: false,
+        error: error.message || 'Failed to update password. Recovery session may be expired.',
+      };
     }
 
-    console.warn('Direct Supabase client updateUser warning:', clientError.message);
-
-    // 2. Fallback: Server API endpoint via authFetch with Bearer token
-    const res = await authFetch('/api/v1/auth/reset-password', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: newPassword }),
-    });
-
-    const data = await res.json().catch(() => ({}));
-
-    if (res.ok && data.success) {
-      return { success: true };
-    }
-
-    return {
-      success: false,
-      error:
-        clientError.message ||
-        data.message ||
-        'Failed to update password. Recovery session may be expired.',
-    };
+    return { success: true };
   } catch (err: unknown) {
     return { success: false, error: err instanceof Error ? err.message : String(err) };
   }

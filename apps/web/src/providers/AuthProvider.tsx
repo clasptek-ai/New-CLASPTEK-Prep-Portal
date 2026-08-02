@@ -67,7 +67,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           globalSessionCache = null;
         }
       } catch (err) {
-        console.warn('Session verification failed:', err);
         setSession(null);
         setUser(null);
         setRoles([]);
@@ -82,6 +81,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // Skip background session polling on public auth pages to prevent 401 console noise
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+      const isPublicAuthPage =
+        pathname.startsWith('/reset-password') ||
+        pathname.startsWith('/login') ||
+        pathname.startsWith('/register') ||
+        pathname.startsWith('/forgot-password') ||
+        pathname.startsWith('/auth/callback');
+
+      if (isPublicAuthPage && !globalSessionCache) {
+        setIsLoading(false);
+        return;
+      }
+    }
+
     fetchSession();
   }, [fetchSession]);
 
