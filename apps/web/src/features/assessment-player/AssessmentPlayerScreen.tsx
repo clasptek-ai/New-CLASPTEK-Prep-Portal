@@ -14,7 +14,6 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { BottomSheet } from '@/shared/ui/bottom-sheet/BottomSheet';
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { authFetch } from '@/lib/api-fetch';
 
@@ -63,8 +62,7 @@ export function AssessmentPlayerScreen({
   onComplete,
 }: AssessmentPlayerProps) {
   const router = useRouter();
-  const { isMobile, isTablet } = useBreakpoint();
-  const { isOnline, wasOffline } = useNetworkStatus();
+  const { isMobile } = useBreakpoint();
 
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
@@ -108,15 +106,6 @@ export function AssessmentPlayerScreen({
     return () => clearInterval(timer);
   }, [sectionStarted]);
 
-  // Update saveState based on network status
-  useEffect(() => {
-    if (!isOnline) {
-      setSaveState('offline');
-    } else if (wasOffline && saveState === 'offline') {
-      setSaveState('saved');
-    }
-  }, [isOnline, wasOffline]);
-
   function handleSelectOption(qId: string, optionCode: string) {
     setAnswers((prev) => ({
       ...prev,
@@ -137,10 +126,6 @@ export function AssessmentPlayerScreen({
     if (!currentQuestion || !attemptId) return;
     setSaveState('saving');
     try {
-      if (!isOnline) {
-        setSaveState('offline');
-        return;
-      }
       await authFetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/answers`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -217,7 +202,6 @@ export function AssessmentPlayerScreen({
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  // Timer Color-Shifting Logic
   const getTimerStyles = () => {
     if (secondsRemaining <= 60) {
       return 'bg-rose-500/20 text-rose-300 border-rose-500 animate-pulse font-extrabold shadow-lg shadow-rose-500/20';
@@ -229,21 +213,18 @@ export function AssessmentPlayerScreen({
     return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
   };
 
-  // Progress Calculations
   const totalQuestionsAllSections = sections.reduce((acc, s) => acc + s.questions.length, 0);
   const answeredCountAll = Object.keys(answers).length;
   const progressPercent = Math.round(
     (answeredCountAll / Math.max(1, totalQuestionsAllSections)) * 100
   );
 
-  // Visual Block Progress Indicator (e.g. ■■■■□□□□)
   const renderVisualBlocks = () => {
     const totalBlocks = 8;
     const filledBlocks = Math.round((progressPercent / 100) * totalBlocks);
     return '■'.repeat(filledBlocks) + '□'.repeat(totalBlocks - filledBlocks);
   };
 
-  // Question Matrix Item Render Helper
   const renderQuestionMatrix = () => (
     <div className="grid grid-cols-5 gap-2">
       {currentQuestions.map((q, idx) => {
@@ -320,9 +301,7 @@ export function AssessmentPlayerScreen({
           </span>
         </div>
 
-        {/* Dynamic Color-Shift Timer & Autosave Status */}
         <div className="flex items-center space-x-3">
-          {/* Autosave Status Pill */}
           <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-400">
             {saveState === 'saving' && (
               <>
@@ -344,7 +323,6 @@ export function AssessmentPlayerScreen({
             )}
           </div>
 
-          {/* Color shifting timer pill */}
           <div
             className={`px-3 py-1.5 rounded-lg border text-xs font-mono font-bold flex items-center space-x-1.5 transition-all ${getTimerStyles()}`}
           >
@@ -352,7 +330,6 @@ export function AssessmentPlayerScreen({
             <span>⏱ {formatTime(secondsRemaining)}</span>
           </div>
 
-          {/* Mobile Palette Drawer Trigger Button */}
           <button
             onClick={() => setPaletteOpenMobile(true)}
             className="lg:hidden p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white min-h-11 touch-target"
@@ -412,8 +389,8 @@ export function AssessmentPlayerScreen({
               {currentQuestion?.prompt}
             </h2>
 
-            {/* MCQ Options */}
-            {currentQuestion?.options && currentQuestion.options.length > 0 && (
+            {/* MCQ & Fallback Options */}
+            {currentQuestion?.options && currentQuestion.options.length > 0 ? (
               <div className="space-y-3">
                 {currentQuestion.options.map((opt) => {
                   const isSelected = answers[currentQuestion.id]?.selectedOptionCode === opt.code;
@@ -438,11 +415,50 @@ export function AssessmentPlayerScreen({
                   );
                 })}
               </div>
+            ) : currentQuestion?.itemType === 'FILL_IN_BLANK' ? (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={answers[currentQuestion?.id || '']?.textResponse || ''}
+                  onChange={(e) => currentQuestion && handleTextChange(currentQuestion.id, e.target.value)}
+                  placeholder="Type your answer here..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500 font-mono"
+                />
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {[
+                  { code: 'A', text: 'True' },
+                  { code: 'B', text: 'False' },
+                  { code: 'C', text: 'Not Given' },
+                ].map((opt) => {
+                  const isSelected = answers[currentQuestion?.id || '']?.selectedOptionCode === opt.code;
+                  return (
+                    <button
+                      key={opt.code}
+                      onClick={() => currentQuestion && handleSelectOption(currentQuestion.id, opt.code)}
+                      className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
+                        isSelected
+                          ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                          : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                      }`}
+                    >
+                      <span className="text-xs md:text-sm flex items-center space-x-3">
+                        <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
+                          {opt.code}
+                        </span>
+                        <span>{opt.text}</span>
+                      </span>
+                      {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                    </button>
+                  );
+                })}
+              </div>
             )}
 
             {/* Essay Input Textarea */}
             {(currentQuestion?.itemType === 'ESSAY' || currentSection.code.includes('WRITING')) && (
-              <div className="space-y-2">
+              <div className="space-y-2 mt-4">
                 <textarea
                   rows={8}
                   value={answers[currentQuestion?.id || '']?.textResponse || ''}
@@ -498,9 +514,8 @@ export function AssessmentPlayerScreen({
           </div>
         </main>
 
-        {/* Desktop / Tablet Right Side Panel: Question Matrix & Visual Progress */}
+        {/* Right Side Panel: Question Matrix & Visual Progress */}
         <aside className="hidden lg:block lg:col-span-4 space-y-5">
-          {/* Question Palette Box */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-lg">
             <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wide">
               {currentSection.name} Question Matrix
@@ -508,7 +523,6 @@ export function AssessmentPlayerScreen({
             {renderQuestionMatrix()}
           </div>
 
-          {/* Visual Progress Box */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-lg">
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide">
               Overall Progress
