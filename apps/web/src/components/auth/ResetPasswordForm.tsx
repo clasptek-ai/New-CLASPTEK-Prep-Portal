@@ -41,17 +41,56 @@ export function ResetPasswordForm() {
   useEffect(() => {
     const errParam = searchParams.get('error');
     const errCode = searchParams.get('error_code');
+    const code = searchParams.get('code');
+    const token_hash = searchParams.get('token_hash');
+    const type = searchParams.get('type') || 'recovery';
+
     if (errParam === 'invalid_token' || errCode === 'otp_expired' || errParam === 'access_denied') {
       setIsInvalidToken(true);
       setError(
         'This password reset link is invalid or has expired. Please request a new password reset email.'
       );
+      return;
     }
 
-    // Monitor Supabase Auth recovery events on page load
-    async function initSessionCheck() {
+    // Exchange recovery code or token_hash for a Supabase Auth session on load
+    async function initRecoverySession() {
       try {
         const supabase = getSupabaseBrowserClient();
+
+        // 1. If 'code' is present in URL (?code=...), exchange PKCE code for session
+        if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeError) {
+            console.error(
+              'exchangeCodeForSession error on /reset-password:',
+              exchangeError.message
+            );
+            setIsInvalidToken(true);
+            setError(
+              'This password reset link is invalid or has expired. Please request a new password reset email.'
+            );
+            return;
+          }
+        }
+
+        // 2. If 'token_hash' is present in URL (?token_hash=...), verify OTP for session
+        if (token_hash) {
+          const { error: otpError } = await supabase.auth.verifyOtp({
+            token_hash,
+            type: type as any,
+          });
+          if (otpError) {
+            console.error('verifyOtp error on /reset-password:', otpError.message);
+            setIsInvalidToken(true);
+            setError(
+              'This password reset link is invalid or has expired. Please request a new password reset email.'
+            );
+            return;
+          }
+        }
+
+        // 3. Listen for Supabase Auth recovery events (e.g. hash fragments)
         const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
           if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
             setIsInvalidToken(false);
@@ -59,11 +98,23 @@ export function ResetPasswordForm() {
           }
         });
 
+        // 4. Verify an active Supabase recovery session exists
         const {
           data: { session },
         } = await supabase.auth.getSession();
+
         if (session) {
           setIsInvalidToken(false);
+          setError(null);
+        } else {
+          const hasHashToken =
+            typeof window !== 'undefined' && window.location.hash.includes('access_token');
+          if (!hasHashToken && !code && !token_hash) {
+            setIsInvalidToken(true);
+            setError(
+              'No active password recovery session found. Please request a new password reset email.'
+            );
+          }
         }
 
         return () => {
@@ -74,7 +125,7 @@ export function ResetPasswordForm() {
       }
     }
 
-    initSessionCheck();
+    initRecoverySession();
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
