@@ -108,9 +108,9 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <div className="w-full max-w-5xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[600px] cq-container">
+    <div className="w-full max-w-5xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-150 cq-container">
       {/* LEFT PANEL (DESKTOP) — BRANDING & FEATURES */}
-      <div className="lg:col-span-5 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950/40 p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col justify-between space-y-8">
+      <div className="lg:col-span-5 bg-linear-to-br from-slate-950 via-slate-900 to-sky-950/40 p-8 lg:p-10 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col justify-between space-y-8">
         <div className="space-y-6">
           <LogoBadge size="md" />
 
@@ -211,7 +211,7 @@ export function ResetPasswordForm() {
             <div className="pt-2">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-sky-500/20 min-h-[44px]"
+                className="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-sky-500/20 min-h-11"
               >
                 <span>Go to Login</span>
                 <ArrowRight size={16} />
@@ -251,12 +251,12 @@ export function ResetPasswordForm() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       placeholder="Enter new password"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 pr-11 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 min-h-[44px]"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 pr-11 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 min-h-11"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1 min-h-[32px] flex items-center justify-center"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1 min-h-8 flex items-center justify-center"
                       aria-label={showPassword ? 'Hide Password' : 'Show Password'}
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -276,12 +276,12 @@ export function ResetPasswordForm() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                       placeholder="Confirm new password"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 pr-11 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 min-h-[44px]"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 pr-11 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 min-h-11"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1 min-h-[32px] flex items-center justify-center"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1 min-h-8 flex items-center justify-center"
                       aria-label={
                         showConfirmPassword ? 'Hide Confirm Password' : 'Show Confirm Password'
                       }
@@ -303,7 +303,7 @@ export function ResetPasswordForm() {
                 <button
                   type="submit"
                   disabled={loading || !validation.isValid || !passwordsMatch}
-                  className="w-full py-3.5 px-5 bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-950 font-extrabold text-sm rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-sky-500/20 min-h-[44px]"
+                  className="w-full py-3.5 px-5 bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-950 font-extrabold text-sm rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-sky-500/20 min-h-11"
                 >
                   <span>{loading ? 'Updating Password...' : 'Reset Password'}</span>
                   {!loading && <ArrowRight size={18} />}

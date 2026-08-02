@@ -8,7 +8,7 @@ export default function ResetPasswordPage() {
     <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 md:p-8 font-sans">
       <Suspense
         fallback={
-          <div className="min-h-[400px] flex items-center justify-center text-slate-400 font-semibold text-sm">
+          <div className="min-h-100 flex items-center justify-center text-slate-400 font-semibold text-sm">
             Loading Password Reset Experience...
           </div>
         }
