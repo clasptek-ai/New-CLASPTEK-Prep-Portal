@@ -25,6 +25,24 @@ export default function HomePage() {
     'ALL' | 'IELTS' | 'TOEFL' | 'SAT' | 'CELPIP'
   >('ALL');
 
+  // Production Security Guard: Intercept password recovery / error parameters and forward to /reset-password
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const search = window.location.search;
+      const hash = window.location.hash;
+      if (
+        search.includes('error') ||
+        search.includes('otp_expired') ||
+        search.includes('code=') ||
+        search.includes('token_hash') ||
+        hash.includes('type=recovery') ||
+        hash.includes('access_token=')
+      ) {
+        window.location.href = `/reset-password${search}${hash}`;
+      }
+    }
+  }, []);
+
   // Quick Stats
   const STATS = [
     {

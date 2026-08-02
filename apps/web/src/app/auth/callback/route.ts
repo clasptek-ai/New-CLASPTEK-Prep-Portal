@@ -8,15 +8,23 @@ import { EmailOtpType } from '@supabase/supabase-js';
 
 /**
  * Auth Callback Route Handler
- * Exchanges Supabase PKCE code or OTP token_hash for active session cookies
+ * Exchanges Supabase PKCE code or OTP token_hash for active session cookies.
+ * Guarantees recovery flows always land on /reset-password and never fall back to homepage.
  */
 export async function GET(req: NextRequest) {
   const appUrl = getAppUrl(process.env);
   const requestUrl = new URL(req.url);
+
   const code = requestUrl.searchParams.get('code');
   const token_hash = requestUrl.searchParams.get('token_hash');
   const type = requestUrl.searchParams.get('type') as EmailOtpType | null;
-  const rawNext = requestUrl.searchParams.get('next') || (type === 'recovery' ? '/reset-password' : '/student/welcome');
+  const errorParam = requestUrl.searchParams.get('error');
+  const errorCode = requestUrl.searchParams.get('error_code');
+  const errorDesc = requestUrl.searchParams.get('error_description');
+
+  const rawNext =
+    requestUrl.searchParams.get('next') ||
+    (type === 'recovery' ? '/reset-password' : '/student/welcome');
 
   // Open Redirect Security Check: Ensure next is a relative path starting with a single '/'
   const isRelativePath =
@@ -25,7 +33,21 @@ export async function GET(req: NextRequest) {
     !rawNext.startsWith('/\\') &&
     !rawNext.includes(':');
 
-  const safeNext = isRelativePath ? rawNext : (type === 'recovery' ? '/reset-password' : '/student/welcome');
+  const safeNext = isRelativePath
+    ? rawNext
+    : type === 'recovery'
+      ? '/reset-password'
+      : '/student/welcome';
+
+  // Handle explicit Supabase Auth Error params (e.g. otp_expired / access_denied)
+  if (errorParam || errorCode || errorDesc) {
+    const errorQuery = new URLSearchParams();
+    errorQuery.set('error', 'invalid_token');
+    if (errorCode) errorQuery.set('error_code', errorCode);
+    if (errorDesc) errorQuery.set('error_description', errorDesc);
+
+    return NextResponse.redirect(`${appUrl}/reset-password?${errorQuery.toString()}`);
+  }
 
   const config = loadEnvironment(process.env);
   const cookieStore = await cookies();
@@ -61,6 +83,9 @@ export async function GET(req: NextRequest) {
         return NextResponse.redirect(`${appUrl}${safeNext}`);
       }
       console.error('verifyOtp error in /auth/callback:', error.message);
+      return NextResponse.redirect(
+        `${appUrl}/reset-password?error=invalid_token&error_code=otp_expired`
+      );
     } catch (err) {
       console.error('verifyOtp exception in /auth/callback:', err);
     }
@@ -74,6 +99,9 @@ export async function GET(req: NextRequest) {
         return NextResponse.redirect(`${appUrl}${safeNext}`);
       }
       console.error('exchangeCodeForSession error in /auth/callback:', error.message);
+      return NextResponse.redirect(
+        `${appUrl}/reset-password?error=invalid_token&error_code=otp_expired`
+      );
     } catch (err) {
       console.error('exchangeCodeForSession exception in /auth/callback:', err);
     }
@@ -84,6 +112,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${appUrl}/reset-password`);
   }
 
-  // Token expired, missing, or invalid
-  return NextResponse.redirect(`${appUrl}/reset-password?error=invalid_token`);
+  // Token expired, missing, or invalid -> redirect ALWAYS to /reset-password
+  return NextResponse.redirect(
+    `${appUrl}/reset-password?error=invalid_token&error_code=otp_expired`
+  );
 }

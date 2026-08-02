@@ -40,7 +40,8 @@ export function ResetPasswordForm() {
 
   useEffect(() => {
     const errParam = searchParams.get('error');
-    if (errParam === 'invalid_token') {
+    const errCode = searchParams.get('error_code');
+    if (errParam === 'invalid_token' || errCode === 'otp_expired' || errParam === 'access_denied') {
       setIsInvalidToken(true);
       setError(
         'This password reset link is invalid or has expired. Please request a new password reset email.'
@@ -175,24 +176,28 @@ export function ResetPasswordForm() {
 
       {/* RIGHT PANEL — RESET PASSWORD CARD & FORM */}
       <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-center space-y-6 bg-slate-900">
-        {/* Invalid or Expired Token Banner */}
+        {/* Invalid or Expired Token Dedicated Screen */}
         {isInvalidToken && !success && (
-          <div className="p-5 bg-rose-500/10 border border-rose-500/30 rounded-2xl space-y-3 text-rose-300">
-            <div className="flex items-center space-x-3 text-sm font-bold">
-              <AlertCircle size={20} className="text-rose-400 shrink-0" />
-              <span>Invalid or Expired Reset Link</span>
+          <div className="p-8 bg-slate-950 border border-rose-500/30 rounded-3xl text-center space-y-5">
+            <div className="w-16 h-16 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full flex items-center justify-center mx-auto">
+              <AlertCircle size={36} />
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              This password reset link is invalid or has expired. Please request a new password
-              reset email.
-            </p>
-            <Link
-              href="/forgot-password"
-              className="inline-flex items-center space-x-2 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl transition-all shadow-md"
-            >
-              <span>Request New Link</span>
-              <ArrowRight size={14} />
-            </Link>
+            <div className="space-y-2">
+              <h3 className="text-xl font-extrabold text-white">Password Reset Link Expired</h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm mx-auto">
+                This password reset link has expired or has already been used. Please request a new
+                password reset email.
+              </p>
+            </div>
+            <div className="pt-2">
+              <Link
+                href="/forgot-password"
+                className="inline-flex items-center justify-center space-x-2 px-6 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-sky-500/20 min-h-11"
+              >
+                <span>Request New Reset Link</span>
+                <ArrowRight size={16} />
+              </Link>
+            </div>
           </div>
         )}
 
