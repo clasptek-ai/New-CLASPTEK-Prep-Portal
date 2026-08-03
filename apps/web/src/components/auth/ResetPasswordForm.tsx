@@ -149,7 +149,7 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <div className="w-full max-w-[460px] mx-auto bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6">
+    <div className="w-full max-w-115 mx-auto bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6">
       {/* Top Logo Badge */}
       <div className="flex justify-center">
         <LogoBadge size="md" />
