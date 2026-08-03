@@ -230,6 +230,12 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.4.0
         version: 5.4.0(react-hook-form@7.82.0(react@19.2.7))
+      '@supabase/ssr':
+        specifier: ^0.5.2
+        version: 0.5.2(@supabase/supabase-js@2.110.2)
+      '@supabase/supabase-js':
+        specifier: ^2.47.10
+        version: 2.110.2
       '@tailwindcss/postcss':
         specifier: ^4.3.3
         version: 4.3.3
