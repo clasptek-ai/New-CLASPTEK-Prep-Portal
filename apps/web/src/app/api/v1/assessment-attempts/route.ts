@@ -12,11 +12,15 @@ import { randomUUID } from 'crypto';
 export async function GET(req: NextRequest) {
   const requestId = randomUUID();
 
+  const startTime = Date.now();
   try {
     const session = await getAuthenticatedSession(req);
     const studentId =
       session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
     if (!studentId) {
+      console.log(
+        `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: NONE | CandidateID: NONE | AssessmentID: N/A | AttemptID: N/A | Endpoint: GET /api/v1/assessment-attempts | Result: 401_UNAUTHORIZED | Duration: ${Date.now() - startTime}ms`
+      );
       return NextResponse.json(
         { success: false, error: 'Unauthorized', requestId },
         { status: 401 }
@@ -38,6 +42,9 @@ export async function GET(req: NextRequest) {
 
     if (activeRes.rows.length > 0) {
       const active = activeRes.rows[0];
+      console.log(
+        `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: ${studentId} | CandidateID: ${studentId} | AssessmentID: ${active.catalog_id} | AttemptID: ${active.id} | Endpoint: GET /api/v1/assessment-attempts | Result: SUCCESS_ACTIVE | Duration: ${Date.now() - startTime}ms`
+      );
       return NextResponse.json({
         success: true,
         hasActiveAttempt: true,
@@ -53,6 +60,9 @@ export async function GET(req: NextRequest) {
       });
     }
 
+    console.log(
+      `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: ${studentId} | CandidateID: ${studentId} | AssessmentID: N/A | AttemptID: NONE | Endpoint: GET /api/v1/assessment-attempts | Result: SUCCESS_NO_ACTIVE | Duration: ${Date.now() - startTime}ms`
+    );
     return NextResponse.json({
       success: true,
       hasActiveAttempt: false,
@@ -71,16 +81,18 @@ export async function GET(req: NextRequest) {
  */
 export async function POST(req: NextRequest) {
   const requestId = randomUUID();
+  const startTime = Date.now();
 
   try {
     const session = await getAuthenticatedSession(req);
     const body = await req.json().catch(() => ({}));
     const studentId =
-      session?.userId ||
-      body.candidateId ||
-      (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
 
     if (!studentId) {
+      console.log(
+        `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: NONE | CandidateID: NONE | AssessmentID: N/A | AttemptID: N/A | Endpoint: POST /api/v1/assessment-attempts | Result: 401_UNAUTHORIZED | Duration: ${Date.now() - startTime}ms`
+      );
       return NextResponse.json(
         { success: false, error: 'Unauthorized', requestId },
         { status: 401 }
@@ -481,6 +493,10 @@ export async function POST(req: NextRequest) {
       );
 
       await client.query('COMMIT');
+
+      console.log(
+        `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: ${studentId} | CandidateID: ${studentId} | AssessmentID: ${definition.id} | AttemptID: ${attemptId} | Endpoint: POST /api/v1/assessment-attempts | Result: 201_CREATED | Duration: ${Date.now() - startTime}ms`
+      );
 
       return NextResponse.json(
         {

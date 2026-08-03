@@ -125,7 +125,7 @@ export function ResetPasswordForm() {
         } else {
           setIsInvalidToken(true);
           setError(
-            'No active password recovery session found. Please request a new password reset email.'
+            'This password reset link is invalid or has expired. Please request a new password reset email.'
           );
         }
 

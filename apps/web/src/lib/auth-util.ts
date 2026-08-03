@@ -21,9 +21,19 @@ export async function getAuthenticatedSession(
     const supabaseAnonKey =
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || 'mock-key';
 
-    const cookieStore = await cookies();
+    let cookieStore: any;
+    try {
+      cookieStore = await cookies();
+    } catch {
+      cookieStore = {
+        getAll() {
+          return [];
+        },
+        set() {},
+      };
+    }
 
-    // 1. Extract Bearer token from headers (Authorization / x-supabase-auth)
+    // 1. Extract Bearer token from headers if passed explicitly by client
     let bearerToken: string | null = null;
     const authHeader = req.headers.get('authorization') || req.headers.get('x-supabase-auth');
     if (authHeader?.startsWith('Bearer ')) {
@@ -32,28 +42,7 @@ export async function getAuthenticatedSession(
       bearerToken = authHeader.trim();
     }
 
-    // 2. Fallback for Mobile WebKit / Chrome Mobile chunked cookies
-    if (!bearerToken) {
-      const allCookies = cookieStore.getAll();
-      const tokenCookies = allCookies
-        .filter((c) => c.name.includes('-auth-token'))
-        .sort((a, b) => a.name.localeCompare(b.name));
-
-      if (tokenCookies.length > 0) {
-        try {
-          const rawCookieValue = tokenCookies.map((c) => c.value).join('');
-          const parsed = JSON.parse(decodeURIComponent(rawCookieValue));
-          bearerToken = parsed?.access_token || parsed?.[0] || null;
-        } catch {
-          const rawStr = tokenCookies.map((c) => c.value).join('');
-          if (rawStr.startsWith('ey')) {
-            bearerToken = rawStr;
-          }
-        }
-      }
-    }
-
-    // Create Supabase server client using the standard helper from persistence package
+    // 2. Create Supabase SSR server client using standard helper from persistence package
     const supabase = createSupabaseServerClient(supabaseUrl, supabaseAnonKey, {
       getAll() {
         return cookieStore.getAll();
@@ -69,12 +58,12 @@ export async function getAuthenticatedSession(
             });
           });
         } catch {
-          // Handled if cookies are immutable
+          // Handled if cookies are immutable in Server Components
         }
       },
     });
 
-    // Validate user token from Bearer header or cookie session
+    // 3. Authenticate candidate via Bearer JWT or Supabase SSR cookie session
     const {
       data: { user },
       error,

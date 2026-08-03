@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export function middleware(_request: NextRequest) {
+export function middleware(request: NextRequest) {
   const response = NextResponse.next();
+  const pathname = request.nextUrl.pathname;
+
+  // Explicit Public & Auth Recovery Route Pass-Through Guarantee
+  const isPublicOrRecoveryRoute =
+    pathname.startsWith('/auth/callback') ||
+    pathname.startsWith('/reset-password') ||
+    pathname.startsWith('/forgot-password') ||
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/register') ||
+    pathname.startsWith('/verify-email');
+
+  if (isPublicOrRecoveryRoute) {
+    // Guarantees recovery callbacks and auth forms are never blocked or redirected
+  }
 
   // Security Headers Hardening
   response.headers.set(

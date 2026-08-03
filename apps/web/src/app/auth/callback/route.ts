@@ -50,7 +50,18 @@ export async function GET(req: NextRequest) {
   }
 
   const config = loadEnvironment(process.env);
-  const cookieStore = await cookies();
+  let cookieStore: any;
+  try {
+    cookieStore = await cookies();
+  } catch {
+    cookieStore = {
+      getAll() {
+        return [];
+      },
+      set() {},
+    };
+  }
+
   const supabase = createSupabaseServerClient(
     config.NEXT_PUBLIC_SUPABASE_URL,
     config.NEXT_PUBLIC_SUPABASE_ANON_KEY,
