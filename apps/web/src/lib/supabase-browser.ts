@@ -1,10 +1,9 @@
-import { createBrowserClient } from '@supabase/ssr';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { createSupabaseBrowserClient } from '@clasptek/persistence';
 import { env } from '../shared/config/env.config';
 
-let browserClient: SupabaseClient | null = null;
+let browserClient: ReturnType<typeof createSupabaseBrowserClient> | null = null;
 
-export function getSupabaseBrowserClient(): SupabaseClient {
+export function getSupabaseBrowserClient(): ReturnType<typeof createSupabaseBrowserClient> {
   if (browserClient) return browserClient;
 
   const url =
@@ -16,6 +15,6 @@ export function getSupabaseBrowserClient(): SupabaseClient {
     env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
     'placeholder-key';
 
-  browserClient = createBrowserClient(url, key);
+  browserClient = createSupabaseBrowserClient(url, key);
   return browserClient;
 }
