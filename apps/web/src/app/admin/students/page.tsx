@@ -43,7 +43,9 @@ export default function StudentDirectoryPage() {
   const [newPhone, setNewPhone] = useState('');
   const [newProgramme, setNewProgramme] = useState('IELTS Academic');
   const [newCohort, setNewCohort] = useState('2026 Q3 Cohort A');
-  const [newPaymentStatus, setNewPaymentStatus] = useState<'PAID' | 'PENDING' | 'COMPLETED' | 'OVERDUE'>('PAID');
+  const [newPaymentStatus, setNewPaymentStatus] = useState<
+    'PAID' | 'PENDING' | 'COMPLETED' | 'OVERDUE'
+  >('PAID');
 
   // Edit Modal
   const [editingStudent, setEditingStudent] = useState<AdminUserRecord | null>(null);
@@ -135,7 +137,9 @@ export default function StudentDirectoryPage() {
     setNewName('');
     setNewEmail('');
     setNewPhone('');
-    showBanner(`Student candidate ${created.name} registered under ID ${created.registrationNumber}!`);
+    showBanner(
+      `Student candidate ${created.name} registered under ID ${created.registrationNumber}!`
+    );
   };
 
   const handleEditStudentSubmit = async (e: React.FormEvent) => {
@@ -173,7 +177,9 @@ export default function StudentDirectoryPage() {
   if (loading) {
     return (
       <div style={{ padding: '4rem 2rem', textAlign: 'center', color: '#94a3b8' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Querying Live Registration Repository...</h3>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>
+          Querying Live Registration Repository...
+        </h3>
       </div>
     );
   }
@@ -214,7 +220,8 @@ export default function StudentDirectoryPage() {
             Student Directory
           </h1>
           <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
-            Live candidate database — audit registrations, target exam assignments, and access gates.
+            Live candidate database — audit registrations, target exam assignments, and access
+            gates.
           </p>
         </div>
 
@@ -395,14 +402,27 @@ export default function StudentDirectoryPage() {
             <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#f8fafc' }}>
               No students found
             </h3>
-            <p style={{ margin: '0.4rem 0 0', fontSize: '0.875rem', color: '#94a3b8', maxWidth: '420px' }}>
-              Register candidate students to begin operational management, cohort placement, and assessment tracking.
+            <p
+              style={{
+                margin: '0.4rem 0 0',
+                fontSize: '0.875rem',
+                color: '#94a3b8',
+                maxWidth: '420px',
+              }}
+            >
+              Register candidate students to begin operational management, cohort placement, and
+              assessment tracking.
             </p>
           </div>
           <Button
             variant="primary"
             onClick={() => setAddModalOpen(true)}
-            style={{ backgroundColor: '#2563eb', color: '#ffffff', gap: '0.5rem', marginTop: '0.5rem' }}
+            style={{
+              backgroundColor: '#2563eb',
+              color: '#ffffff',
+              gap: '0.5rem',
+              marginTop: '0.5rem',
+            }}
           >
             <Plus size={16} />
             <span>Register First Student</span>
@@ -422,7 +442,14 @@ export default function StudentDirectoryPage() {
             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
           }}
         >
-          <div style={{ width: '100%', minWidth: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+          <div
+            style={{
+              width: '100%',
+              minWidth: 0,
+              overflowX: 'auto',
+              WebkitOverflowScrolling: 'touch',
+            }}
+          >
             <table
               style={{
                 width: '100%',
@@ -440,25 +467,75 @@ export default function StudentDirectoryPage() {
                     textAlign: 'left',
                   }}
                 >
-                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, width: '130px' }}>
+                  <th
+                    style={{
+                      padding: '0.9rem 1.15rem',
+                      color: '#94a3b8',
+                      fontWeight: 700,
+                      width: '130px',
+                    }}
+                  >
                     Registration ID
                   </th>
-                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, minWidth: '180px' }}>
+                  <th
+                    style={{
+                      padding: '0.9rem 1.15rem',
+                      color: '#94a3b8',
+                      fontWeight: 700,
+                      minWidth: '180px',
+                    }}
+                  >
                     Student
                   </th>
-                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, minWidth: '140px' }}>
+                  <th
+                    style={{
+                      padding: '0.9rem 1.15rem',
+                      color: '#94a3b8',
+                      fontWeight: 700,
+                      minWidth: '140px',
+                    }}
+                  >
                     Phone
                   </th>
-                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, minWidth: '150px' }}>
+                  <th
+                    style={{
+                      padding: '0.9rem 1.15rem',
+                      color: '#94a3b8',
+                      fontWeight: 700,
+                      minWidth: '150px',
+                    }}
+                  >
                     Programme
                   </th>
-                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, width: '110px' }}>
+                  <th
+                    style={{
+                      padding: '0.9rem 1.15rem',
+                      color: '#94a3b8',
+                      fontWeight: 700,
+                      width: '110px',
+                    }}
+                  >
                     Status
                   </th>
-                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, width: '130px' }}>
+                  <th
+                    style={{
+                      padding: '0.9rem 1.15rem',
+                      color: '#94a3b8',
+                      fontWeight: 700,
+                      width: '130px',
+                    }}
+                  >
                     Progress
                   </th>
-                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, textAlign: 'right', width: '140px' }}>
+                  <th
+                    style={{
+                      padding: '0.9rem 1.15rem',
+                      color: '#94a3b8',
+                      fontWeight: 700,
+                      textAlign: 'right',
+                      width: '140px',
+                    }}
+                  >
                     Actions
                   </th>
                 </tr>
@@ -466,7 +543,10 @@ export default function StudentDirectoryPage() {
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={7} style={{ padding: '3rem 1rem', textAlign: 'center', color: '#94a3b8' }}>
+                    <td
+                      colSpan={7}
+                      style={{ padding: '3rem 1rem', textAlign: 'center', color: '#94a3b8' }}
+                    >
                       No student candidates match your search or filter query.
                     </td>
                   </tr>
@@ -487,12 +567,25 @@ export default function StudentDirectoryPage() {
                         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0f172a')}
                       >
                         {/* 1. Registration ID */}
-                        <td style={{ padding: '0.9rem 1.15rem', fontWeight: 700, color: '#38bdf8', whiteSpace: 'nowrap' }}>
+                        <td
+                          style={{
+                            padding: '0.9rem 1.15rem',
+                            fontWeight: 700,
+                            color: '#38bdf8',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
                           {s.registrationNumber || s.id}
                         </td>
 
                         {/* 2. Student (Name + Email) */}
-                        <td style={{ padding: '0.9rem 1.15rem', minWidth: '180px', maxWidth: '220px' }}>
+                        <td
+                          style={{
+                            padding: '0.9rem 1.15rem',
+                            minWidth: '180px',
+                            maxWidth: '220px',
+                          }}
+                        >
                           <Link
                             href={`/admin/students/${s.id}`}
                             style={{
@@ -523,12 +616,25 @@ export default function StudentDirectoryPage() {
                         </td>
 
                         {/* 3. Phone */}
-                        <td style={{ padding: '0.9rem 1.15rem', fontSize: '0.8rem', color: '#cbd5e1', whiteSpace: 'nowrap' }}>
+                        <td
+                          style={{
+                            padding: '0.9rem 1.15rem',
+                            fontSize: '0.8rem',
+                            color: '#cbd5e1',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
                           {s.phone || 'NOT RECORDED'}
                         </td>
 
                         {/* 4. Programme */}
-                        <td style={{ padding: '0.9rem 1.15rem', minWidth: '150px', maxWidth: '180px' }}>
+                        <td
+                          style={{
+                            padding: '0.9rem 1.15rem',
+                            minWidth: '150px',
+                            maxWidth: '180px',
+                          }}
+                        >
                           <div
                             style={{
                               fontWeight: 600,
@@ -547,7 +653,11 @@ export default function StudentDirectoryPage() {
                         <td style={{ padding: '0.9rem 1.15rem' }}>
                           <Badge
                             variant={
-                              s.status === 'ACTIVE' ? 'success' : s.status === 'SUSPENDED' ? 'danger' : 'warning'
+                              s.status === 'ACTIVE'
+                                ? 'success'
+                                : s.status === 'SUSPENDED'
+                                  ? 'danger'
+                                  : 'warning'
                             }
                           >
                             {s.status}
@@ -570,20 +680,35 @@ export default function StudentDirectoryPage() {
                                 style={{
                                   width: `${progress}%`,
                                   height: '100%',
-                                  backgroundColor: progress > 70 ? '#34d399' : progress > 40 ? '#60a5fa' : '#f59e0b',
+                                  backgroundColor:
+                                    progress > 70
+                                      ? '#34d399'
+                                      : progress > 40
+                                        ? '#60a5fa'
+                                        : '#f59e0b',
                                   borderRadius: '3px',
                                 }}
                               />
                             </div>
-                            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>
+                            <span
+                              style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}
+                            >
                               {progress}%
                             </span>
                           </div>
                         </td>
 
                         {/* 7. Action Bar: View, Edit, More (⋮) Menu */}
-                        <td style={{ padding: '0.9rem 1.15rem', textAlign: 'right', position: 'relative' }}>
-                          <div style={{ display: 'inline-flex', gap: '0.35rem', alignItems: 'center' }}>
+                        <td
+                          style={{
+                            padding: '0.9rem 1.15rem',
+                            textAlign: 'right',
+                            position: 'relative',
+                          }}
+                        >
+                          <div
+                            style={{ display: 'inline-flex', gap: '0.35rem', alignItems: 'center' }}
+                          >
                             {/* View Action */}
                             <Link
                               href={`/admin/students/${s.id}`}
@@ -689,7 +814,9 @@ export default function StudentDirectoryPage() {
                                 }}
                               >
                                 {s.practiceUnlocked ? <Unlock size={13} /> : <Lock size={13} />}
-                                <span>{s.practiceUnlocked ? 'Lock Practice' : 'Unlock Practice'}</span>
+                                <span>
+                                  {s.practiceUnlocked ? 'Lock Practice' : 'Unlock Practice'}
+                                </span>
                               </button>
 
                               <button
@@ -711,7 +838,9 @@ export default function StudentDirectoryPage() {
                                 }}
                               >
                                 {s.mockUnlocked ? <Unlock size={13} /> : <Lock size={13} />}
-                                <span>{s.mockUnlocked ? 'Lock Mock Exam' : 'Unlock Mock Exam'}</span>
+                                <span>
+                                  {s.mockUnlocked ? 'Lock Mock Exam' : 'Unlock Mock Exam'}
+                                </span>
                               </button>
 
                               <button
@@ -757,8 +886,14 @@ export default function StudentDirectoryPage() {
                                   paddingTop: '0.5rem',
                                 }}
                               >
-                                {s.status === 'ACTIVE' ? <UserX size={13} /> : <UserCheck size={13} />}
-                                <span>{s.status === 'ACTIVE' ? 'Suspend Account' : 'Activate Account'}</span>
+                                {s.status === 'ACTIVE' ? (
+                                  <UserX size={13} />
+                                ) : (
+                                  <UserCheck size={13} />
+                                )}
+                                <span>
+                                  {s.status === 'ACTIVE' ? 'Suspend Account' : 'Activate Account'}
+                                </span>
                               </button>
                             </div>
                           )}
@@ -819,7 +954,15 @@ export default function StudentDirectoryPage() {
               style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
             >
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Full Candidate Name *
                 </label>
                 <input
@@ -843,7 +986,15 @@ export default function StudentDirectoryPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Email Address *
                   </label>
                   <input
@@ -867,7 +1018,15 @@ export default function StudentDirectoryPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Phone Contact
                   </label>
                   <input
@@ -891,7 +1050,15 @@ export default function StudentDirectoryPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Target Programme
                   </label>
                   <select
@@ -919,7 +1086,15 @@ export default function StudentDirectoryPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Cohort Assignment
                   </label>
                   <input
@@ -941,7 +1116,14 @@ export default function StudentDirectoryPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifySelf: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifySelf: 'flex-end',
+                  gap: '0.75rem',
+                  marginTop: '1rem',
+                }}
+              >
                 <Button
                   type="button"
                   variant="secondary"
@@ -1009,7 +1191,15 @@ export default function StudentDirectoryPage() {
               style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
             >
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Candidate Name
                 </label>
                 <input
@@ -1032,7 +1222,15 @@ export default function StudentDirectoryPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Email
                   </label>
                   <input
@@ -1052,12 +1250,22 @@ export default function StudentDirectoryPage() {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      color: '#cbd5e1',
+                      marginBottom: '0.35rem',
+                    }}
+                  >
                     Phone Contact
                   </label>
                   <input
                     value={editingStudent.phone || ''}
-                    onChange={(e) => setEditingStudent({ ...editingStudent, phone: e.target.value })}
+                    onChange={(e) =>
+                      setEditingStudent({ ...editingStudent, phone: e.target.value })
+                    }
                     placeholder="+44 7000 000000"
                     style={{
                       width: '100%',
@@ -1075,12 +1283,22 @@ export default function StudentDirectoryPage() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: '#cbd5e1',
+                    marginBottom: '0.35rem',
+                  }}
+                >
                   Target Programme
                 </label>
                 <select
                   value={editingStudent.programme || 'IELTS Academic'}
-                  onChange={(e) => setEditingStudent({ ...editingStudent, programme: e.target.value })}
+                  onChange={(e) =>
+                    setEditingStudent({ ...editingStudent, programme: e.target.value })
+                  }
                   style={{
                     width: '100%',
                     padding: '0.65rem 0.85rem',
@@ -1102,7 +1320,14 @@ export default function StudentDirectoryPage() {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', justifySelf: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifySelf: 'flex-end',
+                  gap: '0.75rem',
+                  marginTop: '1rem',
+                }}
+              >
                 <Button
                   type="button"
                   variant="secondary"
