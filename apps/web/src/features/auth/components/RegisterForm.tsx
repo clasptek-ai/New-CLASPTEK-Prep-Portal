@@ -114,14 +114,18 @@ export function RegisterForm() {
     setSubmitError(null);
     const data = getValues();
     try {
+      const selectedProgObj = PROGRAMME_OPTIONS.find((p) => p.id === selectedProgramme);
+      const targetProgrammeName = selectedProgObj?.name || 'IELTS Academic';
+
       await registerAuth({
         email: data.email,
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
+        phone: data.phone,
+        programme: targetProgrammeName,
+        country: data.country,
       });
-
-      const selectedProgObj = PROGRAMME_OPTIONS.find((p) => p.id === selectedProgramme);
 
       const onboardingData = {
         state: OnboardingState.DIAGNOSTIC_REQUIRED,

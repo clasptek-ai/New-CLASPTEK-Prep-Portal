@@ -1,6 +1,5 @@
 import { apiClient } from '../api/client';
 import {
-  adminQuestionsService,
   AdminQuestion,
   ExamType,
   SectionType,
@@ -285,7 +284,7 @@ export const studentPracticeService = {
     if (typeof window !== 'undefined') {
       try {
         const raw = localStorage.getItem(BOOKMARKS_KEY);
-        let set = new Set<string>(raw ? JSON.parse(raw) : []);
+        const set = new Set<string>(raw ? JSON.parse(raw) : []);
         if (isBookmarked) {
           set.add(questionId);
         } else {

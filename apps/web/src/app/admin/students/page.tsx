@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, Button, Badge } from '@/components/ui/ui-components';
@@ -18,9 +18,8 @@ import {
   Phone,
   Eye,
   Edit3,
+  MoreVertical,
   UserPlus,
-  CreditCard,
-  GraduationCap,
 } from 'lucide-react';
 
 export default function StudentDirectoryPage() {
@@ -34,12 +33,15 @@ export default function StudentDirectoryPage() {
   const [selectedProgramme, setSelectedProgramme] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
 
+  // Active Row Action Popover Menu ID
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+
   // Register Modal
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newPhone, setNewPhone] = useState('');
-  const [newProgramme, setNewProgramme] = useState('IELTS Academic Intensive');
+  const [newProgramme, setNewProgramme] = useState('IELTS Academic');
   const [newCohort, setNewCohort] = useState('2026 Q3 Cohort A');
   const [newPaymentStatus, setNewPaymentStatus] = useState<'PAID' | 'PENDING' | 'COMPLETED' | 'OVERDUE'>('PAID');
 
@@ -50,7 +52,6 @@ export default function StudentDirectoryPage() {
     setLoading(true);
     try {
       const data = await adminUsersService.getUsers();
-      // Only show students or all users
       const studentList = data.filter((u) => u.role === 'STUDENT' || !u.role);
       setStudents(studentList.length > 0 ? studentList : data);
     } catch (e) {
@@ -64,12 +65,22 @@ export default function StudentDirectoryPage() {
     loadData();
   }, []);
 
+  // Close active action popover menu on click outside
+  useEffect(() => {
+    function handleClickOutside() {
+      if (activeMenuId) setActiveMenuId(null);
+    }
+    window.addEventListener('click', handleClickOutside);
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, [activeMenuId]);
+
   const handleTogglePractice = async (id: string) => {
     await adminUsersService.togglePracticeGate(id);
     setStudents((prev) =>
       prev.map((s) => (s.id === id ? { ...s, practiceUnlocked: !s.practiceUnlocked } : s))
     );
     showBanner('Practice Gate access status updated.');
+    setActiveMenuId(null);
   };
 
   const handleToggleMock = async (id: string) => {
@@ -78,6 +89,7 @@ export default function StudentDirectoryPage() {
       prev.map((s) => (s.id === id ? { ...s, mockUnlocked: !s.mockUnlocked } : s))
     );
     showBanner('Mock Exam Gate access status updated.');
+    setActiveMenuId(null);
   };
 
   const handleToggleStatus = async (s: AdminUserRecord) => {
@@ -91,11 +103,13 @@ export default function StudentDirectoryPage() {
       prev.map((item) => (item.id === s.id ? { ...item, status: nextStatus } : item))
     );
     showBanner(`Student account set to ${nextStatus}.`);
+    setActiveMenuId(null);
   };
 
   const handleResetPassword = async (name: string, id: string) => {
     await adminUsersService.initiatePasswordReset(id);
     showBanner(`Password reset dispatch initiated for ${name}.`);
+    setActiveMenuId(null);
   };
 
   const handleAddStudentSubmit = async (e: React.FormEvent) => {
@@ -105,13 +119,13 @@ export default function StudentDirectoryPage() {
     const created = await adminUsersService.addStudent({
       name: newName,
       email: newEmail,
-      phone: newPhone || '+234 803 000 0000',
+      phone: newPhone || '+44 7000 000000',
       role: 'STUDENT',
       status: 'ACTIVE',
       paymentStatus: newPaymentStatus,
       programme: newProgramme,
       cohort: newCohort,
-      progressPercent: 15,
+      progressPercent: 0,
       practiceUnlocked: true,
       mockUnlocked: true,
     });
@@ -139,7 +153,7 @@ export default function StudentDirectoryPage() {
     setTimeout(() => setBanner(null), 3500);
   }
 
-  // Multi-field search across Student Name, Reg ID, Email, Phone, Programme
+  // Search & filter
   const filtered = students.filter((s) => {
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch =
@@ -169,26 +183,29 @@ export default function StudentDirectoryPage() {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.75rem',
+        gap: '1.5rem',
         width: '100%',
+        maxWidth: '1600px',
+        minWidth: 0,
+        margin: '0 auto',
         boxSizing: 'border-box',
       }}
     >
-      {/* Page Header */}
+      {/* 1. Page Header — Single row alignment: Title + Description (left), Register button (right) */}
       <div
         style={{
           display: 'flex',
-          flexWrap: 'wrap',
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: '1rem',
+          flexWrap: 'wrap',
         }}
       >
         <div>
           <h1
             style={{
               margin: 0,
-              fontSize: '1.75rem',
+              fontSize: '1.65rem',
               fontWeight: 800,
               color: '#f8fafc',
               letterSpacing: '-0.02em',
@@ -196,8 +213,8 @@ export default function StudentDirectoryPage() {
           >
             Student Directory
           </h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
-            Live candidate database — audit registrations, cohort assignments, and access gates.
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
+            Live candidate database — audit registrations, target exam assignments, and access gates.
           </p>
         </div>
 
@@ -208,53 +225,57 @@ export default function StudentDirectoryPage() {
             backgroundColor: '#2563eb',
             color: '#ffffff',
             gap: '0.5rem',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
             fontWeight: 600,
-            padding: '0.6rem 1.1rem',
+            padding: '0.6rem 1.15rem',
+            borderRadius: '10px',
+            fontSize: '0.875rem',
+            height: '40px',
           }}
         >
           <Plus size={16} />
-          <span>Register New Student</span>
+          <span>Register Student</span>
         </Button>
       </div>
 
       {banner && (
         <div
           style={{
-            padding: '0.85rem 1.25rem',
+            padding: '0.75rem 1.15rem',
             backgroundColor: 'rgba(16, 185, 129, 0.15)',
             border: '1px solid rgba(16, 185, 129, 0.35)',
-            borderRadius: '8px',
+            borderRadius: '10px',
             color: '#34d399',
-            fontSize: '0.875rem',
+            fontSize: '0.85rem',
             fontWeight: 600,
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
           }}
         >
-          <CheckCircle2 size={18} />
+          <CheckCircle2 size={16} />
           <span>{banner}</span>
         </div>
       )}
 
-      {/* Control Bar: Multi-field Search & Filters */}
+      {/* 2. Unified Search & Filters Toolbar */}
       <Card
         style={{
-          padding: '1.25rem',
-          borderRadius: '12px',
-          backgroundColor: '#111827',
-          border: '1px solid rgba(255, 255, 255, 0.06)',
+          padding: '0.85rem 1.15rem',
+          borderRadius: '14px',
+          backgroundColor: '#0f172a',
+          border: '1px solid #1e293b',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
         }}
       >
         <div
           style={{
             display: 'flex',
-            flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '1rem',
+            flexWrap: 'wrap',
           }}
         >
           {/* Multi-field search box */}
@@ -263,94 +284,92 @@ export default function StudentDirectoryPage() {
               display: 'flex',
               alignItems: 'center',
               gap: '0.6rem',
-              backgroundColor: '#1e293b',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: '#161e2e',
+              border: '1px solid #1e293b',
               borderRadius: '8px',
-              padding: '0.5rem 0.85rem',
+              padding: '0 0.85rem',
+              height: '38px',
               flex: 1,
-              minWidth: '280px',
+              minWidth: '260px',
             }}
           >
-            <Search size={16} color="#94a3b8" />
+            <Search size={15} color="#94a3b8" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by student name, ID, email, phone, or programme..."
+              placeholder="Search candidate name, ID, email, phone, or programme..."
               style={{
                 background: 'none',
                 border: 'none',
                 color: '#f8fafc',
                 outline: 'none',
                 width: '100%',
-                fontSize: '0.875rem',
+                fontSize: '0.85rem',
               }}
             />
           </div>
 
-          {/* Filters */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>
-                Programme:
-              </span>
-              <select
-                value={selectedProgramme}
-                onChange={(e) => setSelectedProgramme(e.target.value)}
-                style={{
-                  padding: '0.45rem 0.75rem',
-                  borderRadius: '6px',
-                  backgroundColor: '#1e293b',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  color: '#38bdf8',
-                  fontSize: '0.825rem',
-                  fontWeight: 700,
-                }}
-              >
-                <option value="ALL">All Programmes</option>
-                <option value="IELTS Academic">IELTS Academic</option>
-                <option value="IELTS General Training">IELTS General Training</option>
-                <option value="TOEFL iBT">TOEFL iBT</option>
-                <option value="Digital SAT">Digital SAT</option>
-                <option value="CELPIP General">CELPIP General</option>
-                <option value="English Proficiency">English Proficiency</option>
-                <option value="UNASSIGNED">Unassigned</option>
-              </select>
-            </div>
+          {/* Filter Dropdowns */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
+            <select
+              value={selectedProgramme}
+              onChange={(e) => setSelectedProgramme(e.target.value)}
+              style={{
+                height: '38px',
+                padding: '0 0.85rem',
+                borderRadius: '8px',
+                backgroundColor: '#161e2e',
+                border: '1px solid #1e293b',
+                color: '#38bdf8',
+                fontSize: '0.825rem',
+                fontWeight: 600,
+                outline: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="ALL">All Programmes</option>
+              <option value="IELTS Academic">IELTS Academic</option>
+              <option value="IELTS General Training">IELTS General Training</option>
+              <option value="TOEFL iBT">TOEFL iBT</option>
+              <option value="Digital SAT">Digital SAT</option>
+              <option value="CELPIP General">CELPIP General</option>
+              <option value="English Proficiency">English Proficiency</option>
+              <option value="UNASSIGNED">Unassigned</option>
+            </select>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: 600 }}>
-                Status:
-              </span>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                style={{
-                  padding: '0.45rem 0.75rem',
-                  borderRadius: '6px',
-                  backgroundColor: '#1e293b',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  color: '#f8fafc',
-                  fontSize: '0.825rem',
-                }}
-              >
-                <option value="ALL">All Statuses</option>
-                <option value="ACTIVE">Active</option>
-                <option value="SUSPENDED">Suspended</option>
-                <option value="PENDING">Pending</option>
-              </select>
-            </div>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              style={{
+                height: '38px',
+                padding: '0 0.85rem',
+                borderRadius: '8px',
+                backgroundColor: '#161e2e',
+                border: '1px solid #1e293b',
+                color: '#f8fafc',
+                fontSize: '0.825rem',
+                fontWeight: 600,
+                outline: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="ACTIVE">Active</option>
+              <option value="SUSPENDED">Suspended</option>
+              <option value="PENDING">Pending</option>
+            </select>
           </div>
         </div>
       </Card>
 
-      {/* Directory Data Table OR Empty State */}
+      {/* 3. Streamlined Student Data Table */}
       {students.length === 0 ? (
         <Card
           style={{
             padding: '4rem 2rem',
-            borderRadius: '14px',
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
+            borderRadius: '16px',
+            backgroundColor: '#0f172a',
+            border: '1px solid #1e293b',
             textAlign: 'center',
             display: 'flex',
             flexDirection: 'column',
@@ -360,24 +379,24 @@ export default function StudentDirectoryPage() {
         >
           <div
             style={{
-              width: '64px',
-              height: '64px',
+              width: '56px',
+              height: '56px',
               borderRadius: '50%',
-              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              backgroundColor: 'rgba(59, 130, 246, 0.12)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#3b82f6',
             }}
           >
-            <UserPlus size={32} />
+            <UserPlus size={28} />
           </div>
           <div>
-            <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#f8fafc' }}>
-              No students have been registered yet.
+            <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#f8fafc' }}>
+              No students found
             </h3>
-            <p style={{ margin: '0.5rem 0 0', fontSize: '0.9rem', color: '#94a3b8', maxWidth: '440px' }}>
-              Register your first student candidate to begin operational management, cohort placement, and assessment tracking.
+            <p style={{ margin: '0.4rem 0 0', fontSize: '0.875rem', color: '#94a3b8', maxWidth: '420px' }}>
+              Register candidate students to begin operational management, cohort placement, and assessment tracking.
             </p>
           </div>
           <Button
@@ -393,16 +412,21 @@ export default function StudentDirectoryPage() {
         <Card
           style={{
             padding: 0,
-            borderRadius: '14px',
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
+            borderRadius: '16px',
+            backgroundColor: '#0f172a',
+            border: '1px solid #1e293b',
+            width: '100%',
+            minWidth: 0,
+            maxWidth: '100%',
             overflow: 'hidden',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
           }}
         >
-          <div style={{ width: '100%', overflowX: 'auto' }}>
+          <div style={{ width: '100%', minWidth: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
             <table
               style={{
                 width: '100%',
+                minWidth: '780px',
                 borderCollapse: 'collapse',
                 fontSize: '0.85rem',
                 color: '#f8fafc',
@@ -411,61 +435,128 @@ export default function StudentDirectoryPage() {
               <thead>
                 <tr
                   style={{
-                    backgroundColor: '#1F2937',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                    backgroundColor: '#161e2e',
+                    borderBottom: '1px solid #1e293b',
                     textAlign: 'left',
                   }}
                 >
-                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, width: '130px' }}>Registration ID</th>
-                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, minWidth: '160px' }}>Student & Progress</th>
-                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, minWidth: '180px' }}>Contact Info</th>
-                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, minWidth: '160px' }}>Programme & Cohort</th>
-                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, width: '100px' }}>Status</th>
-                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, width: '170px' }}>Gates</th>
-                  <th style={{ padding: '0.85rem 1rem', color: '#94a3b8', fontWeight: 700, textAlign: 'right', width: '240px' }}>Actions</th>
+                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, width: '130px' }}>
+                    Registration ID
+                  </th>
+                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, minWidth: '180px' }}>
+                    Student
+                  </th>
+                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, minWidth: '140px' }}>
+                    Phone
+                  </th>
+                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, minWidth: '150px' }}>
+                    Programme
+                  </th>
+                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, width: '110px' }}>
+                    Status
+                  </th>
+                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, width: '130px' }}>
+                    Progress
+                  </th>
+                  <th style={{ padding: '0.9rem 1.15rem', color: '#94a3b8', fontWeight: 700, textAlign: 'right', width: '140px' }}>
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ padding: '3rem 1rem', textAlign: 'center', color: '#94a3b8' }}>
-                      No student candidates match your current search or filter query.
+                      No student candidates match your search or filter query.
                     </td>
                   </tr>
                 ) : (
                   filtered.map((s) => {
                     const progress = s.progressPercent ?? 0;
+                    const isMenuOpen = activeMenuId === s.id;
+
                     return (
                       <tr
                         key={s.id}
                         style={{
                           borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                          backgroundColor: '#111827',
+                          backgroundColor: '#0f172a',
                           transition: 'background-color 150ms ease',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1E293B')}
-                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#111827')}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#161e2e')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0f172a')}
                       >
-                        {/* Registration ID */}
-                        <td style={{ padding: '1rem', fontWeight: 700, color: '#38bdf8', whiteSpace: 'nowrap' }}>
+                        {/* 1. Registration ID */}
+                        <td style={{ padding: '0.9rem 1.15rem', fontWeight: 700, color: '#38bdf8', whiteSpace: 'nowrap' }}>
                           {s.registrationNumber || s.id}
                         </td>
 
-                        {/* Student & Progress Bar */}
-                        <td style={{ padding: '1rem', minWidth: '160px' }}>
+                        {/* 2. Student (Name + Email) */}
+                        <td style={{ padding: '0.9rem 1.15rem', minWidth: '180px', maxWidth: '220px' }}>
                           <Link
                             href={`/admin/students/${s.id}`}
                             style={{
                               fontWeight: 700,
                               color: '#f8fafc',
                               textDecoration: 'none',
-                              fontSize: '0.9rem',
+                              fontSize: '0.875rem',
+                              display: 'block',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
                             }}
                           >
                             {s.name}
                           </Link>
-                          {/* Progress Bar Indicator */}
-                          <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <div
+                            style={{
+                              fontSize: '0.75rem',
+                              color: '#94a3b8',
+                              marginTop: '2px',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {s.email}
+                          </div>
+                        </td>
+
+                        {/* 3. Phone */}
+                        <td style={{ padding: '0.9rem 1.15rem', fontSize: '0.8rem', color: '#cbd5e1', whiteSpace: 'nowrap' }}>
+                          {s.phone || 'NOT RECORDED'}
+                        </td>
+
+                        {/* 4. Programme */}
+                        <td style={{ padding: '0.9rem 1.15rem', minWidth: '150px', maxWidth: '180px' }}>
+                          <div
+                            style={{
+                              fontWeight: 600,
+                              color: '#f8fafc',
+                              fontSize: '0.825rem',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {s.programme || 'UNASSIGNED'}
+                          </div>
+                        </td>
+
+                        {/* 5. Status */}
+                        <td style={{ padding: '0.9rem 1.15rem' }}>
+                          <Badge
+                            variant={
+                              s.status === 'ACTIVE' ? 'success' : s.status === 'SUSPENDED' ? 'danger' : 'warning'
+                            }
+                          >
+                            {s.status}
+                          </Badge>
+                        </td>
+
+                        {/* 6. Progress Bar */}
+                        <td style={{ padding: '0.9rem 1.15rem', width: '130px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             <div
                               style={{
                                 flex: 1,
@@ -484,116 +575,20 @@ export default function StudentDirectoryPage() {
                                 }}
                               />
                             </div>
-                            <span style={{ fontSize: '0.725rem', fontWeight: 700, color: '#94a3b8' }}>
+                            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>
                               {progress}%
                             </span>
                           </div>
                         </td>
 
-                        {/* Contact Info */}
-                        <td style={{ padding: '1rem', fontSize: '0.8rem', color: '#cbd5e1', minWidth: '180px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                            <Mail size={12} color="#94a3b8" />
-                            <span>{s.email}</span>
-                          </div>
-                          {s.phone && (
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.35rem',
-                                marginTop: '3px',
-                                color: '#94a3b8',
-                              }}
-                            >
-                              <Phone size={12} color="#94a3b8" />
-                              <span>{s.phone}</span>
-                            </div>
-                          )}
-                        </td>
-
-                        {/* Programme & Cohort */}
-                        <td style={{ padding: '1rem', minWidth: '160px' }}>
-                          <div style={{ fontWeight: 600, color: '#f8fafc', fontSize: '0.825rem' }}>
-                            {s.programme || 'UNASSIGNED'}
-                          </div>
-                          <div style={{ fontSize: '0.725rem', color: '#94a3b8', marginTop: '2px' }}>
-                            {s.cohort || 'UNASSIGNED'}
-                          </div>
-                        </td>
-
-                        {/* Status */}
-                        <td style={{ padding: '1rem' }}>
-                          <Badge
-                            variant={
-                              s.status === 'ACTIVE' ? 'success' : s.status === 'SUSPENDED' ? 'danger' : 'warning'
-                            }
-                          >
-                            {s.status}
-                          </Badge>
-                        </td>
-
-                        {/* Gate Controls */}
-                        <td style={{ padding: '1rem' }}>
-                          <div style={{ display: 'flex', gap: '0.35rem' }}>
-                            <button
-                              onClick={() => handleTogglePractice(s.id)}
-                              title="Toggle Practice Gate"
-                              style={{
-                                padding: '0.25rem 0.45rem',
-                                fontSize: '0.725rem',
-                                borderRadius: '6px',
-                                backgroundColor: s.practiceUnlocked
-                                  ? 'rgba(52, 211, 153, 0.15)'
-                                  : 'rgba(255, 255, 255, 0.05)',
-                                color: s.practiceUnlocked ? '#34d399' : '#94a3b8',
-                                border: `1px solid ${
-                                  s.practiceUnlocked ? 'rgba(52, 211, 153, 0.3)' : 'rgba(255, 255, 255, 0.1)'
-                                }`,
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.2rem',
-                              }}
-                            >
-                              {s.practiceUnlocked ? <Unlock size={11} /> : <Lock size={11} />}
-                              Practice
-                            </button>
-
-                            <button
-                              onClick={() => handleToggleMock(s.id)}
-                              title="Toggle Mock Exam Gate"
-                              style={{
-                                padding: '0.25rem 0.45rem',
-                                fontSize: '0.725rem',
-                                borderRadius: '6px',
-                                backgroundColor: s.mockUnlocked
-                                  ? 'rgba(167, 139, 250, 0.15)'
-                                  : 'rgba(255, 255, 255, 0.05)',
-                                color: s.mockUnlocked ? '#a78bfa' : '#94a3b8',
-                                border: `1px solid ${
-                                  s.mockUnlocked ? 'rgba(167, 139, 250, 0.3)' : 'rgba(255, 255, 255, 0.1)'
-                                }`,
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '0.2rem',
-                              }}
-                            >
-                              {s.mockUnlocked ? <Unlock size={11} /> : <Lock size={11} />}
-                              Mock
-                            </button>
-                          </div>
-                        </td>
-
-                        {/* Actions: View, Edit, Reset Password, Suspend */}
-                        <td style={{ padding: '1rem', textAlign: 'right' }}>
-                          <div style={{ display: 'inline-flex', gap: '0.3rem', alignItems: 'center' }}>
+                        {/* 7. Action Bar: View, Edit, More (⋮) Menu */}
+                        <td style={{ padding: '0.9rem 1.15rem', textAlign: 'right', position: 'relative' }}>
+                          <div style={{ display: 'inline-flex', gap: '0.35rem', alignItems: 'center' }}>
                             {/* View Action */}
                             <Link
                               href={`/admin/students/${s.id}`}
                               style={{
-                                padding: '0.3rem 0.5rem',
+                                padding: '0.3rem 0.6rem',
                                 fontSize: '0.75rem',
                                 fontWeight: 600,
                                 borderRadius: '6px',
@@ -603,18 +598,19 @@ export default function StudentDirectoryPage() {
                                 textDecoration: 'none',
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: '0.2rem',
+                                gap: '0.25rem',
                               }}
                             >
-                              <Eye size={11} />
+                              <Eye size={12} />
                               View
                             </Link>
 
                             {/* Edit Action */}
                             <button
+                              type="button"
                               onClick={() => setEditingStudent(s)}
                               style={{
-                                padding: '0.3rem 0.5rem',
+                                padding: '0.3rem 0.6rem',
                                 fontSize: '0.75rem',
                                 fontWeight: 600,
                                 borderRadius: '6px',
@@ -624,57 +620,148 @@ export default function StudentDirectoryPage() {
                                 cursor: 'pointer',
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: '0.2rem',
+                                gap: '0.25rem',
                               }}
                             >
-                              <Edit3 size={11} />
+                              <Edit3 size={12} />
                               Edit
                             </button>
 
-                            {/* Reset Password */}
+                            {/* More (⋮) Action Popover Menu Trigger */}
                             <button
-                              onClick={() => handleResetPassword(s.name, s.id)}
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveMenuId(isMenuOpen ? null : s.id);
+                              }}
+                              aria-label="More actions"
+                              aria-expanded={isMenuOpen}
                               style={{
-                                padding: '0.3rem 0.5rem',
-                                fontSize: '0.75rem',
-                                fontWeight: 600,
+                                padding: '0.3rem 0.45rem',
                                 borderRadius: '6px',
-                                backgroundColor: '#1e293b',
-                                color: '#60a5fa',
-                                border: '1px solid rgba(96, 165, 250, 0.3)',
+                                backgroundColor: isMenuOpen ? '#334155' : '#1e293b',
+                                color: '#cbd5e1',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
                                 cursor: 'pointer',
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: '0.2rem',
+                                justifyContent: 'center',
                               }}
                             >
-                              <KeyRound size={11} />
-                              Reset
-                            </button>
-
-                            {/* Suspend / Activate */}
-                            <button
-                              onClick={() => handleToggleStatus(s)}
-                              style={{
-                                padding: '0.3rem 0.5rem',
-                                fontSize: '0.75rem',
-                                fontWeight: 600,
-                                borderRadius: '6px',
-                                backgroundColor: '#1e293b',
-                                color: s.status === 'ACTIVE' ? '#f87171' : '#34d399',
-                                border: `1px solid ${
-                                  s.status === 'ACTIVE' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(52, 211, 153, 0.3)'
-                                }`,
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '0.2rem',
-                              }}
-                            >
-                              {s.status === 'ACTIVE' ? <UserX size={11} /> : <UserCheck size={11} />}
-                              {s.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
+                              <MoreVertical size={14} />
                             </button>
                           </div>
+
+                          {/* Popover Action Menu */}
+                          {isMenuOpen && (
+                            <div
+                              onClick={(e) => e.stopPropagation()}
+                              style={{
+                                position: 'absolute',
+                                right: '1.15rem',
+                                top: 'calc(100% - 6px)',
+                                width: '190px',
+                                backgroundColor: '#0f172a',
+                                border: '1px solid #1e293b',
+                                borderRadius: '10px',
+                                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.6)',
+                                padding: '0.4rem',
+                                zIndex: 100,
+                                textAlign: 'left',
+                              }}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => handleTogglePractice(s.id)}
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  padding: '0.5rem 0.65rem',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  color: s.practiceUnlocked ? '#34d399' : '#94a3b8',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                {s.practiceUnlocked ? <Unlock size={13} /> : <Lock size={13} />}
+                                <span>{s.practiceUnlocked ? 'Lock Practice' : 'Unlock Practice'}</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleToggleMock(s.id)}
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  padding: '0.5rem 0.65rem',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  color: s.mockUnlocked ? '#a78bfa' : '#94a3b8',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                {s.mockUnlocked ? <Unlock size={13} /> : <Lock size={13} />}
+                                <span>{s.mockUnlocked ? 'Lock Mock Exam' : 'Unlock Mock Exam'}</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleResetPassword(s.name, s.id)}
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  padding: '0.5rem 0.65rem',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  color: '#60a5fa',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                <KeyRound size={13} />
+                                <span>Reset Password</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleToggleStatus(s)}
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  padding: '0.5rem 0.65rem',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  color: s.status === 'ACTIVE' ? '#f87171' : '#34d399',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                  borderTop: '1px solid #1e293b',
+                                  marginTop: '0.2rem',
+                                  paddingTop: '0.5rem',
+                                }}
+                              >
+                                {s.status === 'ACTIVE' ? <UserX size={13} /> : <UserCheck size={13} />}
+                                <span>{s.status === 'ACTIVE' ? 'Suspend Account' : 'Activate Account'}</span>
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     );
@@ -706,8 +793,8 @@ export default function StudentDirectoryPage() {
         >
           <div
             style={{
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backgroundColor: '#0f172a',
+              border: '1px solid #1e293b',
               borderRadius: '16px',
               maxWidth: '540px',
               width: '100%',
@@ -744,8 +831,8 @@ export default function StudentDirectoryPage() {
                     width: '100%',
                     padding: '0.65rem 0.85rem',
                     borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    backgroundColor: '#161e2e',
+                    border: '1px solid #1e293b',
                     color: '#ffffff',
                     fontSize: '0.875rem',
                     outline: 'none',
@@ -769,8 +856,8 @@ export default function StudentDirectoryPage() {
                       width: '100%',
                       padding: '0.65rem 0.85rem',
                       borderRadius: '8px',
-                      backgroundColor: '#1e293b',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      backgroundColor: '#161e2e',
+                      border: '1px solid #1e293b',
                       color: '#ffffff',
                       fontSize: '0.875rem',
                       outline: 'none',
@@ -786,13 +873,13 @@ export default function StudentDirectoryPage() {
                   <input
                     value={newPhone}
                     onChange={(e) => setNewPhone(e.target.value)}
-                    placeholder="+234 803 123 4567"
+                    placeholder="+44 7000 000000"
                     style={{
                       width: '100%',
                       padding: '0.65rem 0.85rem',
                       borderRadius: '8px',
-                      backgroundColor: '#1e293b',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      backgroundColor: '#161e2e',
+                      border: '1px solid #1e293b',
                       color: '#ffffff',
                       fontSize: '0.875rem',
                       outline: 'none',
@@ -805,7 +892,7 @@ export default function StudentDirectoryPage() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
-                    Enrolled Programme *
+                    Target Programme
                   </label>
                   <select
                     value={newProgramme}
@@ -814,23 +901,26 @@ export default function StudentDirectoryPage() {
                       width: '100%',
                       padding: '0.65rem 0.85rem',
                       borderRadius: '8px',
-                      backgroundColor: '#1e293b',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      backgroundColor: '#161e2e',
+                      border: '1px solid #1e293b',
                       color: '#ffffff',
                       fontSize: '0.875rem',
                       outline: 'none',
+                      boxSizing: 'border-box',
                     }}
                   >
-                    <option value="IELTS Academic Intensive">IELTS Academic</option>
-                    <option value="TOEFL iBT Mastery">TOEFL iBT</option>
-                    <option value="SAT Academic Preparation">SAT Prep</option>
-                    <option value="CELPIP General Coaching">CELPIP Coaching</option>
+                    <option value="IELTS Academic">IELTS Academic</option>
+                    <option value="IELTS General Training">IELTS General Training</option>
+                    <option value="TOEFL iBT">TOEFL iBT</option>
+                    <option value="Digital SAT">Digital SAT</option>
+                    <option value="CELPIP General">CELPIP General</option>
+                    <option value="English Proficiency">English Proficiency</option>
                   </select>
                 </div>
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
-                    Current Cohort
+                    Cohort Assignment
                   </label>
                   <input
                     value={newCohort}
@@ -840,8 +930,8 @@ export default function StudentDirectoryPage() {
                       width: '100%',
                       padding: '0.65rem 0.85rem',
                       borderRadius: '8px',
-                      backgroundColor: '#1e293b',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      backgroundColor: '#161e2e',
+                      border: '1px solid #1e293b',
                       color: '#ffffff',
                       fontSize: '0.875rem',
                       outline: 'none',
@@ -851,14 +941,21 @@ export default function StudentDirectoryPage() {
                 </div>
               </div>
 
-
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <Button variant="secondary" type="button" onClick={() => setAddModalOpen(false)}>
+              <div style={{ display: 'flex', justifySelf: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setAddModalOpen(false)}
+                  style={{ borderRadius: '8px' }}
+                >
                   Cancel
                 </Button>
-                <Button variant="primary" type="submit" style={{ backgroundColor: '#2563eb', color: '#ffffff' }}>
-                  Complete Registration
+                <Button
+                  type="submit"
+                  variant="primary"
+                  style={{ backgroundColor: '#2563eb', color: '#ffffff', borderRadius: '8px' }}
+                >
+                  Confirm Registration
                 </Button>
               </div>
             </form>
@@ -886,8 +983,8 @@ export default function StudentDirectoryPage() {
         >
           <div
             style={{
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backgroundColor: '#0f172a',
+              border: '1px solid #1e293b',
               borderRadius: '16px',
               maxWidth: '540px',
               width: '100%',
@@ -896,14 +993,24 @@ export default function StudentDirectoryPage() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 style={{ margin: '0 0 1.25rem', fontSize: '1.35rem', fontWeight: 800, color: '#ffffff' }}>
-              Edit Candidate Details ({editingStudent.registrationNumber})
+            <h2
+              style={{
+                margin: '0 0 1.25rem',
+                fontSize: '1.35rem',
+                fontWeight: 800,
+                color: '#ffffff',
+              }}
+            >
+              Edit Candidate Details
             </h2>
 
-            <form onSubmit={handleEditStudentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <form
+              onSubmit={handleEditStudentSubmit}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
+            >
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
-                  Full Name
+                  Candidate Name
                 </label>
                 <input
                   required
@@ -913,11 +1020,12 @@ export default function StudentDirectoryPage() {
                     width: '100%',
                     padding: '0.65rem 0.85rem',
                     borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    backgroundColor: '#161e2e',
+                    border: '1px solid #1e293b',
                     color: '#ffffff',
                     fontSize: '0.875rem',
                     outline: 'none',
+                    boxSizing: 'border-box',
                   }}
                 />
               </div>
@@ -928,93 +1036,86 @@ export default function StudentDirectoryPage() {
                     Email
                   </label>
                   <input
-                    required
-                    type="email"
+                    disabled
                     value={editingStudent.email}
-                    onChange={(e) => setEditingStudent({ ...editingStudent, email: e.target.value })}
                     style={{
                       width: '100%',
                       padding: '0.65rem 0.85rem',
                       borderRadius: '8px',
-                      backgroundColor: '#1e293b',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      color: '#ffffff',
+                      backgroundColor: '#090d16',
+                      border: '1px solid #1e293b',
+                      color: '#64748b',
                       fontSize: '0.875rem',
-                      outline: 'none',
+                      boxSizing: 'border-box',
                     }}
                   />
                 </div>
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
-                    Phone
+                    Phone Contact
                   </label>
                   <input
                     value={editingStudent.phone || ''}
                     onChange={(e) => setEditingStudent({ ...editingStudent, phone: e.target.value })}
+                    placeholder="+44 7000 000000"
                     style={{
                       width: '100%',
                       padding: '0.65rem 0.85rem',
                       borderRadius: '8px',
-                      backgroundColor: '#1e293b',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      backgroundColor: '#161e2e',
+                      border: '1px solid #1e293b',
                       color: '#ffffff',
                       fontSize: '0.875rem',
                       outline: 'none',
+                      boxSizing: 'border-box',
                     }}
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
-                    Programme
-                  </label>
-                  <input
-                    value={editingStudent.programme}
-                    onChange={(e) => setEditingStudent({ ...editingStudent, programme: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#1e293b',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      color: '#ffffff',
-                      fontSize: '0.875rem',
-                      outline: 'none',
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
-                    Cohort
-                  </label>
-                  <input
-                    value={editingStudent.cohort || ''}
-                    onChange={(e) => setEditingStudent({ ...editingStudent, cohort: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#1e293b',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      color: '#ffffff',
-                      fontSize: '0.875rem',
-                      outline: 'none',
-                    }}
-                  />
-                </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.35rem' }}>
+                  Target Programme
+                </label>
+                <select
+                  value={editingStudent.programme || 'IELTS Academic'}
+                  onChange={(e) => setEditingStudent({ ...editingStudent, programme: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '8px',
+                    backgroundColor: '#161e2e',
+                    border: '1px solid #1e293b',
+                    color: '#ffffff',
+                    fontSize: '0.875rem',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <option value="IELTS Academic">IELTS Academic</option>
+                  <option value="IELTS General Training">IELTS General Training</option>
+                  <option value="TOEFL iBT">TOEFL iBT</option>
+                  <option value="Digital SAT">Digital SAT</option>
+                  <option value="CELPIP General">CELPIP General</option>
+                  <option value="English Proficiency">English Proficiency</option>
+                </select>
               </div>
 
-
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <Button variant="secondary" type="button" onClick={() => setEditingStudent(null)}>
+              <div style={{ display: 'flex', justifySelf: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setEditingStudent(null)}
+                  style={{ borderRadius: '8px' }}
+                >
                   Cancel
                 </Button>
-                <Button variant="primary" type="submit" style={{ backgroundColor: '#2563eb', color: '#ffffff' }}>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  style={{ backgroundColor: '#2563eb', color: '#ffffff', borderRadius: '8px' }}
+                >
                   Save Changes
                 </Button>
               </div>

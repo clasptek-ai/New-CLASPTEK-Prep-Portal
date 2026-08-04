@@ -23,7 +23,7 @@ export function validatePasswordStrength(password: string): PasswordValidationRe
   const hasUppercase = /[A-Z]/.test(password);
   const hasLowercase = /[a-z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
-  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password);
 
   const criteria = [hasMinLength, hasUppercase, hasLowercase, hasNumber, hasSpecialChar];
   const score = criteria.filter(Boolean).length;

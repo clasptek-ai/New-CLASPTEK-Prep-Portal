@@ -7,21 +7,20 @@ import {
   LayoutDashboard,
   BookOpen,
   Layers,
-  FileSpreadsheet,
   Award,
   Database,
-  Upload,
   Users,
-  Bell,
   BarChart3,
   Settings,
   ShieldCheck,
-  LifeBuoy,
   Menu,
   X,
+  LogOut,
 } from 'lucide-react';
 import { useAdminWorkspace } from '../../../workspace/AdminWorkspaceContext';
 import { LogoBadge } from '../../../shared/ui/logo/LogoBadge';
+import { useGlobalLogout } from '../../../features/auth/hooks/useGlobalLogout';
+import { LogoutConfirmModal } from '../../../components/auth/LogoutConfirmModal';
 
 export interface NavItem {
   id: string;
@@ -43,6 +42,9 @@ export const AdminSidebar: React.FC = () => {
   const { pendingApprovals: _pendingApprovals } = useAdminWorkspace();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const { handleLogout, isConfirmOpen, cancelLogout, confirmLogout, isLoggingOut } =
+    useGlobalLogout();
 
   const navGroups: NavGroup[] = [
     {
@@ -146,7 +148,18 @@ export const AdminSidebar: React.FC = () => {
         </div>
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          style={{ background: 'transparent', border: 'none', color: '#f8fafc', cursor: 'pointer' }}
+          aria-label="Toggle mobile menu"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#f8fafc',
+            cursor: 'pointer',
+            minWidth: '44px',
+            minHeight: '44px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -156,6 +169,8 @@ export const AdminSidebar: React.FC = () => {
       <aside
         style={{
           width: collapsed ? '72px' : '260px',
+          height: '100vh',
+          maxHeight: '100vh',
           backgroundColor: 'var(--bg-surface-0, #111827)',
           borderRight: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.07))',
           display: 'flex',
@@ -179,7 +194,11 @@ export const AdminSidebar: React.FC = () => {
         >
           {!collapsed && (
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <LogoBadge size="sm" />
+              <LogoBadge
+                size="sm"
+                href="/admin/dashboard"
+                ariaLabel="Navigate to Admin Dashboard"
+              />
             </div>
           )}
 
@@ -196,6 +215,8 @@ export const AdminSidebar: React.FC = () => {
               justifyContent: 'center',
               padding: '0.4rem',
               borderRadius: '6px',
+              minWidth: '44px',
+              minHeight: '44px',
             }}
           >
             <Menu size={18} />
@@ -243,11 +264,13 @@ export const AdminSidebar: React.FC = () => {
                   <Link
                     key={item.id}
                     href={item.href}
+                    aria-label={item.label}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: collapsed ? 'center' : 'space-between',
                       padding: collapsed ? '0.65rem 0' : '0.6rem 0.75rem',
+                      minHeight: '44px',
                       borderRadius: 'var(--radius-md, 8px)',
                       textDecoration: 'none',
                       backgroundColor: isActive ? 'rgba(59, 130, 246, 0.12)' : 'transparent',
@@ -309,7 +332,49 @@ export const AdminSidebar: React.FC = () => {
             </div>
           ))}
         </div>
+
+        {/* Sidebar Footer Logout */}
+        <div
+          style={{
+            padding: '0.75rem',
+            borderTop: '1px solid var(--border-subtle, rgba(255, 255, 255, 0.07))',
+          }}
+        >
+          <button
+            type="button"
+            onClick={handleLogout}
+            title={collapsed ? 'Sign Out' : undefined}
+            aria-label="Sign Out of Admin Console"
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: collapsed ? 'center' : 'flex-start',
+              gap: '0.75rem',
+              padding: collapsed ? '0.65rem 0' : '0.6rem 0.75rem',
+              minHeight: '44px',
+              borderRadius: 'var(--radius-md, 8px)',
+              border: 'none',
+              backgroundColor: 'transparent',
+              color: '#f87171',
+              cursor: 'pointer',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              transition: 'background-color 150ms ease',
+            }}
+          >
+            <LogOut size={18} />
+            {!collapsed && <span>Sign Out</span>}
+          </button>
+        </div>
       </aside>
+
+      <LogoutConfirmModal
+        isOpen={isConfirmOpen}
+        onCancel={cancelLogout}
+        onConfirm={confirmLogout}
+        isLoggingOut={isLoggingOut}
+      />
     </>
   );
 };

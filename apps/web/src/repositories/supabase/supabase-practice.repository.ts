@@ -7,7 +7,7 @@ export class SupabasePracticeRepository implements IPracticeRepository {
     return getSupabaseBrowserClient();
   }
 
-  async getSessions(studentId?: string): Promise<PracticeSession[]> {
+  async getSessions(_studentId?: string): Promise<PracticeSession[]> {
     try {
       const res = await fetch('/api/v1/practice/history');
       const data = await res.json();
@@ -62,11 +62,11 @@ export class SupabasePracticeRepository implements IPracticeRepository {
     return session;
   }
 
-  async deleteSession(id: string): Promise<boolean> {
+  async deleteSession(_id: string): Promise<boolean> {
     return true;
   }
 
-  async getSkillProgress(studentId?: string): Promise<StudentSkillProgress[]> {
+  async getSkillProgress(_studentId?: string): Promise<StudentSkillProgress[]> {
     try {
       const res = await fetch('/api/v1/practice/recommendations');
       const data = await res.json();

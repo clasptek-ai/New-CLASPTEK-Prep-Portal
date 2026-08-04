@@ -17,6 +17,9 @@ export interface RegisterPayload {
   password: string;
   firstName: string;
   lastName: string;
+  phone?: string;
+  programme?: string;
+  country?: string;
 }
 
 export interface AuthState {

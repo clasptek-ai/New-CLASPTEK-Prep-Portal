@@ -6,6 +6,16 @@ import { RBACGuard } from '../../shared/auth/rbac-guard';
 import { AdminSidebar } from './components/admin-sidebar';
 import { AdminHeader } from './components/admin-header';
 
+/**
+ * Production Viewport Dashboard Layout (Linear / Stripe / Vercel style)
+ *
+ * Layout Principles:
+ * - Root Container: Fixed 100vh / 100vw, overflow: hidden (NO root page horizontal scroll).
+ * - AdminSidebar: Fixed height 100vh, independent overflowY: auto.
+ * - Right Area: Flex-1, minWidth: 0, overflow: hidden.
+ * - AdminHeader: Fixed height 64px, full width of main workspace.
+ * - Main Workspace: flex: 1, overflowY: auto, overflowX: hidden. Only table wrappers scroll horizontally when necessary.
+ */
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <AdminWorkspaceProvider>
@@ -13,36 +23,43 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div
           style={{
             display: 'flex',
-            minHeight: '100vh',
-            width: '100%',
+            height: '100vh',
+            width: '100vw',
+            maxHeight: '100vh',
+            maxWidth: '100vw',
             backgroundColor: 'var(--bg-app, #0b0f19)',
             color: 'var(--text-primary, #f8fafc)',
-            overflowX: 'hidden',
+            overflow: 'hidden',
+            boxSizing: 'border-box',
           }}
         >
-          {/* Persistent Desktop Sidebar (Collapsible on tablet, drawer on mobile) */}
+          {/* Persistent Desktop Sidebar */}
           <AdminSidebar />
 
-          {/* Main Content Area */}
+          {/* Main Content Workspace Column */}
           <div
             style={{
               flex: 1,
               display: 'flex',
               flexDirection: 'column',
+              height: '100vh',
               minWidth: 0,
+              overflow: 'hidden',
               boxSizing: 'border-box',
             }}
           >
             {/* Top Operational Header Bar */}
             <AdminHeader />
 
-            {/* Workspace Page Area */}
+            {/* Scrollable Main Workspace Region */}
             <main
               style={{
                 flex: 1,
-                padding: '2rem',
-                maxWidth: '1440px',
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                padding: '1.5rem',
                 width: '100%',
+                maxWidth: '1600px',
                 margin: '0 auto',
                 boxSizing: 'border-box',
               }}
