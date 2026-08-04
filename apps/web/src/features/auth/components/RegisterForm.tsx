@@ -127,9 +127,11 @@ export function RegisterForm() {
         country: data.country,
       });
 
+      const dynamicRegId = `CGA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+
       const onboardingData = {
         state: OnboardingState.DIAGNOSTIC_REQUIRED,
-        studentId: 'CGA-2026-000245',
+        studentId: dynamicRegId,
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,

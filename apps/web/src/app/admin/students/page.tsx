@@ -42,7 +42,7 @@ export default function StudentDirectoryPage() {
   const [newEmail, setNewEmail] = useState('');
   const [newPhone, setNewPhone] = useState('');
   const [newProgramme, setNewProgramme] = useState('IELTS Academic');
-  const [newCohort, setNewCohort] = useState('2026 Q3 Cohort A');
+  const [newCohort, setNewCohort] = useState('UNASSIGNED');
   const [newPaymentStatus, setNewPaymentStatus] = useState<
     'PAID' | 'PENDING' | 'COMPLETED' | 'OVERDUE'
   >('PAID');
@@ -121,7 +121,7 @@ export default function StudentDirectoryPage() {
     const created = await adminUsersService.addStudent({
       name: newName,
       email: newEmail,
-      phone: newPhone || '+44 7000 000000',
+      phone: newPhone || 'NOT RECORDED',
       role: 'STUDENT',
       status: 'ACTIVE',
       paymentStatus: newPaymentStatus,
