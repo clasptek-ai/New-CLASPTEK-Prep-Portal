@@ -4,10 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { DEFAULT_MOCK_BLUEPRINTS } from '@/features/mock-engine/domain/mock-blueprint';
 
 export async function GET(_req: NextRequest) {
-  return NextResponse.json(
-    { success: true, data: DEFAULT_MOCK_BLUEPRINTS },
-    { status: 200 }
-  );
+  return NextResponse.json({ success: true, data: DEFAULT_MOCK_BLUEPRINTS }, { status: 200 });
 }
 
 export async function POST(req: NextRequest) {

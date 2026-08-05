@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     if (authorizedProgramme) {
       const normalizedAuth = authorizedProgramme.toUpperCase().replace(/[^A-Z]/g, '');
       const normalizedReq = examType.toUpperCase().replace(/[^A-Z]/g, '');
-      
+
       const match =
         normalizedAuth === normalizedReq ||
         (normalizedAuth.includes('IELTSAC') && normalizedReq.includes('IELTSAC')) ||
@@ -58,9 +58,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Load active blueprint
-    let bp = blueprintId
-      ? await mockRepo.getSessionById(blueprintId)
-      : null;
+    let bp = blueprintId ? await mockRepo.getSessionById(blueprintId) : null;
 
     if (!bp) {
       bp = await mockRepo.getBlueprintByExamType(examType);
@@ -68,7 +66,10 @@ export async function POST(req: NextRequest) {
 
     if (!bp) {
       return NextResponse.json(
-        { error: 'NO_ACTIVE_MOCK_BLUEPRINT', message: `No active blueprint found for ${examType}.` },
+        {
+          error: 'NO_ACTIVE_MOCK_BLUEPRINT',
+          message: `No active blueprint found for ${examType}.`,
+        },
         { status: 404 }
       );
     }
@@ -90,13 +91,19 @@ export async function POST(req: NextRequest) {
     const mockQuestions = await mockRepo.queryMockQuestionsForBlueprint(bp);
     if (mockQuestions.length === 0) {
       return NextResponse.json(
-        { error: 'BLUEPRINT_INVENTORY_INSUFFICIENT', message: 'No eligible MOCK questions available.' },
+        {
+          error: 'BLUEPRINT_INVENTORY_INSUFFICIENT',
+          message: 'No eligible MOCK questions available.',
+        },
         { status: 422 }
       );
     }
 
     // 4. Calculate server-authoritative timer
-    const totalMinutes = bp.sections.reduce((acc: number, s: any) => acc + (s.timeLimitMinutes || 30), 0);
+    const totalMinutes = bp.sections.reduce(
+      (acc: number, s: any) => acc + (s.timeLimitMinutes || 30),
+      0
+    );
     const startedAt = new Date();
     const expiresAt = new Date(startedAt.getTime() + totalMinutes * 60 * 1000);
     const sessionId = randomUUID();

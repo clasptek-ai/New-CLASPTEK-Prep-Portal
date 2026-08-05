@@ -94,7 +94,11 @@ export async function GET(req: NextRequest) {
       const exam = tags[0] || payload.examType || 'English Proficiency';
       const section = tags[1] || payload.section || 'Grammar';
 
-      const proficiencyLevel = (r.proficiency_level || payload.difficulty || 'MEDIUM').toUpperCase();
+      const proficiencyLevel = (
+        r.proficiency_level ||
+        payload.difficulty ||
+        'MEDIUM'
+      ).toUpperCase();
 
       return {
         id: r.question_id,
@@ -105,7 +109,14 @@ export async function GET(req: NextRequest) {
         subSkill: r.grammar_subtopic || '',
         type: payload.type || 'MCQ',
         difficulty: proficiencyLevel,
-        status: statusUpper === 'PUBLISHED' ? 'PUBLISHED' : statusUpper === 'APPROVED' ? 'APPROVED' : statusUpper === 'UNDER_REVIEW' ? 'UNDER_REVIEW' : 'DRAFT',
+        status:
+          statusUpper === 'PUBLISHED'
+            ? 'PUBLISHED'
+            : statusUpper === 'APPROVED'
+              ? 'APPROVED'
+              : statusUpper === 'UNDER_REVIEW'
+                ? 'UNDER_REVIEW'
+                : 'DRAFT',
         usages: Array.isArray(payload.usages) ? payload.usages : ['DIAGNOSTIC', 'PRACTICE'],
         estimatedTime: '1.5 mins',
         officialSource: 'Clasptek Question Bank',
@@ -127,10 +138,14 @@ export async function GET(req: NextRequest) {
       mappedQuestions = mappedQuestions.filter((q) => q.status === statusParam);
     }
     if (examParam !== 'ALL') {
-      mappedQuestions = mappedQuestions.filter((q) => q.exam.toLowerCase() === examParam.toLowerCase());
+      mappedQuestions = mappedQuestions.filter(
+        (q) => q.exam.toLowerCase() === examParam.toLowerCase()
+      );
     }
     if (sectionParam !== 'ALL') {
-      mappedQuestions = mappedQuestions.filter((q) => q.section.toLowerCase() === sectionParam.toLowerCase());
+      mappedQuestions = mappedQuestions.filter(
+        (q) => q.section.toLowerCase() === sectionParam.toLowerCase()
+      );
     }
     if (difficultyParam !== 'ALL') {
       mappedQuestions = mappedQuestions.filter((q) => q.difficulty === difficultyParam);

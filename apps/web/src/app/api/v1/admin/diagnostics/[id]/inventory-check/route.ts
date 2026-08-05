@@ -15,7 +15,10 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     );
 
     if (defRes.rows.length === 0) {
-      return NextResponse.json({ success: false, error: 'Diagnostic definition not found' }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: 'Diagnostic definition not found' },
+        { status: 404 }
+      );
     }
 
     const definition = defRes.rows[0];

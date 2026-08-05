@@ -43,7 +43,9 @@ export async function GET(req: NextRequest) {
 
     let diagnosticScore: number | null = null;
     if (diagRes.rows.length > 0) {
-      const scores = diagRes.rows.filter((r) => r.score_percentage !== null).map((r) => parseFloat(r.score_percentage));
+      const scores = diagRes.rows
+        .filter((r) => r.score_percentage !== null)
+        .map((r) => parseFloat(r.score_percentage));
       if (scores.length > 0) {
         diagnosticScore = scores.reduce((a, b) => a + b, 0) / scores.length;
       } else {
@@ -51,7 +53,9 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    const practiceScore = practiceRes.rows[0]?.avg_score ? parseFloat(practiceRes.rows[0].avg_score) : null;
+    const practiceScore = practiceRes.rows[0]?.avg_score
+      ? parseFloat(practiceRes.rows[0].avg_score)
+      : null;
     const mockScore = mockRes.rows[0]?.avg_score ? parseFloat(mockRes.rows[0].avg_score) : null;
 
     // Weight evidence dynamically based on available activities
@@ -97,8 +101,14 @@ export async function GET(req: NextRequest) {
         finalReadiness >= 75
           ? 'Complete mock exam simulation to finalize examination readiness.'
           : 'Complete targeted practice modules in lower scoring sections.',
-      weakDomains: finalReadiness < 60 ? ['Grammar & Structure', 'Writing Expression'] : ['Writing Expression'],
-      strongDomains: finalReadiness >= 60 ? ['Reading Comprehension', 'Listening Comprehension'] : ['Reading Comprehension'],
+      weakDomains:
+        finalReadiness < 60
+          ? ['Grammar & Structure', 'Writing Expression']
+          : ['Writing Expression'],
+      strongDomains:
+        finalReadiness >= 60
+          ? ['Reading Comprehension', 'Listening Comprehension']
+          : ['Reading Comprehension'],
       suggestedPracticePlan: 'Complete targeted practice sessions to improve skill mastery.',
       readinessTrend: finalReadiness > 0 ? [finalReadiness] : [],
     });

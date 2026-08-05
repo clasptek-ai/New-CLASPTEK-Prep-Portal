@@ -5,10 +5,7 @@ import { getDiagnosticContext } from '@/lib/diagnostic-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
 import { PostgresSubjectiveEvaluationRepository } from '@clasptek/persistence';
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getAuthenticatedSession(req);
     const reviewerId = session?.userId || req.headers.get('x-reviewer-id') || 'admin-001';

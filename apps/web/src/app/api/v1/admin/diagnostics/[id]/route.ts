@@ -30,7 +30,10 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     );
 
     if (res.rows.length === 0) {
-      return NextResponse.json({ success: false, error: 'Diagnostic definition not found' }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: 'Diagnostic definition not found' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({ success: true, data: res.rows[0] });
@@ -43,14 +46,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const body = await req.json();
-    const {
-      title,
-      durationMinutes,
-      status,
-      instructions,
-      sectionsConfig,
-      assignedProgramme,
-    } = body;
+    const { title, durationMinutes, status, instructions, sectionsConfig, assignedProgramme } =
+      body;
 
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
@@ -80,7 +77,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
           {
             success: false,
             error: 'INVENTORY_VALIDATION_FAILED',
-            message: 'Cannot publish diagnostic assessment: Question bank inventory requirement check failed.',
+            message:
+              'Cannot publish diagnostic assessment: Question bank inventory requirement check failed.',
             inventory: {
               grammar: { required: 30, available: grammarCount, valid: grammarCount >= 30 },
               passages: { required: 1, available: passageCount, valid: passageCount >= 1 },
@@ -141,7 +139,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       );
     }
 
-    return NextResponse.json({ success: true, message: 'Diagnostic definition updated successfully' });
+    return NextResponse.json({
+      success: true,
+      message: 'Diagnostic definition updated successfully',
+    });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
@@ -153,9 +154,15 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
 
-    await pool.query(`UPDATE public.assessment_definitions SET status = 'ARCHIVED', updated_at = NOW() WHERE id = $1`, [id]);
+    await pool.query(
+      `UPDATE public.assessment_definitions SET status = 'ARCHIVED', updated_at = NOW() WHERE id = $1`,
+      [id]
+    );
 
-    return NextResponse.json({ success: true, message: 'Diagnostic assessment archived successfully' });
+    return NextResponse.json({
+      success: true,
+      message: 'Diagnostic assessment archived successfully',
+    });
   } catch (err: any) {
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }

@@ -38,9 +38,10 @@ export async function GET() {
     );
 
     if (res.rows && res.rows.length > 0 && res.rows[0].metadata_value) {
-      const dbSettings = typeof res.rows[0].metadata_value === 'string'
-        ? JSON.parse(res.rows[0].metadata_value)
-        : res.rows[0].metadata_value;
+      const dbSettings =
+        typeof res.rows[0].metadata_value === 'string'
+          ? JSON.parse(res.rows[0].metadata_value)
+          : res.rows[0].metadata_value;
 
       currentSettings = { ...DEFAULT_SETTINGS, ...dbSettings };
     }
@@ -107,7 +108,10 @@ export async function PATCH(req: NextRequest) {
       { status: 200 }
     );
   } catch (err: unknown) {
-    logger.error('PATCH /api/v1/admin/settings failure', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      'PATCH /api/v1/admin/settings failure',
+      err instanceof Error ? err : new Error(String(err))
+    );
     return NextResponse.json(
       { success: false, message: 'Failed to update platform settings' },
       { status: 500 }

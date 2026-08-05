@@ -48,13 +48,15 @@ export async function POST(req: NextRequest) {
     const pool = dbPool.getPool();
 
     // Persist permanent media asset record
-    await pool.query(
-      `INSERT INTO public.media_assets
+    await pool
+      .query(
+        `INSERT INTO public.media_assets
        (id, filename, mime_type, storage_path, asset_type, status, tenant_id, created_at)
        VALUES ($1, $2, $3, $4, 'AUDIO', 'PUBLISHED', '00000000-0000-0000-0000-000000000000', now())
        ON CONFLICT (id) DO NOTHING`,
-      [assetId, filename, mediaType, mediaUrl]
-    ).catch(() => {});
+        [assetId, filename, mediaType, mediaUrl]
+      )
+      .catch(() => {});
 
     return NextResponse.json({
       success: true,

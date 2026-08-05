@@ -9,7 +9,8 @@ export async function GET(req: NextRequest) {
     const requestId = require('crypto').randomUUID();
 
     const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    const studentId =
+      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
 
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
@@ -17,10 +18,11 @@ export async function GET(req: NextRequest) {
     // 1. Resolve student's target programme
     let studentProgramme = 'English Proficiency';
     if (studentId) {
-      const profileRes = await pool.query(
-        `SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`,
-        [studentId]
-      ).catch(() => null);
+      const profileRes = await pool
+        .query(`SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`, [
+          studentId,
+        ])
+        .catch(() => null);
       if (profileRes && profileRes.rows.length > 0 && profileRes.rows[0].target_programme) {
         studentProgramme = profileRes.rows[0].target_programme;
       }
@@ -116,10 +118,14 @@ export async function GET(req: NextRequest) {
 
     const sections = rawSections.map((sec: any) => ({
       name: sec.name || sec.code,
-      questionCount: sec.questionCount || (sec.passages ? sec.passages * 5 : sec.tasks ? sec.tasks.length : 1),
+      questionCount:
+        sec.questionCount || (sec.passages ? sec.passages * 5 : sec.tasks ? sec.tasks.length : 1),
     }));
 
-    const totalQuestions = sections.reduce((acc: number, curr: any) => acc + (curr.questionCount || 0), 0);
+    const totalQuestions = sections.reduce(
+      (acc: number, curr: any) => acc + (curr.questionCount || 0),
+      0
+    );
 
     return NextResponse.json({
       success: true,
@@ -131,7 +137,8 @@ export async function GET(req: NextRequest) {
           code: definition.code,
           title: definition.title,
           description: `Official placement assessment for ${studentProgramme}`,
-          instructions: definition.instructions || 'Complete all sections within the allocated duration.',
+          instructions:
+            definition.instructions || 'Complete all sections within the allocated duration.',
           durationMinutes: definition.durationMinutes || 45,
           totalQuestions,
           programme: {

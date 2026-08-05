@@ -95,7 +95,9 @@ export async function GET(req: NextRequest) {
         status: secondarySkill.score < 65 ? 'DEVELOPING' : 'MASTERED',
         reasoning: `Your score of ${secondarySkill.score}% in ${secondarySkill.skill} indicates opportunity for rapid score improvement with deliberate practice.`,
         suggestedExam: candidateProgramme,
-        suggestedSection: secondarySkill.skill.includes('Writing') ? 'Writing' : secondarySkill.skill,
+        suggestedSection: secondarySkill.skill.includes('Writing')
+          ? 'Writing'
+          : secondarySkill.skill,
       },
     ];
 

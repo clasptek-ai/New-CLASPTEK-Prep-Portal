@@ -66,7 +66,9 @@ export async function GET(req: NextRequest) {
           status: row.attempt_status,
           placementStage: row.placement_stage || 'PENDING_EVALUATION',
           overallScore: row.score ? parseFloat(row.score) : 0,
-          confidencePercentage: row.confidence_percentage ? parseFloat(row.confidence_percentage) : 0,
+          confidencePercentage: row.confidence_percentage
+            ? parseFloat(row.confidence_percentage)
+            : 0,
           reliabilityScore: row.reliability_score ? parseFloat(row.reliability_score) : 0,
           questionsAnswered: row.questions_answered || 0,
           startedAt: row.started_at,

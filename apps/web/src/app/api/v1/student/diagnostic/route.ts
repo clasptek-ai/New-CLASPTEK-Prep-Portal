@@ -7,7 +7,8 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
 export async function GET(req: NextRequest) {
   try {
     const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    const studentId =
+      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
 
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
@@ -15,10 +16,11 @@ export async function GET(req: NextRequest) {
     // 1. Resolve student's target programme from DB or default to 'English Proficiency'
     let studentProgramme = 'English Proficiency';
     if (studentId) {
-      const profileRes = await pool.query(
-        `SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`,
-        [studentId]
-      ).catch(() => null);
+      const profileRes = await pool
+        .query(`SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`, [
+          studentId,
+        ])
+        .catch(() => null);
       if (profileRes && profileRes.rows.length > 0 && profileRes.rows[0].target_programme) {
         studentProgramme = profileRes.rows[0].target_programme;
       }
@@ -78,7 +80,11 @@ export async function GET(req: NextRequest) {
 
     if (!diagnostic) {
       return NextResponse.json(
-        { success: false, error: 'NO_ACTIVE_DIAGNOSTIC', message: 'No active published diagnostic assessment found for your programme.' },
+        {
+          success: false,
+          error: 'NO_ACTIVE_DIAGNOSTIC',
+          message: 'No active published diagnostic assessment found for your programme.',
+        },
         { status: 404 }
       );
     }

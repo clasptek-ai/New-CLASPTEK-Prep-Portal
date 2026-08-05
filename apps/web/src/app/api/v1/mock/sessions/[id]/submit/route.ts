@@ -6,10 +6,7 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
 import { PostgresCanonicalMockRepository } from '@clasptek/persistence';
 import { ExamPluginRegistry } from '@/features/plugins/registry/exam-plugin.registry';
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getAuthenticatedSession(req);
     const studentId = session?.userId || req.headers.get('x-student-id');
@@ -80,9 +77,10 @@ export async function POST(
 
     const submittedAt = new Date();
 
-    const scaledScore = typeof conversion.overallScore === 'number'
-      ? conversion.overallScore
-      : parseFloat(String(conversion.overallScore || 0));
+    const scaledScore =
+      typeof conversion.overallScore === 'number'
+        ? conversion.overallScore
+        : parseFloat(String(conversion.overallScore || 0));
 
     // Update canonical mock_sessions & mock_results in PostgreSQL
     await mockRepo.updateMockSessionResult(sessionId, {

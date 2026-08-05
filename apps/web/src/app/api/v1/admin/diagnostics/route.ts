@@ -79,7 +79,15 @@ export async function POST(req: NextRequest) {
       `INSERT INTO public.assessment_definitions (
         id, code, exam_type, title, assessment_type, duration_minutes, status, instructions, sections_config, created_at, updated_at
       ) VALUES ($1, $2, $3, $4, 'DIAGNOSTIC', $5, 'DRAFT', $6, $7, NOW(), NOW())`,
-      [id, code, examType, title, Number(durationMinutes), instructions, JSON.stringify(defaultSections)]
+      [
+        id,
+        code,
+        examType,
+        title,
+        Number(durationMinutes),
+        instructions,
+        JSON.stringify(defaultSections),
+      ]
     );
 
     if (assignedProgramme) {

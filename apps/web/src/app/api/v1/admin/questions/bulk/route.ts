@@ -122,7 +122,10 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (err: unknown) {
-    logger.error('[POST_BULK_QUESTIONS_ERROR]', err instanceof Error ? err : new Error(String(err)));
+    logger.error(
+      '[POST_BULK_QUESTIONS_ERROR]',
+      err instanceof Error ? err : new Error(String(err))
+    );
     return NextResponse.json(
       {
         success: false,

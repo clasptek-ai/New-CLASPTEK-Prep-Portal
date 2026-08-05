@@ -28,7 +28,11 @@ export async function POST(req: NextRequest) {
 
     if (!assessmentType || !sessionId || !responseId || !skill || !rawResponseReference) {
       return NextResponse.json(
-        { error: 'MISSING_REQUIRED_FIELDS', message: 'assessmentType, sessionId, responseId, skill, and rawResponseReference are required.' },
+        {
+          error: 'MISSING_REQUIRED_FIELDS',
+          message:
+            'assessmentType, sessionId, responseId, skill, and rawResponseReference are required.',
+        },
         { status: 400 }
       );
     }

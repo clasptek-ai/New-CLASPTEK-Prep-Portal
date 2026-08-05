@@ -35,15 +35,19 @@ export async function GET(
     const studentId = decodeURIComponent(rawStudentId || '').trim();
 
     if (!studentId) {
-      return NextResponse.json({ success: false, error: 'Student ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: 'Student ID is required' },
+        { status: 400 }
+      );
     }
 
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
 
     // 1. Fetch student info from auth.users, profiles, or public.users
-    const studentInfoQuery = await pool.query(
-      `SELECT 
+    const studentInfoQuery = await pool
+      .query(
+        `SELECT 
         au.id as auth_id,
         au.email,
         COALESCE(p.first_name || ' ' || p.last_name, au.raw_user_meta_data->>'first_name', split_part(au.email, '@', 1)) as name,
@@ -55,8 +59,9 @@ export async function GET(
           OR p.id::text = $1
           OR p.user_id::text = $1
        LIMIT 1`,
-      [studentId]
-    ).catch(() => null);
+        [studentId]
+      )
+      .catch(() => null);
 
     const studentRecord = studentInfoQuery?.rows?.[0] || {
       auth_id: studentId,

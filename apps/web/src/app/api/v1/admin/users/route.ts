@@ -82,7 +82,10 @@ export async function GET(_req: NextRequest) {
     const mapped = res.rows.map((r: any) => {
       const fullName = [r.first_name, r.last_name].filter(Boolean).join(' ').trim();
       const displayName = fullName || r.email;
-      const regId = `CGA-2026-${r.id.replace(/[^a-zA-Z0-9]/g, '').substring(0, 5).toUpperCase()}`;
+      const regId = `CGA-2026-${r.id
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .substring(0, 5)
+        .toUpperCase()}`;
 
       return {
         id: r.id,

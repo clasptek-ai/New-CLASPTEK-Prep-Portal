@@ -6,10 +6,7 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
 import { PostgresCanonicalPracticeRepository } from '@clasptek/persistence';
 import { calculateBandOrScaleScore } from '@/services/student/practice.service';
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getAuthenticatedSession(req);
     const studentId = session?.userId || req.headers.get('x-student-id');
@@ -72,7 +69,11 @@ export async function POST(
 
     // Update ongoing Practice skill evidence in student_skill_profiles
     const computedStage =
-      scorePercentage >= 75 ? 'MASTERED' : scorePercentage >= 50 ? 'DEVELOPING' : 'NEEDS_IMPROVEMENT';
+      scorePercentage >= 75
+        ? 'MASTERED'
+        : scorePercentage >= 50
+          ? 'DEVELOPING'
+          : 'NEEDS_IMPROVEMENT';
 
     await pool.query(
       `INSERT INTO public.student_skill_profiles 
@@ -82,7 +83,13 @@ export async function POST(
          mastery_percentage = EXCLUDED.mastery_percentage,
          computed_stage = EXCLUDED.computed_stage,
          updated_at = now()`,
-      [studentId, sessionRecord.section_code || 'Grammar', scorePercentage, computedStage, sessionId]
+      [
+        studentId,
+        sessionRecord.section_code || 'Grammar',
+        scorePercentage,
+        computedStage,
+        sessionId,
+      ]
     );
 
     return NextResponse.json({

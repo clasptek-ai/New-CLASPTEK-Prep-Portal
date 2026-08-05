@@ -33,7 +33,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       headers: {
         'X-Deprecated': 'true',
         'X-Replacement': `/api/v1/assessment-attempts/${id}`,
-        'Sunset': 'Sat, 01 Nov 2026 00:00:00 GMT',
+        Sunset: 'Sat, 01 Nov 2026 00:00:00 GMT',
       },
     }
   );

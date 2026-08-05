@@ -7,7 +7,8 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+    const studentId =
+      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
     if (!studentId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -38,14 +39,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       savedAnswers[r.question_id] = r.response_payload;
     });
 
-    const paperSnapshot = typeof attempt.paper_snapshot === 'string'
-      ? JSON.parse(attempt.paper_snapshot)
-      : (attempt.paper_snapshot || {});
+    const paperSnapshot =
+      typeof attempt.paper_snapshot === 'string'
+        ? JSON.parse(attempt.paper_snapshot)
+        : attempt.paper_snapshot || {};
 
     const startedAt = attempt.started_at || new Date();
     const durationMinutes = attempt.duration_minutes || paperSnapshot.durationMinutes || 45;
-    const expiresAt = attempt.expires_at || new Date(new Date(startedAt).getTime() + durationMinutes * 60 * 1000);
-    const remainingSeconds = Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000));
+    const expiresAt =
+      attempt.expires_at || new Date(new Date(startedAt).getTime() + durationMinutes * 60 * 1000);
+    const remainingSeconds = Math.max(
+      0,
+      Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)
+    );
 
     return NextResponse.json({
       success: true,

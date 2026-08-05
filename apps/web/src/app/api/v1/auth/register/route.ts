@@ -74,19 +74,26 @@ export async function POST(req: NextRequest) {
       provider: provider || 'LOCAL',
     });
 
-    // 3. Persist phone & target_programme to canonical public.profiles
+    // 3. Atomically upsert phone & target_programme to canonical public.profiles
     const dbLogger = new ConsoleLogger('RegisterRoute');
     const dbPool = new DatabasePool(config, dbLogger);
     await dbPool.connect();
     const pool = dbPool.getPool();
 
     await pool.query(
-      `UPDATE public.profiles
-       SET phone = COALESCE($1, phone),
-           target_programme = COALESCE($2, target_programme),
-           updated_at = now()
-       WHERE user_id = $3`,
-      [phone || null, programme || null, data.user.id]
+      `INSERT INTO public.profiles (id, user_id, first_name, last_name, phone, target_programme, locale, time_zone, version, created_at, updated_at)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, 'en', 'UTC', 1, now(), now())
+       ON CONFLICT (user_id) DO UPDATE
+       SET phone = COALESCE(EXCLUDED.phone, public.profiles.phone),
+           target_programme = COALESCE(EXCLUDED.target_programme, public.profiles.target_programme),
+           updated_at = now()`,
+      [
+        data.user.id,
+        firstName || 'Student',
+        lastName || 'Candidate',
+        phone || null,
+        programme || null,
+      ]
     );
 
     return NextResponse.json({ success: true, userId: data.user.id }, { status: 201 });
