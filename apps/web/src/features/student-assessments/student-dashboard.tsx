@@ -199,7 +199,14 @@ function StudentAssessmentDashboardContent() {
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700 }}>
                   GRAMMAR SECTION
                 </div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#38bdf8', marginTop: '0.25rem' }}>
+                <div
+                  style={{
+                    fontSize: '1.1rem',
+                    fontWeight: 800,
+                    color: '#38bdf8',
+                    marginTop: '0.25rem',
+                  }}
+                >
                   30 Objective Questions
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.25rem' }}>
@@ -211,7 +218,14 @@ function StudentAssessmentDashboardContent() {
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700 }}>
                   READING SECTION
                 </div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#34d399', marginTop: '0.25rem' }}>
+                <div
+                  style={{
+                    fontSize: '1.1rem',
+                    fontWeight: 800,
+                    color: '#34d399',
+                    marginTop: '0.25rem',
+                  }}
+                >
                   1 Passage / Group
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.25rem' }}>
@@ -223,7 +237,14 @@ function StudentAssessmentDashboardContent() {
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700 }}>
                   WRITING SECTION
                 </div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#a78bfa', marginTop: '0.25rem' }}>
+                <div
+                  style={{
+                    fontSize: '1.1rem',
+                    fontWeight: 800,
+                    color: '#a78bfa',
+                    marginTop: '0.25rem',
+                  }}
+                >
                   2 Writing Tasks
                 </div>
                 <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.25rem' }}>
@@ -367,7 +388,9 @@ function StudentAssessmentDashboardContent() {
 
 export function StudentAssessmentDashboard() {
   return (
-    <Suspense fallback={<div style={{ padding: '2rem', color: '#94a3b8' }}>Loading Dashboard...</div>}>
+    <Suspense
+      fallback={<div style={{ padding: '2rem', color: '#94a3b8' }}>Loading Dashboard...</div>}
+    >
       <StudentAssessmentDashboardContent />
     </Suspense>
   );

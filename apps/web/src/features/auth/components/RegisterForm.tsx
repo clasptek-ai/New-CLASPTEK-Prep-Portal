@@ -114,18 +114,24 @@ export function RegisterForm() {
     setSubmitError(null);
     const data = getValues();
     try {
+      const selectedProgObj = PROGRAMME_OPTIONS.find((p) => p.id === selectedProgramme);
+      const targetProgrammeName = selectedProgObj?.name || 'IELTS Academic';
+
       await registerAuth({
         email: data.email,
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
+        phone: data.phone,
+        programme: targetProgrammeName,
+        country: data.country,
       });
 
-      const selectedProgObj = PROGRAMME_OPTIONS.find((p) => p.id === selectedProgramme);
+      const dynamicRegId = `CGA-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
 
       const onboardingData = {
         state: OnboardingState.DIAGNOSTIC_REQUIRED,
-        studentId: 'CGA-2026-000245',
+        studentId: dynamicRegId,
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,

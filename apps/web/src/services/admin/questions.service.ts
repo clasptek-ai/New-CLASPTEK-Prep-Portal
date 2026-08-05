@@ -490,7 +490,7 @@ export const adminQuestionsService = {
     const repo = RepositoryFactory.getQuestionRepository();
     const list = await repo.findForCandidates(exam, usage);
     if (list && list.length > 0) return list;
-    
+
     const all = await this.getQuestions({ status: 'PUBLISHED' });
     let filtered = all;
     if (exam) {
@@ -733,7 +733,8 @@ export const adminQuestionsService = {
           const matchesStatus = !f.status || f.status === 'ALL' || q.status === f.status;
           const matchesExam = !f.exam || f.exam === 'ALL' || q.exam === f.exam;
           const matchesSection = !f.section || f.section === 'ALL' || q.section === f.section;
-          const matchesDiff = !f.difficulty || f.difficulty === 'ALL' || q.difficulty === f.difficulty;
+          const matchesDiff =
+            !f.difficulty || f.difficulty === 'ALL' || q.difficulty === f.difficulty;
           return matchesStatus && matchesExam && matchesSection && matchesDiff;
         })
         .map((q) => q.id);
@@ -747,15 +748,21 @@ export const adminQuestionsService = {
       affectedCount = all.length - updated.length;
       saveStoredQuestions(updated);
     } else if (payload.action === 'publish') {
-      const updated = all.map((q) => (targetSet.has(q.id) ? { ...q, status: 'PUBLISHED' as const } : q));
+      const updated = all.map((q) =>
+        targetSet.has(q.id) ? { ...q, status: 'PUBLISHED' as const } : q
+      );
       affectedCount = targetSet.size;
       saveStoredQuestions(updated);
     } else if (payload.action === 'unpublish' || payload.action === 'restore') {
-      const updated = all.map((q) => (targetSet.has(q.id) ? { ...q, status: 'DRAFT' as const } : q));
+      const updated = all.map((q) =>
+        targetSet.has(q.id) ? { ...q, status: 'DRAFT' as const } : q
+      );
       affectedCount = targetSet.size;
       saveStoredQuestions(updated);
     } else if (payload.action === 'archive') {
-      const updated = all.map((q) => (targetSet.has(q.id) ? { ...q, status: 'ARCHIVED' as const } : q));
+      const updated = all.map((q) =>
+        targetSet.has(q.id) ? { ...q, status: 'ARCHIVED' as const } : q
+      );
       affectedCount = targetSet.size;
       saveStoredQuestions(updated);
     } else if (payload.action === 'assign_usages' && payload.payloadData?.usages) {
@@ -793,4 +800,3 @@ export const adminQuestionsService = {
     };
   },
 };
-

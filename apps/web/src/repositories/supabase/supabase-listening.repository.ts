@@ -1,4 +1,8 @@
-import { IListeningRepository, ListeningTrack, ListeningSection } from '../interfaces/listening.repository';
+import {
+  IListeningRepository,
+  ListeningTrack,
+  ListeningSection,
+} from '../interfaces/listening.repository';
 import { ExamType } from '../../services/admin/questions.service';
 import { getSupabaseBrowserClient } from '../../lib/supabase-browser';
 

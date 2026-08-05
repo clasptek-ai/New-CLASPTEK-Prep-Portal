@@ -138,7 +138,10 @@ export class SupabaseQuestionRepository implements IQuestionRepository {
     return list.find((q) => q.code === code) || null;
   }
 
-  async findByExamAndSection(exam?: ExamType, section?: QuestionWorkflowStatus): Promise<AdminQuestion[]> {
+  async findByExamAndSection(
+    exam?: ExamType,
+    section?: QuestionWorkflowStatus
+  ): Promise<AdminQuestion[]> {
     const list = await this.findAll();
     return list.filter((q) => {
       if (exam && q.exam !== exam) return false;

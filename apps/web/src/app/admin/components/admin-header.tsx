@@ -1,16 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, ShieldCheck } from 'lucide-react';
+import { Search, Bell, ShieldCheck, LogOut, ChevronDown } from 'lucide-react';
 import { useAdminWorkspace } from '../../../workspace/AdminWorkspaceContext';
 import { Avatar } from '../../../shared/ui/avatar/Avatar';
 import { Badge } from '../../../shared/ui/badge/Badge';
+import { useGlobalLogout } from '../../../features/auth/hooks/useGlobalLogout';
+import { LogoutConfirmModal } from '../../../components/auth/LogoutConfirmModal';
 
 export const AdminHeader: React.FC = () => {
   const { adminProfile, systemHealth, academicTerm, unreadNotificationsCount } =
     useAdminWorkspace();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+  const { handleLogout, isConfirmOpen, cancelLogout, confirmLogout, isLoggingOut } =
+    useGlobalLogout();
 
   // Global Cmd+K / Ctrl+K keyboard shortcut listener for Admin Console
   useEffect(() => {
@@ -130,37 +136,102 @@ export const AdminHeader: React.FC = () => {
 
           {/* Admin Profile Dropdown */}
           {adminProfile && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.6rem',
-                paddingLeft: '0.5rem',
-                borderLeft: '1px solid var(--border-subtle)',
-              }}
-            >
-              <Avatar name={adminProfile.name} size="sm" />
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                aria-label="Admin Profile Menu"
+                aria-expanded={profileDropdownOpen}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                  paddingLeft: '0.5rem',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  minHeight: '44px',
+                }}
+              >
+                <Avatar name={adminProfile.name} size="sm" />
+                <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+                  <span
+                    style={{
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      color: 'var(--text-primary, #f8fafc)',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {adminProfile.name}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.7rem',
+                      color: 'var(--primary-400, #3b82f6)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {adminProfile.role}
+                  </span>
+                </div>
+                <ChevronDown size={14} color="#94a3b8" />
+              </button>
+
+              {profileDropdownOpen && (
+                <div
                   style={{
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    color: 'var(--text-primary, #f8fafc)',
-                    lineHeight: 1.2,
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    width: '200px',
+                    backgroundColor: '#0f172a',
+                    border: '1px solid #1e293b',
+                    borderRadius: '10px',
+                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+                    padding: '0.5rem',
+                    zIndex: 100,
                   }}
                 >
-                  {adminProfile.name}
-                </span>
-                <span
-                  style={{
-                    fontSize: '0.7rem',
-                    color: 'var(--primary-400, #3b82f6)',
-                    fontWeight: 600,
-                  }}
-                >
-                  {adminProfile.role}
-                </span>
-              </div>
+                  <div
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      borderBottom: '1px solid #1e293b',
+                      fontSize: '0.75rem',
+                      color: '#94a3b8',
+                    }}
+                  >
+                    Signed in as <strong>{adminProfile.name}</strong>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProfileDropdownOpen(false);
+                      handleLogout();
+                    }}
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.6rem',
+                      padding: '0.6rem 0.75rem',
+                      minHeight: '44px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      backgroundColor: 'transparent',
+                      color: '#f87171',
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      marginTop: '0.25rem',
+                    }}
+                    aria-label="Sign Out of Admin Console"
+                  >
+                    <LogOut size={16} />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -231,6 +302,13 @@ export const AdminHeader: React.FC = () => {
           </div>
         </div>
       )}
+
+      <LogoutConfirmModal
+        isOpen={isConfirmOpen}
+        onCancel={cancelLogout}
+        onConfirm={confirmLogout}
+        isLoggingOut={isLoggingOut}
+      />
     </>
   );
 };

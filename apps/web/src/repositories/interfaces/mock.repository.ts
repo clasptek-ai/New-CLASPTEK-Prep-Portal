@@ -3,7 +3,6 @@ import {
   MockTemplate,
   MockSession,
   MockResult,
-  MockIntegrityLog,
 } from '../../features/mock-engine/domain/mock-blueprint';
 
 export interface IMockRepository {

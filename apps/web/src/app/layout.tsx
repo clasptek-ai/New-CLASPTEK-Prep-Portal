@@ -3,6 +3,14 @@ import React from 'react';
 import { Providers } from './providers';
 import type { Metadata, Viewport } from 'next';
 import { BrandConfig } from '@/config/brand.config';
+import { Inter } from 'next/font/google';
+import { SkeletonStyles } from '@/components/ui/skeleton';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const viewport: Viewport = {
   themeColor: '#0b0f19',
@@ -39,8 +47,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className={inter.variable}>
+      <head>
+        <SkeletonStyles />
+      </head>
+      <body className={inter.className}>
         <Providers>{children}</Providers>
       </body>
     </html>

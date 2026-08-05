@@ -1,5 +1,10 @@
 import { IMockRepository } from '../interfaces/mock.repository';
-import { MockBlueprint, MockTemplate, MockSession, MockResult } from '../../features/mock-engine/domain/mock-blueprint';
+import {
+  MockBlueprint,
+  MockTemplate,
+  MockSession,
+  MockResult,
+} from '../../features/mock-engine/domain/mock-blueprint';
 import { getSupabaseBrowserClient } from '../../lib/supabase-browser';
 
 export class SupabaseMockRepository implements IMockRepository {
@@ -21,8 +26,12 @@ export class SupabaseMockRepository implements IMockRepository {
           scoringMethod: bp.scoringStrategy,
           allowPause: false,
           status: bp.status,
-          totalQuestions: bp.sections ? bp.sections.reduce((acc: number, s: any) => acc + (s.questionCount || 0), 0) : 40,
-          totalTimeMinutes: bp.sections ? bp.sections.reduce((acc: number, s: any) => acc + (s.timeLimitMinutes || 0), 0) : 120,
+          totalQuestions: bp.sections
+            ? bp.sections.reduce((acc: number, s: any) => acc + (s.questionCount || 0), 0)
+            : 40,
+          totalTimeMinutes: bp.sections
+            ? bp.sections.reduce((acc: number, s: any) => acc + (s.timeLimitMinutes || 0), 0)
+            : 120,
           sections: bp.sections || [],
           createdAt: new Date().toISOString(),
         }));
@@ -82,7 +91,8 @@ export class SupabaseMockRepository implements IMockRepository {
           blueprintId: `bp-${row.sessionId}`,
           exam: row.examType,
           studentId: studentId || 'student',
-          status: row.status === 'COMPLETED' || row.status === 'SUBMITTED' ? 'SUBMITTED' : 'IN_PROGRESS',
+          status:
+            row.status === 'COMPLETED' || row.status === 'SUBMITTED' ? 'SUBMITTED' : 'IN_PROGRESS',
           currentSectionIndex: 0,
           currentQuestionIndex: 0,
           timeRemainingSeconds: 0,

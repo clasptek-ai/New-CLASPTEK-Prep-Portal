@@ -40,11 +40,13 @@ export const DashboardCompositionService = {
             // Ignore
           }
         }
+        const storedId =
+          (typeof window !== 'undefined' && localStorage.getItem('clasptek_user_id')) || 'STUDENT';
         return {
-          id: studentId || 'CGA-2026-000245',
+          id: studentId || storedId,
           name: registeredName,
           avatarUrl: undefined,
-          enrolledAt: '2026-01-15T09:00:00Z',
+          enrolledAt: new Date().toISOString(),
         } as any;
       }),
       studentLearningService.getEnrolledProgrammes().catch(() => []),

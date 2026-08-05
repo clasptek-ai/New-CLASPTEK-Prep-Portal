@@ -5,21 +5,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Menu,
-  X,
   ChevronLeft,
   ChevronRight,
-  Home,
   BookOpen,
   Award,
   User,
   Bell,
   LayoutDashboard,
-  Zap,
   GraduationCap,
+  LogOut,
 } from 'lucide-react';
 import { StudentBottomNav } from '@/shared/ui/navigation/StudentBottomNav';
 import { MobileNavDrawer } from '@/shared/ui/navigation/MobileNavDrawer';
 import { LogoBadge } from '@/shared/ui/logo/LogoBadge';
+import { useGlobalLogout } from '@/features/auth/hooks/useGlobalLogout';
+import { LogoutConfirmModal } from '@/components/auth/LogoutConfirmModal';
 
 interface StudentLayoutProps {
   children: React.ReactNode;
@@ -29,6 +29,9 @@ export function StudentLayout({ children }: StudentLayoutProps) {
   const pathname = usePathname();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const { handleLogout, isConfirmOpen, cancelLogout, confirmLogout, isLoggingOut } =
+    useGlobalLogout();
 
   const navLinks = [
     { label: 'Workspace Dashboard', href: '/student', icon: LayoutDashboard },
@@ -46,12 +49,12 @@ export function StudentLayout({ children }: StudentLayoutProps) {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setMobileDrawerOpen(true)}
-            className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+            className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
             aria-label="Open mobile navigation menu"
           >
             <Menu size={20} />
           </button>
-          <LogoBadge size="sm" />
+          <LogoBadge size="sm" href="/student/welcome" ariaLabel="Navigate to Student Welcome" />
         </div>
         <div className="text-xs font-bold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20">
           STUDENT
@@ -68,10 +71,16 @@ export function StudentLayout({ children }: StudentLayoutProps) {
         >
           {/* Sidebar Top Header */}
           <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-            {!sidebarCollapsed && <LogoBadge size="sm" />}
+            {!sidebarCollapsed && (
+              <LogoBadge
+                size="sm"
+                href="/student/welcome"
+                ariaLabel="Navigate to Student Welcome"
+              />
+            )}
             <button
               onClick={() => setSidebarCollapsed((prev) => !prev)}
-              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
               aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {sidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
@@ -94,7 +103,7 @@ export function StudentLayout({ children }: StudentLayoutProps) {
                   key={link.href}
                   href={link.href}
                   title={sidebarCollapsed ? link.label : undefined}
-                  className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  className={`flex items-center space-x-3 px-3 py-2.5 min-h-11 rounded-xl text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
                     isActive
                       ? 'bg-sky-500 text-slate-950 font-bold shadow-md shadow-sky-500/20'
                       : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -106,6 +115,22 @@ export function StudentLayout({ children }: StudentLayoutProps) {
               );
             })}
           </nav>
+
+          {/* Sidebar Footer Logout Button */}
+          <div className="p-3 border-t border-slate-800">
+            <button
+              type="button"
+              onClick={handleLogout}
+              title={sidebarCollapsed ? 'Sign Out' : undefined}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 min-h-11 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:outline-none ${
+                sidebarCollapsed ? 'justify-center px-0' : ''
+              }`}
+              aria-label="Sign Out of Student Portal"
+            >
+              <LogOut size={18} />
+              {!sidebarCollapsed && <span>Sign Out</span>}
+            </button>
+          </div>
         </aside>
 
         {/* Main Content Workspace Region */}
@@ -118,11 +143,21 @@ export function StudentLayout({ children }: StudentLayoutProps) {
       <MobileNavDrawer
         isOpen={mobileDrawerOpen}
         onClose={() => setMobileDrawerOpen(false)}
+        onLogout={handleLogout}
         title="Student Portal"
         links={navLinks}
         userRole="Student Candidate"
+        logoHref="/student/welcome"
       />
       <StudentBottomNav />
+
+      {/* Assessment Logout Confirmation Dialog */}
+      <LogoutConfirmModal
+        isOpen={isConfirmOpen}
+        onCancel={cancelLogout}
+        onConfirm={confirmLogout}
+        isLoggingOut={isLoggingOut}
+      />
     </div>
   );
 }

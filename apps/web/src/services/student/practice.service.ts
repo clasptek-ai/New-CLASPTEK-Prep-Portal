@@ -1,6 +1,5 @@
 import { apiClient } from '../api/client';
 import {
-  adminQuestionsService,
   AdminQuestion,
   ExamType,
   SectionType,
@@ -159,7 +158,9 @@ export const studentPracticeService = {
           strongTopics: ['Reading', 'Listening'],
           averageTimeSeconds: 45,
           history: history.map((h: any) => ({
-            date: h.completedAt ? new Date(h.completedAt).toISOString().split('T')[0] : '2026-07-31',
+            date: h.completedAt
+              ? new Date(h.completedAt).toISOString().split('T')[0]
+              : '2026-07-31',
             score: h.scorePercentage || 0,
             exam: h.exam || 'English Proficiency',
           })),
@@ -285,7 +286,7 @@ export const studentPracticeService = {
     if (typeof window !== 'undefined') {
       try {
         const raw = localStorage.getItem(BOOKMARKS_KEY);
-        let set = new Set<string>(raw ? JSON.parse(raw) : []);
+        const set = new Set<string>(raw ? JSON.parse(raw) : []);
         if (isBookmarked) {
           set.add(questionId);
         } else {
@@ -360,4 +361,3 @@ export const studentPracticeService = {
     ];
   },
 };
-

@@ -10,12 +10,12 @@ export class IeltsExamPlugin implements IExamPlugin {
     const ratio = Math.min(Math.max(rawScore / (totalQuestions || 40), 0), 1);
     let band = 5.0;
     if (ratio >= 0.88) band = 9.0;
-    else if (ratio >= 0.80) band = 8.5;
+    else if (ratio >= 0.8) band = 8.5;
     else if (ratio >= 0.73) band = 8.0;
     else if (ratio >= 0.65) band = 7.5;
     else if (ratio >= 0.58) band = 7.0;
-    else if (ratio >= 0.50) band = 6.5;
-    else if (ratio >= 0.40) band = 6.0;
+    else if (ratio >= 0.5) band = 6.5;
+    else if (ratio >= 0.4) band = 6.0;
 
     let cefr: 'B1' | 'B2' | 'C1' | 'C2' = 'B2';
     if (band >= 8.5) cefr = 'C2';

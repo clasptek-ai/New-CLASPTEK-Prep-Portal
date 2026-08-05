@@ -85,7 +85,8 @@ export default function AdminResultsOverview() {
           Reports & Academic Performance Analytics
         </h1>
         <p style={{ color: '#94a3b8', margin: '0.35rem 0 0', fontSize: '0.875rem' }}>
-          Monitor institutional performance metrics, readiness distributions, and student evaluation reports.
+          Monitor institutional performance metrics, readiness distributions, and student evaluation
+          reports.
         </p>
       </div>
 
@@ -115,11 +116,17 @@ export default function AdminResultsOverview() {
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#111827')}
         >
           <div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>Total Students</div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', marginTop: '4px' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>
+              Total Students
+            </div>
+            <div
+              style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', marginTop: '4px' }}
+            >
               412
             </div>
-            <div style={{ fontSize: '0.725rem', color: '#38bdf8', marginTop: '4px', fontWeight: 600 }}>
+            <div
+              style={{ fontSize: '0.725rem', color: '#38bdf8', marginTop: '4px', fontWeight: 600 }}
+            >
               Click to view Directory →
             </div>
           </div>
@@ -157,11 +164,17 @@ export default function AdminResultsOverview() {
           onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#111827')}
         >
           <div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>Average Readiness</div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#34d399', marginTop: '4px' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>
+              Average Readiness
+            </div>
+            <div
+              style={{ fontSize: '1.75rem', fontWeight: 800, color: '#34d399', marginTop: '4px' }}
+            >
               78%
             </div>
-            <div style={{ fontSize: '0.725rem', color: '#34d399', marginTop: '4px', fontWeight: 600 }}>
+            <div
+              style={{ fontSize: '0.725rem', color: '#34d399', marginTop: '4px', fontWeight: 600 }}
+            >
               +4.2% from last term
             </div>
           </div>
@@ -200,10 +213,14 @@ export default function AdminResultsOverview() {
         >
           <div>
             <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>At Risk</div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f87171', marginTop: '4px' }}>
+            <div
+              style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f87171', marginTop: '4px' }}
+            >
               21
             </div>
-            <div style={{ fontSize: '0.725rem', color: '#f87171', marginTop: '4px', fontWeight: 600 }}>
+            <div
+              style={{ fontSize: '0.725rem', color: '#f87171', marginTop: '4px', fontWeight: 600 }}
+            >
               Click to filter At Risk candidates
             </div>
           </div>
@@ -239,10 +256,14 @@ export default function AdminResultsOverview() {
             <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>
               Assessments This Week
             </div>
-            <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#a78bfa', marginTop: '4px' }}>
+            <div
+              style={{ fontSize: '1.75rem', fontWeight: 800, color: '#a78bfa', marginTop: '4px' }}
+            >
               186
             </div>
-            <div style={{ fontSize: '0.725rem', color: '#a78bfa', marginTop: '4px', fontWeight: 600 }}>
+            <div
+              style={{ fontSize: '0.725rem', color: '#a78bfa', marginTop: '4px', fontWeight: 600 }}
+            >
               Active test submissions
             </div>
           </div>
@@ -340,7 +361,14 @@ export default function AdminResultsOverview() {
           overflow: 'hidden',
         }}
       >
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            textAlign: 'left',
+            fontSize: '0.875rem',
+          }}
+        >
           <thead>
             <tr
               style={{
@@ -381,11 +409,25 @@ export default function AdminResultsOverview() {
                 >
                   <td style={{ padding: '1rem' }}>
                     <div style={{ fontWeight: 700, color: '#f8fafc' }}>{student.studentName}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#38bdf8', marginTop: '2px', fontWeight: 600 }}>
+                    <div
+                      style={{
+                        fontSize: '0.75rem',
+                        color: '#38bdf8',
+                        marginTop: '2px',
+                        fontWeight: 600,
+                      }}
+                    >
                       ID: {student.studentId}
                     </div>
                   </td>
-                  <td style={{ padding: '1rem', fontWeight: 800, fontSize: '1.05rem', color: '#f8fafc' }}>
+                  <td
+                    style={{
+                      padding: '1rem',
+                      fontWeight: 800,
+                      fontSize: '1.05rem',
+                      color: '#f8fafc',
+                    }}
+                  >
                     {student.overallScore}%
                   </td>
                   <td style={{ padding: '1rem' }}>
@@ -399,20 +441,27 @@ export default function AdminResultsOverview() {
                           student.academicStatus === 'EXCELLING'
                             ? 'rgba(52, 211, 153, 0.15)'
                             : student.academicStatus === 'ON_TRACK'
-                            ? 'rgba(59, 130, 246, 0.15)'
-                            : 'rgba(239, 68, 68, 0.15)',
+                              ? 'rgba(59, 130, 246, 0.15)'
+                              : 'rgba(239, 68, 68, 0.15)',
                         color:
                           student.academicStatus === 'EXCELLING'
                             ? '#34d399'
                             : student.academicStatus === 'ON_TRACK'
-                            ? '#60a5fa'
-                            : '#f87171',
+                              ? '#60a5fa'
+                              : '#f87171',
                       }}
                     >
                       {student.academicStatus.replace('_', ' ')}
                     </span>
                   </td>
-                  <td style={{ padding: '1rem', fontSize: '0.85rem', color: '#cbd5e1', fontWeight: 600 }}>
+                  <td
+                    style={{
+                      padding: '1rem',
+                      fontSize: '0.85rem',
+                      color: '#cbd5e1',
+                      fontWeight: 600,
+                    }}
+                  >
                     {student.performanceTrend}
                   </td>
                   <td style={{ padding: '1rem', fontSize: '0.85rem', color: '#cbd5e1' }}>

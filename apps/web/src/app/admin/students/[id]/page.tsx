@@ -712,13 +712,13 @@ export default function StudentProfilePage() {
                 >
                   <span style={{ color: '#94a3b8' }}>Active Cohort:</span>
                   <span style={{ fontWeight: 700, color: '#38bdf8' }}>
-                    {student.cohort || '2026 Q3 Cohort A'}
+                    {student.cohort || 'UNASSIGNED'}
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: '#94a3b8' }}>Overall Prep Progress:</span>
                   <span style={{ fontWeight: 700, color: '#34d399' }}>
-                    {student.progressPercent || 75}%
+                    {student.progressPercent ?? 0}%
                   </span>
                 </div>
               </div>

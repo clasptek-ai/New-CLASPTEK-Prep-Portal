@@ -10,6 +10,8 @@ import { Alert, AlertDescription, AlertTitle } from '../../shared/ui/alert/Alert
 function LoginPageContent() {
   const searchParams = useSearchParams();
   const sessionTimeout = searchParams.get('timeout') === 'true';
+  const signedOut =
+    searchParams.get('signedOut') === 'true' || searchParams.get('logout') === 'true';
 
   return (
     <AuthShell title="Welcome Back" subtitle="Sign in to continue your Clasptek learning portal.">
@@ -19,6 +21,13 @@ function LoginPageContent() {
           <AlertDescription>
             Your login session has timed out. Please sign in again.
           </AlertDescription>
+        </Alert>
+      )}
+
+      {signedOut && (
+        <Alert variant="success" className="mb-4">
+          <AlertTitle>Signed Out</AlertTitle>
+          <AlertDescription>You have been signed out successfully.</AlertDescription>
         </Alert>
       )}
 
