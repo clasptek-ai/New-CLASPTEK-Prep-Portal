@@ -1,13 +1,22 @@
 import React from 'react';
+import Link from 'next/link';
 import { BrandConfig } from '@/config/brand.config';
 
 export interface LogoBadgeProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   style?: React.CSSProperties;
+  href?: string;
+  ariaLabel?: string;
 }
 
-export const LogoBadge: React.FC<LogoBadgeProps> = ({ size = 'md', className, style }) => {
+export const LogoBadge: React.FC<LogoBadgeProps> = ({
+  size = 'md',
+  className,
+  style,
+  href,
+  ariaLabel,
+}) => {
   const heightMap = {
     sm: '26px',
     md: '32px',
@@ -20,7 +29,7 @@ export const LogoBadge: React.FC<LogoBadgeProps> = ({ size = 'md', className, st
     lg: '0.5rem 1rem',
   };
 
-  return (
+  const content = (
     <div
       className={className}
       style={{
@@ -33,6 +42,7 @@ export const LogoBadge: React.FC<LogoBadgeProps> = ({ size = 'md', className, st
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.22)',
         border: '1px solid rgba(255, 255, 255, 0.2)',
         flexShrink: 0,
+        transition: 'transform 150ms ease, box-shadow 150ms ease',
         ...style,
       }}
     >
@@ -43,6 +53,20 @@ export const LogoBadge: React.FC<LogoBadgeProps> = ({ size = 'md', className, st
       />
     </div>
   );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        aria-label={ariaLabel || `Navigate to ${BrandConfig.portalName} homepage`}
+        className="inline-flex focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none rounded-lg transition-all hover:opacity-95"
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 };
 
 export default LogoBadge;
