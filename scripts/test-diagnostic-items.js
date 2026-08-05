@@ -30,13 +30,16 @@ async function main() {
   console.log('Grammar Questions fetched:', grammarRes.rows.length);
 
   // Fetch answer options for these questions
-  const qvIds = grammarRes.rows.map(r => r.version_id);
-  const optRes = await pool.query(`
+  const qvIds = grammarRes.rows.map((r) => r.version_id);
+  const optRes = await pool.query(
+    `
     SELECT question_version_id, option_code, option_text, is_correct
     FROM public.answer_options
     WHERE question_version_id = ANY($1::uuid[])
     ORDER BY display_order ASC
-  `, [qvIds]);
+  `,
+    [qvIds]
+  );
 
   console.log('Answer Options fetched:', optRes.rows.length);
 
@@ -51,7 +54,7 @@ async function main() {
   await pool.end();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error(err);
   process.exit(1);
 });

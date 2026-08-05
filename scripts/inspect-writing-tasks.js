@@ -10,11 +10,15 @@ async function main() {
   console.log('=== INSPECTING WRITING TASKS IN POSTGRESQL ===\n');
 
   // Check writing_tasks table if it exists
-  const writingTable = await pool.query(`
+  const writingTable = await pool
+    .query(
+      `
     SELECT column_name, data_type 
     FROM information_schema.columns 
     WHERE table_name = 'writing_tasks'
-  `).catch(() => ({ rows: [] }));
+  `
+    )
+    .catch(() => ({ rows: [] }));
 
   console.log('public.writing_tasks columns:', writingTable.rows);
 
@@ -24,20 +28,24 @@ async function main() {
   }
 
   // Check questions table for Writing section or Essay/Letter type
-  const writingQuestions = await pool.query(`
+  const writingQuestions = await pool
+    .query(
+      `
     SELECT q.id, q.code, qv.prompt, qv.payload
     FROM public.questions q
     JOIN public.question_versions qv ON qv.question_id = q.id
     WHERE q.deleted_at IS NULL
       AND (qv.payload->>'section' = 'Writing' OR qv.payload->>'type' IN ('ESSAY', 'LETTER'))
-  `).catch(() => ({ rows: [] }));
+  `
+    )
+    .catch(() => ({ rows: [] }));
 
   console.log('\nWriting Questions in public.questions:', writingQuestions.rows);
 
   await pool.end();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error(err);
   process.exit(1);
 });

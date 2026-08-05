@@ -26,7 +26,15 @@ export class CanonicalJsonImporterValidator {
         foundationCount: 0,
         intermediateCount: 0,
         advancedCount: 0,
-        errors: [{ rowNumber: 0, itemCode: 'ROOT', field: 'payload', error: 'Invalid JSON payload format.', recommendation: 'Provide a valid JSON object.' }],
+        errors: [
+          {
+            rowNumber: 0,
+            itemCode: 'ROOT',
+            field: 'payload',
+            error: 'Invalid JSON payload format.',
+            recommendation: 'Provide a valid JSON object.',
+          },
+        ],
         warnings: [],
       };
     }
@@ -83,7 +91,9 @@ export class CanonicalJsonImporterValidator {
       }
 
       const targetExam = q.examType || examType;
-      const isProductSupported = this.supportedProducts.some((p) => p.toLowerCase() === targetExam.toLowerCase());
+      const isProductSupported = this.supportedProducts.some(
+        (p) => p.toLowerCase() === targetExam.toLowerCase()
+      );
       if (!isProductSupported) {
         itemHasError = true;
         errors.push({
@@ -96,7 +106,10 @@ export class CanonicalJsonImporterValidator {
       }
 
       const section = (q.section || '').toUpperCase();
-      if (targetExam.toUpperCase().includes('SAT') || targetExam.toUpperCase().includes('DIGITAL SAT')) {
+      if (
+        targetExam.toUpperCase().includes('SAT') ||
+        targetExam.toUpperCase().includes('DIGITAL SAT')
+      ) {
         if (section === 'SPEAKING' || section === 'LISTENING') {
           itemHasError = true;
           errors.push({
@@ -195,7 +208,10 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
           section: 'READING',
           questionType: 'MCQ',
           prompt: 'What is the main idea?',
-          options: [{ code: 'A', text: 'Opt A' }, { code: 'B', text: 'Opt B' }],
+          options: [
+            { code: 'A', text: 'Opt A' },
+            { code: 'B', text: 'Opt B' },
+          ],
           correctAnswer: 'A',
           usages: ['PRACTICE'],
         },
@@ -213,12 +229,20 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
       section: 'GRAMMAR',
       proficiencyLevel: 'INTERMEDIATE',
       questionType: 'MCQ',
-      options: [{ code: 'A', text: 'A' }, { code: 'B', text: 'B' }],
+      options: [
+        { code: 'A', text: 'A' },
+        { code: 'B', text: 'B' },
+      ],
       correctAnswer: 'A',
       usages: ['DIAGNOSTIC', 'PRACTICE'],
     }));
 
-    const payload = { schemaVersion: '1.0', examType: 'IELTS Academic', assessmentUsages: ['DIAGNOSTIC', 'PRACTICE'], questions };
+    const payload = {
+      schemaVersion: '1.0',
+      examType: 'IELTS Academic',
+      assessmentUsages: ['DIAGNOSTIC', 'PRACTICE'],
+      questions,
+    };
     const res = importer.validateJsonPayload(payload);
     expect(res.isValid).toBe(true);
     expect(res.totalRecords).toBe(600);
@@ -237,7 +261,10 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
           difficulty: 'FOUNDATION',
           proficiencyLevel: 'FOUNDATION',
           questionType: 'MCQ',
-          options: [{ code: 'A', text: 'A' }, { code: 'B', text: 'B' }],
+          options: [
+            { code: 'A', text: 'A' },
+            { code: 'B', text: 'B' },
+          ],
           correctAnswer: 'A',
         },
       ],
@@ -258,7 +285,10 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
           difficulty: 'INTERMEDIATE',
           proficiencyLevel: 'INTERMEDIATE',
           questionType: 'MCQ',
-          options: [{ code: 'A', text: 'A' }, { code: 'B', text: 'B' }],
+          options: [
+            { code: 'A', text: 'A' },
+            { code: 'B', text: 'B' },
+          ],
           correctAnswer: 'A',
         },
       ],
@@ -279,7 +309,10 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
           difficulty: 'ADVANCED',
           proficiencyLevel: 'ADVANCED',
           questionType: 'MCQ',
-          options: [{ code: 'A', text: 'A' }, { code: 'B', text: 'B' }],
+          options: [
+            { code: 'A', text: 'A' },
+            { code: 'B', text: 'B' },
+          ],
           correctAnswer: 'A',
         },
       ],
@@ -340,7 +373,13 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
       schemaVersion: '1.0',
       examType: 'English Proficiency',
       questions: [
-        { questionCode: 'EP-001', section: 'GRAMMAR', difficulty: 'FOUNDATION', options: [{ code: 'A', text: 'A' }], correctAnswer: 'A' },
+        {
+          questionCode: 'EP-001',
+          section: 'GRAMMAR',
+          difficulty: 'FOUNDATION',
+          options: [{ code: 'A', text: 'A' }],
+          correctAnswer: 'A',
+        },
       ],
     };
     const res = importer.validateJsonPayload(payload);
@@ -352,10 +391,34 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
       schemaVersion: '1.0',
       examType: 'CELPIP General',
       questions: [
-        { questionCode: 'U-01', section: 'READING', usages: ['DIAGNOSTIC'], options: [{ code: 'A', text: 'A' }], correctAnswer: 'A' },
-        { questionCode: 'U-02', section: 'READING', usages: ['PRACTICE'], options: [{ code: 'A', text: 'A' }], correctAnswer: 'A' },
-        { questionCode: 'U-03', section: 'READING', usages: ['MOCK'], options: [{ code: 'A', text: 'A' }], correctAnswer: 'A' },
-        { questionCode: 'U-04', section: 'READING', usages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'], options: [{ code: 'A', text: 'A' }], correctAnswer: 'A' },
+        {
+          questionCode: 'U-01',
+          section: 'READING',
+          usages: ['DIAGNOSTIC'],
+          options: [{ code: 'A', text: 'A' }],
+          correctAnswer: 'A',
+        },
+        {
+          questionCode: 'U-02',
+          section: 'READING',
+          usages: ['PRACTICE'],
+          options: [{ code: 'A', text: 'A' }],
+          correctAnswer: 'A',
+        },
+        {
+          questionCode: 'U-03',
+          section: 'READING',
+          usages: ['MOCK'],
+          options: [{ code: 'A', text: 'A' }],
+          correctAnswer: 'A',
+        },
+        {
+          questionCode: 'U-04',
+          section: 'READING',
+          usages: ['DIAGNOSTIC', 'PRACTICE', 'MOCK'],
+          options: [{ code: 'A', text: 'A' }],
+          correctAnswer: 'A',
+        },
       ],
     };
     const res = importer.validateJsonPayload(payload);
@@ -374,7 +437,12 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
       schemaVersion: '1.0',
       examType: 'UNSUPPORTED_EXAM_PRODUCT',
       questions: [
-        { questionCode: 'BAD-01', proficiencyLevel: 'ULTRA_HARD', options: [{ code: 'A', text: 'A' }], correctAnswer: 'A' },
+        {
+          questionCode: 'BAD-01',
+          proficiencyLevel: 'ULTRA_HARD',
+          options: [{ code: 'A', text: 'A' }],
+          correctAnswer: 'A',
+        },
       ],
     };
     const res = importer.validateJsonPayload(payload);
@@ -427,7 +495,12 @@ describe('Universal Question Bank — Comprehensive JSON Import Verification Sui
       schemaVersion: '1.0',
       examType: 'IELTS Academic',
       questions: [
-        { questionCode: 'WRIT-ESSAY-01', section: 'WRITING', questionType: 'ESSAY', prompt: 'Write Task 2 Essay' },
+        {
+          questionCode: 'WRIT-ESSAY-01',
+          section: 'WRITING',
+          questionType: 'ESSAY',
+          prompt: 'Write Task 2 Essay',
+        },
       ],
     };
     const res = importer.validateJsonPayload(payload);

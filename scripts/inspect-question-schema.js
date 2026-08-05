@@ -2,7 +2,10 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace('sslmode=verify-full', 'sslmode=no-verify'),
+  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace(
+    'sslmode=verify-full',
+    'sslmode=no-verify'
+  ),
   ssl: { rejectUnauthorized: false },
 });
 
@@ -15,7 +18,9 @@ async function inspect() {
     ORDER BY ordinal_position
   `);
   console.log('\n--- question_versions columns ---');
-  qvCols.rows.forEach(c => console.log(`  ${c.column_name.padEnd(30)} ${c.data_type.padEnd(20)} nullable:${c.is_nullable}`));
+  qvCols.rows.forEach((c) =>
+    console.log(`  ${c.column_name.padEnd(30)} ${c.data_type.padEnd(20)} nullable:${c.is_nullable}`)
+  );
 
   // answer_options columns
   const aoCols = await pool.query(`
@@ -25,7 +30,7 @@ async function inspect() {
     ORDER BY ordinal_position
   `);
   console.log('\n--- answer_options columns ---');
-  aoCols.rows.forEach(c => console.log(`  ${c.column_name.padEnd(30)} ${c.data_type}`));
+  aoCols.rows.forEach((c) => console.log(`  ${c.column_name.padEnd(30)} ${c.data_type}`));
 
   // writing_tasks columns
   const wtCols = await pool.query(`
@@ -35,7 +40,7 @@ async function inspect() {
     ORDER BY ordinal_position
   `);
   console.log('\n--- writing_tasks columns ---');
-  wtCols.rows.forEach(c => console.log(`  ${c.column_name.padEnd(30)} ${c.data_type}`));
+  wtCols.rows.forEach((c) => console.log(`  ${c.column_name.padEnd(30)} ${c.data_type}`));
 
   // Sample question_versions row
   const sampleQV = await pool.query(`SELECT * FROM public.question_versions LIMIT 1`);
@@ -46,7 +51,7 @@ async function inspect() {
   // Sample answer_options row
   const sampleAO = await pool.query(`SELECT * FROM public.answer_options LIMIT 3`);
   console.log('\n--- sample answer_options rows ---');
-  sampleAO.rows.forEach(r => console.log(r));
+  sampleAO.rows.forEach((r) => console.log(r));
 
   // Check for correct_option_code or is_correct column
   const correctCol = await pool.query(`
@@ -55,9 +60,12 @@ async function inspect() {
     ORDER BY table_name, column_name
   `);
   console.log('\n--- columns named correct_* or is_correct ---');
-  correctCol.rows.forEach(r => console.log(`  ${r.table_name}.${r.column_name}`));
+  correctCol.rows.forEach((r) => console.log(`  ${r.table_name}.${r.column_name}`));
 
   await pool.end();
 }
 
-inspect().catch(e => { console.error(e.message); process.exit(1); });
+inspect().catch((e) => {
+  console.error(e.message);
+  process.exit(1);
+});

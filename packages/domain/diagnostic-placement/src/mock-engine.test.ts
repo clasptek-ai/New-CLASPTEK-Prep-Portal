@@ -35,12 +35,12 @@ export class IeltsExamPlugin {
     const ratio = Math.min(Math.max(rawScore / (totalQuestions || 40), 0), 1);
     let band = 5.0;
     if (ratio >= 0.88) band = 9.0;
-    else if (ratio >= 0.80) band = 8.5;
+    else if (ratio >= 0.8) band = 8.5;
     else if (ratio >= 0.73) band = 8.0;
     else if (ratio >= 0.65) band = 7.5;
     else if (ratio >= 0.58) band = 7.0;
-    else if (ratio >= 0.50) band = 6.5;
-    else if (ratio >= 0.40) band = 6.0;
+    else if (ratio >= 0.5) band = 6.5;
+    else if (ratio >= 0.4) band = 6.0;
 
     return {
       exam: this.examType,
@@ -91,9 +91,7 @@ describe('Canonical Mock Examination Engine Suite', () => {
       { id: 'mq4', status: 'draft', usages: ['MOCK'] }, // Barred because not published
     ];
 
-    const eligible = questions.filter(
-      (q) => q.status === 'published' && q.usages.includes('MOCK')
-    );
+    const eligible = questions.filter((q) => q.status === 'published' && q.usages.includes('MOCK'));
 
     expect(eligible.length).toBe(2);
     expect(eligible.map((q) => q.id)).toEqual(['mq1', 'mq2']);
@@ -161,7 +159,10 @@ describe('Canonical Mock Examination Engine Suite', () => {
     const expiresAt = new Date(startedAt.getTime() + totalMinutes * 60 * 1000);
 
     const nowOnServer = new Date('2026-07-31T12:30:00Z');
-    const remainingSeconds = Math.max(0, Math.round((expiresAt.getTime() - nowOnServer.getTime()) / 1000));
+    const remainingSeconds = Math.max(
+      0,
+      Math.round((expiresAt.getTime() - nowOnServer.getTime()) / 1000)
+    );
 
     expect(remainingSeconds).toBe(5400); // 90 minutes = 5400s
   });

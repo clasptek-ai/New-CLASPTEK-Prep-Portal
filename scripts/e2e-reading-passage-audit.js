@@ -3,7 +3,10 @@ const { randomUUID } = require('crypto');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace('sslmode=verify-full', 'sslmode=no-verify'),
+  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace(
+    'sslmode=verify-full',
+    'sslmode=no-verify'
+  ),
   ssl: { rejectUnauthorized: false },
 });
 
@@ -34,18 +37,23 @@ async function runFullReadingPassageAudit() {
   const passage = passageRes.rows[0];
   console.log(`Passage Code: ${passage.code} | Title: "${passage.title}"`);
 
-  const linkedQRes = await pool.query(`
+  const linkedQRes = await pool.query(
+    `
     SELECT q.id as question_id, q.code as question_code, qv.id as version_id, qv.prompt, qv.payload
     FROM public.questions q
     JOIN public.question_versions qv ON qv.question_id = q.id
     WHERE q.deleted_at IS NULL
       AND (qv.payload->>'passageCode' = $1 OR qv.payload->>'passageCode' = $2 OR q.code ILIKE $3)
     ORDER BY q.code ASC
-  `, [passage.code, passage.id, `%${passage.code}%`]);
+  `,
+    [passage.code, passage.id, `%${passage.code}%`]
+  );
 
   counts.inQuestionBank = linkedQRes.rows.length;
   counts.selectedByBlueprint = linkedQRes.rows.length;
-  console.log(`✅ Phase 1 Passed: Found ${counts.inQuestionBank} child questions linked to Reading Passage ${passage.code}.`);
+  console.log(
+    `✅ Phase 1 Passed: Found ${counts.inQuestionBank} child questions linked to Reading Passage ${passage.code}.`
+  );
 
   // PHASE 2 & 3 — ASSESSMENT BUILDER & PAPER SNAPSHOT AUDIT
   console.log('\n--- PHASE 2 & 3 — ASSESSMENT BUILDER & PAPER SNAPSHOT AUDIT ---');
@@ -54,24 +62,35 @@ async function runFullReadingPassageAudit() {
   const testEmail = `reading.candidate.${timestamp}@clasptek.org`;
 
   // Register test student
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO auth.users (id, instance_id, email, encrypted_password, email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, role, aud)
     VALUES ($1, '00000000-0000-0000-0000-000000000000', $2, 'scrypt:test', NOW(), '{"provider":"email"}', '{"first_name":"Reading","last_name":"Auditor"}', NOW(), NOW(), 'authenticated', 'authenticated')
-  `, [studentId, testEmail]);
+  `,
+    [studentId, testEmail]
+  );
 
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO public.users (id, status, version, created_at, updated_at)
     VALUES ($1, 'ACTIVE', 1, NOW(), NOW())
     ON CONFLICT (id) DO NOTHING
-  `, [studentId]);
+  `,
+    [studentId]
+  );
 
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO public.profiles (id, user_id, first_name, last_name, target_programme, locale, time_zone, version, created_at, updated_at)
     VALUES ($1, $1, 'Reading', 'Auditor', 'English Proficiency', 'en', 'UTC', 1, NOW(), NOW())
-  `, [studentId]);
+  `,
+    [studentId]
+  );
 
   // Create attempt with paper_snapshot
-  const defRes = await pool.query(`SELECT id, code, title, duration_minutes FROM public.assessment_definitions WHERE status = 'PUBLISHED' LIMIT 1`);
+  const defRes = await pool.query(
+    `SELECT id, code, title, duration_minutes FROM public.assessment_definitions WHERE status = 'PUBLISHED' LIMIT 1`
+  );
   const definition = defRes.rows[0];
 
   // Fetch 30 grammar questions
@@ -83,12 +102,15 @@ async function runFullReadingPassageAudit() {
   `);
 
   const compVersionIds = linkedQRes.rows.map((r) => r.version_id);
-  const compOptRes = await pool.query(`
+  const compOptRes = await pool.query(
+    `
     SELECT question_version_id, option_code, option_text, is_correct
     FROM public.answer_options
     WHERE question_version_id = ANY($1::uuid[])
     ORDER BY question_version_id, display_order ASC
-  `, [compVersionIds]);
+  `,
+    [compVersionIds]
+  );
 
   const compOptsByVer = new Map();
   const compCorrectByVer = new Map();
@@ -115,7 +137,14 @@ async function runFullReadingPassageAudit() {
     code: definition.code,
     title: definition.title,
     durationMinutes: definition.duration_minutes || 45,
-    grammarQuestions: grammarRes.rows.map((r) => ({ id: r.question_id, versionId: r.version_id, code: r.code, prompt: r.prompt, correctOptionCode: 'A', marks: 1 })),
+    grammarQuestions: grammarRes.rows.map((r) => ({
+      id: r.question_id,
+      versionId: r.version_id,
+      code: r.code,
+      prompt: r.prompt,
+      correctOptionCode: 'A',
+      marks: 1,
+    })),
     readingPassage: {
       id: passage.id,
       code: passage.code,
@@ -128,17 +157,28 @@ async function runFullReadingPassageAudit() {
   };
 
   const attemptId = randomUUID();
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO public.assessment_attempts (
       id, student_id, catalog_id, status, started_at, expires_at, duration_minutes, paper_snapshot, tenant_id, created_at, updated_at
     ) VALUES ($1, $2, $3, 'IN_PROGRESS', NOW(), NOW() + INTERVAL '45 minutes', 45, $4, '00000000-0000-0000-0000-000000000000', NOW(), NOW())
-  `, [attemptId, studentId, definition.id, JSON.stringify(paperSnapshot)]);
+  `,
+    [attemptId, studentId, definition.id, JSON.stringify(paperSnapshot)]
+  );
 
-  const dbAttempt = await pool.query(`SELECT paper_snapshot FROM public.assessment_attempts WHERE id = $1`, [attemptId]);
-  const savedSnapshot = typeof dbAttempt.rows[0].paper_snapshot === 'string' ? JSON.parse(dbAttempt.rows[0].paper_snapshot) : dbAttempt.rows[0].paper_snapshot;
-  
+  const dbAttempt = await pool.query(
+    `SELECT paper_snapshot FROM public.assessment_attempts WHERE id = $1`,
+    [attemptId]
+  );
+  const savedSnapshot =
+    typeof dbAttempt.rows[0].paper_snapshot === 'string'
+      ? JSON.parse(dbAttempt.rows[0].paper_snapshot)
+      : dbAttempt.rows[0].paper_snapshot;
+
   counts.insertedIntoPaperSnapshot = savedSnapshot.readingPassage.comprehensionQuestions.length;
-  console.log(`✅ Phase 2 & 3 Passed: ${counts.insertedIntoPaperSnapshot} questions inserted into paper_snapshot.readingPassage.comprehensionQuestions.`);
+  console.log(
+    `✅ Phase 2 & 3 Passed: ${counts.insertedIntoPaperSnapshot} questions inserted into paper_snapshot.readingPassage.comprehensionQuestions.`
+  );
 
   // PHASE 4 — ASSESSMENT PLAYER AUDIT
   console.log('\n--- PHASE 4 — ASSESSMENT PLAYER AUDIT ---');
@@ -149,31 +189,47 @@ async function runFullReadingPassageAudit() {
     options: cq.options,
   }));
   counts.renderedByPlayer = playerReadingQs.length;
-  console.log(`✅ Phase 4 Passed: Assessment Player renders ${counts.renderedByPlayer} comprehension questions (no array slicing / no index 0 restriction).`);
+  console.log(
+    `✅ Phase 4 Passed: Assessment Player renders ${counts.renderedByPlayer} comprehension questions (no array slicing / no index 0 restriction).`
+  );
 
   // PHASE 5 & 6 — NAVIGATION & AUTOSAVE AUDIT
   console.log('\n--- PHASE 5 & 6 — NAVIGATION & AUTOSAVE AUDIT ---');
   for (let i = 0; i < comprehensionQuestions.length; i++) {
     const q = comprehensionQuestions[i];
     const optionCode = q.correctOptionCode || 'A';
-    await pool.query(`
+    await pool.query(
+      `
       INSERT INTO public.assessment_attempt_answers (
         id, attempt_id, question_id, question_version_id, response_payload, time_spent_ms, is_correct, created_at, updated_at
       ) VALUES ($1, $2, $3, $4, $5, 5000, true, NOW(), NOW())
       ON CONFLICT (attempt_id, question_id) DO UPDATE SET response_payload = EXCLUDED.response_payload
-    `, [randomUUID(), attemptId, q.id, q.versionId, JSON.stringify({ selectedOptionCode: optionCode, sectionCode: 'READING' })]);
+    `,
+      [
+        randomUUID(),
+        attemptId,
+        q.id,
+        q.versionId,
+        JSON.stringify({ selectedOptionCode: optionCode, sectionCode: 'READING' }),
+      ]
+    );
   }
 
-  const savedAnswersRes = await pool.query(`
+  const savedAnswersRes = await pool.query(
+    `
     SELECT question_id FROM public.assessment_attempt_answers WHERE attempt_id = $1
-  `, [attemptId]);
+  `,
+    [attemptId]
+  );
   counts.answersAutosaved = savedAnswersRes.rows.length;
-  console.log(`✅ Phase 5 & 6 Passed: Sequential Q1->Q10 navigation autosaved ${counts.answersAutosaved} Reading answers into assessment_attempt_answers.`);
+  console.log(
+    `✅ Phase 5 & 6 Passed: Sequential Q1->Q10 navigation autosaved ${counts.answersAutosaved} Reading answers into assessment_attempt_answers.`
+  );
 
   // PHASE 7 — SUBMISSION & SCORING AUDIT
   console.log('\n--- PHASE 7 — SUBMISSION AUDIT ---');
   counts.answersSubmitted = counts.answersAutosaved;
-  
+
   // Calculate reading score
   let readingCorrect = 0;
   comprehensionQuestions.forEach((q) => {
@@ -182,34 +238,57 @@ async function runFullReadingPassageAudit() {
   counts.questionsScored = comprehensionQuestions.length;
 
   const readingScorePct = (readingCorrect / counts.questionsScored) * 100;
-  await pool.query(`
+  await pool.query(
+    `
     UPDATE public.assessment_attempts
     SET status = 'SUBMITTED', score = $1, closed_at = NOW()
     WHERE id = $2
-  `, [readingScorePct, attemptId]);
+  `,
+    [readingScorePct, attemptId]
+  );
 
-  console.log(`✅ Phase 7 Passed: Submission Scorer evaluated ${counts.questionsScored} Reading questions (${readingCorrect}/${counts.questionsScored} correct = ${readingScorePct}%).`);
+  console.log(
+    `✅ Phase 7 Passed: Submission Scorer evaluated ${counts.questionsScored} Reading questions (${readingCorrect}/${counts.questionsScored} correct = ${readingScorePct}%).`
+  );
 
   // PHASE 8 — RESULTS AUDIT
   console.log('\n--- PHASE 8 — RESULTS AUDIT ---');
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO public.assessment_results (
       attempt_id, student_id, assessment_category, overall_score, placement_level, cefr_level, predicted_band, section_scores, generated_at, updated_at
     ) VALUES ($1, $2, 'DIAGNOSTIC', $3, 'ADVANCED', 'C1', 'Band 7.5', $4, NOW(), NOW())
-  `, [attemptId, studentId, readingScorePct, JSON.stringify([{ sectionCode: 'Reading', scorePercentage: readingScorePct }])]);
-  console.log(`✅ Phase 8 Passed: Reading results calculated using ALL ${counts.questionsScored} questions.`);
+  `,
+    [
+      attemptId,
+      studentId,
+      readingScorePct,
+      JSON.stringify([{ sectionCode: 'Reading', scorePercentage: readingScorePct }]),
+    ]
+  );
+  console.log(
+    `✅ Phase 8 Passed: Reading results calculated using ALL ${counts.questionsScored} questions.`
+  );
 
   // PHASE 9 — ADMIN REVIEW AUDIT
   console.log('\n--- PHASE 9 — ADMIN REVIEW AUDIT ---');
-  const adminReviewRes = await pool.query(`
+  const adminReviewRes = await pool.query(
+    `
     SELECT aa.paper_snapshot, ar.overall_score
     FROM public.assessment_attempts aa
     JOIN public.assessment_results ar ON ar.attempt_id = aa.id
     WHERE aa.id = $1
-  `, [attemptId]);
-  const adminSnapshot = typeof adminReviewRes.rows[0].paper_snapshot === 'string' ? JSON.parse(adminReviewRes.rows[0].paper_snapshot) : adminReviewRes.rows[0].paper_snapshot;
+  `,
+    [attemptId]
+  );
+  const adminSnapshot =
+    typeof adminReviewRes.rows[0].paper_snapshot === 'string'
+      ? JSON.parse(adminReviewRes.rows[0].paper_snapshot)
+      : adminReviewRes.rows[0].paper_snapshot;
   counts.visibleInAdminReview = adminSnapshot.readingPassage.comprehensionQuestions.length;
-  console.log(`✅ Phase 9 Passed: Admin Attempt Inspector renders frozen paper snapshot with all ${counts.visibleInAdminReview} reading questions, student answers, and marks.`);
+  console.log(
+    `✅ Phase 9 Passed: Admin Attempt Inspector renders frozen paper snapshot with all ${counts.visibleInAdminReview} reading questions, student answers, and marks.`
+  );
 
   // RUNTIME VERIFICATION SUMMARY COUNTER
   console.log('\n================================================================');

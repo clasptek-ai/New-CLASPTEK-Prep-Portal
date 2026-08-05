@@ -2,7 +2,10 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace('sslmode=verify-full', 'sslmode=no-verify'),
+  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace(
+    'sslmode=verify-full',
+    'sslmode=no-verify'
+  ),
   ssl: { rejectUnauthorized: false },
 });
 
@@ -56,9 +59,24 @@ async function main() {
     }
 
     const sectionScoresList = [
-      { sectionCode: 'Grammar', sectionName: 'Grammar & Syntax', scorePercentage: totalScore, computedLevel },
-      { sectionCode: 'Reading', sectionName: 'Reading Comprehension', scorePercentage: Math.min(100, totalScore + 5), computedLevel },
-      { sectionCode: 'Writing', sectionName: 'Writing & Essay', scorePercentage: Math.max(0, totalScore - 10), evaluationState: 'COMPLETED' },
+      {
+        sectionCode: 'Grammar',
+        sectionName: 'Grammar & Syntax',
+        scorePercentage: totalScore,
+        computedLevel,
+      },
+      {
+        sectionCode: 'Reading',
+        sectionName: 'Reading Comprehension',
+        scorePercentage: Math.min(100, totalScore + 5),
+        computedLevel,
+      },
+      {
+        sectionCode: 'Writing',
+        sectionName: 'Writing & Essay',
+        scorePercentage: Math.max(0, totalScore - 10),
+        evaluationState: 'COMPLETED',
+      },
     ];
 
     const aiFeedback = {
@@ -66,7 +84,11 @@ async function main() {
       strengths,
       weaknesses,
       nextSteps: `Enroll in ${recommendedCourse} (${recommendedDuration}) to target key focus areas.`,
-      recommendedModules: ['Grammar Modifier Logic', 'Academic Reading Speed', 'Essay Task 2 Syntax'],
+      recommendedModules: [
+        'Grammar Modifier Logic',
+        'Academic Reading Speed',
+        'Essay Task 2 Syntax',
+      ],
     };
 
     await pool.query(
@@ -106,7 +128,9 @@ async function main() {
       ]
     );
 
-    console.log(`  - Persisted result for attempt ${att.id}: Score=${totalScore}%, CEFR=${cefrLevel}, Band=${predictedBand}`);
+    console.log(
+      `  - Persisted result for attempt ${att.id}: Score=${totalScore}%, CEFR=${cefrLevel}, Band=${predictedBand}`
+    );
   }
 
   console.log('\nBackfill complete!');

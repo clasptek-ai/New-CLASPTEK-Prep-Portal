@@ -56,9 +56,30 @@ describe('Diagnostic Assessment & Placement Domain Tests', () => {
     expect(emptyResult.questionsAnswered).toBe(0);
 
     // Submit some answers
-    attempt.submitResponse(randomUUID(), randomUUID(), randomUUID(), { text: 'A', sectionCode: 'Grammar' }, true, 1000); // correct
-    attempt.submitResponse(randomUUID(), randomUUID(), randomUUID(), { text: 'B', sectionCode: 'Grammar' }, false, 1500); // incorrect
-    attempt.submitResponse(randomUUID(), randomUUID(), randomUUID(), { text: 'C', sectionCode: 'Reading' }, true, 1200); // correct
+    attempt.submitResponse(
+      randomUUID(),
+      randomUUID(),
+      randomUUID(),
+      { text: 'A', sectionCode: 'Grammar' },
+      true,
+      1000
+    ); // correct
+    attempt.submitResponse(
+      randomUUID(),
+      randomUUID(),
+      randomUUID(),
+      { text: 'B', sectionCode: 'Grammar' },
+      false,
+      1500
+    ); // incorrect
+    attempt.submitResponse(
+      randomUUID(),
+      randomUUID(),
+      randomUUID(),
+      { text: 'C', sectionCode: 'Reading' },
+      true,
+      1200
+    ); // correct
 
     const result = PlacementEngine.calculate(attempt, form);
     expect(result.questionsAnswered).toBe(3);

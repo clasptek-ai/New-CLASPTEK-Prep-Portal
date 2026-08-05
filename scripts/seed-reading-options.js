@@ -3,7 +3,10 @@ const { randomUUID } = require('crypto');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace('sslmode=verify-full', 'sslmode=no-verify'),
+  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace(
+    'sslmode=verify-full',
+    'sslmode=no-verify'
+  ),
   ssl: { rejectUnauthorized: false },
 });
 
@@ -34,7 +37,15 @@ async function seedReadingOptions() {
       let options = [];
       const promptLower = q.prompt.toLowerCase();
 
-      if (promptLower.includes('true') || promptLower.includes('before') || promptLower.includes('all') || promptLower.includes('every') || promptLower.includes('produces') || promptLower.includes('can help') || promptLower.includes('completely')) {
+      if (
+        promptLower.includes('true') ||
+        promptLower.includes('before') ||
+        promptLower.includes('all') ||
+        promptLower.includes('every') ||
+        promptLower.includes('produces') ||
+        promptLower.includes('can help') ||
+        promptLower.includes('completely')
+      ) {
         // True / False / Not Given
         options = [
           { code: 'A', text: 'True', isCorrect: false },
@@ -66,7 +77,7 @@ async function seedReadingOptions() {
   await pool.end();
 }
 
-seedReadingOptions().catch(err => {
+seedReadingOptions().catch((err) => {
   console.error(err);
   process.exit(1);
 });

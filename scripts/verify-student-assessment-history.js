@@ -2,7 +2,10 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace('sslmode=verify-full', 'sslmode=no-verify'),
+  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace(
+    'sslmode=verify-full',
+    'sslmode=no-verify'
+  ),
   ssl: { rejectUnauthorized: false },
 });
 
@@ -28,9 +31,12 @@ async function main() {
   console.log(`   - Score: ${attempt.score}%`);
 
   // 2. Verify stored result record
-  const resultRes = await pool.query(`
+  const resultRes = await pool.query(
+    `
     SELECT * FROM public.assessment_results WHERE attempt_id = $1
-  `, [attempt.id]);
+  `,
+    [attempt.id]
+  );
 
   if (resultRes.rows.length > 0) {
     const res = resultRes.rows[0];
@@ -46,17 +52,27 @@ async function main() {
 
   // 3. Verify Frozen Paper Snapshot Immutability
   console.log('\n✅ Step 3: Immutable Paper Snapshot Verification');
-  const snapshot = typeof attempt.paper_snapshot === 'string' ? JSON.parse(attempt.paper_snapshot) : attempt.paper_snapshot;
+  const snapshot =
+    typeof attempt.paper_snapshot === 'string'
+      ? JSON.parse(attempt.paper_snapshot)
+      : attempt.paper_snapshot;
   console.log(`   - Grammar Items in Frozen Snapshot: ${snapshot?.grammarQuestions?.length || 0}`);
-  console.log(`   - Reading Passage in Frozen Snapshot: ${snapshot?.readingPassage?.title || 'N/A'}`);
+  console.log(
+    `   - Reading Passage in Frozen Snapshot: ${snapshot?.readingPassage?.title || 'N/A'}`
+  );
   console.log(`   - Writing Tasks in Frozen Snapshot: ${snapshot?.writingTasks?.length || 0}`);
-  console.log('   - Immutability Rule: Paper snapshot is stored inside assessment_attempts and remains 100% immune to subsequent Question Bank edits.');
+  console.log(
+    '   - Immutability Rule: Paper snapshot is stored inside assessment_attempts and remains 100% immune to subsequent Question Bank edits.'
+  );
 
   // 4. Verify Audit Event Timeline
-  const eventsRes = await pool.query(`
+  const eventsRes = await pool.query(
+    `
     SELECT event_type, created_at FROM public.assessment_attempt_events
     WHERE attempt_id = $1 ORDER BY created_at ASC
-  `, [attempt.id]);
+  `,
+    [attempt.id]
+  );
 
   console.log(`\n✅ Step 4: Audit Event Log Timeline (${eventsRes.rows.length} Events)`);
   eventsRes.rows.forEach((e) => {

@@ -2,7 +2,10 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace('sslmode=verify-full', 'sslmode=no-verify'),
+  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace(
+    'sslmode=verify-full',
+    'sslmode=no-verify'
+  ),
   ssl: { rejectUnauthorized: false },
 });
 
@@ -18,7 +21,9 @@ async function main() {
 
   console.log('✅ Step 1: Scoring Model Coherence Check');
   resultsRes.rows.forEach((r) => {
-    console.log(`   - Score ${r.overall_score}% => CEFR: ${r.cefr_level}, Band: ${r.predicted_band}, Placement: ${r.placement_level}`);
+    console.log(
+      `   - Score ${r.overall_score}% => CEFR: ${r.cefr_level}, Band: ${r.predicted_band}, Placement: ${r.placement_level}`
+    );
   });
 
   // 2. Audit Student Learning Dashboard Route

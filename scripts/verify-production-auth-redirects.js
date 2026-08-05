@@ -10,7 +10,9 @@ async function runAuthRedirectAudit() {
   const prodUrl = getAppUrl({ NODE_ENV: 'production' });
   console.log(`- Production Default URL: ${prodUrl}`);
   if (prodUrl === 'https://portal.clasptek.org') {
-    console.log('  ✅ PASSED: Production defaults to https://portal.clasptek.org (0 hardcoded localhost fallback)');
+    console.log(
+      '  ✅ PASSED: Production defaults to https://portal.clasptek.org (0 hardcoded localhost fallback)'
+    );
   } else {
     console.error(`  ❌ FAILED: Unexpected production URL ${prodUrl}`);
   }
@@ -39,7 +41,9 @@ async function runAuthRedirectAudit() {
 
   // 4. Audit Callback Routes & Security Checks
   console.log('\n--- 4. CALLBACK ROUTES & SECURITY AUDIT ---');
-  console.log('  ✅ /auth/callback route handler exchanges PKCE code and validates relative redirects');
+  console.log(
+    '  ✅ /auth/callback route handler exchanges PKCE code and validates relative redirects'
+  );
   console.log('  ✅ /reset-password route presents secure password update interface');
   console.log('  ✅ /login & /register enforce SSL & environment-driven callback targets');
 

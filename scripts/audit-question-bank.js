@@ -28,7 +28,9 @@ async function main() {
   console.log('Total public.reading_passages:', pasCount.rows[0].count);
 
   // Import batches
-  const batches = await pool.query(`SELECT * FROM public.question_import_batches ORDER BY created_at DESC`);
+  const batches = await pool.query(
+    `SELECT * FROM public.question_import_batches ORDER BY created_at DESC`
+  );
   console.log('\nImport Batches:', batches.rows);
 
   // Breakdown by section and proficiency_level from question_versions
@@ -82,7 +84,7 @@ async function main() {
   await pool.end();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error(err);
   process.exit(1);
 });

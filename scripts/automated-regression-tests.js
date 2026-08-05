@@ -2,7 +2,10 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace('sslmode=verify-full', 'sslmode=no-verify'),
+  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace(
+    'sslmode=verify-full',
+    'sslmode=no-verify'
+  ),
   ssl: { rejectUnauthorized: false },
 });
 
@@ -71,17 +74,23 @@ async function runRegressionSuite() {
     results.push({
       test: 'security_no_answer_key_exposure',
       passed: !hasExposedCode,
-      detail: hasExposedCode ? 'FAIL: correctOptionCode was serialized!' : 'PASS: correctOptionCode stripped from DTO',
+      detail: hasExposedCode
+        ? 'FAIL: correctOptionCode was serialized!'
+        : 'PASS: correctOptionCode stripped from DTO',
     });
 
     // -----------------------------------------------------------------
     // TEST 2: Snapshot Integrity — Admin edits do not modify frozen paper
     // -----------------------------------------------------------------
     console.log('\n[TEST 2] Snapshot Integrity: Question edit does not alter candidate paper');
-    const readAttempt = await pool.query(`SELECT paper_snapshot FROM public.assessment_attempts WHERE id = $1`, [attemptId]);
-    const storedSnap = typeof readAttempt.rows[0].paper_snapshot === 'string'
-      ? JSON.parse(readAttempt.rows[0].paper_snapshot)
-      : readAttempt.rows[0].paper_snapshot;
+    const readAttempt = await pool.query(
+      `SELECT paper_snapshot FROM public.assessment_attempts WHERE id = $1`,
+      [attemptId]
+    );
+    const storedSnap =
+      typeof readAttempt.rows[0].paper_snapshot === 'string'
+        ? JSON.parse(readAttempt.rows[0].paper_snapshot)
+        : readAttempt.rows[0].paper_snapshot;
 
     const originalPrompt = storedSnap.grammarQuestions[0].prompt;
     const isUnchanged = originalPrompt === 'What is the past tense of run?';
@@ -108,7 +117,9 @@ async function runRegressionSuite() {
     results.push({
       test: 'duplicate_start_idempotency',
       passed: isDuplicateHandled,
-      detail: isDuplicateHandled ? 'PASS: Same attempt ID returned' : 'FAIL: Duplicate attempt created',
+      detail: isDuplicateHandled
+        ? 'PASS: Same attempt ID returned'
+        : 'FAIL: Duplicate attempt created',
     });
 
     // -----------------------------------------------------------------
@@ -133,9 +144,10 @@ async function runRegressionSuite() {
       [attemptId, qId]
     );
 
-    const restoredPayload = typeof refreshedAns.rows[0]?.response_payload === 'string'
-      ? JSON.parse(refreshedAns.rows[0].response_payload)
-      : refreshedAns.rows[0]?.response_payload;
+    const restoredPayload =
+      typeof refreshedAns.rows[0]?.response_payload === 'string'
+        ? JSON.parse(refreshedAns.rows[0].response_payload)
+        : refreshedAns.rows[0]?.response_payload;
 
     const isRestored = restoredPayload?.selectedOptionCode === 'A';
     console.log(`  Restored answer code: "${restoredPayload?.selectedOptionCode}"`);
@@ -166,7 +178,9 @@ async function runRegressionSuite() {
     results.push({
       test: 'submission_lock_duplicate_prevention',
       passed: isSecondSubmitRejected,
-      detail: isSecondSubmitRejected ? 'PASS: Second submit rejected (0 IN_PROGRESS rows)' : 'FAIL: Allowed double submit',
+      detail: isSecondSubmitRejected
+        ? 'PASS: Second submit rejected (0 IN_PROGRESS rows)'
+        : 'FAIL: Allowed double submit',
     });
 
     // -----------------------------------------------------------------
@@ -183,11 +197,15 @@ async function runRegressionSuite() {
     results.push({
       test: 'student_isolation_security',
       passed: isIsolated,
-      detail: isIsolated ? 'PASS: Access rejected (0 rows returned)' : 'FAIL: Candidate B accessed Candidate A attempt',
+      detail: isIsolated
+        ? 'PASS: Access rejected (0 rows returned)'
+        : 'FAIL: Candidate B accessed Candidate A attempt',
     });
 
     // Cleanup test attempt
-    await pool.query(`DELETE FROM public.assessment_attempt_answers WHERE attempt_id = $1`, [attemptId]);
+    await pool.query(`DELETE FROM public.assessment_attempt_answers WHERE attempt_id = $1`, [
+      attemptId,
+    ]);
     await pool.query(`DELETE FROM public.assessment_attempts WHERE id = $1`, [attemptId]);
 
     // -----------------------------------------------------------------

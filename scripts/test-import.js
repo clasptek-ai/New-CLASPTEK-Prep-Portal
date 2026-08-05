@@ -1,7 +1,12 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 const path = require('path');
-const { CanonicalJsonImporterRepository } = require(path.join(__dirname, '../packages/persistence/dist/question-bank/canonical-json-importer.repository.js'));
+const { CanonicalJsonImporterRepository } = require(
+  path.join(
+    __dirname,
+    '../packages/persistence/dist/question-bank/canonical-json-importer.repository.js'
+  )
+);
 
 const dbUrl = process.env.DATABASE_URL.replace('sslmode=verify-full', 'sslmode=no-verify');
 const pool = new Pool({
@@ -51,9 +56,15 @@ async function main() {
   const optCount = await pool.query('SELECT count(*) FROM public.answer_options');
   const batchCount = await pool.query('SELECT count(*) FROM public.question_import_batches');
 
-  const intLevelCount = await pool.query("SELECT count(*) FROM public.question_versions WHERE proficiency_level = 'INTERMEDIATE'");
-  const fndLevelCount = await pool.query("SELECT count(*) FROM public.question_versions WHERE proficiency_level = 'FOUNDATION'");
-  const advLevelCount = await pool.query("SELECT count(*) FROM public.question_versions WHERE proficiency_level = 'ADVANCED'");
+  const intLevelCount = await pool.query(
+    "SELECT count(*) FROM public.question_versions WHERE proficiency_level = 'INTERMEDIATE'"
+  );
+  const fndLevelCount = await pool.query(
+    "SELECT count(*) FROM public.question_versions WHERE proficiency_level = 'FOUNDATION'"
+  );
+  const advLevelCount = await pool.query(
+    "SELECT count(*) FROM public.question_versions WHERE proficiency_level = 'ADVANCED'"
+  );
 
   console.log('\n=========================================');
   console.log('POSTGRESQL VERIFIED COUNTS AFTER IMPORT 1:');

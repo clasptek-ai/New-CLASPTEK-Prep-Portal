@@ -24,7 +24,9 @@ describe('Phase 9 — Platform-Wide Cross-Module Integration Suite', () => {
     const mockScore = 90; // 90 * 0.4 = 36
 
     const totalWeight = 0.3 + 0.3 + 0.4;
-    const overallReadiness = Math.round((diagScore * 0.3 + pracScore * 0.3 + mockScore * 0.4) / totalWeight);
+    const overallReadiness = Math.round(
+      (diagScore * 0.3 + pracScore * 0.3 + mockScore * 0.4) / totalWeight
+    );
 
     expect(overallReadiness).toBe(78); // 18 + 24 + 36 = 78
   });

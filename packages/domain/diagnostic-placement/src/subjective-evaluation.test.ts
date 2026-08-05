@@ -33,7 +33,11 @@ export class SubjectiveEvaluatorEngine {
 
   evaluateSpeaking(examType: string, mediaUrl: string) {
     if (!mediaUrl || mediaUrl.includes('blob:')) {
-      return { status: 'REQUIRES_REVIEW', error: 'NON_PERMANENT_AUDIO_REFERENCE', criteria: undefined };
+      return {
+        status: 'REQUIRES_REVIEW',
+        error: 'NON_PERMANENT_AUDIO_REFERENCE',
+        criteria: undefined,
+      };
     }
 
     if (examType.includes('IELTS')) {
@@ -79,7 +83,10 @@ describe('Phase 10 — Subjective Evaluation Pipeline Suite', () => {
   });
 
   it('should return Intermediate Proficiency label (NO IELTS bands) for English Proficiency Writing', () => {
-    const res = engine.evaluateWriting('English Proficiency', 'Foundation essay writing content...');
+    const res = engine.evaluateWriting(
+      'English Proficiency',
+      'Foundation essay writing content...'
+    );
     expect(res.status).toBe('COMPLETED');
     expect(res.scoreLabel).toBe('Intermediate Proficiency (75%)');
     expect(res.scoreLabel).not.toContain('Band');

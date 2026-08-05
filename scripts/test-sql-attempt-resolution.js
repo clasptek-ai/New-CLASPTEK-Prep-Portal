@@ -2,7 +2,10 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace('sslmode=verify-full', 'sslmode=no-verify'),
+  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace(
+    'sslmode=verify-full',
+    'sslmode=no-verify'
+  ),
   ssl: { rejectUnauthorized: false },
 });
 
@@ -16,7 +19,8 @@ async function main() {
 
   console.log(`Found ${authUsers.rows.length} auth.users records:`);
   for (const u of authUsers.rows) {
-    const attempts = await pool.query(`
+    const attempts = await pool.query(
+      `
       SELECT
         att.id AS attempt_id,
         att.student_id,
@@ -35,11 +39,15 @@ async function main() {
          OR au.email = $1
          OR $1 IN ('all', 'latest')
       ORDER BY att.created_at DESC
-    `, [u.id]);
+    `,
+      [u.id]
+    );
 
     console.log(`User ${u.id} (${u.email}): ${attempts.rows.length} attempts found.`);
     attempts.rows.forEach((a) => {
-      console.log(`  -> Attempt ${a.attempt_id}: Status=${a.status}, Score=${a.score}%, CEFR=${a.cefr}, Band=${a.predicted_band}`);
+      console.log(
+        `  -> Attempt ${a.attempt_id}: Status=${a.status}, Score=${a.score}%, CEFR=${a.cefr}, Band=${a.predicted_band}`
+      );
     });
   }
 

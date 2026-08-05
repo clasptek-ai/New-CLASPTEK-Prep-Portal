@@ -57,7 +57,8 @@ describe('ENGLISH PROFICIENCY PRE-ASSESSMENT DIRECT CONNECTION FLOW & SCHEMA INT
   });
 
   it('TEST 9: Reading passage query uses canonical status column and omits non-existent deleted_at', () => {
-    const query = "SELECT id, code, title, content FROM public.reading_passages WHERE status = 'published'";
+    const query =
+      "SELECT id, code, title, content FROM public.reading_passages WHERE status = 'published'";
     expect(query).not.toContain('deleted_at');
     expect(query).toContain('reading_passages');
   });
@@ -93,7 +94,8 @@ describe('ENGLISH PROFICIENCY PRE-ASSESSMENT DIRECT CONNECTION FLOW & SCHEMA INT
 
   it('TEST 14: Insufficient inventory returns DIAGNOSTIC_INSUFFICIENT_INVENTORY without falling back to Mock', () => {
     const inventory = { grammarCount: 20, passageCount: 1, writingCount: 2 };
-    const isSufficient = inventory.grammarCount >= 30 && inventory.passageCount >= 1 && inventory.writingCount >= 2;
+    const isSufficient =
+      inventory.grammarCount >= 30 && inventory.passageCount >= 1 && inventory.writingCount >= 2;
     expect(isSufficient).toBe(false);
     const errorCode = 'INSUFFICIENT_DIAGNOSTIC_INVENTORY';
     expect(errorCode).toBe('INSUFFICIENT_DIAGNOSTIC_INVENTORY');

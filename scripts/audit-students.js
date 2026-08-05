@@ -52,13 +52,15 @@ async function main() {
 
   // Inspect programmes and cohorts tables
   console.log('\n=== EXISTING PROGRAMMES TABLE ===');
-  const progRes = await pool.query(`SELECT table_name FROM information_schema.tables WHERE table_name LIKE '%program%' OR table_name LIKE '%cohort%'`);
+  const progRes = await pool.query(
+    `SELECT table_name FROM information_schema.tables WHERE table_name LIKE '%program%' OR table_name LIKE '%cohort%'`
+  );
   console.log('Programme/Cohort Tables:', progRes.rows);
 
   await pool.end();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error(err);
   process.exit(1);
 });

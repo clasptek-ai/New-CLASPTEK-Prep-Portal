@@ -51,13 +51,15 @@ async function main() {
       instructions = EXCLUDED.instructions;
   `);
 
-  const tasks = await pool.query(`SELECT * FROM public.writing_tasks WHERE exam_type = 'English Proficiency'`);
+  const tasks = await pool.query(
+    `SELECT * FROM public.writing_tasks WHERE exam_type = 'English Proficiency'`
+  );
   console.log('English Proficiency Writing Tasks in DB:', tasks.rows.length);
 
   await pool.end();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error(err);
   process.exit(1);
 });

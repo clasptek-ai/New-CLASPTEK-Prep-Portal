@@ -4,7 +4,10 @@ const { getAppUrl } = require('../packages/configuration/dist');
 require('dotenv').config();
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace('sslmode=verify-full', 'sslmode=no-verify'),
+  connectionString: process.env.DATABASE_URL.replace(':6543/', ':5432/').replace(
+    'sslmode=verify-full',
+    'sslmode=no-verify'
+  ),
   ssl: { rejectUnauthorized: false },
 });
 
@@ -21,7 +24,8 @@ async function runPasswordRecoveryAudit() {
 
   // STEP 1: REGISTER CANDIDATE USER
   console.log('--- STEP 1: REGISTER CANDIDATE USER ---');
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO auth.users (
       id, instance_id, email, encrypted_password, email_confirmed_at,
       raw_app_meta_data, raw_user_meta_data, created_at, updated_at, role, aud
@@ -30,18 +34,26 @@ async function runPasswordRecoveryAudit() {
       '{"provider":"email","providers":["email"]}',
       $3, NOW(), NOW(), 'authenticated', 'authenticated'
     )
-  `, [testUserId, testEmail, JSON.stringify({ first_name: 'Recovery', last_name: 'Test' })]);
+  `,
+    [testUserId, testEmail, JSON.stringify({ first_name: 'Recovery', last_name: 'Test' })]
+  );
 
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO public.users (id, status, version, created_at, updated_at)
     VALUES ($1, 'ACTIVE', 1, NOW(), NOW())
     ON CONFLICT (id) DO NOTHING
-  `, [testUserId]);
+  `,
+    [testUserId]
+  );
 
-  await pool.query(`
+  await pool.query(
+    `
     INSERT INTO public.profiles (id, user_id, first_name, last_name, target_programme, locale, time_zone, version, created_at, updated_at)
     VALUES ($1, $1, 'Recovery', 'Test', 'English Proficiency', 'en', 'UTC', 1, NOW(), NOW())
-  `, [testUserId]);
+  `,
+    [testUserId]
+  );
 
   console.log(`✅ Candidate Registered: ${testEmail}`);
 
@@ -53,7 +65,9 @@ async function runPasswordRecoveryAudit() {
   console.log(`- Base App URL: ${appUrl}`);
   console.log(`- Supabase resetPasswordForEmail redirectTo: ${recoveryRedirectTo}`);
   if (recoveryRedirectTo === 'https://portal.clasptek.org/auth/callback?next=/reset-password') {
-    console.log('  ✅ PASSED: Password recovery link targets https://portal.clasptek.org/auth/callback?next=/reset-password');
+    console.log(
+      '  ✅ PASSED: Password recovery link targets https://portal.clasptek.org/auth/callback?next=/reset-password'
+    );
   } else {
     console.error(`  ❌ FAILED: Unexpected recovery link URL ${recoveryRedirectTo}`);
   }
@@ -62,15 +76,20 @@ async function runPasswordRecoveryAudit() {
   console.log('\n--- STEP 3: CALLBACK ROUTE REDIRECT VERIFICATION ---');
   console.log('  ✅ /auth/callback receives token_hash or PKCE code');
   console.log('  ✅ /auth/callback establishes recovery session cookies with sameSite=lax; secure');
-  console.log('  ✅ /auth/callback redirects to https://portal.clasptek.org/reset-password (NOT to /login)');
+  console.log(
+    '  ✅ /auth/callback redirects to https://portal.clasptek.org/reset-password (NOT to /login)'
+  );
 
   // STEP 4: PASSWORD RESET API & AUTH SESSION UPDATE
   console.log('\n--- STEP 4: UPDATE PASSWORD IN AUTHENTICATED RECOVERY SESSION ---');
-  await pool.query(`
+  await pool.query(
+    `
     UPDATE auth.users
     SET encrypted_password = 'scrypt:new_password_hash', updated_at = NOW()
     WHERE id = $1
-  `, [testUserId]);
+  `,
+    [testUserId]
+  );
 
   console.log(`✅ Password Updated via POST /api/v1/auth/reset-password:`);
   console.log(`   - New Password: ${newPassword}`);
@@ -78,7 +97,9 @@ async function runPasswordRecoveryAudit() {
 
   // STEP 5: LOGIN WITH NEW PASSWORD
   console.log('\n--- STEP 5: LOGIN VERIFICATION WITH NEW PASSWORD ---');
-  const userCheck = await pool.query(`SELECT id, email FROM auth.users WHERE id = $1`, [testUserId]);
+  const userCheck = await pool.query(`SELECT id, email FROM auth.users WHERE id = $1`, [
+    testUserId,
+  ]);
   if (userCheck.rows.length === 1) {
     console.log(`✅ Login Success: User ${testEmail} authenticated with new password.`);
     console.log(`   - Redirect Target: /dashboard or /student/welcome`);

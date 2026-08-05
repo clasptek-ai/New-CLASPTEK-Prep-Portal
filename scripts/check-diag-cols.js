@@ -14,7 +14,7 @@ async function checkDiagnosticAttempts() {
     ORDER BY ordinal_position
   `);
   console.log('Columns of [public.diagnostic_attempts]:');
-  colRes.rows.forEach(r => {
+  colRes.rows.forEach((r) => {
     console.log(`  - ${r.column_name.padEnd(25)} | ${r.data_type}`);
   });
   await pool.end();
