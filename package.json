@@ -44,10 +44,11 @@
     "vitest": "^2.1.8"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx lint-staged && pnpm lint",
+    "pre-commit": "npx lint-staged",
     "pre-push": "pnpm typecheck && pnpm test"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,css,md,yml,yaml}": "prettier --write"
+    "*.{js,jsx,ts,tsx,json,css,md,yml,yaml}": "prettier --write",
+    "*.{js,jsx,ts,tsx}": "eslint --fix"
   }
 }

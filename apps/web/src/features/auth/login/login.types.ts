@@ -7,4 +7,5 @@ export interface LoginActionResult {
   message?: string;
   roles?: string[];
   userId?: string;
+  session?: Record<string, unknown>;
 }

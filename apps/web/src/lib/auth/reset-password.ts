@@ -47,9 +47,22 @@ export async function updateUserPassword(
   newPassword: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = getSupabaseBrowserClient();
+    // 1. Attempt password update via SSR endpoint (uses HTTP-only cookies)
+    const res = await fetch('/api/v1/auth/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: newPassword }),
+    });
 
-    // Call Supabase Auth browser client updateUser directly with the established recovery session
+    if (res.ok) {
+      const data = await res.json();
+      if (data.success) {
+        return { success: true };
+      }
+    }
+
+    // 2. Fallback to browser Supabase client
+    const supabase = getSupabaseBrowserClient();
     const { error } = await supabase.auth.updateUser({ password: newPassword });
 
     if (error) {

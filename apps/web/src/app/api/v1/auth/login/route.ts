@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
           'SELECT r.name FROM user_roles ur JOIN roles r ON ur.role_id = r.id WHERE ur.user_id = $1',
           [userId]
         )
-        .then((res) => res.rows.map((row: any) => row.name))
+        .then((res) => res.rows.map((row: { name: string }) => row.name))
         .catch(async () => {
           try {
             const userRoles = await authContext.userRoleRepo.findByUserId(userId);
@@ -192,6 +192,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       user: data.user,
+      session: data.session,
       roles: roleNames,
     });
   } catch (err: unknown) {

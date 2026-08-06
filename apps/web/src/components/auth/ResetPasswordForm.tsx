@@ -29,9 +29,6 @@ export function ResetPasswordForm() {
   useEffect(() => {
     const errParam = searchParams.get('error');
     const errCode = searchParams.get('error_code');
-    const code = searchParams.get('code');
-    const token_hash = searchParams.get('token_hash');
-    const type = searchParams.get('type') || 'recovery';
 
     if (errParam === 'invalid_token' || errCode === 'otp_expired' || errParam === 'access_denied') {
       setIsInvalidToken(true);
@@ -39,12 +36,12 @@ export function ResetPasswordForm() {
       return;
     }
 
-    // Exchange recovery code or token_hash or hash fragment for a Supabase Auth session on load
+    // Verify established recovery session (Server SSR Cookie session or Browser Client session)
     async function initRecoverySession() {
       try {
         const supabase = getSupabaseBrowserClient();
 
-        // 1. Check for URL Hash Fragment (#access_token=...&refresh_token=...)
+        // 1. Check for legacy URL Hash Fragment (#access_token=...&refresh_token=...)
         if (typeof window !== 'undefined' && window.location.hash.includes('access_token=')) {
           const hashParams = new URLSearchParams(window.location.hash.substring(1));
           const accessToken = hashParams.get('access_token');
@@ -60,35 +57,7 @@ export function ResetPasswordForm() {
           }
         }
 
-        // 2. If 'code' is present in URL (?code=...), exchange PKCE code for session
-        if (code) {
-          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-          if (exchangeError) {
-            console.error(
-              'exchangeCodeForSession error on /reset-password:',
-              exchangeError.message
-            );
-            setIsInvalidToken(true);
-            setError('This password reset link is no longer valid.');
-            return;
-          }
-        }
-
-        // 3. If 'token_hash' is present in URL (?token_hash=...), verify OTP for session
-        if (token_hash) {
-          const { error: otpError } = await supabase.auth.verifyOtp({
-            token_hash,
-            type: type as any,
-          });
-          if (otpError) {
-            console.error('verifyOtp error on /reset-password:', otpError.message);
-            setIsInvalidToken(true);
-            setError('This password reset link is no longer valid.');
-            return;
-          }
-        }
-
-        // 4. Listen for Supabase Auth recovery events
+        // 2. Listen for Supabase Auth recovery events
         const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
           if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
             setIsInvalidToken(false);
@@ -96,17 +65,36 @@ export function ResetPasswordForm() {
           }
         });
 
-        // 5. Verify an active Supabase recovery session exists
+        // 3. Check for active SSR HTTP-Only Cookie Session via server endpoint
+        let hasActiveSsrSession = false;
+        try {
+          const ssrRes = await fetch('/api/v1/auth/session');
+          if (ssrRes.ok) {
+            const ssrJson = await ssrRes.json();
+            if (ssrJson.success && ssrJson.user) {
+              hasActiveSsrSession = true;
+            }
+          }
+        } catch {
+          // SSR check network fallback
+        }
+
+        // 4. Check for active Browser Client Session
         const {
-          data: { session },
+          data: { session: browserSession },
         } = await supabase.auth.getSession();
 
-        if (session) {
+        if (hasActiveSsrSession || browserSession) {
           setIsInvalidToken(false);
           setError(null);
-        } else {
+        } else if (errParam || errCode) {
+          // Only show link expired if explicit error query params exist
           setIsInvalidToken(true);
           setError('This password reset link is no longer valid.');
+        } else {
+          // Default to allowing password entry (form submit will validate session via API)
+          setIsInvalidToken(false);
+          setError(null);
         }
 
         return () => {

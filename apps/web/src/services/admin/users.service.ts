@@ -46,8 +46,16 @@ function saveStoredUsers(users: AdminUserRecord[]) {
 export const adminUsersService = {
   async getUsers(): Promise<AdminUserRecord[]> {
     try {
-      const res = await apiClient.get<any>('/api/v1/admin/users');
-      if (res && res.success && Array.isArray(res.data)) {
+      const res = await apiClient.get<
+        { success?: boolean; data?: AdminUserRecord[] } | AdminUserRecord[]
+      >('/api/v1/admin/users');
+      if (
+        res &&
+        typeof res === 'object' &&
+        'success' in res &&
+        res.success &&
+        Array.isArray(res.data)
+      ) {
         return res.data;
       }
       if (Array.isArray(res)) {
@@ -135,36 +143,29 @@ export const adminUsersService = {
     status: 'ACTIVE' | 'SUSPENDED' | 'PENDING',
     reason: string
   ): Promise<boolean> {
-    const list = getStoredUsers();
-    const updated = list.map((u) => {
-      if (u.id === id) {
-        return {
-          ...u,
-          status,
-          statusHistory: [
-            { status, changedBy: 'Administrator', date: new Date().toISOString(), reason },
-            ...(u.statusHistory || []),
-          ],
-        };
-      }
-      return u;
-    });
-    saveStoredUsers(updated);
     try {
-      await apiClient.patch(`/api/v1/admin/users/${id}/status`, { status, reason });
-    } catch {
-      // fallback
+      const res = await apiClient.patch<{ success: boolean }>(`/api/v1/admin/users/${id}/status`, {
+        status,
+        reason,
+      });
+      return Boolean(res && res.success);
+    } catch (err) {
+      console.error('adminUsersService.updateUserStatus error:', err);
+      return false;
     }
-    return true;
   },
 
   async initiatePasswordReset(id: string): Promise<boolean> {
     try {
-      await apiClient.post(`/api/v1/admin/users/${id}/reset-password`, {});
-    } catch {
-      // fallback
+      const res = await apiClient.post<{ success: boolean }>(
+        `/api/v1/admin/users/${id}/reset-password`,
+        {}
+      );
+      return Boolean(res && res.success);
+    } catch (err) {
+      console.error('adminUsersService.initiatePasswordReset error:', err);
+      return false;
     }
-    return true;
   },
 
   async assignRole(id: string, role: string): Promise<boolean> {

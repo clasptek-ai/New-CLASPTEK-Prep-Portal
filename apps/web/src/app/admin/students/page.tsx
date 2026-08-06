@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Card, Button, Badge } from '@/components/ui/ui-components';
 import { adminUsersService, AdminUserRecord } from '@/services/admin/users.service';
 import {
@@ -14,8 +13,6 @@ import {
   KeyRound,
   UserCheck,
   UserX,
-  Mail,
-  Phone,
   Eye,
   Edit3,
   MoreVertical,
@@ -23,7 +20,6 @@ import {
 } from 'lucide-react';
 
 export default function StudentDirectoryPage() {
-  const router = useRouter();
   const [students, setStudents] = useState<AdminUserRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState<string | null>(null);
@@ -43,9 +39,7 @@ export default function StudentDirectoryPage() {
   const [newPhone, setNewPhone] = useState('');
   const [newProgramme, setNewProgramme] = useState('IELTS Academic');
   const [newCohort, setNewCohort] = useState('UNASSIGNED');
-  const [newPaymentStatus, setNewPaymentStatus] = useState<
-    'PAID' | 'PENDING' | 'COMPLETED' | 'OVERDUE'
-  >('PAID');
+  const [newPaymentStatus] = useState<'PAID' | 'PENDING' | 'COMPLETED' | 'OVERDUE'>('PAID');
 
   // Edit Modal
   const [editingStudent, setEditingStudent] = useState<AdminUserRecord | null>(null);
@@ -96,21 +90,29 @@ export default function StudentDirectoryPage() {
 
   const handleToggleStatus = async (s: AdminUserRecord) => {
     const nextStatus = s.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
-    await adminUsersService.updateUserStatus(
+    const success = await adminUsersService.updateUserStatus(
       s.id,
       nextStatus,
       nextStatus === 'SUSPENDED' ? 'Administrative suspension' : 'Access restored'
     );
-    setStudents((prev) =>
-      prev.map((item) => (item.id === s.id ? { ...item, status: nextStatus } : item))
-    );
-    showBanner(`Student account set to ${nextStatus}.`);
+    if (success) {
+      setStudents((prev) =>
+        prev.map((item) => (item.id === s.id ? { ...item, status: nextStatus } : item))
+      );
+      showBanner(`Student candidate status set to ${nextStatus}.`);
+    } else {
+      showBanner(`Failed to update candidate status for ${s.name}. Please try again.`);
+    }
     setActiveMenuId(null);
   };
 
   const handleResetPassword = async (name: string, id: string) => {
-    await adminUsersService.initiatePasswordReset(id);
-    showBanner(`Password reset dispatch initiated for ${name}.`);
+    const success = await adminUsersService.initiatePasswordReset(id);
+    if (success) {
+      showBanner(`Password reset dispatch initiated for ${name}.`);
+    } else {
+      showBanner(`Failed to initiate password reset for ${name}.`);
+    }
     setActiveMenuId(null);
   };
 
