@@ -389,98 +389,124 @@ export function AssessmentPlayerScreen({
               {currentQuestion?.prompt}
             </h2>
 
-            {/* MCQ & Fallback Options */}
-            {currentQuestion?.options && currentQuestion.options.length > 0 ? (
-              <div className="space-y-3">
-                {currentQuestion.options.map((opt) => {
-                  const isSelected = answers[currentQuestion.id]?.selectedOptionCode === opt.code;
+            {/* Explicit Fail-Safe Item Renderer Switch */}
+            {(() => {
+              switch (currentQuestion?.itemType) {
+                case 'MCQ':
                   return (
-                    <button
-                      key={opt.code}
-                      onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
-                      className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
-                        isSelected
-                          ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
-                          : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                      }`}
-                    >
-                      <span className="text-xs md:text-sm flex items-center space-x-3">
-                        <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
-                          {opt.code}
-                        </span>
-                        <span>{opt.text}</span>
-                      </span>
-                      {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
-                    </button>
+                    <div className="space-y-3">
+                      {(currentQuestion.options || []).map((opt) => {
+                        const isSelected = answers[currentQuestion.id]?.selectedOptionCode === opt.code;
+                        return (
+                          <button
+                            key={opt.code}
+                            onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
+                            className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
+                              isSelected
+                                ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                                : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                            }`}
+                          >
+                            <span className="text-xs md:text-sm flex items-center space-x-3">
+                              <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
+                                {opt.code}
+                              </span>
+                              <span>{opt.text}</span>
+                            </span>
+                            {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                          </button>
+                        );
+                      })}
+                    </div>
                   );
-                })}
-              </div>
-            ) : currentQuestion?.itemType === 'FILL_IN_BLANK' ? (
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={answers[currentQuestion?.id || '']?.textResponse || ''}
-                  onChange={(e) => currentQuestion && handleTextChange(currentQuestion.id, e.target.value)}
-                  placeholder="Type your answer here..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500 font-mono"
-                />
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {[
-                  { code: 'A', text: 'True' },
-                  { code: 'B', text: 'False' },
-                  { code: 'C', text: 'Not Given' },
-                ].map((opt) => {
-                  const isSelected = answers[currentQuestion?.id || '']?.selectedOptionCode === opt.code;
-                  return (
-                    <button
-                      key={opt.code}
-                      onClick={() => currentQuestion && handleSelectOption(currentQuestion.id, opt.code)}
-                      className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
-                        isSelected
-                          ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
-                          : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                      }`}
-                    >
-                      <span className="text-xs md:text-sm flex items-center space-x-3">
-                        <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
-                          {opt.code}
-                        </span>
-                        <span>{opt.text}</span>
-                      </span>
-                      {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
 
-            {/* Essay Input Textarea */}
-            {(currentQuestion?.itemType === 'ESSAY' || currentSection.code.includes('WRITING')) && (
-              <div className="space-y-2 mt-4">
-                <textarea
-                  rows={8}
-                  value={answers[currentQuestion?.id || '']?.textResponse || ''}
-                  onChange={(e) =>
-                    currentQuestion && handleTextChange(currentQuestion.id, e.target.value)
-                  }
-                  placeholder="Type your response here..."
-                  inputMode="text"
-                  enterKeyHint="enter"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500"
-                />
-                <div className="text-right text-[11px] text-slate-400 font-mono">
-                  Word Count:{' '}
-                  {
-                    (answers[currentQuestion?.id || '']?.textResponse || '')
-                      .trim()
-                      .split(/\s+/)
-                      .filter(Boolean).length
-                  }
-                </div>
-              </div>
-            )}
+                case 'TRUE_FALSE_NOT_GIVEN':
+                  return (
+                    <div className="space-y-3">
+                      {[
+                        { code: 'A', text: 'True' },
+                        { code: 'B', text: 'False' },
+                        { code: 'C', text: 'Not Given' },
+                      ].map((opt) => {
+                        const isSelected = answers[currentQuestion?.id || '']?.selectedOptionCode === opt.code;
+                        return (
+                          <button
+                            key={opt.code}
+                            onClick={() => currentQuestion && handleSelectOption(currentQuestion.id, opt.code)}
+                            className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
+                              isSelected
+                                ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                                : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                            }`}
+                          >
+                            <span className="text-xs md:text-sm flex items-center space-x-3">
+                              <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
+                                {opt.code}
+                              </span>
+                              <span>{opt.text}</span>
+                            </span>
+                            {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  );
+
+                case 'FILL_IN_BLANK':
+                  return (
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        value={answers[currentQuestion?.id || '']?.textResponse || ''}
+                        onChange={(e) => currentQuestion && handleTextChange(currentQuestion.id, e.target.value)}
+                        placeholder="Type your answer here..."
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500 font-mono"
+                      />
+                    </div>
+                  );
+
+                case 'ESSAY':
+                  return (
+                    <div className="space-y-2">
+                      <textarea
+                        rows={8}
+                        value={answers[currentQuestion?.id || '']?.textResponse || ''}
+                        onChange={(e) =>
+                          currentQuestion && handleTextChange(currentQuestion.id, e.target.value)
+                        }
+                        placeholder="Type your response here..."
+                        inputMode="text"
+                        enterKeyHint="enter"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500"
+                      />
+                      <div className="text-right text-[11px] text-slate-400 font-mono">
+                        Word Count:{' '}
+                        {
+                          (answers[currentQuestion?.id || '']?.textResponse || '')
+                            .trim()
+                            .split(/\s+/)
+                            .filter(Boolean).length
+                        }
+                      </div>
+                    </div>
+                  );
+
+                case 'SPEAKING_PROMPT':
+                  return (
+                    <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2">
+                      <p className="text-xs text-slate-300">Speaking Audio Recorder</p>
+                      <p className="text-[11px] text-slate-400">Record your oral response for evaluation.</p>
+                    </div>
+                  );
+
+                default:
+                  return (
+                    <div className="p-4 bg-red-950/40 border border-red-800/60 rounded-xl text-red-200 text-xs font-mono">
+                      ⚠️ Unsupported Question Item Type: <strong>{String(currentQuestion?.itemType || 'UNKNOWN')}</strong>
+                    </div>
+                  );
+              }
+            })()}
           </div>
 
           {/* Desktop & Tablet Bottom Navigation Controls */}

@@ -214,12 +214,12 @@ function StudentResultsContent() {
             Independent Skill Performance Profile
           </h2>
           <span className="text-xs text-slate-400 font-mono">
-            {result.sectionScores.length || 3} Skills Assessed
+            {(result.sectionScores || []).length || 3} Skills Assessed
           </span>
         </div>
 
         <div className="space-y-4">
-          {result.sectionScores.map((sec) => (
+          {(result.sectionScores || []).map((sec) => (
             <div key={sec.sectionCode} className="space-y-1.5">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-semibold text-white flex items-center space-x-2">
@@ -250,7 +250,7 @@ function StudentResultsContent() {
             🟢 Strongest Competencies
           </h3>
           <ul className="space-y-2">
-            {result.strengths.map((str, idx) => (
+            {(result.strengths || []).map((str, idx) => (
               <li key={idx} className="text-xs text-slate-300 flex items-center space-x-2">
                 <span className="text-emerald-400">✓</span>
                 <span>{str}</span>
@@ -264,7 +264,7 @@ function StudentResultsContent() {
             🎯 Recommended Focus Areas
           </h3>
           <ul className="space-y-2">
-            {result.focusAreas.map((fa, idx) => (
+            {(result.focusAreas || []).map((fa, idx) => (
               <li key={idx} className="text-xs text-slate-300 flex items-center space-x-2">
                 <span className="text-amber-400">!</span>
                 <span>{fa}</span>

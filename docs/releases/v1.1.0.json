@@ -1,0 +1,61 @@
+{
+  "release": "1.1.0",
+  "name": "Release 1.1 — Enterprise Admin Redesign & Edge Resilience",
+  "timestamp": "2026-08-05T19:56:30Z",
+  "environment": "production",
+  "git": {
+    "branch": "master",
+    "commit": "d486bb2b34ad4146b33d0b0cca2d980eeac9a0c2",
+    "tag": "v1.1.0",
+    "remote": "https://github.com/clasptek-ai/New-CLASPTEK-Prep-Portal"
+  },
+  "metrics": {
+    "total_files": 160,
+    "commits": 6,
+    "manifest_exact_match": true,
+    "verification_suite_tasks": "65/65 passed",
+    "database_health": "HEALTHY (158ms latency, 36 indexes)",
+    "question_bank_size": 650,
+    "reading_passages": 6,
+    "writing_tasks": 2,
+    "16_point_checklist_score": "16/16 passed"
+  },
+  "commits": [
+    {
+      "sha": "cdd10b5",
+      "scope": "build(workspace)",
+      "files": 4,
+      "message": "build(workspace): configure pnpm allowBuilds, web dependencies, and CI release gate workflow"
+    },
+    {
+      "sha": "2463761",
+      "scope": "feat(api)",
+      "files": 40,
+      "message": "feat(api): resolve Next.js 15 async params Promise unwrapping and SQL query parameter bindings"
+    },
+    {
+      "sha": "2f99dae",
+      "scope": "feat(ui)",
+      "files": 47,
+      "message": "feat(ui): redesign enterprise navigation layouts, student views, global logout dialog, and edge error boundaries"
+    },
+    {
+      "sha": "bac338f",
+      "scope": "test(verification)",
+      "files": 59,
+      "message": "test(verification): add end-to-end acceptance test runners, Vitest suites, and database integrity verifiers"
+    },
+    {
+      "sha": "3822eb3",
+      "scope": "docs(operations)",
+      "files": 9,
+      "message": "docs(operations): record Release 1.1 operational benchmarks, quality audits, and roadmap"
+    },
+    {
+      "sha": "d486bb2",
+      "scope": "style(formatting)",
+      "files": 1,
+      "message": "style(formatting): align JSX prop indentation in LogoBadge component"
+    }
+  ]
+}
