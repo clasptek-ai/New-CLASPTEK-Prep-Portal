@@ -33,6 +33,7 @@
     "eslint": "^9.16.0",
     "globals": "^17.7.0",
     "jsdom": "^29.1.1",
+    "lint-staged": "^17.3.0",
     "pg": "^8.13.1",
     "prettier": "^3.4.2",
     "simple-git-hooks": "^2.11.1",
@@ -43,7 +44,10 @@
     "vitest": "^2.1.8"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm format:check && pnpm lint",
+    "pre-commit": "npx lint-staged && pnpm lint",
     "pre-push": "pnpm typecheck && pnpm test"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md,yml,yaml}": "prettier --write"
   }
 }

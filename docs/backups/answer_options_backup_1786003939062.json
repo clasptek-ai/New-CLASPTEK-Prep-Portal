@@ -1,0 +1,898 @@
+[
+  {
+    "id": "56a1d430-fd17-4993-b490-bfa019699157",
+    "question_version_id": "d96c663d-b3cc-4779-a885-bf5c92bab72d",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "9571968e-4d34-4a96-aecf-ca7abf4c5315",
+    "question_version_id": "d96c663d-b3cc-4779-a885-bf5c92bab72d",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "13f8dc85-0cd5-45ed-86a0-487067bdd257",
+    "question_version_id": "d96c663d-b3cc-4779-a885-bf5c92bab72d",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "4cd5f398-9686-4350-a4dc-9bf9b8cfb944",
+    "question_version_id": "d96c663d-b3cc-4779-a885-bf5c92bab72d",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "66896331-6cd9-4f8e-8435-9a63580b6b34",
+    "question_version_id": "cded5ca9-8b6b-45b1-8129-ceb969f72808",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "41cf348d-3cda-4b06-8a48-b2607c1ffcec",
+    "question_version_id": "cded5ca9-8b6b-45b1-8129-ceb969f72808",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "76f9af0d-96ad-46d0-9e0b-2597dff5e4b7",
+    "question_version_id": "cded5ca9-8b6b-45b1-8129-ceb969f72808",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "ef2d5b20-8ac8-4ecd-b730-c7734f97110d",
+    "question_version_id": "cded5ca9-8b6b-45b1-8129-ceb969f72808",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "e49c58d4-2a2a-4d90-8d78-6a50abcb0827",
+    "question_version_id": "06ed7d8b-e22b-461a-8e3a-fc214cce08c3",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "11b02d6f-ac22-4f40-95b0-16730f99f4e4",
+    "question_version_id": "06ed7d8b-e22b-461a-8e3a-fc214cce08c3",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "1d8c3ab9-9011-4f18-b380-6fa00194bbda",
+    "question_version_id": "06ed7d8b-e22b-461a-8e3a-fc214cce08c3",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "3f9e9a1b-431f-42b2-819c-19b8075823c8",
+    "question_version_id": "06ed7d8b-e22b-461a-8e3a-fc214cce08c3",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "37b19612-0d22-4147-b78d-05ee88aa4bb5",
+    "question_version_id": "c6de5eba-8eae-4eca-8430-0f51d03722d2",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "61f480af-78ae-47c6-9038-b7c9b6b10ba4",
+    "question_version_id": "c6de5eba-8eae-4eca-8430-0f51d03722d2",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "262ee25b-8b3d-4eda-9b11-efe52df97de9",
+    "question_version_id": "c6de5eba-8eae-4eca-8430-0f51d03722d2",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "a639d1d2-2d93-4210-80d4-16e640e4cbf7",
+    "question_version_id": "c6de5eba-8eae-4eca-8430-0f51d03722d2",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "4b4be2cb-d7be-444c-a50a-69f93a0dc1c8",
+    "question_version_id": "ec150800-f6e0-4b2e-90e5-3fd01ff159ed",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "50ae09a9-7275-4c61-8d92-b0f14d0ee0c4",
+    "question_version_id": "ec150800-f6e0-4b2e-90e5-3fd01ff159ed",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "4f02ab80-a45c-4896-8f63-8ad733e9bfbf",
+    "question_version_id": "ec150800-f6e0-4b2e-90e5-3fd01ff159ed",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "94066fbb-7378-41d1-8d99-428a987c882d",
+    "question_version_id": "ec150800-f6e0-4b2e-90e5-3fd01ff159ed",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "6558ea58-a5f3-4b1f-be59-7412ecae0235",
+    "question_version_id": "f1e2f5dd-1553-4e80-be9d-0f5a93a1d9e5",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "5c37925d-806c-4341-877d-2102f67001a5",
+    "question_version_id": "f1e2f5dd-1553-4e80-be9d-0f5a93a1d9e5",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "4bef18ca-6a62-4bd0-9705-c83cb4042da1",
+    "question_version_id": "f1e2f5dd-1553-4e80-be9d-0f5a93a1d9e5",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "ccb638d9-bce8-4c2b-bb4b-82f37243ed14",
+    "question_version_id": "f1e2f5dd-1553-4e80-be9d-0f5a93a1d9e5",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "f5576d1c-1c69-4c2d-9f6f-a58f37feb665",
+    "question_version_id": "3974fc01-bd15-44e1-af86-4367dca43331",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "fc84ad39-ce7a-43c5-91a4-675760642501",
+    "question_version_id": "3974fc01-bd15-44e1-af86-4367dca43331",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "1bdb3d81-0963-404f-8851-9646bc84ea1f",
+    "question_version_id": "3974fc01-bd15-44e1-af86-4367dca43331",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "af03e053-355a-4d6b-a78a-1a8943e8e9ff",
+    "question_version_id": "3974fc01-bd15-44e1-af86-4367dca43331",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "7dc5077b-81fe-4f55-b5a9-1e78d8aeb539",
+    "question_version_id": "577a60b4-1194-4343-8231-b7fda57bcc5a",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "c239e592-2aff-476b-aca0-f35208264ddd",
+    "question_version_id": "577a60b4-1194-4343-8231-b7fda57bcc5a",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "4f86b177-29cc-4c21-8cb1-4f1b3dc3ae2c",
+    "question_version_id": "577a60b4-1194-4343-8231-b7fda57bcc5a",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "04ccb416-c528-44d4-a88e-47c3efbfbb61",
+    "question_version_id": "577a60b4-1194-4343-8231-b7fda57bcc5a",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "28b03747-350a-4aca-a87b-a64d7454f6ca",
+    "question_version_id": "7ce744a9-7ce7-451b-aa87-1ed6400b60da",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "75186fec-d934-44ef-81fc-9cc117790f6f",
+    "question_version_id": "7ce744a9-7ce7-451b-aa87-1ed6400b60da",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "11082f24-b9ef-445c-86b2-a43314f1a7d3",
+    "question_version_id": "7ce744a9-7ce7-451b-aa87-1ed6400b60da",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "fa33f6ec-dd5c-4f2d-bcad-c20e3a50502b",
+    "question_version_id": "7ce744a9-7ce7-451b-aa87-1ed6400b60da",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "7efca2ce-b1ce-42ff-a89d-d25f3719a978",
+    "question_version_id": "2815c2e2-0401-4ccb-83ae-ae51a033fd1e",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "f2e6bd56-245e-414c-ba0b-0676594443b6",
+    "question_version_id": "2815c2e2-0401-4ccb-83ae-ae51a033fd1e",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "32e15b7b-f2bf-4feb-a978-0117e384cdf2",
+    "question_version_id": "2815c2e2-0401-4ccb-83ae-ae51a033fd1e",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "904e6436-d2c1-4400-898d-fda451038960",
+    "question_version_id": "2815c2e2-0401-4ccb-83ae-ae51a033fd1e",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "329131cd-fd8c-4d87-b0fe-68082cffc930",
+    "question_version_id": "67a17c66-ca95-460c-97e9-386ad0b286f5",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "92b3c595-719b-42ab-a407-2f024e229b2d",
+    "question_version_id": "67a17c66-ca95-460c-97e9-386ad0b286f5",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "a52997e1-f2f3-4a79-912c-c9004cdb7296",
+    "question_version_id": "67a17c66-ca95-460c-97e9-386ad0b286f5",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "e70fc154-35a8-44b0-8d22-fae67e1ed441",
+    "question_version_id": "67a17c66-ca95-460c-97e9-386ad0b286f5",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "089139ea-ac82-4996-8cf1-abe37723dc0a",
+    "question_version_id": "26c7b07e-4f52-442a-ab6a-0f2a06795f56",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "574f3b5d-73d2-410b-97da-40ed2cbb0002",
+    "question_version_id": "26c7b07e-4f52-442a-ab6a-0f2a06795f56",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "0f343d5b-905b-441e-ab8b-b3dbef6cc243",
+    "question_version_id": "26c7b07e-4f52-442a-ab6a-0f2a06795f56",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "23898604-09f6-4528-bad9-6932ea312a32",
+    "question_version_id": "26c7b07e-4f52-442a-ab6a-0f2a06795f56",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "4457290f-2544-42c3-809d-ab639c85787d",
+    "question_version_id": "0817889a-52a8-4864-9b6c-4e7c14e5dbc0",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "1e8fa1b4-a2ba-4dca-8395-4736d9a12b6e",
+    "question_version_id": "0817889a-52a8-4864-9b6c-4e7c14e5dbc0",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "fad968bc-53b6-4768-a2ba-fe7562acaa3d",
+    "question_version_id": "0817889a-52a8-4864-9b6c-4e7c14e5dbc0",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "84260f53-055a-4bd4-8472-403b568e58e6",
+    "question_version_id": "0817889a-52a8-4864-9b6c-4e7c14e5dbc0",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "95819bdb-45e7-46f9-aa22-7f24362e4335",
+    "question_version_id": "2dff6cd7-c0d4-43b6-9813-ca1811d3858a",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "17b1a7fe-1d76-4475-8fdf-32d019498e28",
+    "question_version_id": "2dff6cd7-c0d4-43b6-9813-ca1811d3858a",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "3062d0cc-75bd-4c44-81af-9dcadf0ae9c0",
+    "question_version_id": "2dff6cd7-c0d4-43b6-9813-ca1811d3858a",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "3e492534-0024-4747-8c29-011ed90fac18",
+    "question_version_id": "2dff6cd7-c0d4-43b6-9813-ca1811d3858a",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "8427a7e3-65e6-4270-ab02-90ecc39397b1",
+    "question_version_id": "64611d7e-7269-4aa3-b4d0-076dc2f90ccb",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "8807048e-3c14-4eec-a44e-58ea723ef433",
+    "question_version_id": "64611d7e-7269-4aa3-b4d0-076dc2f90ccb",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "24252dff-4bfa-421d-9909-801169439463",
+    "question_version_id": "64611d7e-7269-4aa3-b4d0-076dc2f90ccb",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "64df388a-9969-45c5-b1da-4a8bef313983",
+    "question_version_id": "64611d7e-7269-4aa3-b4d0-076dc2f90ccb",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "43439389-5799-42c3-bd26-ff30797b1337",
+    "question_version_id": "0240215f-3cef-4024-b2ec-3b4d8e92512d",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "49798a17-0770-4fc4-a4c9-41decddc03e8",
+    "question_version_id": "0240215f-3cef-4024-b2ec-3b4d8e92512d",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "0aaff146-243f-4761-9dd4-81d23373b62d",
+    "question_version_id": "0240215f-3cef-4024-b2ec-3b4d8e92512d",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "c959bc69-5e22-41e2-a542-d92d5166e167",
+    "question_version_id": "0240215f-3cef-4024-b2ec-3b4d8e92512d",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "e32f7bac-a552-43bc-b6cd-b7e50472d951",
+    "question_version_id": "c0ac14fe-7afd-434c-9ccb-452289cb575e",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "1f947218-6a5f-4433-a6c2-184d73689a57",
+    "question_version_id": "c0ac14fe-7afd-434c-9ccb-452289cb575e",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "6cd8d84e-727a-4bd2-aaa7-76d146a56bf5",
+    "question_version_id": "c0ac14fe-7afd-434c-9ccb-452289cb575e",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "84973db5-3517-4d2c-9cae-ed5eae1a2a3e",
+    "question_version_id": "c0ac14fe-7afd-434c-9ccb-452289cb575e",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "c5171127-b6d3-4b90-b935-1faed2c6ea7f",
+    "question_version_id": "06e96226-02bc-4e92-ae7e-6697c3df43d4",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "c4ee5291-3d53-487e-a0a0-a8294f0c5384",
+    "question_version_id": "06e96226-02bc-4e92-ae7e-6697c3df43d4",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "43e75a53-99f1-4ced-9c13-063b6a77b089",
+    "question_version_id": "06e96226-02bc-4e92-ae7e-6697c3df43d4",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "96bb6a05-a9f6-40f1-bbd1-0176660c87cb",
+    "question_version_id": "06e96226-02bc-4e92-ae7e-6697c3df43d4",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "6756cfa0-fa9f-4278-a343-8518d899b4ca",
+    "question_version_id": "fe6508df-d3be-4288-8c08-572c69937190",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "c73fff65-ce3b-4c5b-9a7f-6a872fa14f51",
+    "question_version_id": "fe6508df-d3be-4288-8c08-572c69937190",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "6217f4d5-ae9e-4faa-b161-4bdc39ec1157",
+    "question_version_id": "fe6508df-d3be-4288-8c08-572c69937190",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "fc21ce1e-d170-4708-8e70-90627530e577",
+    "question_version_id": "fe6508df-d3be-4288-8c08-572c69937190",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "eadb8852-f03e-431e-b25a-839c984ed3b4",
+    "question_version_id": "32b0a7d5-0b32-4e5d-930b-1dd108da3a23",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "c63018d3-7024-45b1-b2e2-d93a8b3b073f",
+    "question_version_id": "32b0a7d5-0b32-4e5d-930b-1dd108da3a23",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "16a60d25-9dd6-446c-9063-ad1310aa5da3",
+    "question_version_id": "32b0a7d5-0b32-4e5d-930b-1dd108da3a23",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "3de14096-f5cb-42dd-8ba9-c9ec02977852",
+    "question_version_id": "32b0a7d5-0b32-4e5d-930b-1dd108da3a23",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "8b9ffcd6-1f1c-4178-a89e-03449d47a475",
+    "question_version_id": "ba3b1d8e-7ae2-4b6b-b7ac-fd2747e85e6d",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "024976ea-ec7a-483c-bbb7-80f7f281440b",
+    "question_version_id": "ba3b1d8e-7ae2-4b6b-b7ac-fd2747e85e6d",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "52237d94-4618-49c7-95a0-66a4a9b00564",
+    "question_version_id": "ba3b1d8e-7ae2-4b6b-b7ac-fd2747e85e6d",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "554c2179-f2b3-4aae-b696-8de80fe5d6fb",
+    "question_version_id": "ba3b1d8e-7ae2-4b6b-b7ac-fd2747e85e6d",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "52923cc4-9786-4c91-a411-3f1915b299a9",
+    "question_version_id": "e782c420-95d8-4b0c-8bfd-3207bcef89fa",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "3599a452-887b-41cf-85f3-46c984042e9b",
+    "question_version_id": "e782c420-95d8-4b0c-8bfd-3207bcef89fa",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "0e38dc77-d1f4-42fb-8f29-0efb77eef843",
+    "question_version_id": "e782c420-95d8-4b0c-8bfd-3207bcef89fa",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "773efaa1-18be-45d6-a1af-b9373054adf7",
+    "question_version_id": "e782c420-95d8-4b0c-8bfd-3207bcef89fa",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "99a3ca84-d2e7-41eb-b1f2-108fda8f8e81",
+    "question_version_id": "99777cd2-3e03-4f5a-aad8-f294b5fccb97",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "56381cb1-31c3-46c8-804a-6720d911cb36",
+    "question_version_id": "99777cd2-3e03-4f5a-aad8-f294b5fccb97",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "dce4ad9d-f9b9-444b-ae6d-919fafdda10d",
+    "question_version_id": "99777cd2-3e03-4f5a-aad8-f294b5fccb97",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "f842e7ef-a802-436a-82e8-749dcbfbb23d",
+    "question_version_id": "99777cd2-3e03-4f5a-aad8-f294b5fccb97",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "f9f788ce-e457-4f19-99f4-c010d859698f",
+    "question_version_id": "c1ee775e-9663-4c91-b074-8a5db0f50dd8",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "47baf98d-efad-45f4-a154-bc37db5f6450",
+    "question_version_id": "c1ee775e-9663-4c91-b074-8a5db0f50dd8",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "a28876fe-ba5d-42eb-ae35-1c60f4f56cf5",
+    "question_version_id": "c1ee775e-9663-4c91-b074-8a5db0f50dd8",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "df738a4a-2b8e-427d-b24b-433350d55f70",
+    "question_version_id": "c1ee775e-9663-4c91-b074-8a5db0f50dd8",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "258d08d8-accf-4aaa-a363-987b605b2813",
+    "question_version_id": "6010b0a5-c789-4eca-a519-2d73eceb1fd5",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "06a6441f-6b4a-4a9e-a312-98318ddb471a",
+    "question_version_id": "6010b0a5-c789-4eca-a519-2d73eceb1fd5",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "52d55697-0d07-430e-ab31-e78f4f3ad7a8",
+    "question_version_id": "6010b0a5-c789-4eca-a519-2d73eceb1fd5",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "544d0da9-c5b6-4743-842b-457e46488a2b",
+    "question_version_id": "6010b0a5-c789-4eca-a519-2d73eceb1fd5",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "2116c8a0-3151-4dee-b6e8-59ad6937c84f",
+    "question_version_id": "f5909f33-8778-45c9-b882-6ea9cacbbd02",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "6c45548d-41d9-4642-9748-62be04561ba9",
+    "question_version_id": "f5909f33-8778-45c9-b882-6ea9cacbbd02",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "e79c7a62-4edb-4ed9-8eed-e52d21634290",
+    "question_version_id": "f5909f33-8778-45c9-b882-6ea9cacbbd02",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "b3dd4300-4374-41da-a980-f6896a5bab87",
+    "question_version_id": "f5909f33-8778-45c9-b882-6ea9cacbbd02",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "811f6639-f13d-40d8-8134-44b190f1ffb1",
+    "question_version_id": "540f7261-1d2c-40b8-b35d-a581e5dc297c",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "b7a8b22a-5705-49ce-b93c-5fd2f93024cc",
+    "question_version_id": "540f7261-1d2c-40b8-b35d-a581e5dc297c",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "36701084-ff79-41f5-9c57-ce90a1f0ebf4",
+    "question_version_id": "540f7261-1d2c-40b8-b35d-a581e5dc297c",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "c5cb9712-970b-4ec5-8f96-b526f97aec0b",
+    "question_version_id": "540f7261-1d2c-40b8-b35d-a581e5dc297c",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  },
+  {
+    "id": "dab703b7-e489-432d-bb7b-15dbe1859184",
+    "question_version_id": "d2b36c39-9476-4689-9352-8d2055dbf835",
+    "option_code": "A",
+    "option_text": "primary objective / core model",
+    "is_correct": true,
+    "display_order": 1
+  },
+  {
+    "id": "e5bf221b-e184-4e6e-87c9-dd40f02064bc",
+    "question_version_id": "d2b36c39-9476-4689-9352-8d2055dbf835",
+    "option_code": "B",
+    "option_text": "secondary alternative option",
+    "is_correct": false,
+    "display_order": 2
+  },
+  {
+    "id": "613d78c9-f988-4703-99b5-91eb77fea425",
+    "question_version_id": "d2b36c39-9476-4689-9352-8d2055dbf835",
+    "option_code": "C",
+    "option_text": "unrelated environmental factor",
+    "is_correct": false,
+    "display_order": 3
+  },
+  {
+    "id": "5c05b1a4-d213-4588-ae60-d7fe59a860cd",
+    "question_version_id": "d2b36c39-9476-4689-9352-8d2055dbf835",
+    "option_code": "D",
+    "option_text": "traditional legacy system",
+    "is_correct": false,
+    "display_order": 4
+  }
+]

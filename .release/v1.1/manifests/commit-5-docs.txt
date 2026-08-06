@@ -1,0 +1,9 @@
+docs/operations/AI_Recommendation_Accuracy_Report.md
+docs/operations/Assessment_Intelligence_Report.md
+docs/operations/Content_Quality_Audit.md
+docs/operations/Data_Quality_Governance_Report.md
+docs/operations/Executive_BI_Report.md
+docs/operations/Learning_Analytics_Report.md
+docs/operations/Monthly_Operations_Report_Template.md
+docs/operations/Student_Success_Report.md
+docs/operations/Version_1_1_Roadmap.md
