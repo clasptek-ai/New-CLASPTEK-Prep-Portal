@@ -22,7 +22,7 @@ export interface PlayerQuestion {
   versionId: string;
   code: string;
   prompt: string;
-  itemType: 'MCQ' | 'FILL_IN_BLANK' | 'ESSAY' | 'SPEAKING_PROMPT' | 'MATCHING';
+  itemType: 'MCQ' | 'FILL_IN_BLANK' | 'ESSAY' | 'SPEAKING_PROMPT' | 'MATCHING' | 'TRUE_FALSE_NOT_GIVEN';
   options?: { code: string; text: string }[];
   passageTitle?: string;
   passageContent?: string;
