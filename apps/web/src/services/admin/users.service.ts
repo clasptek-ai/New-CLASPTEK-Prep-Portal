@@ -228,6 +228,19 @@ export const adminUsersService = {
     }
   },
 
+  async unlockAccount(id: string): Promise<boolean> {
+    try {
+      const res = await apiClient.post<{ success: boolean }>(
+        `/api/v1/admin/users/${id}/unlock-account`,
+        {}
+      );
+      return Boolean(res && res.success);
+    } catch (err) {
+      console.error('adminUsersService.unlockAccount error:', err);
+      return false;
+    }
+  },
+
   async assignRole(id: string, role: string): Promise<boolean> {
     try {
       await apiClient.patch(`/api/v1/admin/users/${id}/role`, { role });

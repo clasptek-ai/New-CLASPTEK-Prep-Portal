@@ -513,12 +513,16 @@ export class PostgresSecurityProfileRepository implements SecurityProfileReposit
       r.id,
       r.user_id,
       r.preferred_mfa,
-      r.failed_attempts,
+      r.failed_attempts || 0,
       r.lock_status as LockStatus,
       r.security_preferences || {},
-      r.version,
+      r.version || 1,
       r.created_at,
-      r.updated_at
+      r.updated_at,
+      r.locked_at ? new Date(r.locked_at) : null,
+      r.lock_expires_at ? new Date(r.lock_expires_at) : null,
+      r.last_failed_attempt ? new Date(r.last_failed_attempt) : null,
+      r.lock_count || 0
     );
   }
 
@@ -532,27 +536,39 @@ export class PostgresSecurityProfileRepository implements SecurityProfileReposit
       r.id,
       r.user_id,
       r.preferred_mfa,
-      r.failed_attempts,
+      r.failed_attempts || 0,
       r.lock_status as LockStatus,
       r.security_preferences || {},
-      r.version,
+      r.version || 1,
       r.created_at,
-      r.updated_at
+      r.updated_at,
+      r.locked_at ? new Date(r.locked_at) : null,
+      r.lock_expires_at ? new Date(r.lock_expires_at) : null,
+      r.last_failed_attempt ? new Date(r.last_failed_attempt) : null,
+      r.lock_count || 0
     );
   }
 
   public async save(profile: SecurityProfile): Promise<void> {
     const pool = this.dbPool.getPool();
     const query = `
-      INSERT INTO security_profiles (id, user_id, preferred_mfa, failed_attempts, lock_status, security_preferences, version, updated_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
+      INSERT INTO security_profiles (
+        id, user_id, preferred_mfa, failed_attempts, lock_status,
+        security_preferences, version, updated_at,
+        locked_at, lock_expires_at, last_failed_attempt, lock_count
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP, $8, $9, $10, $11)
       ON CONFLICT (user_id) DO UPDATE SET
         preferred_mfa = EXCLUDED.preferred_mfa,
         failed_attempts = EXCLUDED.failed_attempts,
         lock_status = EXCLUDED.lock_status,
         security_preferences = EXCLUDED.security_preferences,
         version = EXCLUDED.version,
-        updated_at = CURRENT_TIMESTAMP
+        updated_at = CURRENT_TIMESTAMP,
+        locked_at = EXCLUDED.locked_at,
+        lock_expires_at = EXCLUDED.lock_expires_at,
+        last_failed_attempt = EXCLUDED.last_failed_attempt,
+        lock_count = EXCLUDED.lock_count
     `;
     await pool.query(query, [
       profile.id,
@@ -562,6 +578,10 @@ export class PostgresSecurityProfileRepository implements SecurityProfileReposit
       profile.lockStatus,
       profile.securityPreferences,
       profile.version,
+      profile.lockedAt,
+      profile.lockExpiresAt,
+      profile.lastFailedAttempt,
+      profile.lockCount,
     ]);
   }
 }

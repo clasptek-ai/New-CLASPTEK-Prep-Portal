@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    // 1. Pre-auth security profile lock check
+    // 1. Pre-auth security profile lock check & auto-unlock evaluation
     const pool = dbPool.getPool();
 
     let securityProfile: SecurityProfile | null = null;
@@ -73,14 +73,56 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (securityProfile && securityProfile.lockStatus === 'LOCKED') {
-      return NextResponse.json(
-        {
-          code: 'ACCOUNT_LOCKED',
-          message: 'Account is temporarily locked due to excessive failed attempts',
-        },
-        { status: 403 }
-      );
+    if (securityProfile) {
+      // Auto-unlock if lock expiration has passed
+      if (securityProfile.lockStatus === 'LOCKED') {
+        const isExpired = securityProfile.autoUnlockIfExpired();
+        if (isExpired) {
+          await securityProfileRepo.save(securityProfile).catch(() => {});
+          await pool
+            .query(
+              `INSERT INTO public.audit_logs (id, user_id, action, entity, entity_id, payload, created_at)
+             VALUES (gen_random_uuid(), $1, 'AUTO_UNLOCKED_EXPIRED_ACCOUNT', 'public.security_profiles', $2, $3, NOW())`,
+              [
+                securityProfile.userId,
+                securityProfile.id,
+                JSON.stringify({ email, autoUnlockedAt: new Date().toISOString() }),
+              ]
+            )
+            .catch(() => null);
+        } else {
+          // Still locked: Calculate retryAfterMinutes
+          const retryAfterMinutes = securityProfile.lockExpiresAt
+            ? Math.max(1, Math.ceil((securityProfile.lockExpiresAt.getTime() - Date.now()) / 60000))
+            : 15;
+
+          await pool
+            .query(
+              `INSERT INTO public.audit_logs (id, user_id, action, entity, entity_id, payload, created_at)
+             VALUES (gen_random_uuid(), $1, 'BLOCKED_LOCKED_ACCOUNT_LOGIN_ATTEMPT', 'public.security_profiles', $2, $3, NOW())`,
+              [
+                securityProfile.userId,
+                securityProfile.id,
+                JSON.stringify({
+                  email,
+                  retryAfterMinutes,
+                  lockExpiresAt: securityProfile.lockExpiresAt,
+                }),
+              ]
+            )
+            .catch(() => null);
+
+          return NextResponse.json(
+            {
+              code: 'ACCOUNT_LOCKED',
+              message: `Account is temporarily locked due to excessive failed attempts. Please try again in ${retryAfterMinutes} minute(s).`,
+              retryAfterMinutes,
+              lockExpiresAt: securityProfile.lockExpiresAt?.toISOString(),
+            },
+            { status: 403 }
+          );
+        }
+      }
     }
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -92,6 +134,27 @@ export async function POST(req: NextRequest) {
       if (securityProfile) {
         securityProfile.incrementFailedAttempts(5);
         await securityProfileRepo.save(securityProfile).catch(() => {});
+
+        await pool
+          .query(
+            `INSERT INTO public.audit_logs (id, user_id, action, entity, entity_id, payload, created_at)
+           VALUES (gen_random_uuid(), $1, $2, 'public.security_profiles', $3, $4, NOW())`,
+            [
+              securityProfile.userId,
+              securityProfile.lockStatus === 'LOCKED'
+                ? 'ACCOUNT_LOCKED_EXCESSIVE_FAILED_ATTEMPTS'
+                : 'FAILED_LOGIN_ATTEMPT',
+              securityProfile.id,
+              JSON.stringify({
+                email,
+                failedAttempts: securityProfile.failedAttempts,
+                lockStatus: securityProfile.lockStatus,
+                lockExpiresAt: securityProfile.lockExpiresAt,
+                error: error.message,
+              }),
+            ]
+          )
+          .catch(() => null);
       }
       return NextResponse.json({ code: 'AUTH_ERROR', message: error.message }, { status: 400 });
     }

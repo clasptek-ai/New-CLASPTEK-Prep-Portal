@@ -138,6 +138,16 @@ export default function StudentDirectoryPage() {
     setActiveMenuId(null);
   };
 
+  const handleUnlockAccount = async (name: string, id: string) => {
+    const success = await adminUsersService.unlockAccount(id);
+    if (success) {
+      showBanner(`Account lockout cleared for ${name}. Candidate can log in immediately.`);
+    } else {
+      showBanner(`Failed to clear account lockout for ${name}.`);
+    }
+    setActiveMenuId(null);
+  };
+
   const handleDeleteStudent = async (s: AdminUserRecord) => {
     const confirmName = window.prompt(
       `CRITICAL: Type "DELETE" to archive student candidate "${s.name}".`
@@ -962,6 +972,28 @@ export default function StudentDirectoryPage() {
                               >
                                 <UserX size={13} />
                                 <span>Force Logout</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleUnlockAccount(s.name, s.id)}
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  padding: '0.5rem 0.65rem',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  color: '#a78bfa',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                <Unlock size={13} />
+                                <span>Unlock Account Lock</span>
                               </button>
 
                               <button
