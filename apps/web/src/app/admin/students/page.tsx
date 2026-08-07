@@ -116,6 +116,59 @@ export default function StudentDirectoryPage() {
     setActiveMenuId(null);
   };
 
+  const handleResendVerification = async (name: string, id: string) => {
+    const success = await adminUsersService.resendVerification(id);
+    if (success) {
+      showBanner(`Verification email resent to ${name}.`);
+    } else {
+      showBanner(
+        `Unable to resend verification email for ${name}. Account may already be verified.`
+      );
+    }
+    setActiveMenuId(null);
+  };
+
+  const handleForceLogout = async (name: string, id: string) => {
+    const success = await adminUsersService.forceLogout(id);
+    if (success) {
+      showBanner(`Force logout executed for ${name}. Active session tokens invalidated.`);
+    } else {
+      showBanner(`Failed to execute force logout for ${name}.`);
+    }
+    setActiveMenuId(null);
+  };
+
+  const handleDeleteStudent = async (s: AdminUserRecord) => {
+    const confirmName = window.prompt(
+      `CRITICAL: Type "DELETE" to archive student candidate "${s.name}".`
+    );
+    if (confirmName !== 'DELETE') return;
+
+    const success = await adminUsersService.deleteStudent(s.id);
+    if (success) {
+      setStudents((prev) => prev.filter((item) => item.id !== s.id));
+      showBanner(`Student candidate ${s.name} archived successfully.`);
+    } else {
+      showBanner(
+        `Failed to archive student candidate ${s.name}. Administrator credentials required.`
+      );
+    }
+    setActiveMenuId(null);
+  };
+
+  const handleRestoreStudent = async (s: AdminUserRecord) => {
+    const success = await adminUsersService.restoreStudent(s.id);
+    if (success) {
+      setStudents((prev) =>
+        prev.map((item) => (item.id === s.id ? { ...item, status: 'ACTIVE' } : item))
+      );
+      showBanner(`Student candidate ${s.name} restored to ACTIVE status.`);
+    } else {
+      showBanner(`Failed to restore student candidate ${s.name}.`);
+    }
+    setActiveMenuId(null);
+  };
+
   const handleAddStudentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName.trim() || !newEmail.trim()) return;
@@ -869,6 +922,50 @@ export default function StudentDirectoryPage() {
 
                               <button
                                 type="button"
+                                onClick={() => handleResendVerification(s.name, s.id)}
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  padding: '0.5rem 0.65rem',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  color: '#38bdf8',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                <UserPlus size={13} />
+                                <span>Resend Verification</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleForceLogout(s.name, s.id)}
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  padding: '0.5rem 0.65rem',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  color: '#fbbf24',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                }}
+                              >
+                                <UserX size={13} />
+                                <span>Force Logout</span>
+                              </button>
+
+                              <button
+                                type="button"
                                 onClick={() => handleToggleStatus(s)}
                                 style={{
                                   width: '100%',
@@ -896,6 +993,55 @@ export default function StudentDirectoryPage() {
                                 <span>
                                   {s.status === 'ACTIVE' ? 'Suspend Account' : 'Activate Account'}
                                 </span>
+                              </button>
+
+                              {s.status === 'SUSPENDED' && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleRestoreStudent(s)}
+                                  style={{
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    padding: '0.5rem 0.65rem',
+                                    borderRadius: '6px',
+                                    border: 'none',
+                                    backgroundColor: 'transparent',
+                                    color: '#34d399',
+                                    cursor: 'pointer',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  <UserCheck size={13} />
+                                  <span>Restore Student</span>
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteStudent(s)}
+                                style={{
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.5rem',
+                                  padding: '0.5rem 0.65rem',
+                                  borderRadius: '6px',
+                                  border: 'none',
+                                  backgroundColor: 'transparent',
+                                  color: '#ef4444',
+                                  cursor: 'pointer',
+                                  fontSize: '0.8rem',
+                                  fontWeight: 600,
+                                  borderTop: '1px solid #1e293b',
+                                  marginTop: '0.2rem',
+                                  paddingTop: '0.5rem',
+                                }}
+                              >
+                                <UserX size={13} />
+                                <span>Archive Student</span>
                               </button>
                             </div>
                           )}

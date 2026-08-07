@@ -37,7 +37,7 @@ function getStoredUsers(): AdminUserRecord[] {
   }
 }
 
-function saveStoredUsers(users: AdminUserRecord[]) {
+function _saveStoredUsers(users: AdminUserRecord[]) {
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
   }
@@ -75,7 +75,18 @@ export const adminUsersService = {
   async addStudent(
     newStudent: Partial<AdminUserRecord> & { name: string; email: string }
   ): Promise<AdminUserRecord> {
-    const list = getStoredUsers();
+    try {
+      const res = await apiClient.post<{ success: boolean; data: AdminUserRecord }>(
+        '/api/v1/admin/users',
+        newStudent
+      );
+      if (res && res.success && res.data) {
+        return res.data;
+      }
+    } catch (err) {
+      console.error('adminUsersService.addStudent error:', err);
+    }
+    // Fallback if API fails
     const created: AdminUserRecord = {
       id: `u-${Date.now()}`,
       registrationNumber: `CGA-2026-${Math.floor(10000 + Math.random() * 90000)}`,
@@ -87,55 +98,55 @@ export const adminUsersService = {
       paymentStatus: newStudent.paymentStatus || 'NOT RECORDED',
       programme: newStudent.programme || 'English Proficiency',
       cohort: newStudent.cohort || 'UNASSIGNED',
-      progressPercent: newStudent.progressPercent ?? 0,
-      practiceUnlocked: newStudent.practiceUnlocked ?? true,
-      mockUnlocked: newStudent.mockUnlocked ?? true,
+      progressPercent: 0,
+      practiceUnlocked: true,
+      mockUnlocked: true,
       registeredDate: new Date().toISOString(),
-      statusHistory: [
-        {
-          status: newStudent.status || 'ACTIVE',
-          changedBy: 'Admin Operations',
-          date: new Date().toISOString(),
-          reason: 'Operational candidate registration',
-        },
-      ],
+      statusHistory: [],
     };
-    saveStoredUsers([created, ...list]);
     return created;
   },
 
   async updateStudent(id: string, updates: Partial<AdminUserRecord>): Promise<boolean> {
-    const list = getStoredUsers();
-    const updated = list.map((u) => (u.id === id ? { ...u, ...updates } : u));
-    saveStoredUsers(updated);
     try {
-      await apiClient.patch('/api/v1/admin/users', {
+      const res = await apiClient.patch<{ success: boolean }>('/api/v1/admin/users', {
         userId: id,
         phone: updates.phone,
         programme: updates.programme,
         cohort: updates.cohort,
         status: updates.status,
       });
+      return Boolean(res && res.success);
     } catch (err) {
       console.error('updateStudent patch error:', err);
+      return false;
     }
-    return true;
   },
 
-  async togglePracticeGate(id: string): Promise<boolean> {
-    const list = getStoredUsers();
-    const updated = list.map((u) =>
-      u.id === id ? { ...u, practiceUnlocked: !u.practiceUnlocked } : u
-    );
-    saveStoredUsers(updated);
-    return true;
+  async togglePracticeGate(id: string, locked?: boolean, reason?: string): Promise<boolean> {
+    try {
+      const res = await apiClient.patch<{ success: boolean }>(
+        `/api/v1/admin/users/${id}/practice-gate`,
+        { locked, reason }
+      );
+      return Boolean(res && res.success);
+    } catch (err) {
+      console.error('togglePracticeGate error:', err);
+      return false;
+    }
   },
 
-  async toggleMockGate(id: string): Promise<boolean> {
-    const list = getStoredUsers();
-    const updated = list.map((u) => (u.id === id ? { ...u, mockUnlocked: !u.mockUnlocked } : u));
-    saveStoredUsers(updated);
-    return true;
+  async toggleMockGate(id: string, locked?: boolean, reason?: string): Promise<boolean> {
+    try {
+      const res = await apiClient.patch<{ success: boolean }>(
+        `/api/v1/admin/users/${id}/mock-gate`,
+        { locked, reason }
+      );
+      return Boolean(res && res.success);
+    } catch (err) {
+      console.error('toggleMockGate error:', err);
+      return false;
+    }
   },
 
   async updateUserStatus(
@@ -164,6 +175,55 @@ export const adminUsersService = {
       return Boolean(res && res.success);
     } catch (err) {
       console.error('adminUsersService.initiatePasswordReset error:', err);
+      return false;
+    }
+  },
+
+  async deleteStudent(id: string): Promise<boolean> {
+    try {
+      const res = await apiClient.delete<{ success: boolean }>(`/api/v1/admin/users/${id}`);
+      return Boolean(res && res.success);
+    } catch (err) {
+      console.error('adminUsersService.deleteStudent error:', err);
+      return false;
+    }
+  },
+
+  async restoreStudent(id: string): Promise<boolean> {
+    try {
+      const res = await apiClient.post<{ success: boolean }>(
+        `/api/v1/admin/users/${id}/restore`,
+        {}
+      );
+      return Boolean(res && res.success);
+    } catch (err) {
+      console.error('adminUsersService.restoreStudent error:', err);
+      return false;
+    }
+  },
+
+  async forceLogout(id: string): Promise<boolean> {
+    try {
+      const res = await apiClient.post<{ success: boolean }>(
+        `/api/v1/admin/users/${id}/logout`,
+        {}
+      );
+      return Boolean(res && res.success);
+    } catch (err) {
+      console.error('adminUsersService.forceLogout error:', err);
+      return false;
+    }
+  },
+
+  async resendVerification(id: string): Promise<boolean> {
+    try {
+      const res = await apiClient.post<{ success: boolean }>(
+        `/api/v1/admin/users/${id}/resend-verification`,
+        {}
+      );
+      return Boolean(res && res.success);
+    } catch (err) {
+      console.error('adminUsersService.resendVerification error:', err);
       return false;
     }
   },

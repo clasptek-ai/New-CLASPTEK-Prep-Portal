@@ -192,3 +192,156 @@ export async function PATCH(req: NextRequest) {
     );
   }
 }
+
+export async function POST(req: NextRequest) {
+  try {
+    const config = loadEnvironment(process.env);
+    const logger = new ConsoleLogger('AdminUserRegisterRoute');
+    const dbPool = new DatabasePool(config, logger);
+    await dbPool.connect();
+    const pool = dbPool.getPool();
+
+    const body = await req.json();
+    const { name, email, phone, programme, cohort, paymentStatus } = body;
+
+    if (!name || !email || !email.includes('@')) {
+      return NextResponse.json(
+        { success: false, message: 'Valid name and email are required.' },
+        { status: 400 }
+      );
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+
+    // 1. Check for duplicate email in auth.users
+    const dupCheck = await pool.query('SELECT id FROM auth.users WHERE LOWER(email) = $1', [
+      trimmedEmail,
+    ]);
+    if (dupCheck.rows.length > 0) {
+      return NextResponse.json(
+        { success: false, message: 'A student account with this email address already exists.' },
+        { status: 400 }
+      );
+    }
+
+    // 2. Create user in Supabase Auth via Admin Client
+    const { getSupabaseServerClient } = await import('@/lib/supabase-client');
+    const supabaseAdmin = getSupabaseServerClient();
+    const nameParts = name.trim().split(' ');
+    const firstName = nameParts[0] || 'Student';
+    const lastName = nameParts.slice(1).join(' ') || 'Candidate';
+    const tempPassword = `Clasptek_${Math.random().toString(36).substring(2, 10)}!`;
+
+    const { data: authData, error: createErr } = await supabaseAdmin.auth.admin.createUser({
+      email: trimmedEmail,
+      password: tempPassword,
+      email_confirm: true,
+      user_metadata: {
+        first_name: firstName,
+        last_name: lastName,
+        phone: phone || null,
+        programme: programme || null,
+      },
+    });
+
+    if (createErr || !authData.user) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: createErr?.message || 'Failed to create authentication user.',
+        },
+        { status: 400 }
+      );
+    }
+
+    const userId = authData.user.id;
+
+    // 3. Atomically insert into public.users and public.profiles
+    await pool.query(
+      `INSERT INTO public.users (id, status, version, created_at, updated_at)
+       VALUES ($1, 'ACTIVE', 1, NOW(), NOW())
+       ON CONFLICT (id) DO UPDATE SET status = 'ACTIVE', updated_at = NOW()`,
+      [userId]
+    );
+
+    await pool.query(
+      `INSERT INTO public.profiles (id, user_id, first_name, last_name, phone, target_programme, locale, time_zone, version, created_at, updated_at)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, 'en', 'UTC', 1, NOW(), NOW())
+       ON CONFLICT (user_id) DO UPDATE
+       SET phone = COALESCE(EXCLUDED.phone, public.profiles.phone),
+           target_programme = COALESCE(EXCLUDED.target_programme, public.profiles.target_programme),
+           updated_at = NOW()`,
+      [userId, firstName, lastName, phone || null, programme || null]
+    );
+
+    // 4. Enroll in programme if provided
+    if (programme || cohort) {
+      try {
+        let progUuid: string | null = null;
+        if (programme) {
+          const progCheck = await pool.query(
+            'SELECT id FROM public.programmes WHERE id::text = $1 OR name ILIKE $1 LIMIT 1',
+            [programme]
+          );
+          if (progCheck.rows.length > 0) {
+            progUuid = progCheck.rows[0].id;
+          }
+        }
+        await pool.query(
+          `INSERT INTO public.student_programme_enrollments
+           (id, student_id, programme_id, cohort_id, enrollment_status, enrolled_at, created_at, updated_at)
+           VALUES ($1, $2, $3, $4, 'ACTIVE', NOW(), NOW(), NOW())`,
+          [randomUUID(), userId, progUuid, cohort || 'UNASSIGNED']
+        );
+      } catch (enrollErr) {
+        logger.warn('[ENROLLMENT_INSERT_WARNING]', { error: String(enrollErr) });
+      }
+    }
+
+    // 5. Dispatch confirmation email via Supabase Auth
+    const { getAppUrl } = await import('@clasptek/configuration');
+    const appUrl = getAppUrl(process.env);
+    const redirectTo = `${appUrl}/auth/callback?next=/student/welcome`;
+    await supabaseAdmin.auth.resetPasswordForEmail(trimmedEmail, { redirectTo }).catch(() => null);
+
+    // 6. Log audit event
+    await pool
+      .query(
+        `INSERT INTO public.audit_logs (id, user_id, action, entity, entity_id, payload, created_at)
+       VALUES (gen_random_uuid(), $1, 'ADMIN_REGISTERED_STUDENT', 'public.users', $1, $2, NOW())`,
+        [userId, JSON.stringify({ email: trimmedEmail, name, programme, cohort })]
+      )
+      .catch(() => null);
+
+    const regId = `CGA-2026-${userId
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .substring(0, 5)
+      .toUpperCase()}`;
+
+    const createdRecord = {
+      id: userId,
+      registrationNumber: regId,
+      name: `${firstName} ${lastName}`,
+      email: trimmedEmail,
+      phone: phone || 'NOT RECORDED',
+      role: 'STUDENT',
+      status: 'ACTIVE',
+      paymentStatus: paymentStatus || 'PAID',
+      programme: programme || 'UNASSIGNED',
+      cohort: cohort || 'UNASSIGNED',
+      progressPercent: 0,
+      practiceUnlocked: true,
+      mockUnlocked: true,
+      registeredDate: new Date().toISOString(),
+      statusHistory: [],
+    };
+
+    return NextResponse.json({ success: true, data: createdRecord }, { status: 201 });
+  } catch (err: unknown) {
+    console.error('[ADMIN_REGISTER_STUDENT_ERROR]', err);
+    return NextResponse.json(
+      { success: false, message: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
+  }
+}

@@ -1,0 +1,83 @@
+export const dynamic = 'force-dynamic';
+
+import { NextRequest, NextResponse } from 'next/server';
+import { getAuthenticatedSession } from '@/lib/auth-util';
+import { loadEnvironment } from '@clasptek/configuration';
+import { DatabasePool } from '@clasptek/persistence';
+import { ConsoleLogger } from '@clasptek/observability';
+import { getSupabaseServerClient } from '@/lib/supabase-client';
+
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const session = await getAuthenticatedSession(req);
+    const isAdmin =
+      session &&
+      session.roles.some((r) =>
+        ['ADMINISTRATOR', 'SUPER_ADMIN', 'SUPER_ADMINISTRATOR', 'STAFF'].includes(r)
+      );
+
+    if (!isAdmin) {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized. Admin credentials required.' },
+        { status: 401 }
+      );
+    }
+
+    const resolvedParams = await params;
+    const userId = resolvedParams.id;
+    if (!userId) {
+      return NextResponse.json({ success: false, message: 'Missing user ID' }, { status: 400 });
+    }
+
+    const config = loadEnvironment(process.env);
+    const logger = new ConsoleLogger('RestoreUserRoute');
+    const dbPool = new DatabasePool(config, logger);
+    await dbPool.connect();
+    const pool = dbPool.getPool();
+
+    // 1. Restore public.users status
+    await pool.query(
+      `UPDATE public.users
+       SET deleted_at = NULL,
+           deleted_by = NULL,
+           is_deleted = FALSE,
+           status = 'ACTIVE',
+           updated_at = NOW()
+       WHERE id = $1`,
+      [userId]
+    );
+
+    // 2. Unban user in Supabase Auth
+    try {
+      const supabaseAdmin = getSupabaseServerClient();
+      await supabaseAdmin.auth.admin.updateUserById(userId, {
+        ban_duration: 'none',
+      });
+    } catch (authErr) {
+      logger.warn('[SUPABASE_UNBAN_WARNING]', { error: String(authErr) });
+    }
+
+    // 3. Record Audit Log
+    await pool
+      .query(
+        `INSERT INTO public.audit_logs (id, user_id, action, entity, entity_id, payload, created_at)
+       VALUES (gen_random_uuid(), $1, 'ADMIN_RESTORED_STUDENT', 'public.users', $2, $3, NOW())`,
+        [
+          session.userId,
+          userId,
+          JSON.stringify({ restoredBy: session.userId, restoredAt: new Date().toISOString() }),
+        ]
+      )
+      .catch(() => null);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Student candidate account restored to ACTIVE status successfully.',
+    });
+  } catch (err: unknown) {
+    return NextResponse.json(
+      { success: false, message: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
+  }
+}
