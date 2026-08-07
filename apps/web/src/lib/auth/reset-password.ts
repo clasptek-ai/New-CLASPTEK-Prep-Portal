@@ -47,10 +47,21 @@ export async function updateUserPassword(
   newPassword: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // 1. Attempt password update via SSR endpoint (uses HTTP-only cookies)
+    const supabase = getSupabaseBrowserClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (session?.access_token) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
+
+    // 1. Attempt password update via SSR endpoint (uses HTTP-only cookies + optional Bearer header)
     const res = await fetch('/api/v1/auth/reset-password', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
+      credentials: 'same-origin',
       body: JSON.stringify({ password: newPassword }),
     });
 
@@ -62,7 +73,6 @@ export async function updateUserPassword(
     }
 
     // 2. Fallback to browser Supabase client
-    const supabase = getSupabaseBrowserClient();
     const { error } = await supabase.auth.updateUser({ password: newPassword });
 
     if (error) {

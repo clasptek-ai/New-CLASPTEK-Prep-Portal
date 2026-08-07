@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
+import { extractSelectedOptionCode } from '@/lib/scoring/extractSelectedOptionCode';
 import { randomUUID } from 'crypto';
 
 /**
@@ -99,12 +100,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       grammarQs.forEach((q: any) => {
         grammarTotal += q.marks || 1;
         const raw = candidateAnswers.get(q.id);
-        const selectedCode =
-          raw === null || raw === undefined
-            ? null
-            : typeof raw === 'string'
-              ? raw
-              : raw?.selectedOptionCode || raw?.code || raw?.answer || null;
+        const selectedCode = extractSelectedOptionCode(raw);
 
         const isCorrect =
           selectedCode !== null && q.correctOptionCode && selectedCode === q.correctOptionCode;
@@ -129,12 +125,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       comprehensionQs.forEach((q: any) => {
         readingTotal += q.marks || 1;
         const raw = candidateAnswers.get(q.id);
-        const selectedCode =
-          raw === null || raw === undefined
-            ? null
-            : typeof raw === 'string'
-              ? raw
-              : raw?.selectedOptionCode || raw?.code || raw?.answer || null;
+        const selectedCode = extractSelectedOptionCode(raw);
 
         const isCorrect =
           selectedCode !== null && q.correctOptionCode && selectedCode === q.correctOptionCode;

@@ -51,11 +51,13 @@ function StudentResultsContent() {
         const data = await res.json();
         if (data.data) {
           setResult(data.data);
-        } else if (data.resultId || data.success) {
+        } else if (data.resultId || (data.success && data.overallScore !== undefined)) {
           setResult(data);
+        } else {
+          setResult(null);
         }
       } catch {
-        // Fallback error
+        setResult(null);
       } finally {
         setLoading(false);
       }
@@ -180,13 +182,13 @@ function StudentResultsContent() {
         <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 text-center">
           <div className="text-xs text-slate-400 uppercase tracking-wide">CEFR Level</div>
           <div className="text-2xl font-bold text-indigo-400 mt-1.5">
-            {result.cefrLevel || 'B1'}
+            {result.cefrLevel || 'Pending Evaluation'}
           </div>
         </div>
         <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 text-center">
           <div className="text-xs text-slate-400 uppercase tracking-wide">Predicted Score</div>
           <div className="text-2xl font-bold text-purple-400 mt-1.5">
-            {result.predictedBand || 'Band 6.5'}
+            {result.predictedBand || 'Not Yet Generated'}
           </div>
         </div>
         <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 text-center">

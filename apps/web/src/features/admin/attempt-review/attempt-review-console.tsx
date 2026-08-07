@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { extractSelectedOptionCode } from '@/lib/scoring/extractSelectedOptionCode';
 
 export interface AttemptSummary {
   attemptId: string;
@@ -173,13 +174,13 @@ export function AttemptInspectorModal({
                     <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
                       <div className="text-[10px] text-slate-400 uppercase">CEFR Level</div>
                       <div className="text-xl font-bold text-indigo-400 mt-1">
-                        {detailBundle.result?.cefrLevel || 'B1'}
+                        {detailBundle.result?.cefrLevel || 'Pending Evaluation'}
                       </div>
                     </div>
                     <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
                       <div className="text-[10px] text-slate-400 uppercase">Predicted Band</div>
                       <div className="text-xl font-bold text-purple-400 mt-1">
-                        {detailBundle.result?.predictedBand || 'Band 6.5'}
+                        {detailBundle.result?.predictedBand || 'Not Yet Generated'}
                       </div>
                     </div>
                     <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
@@ -245,9 +246,7 @@ export function AttemptInspectorModal({
                     {detailBundle.paperSnapshot.grammarQuestions?.map((q: any, idx: number) => {
                       const ansObj = detailBundle.answers[q.id];
                       const selectedCode =
-                        ansObj?.responsePayload?.selectedOptionCode ||
-                        ansObj?.responsePayload ||
-                        '-';
+                        extractSelectedOptionCode(ansObj?.responsePayload) || '-';
                       const isCorrect = ansObj?.isCorrect;
 
                       return (
@@ -322,7 +321,8 @@ export function AttemptInspectorModal({
                     {detailBundle.paperSnapshot.readingPassage?.comprehensionQuestions?.map(
                       (cq: any, idx: number) => {
                         const ansObj = detailBundle.answers[cq.id];
-                        const selectedCode = ansObj?.responsePayload?.selectedOptionCode || '-';
+                        const selectedCode =
+                          extractSelectedOptionCode(ansObj?.responsePayload) || '-';
                         const isCorrect = ansObj?.isCorrect;
 
                         return (

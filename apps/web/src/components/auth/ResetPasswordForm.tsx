@@ -289,7 +289,7 @@ export function ResetPasswordForm() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading || !validation.isValid || !passwordsMatch}
+              disabled={loading}
               className="w-full py-3.5 px-5 bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-950 font-extrabold text-sm rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-sky-500/20 min-h-11"
             >
               <span>{loading ? 'Updating Password...' : 'Reset Password'}</span>

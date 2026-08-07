@@ -86,7 +86,12 @@ export async function GET(req: NextRequest) {
     }
   );
 
-  // 1. Verify OTP token_hash if provided (e.g. Supabase Auth Recovery link)
+  const isRecoveryFlow = type === 'recovery' || safeNext.includes('reset-password');
+  const failureRedirectUrl = isRecoveryFlow
+    ? `${appUrl}/reset-password?error=invalid_token&error_code=otp_expired`
+    : `${appUrl}/login?error=invalid_token&error_code=otp_expired`;
+
+  // 1. Verify OTP token_hash if provided (e.g. Supabase Auth Recovery or Confirmation link)
   if (token_hash && type) {
     try {
       const { error } = await supabase.auth.verifyOtp({ token_hash, type });
@@ -94,9 +99,7 @@ export async function GET(req: NextRequest) {
         return NextResponse.redirect(`${appUrl}${safeNext}`);
       }
       console.error('verifyOtp error in /auth/callback:', error.message);
-      return NextResponse.redirect(
-        `${appUrl}/reset-password?error=invalid_token&error_code=otp_expired`
-      );
+      return NextResponse.redirect(failureRedirectUrl);
     } catch (err) {
       console.error('verifyOtp exception in /auth/callback:', err);
     }
@@ -110,21 +113,12 @@ export async function GET(req: NextRequest) {
         return NextResponse.redirect(`${appUrl}${safeNext}`);
       }
       console.error('exchangeCodeForSession error in /auth/callback:', error.message);
-      return NextResponse.redirect(
-        `${appUrl}/reset-password?error=invalid_token&error_code=otp_expired`
-      );
+      return NextResponse.redirect(failureRedirectUrl);
     } catch (err) {
       console.error('exchangeCodeForSession exception in /auth/callback:', err);
     }
   }
 
-  // Fallback: If request specifies reset-password or recovery, allow client JS on /reset-password to parse hash/session
-  if (type === 'recovery' || safeNext.includes('reset-password')) {
-    return NextResponse.redirect(`${appUrl}/reset-password`);
-  }
-
-  // Token expired, missing, or invalid -> redirect ALWAYS to /reset-password
-  return NextResponse.redirect(
-    `${appUrl}/reset-password?error=invalid_token&error_code=otp_expired`
-  );
+  // Token expired, missing, or invalid -> redirect contextually
+  return NextResponse.redirect(failureRedirectUrl);
 }
