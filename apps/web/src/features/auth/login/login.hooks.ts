@@ -30,13 +30,13 @@ export function useLoginForm() {
         return;
       }
 
-      if (result.session?.access_token) {
+      if (result.session) {
         try {
           const { getSupabaseBrowserClient } = await import('@/lib/supabase-browser');
           const supabase = getSupabaseBrowserClient();
           await supabase.auth.setSession({
             access_token: result.session.access_token,
-            refresh_token: result.session.refresh_token || '',
+            refresh_token: result.session.refresh_token,
           });
         } catch (sessionErr) {
           console.error('[LOGIN_HOOK] Failed to sync browser session:', sessionErr);

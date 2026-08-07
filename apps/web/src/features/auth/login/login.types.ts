@@ -1,3 +1,4 @@
+import type { Session } from '@supabase/supabase-js';
 import { LoginSchema } from './login.schema';
 
 export type LoginFormData = LoginSchema;
@@ -7,5 +8,5 @@ export interface LoginActionResult {
   message?: string;
   roles?: string[];
   userId?: string;
-  session?: Record<string, unknown>;
+  session?: Session;
 }
