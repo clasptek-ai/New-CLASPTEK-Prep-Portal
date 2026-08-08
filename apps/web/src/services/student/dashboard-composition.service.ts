@@ -23,32 +23,15 @@ import {
 export const DashboardCompositionService = {
   async getOverview(studentId?: string): Promise<DashboardOverviewDto> {
     const [profile, programmes, readiness, notifications] = await Promise.all([
-      studentProfileService.getProfile().catch(() => {
-        let registeredName = 'Student';
-        if (typeof window !== 'undefined') {
-          try {
-            const raw = localStorage.getItem('clasptek_onboarding_data');
-            if (raw) {
-              const parsed = JSON.parse(raw);
-              if (parsed.firstName) {
-                registeredName = parsed.lastName
-                  ? `${parsed.firstName} ${parsed.lastName}`
-                  : parsed.firstName;
-              }
-            }
-          } catch {
-            // Ignore
-          }
-        }
-        const storedId =
-          (typeof window !== 'undefined' && localStorage.getItem('clasptek_user_id')) || 'STUDENT';
-        return {
-          id: studentId || storedId,
-          name: registeredName,
-          avatarUrl: undefined,
-          enrolledAt: new Date().toISOString(),
-        } as any;
-      }),
+      studentProfileService.getProfile().catch(
+        () =>
+          ({
+            id: studentId || 'UNKNOWN',
+            name: 'Student',
+            avatarUrl: undefined,
+            enrolledAt: new Date().toISOString(),
+          }) as any
+      ),
       studentLearningService.getEnrolledProgrammes().catch(() => []),
       studentReadinessService.getReadiness().catch(() => ({ overallReadiness: 78 }) as any),
       studentNotificationsService.getNotifications().catch(() => []),
