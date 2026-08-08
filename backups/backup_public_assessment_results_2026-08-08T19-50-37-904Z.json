@@ -1,0 +1,1670 @@
+[
+  {
+    "id": "99297bf6-a90a-433c-9714-ef93891a934c",
+    "session_id": null,
+    "attempt_id": "5ff168a5-75a8-4c09-8a86-773d7d8c4a14",
+    "student_id": "505e2f81-2578-4a9c-9c82-d5ae1d7b3fc3",
+    "overall_score": "2.50",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T14:57:12.779Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A1",
+    "predicted_band": "Band 3.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 2.5
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 7.5
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 2.5% overall proficiency (A2 / Band 5.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:42:59.293Z"
+  },
+  {
+    "id": "776543cc-0d62-43bc-96bd-81ec76521267",
+    "session_id": null,
+    "attempt_id": "d6daa9b7-cec7-4d6d-9a4f-6c672488dc61",
+    "student_id": "eff05c27-95c2-43f7-995a-b39b7140ebc9",
+    "overall_score": "85.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T21:37:51.144Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "ADVANCED",
+    "cefr_level": "C1",
+    "predicted_band": "Band 8.0",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 80
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 85
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 70
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 80% overall proficiency (B2 / Band 7.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:27.267Z"
+  },
+  {
+    "id": "0921052b-8ae6-4d99-a6ec-3c089cf2e3fd",
+    "session_id": null,
+    "attempt_id": "28aa2278-d89b-4c87-87d1-d287317d07ea",
+    "student_id": "ea4789aa-020d-4236-b934-4d95e24b298a",
+    "overall_score": "85.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T21:40:15.509Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "ADVANCED",
+    "cefr_level": "C1",
+    "predicted_band": "Band 8.0",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 80
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 85
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 70
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 80% overall proficiency (B2 / Band 7.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:37.946Z"
+  },
+  {
+    "id": "7778160c-b12d-4d70-9c58-2e66f7ba164b",
+    "session_id": null,
+    "attempt_id": "8fa20259-646f-4e13-9038-438f95ef563f",
+    "student_id": "b8bb530e-4168-4a00-8948-150e50e07967",
+    "overall_score": "20.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-02T22:36:34.892Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A2",
+    "predicted_band": "Band 4.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 90
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 100% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:01.451Z"
+  },
+  {
+    "id": "543fffc0-aa39-484f-96c7-9954eece4136",
+    "session_id": null,
+    "attempt_id": "c4da0647-206a-4158-83c9-5c392a833a46",
+    "student_id": "505e2f81-2578-4a9c-9c82-d5ae1d7b3fc3",
+    "overall_score": "2.50",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T19:06:42.558Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A1",
+    "predicted_band": "Band 3.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 2.5
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 7.5
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 2.5% overall proficiency (A2 / Band 5.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:10.738Z"
+  },
+  {
+    "id": "cac4a8b5-7a1a-41a5-b61b-2270cd0473e6",
+    "session_id": null,
+    "attempt_id": "07c0340a-1d90-48b4-a06d-3628f59bd6b3",
+    "student_id": "a0ff1e6f-4e4b-4760-9b83-1e18d16f0d7a",
+    "overall_score": "47.50",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T20:49:46.908Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "B1",
+    "predicted_band": "Band 6.0",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 47.5
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 52.5
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 37.5
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 47.5% overall proficiency (A2 / Band 6.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:16.317Z"
+  },
+  {
+    "id": "3fb88e2b-5c6f-412a-bc9c-e4463ee3d173",
+    "session_id": null,
+    "attempt_id": "1dbc830b-e145-4b84-aea5-4bf33fe88650",
+    "student_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "overall_score": "0.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-06T08:16:32.890Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A1",
+    "predicted_band": "Band 3.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 0
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 5
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 0% overall proficiency (A2 / Band 5.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:39.445Z"
+  },
+  {
+    "id": "f84cff97-a2a1-4210-b64e-17cc57a79b0c",
+    "session_id": null,
+    "attempt_id": "df3b2d64-5026-48fb-b419-74cfe990a3f6",
+    "student_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "overall_score": "0.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-05T22:02:53.328Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A1",
+    "predicted_band": "Band 3.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 0
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 5
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 0% overall proficiency (A2 / Band 5.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:26.056Z"
+  },
+  {
+    "id": "a5138385-23a3-46cd-9c36-440919a8396c",
+    "session_id": null,
+    "attempt_id": "6c5f6dba-c4ab-4efc-9766-c867ffe7c674",
+    "student_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "overall_score": "0.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-06T07:54:15.715Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A1",
+    "predicted_band": "Band 3.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 0
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 5
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 0% overall proficiency (A2 / Band 5.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:32.741Z"
+  },
+  {
+    "id": "933eacc8-c5ee-46d6-a253-0bff2aa31d15",
+    "session_id": null,
+    "attempt_id": "a97121d3-45fd-4edc-a83e-d9afdf0be935",
+    "student_id": "cc435b2c-e277-4483-88d7-e2da5d607cd2",
+    "overall_score": "85.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T21:37:17.692Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "ADVANCED",
+    "cefr_level": "C1",
+    "predicted_band": "Band 8.0",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 80
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 85
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 70
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 80% overall proficiency (B2 / Band 7.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:46.104Z"
+  },
+  {
+    "id": "57124151-a679-4a17-a0b6-73d41056d900",
+    "session_id": null,
+    "attempt_id": "63d5833a-cd95-4909-ae74-5429f787feae",
+    "student_id": "5bbf7c48-d69c-4bd3-bac3-8e1e7479f03d",
+    "overall_score": "85.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T21:39:37.832Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "ADVANCED",
+    "cefr_level": "C1",
+    "predicted_band": "Band 8.0",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 80
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 85
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 70
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 80% overall proficiency (B2 / Band 7.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:32.657Z"
+  },
+  {
+    "id": "64276cb1-32c4-459e-adf9-bf0c1ae8f031",
+    "session_id": null,
+    "attempt_id": "9fea8f4b-d852-4565-8328-1a3369e74f69",
+    "student_id": "b2ff5747-6f5b-4651-a173-63b679747d4a",
+    "overall_score": "22.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-02T21:22:33.266Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A2",
+    "predicted_band": "Band 4.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 90
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 100% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:52.742Z"
+  },
+  {
+    "id": "f44c5987-2c26-4301-8581-2d259b61b4cf",
+    "session_id": null,
+    "attempt_id": "9bc81261-62c3-46dd-a3e2-c96736cc79f3",
+    "student_id": "3ad56c4d-920b-4201-a251-0cd1d125fb96",
+    "overall_score": "0.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T23:29:27.079Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A1",
+    "predicted_band": "Band 3.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 90
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 95
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 80
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 90% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:45:00.225Z"
+  },
+  {
+    "id": "e198caca-e307-4e2d-8215-540dc9a46226",
+    "session_id": null,
+    "attempt_id": "d199ad65-6ae6-4f9d-b17b-7294a307b5ab",
+    "student_id": "45b85b88-6a9d-4231-9511-f559a4eef16d",
+    "overall_score": "22.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-02T21:22:12.566Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A2",
+    "predicted_band": "Band 4.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 90
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 100% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:08.857Z"
+  },
+  {
+    "id": "749a55e9-ea09-4a5b-a157-2775c7976739",
+    "session_id": null,
+    "attempt_id": "906be8fe-fea6-42a5-85ed-9a09cc268a00",
+    "student_id": "682a8d3c-42ab-457a-abb4-038dd7f1fe43",
+    "overall_score": "85.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T21:36:52.747Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "ADVANCED",
+    "cefr_level": "C1",
+    "predicted_band": "Band 8.0",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 80
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 85
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 70
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 80% overall proficiency (B2 / Band 7.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:21.931Z"
+  },
+  {
+    "id": "ff9a8d2e-4b2a-4941-9f94-46f38125d3bb",
+    "session_id": null,
+    "attempt_id": "6ca9362a-c9b0-414e-8a3a-730fd90843ab",
+    "student_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "overall_score": "75.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-03T23:17:30.734Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "C1",
+    "predicted_band": "Band 7.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 90
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 100% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:09.639Z"
+  },
+  {
+    "id": "c323397a-8382-4363-966b-cc9a15ec5132",
+    "session_id": null,
+    "attempt_id": "207a46d6-e250-48b4-8e2f-d2d7efdf0d7a",
+    "student_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "overall_score": "75.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-03T23:18:07.812Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "C1",
+    "predicted_band": "Band 7.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 90
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 100% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:10.433Z"
+  },
+  {
+    "id": "15673611-c75d-4baf-b305-72dc28d54a3d",
+    "session_id": null,
+    "attempt_id": "a937372f-7725-41ce-916d-3ff00d139cae",
+    "student_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "overall_score": "75.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-03T23:18:31.566Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "C1",
+    "predicted_band": "Band 7.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 90
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 100% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:11.199Z"
+  },
+  {
+    "id": "f9e41671-fc3b-4c19-951c-c99fb73764af",
+    "session_id": null,
+    "attempt_id": "f9e41671-fc3b-4c19-951c-c99fb73764af",
+    "student_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "overall_score": "75.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-03T23:18:56.552Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "C1",
+    "predicted_band": "Band 7.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 90
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 100% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:11.979Z"
+  },
+  {
+    "id": "c2374a0a-5891-4d17-87c3-9eee1518a4d5",
+    "session_id": null,
+    "attempt_id": "6e6b799b-b33a-4d8c-8e13-177f61da5dc6",
+    "student_id": "d9e7d59a-6878-4eca-8d3a-8a5e111fd07d",
+    "overall_score": "75.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-03T20:00:37.163Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "C1",
+    "predicted_band": "Band 7.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 90
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 100% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:02.233Z"
+  },
+  {
+    "id": "27953b15-13cf-454f-ae0f-e18760caf216",
+    "session_id": null,
+    "attempt_id": "4d6667ee-0804-4c21-9cd8-f2c7a3c40c42",
+    "student_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "overall_score": "0.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-06T08:19:28.988Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A1",
+    "predicted_band": "Band 3.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 0
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 0
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "PENDING_RUBRIC_EVALUATION",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Baseline Question Completion"],
+    "weaknesses": [
+      "Grammar Structure & Complex Modifiers",
+      "Reading Inference & Passage Detail Extraction"
+    ],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 0% overall proficiency (A1 / Band 3.5). Demonstrates strengths in Baseline Question Completion.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Baseline Question Completion"],
+      "weaknesses": [
+        "Grammar Structure & Complex Modifiers",
+        "Reading Inference & Passage Detail Extraction"
+      ],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:46.094Z"
+  },
+  {
+    "id": "cc10fe0b-41b9-45b9-99a7-13691dcd44b8",
+    "session_id": null,
+    "attempt_id": "02415993-7b68-4281-9344-a02703b83206",
+    "student_id": "c9a86a59-6eef-4590-9c4f-62a33fc75181",
+    "overall_score": "75.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-06T15:55:07.667Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "C1",
+    "predicted_band": "Band 7.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "INTERMEDIATE",
+        "scorePercentage": 76.67
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "INTERMEDIATE",
+        "scorePercentage": 70
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "PENDING_RUBRIC_EVALUATION",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax"],
+    "weaknesses": ["Reading Inference & Passage Detail Extraction"],
+    "recommended_course": "Comprehensive Band 7 Prep",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 75% overall proficiency (C1 / Band 7.5). Demonstrates strengths in Grammar Modifier Accuracy & Syntax.",
+      "nextSteps": "Enroll in Comprehensive Band 7 Prep (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax"],
+      "weaknesses": ["Reading Inference & Passage Detail Extraction"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:52.790Z"
+  },
+  {
+    "id": "124cb368-9eb0-445b-91b4-1a934ae2b23c",
+    "session_id": null,
+    "attempt_id": "0c39263d-b972-40e0-b22e-3d4141cd7397",
+    "student_id": "c9a86a59-6eef-4590-9c4f-62a33fc75181",
+    "overall_score": "0.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-06T15:57:17.982Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A1",
+    "predicted_band": "Band 3.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 0
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 0
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "PENDING_RUBRIC_EVALUATION",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Baseline Question Completion"],
+    "weaknesses": [
+      "Grammar Structure & Complex Modifiers",
+      "Reading Inference & Passage Detail Extraction"
+    ],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 0% overall proficiency (A1 / Band 3.5). Demonstrates strengths in Baseline Question Completion.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Baseline Question Completion"],
+      "weaknesses": [
+        "Grammar Structure & Complex Modifiers",
+        "Reading Inference & Passage Detail Extraction"
+      ],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:59.461Z"
+  },
+  {
+    "id": "edb5b7d8-a7e5-4810-90ab-63fc60ca5d2a",
+    "session_id": null,
+    "attempt_id": "0ef235a4-9891-4bc7-88e1-e0540f27ccad",
+    "student_id": "505e2f81-2578-4a9c-9c82-d5ae1d7b3fc3",
+    "overall_score": "42.50",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-01T18:10:04.857Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "B1",
+    "predicted_band": "Band 5.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 42.5
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 47.5
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 32.5
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 42.5% overall proficiency (A2 / Band 5.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:04.928Z"
+  },
+  {
+    "id": "a148623e-8112-47f2-9532-5ad924953b6c",
+    "session_id": null,
+    "attempt_id": "547f6f84-93f2-4e74-aa2b-0452f18a9d02",
+    "student_id": "505e2f81-2578-4a9c-9c82-d5ae1d7b3fc3",
+    "overall_score": "52.50",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-05T21:24:43.932Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "B1",
+    "predicted_band": "Band 6.0",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "INTERMEDIATE",
+        "scorePercentage": 52.5
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "INTERMEDIATE",
+        "scorePercentage": 57.5
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 42.5
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Comprehensive Band 7 Prep",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 52.5% overall proficiency (B1 / Band 6.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Comprehensive Band 7 Prep (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:19.368Z"
+  },
+  {
+    "id": "bcb17105-fc6e-42db-9175-17a638dcd929",
+    "session_id": null,
+    "attempt_id": "247f76b0-af7c-4acb-a536-c70b1f638f18",
+    "student_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "overall_score": "22.50",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-02T22:29:53.941Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A2",
+    "predicted_band": "Band 4.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 22.5
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 27.5
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 12.5
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 22.5% overall proficiency (A2 / Band 5.5). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:43:59.365Z"
+  },
+  {
+    "id": "b5eee635-b694-44b8-bf17-c425563c2bd2",
+    "session_id": null,
+    "attempt_id": "fe44ad67-a864-4844-9a13-02b8bfa4d194",
+    "student_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "overall_score": "75.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-04T08:26:12.159Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "C1",
+    "predicted_band": "Band 7.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "ADVANCED",
+        "scorePercentage": 100
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "COMPLETED",
+        "scorePercentage": 90
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+    "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+    "recommended_course": "Advanced Band 8+ Masterclass",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 100% overall proficiency (C1 / Band 8.0). Demonstrates baseline competency across grammar and reading sections.",
+      "nextSteps": "Enroll in Advanced Band 8+ Masterclass (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax", "Baseline Question Completion"],
+      "weaknesses": ["Reading Passage Inference", "Essay Task 2 Syntax"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-07T12:44:12.746Z"
+  },
+  {
+    "id": "d1ac9834-cefa-45b7-8b56-dd4ccfdd35cf",
+    "session_id": null,
+    "attempt_id": "a2216d19-50cb-4569-a53f-82aa5a80a245",
+    "student_id": "c9a86a59-6eef-4590-9c4f-62a33fc75181",
+    "overall_score": "75.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-08T11:40:58.365Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "C1",
+    "predicted_band": "Band 7.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "INTERMEDIATE",
+        "scorePercentage": 80
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "INTERMEDIATE",
+        "scorePercentage": 60
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "PENDING_RUBRIC_EVALUATION",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Grammar Modifier Accuracy & Syntax"],
+    "weaknesses": ["Reading Inference & Passage Detail Extraction"],
+    "recommended_course": "Comprehensive Band 7 Prep",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 75% overall proficiency (C1 / Band 7.5). Demonstrates strengths in Grammar Modifier Accuracy & Syntax.",
+      "nextSteps": "Enroll in Comprehensive Band 7 Prep (5 Weeks) to target key focus areas.",
+      "strengths": ["Grammar Modifier Accuracy & Syntax"],
+      "weaknesses": ["Reading Inference & Passage Detail Extraction"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-08T11:40:58.365Z"
+  },
+  {
+    "id": "99a7b810-b4fd-4f3c-a924-dc6da179b510",
+    "session_id": null,
+    "attempt_id": "73c321e2-6715-4f20-a954-805e39952035",
+    "student_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "overall_score": "60.00",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-08T11:48:35.265Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "INTERMEDIATE",
+    "cefr_level": "B2",
+    "predicted_band": "Band 6.5",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "INTERMEDIATE",
+        "scorePercentage": 53.33
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "INTERMEDIATE",
+        "scorePercentage": 80
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "PENDING_RUBRIC_EVALUATION",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Reading Passage Inference & Contextual Vocabulary"],
+    "weaknesses": ["Grammar Structure & Complex Modifiers"],
+    "recommended_course": "Comprehensive Band 7 Prep",
+    "recommended_duration": "5 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 60% overall proficiency (B2 / Band 6.5). Demonstrates strengths in Reading Passage Inference & Contextual Vocabulary.",
+      "nextSteps": "Enroll in Comprehensive Band 7 Prep (5 Weeks) to target key focus areas.",
+      "strengths": ["Reading Passage Inference & Contextual Vocabulary"],
+      "weaknesses": ["Grammar Structure & Complex Modifiers"],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-08T11:48:35.265Z"
+  },
+  {
+    "id": "d4ad55e5-f017-4ba7-ba33-6d42f6433950",
+    "session_id": null,
+    "attempt_id": "c11f1a0f-0596-4616-be17-d0a57cfc7756",
+    "student_id": "c9a86a59-6eef-4590-9c4f-62a33fc75181",
+    "overall_score": "27.50",
+    "max_score": "100.00",
+    "is_passed": false,
+    "visibility_mode": "FULL_REVIEW",
+    "section_breakdown": {},
+    "skill_breakdown": {},
+    "practice_recommendation": null,
+    "time_taken_seconds": 0,
+    "generated_at": "2026-08-08T13:45:35.980Z",
+    "assessment_category": "DIAGNOSTIC",
+    "placement_level": "FOUNDATION",
+    "cefr_level": "A2",
+    "predicted_band": "Band 5.0",
+    "section_scores": [
+      {
+        "sectionCode": "Grammar",
+        "sectionName": "Grammar & Syntax",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 23.33
+      },
+      {
+        "sectionCode": "Reading",
+        "sectionName": "Reading Comprehension",
+        "computedLevel": "FOUNDATION",
+        "scorePercentage": 40
+      },
+      {
+        "sectionCode": "Writing",
+        "sectionName": "Writing & Essay",
+        "evaluationState": "PENDING_RUBRIC_EVALUATION",
+        "scorePercentage": 0
+      }
+    ],
+    "strengths": ["Baseline Question Completion"],
+    "weaknesses": [
+      "Grammar Structure & Complex Modifiers",
+      "Reading Inference & Passage Detail Extraction"
+    ],
+    "recommended_course": "English Proficiency Core Foundation",
+    "recommended_duration": "8 Weeks",
+    "ai_feedback": {
+      "summary": "Diagnostic evaluation complete with 27.5% overall proficiency (A2 / Band 5.0). Demonstrates strengths in Baseline Question Completion.",
+      "nextSteps": "Enroll in English Proficiency Core Foundation (8 Weeks) to target key focus areas.",
+      "strengths": ["Baseline Question Completion"],
+      "weaknesses": [
+        "Grammar Structure & Complex Modifiers",
+        "Reading Inference & Passage Detail Extraction"
+      ],
+      "recommendedModules": [
+        "Grammar Modifier Logic",
+        "Academic Reading Speed",
+        "Essay Task 2 Syntax"
+      ]
+    },
+    "updated_at": "2026-08-08T13:45:35.980Z"
+  }
+]

@@ -14,9 +14,9 @@ export async function GET(req: NextRequest) {
     const { dbPool, sessionRepo } = await getAuthContext();
     const pool = dbPool.getPool();
 
-    // 1. Resolve user profile details from public tables
+    // 1. Resolve user profile details from public tables and auth.users
     const userRes = await pool.query(
-      'SELECT email, created_at FROM public.identities WHERE user_id = $1 LIMIT 1',
+      'SELECT email, raw_user_meta_data, created_at FROM auth.users WHERE id = $1 LIMIT 1',
       [session.userId]
     );
     const profRes = await pool.query(
@@ -24,37 +24,25 @@ export async function GET(req: NextRequest) {
       [session.userId]
     );
 
-    let email = userRes.rows[0]?.email;
-    let firstName = profRes.rows[0]?.first_name;
-    let lastName = profRes.rows[0]?.last_name;
-    let avatarUrl = profRes.rows[0]?.avatar;
-    const phone = profRes.rows[0]?.phone;
-    let enrolledAt = userRes.rows[0]?.created_at;
+    const au = userRes.rows[0] || {};
+    const meta = au.raw_user_meta_data || {};
+    const email = au.email || '';
 
-    // Fallback: Query auth.users directly for exact session.userId metadata
-    if (!email || !firstName) {
-      const authUserRes = await pool
-        .query('SELECT email, raw_user_meta_data, created_at FROM auth.users WHERE id = $1', [
-          session.userId,
-        ])
-        .catch(() => null);
+    let firstName =
+      profRes.rows[0]?.first_name || meta.first_name || meta.name?.split(' ')[0] || '';
+    let lastName =
+      profRes.rows[0]?.last_name ||
+      meta.last_name ||
+      meta.name?.split(' ').slice(1).join(' ') ||
+      '';
+    const avatarUrl = profRes.rows[0]?.avatar || '/avatars/default.png';
+    const phone = profRes.rows[0]?.phone || meta.phone || '';
+    const enrolledAt = profRes.rows[0]?.created_at || au.created_at || new Date().toISOString();
 
-      if (authUserRes && authUserRes.rows.length > 0) {
-        const au = authUserRes.rows[0];
-        if (!email) email = au.email;
-        if (!enrolledAt) enrolledAt = au.created_at;
-        const meta = au.raw_user_meta_data || {};
-        if (!firstName) firstName = meta.first_name || meta.name || 'Candidate';
-        if (!lastName) lastName = meta.last_name || '';
-      }
-    }
-
-    email = email || 'student@clasptek.org';
-    firstName = firstName || 'Candidate';
-    lastName = lastName || '';
-    avatarUrl = avatarUrl || '/avatars/default.png';
-    enrolledAt = enrolledAt || new Date().toISOString();
-    const fullName = `${firstName} ${lastName}`.trim();
+    firstName = firstName.trim();
+    lastName = lastName.trim();
+    const fullName =
+      `${firstName} ${lastName}`.trim() || email.split('@')[0] || 'Authenticated User';
 
     // 2. Resolve login history from security_sessions
     let loginHistory: { ip: string; device: string; timestamp: string }[] = [];

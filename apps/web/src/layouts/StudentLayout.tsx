@@ -146,7 +146,7 @@ export function StudentLayout({ children }: StudentLayoutProps) {
         onLogout={handleLogout}
         title="Student Portal"
         links={navLinks}
-        userRole="Student Candidate"
+        userRole="Student Portal"
         logoHref="/student/welcome"
       />
       <StudentBottomNav />

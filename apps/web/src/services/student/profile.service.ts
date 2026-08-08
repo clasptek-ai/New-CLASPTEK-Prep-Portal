@@ -18,7 +18,7 @@ export const studentProfileService = {
       console.error('studentProfileService.getProfile failed:', err);
       return {
         id: '',
-        name: 'Student Candidate',
+        name: '',
         email: '',
         avatarUrl: undefined,
         phone: '',

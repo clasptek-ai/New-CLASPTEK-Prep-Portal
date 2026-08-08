@@ -1,0 +1,324 @@
+[
+  {
+    "id": "81718789-4158-4ea9-bb20-2eb04df4db26",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "FAILED_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "error": "Invalid login credentials",
+      "lockStatus": "UNLOCKED",
+      "lockExpiresAt": null,
+      "failedAttempts": 1
+    },
+    "created_at": "2026-08-08T13:43:24.542Z"
+  },
+  {
+    "id": "a3f9b65d-ba37-4a51-a0fd-c4b8c2a35a16",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "FAILED_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "error": "Invalid login credentials",
+      "lockStatus": "UNLOCKED",
+      "lockExpiresAt": null,
+      "failedAttempts": 2
+    },
+    "created_at": "2026-08-08T13:43:41.618Z"
+  },
+  {
+    "id": "24b78eb8-f54d-44e0-87f1-f354970f215e",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "FAILED_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "error": "Invalid login credentials",
+      "lockStatus": "UNLOCKED",
+      "lockExpiresAt": null,
+      "failedAttempts": 3
+    },
+    "created_at": "2026-08-08T13:43:44.109Z"
+  },
+  {
+    "id": "70a4703a-0b70-474a-be92-0d07a89c3ddd",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "FAILED_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "error": "Invalid login credentials",
+      "lockStatus": "UNLOCKED",
+      "lockExpiresAt": null,
+      "failedAttempts": 4
+    },
+    "created_at": "2026-08-08T13:43:56.297Z"
+  },
+  {
+    "id": "4e6ed1c4-f1ba-4694-9c49-ed18d1960cb2",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "ACCOUNT_LOCKED_EXCESSIVE_FAILED_ATTEMPTS",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "error": "Invalid login credentials",
+      "lockStatus": "LOCKED",
+      "lockExpiresAt": "2026-08-08T13:59:27.431Z",
+      "failedAttempts": 5
+    },
+    "created_at": "2026-08-08T13:44:27.541Z"
+  },
+  {
+    "id": "c0c9caee-d943-48af-acbf-e30cc87ca26d",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "BLOCKED_LOCKED_ACCOUNT_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "lockExpiresAt": "2026-08-08T13:59:27.431Z",
+      "retryAfterMinutes": 15
+    },
+    "created_at": "2026-08-08T13:45:01.581Z"
+  },
+  {
+    "id": "70e8b945-c6fd-4a25-a16e-57857f722122",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "BLOCKED_LOCKED_ACCOUNT_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "lockExpiresAt": "2026-08-08T13:59:27.431Z",
+      "retryAfterMinutes": 14
+    },
+    "created_at": "2026-08-08T13:45:33.220Z"
+  },
+  {
+    "id": "b6c6a245-a7fb-4a97-9d8d-f42b2d95e9df",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "BLOCKED_LOCKED_ACCOUNT_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "lockExpiresAt": "2026-08-08T13:59:27.431Z",
+      "retryAfterMinutes": 14
+    },
+    "created_at": "2026-08-08T13:46:10.307Z"
+  },
+  {
+    "id": "6e17b9e2-0509-4365-a614-7e169d778bb0",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "BLOCKED_LOCKED_ACCOUNT_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "lockExpiresAt": "2026-08-08T13:59:27.431Z",
+      "retryAfterMinutes": 14
+    },
+    "created_at": "2026-08-08T13:46:27.132Z"
+  },
+  {
+    "id": "04b0a070-e77e-4839-8cf6-a8a9314eb42e",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "BLOCKED_LOCKED_ACCOUNT_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "lockExpiresAt": "2026-08-08T13:59:27.431Z",
+      "retryAfterMinutes": 12
+    },
+    "created_at": "2026-08-08T13:48:21.611Z"
+  },
+  {
+    "id": "82c7ecde-4146-40ac-acf9-8b1ac398fc3d",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "BLOCKED_LOCKED_ACCOUNT_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "lockExpiresAt": "2026-08-08T13:59:27.431Z",
+      "retryAfterMinutes": 10
+    },
+    "created_at": "2026-08-08T13:49:38.049Z"
+  },
+  {
+    "id": "3bdd2ce8-164c-40b7-82cc-3b1fea1137a7",
+    "user_id": "0a297f82-95e5-403e-bb5d-68e2006f7757",
+    "action": "BLOCKED_LOCKED_ACCOUNT_LOGIN_ATTEMPT",
+    "entity": "public.security_profiles",
+    "entity_id": "1fa95695-34e3-4c2d-a111-362418a37ffe",
+    "payload": {
+      "email": "otusanyaomolara85@gmail.com",
+      "lockExpiresAt": "2026-08-08T13:59:27.431Z",
+      "retryAfterMinutes": 9
+    },
+    "created_at": "2026-08-08T13:50:27.817Z"
+  },
+  {
+    "id": "5b6de146-22a8-49d4-9d87-fd2ce9bf5c2c",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_FORCE_LOGOUT_STUDENT",
+    "entity": "public.users",
+    "entity_id": "8ca43ece-d226-466c-b32d-5f296eb61b1b",
+    "payload": {
+      "loggedOutAt": "2026-08-08T19:41:41.855Z",
+      "loggedOutBy": "518b0d01-b344-4962-864c-126c2487fa78"
+    },
+    "created_at": "2026-08-08T19:41:41.891Z"
+  },
+  {
+    "id": "8a543847-1b24-4fc2-acc9-73d108f44959",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "8ca43ece-d226-466c-b32d-5f296eb61b1b",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:42:07.189Z"
+  },
+  {
+    "id": "29cea554-c622-4d14-845d-bab5f461ea59",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "019c62e7-9c63-44ef-98cb-1cc1287d289a",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:42:15.966Z"
+  },
+  {
+    "id": "68f56182-9c7f-49e2-a2b6-d348e79aab3b",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "56af5e34-3fdf-4647-a295-84a1c3f367f2",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:42:30.138Z"
+  },
+  {
+    "id": "d78f4244-3c61-4e4c-a9ac-6fed725afde0",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "a4980cde-110c-4898-9285-197ee7df74fe",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:42:45.931Z"
+  },
+  {
+    "id": "88b4c7f5-6655-4f24-bcd1-f66481ac9621",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "9e6ed614-1eca-4312-8d87-5b55f1b2f32f",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:42:58.485Z"
+  },
+  {
+    "id": "3b0fdaf2-8602-45fb-bb1b-ad4ae8aa9f78",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "ba23830c-ab3c-45de-b863-0cdc7cb3c5e6",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:43:05.232Z"
+  },
+  {
+    "id": "c4cf10ee-ca83-4a5c-ae75-c12a63a192c4",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "4b9e4d58-7e86-417a-9837-7c043c090d62",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:43:13.028Z"
+  },
+  {
+    "id": "c9866030-40a2-41b3-94b1-485b9efc6494",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "0d325b3b-d988-4eac-b1b4-2fae1e329c64",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:43:24.675Z"
+  },
+  {
+    "id": "90a7bf91-d297-45c9-b51e-78d68ea2b846",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "343f1d48-913f-45f1-bced-0d3c588d4f60",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:43:38.612Z"
+  },
+  {
+    "id": "7033754b-717b-4131-abb9-713551523549",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "d9e7d59a-6878-4eca-8d3a-8a5e111fd07d",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:43:46.325Z"
+  },
+  {
+    "id": "15900319-e855-4c5d-a4aa-ff0153734df3",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "07a40276-b7ae-4ff5-b3b3-bf76bbb1ee75",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:44:02.540Z"
+  },
+  {
+    "id": "e9f66cc4-d270-411e-b1e8-8d4ebdc8bd8c",
+    "user_id": "518b0d01-b344-4962-864c-126c2487fa78",
+    "action": "ADMIN_UPDATE_USER_STATUS",
+    "entity": "public.users",
+    "entity_id": "b8bb530e-4168-4a00-8948-150e50e07967",
+    "payload": {
+      "reason": "Administrative suspension",
+      "status": "SUSPENDED"
+    },
+    "created_at": "2026-08-08T19:44:15.029Z"
+  }
+]

@@ -83,8 +83,8 @@ export interface AICoachMessage {
 }
 
 export const DEFAULT_LEARNER_PROFILE: LearnerIntelligenceProfile = {
-  studentId: 'student-001',
-  studentName: 'Student Candidate',
+  studentId: '',
+  studentName: '',
   targetExam: 'IELTS Academic',
   targetScore: 'Band 7.5',
   currentScore: 'Band 6.5',

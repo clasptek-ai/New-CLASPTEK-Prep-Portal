@@ -18,8 +18,8 @@ export const DashboardAggregationService = {
       studentProfileService.getProfile().catch(
         () =>
           ({
-            id: studentId || 'stud-active-123',
-            name: 'Student Candidate',
+            id: studentId || '',
+            name: '',
             avatarUrl: '/avatars/default.png',
             enrolledAt: new Date().toISOString(),
           }) as any
@@ -42,8 +42,8 @@ export const DashboardAggregationService = {
 
     return {
       profile: {
-        id: profile.id || studentId || 'stud-active-123',
-        studentName: profile.name || 'Student Candidate',
+        id: profile.id || studentId || '',
+        studentName: profile.name || '',
         avatarUrl: profile.avatarUrl || '/avatars/default.png',
         currentProgrammeId: activeProg.id,
         currentProgrammeTitle: activeProg.name,

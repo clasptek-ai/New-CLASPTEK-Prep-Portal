@@ -26,8 +26,8 @@ export const DashboardCompositionService = {
       studentProfileService.getProfile().catch(
         () =>
           ({
-            id: studentId || 'UNKNOWN',
-            name: 'Student',
+            id: studentId || '',
+            name: '',
             avatarUrl: undefined,
             enrolledAt: new Date().toISOString(),
           }) as any
@@ -50,8 +50,8 @@ export const DashboardCompositionService = {
 
     return {
       profile: {
-        id: profile.id || studentId || 'stud-active-123',
-        studentName: profile.name || 'Student Candidate',
+        id: profile.id || studentId || '',
+        studentName: profile.name || '',
         avatarUrl: profile.avatarUrl || '/avatars/default.png',
         currentProgrammeId: activeProg.id,
         currentProgrammeTitle: activeProg.name,
