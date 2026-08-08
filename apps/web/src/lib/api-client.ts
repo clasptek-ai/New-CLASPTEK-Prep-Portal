@@ -16,14 +16,37 @@ export class ApiError extends Error {
   }
 }
 
+async function getAuthHeaders(
+  customHeaders?: Record<string, string>
+): Promise<Record<string, string>> {
+  const reqHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...customHeaders,
+  };
+
+  if (typeof window !== 'undefined' && !reqHeaders['Authorization']) {
+    try {
+      const { getSupabaseBrowserClient } = await import('./supabase-browser');
+      const supabase = getSupabaseBrowserClient();
+      const { data } = await supabase.auth.getSession();
+      const token = data.session?.access_token;
+      if (token) {
+        reqHeaders['Authorization'] = `Bearer ${token}`;
+      }
+    } catch {
+      // Ignore if browser client is uninitialized
+    }
+  }
+
+  return reqHeaders;
+}
+
 export const apiClient = {
   async get<T>(url: string, headers?: Record<string, string>): Promise<T> {
+    const finalHeaders = await getAuthHeaders(headers);
     const res = await fetch(url, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
+      headers: finalHeaders,
     });
 
     if (!res.ok) {
@@ -37,12 +60,10 @@ export const apiClient = {
   },
 
   async post<T>(url: string, body?: unknown, headers?: Record<string, string>): Promise<T> {
+    const finalHeaders = await getAuthHeaders(headers);
     const res = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
+      headers: finalHeaders,
       body: body ? JSON.stringify(body) : undefined,
     });
 
@@ -57,12 +78,10 @@ export const apiClient = {
   },
 
   async put<T>(url: string, body?: unknown, headers?: Record<string, string>): Promise<T> {
+    const finalHeaders = await getAuthHeaders(headers);
     const res = await fetch(url, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
+      headers: finalHeaders,
       body: body ? JSON.stringify(body) : undefined,
     });
 
@@ -77,12 +96,10 @@ export const apiClient = {
   },
 
   async delete<T>(url: string, headers?: Record<string, string>): Promise<T> {
+    const finalHeaders = await getAuthHeaders(headers);
     const res = await fetch(url, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
+      headers: finalHeaders,
     });
 
     if (!res.ok) {

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { authFetch } from '@/lib/api-fetch';
 
 interface SectionScore {
   sectionCode: string;
@@ -49,7 +50,7 @@ function StudentResultsContent() {
         const url = attemptId
           ? `/api/v1/assessment-attempts/${attemptId}/result`
           : '/api/v1/assessment/result';
-        const res = await fetch(url);
+        const res = await authFetch(url);
         const data = await res.json();
 
         let resolvedResult: ResultData | null = null;

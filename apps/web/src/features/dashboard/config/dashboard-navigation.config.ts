@@ -11,7 +11,7 @@ export const DashboardNavigationConfig = {
     'resume-last-lesson': '/learning',
     'browse-courses': '/learning',
     'open-ai-coach': '/learning-assistant',
-    'view-results': '/results',
+    'view-results': '/student/results',
     'view-calendar': '/student/calendar',
   } as Record<string, string>,
 

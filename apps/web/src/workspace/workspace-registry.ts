@@ -33,7 +33,7 @@ export const workspaceRegistry: Record<WorkspaceId, WorkspaceDefinition> = {
       { name: 'Mock Exams', href: '/student/mock', icon: 'BookOpen' },
       { name: 'AI Coach', href: '/learning-assistant', icon: 'Sparkles' },
       { name: 'Readiness', href: '/readiness', icon: 'Target' },
-      { name: 'Results', href: '/results', icon: 'TrendingUp' },
+      { name: 'Results', href: '/student/results', icon: 'TrendingUp' },
       { name: 'Settings', href: '/account', icon: 'Settings' },
     ],
   },

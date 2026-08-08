@@ -9,6 +9,6 @@ export const studentNavigation: NavigationItem[] = [
   { name: 'My Learning', href: '/learning', icon: 'GraduationCap' },
   { name: 'Practice', href: '/practice', icon: 'Zap' },
   { name: 'Mock Exams', href: '/assessments', icon: 'FileText' },
-  { name: 'Results', href: '/results', icon: 'TrendingUp' },
+  { name: 'Results', href: '/student/results', icon: 'TrendingUp' },
   { name: 'Profile', href: '/profile', icon: 'UserSettings' },
 ];
