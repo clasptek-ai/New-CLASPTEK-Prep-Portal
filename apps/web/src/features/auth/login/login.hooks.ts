@@ -30,6 +30,20 @@ export function useLoginForm() {
         return;
       }
 
+      if (typeof window !== 'undefined') {
+        // Purge stale local storage items from previous browser sessions/users
+        localStorage.removeItem('clasptek_onboarding_data');
+        localStorage.removeItem('clasptek_onboarding_state');
+        localStorage.removeItem('clasptek_user_id');
+        localStorage.removeItem('clasptek_user_name');
+        localStorage.removeItem('clasptek_user_role');
+
+        const activeUserId = result.userId || result.user?.id || result.session?.user?.id;
+        if (activeUserId) {
+          localStorage.setItem('clasptek_user_id', activeUserId);
+        }
+      }
+
       if (result.session) {
         try {
           const { getSupabaseBrowserClient } = await import('@/lib/supabase-browser');
@@ -59,9 +73,13 @@ export function useLoginForm() {
           ].includes(r)
         );
 
-      if (typeof window !== 'undefined' && isClasptekAdmin) {
-        localStorage.setItem('clasptek_user_role', 'ADMINISTRATOR');
-        localStorage.setItem('clasptek_user_name', 'Clasptek Coaching Limited');
+      if (typeof window !== 'undefined') {
+        if (isClasptekAdmin) {
+          localStorage.setItem('clasptek_user_role', 'ADMINISTRATOR');
+          localStorage.setItem('clasptek_user_name', 'Clasptek Coaching Limited');
+        } else {
+          localStorage.setItem('clasptek_user_role', roles[0] || 'STUDENT');
+        }
       }
 
       if (isAdminStaff) {

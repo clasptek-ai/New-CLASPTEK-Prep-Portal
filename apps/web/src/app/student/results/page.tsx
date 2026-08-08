@@ -42,27 +42,61 @@ function StudentResultsContent() {
   const [result, setResult] = useState<ResultData | null>(null);
 
   useEffect(() => {
-    async function loadResult() {
+    let isMounted = true;
+
+    async function loadResult(retryCount = 0) {
       try {
         const url = attemptId
           ? `/api/v1/assessment-attempts/${attemptId}/result`
           : '/api/v1/assessment/result';
         const res = await fetch(url);
         const data = await res.json();
+
+        let resolvedResult: ResultData | null = null;
         if (data.data) {
-          setResult(data.data);
+          resolvedResult = data.data;
         } else if (data.resultId || (data.success && data.overallScore !== undefined)) {
-          setResult(data);
-        } else {
+          resolvedResult = data;
+        }
+
+        if (resolvedResult) {
+          if (isMounted) {
+            setResult(resolvedResult);
+            setLoading(false);
+          }
+          return;
+        }
+
+        // If attemptId was passed but result hasn't finished processing in DB, retry up to 5 times (1s interval)
+        if (attemptId && retryCount < 5) {
+          setTimeout(() => {
+            if (isMounted) loadResult(retryCount + 1);
+          }, 1000);
+          return;
+        }
+
+        if (isMounted) {
           setResult(null);
+          setLoading(false);
         }
       } catch {
-        setResult(null);
-      } finally {
-        setLoading(false);
+        if (attemptId && retryCount < 5) {
+          setTimeout(() => {
+            if (isMounted) loadResult(retryCount + 1);
+          }, 1000);
+          return;
+        }
+        if (isMounted) {
+          setResult(null);
+          setLoading(false);
+        }
       }
     }
-    loadResult();
+
+    loadResult(0);
+    return () => {
+      isMounted = false;
+    };
   }, [attemptId]);
 
   if (loading) {
@@ -125,6 +159,9 @@ function StudentResultsContent() {
   };
 
   const isEvaluating = result?.placementLifecycle === 'EVALUATING';
+  const sectionScoresList = Array.isArray(result?.sectionScores) ? result.sectionScores : [];
+  const strengthsList = Array.isArray(result?.strengths) ? result.strengths : [];
+  const focusAreasList = Array.isArray(result?.focusAreas) ? result.focusAreas : [];
 
   return (
     <div className="max-w-5xl mx-auto my-8 p-6 md:p-8 bg-slate-900 border border-slate-800 rounded-2xl text-white space-y-8 font-sans">
@@ -169,7 +206,9 @@ function StudentResultsContent() {
           <div className="text-xs text-sky-400 font-semibold uppercase tracking-wide">
             Placement Stage
           </div>
-          <div className="text-xl font-extrabold text-white mt-0.5">{result.placementStage}</div>
+          <div className="text-xl font-extrabold text-white mt-0.5">
+            {result.placementStage || 'FOUNDATION'}
+          </div>
         </div>
       </div>
 
@@ -177,7 +216,7 @@ function StudentResultsContent() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 text-center">
           <div className="text-xs text-slate-400 uppercase tracking-wide">Overall Proficiency</div>
-          <div className="text-3xl font-black text-sky-400 mt-1">{result.overallScore}%</div>
+          <div className="text-3xl font-black text-sky-400 mt-1">{result.overallScore ?? 0}%</div>
         </div>
         <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 text-center">
           <div className="text-xs text-slate-400 uppercase tracking-wide">CEFR Level</div>
@@ -216,12 +255,12 @@ function StudentResultsContent() {
             Independent Skill Performance Profile
           </h2>
           <span className="text-xs text-slate-400 font-mono">
-            {(result.sectionScores || []).length || 3} Skills Assessed
+            {sectionScoresList.length || 3} Skills Assessed
           </span>
         </div>
 
         <div className="space-y-4">
-          {(result.sectionScores || []).map((sec) => (
+          {sectionScoresList.map((sec) => (
             <div key={sec.sectionCode} className="space-y-1.5">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-semibold text-white flex items-center space-x-2">
@@ -232,12 +271,14 @@ function StudentResultsContent() {
                     </span>
                   )}
                 </span>
-                <span className="font-mono text-sky-400 font-bold">{sec.scorePercentage}%</span>
+                <span className="font-mono text-sky-400 font-bold">
+                  {sec.scorePercentage ?? 0}%
+                </span>
               </div>
               <div className="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-800">
                 <div
                   className="bg-sky-500 h-full rounded-full transition-all duration-500"
-                  style={{ width: `${sec.scorePercentage}%` }}
+                  style={{ width: `${Math.min(100, Math.max(0, sec.scorePercentage ?? 0))}%` }}
                 />
               </div>
             </div>
@@ -252,7 +293,7 @@ function StudentResultsContent() {
             🟢 Strongest Competencies
           </h3>
           <ul className="space-y-2">
-            {(result.strengths || []).map((str, idx) => (
+            {strengthsList.map((str, idx) => (
               <li key={idx} className="text-xs text-slate-300 flex items-center space-x-2">
                 <span className="text-emerald-400">✓</span>
                 <span>{str}</span>
@@ -266,7 +307,7 @@ function StudentResultsContent() {
             🎯 Recommended Focus Areas
           </h3>
           <ul className="space-y-2">
-            {(result.focusAreas || []).map((fa, idx) => (
+            {focusAreasList.map((fa, idx) => (
               <li key={idx} className="text-xs text-slate-300 flex items-center space-x-2">
                 <span className="text-amber-400">!</span>
                 <span>{fa}</span>

@@ -14,21 +14,47 @@ export async function GET(req: NextRequest) {
     const { dbPool, sessionRepo } = await getAuthContext();
     const pool = dbPool.getPool();
 
-    // 1. Resolve user profile details
+    // 1. Resolve user profile details from public tables
     const userRes = await pool.query(
       'SELECT email, created_at FROM public.identities WHERE user_id = $1 LIMIT 1',
       [session.userId]
     );
     const profRes = await pool.query(
-      'SELECT first_name, last_name, avatar FROM public.profiles WHERE user_id = $1 LIMIT 1',
+      'SELECT first_name, last_name, avatar, phone FROM public.profiles WHERE user_id = $1 LIMIT 1',
       [session.userId]
     );
 
-    const email = userRes.rows[0]?.email || 'user@clasptek.com';
-    const firstName = profRes.rows[0]?.first_name || 'Clasptek';
-    const lastName = profRes.rows[0]?.last_name || 'User';
-    const avatarUrl = profRes.rows[0]?.avatar || '/avatars/default.png';
-    const enrolledAt = userRes.rows[0]?.created_at || new Date().toISOString();
+    let email = userRes.rows[0]?.email;
+    let firstName = profRes.rows[0]?.first_name;
+    let lastName = profRes.rows[0]?.last_name;
+    let avatarUrl = profRes.rows[0]?.avatar;
+    const phone = profRes.rows[0]?.phone;
+    let enrolledAt = userRes.rows[0]?.created_at;
+
+    // Fallback: Query auth.users directly for exact session.userId metadata
+    if (!email || !firstName) {
+      const authUserRes = await pool
+        .query('SELECT email, raw_user_meta_data, created_at FROM auth.users WHERE id = $1', [
+          session.userId,
+        ])
+        .catch(() => null);
+
+      if (authUserRes && authUserRes.rows.length > 0) {
+        const au = authUserRes.rows[0];
+        if (!email) email = au.email;
+        if (!enrolledAt) enrolledAt = au.created_at;
+        const meta = au.raw_user_meta_data || {};
+        if (!firstName) firstName = meta.first_name || meta.name || 'Candidate';
+        if (!lastName) lastName = meta.last_name || '';
+      }
+    }
+
+    email = email || 'student@clasptek.org';
+    firstName = firstName || 'Candidate';
+    lastName = lastName || '';
+    avatarUrl = avatarUrl || '/avatars/default.png';
+    enrolledAt = enrolledAt || new Date().toISOString();
+    const fullName = `${firstName} ${lastName}`.trim();
 
     // 2. Resolve login history from security_sessions
     let loginHistory: { ip: string; device: string; timestamp: string }[] = [];
@@ -42,23 +68,15 @@ export async function GET(req: NextRequest) {
           : new Date().toISOString(),
       }));
     } catch {
-      loginHistory = [
-        { ip: '127.0.0.1', device: 'Chrome / Windows', timestamp: new Date().toISOString() },
-      ];
-    }
-
-    if (loginHistory.length === 0) {
-      loginHistory = [
-        { ip: '127.0.0.1', device: 'Chrome / Windows', timestamp: new Date().toISOString() },
-      ];
+      loginHistory = [];
     }
 
     return NextResponse.json({
       id: session.userId,
-      name: `${firstName} ${lastName}`,
+      name: fullName,
       email,
       avatarUrl,
-      phone: '+1 (555) 019-2834',
+      phone: phone || '',
       enrolledAt,
       loginHistory,
     });

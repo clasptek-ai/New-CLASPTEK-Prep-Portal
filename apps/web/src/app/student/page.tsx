@@ -2,19 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import {
-  BookOpen,
-  Award,
-  Play,
-  CheckCircle2,
-  Clock,
-  ArrowRight,
-  Sparkles,
-  Zap,
-  Target,
-  FileText,
-  BarChart2,
-} from 'lucide-react';
+import { BookOpen, Play, Clock, ArrowRight, Zap, Target } from 'lucide-react';
 
 interface LearningModule {
   id: string;
@@ -49,8 +37,13 @@ export default function StudentLearningDashboardPage() {
   useEffect(() => {
     async function loadDashboard() {
       try {
-        const res = await fetch('/api/v1/assessment/result');
-        const resData = await res.json();
+        const [res, profRes] = await Promise.all([
+          fetch('/api/v1/assessment/result').catch(() => null),
+          fetch('/api/v1/student/profile').catch(() => null),
+        ]);
+
+        const resData = res ? await res.json().catch(() => ({})) : {};
+        const profData = profRes ? await profRes.json().catch(() => ({})) : {};
 
         let progName = 'English Proficiency Core Foundation';
         let cefr = 'B1';
@@ -64,8 +57,10 @@ export default function StudentLearningDashboardPage() {
           duration = resData.recommendedDuration || '5 Weeks';
         }
 
+        const studentName = profData.name || 'Candidate';
+
         setData({
-          studentName: 'Candidate',
+          studentName,
           enrolledProgramme: progName,
           recommendedPathway: `${progName} (${duration})`,
           cefrLevel: cefr,
