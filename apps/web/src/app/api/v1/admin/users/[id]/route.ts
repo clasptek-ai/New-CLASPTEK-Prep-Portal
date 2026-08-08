@@ -1,38 +1,16 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthenticatedSession } from '@/lib/auth-util';
+import { requireAdminSession } from '@/lib/admin-auth';
 import { loadEnvironment } from '@clasptek/configuration';
 import { DatabasePool } from '@clasptek/persistence';
 import { ConsoleLogger } from '@clasptek/observability';
 import { getSupabaseServerClient } from '@/lib/supabase-client';
 
-/**
- * DELETE /api/v1/admin/users/:id
- * Soft Deletes / Archives candidate student account:
- * - Updates public.users setting deleted_at = NOW(), deleted_by = $1, is_deleted = TRUE, status = 'ARCHIVED'
- * - Invalidation of global active sessions via Supabase Admin API
- * - Bans user token issuance in Supabase Auth
- * - PRESERVES historical assessment_attempts, assessment_results, certificates, and audit_logs!
- */
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await getAuthenticatedSession(req);
-    const isSuperAdmin =
-      session &&
-      session.roles.some((r) =>
-        ['SUPER_ADMIN', 'SUPER_ADMINISTRATOR', 'ADMINISTRATOR'].includes(r)
-      );
-
-    if (!isSuperAdmin) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Unauthorized. Administrator credentials required to archive accounts.',
-        },
-        { status: 401 }
-      );
-    }
+    const { session, errorResponse } = await requireAdminSession(req);
+    if (errorResponse) return errorResponse;
 
     const resolvedParams = await params;
     const userId = resolvedParams.id;

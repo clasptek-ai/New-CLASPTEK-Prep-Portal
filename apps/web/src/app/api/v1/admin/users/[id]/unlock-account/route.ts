@@ -16,19 +16,8 @@ import { getSupabaseServerClient } from '@/lib/supabase-client';
  */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await getAuthenticatedSession(req);
-    const isAdmin =
-      session &&
-      session.roles.some((r) =>
-        ['ADMINISTRATOR', 'SUPER_ADMIN', 'SUPER_ADMINISTRATOR', 'STAFF'].includes(r)
-      );
-
-    if (!isAdmin) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized. Admin credentials required to unlock accounts.' },
-        { status: 401 }
-      );
-    }
+    const { session, errorResponse } = await requireAdminSession(req);
+    if (errorResponse) return errorResponse;
 
     const resolvedParams = await params;
     const userId = resolvedParams.id;

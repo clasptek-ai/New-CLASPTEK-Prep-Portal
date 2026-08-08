@@ -1,7 +1,5 @@
-export const dynamic = 'force-dynamic';
-
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthenticatedSession } from '@/lib/auth-util';
+import { requireAdminSession } from '@/lib/admin-auth';
 import { loadEnvironment, getAppUrl } from '@clasptek/configuration';
 import { DatabasePool } from '@clasptek/persistence';
 import { ConsoleLogger } from '@clasptek/observability';
@@ -9,19 +7,8 @@ import { getSupabaseServerClient } from '@/lib/supabase-client';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await getAuthenticatedSession(req);
-    const isAdmin =
-      session &&
-      session.roles.some((r) =>
-        ['ADMINISTRATOR', 'SUPER_ADMIN', 'SUPER_ADMINISTRATOR', 'STAFF'].includes(r)
-      );
-
-    if (!isAdmin) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized. Admin credentials required.' },
-        { status: 401 }
-      );
-    }
+    const { session, errorResponse } = await requireAdminSession(req);
+    if (errorResponse) return errorResponse;
 
     const resolvedParams = await params;
     const userId = resolvedParams.id;
@@ -52,8 +39,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (targetUser.email_confirmed_at) {
       return NextResponse.json(
-        { success: false, message: 'Account email has already been verified.' },
-        { status: 400 }
+        {
+          success: true,
+          alreadyVerified: true,
+          message: `Account email (${targetUser.email}) is already verified. No confirmation needed.`,
+        },
+        { status: 200 }
       );
     }
 

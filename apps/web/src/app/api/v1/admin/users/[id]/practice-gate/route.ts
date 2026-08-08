@@ -1,26 +1,13 @@
-export const dynamic = 'force-dynamic';
-
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthenticatedSession } from '@/lib/auth-util';
+import { requireAdminSession } from '@/lib/admin-auth';
 import { loadEnvironment } from '@clasptek/configuration';
 import { DatabasePool } from '@clasptek/persistence';
 import { ConsoleLogger } from '@clasptek/observability';
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await getAuthenticatedSession(req);
-    const isAdmin =
-      session &&
-      session.roles.some((r) =>
-        ['ADMINISTRATOR', 'SUPER_ADMIN', 'SUPER_ADMINISTRATOR', 'STAFF'].includes(r)
-      );
-
-    if (!isAdmin) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized. Admin credentials required.' },
-        { status: 401 }
-      );
-    }
+    const { session, errorResponse } = await requireAdminSession(req);
+    if (errorResponse) return errorResponse;
 
     const resolvedParams = await params;
     const userId = resolvedParams.id;

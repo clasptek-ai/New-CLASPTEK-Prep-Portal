@@ -1,7 +1,5 @@
-export const dynamic = 'force-dynamic';
-
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuthenticatedSession } from '@/lib/auth-util';
+import { requireAdminSession } from '@/lib/admin-auth';
 import { loadEnvironment } from '@clasptek/configuration';
 import { DatabasePool } from '@clasptek/persistence';
 import { ConsoleLogger } from '@clasptek/observability';
@@ -9,19 +7,8 @@ import { getSupabaseServerClient } from '@/lib/supabase-client';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await getAuthenticatedSession(req);
-    const isAdmin =
-      session &&
-      session.roles.some((r) =>
-        ['ADMINISTRATOR', 'SUPER_ADMIN', 'SUPER_ADMINISTRATOR', 'STAFF'].includes(r)
-      );
-
-    if (!isAdmin) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized. Admin credentials required.' },
-        { status: 401 }
-      );
-    }
+    const { session, errorResponse } = await requireAdminSession(req);
+    if (errorResponse) return errorResponse;
 
     const resolvedParams = await params;
     const userId = resolvedParams.id;
@@ -35,15 +22,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     await dbPool.connect();
     const pool = dbPool.getPool();
 
-    // Global sign-out via Supabase Admin API
-    const supabaseAdmin = getSupabaseServerClient();
-    const { error: signOutErr } = await supabaseAdmin.auth.admin.signOut(userId, 'global');
+    // 1. Invalidate active security_sessions in database
+    await pool
+      .query(
+        'UPDATE public.security_sessions SET is_active = false, invalidated_at = NOW() WHERE user_id = $1',
+        [userId]
+      )
+      .catch(() => null);
 
-    if (signOutErr) {
-      return NextResponse.json(
-        { success: false, message: signOutErr.message || 'Failed to invalidate active sessions.' },
-        { status: 500 }
-      );
+    // 2. Global sign-out via Supabase Admin API
+    try {
+      const supabaseAdmin = getSupabaseServerClient();
+      await supabaseAdmin.auth.admin.signOut(userId, 'global');
+    } catch (signOutErr: any) {
+      logger.warn('[FORCE_LOGOUT_SUPABASE_WARNING]', { message: signOutErr.message });
     }
 
     // Record Audit Log
