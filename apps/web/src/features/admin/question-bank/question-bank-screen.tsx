@@ -26,21 +26,12 @@ import {
   Trash2,
   Search,
   BookOpen,
-  Filter,
   ShieldCheck,
-  FileText,
   Volume2,
   Image as ImageIcon,
   AlertCircle,
   Clock,
-  Tag,
-  Copy,
   Layers,
-  ArrowRight,
-  Send,
-  Archive,
-  CheckSquare,
-  Square,
   ChevronDown,
 } from 'lucide-react';
 
@@ -68,21 +59,21 @@ export function QuestionBankScreen() {
   // Modal States
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createPassageModalOpen, setCreatePassageModalOpen] = useState(false);
-  const [createMediaModalOpen, setCreateMediaModalOpen] = useState(false);
+  const [_createMediaModalOpen, _setCreateMediaModalOpen] = useState(false);
   const [previewQuestion, setPreviewQuestion] = useState<AdminQuestion | null>(null);
   const [previewPassage, setPreviewPassage] = useState<Passage | null>(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [_deleteConfirmId, _setDeleteConfirmId] = useState<string | null>(null);
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
 
   // Question Form State
   const [newExam, setNewExam] = useState<ExamType>('IELTS Academic');
   const [newSection, setNewSection] = useState<SectionType>('Reading');
   const [newSkill, setNewSkill] = useState('Matching Headings');
-  const [newSubSkill, setNewSubSkill] = useState('');
+  const [newSubSkill, _setNewSubSkill] = useState('');
   const [newType, setNewType] = useState<QuestionType>('MCQ');
   const [newDifficulty, setNewDifficulty] = useState<DifficultyLevel>('MEDIUM');
-  const [newEstimatedTime, setNewEstimatedTime] = useState('2 mins');
-  const [newOfficialSource, setNewOfficialSource] = useState('Cambridge 18 Test 1');
+  const [newEstimatedTime, _setNewEstimatedTime] = useState('2 mins');
+  const [newOfficialSource, _setNewOfficialSource] = useState('Cambridge 18 Test 1');
   const [newPrompt, setNewPrompt] = useState('');
   const [newOptionA, setNewOptionA] = useState('');
   const [newOptionB, setNewOptionB] = useState('');
@@ -94,21 +85,21 @@ export function QuestionBankScreen() {
   const [newSelectedPassageId, setNewSelectedPassageId] = useState('');
   const [newAudioUrl, setNewAudioUrl] = useState('');
   const [newImageUrl, setNewImageUrl] = useState('');
-  const [newTags, setNewTags] = useState('IELTS, Reading, Headings');
+  const [newTags, _setNewTags] = useState('IELTS, Reading, Headings');
 
   // Passage Form State
   const [pasTitle, setPasTitle] = useState('');
   const [pasExam, setPasExam] = useState<ExamType>('IELTS Academic');
-  const [pasSection, setPasSection] = useState<SectionType>('Reading');
+  const [pasSection, _setPasSection] = useState<SectionType>('Reading');
   const [pasSource, setPasSource] = useState('Cambridge 18');
   const [pasContent, setPasContent] = useState('');
 
   // Media Form State
   const [medTitle, setMedTitle] = useState('');
-  const [medType, setMedType] = useState<'IMAGE' | 'AUDIO' | 'PDF'>('AUDIO');
+  const [medType, _setMedType] = useState<'IMAGE' | 'AUDIO' | 'PDF'>('AUDIO');
   const [medUrl, setMedUrl] = useState('');
-  const [medExam, setMedExam] = useState<ExamType>('IELTS Academic');
-  const [medTags, setMedTags] = useState('Listening, Audio');
+  const [medExam, _setMedExam] = useState<ExamType>('IELTS Academic');
+  const [medTags, _setMedTags] = useState('Listening, Audio');
 
   const [totalQuestionsCount, setTotalQuestionsCount] = useState<number>(0);
 
@@ -152,7 +143,7 @@ export function QuestionBankScreen() {
     showBanner(`Question status updated to ${newStatus}!`);
   }
 
-  async function handleDeleteQuestion(id: string) {
+  async function _handleDeleteQuestion(id: string) {
     await adminQuestionsService.deleteQuestion(id);
     setQuestions((prev) => prev.filter((q) => q.id !== id));
     setDeleteConfirmId(null);
@@ -206,7 +197,7 @@ export function QuestionBankScreen() {
       passageTitle: selectedPassage?.title || undefined,
       audioUrl: newAudioUrl || undefined,
       imageUrl: newImageUrl || undefined,
-      tags: newTags.split(',').map((t) => t.trim()),
+      tags: newTags.split(',').map((t: string) => t.trim()),
     });
 
     if (res.duplicate) {
@@ -239,7 +230,7 @@ export function QuestionBankScreen() {
     showBanner('New Passage added to repository!');
   }
 
-  async function handleCreateMedia(e: React.FormEvent) {
+  async function _handleCreateMedia(e: React.FormEvent) {
     e.preventDefault();
     if (!medTitle.trim() || !medUrl.trim()) return;
 
@@ -248,7 +239,7 @@ export function QuestionBankScreen() {
       type: medType,
       url: medUrl,
       examType: medExam,
-      tags: medTags.split(',').map((t) => t.trim()),
+      tags: medTags.split(',').map((t: string) => t.trim()),
     });
 
     setCreateMediaModalOpen(false);
@@ -747,8 +738,12 @@ export function QuestionBankScreen() {
             onBulkArchive={() => setBulkConfirmAction('ARCHIVE')}
             onBulkDelete={() => setBulkConfirmAction('DELETE')}
             onBulkAssignUsages={(usages) => handleExecuteBulkAction('assign_usages', { usages })}
-            onBulkUpdateDifficulty={(difficulty) => handleExecuteBulkAction('update_difficulty', { difficulty })}
-            onBulkMoveToPassage={(passageId, passageTitle) => handleExecuteBulkAction('move_passage', { passageId, passageTitle })}
+            onBulkUpdateDifficulty={(difficulty) =>
+              handleExecuteBulkAction('update_difficulty', { difficulty })
+            }
+            onBulkMoveToPassage={(passageId, passageTitle) =>
+              handleExecuteBulkAction('move_passage', { passageId, passageTitle })
+            }
             onBulkExport={(format) => handleBulkExportCSV(format)}
           />
 
@@ -787,9 +782,7 @@ export function QuestionBankScreen() {
                   }
                   style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                 />
-                <span>
-                  Select Current Page ({filteredQuestions.length} Items)
-                </span>
+                <span>Select Current Page ({filteredQuestions.length} Items)</span>
               </label>
             </div>
 
@@ -943,150 +936,150 @@ export function QuestionBankScreen() {
                         >
                           {q.code || q.id}
                         </span>
-                      <Badge variant="info">{q.exam || q.programmeName || 'IELTS'}</Badge>
-                      <Badge variant="neutral">{q.section || 'General'}</Badge>
-                      <span
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#94a3b8',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.3rem',
-                        }}
-                      >
-                        <Clock size={12} /> {q.estimatedTime || '2 mins'}
-                      </span>
+                        <Badge variant="info">{q.exam || q.programmeName || 'IELTS'}</Badge>
+                        <Badge variant="neutral">{q.section || 'General'}</Badge>
+                        <span
+                          style={{
+                            fontSize: '0.75rem',
+                            color: '#94a3b8',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.3rem',
+                          }}
+                        >
+                          <Clock size={12} /> {q.estimatedTime || '2 mins'}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Badge variant={getStatusBadgeVariant(q.status)}>{q.status}</Badge>
+                        <Badge
+                          variant={
+                            q.difficulty === 'HARD'
+                              ? 'danger'
+                              : q.difficulty === 'MEDIUM'
+                                ? 'warning'
+                                : 'success'
+                          }
+                        >
+                          {q.difficulty}
+                        </Badge>
+                      </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <Badge variant={getStatusBadgeVariant(q.status)}>{q.status}</Badge>
-                      <Badge
-                        variant={
-                          q.difficulty === 'HARD'
-                            ? 'danger'
-                            : q.difficulty === 'MEDIUM'
-                              ? 'warning'
-                              : 'success'
-                        }
-                      >
-                        {q.difficulty}
-                      </Badge>
-                    </div>
-                  </div>
-
-                  {/* Question Prompt */}
-                  <div
-                    style={{
-                      fontSize: '0.95rem',
-                      fontWeight: 600,
-                      color: '#f8fafc',
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {q.text}
-                  </div>
-
-                  {/* Passage Title if attached */}
-                  {q.passageTitle && (
+                    {/* Question Prompt */}
                     <div
                       style={{
-                        fontSize: '0.8rem',
-                        color: '#cbd5e1',
-                        backgroundColor: '#161e2e',
-                        padding: '0.4rem 0.75rem',
-                        borderRadius: '6px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.4rem',
+                        fontSize: '0.95rem',
+                        fontWeight: 600,
+                        color: '#f8fafc',
+                        lineHeight: 1.5,
                       }}
                     >
-                      <BookOpen size={14} color="#38bdf8" />
-                      Attached Passage: <strong>{q.passageTitle}</strong>
-                    </div>
-                  )}
-
-                  {/* Footer Actions & Metadata */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexWrap: 'wrap',
-                      gap: '0.75rem',
-                      paddingTop: '0.5rem',
-                      borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-                    }}
-                  >
-                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                      Skill: <strong>{q.skill || q.topic}</strong> | Source:{' '}
-                      <strong>{q.officialSource || 'Clasptek Bank'}</strong>
+                      {q.text}
                     </div>
 
-                    {/* Workflow Transition Buttons */}
-                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setPreviewQuestion(q)}
-                        style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}
+                    {/* Passage Title if attached */}
+                    {q.passageTitle && (
+                      <div
+                        style={{
+                          fontSize: '0.8rem',
+                          color: '#cbd5e1',
+                          backgroundColor: '#161e2e',
+                          padding: '0.4rem 0.75rem',
+                          borderRadius: '6px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                        }}
                       >
-                        <Eye size={14} /> Preview
-                      </Button>
+                        <BookOpen size={14} color="#38bdf8" />
+                        Attached Passage: <strong>{q.passageTitle}</strong>
+                      </div>
+                    )}
 
-                      {q.status === 'DRAFT' && (
+                    {/* Footer Actions & Metadata */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: '0.75rem',
+                        paddingTop: '0.5rem',
+                        borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                      }}
+                    >
+                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                        Skill: <strong>{q.skill || q.topic}</strong> | Source:{' '}
+                        <strong>{q.officialSource || 'Clasptek Bank'}</strong>
+                      </div>
+
+                      {/* Workflow Transition Buttons */}
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                         <Button
-                          variant="secondary"
+                          variant="outline"
                           size="sm"
-                          onClick={() => handleStatusChange(q.id, 'UNDER_REVIEW')}
+                          onClick={() => setPreviewQuestion(q)}
+                          style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}
                         >
-                          Submit for Review
+                          <Eye size={14} /> Preview
                         </Button>
-                      )}
 
-                      {q.status === 'UNDER_REVIEW' && (
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => handleStatusChange(q.id, 'APPROVED')}
-                        >
-                          Approve Item
-                        </Button>
-                      )}
+                        {q.status === 'DRAFT' && (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => handleStatusChange(q.id, 'UNDER_REVIEW')}
+                          >
+                            Submit for Review
+                          </Button>
+                        )}
 
-                      {q.status === 'APPROVED' && (
-                        <Button
-                          variant="success"
-                          size="sm"
-                          onClick={() => handleStatusChange(q.id, 'PUBLISHED')}
-                        >
-                          Publish to Mocks
-                        </Button>
-                      )}
+                        {q.status === 'UNDER_REVIEW' && (
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => handleStatusChange(q.id, 'APPROVED')}
+                          >
+                            Approve Item
+                          </Button>
+                        )}
 
-                      {q.status !== 'ARCHIVED' && (
+                        {q.status === 'APPROVED' && (
+                          <Button
+                            variant="success"
+                            size="sm"
+                            onClick={() => handleStatusChange(q.id, 'PUBLISHED')}
+                          >
+                            Publish to Mocks
+                          </Button>
+                        )}
+
+                        {q.status !== 'ARCHIVED' && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleStatusChange(q.id, 'ARCHIVED')}
+                            style={{ color: '#ef4444' }}
+                          >
+                            Archive
+                          </Button>
+                        )}
+
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleStatusChange(q.id, 'ARCHIVED')}
-                          style={{ color: '#ef4444' }}
+                          onClick={() => setDeleteConfirmId(q.id)}
+                          style={{ color: '#64748b' }}
                         >
-                          Archive
+                          <Trash2 size={14} />
                         </Button>
-                      )}
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setDeleteConfirmId(q.id)}
-                        style={{ color: '#64748b' }}
-                      >
-                        <Trash2 size={14} />
-                      </Button>
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              );
-            })}
+                  </Card>
+                );
+              })}
             </div>
           )}
 
@@ -1808,6 +1801,278 @@ export function QuestionBankScreen() {
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button variant="outline" onClick={() => setPreviewQuestion(null)}>
                 Close Preview
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PASSAGE DETAILS MODAL */}
+      {previewPassage && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1.5rem',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#0f172a',
+              border: '1px solid #334155',
+              width: '100%',
+              maxWidth: '850px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              borderRadius: '16px',
+              padding: '2rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.25rem',
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}
+            >
+              <div>
+                <span
+                  style={{
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    color: '#38bdf8',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  Passage Repository Detail
+                </span>
+                <h2
+                  style={{
+                    fontSize: '1.4rem',
+                    fontWeight: 800,
+                    color: '#ffffff',
+                    margin: '0.25rem 0 0',
+                  }}
+                >
+                  {previewPassage.title}
+                </h2>
+              </div>
+              <Badge variant="primary">{previewPassage.examType}</Badge>
+            </div>
+
+            {/* Metadata Bar */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                gap: '0.75rem',
+                backgroundColor: '#1e293b',
+                padding: '1rem',
+                borderRadius: '10px',
+                border: '1px solid #334155',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Section & Module</div>
+                <div
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    color: '#f8fafc',
+                    marginTop: '2px',
+                  }}
+                >
+                  {previewPassage.section || 'Reading'}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Word Count</div>
+                <div
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    color: '#38bdf8',
+                    marginTop: '2px',
+                  }}
+                >
+                  {previewPassage.wordCount ||
+                    previewPassage.content.split(/\s+/).filter(Boolean).length}{' '}
+                  Words
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Linked Questions</div>
+                <div
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    color: '#a78bfa',
+                    marginTop: '2px',
+                  }}
+                >
+                  {questions.filter((q) => q.passageId === previewPassage.id).length} Questions
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Created Date</div>
+                <div
+                  style={{
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                    color: '#cbd5e1',
+                    marginTop: '2px',
+                  }}
+                >
+                  {previewPassage.createdAt
+                    ? new Date(previewPassage.createdAt).toLocaleDateString()
+                    : 'N/A'}
+                </div>
+              </div>
+            </div>
+
+            {/* Passage Content Body */}
+            <div>
+              <div
+                style={{
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#94a3b8',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                Full Passage Text:
+              </div>
+              <div
+                style={{
+                  backgroundColor: '#020617',
+                  border: '1px solid #1e293b',
+                  borderRadius: '10px',
+                  padding: '1.25rem',
+                  color: '#e2e8f0',
+                  lineHeight: '1.7',
+                  fontSize: '0.95rem',
+                  maxHeight: '300px',
+                  overflowY: 'auto',
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                {previewPassage.content}
+              </div>
+            </div>
+
+            {/* Linked Questions Section */}
+            <div>
+              <div
+                style={{
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#94a3b8',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                Linked Questions & Answer Keys:
+              </div>
+              {questions.filter((q) => q.passageId === previewPassage.id).length === 0 ? (
+                <div
+                  style={{
+                    padding: '1rem',
+                    backgroundColor: '#1e293b',
+                    borderRadius: '8px',
+                    color: '#94a3b8',
+                    fontSize: '0.85rem',
+                    textAlign: 'center',
+                  }}
+                >
+                  No questions currently linked to this passage.
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.75rem',
+                    maxHeight: '250px',
+                    overflowY: 'auto',
+                  }}
+                >
+                  {questions
+                    .filter((q) => q.passageId === previewPassage.id)
+                    .map((lq) => (
+                      <div
+                        key={lq.id}
+                        style={{
+                          backgroundColor: '#1e293b',
+                          border: '1px solid #334155',
+                          borderRadius: '8px',
+                          padding: '0.85rem 1rem',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            marginBottom: '0.35rem',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '0.8rem',
+                              fontFamily: 'monospace',
+                              color: '#38bdf8',
+                            }}
+                          >
+                            {lq.code}
+                          </span>
+                          <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 700 }}>
+                            Answer Key: {lq.correctAnswer}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: '0.9rem', color: '#ffffff', fontWeight: 600 }}>
+                          {lq.text}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '0.75rem',
+                marginTop: '0.5rem',
+              }}
+            >
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setBanner(`Editing passage "${previewPassage.title}"`);
+                  setPreviewPassage(null);
+                }}
+              >
+                Edit Passage
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  setPassages((prev) => prev.filter((p) => p.id !== previewPassage.id));
+                  setBanner(`Passage "${previewPassage.title}" removed.`);
+                  setPreviewPassage(null);
+                }}
+              >
+                Delete Passage
+              </Button>
+              <Button variant="primary" onClick={() => setPreviewPassage(null)}>
+                Close Details
               </Button>
             </div>
           </div>

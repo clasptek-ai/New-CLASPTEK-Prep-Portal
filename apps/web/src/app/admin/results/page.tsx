@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Users, TrendingUp, AlertTriangle, FileCheck, Search, Filter } from 'lucide-react';
@@ -20,39 +18,42 @@ export default function AdminResultsOverview() {
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [loading, setLoading] = useState(true);
 
-  const [students] = useState<StudentOverviewItem[]>([
-    {
-      studentId: 'stu-101',
-      studentName: 'Alex Morgan',
-      overallScore: 88.5,
-      academicStatus: 'EXCELLING',
-      performanceTrend: 'IMPROVING',
-      totalAssessments: 14,
-      totalEvaluations: 10,
-      lastCalculatedAt: new Date().toISOString(),
-    },
-    {
-      studentId: 'stu-102',
-      studentName: 'David Chen',
-      overallScore: 74.0,
-      academicStatus: 'ON_TRACK',
-      performanceTrend: 'STABLE',
-      totalAssessments: 8,
-      totalEvaluations: 6,
-      lastCalculatedAt: new Date(Date.now() - 86400000).toISOString(),
-    },
-    {
-      studentId: 'stu-103',
-      studentName: 'Sara Ahmed',
-      overallScore: 58.0,
-      academicStatus: 'AT_RISK',
-      performanceTrend: 'DECLINING',
-      totalAssessments: 5,
-      totalEvaluations: 3,
-      lastCalculatedAt: new Date(Date.now() - 172800000).toISOString(),
-    },
-  ]);
+  const [metrics, setMetrics] = useState({
+    totalStudents: 0,
+    avgReadiness: 0,
+    atRiskCount: 0,
+    totalAssessments: 0,
+  });
+
+  const [students, setStudents] = useState<StudentOverviewItem[]>([]);
+
+  useEffect(() => {
+    async function loadLiveReports() {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/v1/admin/reports', {
+          headers: { 'Cache-Control': 'no-cache' },
+        });
+        const json = await res.json();
+        if (json.success && json.data) {
+          setMetrics({
+            totalStudents: json.data.totalStudents || 0,
+            avgReadiness: json.data.avgReadiness || 0,
+            atRiskCount: json.data.atRiskCount || 0,
+            totalAssessments: json.data.totalAssessments || 0,
+          });
+          setStudents(json.data.students || []);
+        }
+      } catch (err) {
+        console.error('Failed to load live admin reports', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadLiveReports();
+  }, []);
 
   const filteredStudents = students.filter((s) => {
     const matchesSearch =
@@ -122,7 +123,7 @@ export default function AdminResultsOverview() {
             <div
               style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', marginTop: '4px' }}
             >
-              412
+              {loading ? '...' : metrics.totalStudents}
             </div>
             <div
               style={{ fontSize: '0.725rem', color: '#38bdf8', marginTop: '4px', fontWeight: 600 }}
@@ -170,7 +171,7 @@ export default function AdminResultsOverview() {
             <div
               style={{ fontSize: '1.75rem', fontWeight: 800, color: '#34d399', marginTop: '4px' }}
             >
-              78%
+              {loading ? '...' : `${metrics.avgReadiness}%`}
             </div>
             <div
               style={{ fontSize: '0.725rem', color: '#34d399', marginTop: '4px', fontWeight: 600 }}
@@ -216,7 +217,7 @@ export default function AdminResultsOverview() {
             <div
               style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f87171', marginTop: '4px' }}
             >
-              21
+              {loading ? '...' : metrics.atRiskCount}
             </div>
             <div
               style={{ fontSize: '0.725rem', color: '#f87171', marginTop: '4px', fontWeight: 600 }}
@@ -259,7 +260,7 @@ export default function AdminResultsOverview() {
             <div
               style={{ fontSize: '1.75rem', fontWeight: 800, color: '#a78bfa', marginTop: '4px' }}
             >
-              186
+              {loading ? '...' : metrics.totalAssessments}
             </div>
             <div
               style={{ fontSize: '0.725rem', color: '#a78bfa', marginTop: '4px', fontWeight: 600 }}
