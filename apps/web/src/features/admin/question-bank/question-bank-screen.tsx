@@ -59,10 +59,10 @@ export function QuestionBankScreen() {
   // Modal States
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createPassageModalOpen, setCreatePassageModalOpen] = useState(false);
-  const [_createMediaModalOpen, _setCreateMediaModalOpen] = useState(false);
+  const [_createMediaModalOpen, setCreateMediaModalOpen] = useState(false);
   const [previewQuestion, setPreviewQuestion] = useState<AdminQuestion | null>(null);
   const [previewPassage, setPreviewPassage] = useState<Passage | null>(null);
-  const [_deleteConfirmId, _setDeleteConfirmId] = useState<string | null>(null);
+  const [_deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
 
   // Question Form State
