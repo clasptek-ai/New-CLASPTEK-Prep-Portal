@@ -211,7 +211,7 @@ export function RegisterForm() {
           {/* Progress Bar Component (50% / 100%) */}
           <div className="w-full h-2 bg-slate-800/80 rounded-full overflow-hidden">
             <div
-              className={`h-full bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-500 transition-all duration-500 ${
+              className={`h-full bg-linear-to-r from-blue-600 via-blue-500 to-indigo-500 transition-all duration-500 ${
                 step === 1 ? 'w-1/2' : 'w-full'
               }`}
             />
@@ -470,7 +470,7 @@ export function RegisterForm() {
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="w-full h-14 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="w-full h-14 bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 <span>Continue</span>
                 <ArrowRight size={20} />
@@ -551,7 +551,7 @@ export function RegisterForm() {
                 type="button"
                 disabled={isLoading || isSuccess}
                 onClick={handleCompleteRegistration}
-                className="flex-2 h-14 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-sm sm:text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="flex-2 h-14 bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-sm sm:text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 <span>{isLoading ? 'Creating Account...' : 'Complete & Start Assessment'}</span>
                 <CheckCircle2 size={20} />
