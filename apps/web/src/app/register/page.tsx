@@ -19,7 +19,7 @@ export default function RegisterPage() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-blue-600/5 blur-[120px] pointer-events-none rounded-full" />
 
       {/* Top Header Section: Logo & Headline */}
-      <div className="w-full max-w-165 flex flex-col items-center text-center mb-6 sm:mb-8 z-10 animate-in fade-in slide-in-from-top-4 duration-500">
+      <div className="w-full max-w-[660px] flex flex-col items-center text-center mb-6 sm:mb-8 z-10 animate-in fade-in slide-in-from-top-4 duration-500">
         {/* Logo */}
         <Link
           href="/"
@@ -56,7 +56,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Main Registration Experience Card Container (Desktop 620-680px, Tablet 540px, Mobile 100% / max-w-480px) */}
-      <div className="w-full max-w-120 sm:max-w-135 md:max-w-165 z-10 transition-all duration-300">
+      <div className="w-full max-w-[480px] sm:max-w-[540px] md:max-w-[660px] z-10 transition-all duration-300">
         <RegisterForm />
       </div>
 

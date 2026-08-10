@@ -168,18 +168,24 @@ interface CardProps {
 }
 
 export function Card({ title, children, actions, style, className }: CardProps) {
-  return (
-    <div
-      className={`card ${className || ''}`.trim()}
-      style={{
-        backgroundColor: 'var(--card-bg)',
-        border: '1px solid var(--card-border)',
-        borderRadius: 'var(--radius-lg)',
-        padding: 'var(--spacing-24)',
-        boxShadow: 'var(--shadow-lg)',
+  const defaultStyles: React.CSSProperties = className
+    ? {}
+    : {
+        backgroundColor: 'var(--card-bg, #111827)',
+        border: '1px solid var(--card-border, #1e293b)',
+        borderRadius: 'var(--radius-lg, 16px)',
+        padding: '1.5rem',
+        boxShadow: 'var(--shadow-lg, 0 4px 20px rgba(0,0,0,0.2))',
         display: 'flex',
         flexDirection: 'column',
-        gap: 'var(--spacing-16)',
+        gap: '1rem',
+      };
+
+  return (
+    <div
+      className={className || 'card'}
+      style={{
+        ...defaultStyles,
         ...style,
       }}
     >
@@ -189,20 +195,20 @@ export function Card({ title, children, actions, style, className }: CardProps) 
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            borderBottom: '1px solid var(--card-border)',
-            paddingBottom: 'var(--spacing-12)',
+            borderBottom: '1px solid var(--card-border, #1e293b)',
+            paddingBottom: '0.75rem',
           }}
         >
           {typeof title === 'string' ? (
             <h3
-              style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main)' }}
+              style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main, #f8fafc)' }}
             >
               {title}
             </h3>
           ) : (
             title
           )}
-          {actions && <div style={{ display: 'flex', gap: 'var(--spacing-8)' }}>{actions}</div>}
+          {actions && <div style={{ display: 'flex', gap: '0.5rem' }}>{actions}</div>}
         </div>
       )}
       <div style={{ flex: 1 }}>{children}</div>

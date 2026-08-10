@@ -493,7 +493,7 @@ export function RegisterForm() {
             </div>
 
             {/* Programme Options Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-95 overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[380px] overflow-y-auto pr-1">
               {PROGRAMME_OPTIONS.map((prog) => {
                 const isSelected = selectedProgramme === prog.id;
                 return (
