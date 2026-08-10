@@ -261,7 +261,7 @@ export function RegisterForm() {
                     autoComplete="given-name"
                     placeholder="First name"
                     {...register('firstName')}
-                    className={`w-full pl-10 pr-4 h-[52px] rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
                       errors.firstName
                         ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
                         : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
@@ -289,7 +289,7 @@ export function RegisterForm() {
                     autoComplete="family-name"
                     placeholder="Last name"
                     {...register('lastName')}
-                    className={`w-full pl-10 pr-4 h-[52px] rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
                       errors.lastName
                         ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
                         : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
@@ -319,7 +319,7 @@ export function RegisterForm() {
                   autoComplete="email"
                   placeholder="name@domain.com"
                   {...register('email')}
-                  className={`w-full pl-10 pr-4 h-[52px] rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                  className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
                     errors.email
                       ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
                       : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
@@ -349,7 +349,7 @@ export function RegisterForm() {
                     autoComplete="tel"
                     placeholder="+44 7000 000000"
                     {...register('phone')}
-                    className={`w-full pl-10 pr-4 h-[52px] rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
                       errors.phone
                         ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
                         : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
@@ -378,7 +378,7 @@ export function RegisterForm() {
                   <select
                     id="country-select"
                     {...register('country')}
-                    className={`w-full pl-10 pr-8 h-[52px] rounded-xl bg-slate-900/80 border text-slate-100 text-sm outline-none transition-all appearance-none ${
+                    className={`w-full pl-10 pr-8 h-13 rounded-xl bg-slate-900/80 border text-slate-100 text-sm outline-none transition-all appearance-none ${
                       errors.country
                         ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
                         : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
@@ -422,7 +422,7 @@ export function RegisterForm() {
                     autoComplete="new-password"
                     placeholder="At least 8 chars"
                     {...register('password')}
-                    className={`w-full pl-10 pr-4 h-[52px] rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
                       errors.password
                         ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
                         : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
@@ -450,7 +450,7 @@ export function RegisterForm() {
                     autoComplete="new-password"
                     placeholder="Re-enter password"
                     {...register('confirmPassword')}
-                    className={`w-full pl-10 pr-4 h-[52px] rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
                       errors.confirmPassword
                         ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
                         : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
@@ -470,7 +470,7 @@ export function RegisterForm() {
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="w-full h-[56px] bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="w-full h-14 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 <span>Continue</span>
                 <ArrowRight size={20} />
@@ -493,7 +493,7 @@ export function RegisterForm() {
             </div>
 
             {/* Programme Options Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-[380px] overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-95 overflow-y-auto pr-1">
               {PROGRAMME_OPTIONS.map((prog) => {
                 const isSelected = selectedProgramme === prog.id;
                 return (
@@ -541,7 +541,7 @@ export function RegisterForm() {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="flex-1 h-[56px] bg-slate-800/90 hover:bg-slate-800 text-slate-200 font-bold text-sm rounded-[14px] border border-slate-700/80 transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="flex-1 h-14 bg-slate-800/90 hover:bg-slate-800 text-slate-200 font-bold text-sm rounded-[14px] border border-slate-700/80 transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 <ArrowLeft size={18} />
                 <span>Back</span>
@@ -551,7 +551,7 @@ export function RegisterForm() {
                 type="button"
                 disabled={isLoading || isSuccess}
                 onClick={handleCompleteRegistration}
-                className="flex-[2] h-[56px] bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-sm sm:text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="flex-2 h-14 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-sm sm:text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
               >
                 <span>{isLoading ? 'Creating Account...' : 'Complete & Start Assessment'}</span>
                 <CheckCircle2 size={20} />
