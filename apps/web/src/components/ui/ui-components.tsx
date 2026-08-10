@@ -80,7 +80,7 @@ export function ProgressBar({ value, max = 100 }: { value: number; max?: number 
 
 export function Button({
   variant = 'primary',
-  size = 'md',
+  size: _size = 'md',
   children,
   style,
   ...props
@@ -164,12 +164,13 @@ interface CardProps {
   children: React.ReactNode;
   actions?: React.ReactNode;
   style?: React.CSSProperties;
+  className?: string;
 }
 
-export function Card({ title, children, actions, style }: CardProps) {
+export function Card({ title, children, actions, style, className }: CardProps) {
   return (
     <div
-      className="card"
+      className={`card ${className || ''}`.trim()}
       style={{
         backgroundColor: 'var(--card-bg)',
         border: '1px solid var(--card-border)',

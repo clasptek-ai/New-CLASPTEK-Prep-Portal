@@ -7,9 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../hooks/useAuth';
 import { Input, Button, Card } from '../../../components/ui/ui-components';
-import { LogoBadge } from '../../../shared/ui/logo/LogoBadge';
 import { OnboardingState } from '@/features/onboarding/types/onboarding-state';
-import { CheckCircle2, ArrowRight, ArrowLeft, Sparkles, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
 
 const registerStep1Schema = z
   .object({
@@ -162,96 +161,48 @@ export function RegisterForm() {
   };
 
   return (
-    <Card
-      style={{
-        width: '100%',
-        maxWidth: '540px',
-        margin: '0 auto',
-        backgroundColor: '#111827',
-        border: '1px solid rgba(59, 130, 246, 0.25)',
-        borderRadius: '20px',
-        padding: '2rem',
-        boxSizing: 'border-box',
-        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)',
-      }}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {/* Step Indicator Bar */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            paddingBottom: '1rem',
-          }}
-        >
-          <LogoBadge size="sm" />
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 800,
-                color: step === 1 ? '#38bdf8' : '#34d399',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                padding: '0.2rem 0.6rem',
-                borderRadius: '6px',
-              }}
-            >
-              Step {step} of 2: {step === 1 ? 'Personal Profile' : 'Target Programme'}
-            </span>
+    <Card className="w-full bg-[#0d1322] border border-slate-800/80 rounded-2xl p-5 sm:p-8 shadow-2xl shadow-black/60 backdrop-blur-sm">
+      <div className="flex flex-col gap-6">
+        {/* Header & Step Progress Indicator Bar */}
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight m-0">
+              {step === 1 ? 'Candidate Registration' : 'Target Examination'}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1 mb-0">
+              Registration takes less than 2 minutes.
+            </p>
           </div>
+          <span className="shrink-0 text-xs font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-full uppercase tracking-wider">
+            Step {step} of 2
+          </span>
         </div>
 
         {(error || submitError) && (
           <div
             role="alert"
-            style={{
-              padding: '0.85rem 1rem',
-              backgroundColor: 'rgba(239, 68, 68, 0.12)',
-              border: '1px solid rgba(239, 68, 68, 0.35)',
-              borderRadius: '10px',
-              color: '#f87171',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-            }}
+            className="p-3.5 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs sm:text-sm font-medium flex items-start gap-2"
           >
-            ⚠️{' '}
-            {submitError ||
-              (typeof error === 'object' ? error?.message || JSON.stringify(error) : String(error))}
+            <span className="shrink-0">⚠️</span>
+            <span>
+              {submitError ||
+                (typeof error === 'object'
+                  ? error?.message || JSON.stringify(error)
+                  : String(error))}
+            </span>
           </div>
         )}
 
         {isSuccess && (
-          <div
-            style={{
-              padding: '1rem',
-              backgroundColor: 'rgba(16, 185, 129, 0.15)',
-              border: '1px solid rgba(16, 185, 129, 0.35)',
-              borderRadius: '10px',
-              color: '#34d399',
-              fontSize: '0.9rem',
-              textAlign: 'center',
-              fontWeight: 700,
-            }}
-          >
+          <div className="p-4 bg-emerald-500/15 border border-emerald-500/30 rounded-xl text-emerald-400 text-sm font-semibold text-center animate-in fade-in">
             🎉 Account created successfully! Launching your placement gateway...
           </div>
         )}
 
         {step === 1 ? (
           /* STEP 1: CREATE YOUR ACCOUNT */
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: '#ffffff' }}>
-                Candidate Registration
-              </h2>
-              <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
-                Registration takes less than 2 minutes. Fill in your details below.
-              </p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+          <div className="flex flex-col gap-4 sm:gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="First Name"
                 autoComplete="given-name"
@@ -277,7 +228,7 @@ export function RegisterForm() {
               {...register('email')}
             />
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Phone Number"
                 autoComplete="tel"
@@ -288,29 +239,14 @@ export function RegisterForm() {
               <div>
                 <label
                   htmlFor="country-select"
-                  style={{
-                    display: 'block',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    color: '#cbd5e1',
-                    marginBottom: '0.35rem',
-                  }}
+                  className="block text-xs sm:text-sm font-medium text-slate-300 mb-1.5"
                 >
                   Country
                 </label>
                 <select
                   id="country-select"
                   {...register('country')}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#161e2e',
-                    border: errors.country ? '1px solid #ef4444' : '1px solid #1e293b',
-                    color: '#f8fafc',
-                    fontSize: '0.875rem',
-                    outline: 'none',
-                  }}
+                  className="w-full px-3.5 py-2.5 rounded-lg bg-[#161e2e] border border-slate-700 text-slate-100 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 >
                   <option value="">Select your country</option>
                   <option value="United Kingdom">United Kingdom</option>
@@ -323,21 +259,12 @@ export function RegisterForm() {
                   <option value="Other">Other Country</option>
                 </select>
                 {errors.country?.message && (
-                  <span
-                    style={{
-                      fontSize: '0.75rem',
-                      color: '#ef4444',
-                      marginTop: '0.25rem',
-                      display: 'block',
-                    }}
-                  >
-                    {errors.country.message}
-                  </span>
+                  <span className="text-xs text-red-400 mt-1 block">{errors.country.message}</span>
                 )}
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.85rem' }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Password"
                 type="password"
@@ -359,19 +286,7 @@ export function RegisterForm() {
             <Button
               type="button"
               onClick={handleNextStep}
-              style={{
-                marginTop: '0.5rem',
-                width: '100%',
-                padding: '0.85rem',
-                backgroundColor: '#2563eb',
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem',
-                borderRadius: '10px',
-              }}
+              className="mt-2 w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm sm:text-base rounded-xl transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2"
             >
               <span>Continue to Programme Selection</span>
               <ArrowRight size={18} />
@@ -379,95 +294,54 @@ export function RegisterForm() {
           </div>
         ) : (
           /* STEP 2: CHOOSE YOUR PROGRAMME */
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <div className="flex flex-col gap-5">
             <div>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: '#ffffff' }}>
-                Select Examination Target
-              </h2>
-              <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#94a3b8' }}>
-                Your diagnostic assessment will be tailored to this target examination.
+              <p className="text-xs sm:text-sm text-slate-400 m-0">
+                Select your target examination. Diagnostic assessment will be tailored to this
+                programme.
               </p>
             </div>
 
             {/* Programme Options Grid */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                gap: '0.75rem',
-                maxHeight: '360px',
-                overflowY: 'auto',
-              }}
-            >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[360px] overflow-y-auto pr-1">
               {PROGRAMME_OPTIONS.map((prog) => {
                 const isSelected = selectedProgramme === prog.id;
                 return (
                   <div
                     key={prog.id}
                     onClick={() => setSelectedProgramme(prog.id)}
-                    style={{
-                      padding: '1rem',
-                      borderRadius: '12px',
-                      backgroundColor: isSelected ? 'rgba(37, 99, 235, 0.15)' : '#161e2e',
-                      border: isSelected
-                        ? '2px solid #2563eb'
-                        : '1px solid rgba(255, 255, 255, 0.08)',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      position: 'relative',
-                    }}
+                    className={`p-3.5 rounded-xl cursor-pointer transition-all border ${
+                      isSelected
+                        ? 'bg-blue-600/15 border-blue-500 shadow-md shadow-blue-500/20'
+                        : 'bg-[#161e2e] border-slate-800 hover:border-slate-700'
+                    }`}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '0.4rem',
-                      }}
-                    >
+                    <div className="flex items-center justify-between mb-1.5">
                       <span
-                        style={{
-                          fontSize: '0.7rem',
-                          fontWeight: 700,
-                          color: isSelected ? '#3b82f6' : '#94a3b8',
-                          backgroundColor: isSelected
-                            ? 'rgba(59, 130, 246, 0.2)'
-                            : 'rgba(255, 255, 255, 0.05)',
-                          padding: '0.15rem 0.5rem',
-                          borderRadius: '4px',
-                        }}
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${
+                          isSelected
+                            ? 'text-blue-400 bg-blue-500/20'
+                            : 'text-slate-400 bg-slate-800'
+                        }`}
                       >
                         {prog.badge}
                       </span>
-                      {isSelected && <CheckCircle2 size={16} color="#3b82f6" />}
+                      {isSelected && <CheckCircle2 size={16} className="text-blue-500" />}
                     </div>
 
-                    <h4
-                      style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#ffffff' }}
-                    >
-                      {prog.name}
-                    </h4>
-                    <p style={{ margin: '0.2rem 0 0 0', fontSize: '0.75rem', color: '#94a3b8' }}>
-                      {prog.category}
-                    </p>
+                    <h4 className="m-0 text-sm font-bold text-white">{prog.name}</h4>
+                    <p className="m-0 text-xs text-slate-400 mt-0.5">{prog.category}</p>
                   </div>
                 );
               })}
             </div>
 
-            <div style={{ display: 'flex', gap: '0.85rem', marginTop: '0.5rem' }}>
+            <div className="flex gap-3 mt-2">
               <Button
                 type="button"
                 variant="secondary"
                 onClick={() => setStep(1)}
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.4rem',
-                  borderRadius: '10px',
-                }}
+                className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm rounded-xl transition-colors flex items-center justify-center gap-1.5"
               >
                 <ArrowLeft size={16} />
                 <span>Back</span>
@@ -476,18 +350,7 @@ export function RegisterForm() {
                 type="button"
                 disabled={isLoading || isSuccess}
                 onClick={handleCompleteRegistration}
-                style={{
-                  flex: 2,
-                  padding: '0.85rem',
-                  backgroundColor: '#2563eb',
-                  fontWeight: 700,
-                  fontSize: '0.95rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.5rem',
-                  borderRadius: '10px',
-                }}
+                className="flex-[2] py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2"
               >
                 <span>{isLoading ? 'Creating Profile...' : 'Complete & Start Assessment'}</span>
                 <CheckCircle2 size={18} />
