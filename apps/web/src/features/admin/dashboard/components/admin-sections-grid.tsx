@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Card } from '../../../../shared/ui/card/Card';
 import { CheckCircle2 } from 'lucide-react';
 import { adminDashboardService } from '@/services/admin/dashboard.service';
-import { InfrastructureHealthDto } from '@/services/admin/analytics.service';
+import { InfrastructureHealthDto } from '@/services/admin/analytics.dto';
 
 export interface AdminSectionsGridProps {
   notifications?: Array<{ id: string; title: string; message: string; severity: string }>;

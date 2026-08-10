@@ -8,7 +8,7 @@ import {
   PracticeAnalyticsDto,
   DiagnosticAnalyticsDto,
   MockAnalyticsDto,
-} from './analytics.service';
+} from './analytics.dto';
 
 export interface AdminDashboardAggregatedData {
   stats: {

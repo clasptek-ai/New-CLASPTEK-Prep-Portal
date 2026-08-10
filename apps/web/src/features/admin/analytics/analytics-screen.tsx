@@ -9,7 +9,7 @@ import {
   StudentAnalyticsDto,
   QuestionBankMetricsDto,
   PracticeAnalyticsDto,
-} from '../../../services/admin/analytics.service';
+} from '../../../services/admin/analytics.dto';
 import { Users, TrendingUp, Award, BookOpen } from 'lucide-react';
 
 export function AnalyticsScreen() {
