@@ -5,6 +5,15 @@ import { env } from '../shared/config/env.config';
 let browserClient: SupabaseClient | null = null;
 
 /**
+ * Resets the singleton Supabase Browser Client.
+ * Must be invoked on logout, session expiration, or 401 token refresh failures
+ * to prevent stale in-memory token state from triggering refresh loops.
+ */
+export function resetBrowserClientSingleton(): void {
+  browserClient = null;
+}
+
+/**
  * Creates or retrieves the singleton Supabase Browser Client with full session persistence options:
  * - persistSession = true
  * - autoRefreshToken = true

@@ -1,22 +1,44 @@
 export interface DashboardMetricsDto {
+  // Row 1 KPIs
   totalStudents: number;
+  activeProgrammes: number;
   publishedQuestions: number;
+  readingPassages: number;
   practiceSessionsToday: number;
-  diagnosticsCompleted: number;
+  diagnosticsCompletedToday: number;
+
+  // Row 2 KPIs
   mockExamsCompleted: number;
   averageReadiness: number;
-  atRiskStudentsCount: number;
   pendingReviewsCount: number;
+  activeAssessments: number;
+  studentRegistrationsToday: number;
+  totalQuestionBankAssets: number;
+
+  // Executive Charts & Analytics
+  registrationTrend: Array<{ month: string; count: number }>;
+  practiceActivityTrend: Array<{ day: string; count: number }>;
+  readinessDistribution: { high: number; medium: number; low: number };
+  programmeDistribution: Array<{ name: string; count: number }>;
+  questionDistribution: {
+    byExam: Array<{ name: string; count: number }>;
+    bySkill: Array<{ name: string; count: number }>;
+    byDifficulty: Array<{ name: string; count: number }>;
+  };
+
+  // Institutional Activity & Operational Tasks
   recentActivities: Array<{
     id: string;
     action: string;
     user: string;
     timestamp: string;
+    type?: string;
   }>;
   pendingTasks: Array<{
     label: string;
     status: string;
     color: string;
+    actionUrl?: string;
   }>;
 }
 

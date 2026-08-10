@@ -1,15 +1,32 @@
+export const dynamic = 'force-dynamic';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedSession } from '@/lib/auth-util';
 import { AdminAnalyticsService } from '@/services/admin/analytics.service';
 
+/** Admin roles that are permitted to access institutional analytics */
+const ADMIN_ROLES = new Set([
+  'ADMINISTRATOR',
+  'ADMIN',
+  'SUPER_ADMINISTRATOR',
+  'SYSTEM_ADMIN',
+  'SYSTEM_ADMINISTRATOR',
+]);
+
 export async function GET(req: NextRequest) {
   try {
     const session = await getAuthenticatedSession(req);
-    if (
-      !session ||
-      (!session.roles.includes('ADMINISTRATOR') && !session.roles.includes('SYSTEM_ADMIN'))
-    ) {
-      return NextResponse.json({ error: 'Unauthorized admin access' }, { status: 401 });
+
+    if (!session) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const hasAdminRole = session.roles.some((r) => ADMIN_ROLES.has(r.toUpperCase()));
+    if (!hasAdminRole) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Admin role required', roles: session.roles },
+        { status: 401 }
+      );
     }
 
     const type = req.nextUrl.searchParams.get('type') || 'dashboard';

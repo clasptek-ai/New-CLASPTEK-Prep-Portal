@@ -184,7 +184,8 @@ export class PostgresCanonicalPracticeRepository {
       [questionVersionId]
     );
 
-    const explanation = expRes.rows[0]?.explanation || 'Option A is the correct answer based on question key.';
+    const explanation =
+      expRes.rows[0]?.explanation || 'Option A is the correct answer based on question key.';
 
     if (res.rows.length === 0) {
       return { isCorrect: userOptionCode === 'A' || userOptionCode === 'B', explanation };
@@ -260,11 +261,14 @@ export class PostgresCanonicalPracticeRepository {
     }));
   }
 
-  public async getAdminSessions(filters?: { examType?: string; sectionCode?: string }): Promise<any[]> {
+  public async getAdminSessions(filters?: {
+    examType?: string;
+    sectionCode?: string;
+  }): Promise<any[]> {
     let query = `
       SELECT ps.*, u.email as student_email 
       FROM public.practice_sessions ps
-      LEFT JOIN public.users u ON u.id = ps.student_id
+      LEFT JOIN auth.users u ON u.id = ps.student_id
       WHERE ps.deleted_at IS NULL
     `;
     const params: any[] = [];

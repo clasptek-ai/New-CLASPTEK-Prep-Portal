@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { UserSession } from '../features/auth/types/auth.types';
-import { getSupabaseBrowserClient } from '../lib/supabase-browser';
+import { getSupabaseBrowserClient, resetBrowserClientSingleton } from '../lib/supabase-browser';
 
 export interface AuthContextType {
   session: UserSession | null;
@@ -31,6 +31,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [roles, setRoles] = useState<string[]>(globalSessionCache?.roles || []);
   const [isLoading, setIsLoading] = useState(!globalSessionCache);
 
+  const clearSessionState = useCallback(() => {
+    setSession(null);
+    setUser(null);
+    setRoles([]);
+    setIsLoading(false);
+    globalSessionCache = null;
+    resetBrowserClientSingleton();
+  }, []);
+
   const fetchSession = useCallback(async () => {
     // Deduplicate concurrent fetch requests
     if (pendingSessionFetch) {
@@ -39,6 +48,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     pendingSessionFetch = (async () => {
       try {
+        // 1. First check local browser session using Supabase Browser Client
+        let sbSession = null;
+        try {
+          const supabase = getSupabaseBrowserClient();
+          const { data } = await supabase.auth.getSession();
+          sbSession = data.session;
+        } catch (err) {
+          console.warn('[AUTH_LIFECYCLE] Browser session check failed:', err);
+        }
+
+        // 2. If NO session exists in browser storage/client, DO NOT call /api/v1/auth/session!
+        if (!sbSession) {
+          clearSessionState();
+          return;
+        }
+
+        // 3. Session exists in browser -> validate on server and load profile/roles DTO
         const res = await fetch('/api/v1/auth/session', { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
@@ -81,16 +107,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(fullUser);
           setRoles(rawRoles);
         } else {
-          setSession(null);
-          setUser(null);
-          setRoles([]);
-          globalSessionCache = null;
+          // Server returned 401/403 -> clear session cleanly
+          clearSessionState();
         }
       } catch (err) {
-        setSession(null);
-        setUser(null);
-        setRoles([]);
-        globalSessionCache = null;
+        console.error('[AUTH_LIFECYCLE] Session fetch exception:', err);
+        clearSessionState();
       } finally {
         setIsLoading(false);
         pendingSessionFetch = null;
@@ -98,10 +120,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })();
 
     return pendingSessionFetch;
-  }, []);
+  }, [clearSessionState]);
 
   useEffect(() => {
-    // Fetch current session on mount
+    // Initial session check on mount
     fetchSession();
 
     // Listen to Supabase auth events (login, logout, token refresh, recovery)
@@ -115,12 +137,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           event === 'PASSWORD_RECOVERY'
         ) {
           fetchSession();
-        } else if (event === 'SIGNED_OUT') {
-          setSession(null);
-          setUser(null);
-          setRoles([]);
-          setIsLoading(false);
-          globalSessionCache = null;
+        } else if (
+          event === 'SIGNED_OUT' ||
+          event === ('TOKEN_REFRESH_FAILED' as any) ||
+          event === ('USER_DELETED' as any)
+        ) {
+          console.warn(`[AUTH_LIFECYCLE] Auth event ${event} -> clearing session state.`);
+          clearSessionState();
         }
       });
 
@@ -130,7 +153,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Browser client listener fallback
     }
-  }, [fetchSession]);
+  }, [fetchSession, clearSessionState]);
 
   const contextValue = useMemo(
     () => ({

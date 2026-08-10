@@ -70,38 +70,40 @@ export async function getAuthenticatedSession(
     } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
 
     if (error || !user) {
-      // Check for development / mock auth fallback headers
-      const headerStudentId = req.headers.get('x-student-id');
-      const headerRole = req.headers.get('x-user-role') || 'STUDENT';
-      if (
-        headerStudentId &&
-        (process.env.NEXT_PUBLIC_DEV_MOCK_AUTH === 'true' ||
-          process.env.NODE_ENV === 'test' ||
-          process.env.NODE_ENV === 'development')
-      ) {
-        return {
-          userId: headerStudentId,
-          profileId: 'profile-' + headerStudentId,
-          roles: [headerRole],
-        };
-      }
       return null;
     }
 
-    // Resolve roles from DB
+    // 4. Resolve roles — priority order:
+    //    a) Custom role DB table (most authoritative)
+    //    b) Supabase app_metadata.role (set by admin via Supabase dashboard or server-side)
+    //    c) Supabase user_metadata.role (set during registration)
+    //    d) Default to STUDENT (never guess ADMINISTRATOR)
     let roleNames: string[] = [];
+
     try {
       const authCtx = await getAuthContext();
       const userRoles = await authCtx.userRoleRepo.findByUserId(user.id);
       const roles = await Promise.all(userRoles.map((ur) => authCtx.roleRepo.findById(ur.roleId)));
       roleNames = roles.filter((r): r is any => r !== null).map((r) => r.name);
     } catch {
-      // Fallback role heuristics in case DB is offline/uninitialized in local dev
-      if (user.email?.includes('admin')) {
-        roleNames = ['ADMINISTRATOR'];
-      } else if (user.email?.includes('instructor')) {
-        roleNames = ['INSTRUCTOR'];
+      // DB lookup failed — fall back to JWT claims
+      roleNames = [];
+    }
+
+    // If DB lookup returned nothing, check Supabase JWT metadata claims
+    if (roleNames.length === 0) {
+      // app_metadata is set server-side and is trusted
+      const appRole = user.app_metadata?.role || user.app_metadata?.user_role;
+      // user_metadata is set by the client during sign-up
+      const userRole = user.user_metadata?.role || user.user_metadata?.user_role;
+
+      const claimedRole = appRole || userRole;
+
+      if (claimedRole) {
+        // Normalize role name to uppercase
+        roleNames = [String(claimedRole).toUpperCase()];
       } else {
+        // No role found anywhere — default to STUDENT (never elevate privileges)
         roleNames = ['STUDENT'];
       }
     }
@@ -109,21 +111,10 @@ export async function getAuthenticatedSession(
     return {
       userId: user.id,
       profileId: 'profile-' + user.id,
-      roles: roleNames.length > 0 ? roleNames : ['STUDENT'],
+      roles: roleNames,
     };
   } catch (err: any) {
     console.error('getAuthenticatedSession error:', err);
-    if (process.env.NEXT_PUBLIC_DEV_MOCK_AUTH === 'true' || process.env.NODE_ENV === 'test') {
-      const headerStudentId = req.headers.get('x-student-id');
-      const headerRole = req.headers.get('x-user-role') || 'STUDENT';
-      if (headerStudentId) {
-        return {
-          userId: headerStudentId,
-          profileId: 'profile-' + headerStudentId,
-          roles: [headerRole],
-        };
-      }
-    }
     return null;
   }
 }

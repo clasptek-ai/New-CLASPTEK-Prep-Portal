@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Upload, Layers, Award, Play, Bell, Users, Plus } from 'lucide-react';
+import { Upload, Layers, Award, Play, Bell, Users, BookOpen, BarChart2 } from 'lucide-react';
 
 export const QuickActionsBar: React.FC = () => {
   const router = useRouter();
@@ -15,7 +15,7 @@ export const QuickActionsBar: React.FC = () => {
       onClick: () => router.push('/admin/question-bank/import'),
     },
     {
-      label: '+ Create Practice Session',
+      label: '+ Create Practice',
       sub: 'Configure practice templates',
       icon: <Layers size={18} color="#38bdf8" />,
       onClick: () => router.push('/admin/practice-sessions'),
@@ -39,34 +39,55 @@ export const QuickActionsBar: React.FC = () => {
       onClick: () => router.push('/admin/notifications'),
     },
     {
-      label: '+ View Students',
+      label: '+ Manage Students',
       sub: 'User directory management',
       icon: <Users size={18} color="#38bdf8" />,
       onClick: () => router.push('/admin/users'),
+    },
+    {
+      label: '+ Create Programme',
+      sub: 'Setup academic exam track',
+      icon: <BookOpen size={18} color="#38bdf8" />,
+      onClick: () => router.push('/admin/programmes'),
+    },
+    {
+      label: 'View Reports',
+      sub: 'Institutional analytics DTO',
+      icon: <BarChart2 size={18} color="#38bdf8" />,
+      onClick: () => router.push('/admin/reports'),
     },
   ];
 
   return (
     <div
       style={{
-        padding: '1.5rem',
+        padding: '1.25rem 1.5rem',
         borderRadius: '16px',
         backgroundColor: '#151d30',
         border: '1px solid rgba(255, 255, 255, 0.07)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1rem',
+        gap: '0.85rem',
+        boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
       }}
     >
-      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
-        Quick Actions
-      </h3>
+      <div
+        style={{
+          fontSize: '0.75rem',
+          fontWeight: 800,
+          color: '#64748b',
+          textTransform: 'uppercase',
+          letterSpacing: '0.06em',
+        }}
+      >
+        Quick Administrative Command Operations
+      </div>
 
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '0.85rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+          gap: '0.75rem',
         }}
       >
         {actions.map((act, idx) => (
@@ -74,7 +95,7 @@ export const QuickActionsBar: React.FC = () => {
             key={idx}
             onClick={act.onClick}
             style={{
-              padding: '0.9rem 1rem',
+              padding: '0.85rem 1rem',
               borderRadius: '12px',
               backgroundColor: '#0f172a',
               border: '1px solid rgba(255, 255, 255, 0.08)',
@@ -84,31 +105,57 @@ export const QuickActionsBar: React.FC = () => {
               gap: '0.75rem',
               textAlign: 'left',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
+              height: '64px',
+              boxSizing: 'border-box',
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = '#38bdf8';
               e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.08)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
               e.currentTarget.style.backgroundColor = '#0f172a';
+              e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
             <div
               style={{
-                padding: '0.5rem',
+                padding: '0.45rem',
                 borderRadius: '8px',
                 backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
               }}
             >
               {act.icon}
             </div>
-            <div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 700, color: '#ffffff' }}>
+            <div style={{ overflow: 'hidden' }}>
+              <div
+                style={{
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#ffffff',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {act.label}
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
+              <div
+                style={{
+                  fontSize: '0.725rem',
+                  color: '#94a3b8',
+                  marginTop: '1px',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {act.sub}
               </div>
             </div>

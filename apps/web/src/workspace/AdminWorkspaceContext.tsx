@@ -1,9 +1,12 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { adminDashboardService } from '../services/admin/dashboard.service';
+import { registerAuthErrorHandler } from '../services/api/client';
 import { getDeterministicId, getDeterministicName } from '../lib/mock-util';
 import { useAuthContext } from '../providers/AuthProvider';
+import { getSupabaseBrowserClient } from '../lib/supabase-browser';
 
 export interface AdminWorkspaceContextType {
   adminProfile: { id: string; name: string; role: string; email: string } | null;
@@ -25,6 +28,7 @@ export const AdminWorkspaceContext = createContext<AdminWorkspaceContextType | u
 
 export const AdminWorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user: authUser, roles: authRoles } = useAuthContext();
+  const router = useRouter();
   const [adminProfile, setAdminProfile] = useState<AdminWorkspaceContextType['adminProfile']>(null);
   const [pendingApprovals, setPendingApprovals] = useState(0);
   const [systemHealth, setSystemHealth] = useState<'HEALTHY' | 'WARNING' | 'CRITICAL'>('HEALTHY');
@@ -37,9 +41,26 @@ export const AdminWorkspaceProvider: React.FC<{ children: React.ReactNode }> = (
   const [configSnapshot, setConfigSnapshot] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // Register a global 401 handler: clear Supabase session and redirect to login.
+  // This fires at most once per 401 response across the entire admin portal.
+  useEffect(() => {
+    let redirected = false;
+    registerAuthErrorHandler(async () => {
+      if (redirected) return;
+      redirected = true;
+      try {
+        const supabase = getSupabaseBrowserClient();
+        await supabase.auth.signOut();
+      } catch {
+        // Best-effort sign-out
+      }
+      router.replace('/login?reason=session_expired');
+    });
+  }, [router]);
+
   const refreshContext = async () => {
     try {
-      const data = await adminDashboardService.getDashboardData();
+      const data = await adminDashboardService.getDashboardDataSafe();
 
       let storedName: string | null = null;
       if (typeof window !== 'undefined') {
@@ -71,7 +92,7 @@ export const AdminWorkspaceProvider: React.FC<{ children: React.ReactNode }> = (
       }
 
       setAdminProfile(profile);
-      setPendingApprovals(5);
+      setPendingApprovals(data.pendingTasks.length);
       setSystemHealth(data.stats.platformHealth);
       setUnreadNotificationsCount(data.notifications.length);
       setRecentActivities(data.recentActivity);

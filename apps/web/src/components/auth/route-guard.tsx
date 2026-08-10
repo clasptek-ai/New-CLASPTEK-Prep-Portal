@@ -65,7 +65,7 @@ export function RouteGuard({ allowedRoles, children }: RouteGuardProps) {
         return;
       }
 
-      // Check if session exists in Supabase browser client before redirecting
+      // Check if session exists in Supabase browser client before deciding action
       let currentSession: any = null;
       let accessToken: string | null = null;
       let refreshToken: string | null = null;
@@ -87,7 +87,28 @@ export function RouteGuard({ allowedRoles, children }: RouteGuardProps) {
         // Ignored
       }
 
-      // Attempt session refetch once to catch freshly set cookies
+      // If NO browser session exists at all, DO NOT call refetchSession()!
+      // Immediately redirect to /login to avoid triggering server getUser/refresh calls.
+      if (!currentSession) {
+        const currentUrl = typeof window !== 'undefined' ? window.location.href : pathname;
+        logAuthRedirectToLogin({
+          reason: `RouteGuard: Access denied on protected route ${pathname}. No active browser session.`,
+          currentUrl,
+          session: null,
+          accessToken: null,
+          refreshToken: null,
+          userId: user?.id || null,
+          authUserRepoId: null,
+        });
+
+        if (isMounted) {
+          setLoading(false);
+          router.push('/login');
+        }
+        return;
+      }
+
+      // Session exists in browser -> attempt refetch once for full server role verification
       await refetchSession();
 
       const currentUrl = typeof window !== 'undefined' ? window.location.href : pathname;
@@ -107,7 +128,7 @@ export function RouteGuard({ allowedRoles, children }: RouteGuardProps) {
         return;
       }
 
-      // Unauthenticated access -> Log detailed forensic evidence and redirect to /login
+      // If after refetch we are still unauthenticated -> redirect to /login
       logAuthRedirectToLogin({
         reason: `RouteGuard: Access denied on protected route ${pathname}. Session is unauthenticated.`,
         currentUrl,

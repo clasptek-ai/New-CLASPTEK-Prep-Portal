@@ -12,99 +12,167 @@ import {
 
 export interface AdminDashboardAggregatedData {
   stats: {
+    // Row 1
+    totalStudents: number;
     totalUsers: number;
     activeStudents: number;
-    activeInstructors: number;
-    programmesCount: number;
-    activeExamsCount: number;
-    assignmentsSubmitted: number;
-    overallReadinessAverage: number;
-    platformHealth: 'HEALTHY' | 'WARNING' | 'CRITICAL';
+    activeProgrammes: number;
     publishedQuestions: number;
+    readingPassages: number;
     practiceSessionsToday: number;
-    diagnosticsCompleted: number;
+    diagnosticsCompletedToday: number;
+
+    // Row 2
     mockExamsCompleted: number;
+    averageReadiness: number;
+    pendingReviewsCount: number;
+    activeAssessments: number;
+    studentRegistrationsToday: number;
+    totalQuestionBankAssets: number;
+
+    platformHealth: 'HEALTHY' | 'WARNING' | 'CRITICAL';
   };
-  recentActivity: { id: string; action: string; user: string; timestamp: string }[];
+  charts: {
+    registrationTrend: Array<{ month: string; count: number }>;
+    practiceActivityTrend: Array<{ day: string; count: number }>;
+    readinessDistribution: { high: number; medium: number; low: number };
+    programmeDistribution: Array<{ name: string; count: number }>;
+    questionDistribution: {
+      byExam: Array<{ name: string; count: number }>;
+      bySkill: Array<{ name: string; count: number }>;
+      byDifficulty: Array<{ name: string; count: number }>;
+    };
+  };
+  recentActivity: { id: string; action: string; user: string; timestamp: string; type?: string }[];
   notifications: { id: string; title: string; message: string; severity: string }[];
-  pendingTasks: { label: string; status: string; color: string }[];
+  pendingTasks: { label: string; status: string; color: string; actionUrl?: string }[];
 }
+
+/** Empty-state DTO — returned when data is genuinely unavailable (not mock data) */
+const EMPTY_DASHBOARD: AdminDashboardAggregatedData = {
+  stats: {
+    totalStudents: 0,
+    totalUsers: 0,
+    activeStudents: 0,
+    activeProgrammes: 0,
+    publishedQuestions: 0,
+    readingPassages: 0,
+    practiceSessionsToday: 0,
+    diagnosticsCompletedToday: 0,
+    mockExamsCompleted: 0,
+    averageReadiness: 0,
+    pendingReviewsCount: 0,
+    activeAssessments: 0,
+    studentRegistrationsToday: 0,
+    totalQuestionBankAssets: 0,
+    platformHealth: 'HEALTHY',
+  },
+  charts: {
+    registrationTrend: [],
+    practiceActivityTrend: [],
+    readinessDistribution: { high: 0, medium: 0, low: 0 },
+    programmeDistribution: [],
+    questionDistribution: { byExam: [], bySkill: [], byDifficulty: [] },
+  },
+  recentActivity: [],
+  notifications: [
+    {
+      id: 'sys-notify-1',
+      title: 'Institutional Engine Running',
+      message: 'Supabase PostgreSQL connected',
+      severity: 'INFO',
+    },
+  ],
+  pendingTasks: [],
+};
 
 export const adminDashboardService = {
   async getDashboardData(): Promise<AdminDashboardAggregatedData> {
-    try {
-      const res = await apiClient.get<DashboardMetricsDto>(
-        '/api/v1/admin/analytics?type=dashboard'
-      );
+    // Let APIError (401/403) propagate — callers must handle auth errors.
+    const res = await apiClient.get<DashboardMetricsDto>('/api/v1/admin/analytics?type=dashboard');
 
-      return {
-        stats: {
-          totalUsers: res.totalStudents,
-          activeStudents: res.totalStudents,
-          activeInstructors: 2,
-          programmesCount: 4,
-          activeExamsCount: res.mockExamsCompleted,
-          assignmentsSubmitted: res.practiceSessionsToday,
-          overallReadinessAverage: res.averageReadiness,
-          platformHealth: 'HEALTHY',
-          publishedQuestions: res.publishedQuestions,
-          practiceSessionsToday: res.practiceSessionsToday,
-          diagnosticsCompleted: res.diagnosticsCompleted,
-          mockExamsCompleted: res.mockExamsCompleted,
+    const totalStudents = res.totalStudents || 0;
+
+    return {
+      stats: {
+        totalStudents,
+        totalUsers: totalStudents,
+        activeStudents: totalStudents,
+        activeProgrammes: res.activeProgrammes || 0,
+        publishedQuestions: res.publishedQuestions || 0,
+        readingPassages: res.readingPassages || 0,
+        practiceSessionsToday: res.practiceSessionsToday || 0,
+        diagnosticsCompletedToday: res.diagnosticsCompletedToday || 0,
+        mockExamsCompleted: res.mockExamsCompleted || 0,
+        averageReadiness: res.averageReadiness || 0,
+        pendingReviewsCount: res.pendingReviewsCount || 0,
+        activeAssessments: res.activeAssessments || 0,
+        studentRegistrationsToday: res.studentRegistrationsToday || 0,
+        totalQuestionBankAssets: res.totalQuestionBankAssets || 0,
+        platformHealth: 'HEALTHY',
+      },
+      charts: {
+        registrationTrend: res.registrationTrend || [],
+        practiceActivityTrend: res.practiceActivityTrend || [],
+        readinessDistribution: res.readinessDistribution || { high: 0, medium: 0, low: 0 },
+        programmeDistribution: res.programmeDistribution || [],
+        questionDistribution: res.questionDistribution || {
+          byExam: [],
+          bySkill: [],
+          byDifficulty: [],
         },
-        recentActivity: res.recentActivities,
-        notifications: [],
-        pendingTasks: res.pendingTasks,
-      };
-    } catch {
-      return {
-        stats: {
-          totalUsers: 31,
-          activeStudents: 31,
-          activeInstructors: 2,
-          programmesCount: 4,
-          activeExamsCount: 0,
-          assignmentsSubmitted: 0,
-          overallReadinessAverage: 74.5,
-          platformHealth: 'HEALTHY',
-          publishedQuestions: 650,
-          practiceSessionsToday: 0,
-          diagnosticsCompleted: 26,
-          mockExamsCompleted: 0,
+      },
+      recentActivity: res.recentActivities || [],
+      notifications: [
+        {
+          id: 'sys-notify-1',
+          title: 'Institutional Analytics Engine Active',
+          message: 'Telemetry metrics derived from Supabase PostgreSQL',
+          severity: 'INFO',
         },
-        recentActivity: [
-          {
-            id: 'init-1',
-            action: 'Institutional Database Analytics Connected',
-            user: 'System Admin',
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          },
-        ],
-        notifications: [],
-        pendingTasks: [],
-      };
+      ],
+      pendingTasks: res.pendingTasks || [],
+    };
+  },
+
+  /** Graceful fallback on network error only — not on auth errors */
+  async getDashboardDataSafe(): Promise<AdminDashboardAggregatedData> {
+    try {
+      return await this.getDashboardData();
+    } catch (err: any) {
+      if (err?.status === 401 || err?.status === 403) throw err;
+      console.error('[adminDashboardService] getDashboardData failed:', err);
+      return EMPTY_DASHBOARD;
     }
   },
 
   async getHealth(): Promise<InfrastructureHealthDto> {
+    const res = await apiClient.get<InfrastructureHealthDto>('/api/v1/admin/analytics?type=health');
+    return res;
+  },
+
+  async getHealthSafe(): Promise<InfrastructureHealthDto> {
     try {
-      return await apiClient.get<InfrastructureHealthDto>('/api/v1/admin/analytics?type=health');
-    } catch {
+      return await this.getHealth();
+    } catch (err: any) {
+      if (err?.status === 401 || err?.status === 403) throw err;
       return {
         status: 'HEALTHY',
-        services: [
-          { name: 'Database Engine', status: 'Healthy', detail: 'Supabase Postgres Active' },
-          { name: 'Authentication API', status: 'Healthy', detail: 'Supabase Auth PKCE Active' },
-        ],
+        services: [],
         lastCheckedAt: new Date().toISOString(),
       };
     }
   },
 
   async getStudents(): Promise<StudentAnalyticsDto> {
+    return await apiClient.get<StudentAnalyticsDto>('/api/v1/admin/analytics?type=students');
+  },
+
+  async getStudentsSafe(): Promise<StudentAnalyticsDto> {
     try {
-      return await apiClient.get<StudentAnalyticsDto>('/api/v1/admin/analytics?type=students');
-    } catch {
+      return await this.getStudents();
+    } catch (err: any) {
+      if (err?.status === 401 || err?.status === 403) throw err;
       return {
         totalStudents: 0,
         activeStudents: 0,
@@ -117,27 +185,33 @@ export const adminDashboardService = {
   },
 
   async getQuestionBankMetrics(): Promise<QuestionBankMetricsDto> {
+    return await apiClient.get<QuestionBankMetricsDto>(
+      '/api/v1/admin/analytics?type=question-bank'
+    );
+  },
+
+  async getQuestionBankMetricsSafe(): Promise<QuestionBankMetricsDto> {
     try {
-      return await apiClient.get<QuestionBankMetricsDto>(
-        '/api/v1/admin/analytics?type=question-bank'
-      );
-    } catch {
-      return { total: 650, draft: 0, published: 650, archived: 0, approved: 650, underReview: 0 };
+      return await this.getQuestionBankMetrics();
+    } catch (err: any) {
+      if (err?.status === 401 || err?.status === 403) throw err;
+      return { total: 0, draft: 0, published: 0, archived: 0, approved: 0, underReview: 0 };
     }
   },
 
   async getProgrammes(): Promise<ProgrammeAnalyticsDto> {
-    try {
-      return await apiClient.get<ProgrammeAnalyticsDto>('/api/v1/admin/analytics?type=programmes');
-    } catch {
-      return { programmes: [] };
-    }
+    return await apiClient.get<ProgrammeAnalyticsDto>('/api/v1/admin/analytics?type=programmes');
   },
 
   async getPractice(): Promise<PracticeAnalyticsDto> {
+    return await apiClient.get<PracticeAnalyticsDto>('/api/v1/admin/analytics?type=practice');
+  },
+
+  async getPracticeSafe(): Promise<PracticeAnalyticsDto> {
     try {
-      return await apiClient.get<PracticeAnalyticsDto>('/api/v1/admin/analytics?type=practice');
-    } catch {
+      return await this.getPractice();
+    } catch (err: any) {
+      if (err?.status === 401 || err?.status === 403) throw err;
       return {
         totalSessions: 0,
         completedSessions: 0,
@@ -152,34 +226,10 @@ export const adminDashboardService = {
   },
 
   async getDiagnostic(): Promise<DiagnosticAnalyticsDto> {
-    try {
-      return await apiClient.get<DiagnosticAnalyticsDto>('/api/v1/admin/analytics?type=diagnostic');
-    } catch {
-      return {
-        totalAttempts: 26,
-        completionRate: 100,
-        averageScore: 78,
-        averageDurationMinutes: 45,
-        averageBand: 7.5,
-        passRate: 90,
-        topWeakSkill: 'Writing Task 2',
-        topStrongSkill: 'Listening Section 1',
-      };
-    }
+    return await apiClient.get<DiagnosticAnalyticsDto>('/api/v1/admin/analytics?type=diagnostic');
   },
 
   async getMock(): Promise<MockAnalyticsDto> {
-    try {
-      return await apiClient.get<MockAnalyticsDto>('/api/v1/admin/analytics?type=mock');
-    } catch {
-      return {
-        registeredCandidates: 0,
-        completedMocks: 0,
-        averageScore: 0,
-        averageTimeMinutes: 0,
-        completionPercentage: 0,
-        bandDistribution: {},
-      };
-    }
+    return await apiClient.get<MockAnalyticsDto>('/api/v1/admin/analytics?type=mock');
   },
 };

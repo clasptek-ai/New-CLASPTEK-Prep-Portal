@@ -4,11 +4,27 @@ import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 export interface RequestOptions extends RequestInit {
   retries?: number;
+  /**
+   * If true, this request will NOT be retried or trigger an auth redirect on 401/403.
+   * Used internally to avoid infinite loops.
+   */
+  skipAuthRetry?: boolean;
+}
+
+type AuthErrorHandler = () => void;
+let _authErrorHandler: AuthErrorHandler | null = null;
+
+/**
+ * Register a global handler to be called when any API request receives a 401.
+ * The handler should clear the session and redirect to /login.
+ */
+export function registerAuthErrorHandler(handler: AuthErrorHandler) {
+  _authErrorHandler = handler;
 }
 
 export const apiClient = {
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-    const { retries = 2, ...fetchOptions } = options;
+    const { retries = 2, skipAuthRetry = false, ...fetchOptions } = options;
 
     const reqHeaders = new Headers(fetchOptions.headers || {});
     if (!reqHeaders.has('Content-Type')) {
@@ -39,10 +55,15 @@ export const apiClient = {
       }
     }
 
+    const targetUrl =
+      typeof window === 'undefined' && path.startsWith('/')
+        ? `${process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}${path}`
+        : path;
+
     let attempt = 0;
     while (attempt <= retries) {
       try {
-        const response = await fetch(path, config);
+        const response = await fetch(targetUrl, config);
 
         // Apply response interceptors
         let interceptedResponse = response;
@@ -59,6 +80,25 @@ export const apiClient = {
           } catch {
             // No json body
           }
+
+          // On 401 Unauthorized — do NOT retry. Clear session and redirect to login.
+          if (interceptedResponse.status === 401 || interceptedResponse.status === 403) {
+            const authError = new APIError(
+              interceptedResponse.status,
+              errorData?.error ||
+                errorData?.message ||
+                `HTTP ${interceptedResponse.status}: Authentication required`,
+              errorData
+            );
+
+            // Trigger global auth error handler exactly once (no retry loop)
+            if (!skipAuthRetry && _authErrorHandler) {
+              _authErrorHandler();
+            }
+
+            throw authError;
+          }
+
           throw new APIError(
             interceptedResponse.status,
             errorData?.message || `HTTP error! status: ${interceptedResponse.status}`,
@@ -68,6 +108,11 @@ export const apiClient = {
 
         return (await interceptedResponse.json()) as T;
       } catch (error: any) {
+        // Never retry on auth errors — throw immediately
+        if (error instanceof APIError && (error.status === 401 || error.status === 403)) {
+          throw error;
+        }
+
         // Ensure that thrown objects (including DOM Event objects) are normalized into valid Error instances
         const normalizedError =
           error instanceof Error
@@ -84,7 +129,7 @@ export const apiClient = {
           throw normalizedError;
         }
         attempt++;
-        // Exponential backoff delay
+        // Exponential backoff delay (not applied for auth errors, which are thrown immediately above)
         await new Promise((res) => setTimeout(res, Math.pow(2, attempt) * 100));
       }
     }

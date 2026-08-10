@@ -9,17 +9,14 @@ import { AdminHeader } from './components/admin-header';
 /**
  * Production Viewport Dashboard Layout (Linear / Stripe / Vercel style)
  *
- * Layout Principles:
- * - Root Container: Fixed 100vh / 100vw, overflow: hidden (NO root page horizontal scroll).
- * - AdminSidebar: Fixed height 100vh, independent overflowY: auto.
- * - Right Area: Flex-1, minWidth: 0, overflow: hidden.
- * - AdminHeader: Fixed height 64px, full width of main workspace.
- * - Main Workspace: flex: 1, overflowY: auto, overflowX: hidden. Only table wrappers scroll horizontally when necessary.
+ * Security Architecture:
+ * - RBACGuard is at the top level to ensure unpermitted users (e.g. Students) receive
+ *   a clean HTTP 403 Forbidden screen WITHOUT mounting AdminWorkspaceProvider or triggering admin APIs.
  */
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <AdminWorkspaceProvider>
-      <RBACGuard>
+    <RBACGuard>
+      <AdminWorkspaceProvider>
         <div
           style={{
             display: 'flex',
@@ -68,7 +65,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </main>
           </div>
         </div>
-      </RBACGuard>
-    </AdminWorkspaceProvider>
+      </AdminWorkspaceProvider>
+    </RBACGuard>
   );
 }

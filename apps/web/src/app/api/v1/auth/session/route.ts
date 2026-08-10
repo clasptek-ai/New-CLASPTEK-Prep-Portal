@@ -77,9 +77,9 @@ const DEFAULT_ROLE_PERMISSIONS: Record<string, string[]> = {
 
 function resolveWorkspaces(roles: string[]): { workspaces: string[]; defaultWorkspace: string } {
   const isAdmin = roles.some((r) =>
-    ['ADMINISTRATOR', 'SUPER_ADMIN', 'SUPER_ADMINISTRATOR', 'STAFF'].includes(r)
+    ['ADMINISTRATOR', 'SUPER_ADMIN', 'SUPER_ADMINISTRATOR', 'STAFF'].includes(r.toUpperCase())
   );
-  const isInstructor = roles.some((r) => ['INSTRUCTOR', 'TUTOR'].includes(r));
+  const isInstructor = roles.some((r) => ['INSTRUCTOR', 'TUTOR'].includes(r.toUpperCase()));
 
   if (isAdmin) {
     return {
@@ -104,7 +104,8 @@ function resolveWorkspaces(roles: string[]): { workspaces: string[]; defaultWork
 function resolvePermissions(roles: string[]): string[] {
   const permSet = new Set<string>();
   roles.forEach((role) => {
-    const perms = DEFAULT_ROLE_PERMISSIONS[role] || DEFAULT_ROLE_PERMISSIONS['STUDENT'];
+    const perms =
+      DEFAULT_ROLE_PERMISSIONS[role.toUpperCase()] || DEFAULT_ROLE_PERMISSIONS['STUDENT'];
     perms.forEach((p) => permSet.add(p));
   });
   return Array.from(permSet);
@@ -152,11 +153,16 @@ export async function GET(_req: NextRequest) {
       );
     }
 
-    // 4. Initialize Auth Context for DB queries
+    // 4. Resolve Roles
+    // Priority order:
+    // a) Database custom user_roles table
+    // b) Supabase app_metadata.role (set server-side)
+    // c) Supabase user_metadata.role (set at signup)
+    // d) Default to STUDENT (never guess ADMINISTRATOR)
     let roleNames: string[] = [];
     try {
       const authContext = await getAuthContext();
-      const { userRoleRepo, roleRepo, dbPool } = authContext;
+      const { dbPool } = authContext;
 
       const pool = dbPool.getPool();
       const roleResult = await pool.query(
@@ -165,21 +171,21 @@ export async function GET(_req: NextRequest) {
       );
       roleNames = roleResult.rows.map((row: any) => row.name);
     } catch {
-      // Fallback heuristics if DB pool query fails
-      if (
-        user.email?.toLowerCase().includes('admin') ||
-        user.email?.toLowerCase() === 'clasptek@gmail.com'
-      ) {
-        roleNames = ['ADMINISTRATOR'];
-      } else if (user.email?.toLowerCase().includes('instructor')) {
-        roleNames = ['INSTRUCTOR'];
+      roleNames = [];
+    }
+
+    if (roleNames.length === 0) {
+      const claimedRole =
+        user.app_metadata?.role ||
+        user.app_metadata?.user_role ||
+        user.user_metadata?.role ||
+        user.user_metadata?.user_role;
+
+      if (claimedRole) {
+        roleNames = [String(claimedRole).toUpperCase()];
       } else {
         roleNames = ['STUDENT'];
       }
-    }
-
-    if (user.email?.toLowerCase() === 'clasptek@gmail.com') {
-      roleNames = ['ADMINISTRATOR'];
     }
 
     const resolvedRoles = roleNames.length > 0 ? roleNames : ['STUDENT'];
@@ -215,10 +221,6 @@ export async function GET(_req: NextRequest) {
         '';
     }
 
-    if (user.email?.toLowerCase() === 'clasptek@gmail.com') {
-      profileName = 'Clasptek Coaching Limited';
-    }
-
     const profile: SessionProfileDTO = {
       id: user.id,
       name: profileName,
@@ -245,7 +247,6 @@ export async function GET(_req: NextRequest) {
 
     return NextResponse.json(responseDTO);
   } catch (err: unknown) {
-    // Log error internally, sanitize client response (0 stack traces exposed)
     console.error('GET /api/v1/auth/session failure:', err);
 
     return NextResponse.json(
