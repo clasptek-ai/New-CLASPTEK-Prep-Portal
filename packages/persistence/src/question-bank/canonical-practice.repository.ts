@@ -7,6 +7,7 @@ export interface PracticeQuestionQueryFilter {
   questionType?: string;
   difficulty?: string;
   questionCount: number;
+  studentId?: string;
 }
 
 export interface PracticeEligibleQuestion {
@@ -47,7 +48,25 @@ export class PostgresCanonicalPracticeRepository {
   public async queryEligibleQuestions(
     filter: PracticeQuestionQueryFilter
   ): Promise<PracticeEligibleQuestion[]> {
-    const { examType, sectionCode, difficulty, questionCount } = filter;
+    const { examType, sectionCode, difficulty, questionCount, studentId } = filter;
+
+    // Extract recently used question IDs if studentId provided
+    const recentlyUsedIds = new Set<string>();
+    if (studentId) {
+      try {
+        const historyRes = await this.pool.query(
+          `SELECT DISTINCT question_id
+           FROM public.assessment_attempt_answers aaa
+           JOIN public.assessment_attempts aa ON aa.id = aaa.attempt_id
+           WHERE aa.student_id = $1 AND aa.status IN ('SUBMITTED', 'COMPLETED')
+           ORDER BY question_id LIMIT 300`,
+          [studentId]
+        );
+        historyRes.rows.forEach((r: any) => recentlyUsedIds.add(r.question_id));
+      } catch (err) {
+        // Fallback silently if history query fails
+      }
+    }
 
     let sql = `
       SELECT q.id as question_id, qv.id as question_version_id, q.code, qv.prompt, 
@@ -90,14 +109,23 @@ export class PostgresCanonicalPracticeRepository {
       sql += ` AND (qv.payload->>'difficulty' = $${queryParams.length})`;
     }
 
-    queryParams.push(questionCount * 2);
+    queryParams.push(questionCount * 3);
     sql += ` ORDER BY random() LIMIT $${queryParams.length}`;
 
     const res = await this.pool.query(sql, queryParams);
 
+    const rows = res.rows;
+    const unused = rows.filter((r: any) => !recentlyUsedIds.has(r.question_id));
+    const used = rows.filter((r: any) => recentlyUsedIds.has(r.question_id));
+
+    const selected = unused.slice(0, questionCount);
+    if (selected.length < questionCount) {
+      selected.push(...used.slice(0, questionCount - selected.length));
+    }
+
     const questions: PracticeEligibleQuestion[] = [];
 
-    for (const r of res.rows) {
+    for (const r of selected) {
       // Fetch options from answer_options table, stripping is_correct for browser payload
       const optRes = await this.pool.query(
         `SELECT option_code, option_text FROM public.answer_options 

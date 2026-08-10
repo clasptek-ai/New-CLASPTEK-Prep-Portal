@@ -114,7 +114,7 @@ export class PostgresCanonicalMockRepository {
            AND NOT (
              (qv.payload->'usages' @> '"PRACTICE"'::jsonb OR qv.payload->'usages' @> '"DIAGNOSTIC"'::jsonb)
              AND NOT (qv.payload->'usages' @> '"MOCK"'::jsonb)
-           )`,
+           )`
       );
 
       const available = countRes.rows[0]?.available_count || 0;
@@ -135,9 +135,28 @@ export class PostgresCanonicalMockRepository {
   }
 
   public async queryMockQuestionsForBlueprint(
-    blueprint: MockBlueprintRecord
+    blueprint: MockBlueprintRecord,
+    studentId?: string
   ): Promise<MockEligibleQuestion[]> {
     const questions: MockEligibleQuestion[] = [];
+
+    // Extract recently used question IDs if studentId provided
+    const recentlyUsedIds = new Set<string>();
+    if (studentId) {
+      try {
+        const historyRes = await this.pool.query(
+          `SELECT DISTINCT question_id
+           FROM public.assessment_attempt_answers aaa
+           JOIN public.assessment_attempts aa ON aa.id = aaa.attempt_id
+           WHERE aa.student_id = $1 AND aa.status IN ('SUBMITTED', 'COMPLETED')
+           ORDER BY question_id LIMIT 300`,
+          [studentId]
+        );
+        historyRes.rows.forEach((r: any) => recentlyUsedIds.add(r.question_id));
+      } catch (err) {
+        // Fallback silently if history query fails
+      }
+    }
 
     for (const sec of blueprint.sections) {
       const res = await this.pool.query(
@@ -160,10 +179,19 @@ export class PostgresCanonicalMockRepository {
            )
          ORDER BY random()
          LIMIT $1`,
-        [sec.questionCount]
+        [sec.questionCount * 3]
       );
 
-      for (const r of res.rows) {
+      const rows = res.rows;
+      const unused = rows.filter((r: any) => !recentlyUsedIds.has(r.question_id));
+      const used = rows.filter((r: any) => recentlyUsedIds.has(r.question_id));
+
+      const selected = unused.slice(0, sec.questionCount);
+      if (selected.length < sec.questionCount) {
+        selected.push(...used.slice(0, sec.questionCount - selected.length));
+      }
+
+      for (const r of selected) {
         const optRes = await this.pool.query(
           `SELECT option_code, option_text FROM public.answer_options 
            WHERE question_version_id = $1 ORDER BY display_order ASC`,
@@ -220,15 +248,17 @@ export class PostgresCanonicalMockRepository {
   ): Promise<void> {
     for (let idx = 0; idx < questions.length; idx++) {
       const q = questions[idx];
-      await this.pool.query(
-        `INSERT INTO public.session_question_snapshots 
+      await this.pool
+        .query(
+          `INSERT INTO public.session_question_snapshots 
          (id, session_id, question_id, question_version_id, display_order)
          VALUES (gen_random_uuid(), $1, $2, $3, $4)
          ON CONFLICT (session_id, question_id) DO NOTHING`,
-        [sessionId, q.questionId, q.questionVersionId, idx + 1]
-      ).catch(() => {
-        // Handle optional snapshot insert
-      });
+          [sessionId, q.questionId, q.questionVersionId, idx + 1]
+        )
+        .catch(() => {
+          // Handle optional snapshot insert
+        });
     }
   }
 
@@ -278,27 +308,28 @@ export class PostgresCanonicalMockRepository {
       ]
     );
 
-    await this.pool.query(
-      `INSERT INTO public.mock_results
+    await this.pool
+      .query(
+        `INSERT INTO public.mock_results
        (id, session_id, student_id, overall_raw_score, official_scaled_score, official_score_label, status, scored_at)
        SELECT gen_random_uuid(), $1, student_id, $2, $3, $4, $5, now()
        FROM public.mock_sessions WHERE id = $1
        ON CONFLICT (id) DO NOTHING`,
-      [
-        sessionId,
-        summary.scorePercentage,
-        summary.officialScaledScore,
-        summary.officialScoreLabel,
-        summary.evaluationState === 'COMPLETED' ? 'PUBLISHED' : 'PENDING',
-      ]
-    ).catch(() => {});
+        [
+          sessionId,
+          summary.scorePercentage,
+          summary.officialScaledScore,
+          summary.officialScoreLabel,
+          summary.evaluationState === 'COMPLETED' ? 'PUBLISHED' : 'PENDING',
+        ]
+      )
+      .catch(() => {});
   }
 
   public async getSessionById(sessionId: string): Promise<any | null> {
-    const res = await this.pool.query(
-      `SELECT * FROM public.mock_sessions WHERE id = $1 LIMIT 1`,
-      [sessionId]
-    );
+    const res = await this.pool.query(`SELECT * FROM public.mock_sessions WHERE id = $1 LIMIT 1`, [
+      sessionId,
+    ]);
     if (res.rows.length === 0) return null;
     return res.rows[0];
   }

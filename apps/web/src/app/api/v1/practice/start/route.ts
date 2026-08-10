@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
       skillCode,
       difficulty,
       questionCount,
+      studentId,
     });
 
     if (eligibleQuestions.length === 0) {

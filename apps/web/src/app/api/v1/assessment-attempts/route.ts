@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
+import { QuestionSelectionService } from '@/lib/question-selection-service';
 import { randomUUID } from 'crypto';
 
 /**
@@ -226,204 +227,14 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      // 5. Generate immutable paper snapshot with correctOptionCode for each MCQ
-      // Fetch 30 level-balanced Grammar questions
-      const grammarRes = await client.query(`
-        WITH foundation_q AS (
-          SELECT q.id as question_id, q.code, qv.id as version_id, qv.prompt,
-                 COALESCE(qv.proficiency_level, 'FOUNDATION') as proficiency_level, qv.payload
-          FROM public.questions q
-          JOIN public.question_versions qv ON qv.question_id = q.id
-          WHERE q.deleted_at IS NULL
-            AND (qv.proficiency_level ILIKE 'FOUNDATION%' OR qv.proficiency_level ILIKE 'BASIC%' OR qv.proficiency_level ILIKE 'EASY%')
-          LIMIT 10
-        ),
-        intermediate_q AS (
-          SELECT q.id as question_id, q.code, qv.id as version_id, qv.prompt,
-                 COALESCE(qv.proficiency_level, 'INTERMEDIATE') as proficiency_level, qv.payload
-          FROM public.questions q
-          JOIN public.question_versions qv ON qv.question_id = q.id
-          WHERE q.deleted_at IS NULL
-            AND (qv.proficiency_level ILIKE 'INTERMEDIATE%' OR qv.proficiency_level ILIKE 'MEDIUM%')
-          LIMIT 10
-        ),
-        advanced_q AS (
-          SELECT q.id as question_id, q.code, qv.id as version_id, qv.prompt,
-                 COALESCE(qv.proficiency_level, 'ADVANCED') as proficiency_level, qv.payload
-          FROM public.questions q
-          JOIN public.question_versions qv ON qv.question_id = q.id
-          WHERE q.deleted_at IS NULL
-            AND (qv.proficiency_level ILIKE 'ADVANCED%' OR qv.proficiency_level ILIKE 'HARD%')
-          LIMIT 10
-        ),
-        level_balanced AS (
-          SELECT * FROM foundation_q UNION ALL
-          SELECT * FROM intermediate_q UNION ALL
-          SELECT * FROM advanced_q
-        ),
-        fallback_q AS (
-          SELECT q.id as question_id, q.code, qv.id as version_id, qv.prompt,
-                 COALESCE(qv.proficiency_level, 'INTERMEDIATE') as proficiency_level, qv.payload
-          FROM public.questions q
-          JOIN public.question_versions qv ON qv.question_id = q.id
-          WHERE q.deleted_at IS NULL
-            AND q.id NOT IN (SELECT question_id FROM level_balanced)
-          LIMIT 30
-        )
-        SELECT question_id, code, version_id, prompt, proficiency_level, payload
-        FROM (SELECT * FROM level_balanced UNION ALL SELECT * FROM fallback_q) combined_grammar
-        LIMIT 30
-      `);
-
-      const qvIds = grammarRes.rows.map((r) => r.version_id);
-      const optRes =
-        qvIds.length > 0
-          ? await client.query(
-              `SELECT question_version_id, option_code, option_text, is_correct, display_order
-               FROM public.answer_options
-               WHERE question_version_id = ANY($1::uuid[])
-               ORDER BY question_version_id, display_order ASC`,
-              [qvIds]
-            )
-          : { rows: [] };
-
-      const optionsByVersion = new Map<
-        string,
-        { code: string; text: string; isCorrect: boolean }[]
-      >();
-      const correctByVersion = new Map<string, string>();
-
-      optRes.rows.forEach((o) => {
-        if (!optionsByVersion.has(o.question_version_id)) {
-          optionsByVersion.set(o.question_version_id, []);
-        }
-        optionsByVersion.get(o.question_version_id)!.push({
-          code: o.option_code || 'A',
-          text: o.option_text,
-          isCorrect: Boolean(o.is_correct),
-        });
-        if (o.is_correct) {
-          correctByVersion.set(o.question_version_id, o.option_code);
-        }
+      // 5. Generate attempt-aware, randomized paper snapshot via QuestionSelectionService
+      const generatedSnapshot = await QuestionSelectionService.generatePaperSnapshot(client, {
+        studentId,
+        examType: studentProgramme,
+        grammarCount: 30,
+        passageCount: 1,
+        writingCount: 2,
       });
-
-      const grammarSnapshot = grammarRes.rows.map((r, i) => {
-        const opts = optionsByVersion.get(r.version_id) || [
-          { code: 'A', text: 'Option A', isCorrect: false },
-          { code: 'B', text: 'Option B', isCorrect: true },
-          { code: 'C', text: 'Option C', isCorrect: false },
-          { code: 'D', text: 'Option D', isCorrect: false },
-        ];
-        const correctCode =
-          correctByVersion.get(r.version_id) || opts.find((o) => o.isCorrect)?.code || 'B';
-        return {
-          id: r.question_id,
-          versionId: r.version_id,
-          code: r.code || `ENG-GRAM-${(i + 1).toString().padStart(3, '0')}`,
-          prompt: r.prompt,
-          section: 'Grammar',
-          itemType: 'MCQ',
-          proficiencyLevel: r.proficiency_level || 'INTERMEDIATE',
-          options: opts.map((o) => ({ code: o.code, text: o.text })),
-          correctOptionCode: correctCode,
-          marks: 1,
-          order: i + 1,
-        };
-      });
-
-      // Reading passage with ALL linked comprehension questions from DB
-      const passageRes = await client.query(`
-        SELECT id, code, title, content
-        FROM public.reading_passages
-        WHERE status = 'published' OR status IS NOT NULL
-        ORDER BY created_at DESC LIMIT 1
-      `);
-      const passage = passageRes.rows[0] || null;
-
-      let comprehensionQuestions: any[] = [];
-      if (passage) {
-        const compRes = await client.query(
-          `SELECT q.id as question_id, q.code as question_code, qv.id as version_id, qv.prompt, qv.proficiency_level, qv.payload
-           FROM public.questions q
-           JOIN public.question_versions qv ON qv.question_id = q.id
-           WHERE q.deleted_at IS NULL
-             AND (qv.payload->>'passageCode' = $1 OR qv.payload->>'passageCode' = $2 OR q.code ILIKE $3)
-           ORDER BY q.code ASC`,
-          [passage.code, passage.id, `%${passage.code}%`]
-        );
-
-        if (compRes.rows.length > 0) {
-          const compVersionIds = compRes.rows.map((r: any) => r.version_id);
-          const compOptRes = await client.query(
-            `SELECT question_version_id, option_code, option_text, is_correct, display_order
-             FROM public.answer_options
-             WHERE question_version_id = ANY($1::uuid[])
-             ORDER BY question_version_id, display_order ASC`,
-            [compVersionIds]
-          );
-
-          const compOptsByVer = new Map<string, any[]>();
-          const compCorrectByVer = new Map<string, string>();
-          compOptRes.rows.forEach((o: any) => {
-            if (!compOptsByVer.has(o.question_version_id)) {
-              compOptsByVer.set(o.question_version_id, []);
-            }
-            compOptsByVer
-              .get(o.question_version_id)!
-              .push({ code: o.option_code, text: o.option_text });
-            if (o.is_correct) {
-              compCorrectByVer.set(o.question_version_id, o.option_code);
-            }
-          });
-
-          comprehensionQuestions = compRes.rows.map((r: any, idx: number) => {
-            const opts = compOptsByVer.get(r.version_id) || [];
-            const correctCode = compCorrectByVer.get(r.version_id) || opts[0]?.code || 'A';
-            return {
-              id: r.question_id,
-              versionId: r.version_id,
-              code: r.question_code || `ENG-READ-${(idx + 1).toString().padStart(2, '0')}`,
-              prompt: r.prompt,
-              proficiencyLevel: r.proficiency_level || 'INTERMEDIATE',
-              itemType: 'MCQ',
-              options: opts,
-              correctOptionCode: correctCode,
-              marks: 1,
-              order: idx + 1,
-            };
-          });
-        }
-      }
-
-      const readingSnapshot = passage
-        ? {
-            id: passage.id,
-            code: passage.code,
-            title: passage.title,
-            content: passage.content,
-            comprehensionQuestions,
-          }
-        : null;
-
-      // Writing tasks
-      const writingRes = await client.query(`
-        SELECT id, code, task_number, title, prompt, instructions, min_words, max_words
-        FROM public.writing_tasks
-        WHERE exam_type = 'English Proficiency' OR exam_type IS NOT NULL
-        ORDER BY task_number ASC LIMIT 2
-      `);
-      const writingSnapshot = writingRes.rows.map((w) => ({
-        id: w.id,
-        code: w.code,
-        taskNumber: w.task_number,
-        title: w.title,
-        prompt: w.prompt,
-        instructions: w.instructions,
-        minWords: w.min_words || 150,
-        maxWords: w.max_words || 400,
-        itemType: 'ESSAY',
-        marks: 10,
-      }));
 
       const now = new Date();
       const durationMins = definition.duration_minutes || 45;
@@ -440,9 +251,9 @@ export async function POST(req: NextRequest) {
           title: definition.title,
           durationMinutes: durationMins,
         },
-        grammarQuestions: grammarSnapshot,
-        readingPassage: readingSnapshot,
-        writingTasks: writingSnapshot,
+        grammarQuestions: generatedSnapshot.grammarQuestions,
+        readingPassage: generatedSnapshot.readingPassage,
+        writingTasks: generatedSnapshot.writingTasks,
         scoring: {
           grammarWeight: 0.6,
           readingWeight: 0.2,
@@ -455,19 +266,18 @@ export async function POST(req: NextRequest) {
         },
       };
 
-      // 6. Atomic attempt creation
-      const attemptId = randomUUID();
-
-      await client.query(
+      // 6. Insert new attempt record
+      const insertRes = await client.query(
         `INSERT INTO public.assessment_attempts (
-          id, student_id, catalog_id, status, started_at, expires_at,
+          student_id, catalog_id, status, started_at, expires_at,
           duration_minutes, paper_snapshot, tenant_id, created_at, updated_at
-        ) VALUES ($1, $2, $3, 'IN_PROGRESS', $4, $5, $6, $7, $8, $4, $4)`,
+        ) VALUES (
+          $1, $2, 'IN_PROGRESS', NOW(), $3,
+          $4, $5, $6, NOW(), NOW()
+        ) RETURNING id, started_at, expires_at`,
         [
-          attemptId,
           studentId,
           definition.id,
-          now.toISOString(),
           expiresAt.toISOString(),
           durationMins,
           JSON.stringify(paperSnapshot),
@@ -475,19 +285,23 @@ export async function POST(req: NextRequest) {
         ]
       );
 
+      const newAttempt = insertRes.rows[0];
+
+      // 7. Log ATTEMPT_STARTED event
       await client.query(
         `INSERT INTO public.assessment_attempt_events (
           attempt_id, event_type, event_payload, created_at
-        ) VALUES ($1, 'ATTEMPT_CREATED', $2, NOW())`,
+        ) VALUES ($1, 'ATTEMPT_STARTED', $2, NOW())`,
         [
-          attemptId,
+          newAttempt.id,
           JSON.stringify({
+            studentId,
+            catalogId: definition.id,
+            totalQuestions:
+              generatedSnapshot.grammarQuestions.length +
+              (generatedSnapshot.readingPassage?.comprehensionQuestions?.length || 0) +
+              generatedSnapshot.writingTasks.length,
             requestId,
-            assessmentId: definition.id,
-            durationMinutes: durationMins,
-            grammarCount: grammarSnapshot.length,
-            readingQuestionCount: comprehensionQuestions.length,
-            snapshotVersion: 1,
           }),
         ]
       );
@@ -495,24 +309,24 @@ export async function POST(req: NextRequest) {
       await client.query('COMMIT');
 
       console.log(
-        `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: ${studentId} | CandidateID: ${studentId} | AssessmentID: ${definition.id} | AttemptID: ${attemptId} | Endpoint: POST /api/v1/assessment-attempts | Result: 201_CREATED | Duration: ${Date.now() - startTime}ms`
+        `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: ${studentId} | CandidateID: ${studentId} | AssessmentID: ${definition.id} | AttemptID: ${newAttempt.id} | Endpoint: POST /api/v1/assessment-attempts | Result: SUCCESS_CREATED | Duration: ${Date.now() - startTime}ms`
       );
 
-      return NextResponse.json(
-        {
-          success: true,
-          data: {
-            attemptId,
-            resumed: false,
-            startedAt: now.toISOString(),
-            expiresAt: expiresAt.toISOString(),
-            durationMinutes: durationMins,
-          },
-          attemptId,
-          meta: { timestamp: now.toISOString(), version: 1, requestId },
+      return NextResponse.json({
+        success: true,
+        data: {
+          attemptId: newAttempt.id,
+          resumed: false,
+          startedAt: newAttempt.started_at,
+          expiresAt: newAttempt.expires_at,
+          totalQuestions:
+            generatedSnapshot.grammarQuestions.length +
+            (generatedSnapshot.readingPassage?.comprehensionQuestions?.length || 0) +
+            generatedSnapshot.writingTasks.length,
         },
-        { status: 201 }
-      );
+        attemptId: newAttempt.id, // Backward-compat fallback
+        meta: { timestamp: new Date().toISOString(), version: 1, requestId },
+      });
     } catch (innerErr: any) {
       await client.query('ROLLBACK');
       console.error(`[${requestId}] POST /api/v1/assessment-attempts transaction error:`, innerErr);

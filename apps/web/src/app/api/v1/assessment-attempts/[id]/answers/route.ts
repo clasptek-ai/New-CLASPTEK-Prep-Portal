@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
 
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getAuthenticatedSession(req);
@@ -41,19 +43,25 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           ? [{ questionId, questionVersionId, answer, timeSpentMs }]
           : [];
 
+    let savedCount = 0;
     for (const item of answerItems) {
       const qId = item.questionId;
       const vId = item.questionVersionId || qId;
       const payload = item.answer || item.responsePayload || item;
 
-      await pool.query(
-        `INSERT INTO public.assessment_attempt_answers (
-          attempt_id, question_id, question_version_id, response_payload, time_spent_ms, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, NOW())
-        ON CONFLICT (attempt_id, question_id) 
-        DO UPDATE SET response_payload = EXCLUDED.response_payload, time_spent_ms = EXCLUDED.time_spent_ms, updated_at = NOW()`,
-        [attemptId, qId, vId, JSON.stringify(payload), Number(item.timeSpentMs || 0)]
-      );
+      // Skip non-UUID question IDs to avoid Postgres 22P02 string_to_uuid syntax errors
+      if (qId && typeof qId === 'string' && uuidRegex.test(qId)) {
+        const safeVId = vId && typeof vId === 'string' && uuidRegex.test(vId) ? vId : qId;
+        await pool.query(
+          `INSERT INTO public.assessment_attempt_answers (
+            attempt_id, question_id, question_version_id, response_payload, time_spent_ms, updated_at
+          ) VALUES ($1, $2, $3, $4, $5, NOW())
+          ON CONFLICT (attempt_id, question_id) 
+          DO UPDATE SET response_payload = EXCLUDED.response_payload, time_spent_ms = EXCLUDED.time_spent_ms, updated_at = NOW()`,
+          [attemptId, qId, safeVId, JSON.stringify(payload), Number(item.timeSpentMs || 0)]
+        );
+        savedCount++;
+      }
     }
 
     // Append-only event log for autosave
@@ -61,7 +69,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       .query(
         `INSERT INTO public.assessment_attempt_events (attempt_id, event_type, event_payload, created_at)
        VALUES ($1, 'AUTO_SAVE', $2, NOW())`,
-        [attemptId, JSON.stringify({ itemCount: answerItems.length })]
+        [attemptId, JSON.stringify({ itemCount: savedCount })]
       )
       .catch(() => null);
 
@@ -69,7 +77,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       success: true,
       data: {
         attemptId,
-        savedCount: answerItems.length,
+        savedCount,
       },
       meta: {
         timestamp: new Date().toISOString(),

@@ -9,15 +9,14 @@ import { randomUUID } from 'crypto';
 /**
  * POST /api/v1/assessment-attempts/:id/submit
  *
- * RC1 Production Hardening:
- * - Scoring reads correctOptionCode exclusively from paper_snapshot (never from editable tables)
+ * RC1 Production Hardening & Idempotent Submission Engine:
+ * - Reads correctOptionCode exclusively from paper_snapshot
  * - MCQ grammar questions: exact match against correctOptionCode
  * - Reading comprehension: exact match against correctOptionCode
  * - Writing tasks: deferred async evaluation (placeholder with extensible score slot)
- * - Section-level scores and weighted total computed and stored
+ * - Section-level scores and weighted total computed and stored (guaranteed no NaN/Infinity)
  * - All writes wrapped in a single BEGIN/COMMIT transaction
- * - Duplicate submission rejected (attempt must be IN_PROGRESS)
- * - Placement recommendation derived from total weighted score
+ * - Idempotent: If attempt was ALREADY submitted, returns 200 OK with existing result payload
  */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const requestId = randomUUID();
@@ -42,10 +41,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     try {
       await client.query('BEGIN');
 
-      // 1. Fetch attempt — must be IN_PROGRESS and owned by this student
+      // 1. Fetch attempt owned by this student
       const attemptRes = await client.query(
         `SELECT * FROM public.assessment_attempts
-         WHERE id = $1 AND student_id = $2 AND status = 'IN_PROGRESS'
+         WHERE id = $1 AND student_id = $2
          FOR UPDATE`,
         [attemptId, studentId]
       );
@@ -55,7 +54,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         return NextResponse.json(
           {
             success: false,
-            error: 'Attempt not active, not found, or already submitted',
+            error: 'Attempt not found or unauthorized',
             requestId,
           },
           { status: 404 }
@@ -63,6 +62,34 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       }
 
       const attempt = attemptRes.rows[0];
+
+      // IDEMPOTENCY GUARD: If attempt is ALREADY submitted or completed, return 200 OK with existing result
+      if (attempt.status === 'SUBMITTED' || attempt.status === 'COMPLETED') {
+        const existingResult = await client.query(
+          `SELECT * FROM public.assessment_results WHERE attempt_id = $1`,
+          [attemptId]
+        );
+        await client.query('COMMIT');
+
+        const resRow = existingResult.rows[0];
+        const overallScore = parseFloat(attempt.score || resRow?.overall_score || '0');
+
+        return NextResponse.json({
+          success: true,
+          data: {
+            attemptId,
+            status: attempt.status,
+            score: overallScore,
+            computedLevel: resRow?.placement_level || 'INTERMEDIATE',
+            cefrLevel: resRow?.cefr_level || 'B2',
+            predictedBand: resRow?.predicted_band || 'Band 6.5',
+            recommendedCourse: resRow?.recommended_course || 'Comprehensive Exam Prep',
+            recommendedDuration: resRow?.recommended_duration || '5 Weeks',
+            submittedAt: attempt.closed_at || attempt.updated_at || new Date().toISOString(),
+          },
+          meta: { timestamp: new Date().toISOString(), version: 1, requestId },
+        });
+      }
 
       // 2. Deserialize frozen paper snapshot
       const paperSnapshot =
@@ -98,14 +125,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       > = {};
 
       grammarQs.forEach((q: any) => {
-        grammarTotal += q.marks || 1;
+        const itemMarks = Number(q.marks) || 1;
+        grammarTotal += itemMarks;
         const raw = candidateAnswers.get(q.id);
         const selectedCode = extractSelectedOptionCode(raw);
 
         const isCorrect =
           selectedCode !== null && q.correctOptionCode && selectedCode === q.correctOptionCode;
 
-        if (isCorrect) grammarCorrect += q.marks || 1;
+        if (isCorrect) grammarCorrect += itemMarks;
 
         grammarScoreMap[q.id] = {
           correct: isCorrect,
@@ -123,28 +151,25 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       let readingTotal = 0;
 
       comprehensionQs.forEach((q: any) => {
-        readingTotal += q.marks || 1;
+        const itemMarks = Number(q.marks) || 1;
+        readingTotal += itemMarks;
         const raw = candidateAnswers.get(q.id);
         const selectedCode = extractSelectedOptionCode(raw);
 
         const isCorrect =
           selectedCode !== null && q.correctOptionCode && selectedCode === q.correctOptionCode;
 
-        if (isCorrect) readingCorrect += q.marks || 1;
+        if (isCorrect) readingCorrect += itemMarks;
       });
 
       const readingRaw = readingTotal > 0 ? (readingCorrect / readingTotal) * 100 : 0;
 
       // --- Writing Section Scoring ---
-      // Writing is scored asynchronously (AI evaluation pipeline).
-      // We store a placeholder score of 0 and mark writing as PENDING.
-      // The evaluation worker will update assessment_attempt_answers.is_correct
-      // and the placement will be re-computed once writing scores are available.
       const writingTasks: any[] = paperSnapshot.writingTasks || [];
       const writingPending = writingTasks.length > 0;
       const writingRaw = 0; // deferred — will be updated by AI evaluation pipeline
 
-      // --- Weighted Total Score ---
+      // --- Weighted Total Score Calculation (NaN Protection) ---
       const scoringConfig = paperSnapshot.scoring || {
         grammarWeight: 0.6,
         readingWeight: 0.2,
@@ -158,29 +183,36 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         FOUNDATION: 0,
       };
 
-      // Adjust weights if writing is pending (redistribute to objective sections)
-      let weightedScore: number;
+      let weightedScore = 0;
+      const gWeight = Number(scoringConfig.grammarWeight) || 0.6;
+      const rWeight = Number(scoringConfig.readingWeight) || 0.2;
+      const wWeight = Number(scoringConfig.writingWeight) || 0.2;
+
       if (writingPending) {
-        // Redistribute writing weight proportionally to grammar and reading
-        const totalObjectiveWeight = scoringConfig.grammarWeight + scoringConfig.readingWeight;
-        const grammarAdjusted = scoringConfig.grammarWeight / totalObjectiveWeight;
-        const readingAdjusted = scoringConfig.readingWeight / totalObjectiveWeight;
-        weightedScore = grammarRaw * grammarAdjusted + readingRaw * readingAdjusted;
+        const totalObjectiveWeight = gWeight + rWeight;
+        if (totalObjectiveWeight > 0) {
+          const grammarAdjusted = gWeight / totalObjectiveWeight;
+          const readingAdjusted = rWeight / totalObjectiveWeight;
+          weightedScore = grammarRaw * grammarAdjusted + readingRaw * readingAdjusted;
+        } else {
+          weightedScore = grammarRaw;
+        }
       } else {
-        weightedScore =
-          grammarRaw * scoringConfig.grammarWeight +
-          readingRaw * scoringConfig.readingWeight +
-          writingRaw * scoringConfig.writingWeight;
+        weightedScore = grammarRaw * gWeight + readingRaw * rWeight + writingRaw * wWeight;
       }
 
-      const totalScore = Math.round(weightedScore * 100) / 100;
+      // Ensure totalScore is always a finite number between 0 and 100
+      const totalScore =
+        Number.isFinite(weightedScore) && !isNaN(weightedScore)
+          ? Math.round(Math.min(100, Math.max(0, weightedScore)) * 100) / 100
+          : 0;
 
       // --- Placement Recommendation ---
       let computedLevel = 'FOUNDATION';
       if (totalScore >= thresholds.ADVANCED) computedLevel = 'ADVANCED';
       else if (totalScore >= thresholds.INTERMEDIATE) computedLevel = 'INTERMEDIATE';
 
-      // --- Dynamic CEFR & Predicted Band Calculation (Coherent Scoring Model) ---
+      // --- Dynamic CEFR & Predicted Band Calculation ---
       let cefrLevel = 'A1';
       let predictedBand = 'Band 3.5';
 
@@ -213,7 +245,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         predictedBand = 'Band 3.5';
       }
 
-      // Dynamic Strengths & Focus Areas based on section breakdown
+      // Dynamic Strengths & Focus Areas
       const strengths: string[] = [];
       const weaknesses: string[] = [];
 
@@ -298,14 +330,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       };
 
       // 5. Update assessment_attempt_answers.is_correct for MCQ/Reading items
-      // (batch update for grade-book accuracy)
+      // (only if question_id is a valid UUID string)
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       for (const [qId, result] of Object.entries(grammarScoreMap)) {
-        await client.query(
-          `UPDATE public.assessment_attempt_answers
-           SET is_correct = $1, updated_at = NOW()
-           WHERE attempt_id = $2 AND question_id = $3`,
-          [result.correct, attemptId, qId]
-        );
+        if (uuidRegex.test(qId)) {
+          await client.query(
+            `UPDATE public.assessment_attempt_answers
+             SET is_correct = $1, updated_at = NOW()
+             WHERE attempt_id = $2 AND question_id = $3`,
+            [result.correct, attemptId, qId]
+          );
+        }
       }
 
       // 6. Lock attempt as SUBMITTED and store score

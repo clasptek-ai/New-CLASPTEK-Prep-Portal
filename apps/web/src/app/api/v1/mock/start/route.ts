@@ -87,8 +87,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Query eligible MOCK questions
-    const mockQuestions = await mockRepo.queryMockQuestionsForBlueprint(bp);
+    // 3. Query eligible MOCK questions with attempt-aware student history exclusion
+    const mockQuestions = await mockRepo.queryMockQuestionsForBlueprint(bp, studentId);
     if (mockQuestions.length === 0) {
       return NextResponse.json(
         {
