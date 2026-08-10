@@ -1,39 +1,31 @@
-import React from 'react';
-import {
-  Users,
-  BookOpen,
-  Award,
-  Database,
-  ShieldCheck,
-  TrendingUp,
-  Clock,
-  AlertCircle,
-} from 'lucide-react';
+import { Users, Award, Database, TrendingUp, Clock } from 'lucide-react';
 
 export interface KPISummaryGridProps {
   stats: {
     totalUsers: number;
-    activeStudents: number;
-    activeInstructors: number;
-    programmesCount: number;
-    activeExamsCount: number;
+    publishedQuestions?: number;
+    practiceSessionsToday?: number;
+    diagnosticsCompleted?: number;
+    mockExamsCompleted?: number;
+    overallReadinessAverage?: number;
     platformHealth: 'HEALTHY' | 'WARNING' | 'CRITICAL';
   };
-  pendingApprovals: number;
+  pendingApprovals?: number;
 }
 
-export const KPISummaryGrid: React.FC<KPISummaryGridProps> = ({ stats, pendingApprovals }) => {
+export const KPISummaryGrid: React.FC<KPISummaryGridProps> = ({ stats }) => {
   const studentCount = stats.totalUsers || 0;
-  const practiceCount = stats.programmesCount || 0;
-  const diagnosticCount = stats.activeStudents || 0;
-  const mockCount = stats.activeInstructors || 0;
-  const publishedQuestionCount = stats.activeExamsCount > 0 ? stats.activeExamsCount * 40 : 0;
+  const practiceCount = stats.practiceSessionsToday ?? 0;
+  const diagnosticCount = stats.diagnosticsCompleted ?? 0;
+  const mockCount = stats.mockExamsCompleted ?? 0;
+  const publishedQuestionCount = stats.publishedQuestions ?? 0;
+  const readinessAvg = stats.overallReadinessAverage ?? 0;
 
   const kpis = [
     {
       title: 'Total Students',
       value: studentCount.toString(),
-      description: studentCount > 0 ? 'Active registered candidates' : '0 Candidates',
+      description: studentCount > 0 ? 'Active registered candidates' : 'No registered candidates',
       icon: <Users size={22} color="#38bdf8" />,
       accentColor: '#38bdf8',
     },
@@ -67,7 +59,7 @@ export const KPISummaryGrid: React.FC<KPISummaryGridProps> = ({ stats, pendingAp
     },
     {
       title: 'Average Readiness',
-      value: studentCount > 0 ? '76.4%' : '0%',
+      value: studentCount > 0 ? `${readinessAvg}%` : '0%',
       description: 'Exam preparedness score',
       icon: <TrendingUp size={22} color="#34d399" />,
       accentColor: '#34d399',

@@ -14,7 +14,7 @@ import { Skeleton } from '../../../shared/ui/skeleton/Skeleton';
 
 export function AdminDashboardScreen() {
   const _router = useRouter();
-  const { adminProfile, pendingApprovals, systemHealth, academicTerm } = useAdminWorkspace();
+  const { adminProfile, pendingApprovals } = useAdminWorkspace();
   const [data, setData] = useState<AdminDashboardAggregatedData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -24,7 +24,7 @@ export function AdminDashboardScreen() {
         const res = await adminDashboardService.getDashboardData();
         setData(res);
       } catch (e) {
-        console.error(e);
+        console.error('Failed to load admin dashboard live data', e);
       } finally {
         setLoading(false);
       }
@@ -87,7 +87,7 @@ export function AdminDashboardScreen() {
               letterSpacing: '-0.02em',
             }}
           >
-            Good Morning, Administrator
+            Good Morning, {adminProfile.name || 'Administrator'}
           </h1>
           <div
             style={{
@@ -99,10 +99,11 @@ export function AdminDashboardScreen() {
               gap: '1rem',
             }}
           >
-            <span style={{ color: '#34d399', fontWeight: 600 }}>System Status: Healthy 🟢</span>
+            <span style={{ color: '#34d399', fontWeight: 600 }}>System Status: Operational 🟢</span>
             <span>•</span>
             <span>
-              Last Sync: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              Last Database Sync:{' '}
+              {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
         </div>
@@ -115,7 +116,11 @@ export function AdminDashboardScreen() {
       <QuickActionsBar />
 
       {/* Admin Operations Grid (Telemetry, Announcements, Audit Stream) */}
-      <AdminSectionsGrid notifications={data.notifications} recentActivity={data.recentActivity} />
+      <AdminSectionsGrid
+        notifications={data.notifications}
+        recentActivity={data.recentActivity}
+        pendingTasks={data.pendingTasks}
+      />
     </div>
   );
 }
