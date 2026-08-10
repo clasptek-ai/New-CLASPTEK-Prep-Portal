@@ -379,9 +379,11 @@ export const AdminAnalyticsService = {
           studentMap.set(uid, { practiceCount: 0, diagnosticDone: false, mockDone: false });
         }
         const data = studentMap.get(uid);
-        data.practiceCount++;
-        if (att.mode === 'DIAGNOSTIC' && att.status === 'COMPLETED') data.diagnosticDone = true;
-        if (att.mode === 'MOCK' && att.status === 'COMPLETED') data.mockDone = true;
+        if (data) {
+          data.practiceCount++;
+          if (att.mode === 'DIAGNOSTIC' && att.status === 'COMPLETED') data.diagnosticDone = true;
+          if (att.mode === 'MOCK' && att.status === 'COMPLETED') data.mockDone = true;
+        }
       });
 
       const students = usersRes.rows.map((u) => {
