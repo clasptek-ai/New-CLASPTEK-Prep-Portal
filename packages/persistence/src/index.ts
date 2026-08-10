@@ -275,7 +275,14 @@ export { DatabasePool } from './database-pool';
  * Creates a browser-safe Supabase client (only uses public non-privileged credentials)
  */
 export function createSupabaseBrowserClient(url: string, anonKey: string): SupabaseClient {
-  return createBrowserClient(url, anonKey);
+  return createBrowserClient(url, anonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce',
+    },
+  });
 }
 
 export interface NextCookiesAdapter {

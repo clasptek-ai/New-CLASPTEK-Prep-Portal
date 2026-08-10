@@ -187,11 +187,33 @@ export async function GET(_req: NextRequest) {
     const { workspaces, defaultWorkspace } = resolveWorkspaces(resolvedRoles);
 
     // 5. Construct Profile DTO
-    let profileName =
-      user.user_metadata?.name ||
-      user.user_metadata?.full_name ||
-      user.email?.split('@')[0] ||
-      'Authenticated Student';
+    let profileName = '';
+    try {
+      const authCtx = await getAuthContext();
+      const pool = authCtx.dbPool.getPool();
+      const profRes = await pool.query(
+        'SELECT first_name, last_name, avatar FROM public.profiles WHERE user_id = $1 LIMIT 1',
+        [user.id]
+      );
+      if (profRes.rows.length > 0) {
+        const fn = profRes.rows[0].first_name || '';
+        const ln = profRes.rows[0].last_name || '';
+        profileName = `${fn} ${ln}`.trim();
+      }
+    } catch {
+      // Ignored
+    }
+
+    if (!profileName) {
+      profileName =
+        user.user_metadata?.name ||
+        user.user_metadata?.full_name ||
+        (user.user_metadata?.first_name
+          ? `${user.user_metadata.first_name} ${user.user_metadata.last_name || ''}`.trim()
+          : '') ||
+        user.email?.split('@')[0] ||
+        '';
+    }
 
     if (user.email?.toLowerCase() === 'clasptek@gmail.com') {
       profileName = 'Clasptek Coaching Limited';

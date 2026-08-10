@@ -77,8 +77,11 @@ function getNavIcon(iconName: string) {
   }
 }
 
+import { useAuthContext } from '../providers/AuthProvider';
+
 export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps) {
   const context = useContext(WorkspaceContext);
+  const { user: authUser, isLoading: authLoading } = useAuthContext();
   const pathname = usePathname();
   const router = useRouter();
   const [switcherOpen, setSwitcherOpen] = useState(false);
@@ -90,6 +93,12 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
   }
 
   const { currentWorkspace, setWorkspaceId, preferences, updatePreferences } = context;
+
+  const displayName = authLoading
+    ? 'Loading Profile...'
+    : authUser?.name || authUser?.email?.split('@')[0] || currentWorkspace.name;
+
+  const displayEmail = authLoading ? '' : authUser?.email || '';
 
   useEffect(() => {
     if (currentWorkspace.id !== workspaceRole) {
@@ -136,9 +145,10 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
       >
         <TopNavigation
           user={{
-            name: currentWorkspace.name,
-            email: `${workspaceRole.toLowerCase()}@clasptek.com`,
+            name: displayName,
+            email: displayEmail,
             role: workspaceRole,
+            avatarUrl: authUser?.user_metadata?.avatar_url,
           }}
           onSearch={(_q: string) => setSearchOpen(true)}
           onToggleTheme={() =>

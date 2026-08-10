@@ -20,15 +20,55 @@ import {
  * ✅ ALLOWED: Call existing application services, execute independent requests in parallel (Promise.all), map DTOs.
  * ❌ NOT ALLOWED: Query repositories directly, calculate business metrics (XP/readiness/streak math), apply auth rules, generate AI recs, persist state.
  */
+import { getAuthContext } from '../../lib/auth-context';
+
 export const DashboardCompositionService = {
   async getOverview(studentId?: string): Promise<DashboardOverviewDto> {
+    let resolvedName = '';
+    let resolvedEmail = '';
+    let resolvedAvatar = '/avatars/default.png';
+
+    if (studentId) {
+      try {
+        const { dbPool } = await getAuthContext();
+        const pool = dbPool.getPool();
+        const userRes = await pool.query(
+          'SELECT email, raw_user_meta_data FROM auth.users WHERE id = $1 LIMIT 1',
+          [studentId]
+        );
+        const profRes = await pool.query(
+          'SELECT first_name, last_name, avatar FROM public.profiles WHERE user_id = $1 LIMIT 1',
+          [studentId]
+        );
+
+        if (profRes.rows.length > 0) {
+          const fn = profRes.rows[0].first_name || '';
+          const ln = profRes.rows[0].last_name || '';
+          resolvedName = `${fn} ${ln}`.trim();
+          if (profRes.rows[0].avatar) resolvedAvatar = profRes.rows[0].avatar;
+        }
+
+        if (!resolvedName && userRes.rows.length > 0) {
+          const meta = userRes.rows[0].raw_user_meta_data || {};
+          resolvedEmail = userRes.rows[0].email || '';
+          resolvedName =
+            meta.name ||
+            meta.full_name ||
+            (meta.first_name ? `${meta.first_name} ${meta.last_name || ''}`.trim() : '') ||
+            resolvedEmail.split('@')[0];
+        }
+      } catch (err) {
+        console.error('Database query fallback in DashboardCompositionService:', err);
+      }
+    }
+
     const [profile, programmes, readiness, notifications] = await Promise.all([
       studentProfileService.getProfile().catch(
         () =>
           ({
             id: studentId || '',
-            name: '',
-            avatarUrl: undefined,
+            name: resolvedName,
+            avatarUrl: resolvedAvatar,
             enrolledAt: new Date().toISOString(),
           }) as any
       ),
@@ -47,12 +87,13 @@ export const DashboardCompositionService = {
       };
 
     const unreadCount = notifications.filter((n: NotificationItem) => !n.read).length;
+    const finalStudentName = profile?.name || resolvedName;
 
     return {
       profile: {
         id: profile.id || studentId || '',
-        studentName: profile.name || '',
-        avatarUrl: profile.avatarUrl || '/avatars/default.png',
+        studentName: finalStudentName,
+        avatarUrl: profile.avatarUrl || resolvedAvatar,
         currentProgrammeId: activeProg.id,
         currentProgrammeTitle: activeProg.name,
         studyStreakDays: 14,
