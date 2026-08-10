@@ -326,12 +326,21 @@ export function Dialog({ isOpen, onClose, title, children, footer }: DialogProps
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  containerClassName?: string;
 }
 
-export function Input({ label, error, style, ...props }: InputProps) {
+export function Input({
+  label,
+  error,
+  style,
+  className,
+  containerClassName,
+  ...props
+}: InputProps) {
   const [focused, setFocused] = useState(false);
   return (
     <div
+      className={containerClassName}
       style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-8)', width: '100%' }}
     >
       {label && (
@@ -341,6 +350,7 @@ export function Input({ label, error, style, ...props }: InputProps) {
       )}
       <input
         {...props}
+        className={className}
         onFocus={(e) => {
           setFocused(true);
           props.onFocus?.(e);
