@@ -35,23 +35,52 @@ interface ResultData {
 }
 
 function StudentResultsContent() {
+  // =========================================================================
+  // TOP-LEVEL UNCONDITIONAL HOOK DECLARATIONS (REACT HOOK ORDER RULE)
+  // ALL hooks MUST execute in the exact same order on every render.
+  // DO NOT place any hook after an early return or inside a conditional branch.
+  // =========================================================================
   const searchParams = useSearchParams();
   const router = useRouter();
   const attemptId = searchParams.get('attemptId') || searchParams.get('sessionId');
 
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState<ResultData | null>(null);
+  const [enrolling, setEnrolling] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadResult(retryCount = 0) {
+      if (!attemptId) {
+        if (isMounted) {
+          setErrorMessage('Missing assessment attempt ID. Please return to the diagnostic hub.');
+          setLoading(false);
+        }
+        return;
+      }
+
       try {
-        const url = attemptId
-          ? `/api/v1/assessment-attempts/${attemptId}/result`
-          : '/api/v1/assessment/result';
+        const url = `/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/result`;
         const res = await authFetch(url);
         const data = await res.json();
+
+        if (res.status === 401 || data.error === 'Unauthorized') {
+          if (isMounted) {
+            setErrorMessage('Your session has expired. Please sign in again.');
+            setLoading(false);
+          }
+          return;
+        }
+
+        if (res.status === 403 || data.error === 'Forbidden') {
+          if (isMounted) {
+            setErrorMessage('You are not authorized to view this assessment result.');
+            setLoading(false);
+          }
+          return;
+        }
 
         let resolvedResult: ResultData | null = null;
         if (data.data) {
@@ -63,13 +92,14 @@ function StudentResultsContent() {
         if (resolvedResult) {
           if (isMounted) {
             setResult(resolvedResult);
+            setErrorMessage(null);
             setLoading(false);
           }
           return;
         }
 
-        // If attemptId was passed but result hasn't finished processing in DB, retry up to 5 times (1s interval)
-        if (attemptId && retryCount < 5) {
+        // If attempt exists but result generation is in progress, retry up to 5 times (1s interval)
+        if (retryCount < 5) {
           setTimeout(() => {
             if (isMounted) loadResult(retryCount + 1);
           }, 1000);
@@ -78,10 +108,14 @@ function StudentResultsContent() {
 
         if (isMounted) {
           setResult(null);
+          setErrorMessage(
+            data.message || data.error || 'Your assessment result is not available yet.'
+          );
           setLoading(false);
         }
-      } catch {
-        if (attemptId && retryCount < 5) {
+      } catch (err: any) {
+        console.error('Error fetching assessment result:', err);
+        if (retryCount < 5) {
           setTimeout(() => {
             if (isMounted) loadResult(retryCount + 1);
           }, 1000);
@@ -89,6 +123,7 @@ function StudentResultsContent() {
         }
         if (isMounted) {
           setResult(null);
+          setErrorMessage('Network error occurred while fetching assessment results.');
           setLoading(false);
         }
       }
@@ -100,6 +135,38 @@ function StudentResultsContent() {
     };
   }, [attemptId]);
 
+  // =========================================================================
+  // EVENT HANDLERS & HELPERS
+  // =========================================================================
+  const handleEnroll = async () => {
+    if (!result) return;
+    setEnrolling(true);
+    try {
+      const res = await fetch('/api/v1/student/enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          attemptId: result.attemptId,
+          pathwayName: result.recommendedNextStep,
+          duration: result.recommendedDuration,
+        }),
+      });
+      const data = await res.json();
+      if (data.data?.redirectUrl) {
+        router.push(data.data.redirectUrl);
+      } else {
+        router.push('/student');
+      }
+    } catch {
+      router.push('/student');
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
+  // =========================================================================
+  // CONDITIONAL RENDER STATES (EARLY RETURNS AFTER ALL HOOKS HAVE FIRED)
+  // =========================================================================
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-8">
@@ -109,6 +176,22 @@ function StudentResultsContent() {
             Fetching Persisted Diagnostic Placement & Skill Breakdown...
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (errorMessage && !result) {
+    return (
+      <div className="max-w-3xl mx-auto my-12 p-8 bg-slate-900 border border-slate-800 rounded-2xl text-white text-center space-y-4">
+        <div className="text-3xl">⚠️</div>
+        <h2 className="text-xl font-bold">Assessment Result Status</h2>
+        <p className="text-xs text-slate-400">{errorMessage}</p>
+        <button
+          onClick={() => router.push('/student/assessments')}
+          className="px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold rounded-xl transition-colors"
+        >
+          Go to Diagnostic Hub
+        </button>
       </div>
     );
   }
@@ -132,37 +215,10 @@ function StudentResultsContent() {
     );
   }
 
-  const [enrolling, setEnrolling] = useState(false);
-
-  const handleEnroll = async () => {
-    setEnrolling(true);
-    try {
-      const res = await fetch('/api/v1/student/enroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          attemptId: result?.attemptId,
-          pathwayName: result?.recommendedNextStep,
-          duration: result?.recommendedDuration,
-        }),
-      });
-      const data = await res.json();
-      if (data.data?.redirectUrl) {
-        router.push(data.data.redirectUrl);
-      } else {
-        router.push('/student');
-      }
-    } catch {
-      router.push('/student');
-    } finally {
-      setEnrolling(false);
-    }
-  };
-
-  const isEvaluating = result?.placementLifecycle === 'EVALUATING';
-  const sectionScoresList = Array.isArray(result?.sectionScores) ? result.sectionScores : [];
-  const strengthsList = Array.isArray(result?.strengths) ? result.strengths : [];
-  const focusAreasList = Array.isArray(result?.focusAreas) ? result.focusAreas : [];
+  const isEvaluating = result.placementLifecycle === 'EVALUATING';
+  const sectionScoresList = Array.isArray(result.sectionScores) ? result.sectionScores : [];
+  const strengthsList = Array.isArray(result.strengths) ? result.strengths : [];
+  const focusAreasList = Array.isArray(result.focusAreas) ? result.focusAreas : [];
 
   return (
     <div className="max-w-5xl mx-auto my-8 p-6 md:p-8 bg-slate-900 border border-slate-800 rounded-2xl text-white space-y-8 font-sans">
