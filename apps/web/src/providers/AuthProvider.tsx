@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { UserSession } from '../features/auth/types/auth.types';
 import { getSupabaseBrowserClient, resetBrowserClientSingleton } from '../lib/supabase-browser';
+import { clearClientTokenCache } from '../services/api/client';
 
 export interface AuthContextType {
   session: UserSession | null;
@@ -38,6 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
     globalSessionCache = null;
     resetBrowserClientSingleton();
+    clearClientTokenCache();
   }, []);
 
   const fetchSession = useCallback(async () => {

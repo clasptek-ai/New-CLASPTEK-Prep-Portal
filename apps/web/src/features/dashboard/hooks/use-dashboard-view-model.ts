@@ -134,11 +134,11 @@ export function useDashboardViewModel(): DashboardViewModel {
 
   const studentName = overview?.profile.studentName || registeredName;
   const avatarUrl = overview?.profile.avatarUrl;
-  const studyStreakDays = overview?.profile.studyStreakDays || 14;
-  const completedTasksCount = overview?.progress.lessonCompletionCount || 17;
-  const totalTasksCount = overview?.progress.totalLessonsCount || 25;
+  const studyStreakDays = overview?.profile.studyStreakDays ?? 0;
+  const completedTasksCount = overview?.progress.lessonCompletionCount ?? 0;
+  const totalTasksCount = overview?.progress.totalLessonsCount ?? 0;
   const activeNotificationsCount =
-    notifications?.unreadCount || overview?.unreadNotificationsCount || 2;
+    notifications?.unreadCount ?? overview?.unreadNotificationsCount ?? 0;
 
   return {
     activeProgrammeId,

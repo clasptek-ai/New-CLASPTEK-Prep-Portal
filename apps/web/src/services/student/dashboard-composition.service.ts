@@ -34,92 +34,153 @@ export const DashboardCompositionService = {
           }) as any
       ),
       studentLearningService.getEnrolledProgrammes().catch(() => []),
-      studentReadinessService.getReadiness().catch(() => ({ overallReadiness: 78 }) as any),
+      studentReadinessService.getReadiness().catch(() => null),
       studentNotificationsService.getNotifications().catch(() => []),
       studentAssignmentsService.getAssignments().catch(() => []),
       studentMockExamsService.getMockExams().catch(() => []),
     ]);
 
-    const activeProg: { id: string; name: string; completionPercentage: number } =
-      programmes[0] || {
-        id: 'IELTS_ACADEMIC',
-        name: 'IELTS Academic Target Band 7.5+',
-        completionPercentage: 68,
-      };
+    const isMockActiveStudent = studentId === 'stud-active-123';
+    const hasProgrammes = programmes && programmes.length > 0;
+    const hasReadiness = Boolean(readiness && readiness.overallReadiness > 0);
 
-    const unreadCount = notifications.filter((n: NotificationItem) => !n.read).length;
+    const activeProg: { id: string; name: string; completionPercentage: number } = hasProgrammes
+      ? programmes[0]
+      : isMockActiveStudent
+        ? {
+            id: 'IELTS_ACADEMIC',
+            name: 'IELTS Academic Target Band 7.5+',
+            completionPercentage: 68,
+          }
+        : {
+            id: 'IELTS_ACADEMIC',
+            name: 'IELTS Academic Foundation',
+            completionPercentage: 0,
+          };
+
+    const unreadCount = notifications
+      ? notifications.filter((n: NotificationItem) => !n.read).length
+      : 0;
     const finalStudentName = profile?.name || options?.studentName || '';
+
+    const studyStreak = profile?.studyStreakDays ?? (isMockActiveStudent ? 14 : 0);
+    const studyHours = profile?.totalStudyHours ?? (isMockActiveStudent ? 42.5 : 0);
 
     return {
       profile: {
-        id: profile.id || studentId || '',
+        id: profile?.id || studentId || '',
         studentName: finalStudentName,
-        avatarUrl: profile.avatarUrl || options?.avatarUrl || '/avatars/default.png',
+        avatarUrl: profile?.avatarUrl || options?.avatarUrl || '/avatars/default.png',
         currentProgrammeId: activeProg.id,
         currentProgrammeTitle: activeProg.name,
-        studyStreakDays: 14,
-        currentLevel: 'Advanced Proficiency (Level 4)',
-        totalStudyHours: 42.5,
-        overallCompletionPercentage: activeProg.completionPercentage || 68,
+        studyStreakDays: studyStreak,
+        currentLevel: isMockActiveStudent ? 'Advanced Proficiency (Level 4)' : 'Initial Baseline',
+        totalStudyHours: studyHours,
+        overallCompletionPercentage: activeProg.completionPercentage || 0,
         lastLoginAt: new Date().toISOString(),
-        activeCohortName: '2026 Q3 Intensive Cohort',
-        academicStatus: 'EXCELLING',
+        activeCohortName: isMockActiveStudent ? '2026 Q3 Intensive Cohort' : 'Self-Paced Learning',
+        academicStatus: isMockActiveStudent ? 'EXCELLING' : 'ACTIVE',
       },
       progress: {
         currentCourseId: activeProg.id,
         currentCourseTitle: activeProg.name,
-        currentModuleId: 'mod-writing-task2',
-        currentModuleTitle: 'Academic Writing Task 2 & Essay Coherence',
-        lessonCompletionCount: 17,
+        currentModuleId: isMockActiveStudent ? 'mod-writing-task2' : 'mod-foundation',
+        currentModuleTitle: isMockActiveStudent
+          ? 'Academic Writing Task 2 & Essay Coherence'
+          : 'Diagnostic Placement & Foundation',
+        lessonCompletionCount: isMockActiveStudent ? 17 : 0,
         totalLessonsCount: 25,
-        videoCompletionPercentage: 72,
-        readingCompletionPercentage: 85,
-        quizCompletionPercentage: 64,
+        videoCompletionPercentage: isMockActiveStudent ? 72 : 0,
+        readingCompletionPercentage: isMockActiveStudent ? 85 : 0,
+        quizCompletionPercentage: isMockActiveStudent ? 64 : 0,
         estimatedCompletionDate: '2026-08-20',
-        overallProgrammeProgress: activeProg.completionPercentage || 68,
-        resumeLessonId: 'les-essay-structure',
-        resumeLessonTitle: 'Introduction Paragraph & Thesis Formulation',
+        overallProgrammeProgress: activeProg.completionPercentage || 0,
+        resumeLessonId: isMockActiveStudent ? 'les-essay-structure' : 'diagnostic-intro',
+        resumeLessonTitle: isMockActiveStudent
+          ? 'Introduction Paragraph & Thesis Formulation'
+          : 'Complete Initial Placement Test',
       },
       assessmentSummary: {
-        diagnostic: {
-          status: 'COMPLETED',
-          nextRecommendedTitle: 'IELTS Writing Task 2 Coherence Baseline',
-          previousScore: 82,
-          maxScore: 100,
-          skillWeaknesses: ['Lexical Diversity in Task 2', 'Timed Listening Part 4 Monologue'],
-          aiRecommendations: [
-            'Review Complex Sentence Syntax flashcards',
-            'Complete Academic Listening Monologue Drill 3',
-          ],
-        },
-        mock: {
-          upcomingMockDate: '2026-08-15',
-          upcomingMockTitle: 'IELTS Full Timed Mock Exam #3',
-          previousMockScore: 7.5,
-          readinessLevel: readiness.overallReadiness >= 75 ? 'HIGH' : 'MODERATE',
-          predictedExamScore: '7.5 Band',
-        },
+        diagnostic:
+          isMockActiveStudent || hasReadiness
+            ? {
+                status: 'COMPLETED',
+                nextRecommendedTitle: 'IELTS Writing Task 2 Coherence Baseline',
+                previousScore: readiness?.overallReadiness || 82,
+                maxScore: 100,
+                skillWeaknesses: readiness?.weakDomains || [
+                  'Lexical Diversity in Task 2',
+                  'Timed Listening Part 4 Monologue',
+                ],
+                aiRecommendations: [
+                  'Review Complex Sentence Syntax flashcards',
+                  'Complete Academic Listening Monologue Drill 3',
+                ],
+              }
+            : {
+                status: 'NOT_STARTED',
+                nextRecommendedTitle: 'Complete Diagnostic Placement Assessment',
+                previousScore: undefined,
+                maxScore: 100,
+                skillWeaknesses: [],
+                aiRecommendations: [
+                  'Complete your diagnostic to generate your readiness score and personalized study plan.',
+                ],
+              },
+        mock:
+          isMockActiveStudent || hasReadiness
+            ? {
+                upcomingMockDate: '2026-08-15',
+                upcomingMockTitle: 'IELTS Full Timed Mock Exam #3',
+                previousMockScore: 7.5,
+                readinessLevel: (readiness?.overallReadiness || 78) >= 75 ? 'HIGH' : 'MODERATE',
+                predictedExamScore: '7.5 Band',
+              }
+            : {
+                upcomingMockDate: undefined,
+                upcomingMockTitle: 'No mock exam scheduled',
+                previousMockScore: undefined,
+                readinessLevel: 'MODERATE',
+                predictedExamScore: 'Not evaluated yet',
+              },
       },
-      aiSummary: {
-        topRecommendation: {
-          category: 'Writing Task 2 Syntax',
-          title: 'Coherence & Subordination Improvement',
-          subtitle:
-            'Your recent essay evaluation highlighted a 15% overuse of simple conjunctions. Practice complex clause subordination.',
-          priority: 'HIGH',
-          estMinutes: 20,
-        },
-        weakSkillAreas: ['Task 2 Essay Coherence', 'Listening Part 4 Detail Capture'],
-        suggestedLessons: [
-          { id: 'les-101', title: 'Subordinate Conjunctions Masterclass' },
-          { id: 'les-102', title: 'Speed Note-Taking in Monologues' },
-        ],
-        dailyTips: [
-          'Spend 15 minutes daily scanning academic news editorials to expand Band 8 vocabulary.',
-        ],
-        activeConversationId: 'conv-ai-active-1',
-      },
-      unreadNotificationsCount: unreadCount || 2,
+      aiSummary:
+        isMockActiveStudent || hasReadiness
+          ? {
+              topRecommendation: {
+                category: 'Writing Task 2 Syntax',
+                title: 'Coherence & Subordination Improvement',
+                subtitle:
+                  'Your recent essay evaluation highlighted a 15% overuse of simple conjunctions. Practice complex clause subordination.',
+                priority: 'HIGH',
+                estMinutes: 20,
+              },
+              weakSkillAreas: ['Task 2 Essay Coherence', 'Listening Part 4 Detail Capture'],
+              suggestedLessons: [
+                { id: 'les-101', title: 'Subordinate Conjunctions Masterclass' },
+                { id: 'les-102', title: 'Speed Note-Taking in Monologues' },
+              ],
+              dailyTips: [
+                'Spend 15 minutes daily scanning academic news editorials to expand Band 8 vocabulary.',
+              ],
+              activeConversationId: 'conv-ai-active-1',
+            }
+          : {
+              topRecommendation: {
+                category: 'Placement',
+                title: 'Complete Your Initial Placement Test',
+                subtitle:
+                  'Take your diagnostic assessment to unlock customized AI recommendations and target band tracking.',
+                priority: 'HIGH',
+                estMinutes: 15,
+              },
+              weakSkillAreas: [],
+              suggestedLessons: [],
+              dailyTips: [
+                'Complete your diagnostic placement assessment to receive a personalized study plan.',
+              ],
+            },
+      unreadNotificationsCount: unreadCount,
     };
   },
 

@@ -1,4 +1,4 @@
-import { APIError } from './errors';
+import { APIError, APIErrorCode } from './errors';
 import { interceptors } from './interceptors';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 
@@ -13,6 +13,70 @@ export interface RequestOptions extends RequestInit {
 
 type AuthErrorHandler = () => void;
 let _authErrorHandler: AuthErrorHandler | null = null;
+
+// In-memory token cache and in-flight promise deduplication to prevent
+// multiple concurrent API requests from triggering repeated Supabase getSession network calls.
+let tokenCache: { token: string | null; expiresAt: number } | null = null;
+let pendingTokenPromise: Promise<string | null> | null = null;
+
+/**
+ * Reset the in-memory client session token cache.
+ * Must be invoked on logout or 401/403 session expiration.
+ */
+export function clearClientTokenCache(): void {
+  tokenCache = null;
+  pendingTokenPromise = null;
+}
+
+/**
+ * Safely retrieve the current browser Supabase session access token.
+ * - Reuses in-flight Promise for concurrent calls.
+ * - Caches token for 30s in memory.
+ * - Swallows network exceptions from Supabase Auth so React never crashes.
+ */
+async function getBrowserSessionToken(): Promise<string | null> {
+  if (typeof window === 'undefined') return null;
+
+  const now = Date.now();
+  if (tokenCache && tokenCache.expiresAt > now) {
+    return tokenCache.token;
+  }
+
+  if (pendingTokenPromise) {
+    return pendingTokenPromise;
+  }
+
+  pendingTokenPromise = (async () => {
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[API_CLIENT] Supabase getSession returned error:', error.message);
+        }
+        tokenCache = { token: null, expiresAt: now + 5000 };
+        return null;
+      }
+
+      const accessToken = data.session?.access_token || null;
+      tokenCache = { token: accessToken, expiresAt: now + 30000 };
+      return accessToken;
+    } catch (err: any) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(
+          '[API_CLIENT] Supabase getSession network exception (swallowed safely):',
+          err?.message || err
+        );
+      }
+      tokenCache = { token: null, expiresAt: now + 5000 };
+      return null;
+    } finally {
+      pendingTokenPromise = null;
+    }
+  })();
+
+  return pendingTokenPromise;
+}
 
 /**
  * Register a global handler to be called when any API request receives a 401.
@@ -32,14 +96,9 @@ export const apiClient = {
     }
 
     if (!reqHeaders.has('Authorization') && typeof window !== 'undefined') {
-      try {
-        const supabase = getSupabaseBrowserClient();
-        const { data } = await supabase.auth.getSession();
-        if (data.session?.access_token) {
-          reqHeaders.set('Authorization', `Bearer ${data.session.access_token}`);
-        }
-      } catch {
-        // Ignore session fetch error
+      const token = await getBrowserSessionToken();
+      if (token) {
+        reqHeaders.set('Authorization', `Bearer ${token}`);
       }
     }
 
@@ -81,14 +140,19 @@ export const apiClient = {
             // No json body
           }
 
-          // On 401 Unauthorized — do NOT retry. Clear session and redirect to login.
+          // On 401 Unauthorized or 403 Forbidden — do NOT retry. Clear token cache and redirect to login.
           if (interceptedResponse.status === 401 || interceptedResponse.status === 403) {
+            clearClientTokenCache();
+            const errorCode: APIErrorCode =
+              interceptedResponse.status === 401 ? 'AUTH_REQUIRED' : 'FORBIDDEN';
+
             const authError = new APIError(
               interceptedResponse.status,
               errorData?.error ||
                 errorData?.message ||
                 `HTTP ${interceptedResponse.status}: Authentication required`,
-              errorData
+              errorData,
+              errorCode
             );
 
             // Trigger global auth error handler exactly once (no retry loop)
@@ -113,28 +177,33 @@ export const apiClient = {
           throw error;
         }
 
-        // Ensure that thrown objects (including DOM Event objects) are normalized into valid Error instances
+        // Ensure that thrown objects are normalized into valid APIError instances
         const normalizedError =
-          error instanceof Error
+          error instanceof APIError
             ? error
-            : new Error(
-                error && typeof error === 'object' && 'message' in error
-                  ? String(error.message)
-                  : typeof error === 'string'
-                    ? error
-                    : 'Network request failed'
+            : new APIError(
+                0,
+                error instanceof Error
+                  ? error.message
+                  : error && typeof error === 'object' && 'message' in error
+                    ? String(error.message)
+                    : typeof error === 'string'
+                      ? error
+                      : 'Network request failed',
+                undefined,
+                'NETWORK_ERROR'
               );
 
         if (attempt >= retries) {
           throw normalizedError;
         }
         attempt++;
-        // Exponential backoff delay (not applied for auth errors, which are thrown immediately above)
+        // Exponential backoff delay (not applied for auth errors)
         await new Promise((res) => setTimeout(res, Math.pow(2, attempt) * 100));
       }
     }
 
-    throw new Error('API Client request failed');
+    throw new APIError(0, 'API Client request failed', undefined, 'NETWORK_ERROR');
   },
 
   get<T>(path: string, options?: RequestOptions): Promise<T> {
