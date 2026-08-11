@@ -34,6 +34,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
 
     const { id: attemptId } = await params;
+    console.info(
+      `[ASSESSMENT_SUBMIT_START] requestId=${requestId} userId=${studentId} attemptId=${attemptId}`
+    );
+
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
     const client = await pool.connect();
@@ -51,6 +55,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
       if (attemptRes.rows.length === 0) {
         await client.query('ROLLBACK');
+        console.warn(
+          `[ASSESSMENT_SUBMIT_FAILURE] requestId=${requestId} operation=ATTEMPT_LOOKUP error=NOT_FOUND message="Attempt not found or unauthorized"`
+        );
         return NextResponse.json(
           {
             success: false,
@@ -62,6 +69,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       }
 
       const attempt = attemptRes.rows[0];
+      console.info(
+        `[ATTEMPT_FOUND] requestId=${requestId} attemptId=${attemptId} status=${attempt.status}`
+      );
 
       // IDEMPOTENCY GUARD: If attempt is ALREADY submitted or completed, return 200 OK with existing result
       if (attempt.status === 'SUBMITTED' || attempt.status === 'COMPLETED') {
@@ -73,6 +83,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
         const resRow = existingResult.rows[0];
         const overallScore = parseFloat(attempt.score || resRow?.overall_score || '0');
+        console.info(
+          `[SUBMISSION_IDEMPOTENT_RESUME] requestId=${requestId} attemptId=${attemptId} score=${overallScore}`
+        );
 
         return NextResponse.json({
           success: true,
@@ -109,10 +122,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       answersRes.rows.forEach((r) => {
         candidateAnswers.set(r.question_id, r.response_payload);
       });
+      console.info(
+        `[ANSWERS_VALIDATED] requestId=${requestId} attemptId=${attemptId} answerCount=${answersRes.rows.length}`
+      );
 
       // =======================================================================
       // 4. SCORING ENGINE — reads exclusively from paper_snapshot
       // =======================================================================
+      console.info(`[SCORE_CALCULATION_START] requestId=${requestId} attemptId=${attemptId}`);
 
       // --- Grammar Section Scoring ---
       const grammarQs: any[] = paperSnapshot.grammarQuestions || [];
@@ -245,6 +262,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         predictedBand = 'Band 3.5';
       }
 
+      console.info(
+        `[SCORE_CALCULATION_COMPLETE] requestId=${requestId} attemptId=${attemptId} score=${totalScore} level=${computedLevel} cefr=${cefrLevel} band=${predictedBand}`
+      );
+
       // Dynamic Strengths & Focus Areas
       const strengths: string[] = [];
       const weaknesses: string[] = [];
@@ -330,7 +351,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       };
 
       // 5. Update assessment_attempt_answers.is_correct for MCQ/Reading items
-      // (only if question_id is a valid UUID string)
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       for (const [qId, result] of Object.entries(grammarScoreMap)) {
         if (uuidRegex.test(qId)) {
@@ -344,6 +364,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       }
 
       // 6. Lock attempt as SUBMITTED and store score
+      console.info(`[ATTEMPT_FINALIZE_START] requestId=${requestId} attemptId=${attemptId}`);
       await client.query(
         `UPDATE public.assessment_attempts
          SET status = 'SUBMITTED',
@@ -355,6 +376,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       );
 
       // 7. Persist Result into public.assessment_results
+      console.info(`[RESULT_WRITE_START] requestId=${requestId} attemptId=${attemptId}`);
       await client.query(
         `INSERT INTO public.assessment_results (
           attempt_id, student_id, assessment_category,
@@ -390,6 +412,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           JSON.stringify(aiFeedback),
         ]
       );
+      console.info(`[RESULT_WRITE_COMPLETE] requestId=${requestId} attemptId=${attemptId}`);
 
       // 8. Log SUBMITTED & RESULT_GENERATED events
       await client.query(
@@ -423,6 +446,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       );
 
       await client.query('COMMIT');
+      console.info(`[ATTEMPT_FINALIZE_COMPLETE] requestId=${requestId} attemptId=${attemptId}`);
+      console.info(
+        `[SUBMISSION_SUCCESS] requestId=${requestId} attemptId=${attemptId} score=${totalScore}`
+      );
 
       return NextResponse.json({
         success: true,
@@ -443,8 +470,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     } catch (innerErr: any) {
       await client.query('ROLLBACK');
       console.error(
-        `[${requestId}] POST /api/v1/assessment-attempts/${attemptId}/submit transaction error:`,
-        innerErr
+        `[ASSESSMENT_SUBMIT_FAILURE] requestId=${requestId} operation=TRANSACTION errorName=${innerErr.name} code=${innerErr.code} constraint=${innerErr.constraint} message="${innerErr.message}"`
       );
       return NextResponse.json(
         { success: false, error: innerErr.message, requestId },

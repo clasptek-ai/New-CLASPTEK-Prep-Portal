@@ -156,11 +156,28 @@ export async function POST(req: NextRequest) {
           )
           .catch(() => null);
       }
-      return NextResponse.json({ code: 'AUTH_ERROR', message: error.message }, { status: 400 });
+      const errMsg = (error.message || '').toLowerCase();
+      if (errMsg.includes('banned') || errMsg.includes('suspended')) {
+        return NextResponse.json(
+          {
+            code: 'ACCOUNT_SUSPENDED',
+            message: 'This account has been suspended. Please contact support.',
+          },
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json(
+        { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password.' },
+        { status: 401 }
+      );
     }
 
     if (!data.user || !data.session) {
-      return NextResponse.json({ code: 'AUTH_ERROR', message: 'Login failed' }, { status: 400 });
+      return NextResponse.json(
+        { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password.' },
+        { status: 401 }
+      );
     }
 
     // 3. Parallel Post-Auth Operations (Domain Sync + Security Reset + Session Recording + Role Resolution)

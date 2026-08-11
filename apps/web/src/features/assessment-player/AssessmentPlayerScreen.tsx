@@ -14,7 +14,6 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { BottomSheet } from '@/shared/ui/bottom-sheet/BottomSheet';
-import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { authFetch } from '@/lib/api-fetch';
 
 export interface PlayerQuestion {
@@ -22,7 +21,8 @@ export interface PlayerQuestion {
   versionId: string;
   code: string;
   prompt: string;
-  itemType: 'MCQ' | 'FILL_IN_BLANK' | 'ESSAY' | 'SPEAKING_PROMPT' | 'MATCHING' | 'TRUE_FALSE_NOT_GIVEN';
+  itemType:
+    'MCQ' | 'FILL_IN_BLANK' | 'ESSAY' | 'SPEAKING_PROMPT' | 'MATCHING' | 'TRUE_FALSE_NOT_GIVEN';
   options?: { code: string; text: string }[];
   passageTitle?: string;
   passageContent?: string;
@@ -52,6 +52,7 @@ export interface AssessmentPlayerProps {
 }
 
 export function AssessmentPlayerScreen({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   assessmentId,
   title,
   examType,
@@ -62,7 +63,6 @@ export function AssessmentPlayerScreen({
   onComplete,
 }: AssessmentPlayerProps) {
   const router = useRouter();
-  const { isMobile } = useBreakpoint();
 
   const [currentSectionIdx, setCurrentSectionIdx] = useState(0);
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
@@ -161,8 +161,11 @@ export function AssessmentPlayerScreen({
     }
   }
 
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   async function handleSubmitFinal() {
     setIsSubmitting(true);
+    setSubmitError(null);
     try {
       for (const [qId, ans] of Object.entries(answers)) {
         if (ans.textResponse || ans.audioRecordingUrl) {
@@ -182,15 +185,31 @@ export function AssessmentPlayerScreen({
         }
       }
 
-      await authFetch(`/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ examType }),
-      });
+      const res = await authFetch(
+        `/api/v1/assessment-attempts/${encodeURIComponent(attemptId)}/submit`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ examType }),
+        }
+      );
+
+      const json = await res.json().catch(() => ({}));
+
+      if (!res.ok || !json.success) {
+        let msg = json.error || json.message || 'Assessment submission failed on server.';
+        if (res.status === 401) msg = 'Your session has expired. Please log in again to submit.';
+        else if (res.status === 403)
+          msg = 'You are not authorized to submit this assessment attempt.';
+        else if (res.status === 404) msg = 'Assessment attempt not found or already closed.';
+        throw new Error(msg);
+      }
+
       if (onComplete) onComplete();
       else router.push(`/student/results?attemptId=${encodeURIComponent(attemptId)}`);
-    } catch {
-      router.push(`/student/results?attemptId=${encodeURIComponent(attemptId)}`);
+    } catch (err: any) {
+      console.error('Assessment final submission error:', err);
+      setSubmitError(err.message || 'An unexpected error occurred during submission.');
     } finally {
       setIsSubmitting(false);
     }
@@ -396,7 +415,8 @@ export function AssessmentPlayerScreen({
                   return (
                     <div className="space-y-3">
                       {(currentQuestion.options || []).map((opt) => {
-                        const isSelected = answers[currentQuestion.id]?.selectedOptionCode === opt.code;
+                        const isSelected =
+                          answers[currentQuestion.id]?.selectedOptionCode === opt.code;
                         return (
                           <button
                             key={opt.code}
@@ -428,11 +448,14 @@ export function AssessmentPlayerScreen({
                         { code: 'B', text: 'False' },
                         { code: 'C', text: 'Not Given' },
                       ].map((opt) => {
-                        const isSelected = answers[currentQuestion?.id || '']?.selectedOptionCode === opt.code;
+                        const isSelected =
+                          answers[currentQuestion?.id || '']?.selectedOptionCode === opt.code;
                         return (
                           <button
                             key={opt.code}
-                            onClick={() => currentQuestion && handleSelectOption(currentQuestion.id, opt.code)}
+                            onClick={() =>
+                              currentQuestion && handleSelectOption(currentQuestion.id, opt.code)
+                            }
                             className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
                               isSelected
                                 ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
@@ -458,7 +481,9 @@ export function AssessmentPlayerScreen({
                       <input
                         type="text"
                         value={answers[currentQuestion?.id || '']?.textResponse || ''}
-                        onChange={(e) => currentQuestion && handleTextChange(currentQuestion.id, e.target.value)}
+                        onChange={(e) =>
+                          currentQuestion && handleTextChange(currentQuestion.id, e.target.value)
+                        }
                         placeholder="Type your answer here..."
                         className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500 font-mono"
                       />
@@ -495,14 +520,17 @@ export function AssessmentPlayerScreen({
                   return (
                     <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2">
                       <p className="text-xs text-slate-300">Speaking Audio Recorder</p>
-                      <p className="text-[11px] text-slate-400">Record your oral response for evaluation.</p>
+                      <p className="text-[11px] text-slate-400">
+                        Record your oral response for evaluation.
+                      </p>
                     </div>
                   );
 
                 default:
                   return (
                     <div className="p-4 bg-red-950/40 border border-red-800/60 rounded-xl text-red-200 text-xs font-mono">
-                      ⚠️ Unsupported Question Item Type: <strong>{String(currentQuestion?.itemType || 'UNKNOWN')}</strong>
+                      ⚠️ Unsupported Question Item Type:{' '}
+                      <strong>{String(currentQuestion?.itemType || 'UNKNOWN')}</strong>
                     </div>
                   );
               }
@@ -635,6 +663,14 @@ export function AssessmentPlayerScreen({
               You have completed {answeredCountAll} of {totalQuestionsAllSections} questions.
               Submitting will compute your placement assessment outcome.
             </p>
+            {submitError && (
+              <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs space-y-1">
+                <div className="font-bold flex items-center space-x-1">
+                  <span>⚠️ Submission Error</span>
+                </div>
+                <div>{submitError}</div>
+              </div>
+            )}
             <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
               <button
                 onClick={() => setConfirmOpen(false)}
@@ -647,7 +683,11 @@ export function AssessmentPlayerScreen({
                 disabled={isSubmitting}
                 className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold rounded-xl min-h-11"
               >
-                {isSubmitting ? 'Submitting...' : 'Confirm Submission'}
+                {isSubmitting
+                  ? 'Submitting...'
+                  : submitError
+                    ? 'Retry Submission'
+                    : 'Confirm Submission'}
               </button>
             </div>
           </div>
