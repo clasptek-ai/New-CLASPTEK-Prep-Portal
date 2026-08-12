@@ -199,15 +199,15 @@ export function AdminDashboardScreen() {
       {/* Executive Command Actions */}
       <QuickActionsBar />
 
-      {/* Executive Analytics Charts & Cohort Distributions */}
-      <ExecutiveAnalytics charts={data.charts} />
-
-      {/* Realtime Activity Stream, Pending Operations & Subsystem Health */}
+      {/* Activity Area & Pending Operations (Two-Column Layout) */}
       <AdminSectionsGrid
         notifications={data.notifications}
         recentActivity={data.recentActivity}
         pendingTasks={data.pendingTasks}
       />
+
+      {/* Executive Analytics Charts & Cohort Distributions */}
+      <ExecutiveAnalytics charts={data.charts} />
     </div>
   );
 }

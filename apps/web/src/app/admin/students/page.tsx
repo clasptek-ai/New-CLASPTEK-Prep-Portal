@@ -44,6 +44,9 @@ export default function StudentDirectoryPage() {
   // Edit Modal
   const [editingStudent, setEditingStudent] = useState<AdminUserRecord | null>(null);
 
+  // Delete Confirmation Modal
+  const [deletingStudent, setDeletingStudent] = useState<AdminUserRecord | null>(null);
+
   const loadData = async () => {
     setLoading(true);
     try {
@@ -148,22 +151,29 @@ export default function StudentDirectoryPage() {
     setActiveMenuId(null);
   };
 
-  const handleDeleteStudent = async (s: AdminUserRecord) => {
-    const confirmName = window.prompt(
-      `CRITICAL: Type "DELETE" to archive student candidate "${s.name}".`
-    );
-    if (confirmName !== 'DELETE') return;
-
-    const success = await adminUsersService.deleteStudent(s.id);
-    if (success) {
-      setStudents((prev) => prev.filter((item) => item.id !== s.id));
-      showBanner(`Student candidate ${s.name} archived successfully.`);
-    } else {
-      showBanner(
-        `Failed to archive student candidate ${s.name}. Administrator credentials required.`
-      );
-    }
+  const handleDeleteStudent = (s: AdminUserRecord) => {
+    setDeletingStudent(s);
     setActiveMenuId(null);
+  };
+
+  const confirmDeleteStudent = async (s: AdminUserRecord) => {
+    setDeletingStudent(null);
+    const res = await adminUsersService.deleteStudent(s.id);
+    if (res.success || res.code === 'ALREADY_DELETED') {
+      setStudents((prev) => prev.filter((item) => item.id !== s.id));
+      showBanner(
+        res.code === 'ALREADY_DELETED'
+          ? 'Student account was already removed.'
+          : 'Student account deleted successfully.'
+      );
+      loadData();
+    } else if (res.code === 'USER_NOT_FOUND') {
+      setStudents((prev) => prev.filter((item) => item.id !== s.id));
+      showBanner('Student account could not be found.');
+      loadData();
+    } else {
+      showBanner(res.message || 'Unable to delete this student. Please try again.');
+    }
   };
 
   const handleRestoreStudent = async (s: AdminUserRecord) => {
@@ -1525,6 +1535,108 @@ export default function StudentDirectoryPage() {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* 5. DELETE STUDENT CONFIRMATION MODAL */}
+      {deletingStudent && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(2, 6, 23, 0.85)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '1rem',
+          }}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '460px',
+              backgroundColor: '#0f172a',
+              border: '1px solid #1e293b',
+              borderRadius: '16px',
+              padding: '1.75rem',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.25rem',
+              boxSizing: 'border-box',
+            }}
+          >
+            <div>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '1.25rem',
+                  fontWeight: 800,
+                  color: '#f8fafc',
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                Delete Student?
+              </h3>
+              <p
+                style={{
+                  margin: '0.5rem 0 0',
+                  fontSize: '0.875rem',
+                  color: '#94a3b8',
+                  lineHeight: 1.5,
+                }}
+              >
+                This will permanently remove the student&apos;s portal account and associated
+                student records for{' '}
+                <strong style={{ color: '#ffffff' }}>{deletingStudent.name}</strong>.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '0.75rem',
+                marginTop: '0.5rem',
+              }}
+            >
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setDeletingStudent(null)}
+                style={{
+                  backgroundColor: '#1e293b',
+                  color: '#cbd5e1',
+                  borderRadius: '8px',
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.85rem',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                variant="danger"
+                onClick={() => confirmDeleteStudent(deletingStudent)}
+                style={{
+                  backgroundColor: '#dc2626',
+                  color: '#ffffff',
+                  borderRadius: '8px',
+                  padding: '0.5rem 1.15rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                }}
+              >
+                Delete Student
+              </Button>
+            </div>
           </div>
         </div>
       )}

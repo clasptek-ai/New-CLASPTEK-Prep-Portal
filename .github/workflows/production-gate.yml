@@ -12,6 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      NEXT_PUBLIC_SITE_URL: https://portal.clasptek.org
+      NEXT_PUBLIC_APP_URL: https://portal.clasptek.org
+      NODE_ENV: production
+
     steps:
       - name: Checkout Codebase
         uses: actions/checkout@v4
@@ -20,6 +28,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'pnpm'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v3
@@ -29,13 +38,17 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Verify Deployment Secret Availability
+        run: |
+          test -n "$DATABASE_URL" || (echo "::error::DATABASE_URL is not configured in GitHub Secrets" && exit 1)
+          test -n "$NEXT_PUBLIC_SUPABASE_URL" || (echo "::error::NEXT_PUBLIC_SUPABASE_URL is not configured in GitHub Secrets" && exit 1)
+          test -n "$NEXT_PUBLIC_SUPABASE_ANON_KEY" || (echo "::error::NEXT_PUBLIC_SUPABASE_ANON_KEY is not configured in GitHub Secrets" && exit 1)
+          test -n "$SUPABASE_SERVICE_ROLE_KEY" || (echo "::error::SUPABASE_SERVICE_ROLE_KEY is not configured in GitHub Secrets" && exit 1)
+          echo "All required deployment secrets are verified and present."
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
       - name: Execute Pre-Deploy Certification Gate
         run: node scripts/pre-deploy-gate.js
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          NEXT_PUBLIC_SITE_URL: https://portal.clasptek.org
-          NEXT_PUBLIC_APP_URL: https://portal.clasptek.org
-          NODE_ENV: production

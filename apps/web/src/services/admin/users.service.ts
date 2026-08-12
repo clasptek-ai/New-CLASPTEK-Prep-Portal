@@ -24,6 +24,12 @@ export interface AdminUserRecord {
   }[];
 }
 
+export interface DeleteStudentResult {
+  success: boolean;
+  message: string;
+  code?: string;
+}
+
 const STORAGE_KEY = 'clasptek_users_db';
 
 function getStoredUsers(): AdminUserRecord[] {
@@ -179,13 +185,30 @@ export const adminUsersService = {
     }
   },
 
-  async deleteStudent(id: string): Promise<boolean> {
+  async deleteStudent(id: string): Promise<DeleteStudentResult> {
     try {
-      const res = await apiClient.delete<{ success: boolean }>(`/api/v1/admin/users/${id}`);
-      return Boolean(res && res.success);
-    } catch (err) {
+      const res = await apiClient.delete<{ success: boolean; message?: string; code?: string }>(
+        `/api/v1/admin/users/${id}`
+      );
+      return {
+        success: Boolean(res && res.success !== false),
+        message: res?.message || 'Student account deleted successfully.',
+        code: res?.code,
+      };
+    } catch (err: any) {
       console.error('adminUsersService.deleteStudent error:', err);
-      return false;
+      if (err?.code === 'USER_NOT_FOUND' || err?.status === 404) {
+        return {
+          success: false,
+          message: 'Student account could not be found.',
+          code: 'USER_NOT_FOUND',
+        };
+      }
+      return {
+        success: false,
+        message: err?.message || 'Unable to delete this student. Please try again.',
+        code: 'DELETE_FAILED',
+      };
     }
   },
 
