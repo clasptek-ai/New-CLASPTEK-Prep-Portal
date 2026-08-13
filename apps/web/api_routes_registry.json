@@ -1,0 +1,6220 @@
+{
+  "totalRoutes": 336,
+  "highRiskCount": 60,
+  "routes": [
+    {
+      "id": 1,
+      "relativePath": "/admin/ai-dashboard/route.ts",
+      "urlPattern": "/api/v1/admin/ai-dashboard",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 2,
+      "relativePath": "/admin/analytics/route.ts",
+      "urlPattern": "/api/v1/admin/analytics",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 3,
+      "relativePath": "/admin/assessment/publish/route.ts",
+      "urlPattern": "/api/v1/admin/assessment/publish",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 4,
+      "relativePath": "/admin/assessment/sessions/route.ts",
+      "urlPattern": "/api/v1/admin/assessment/sessions",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 5,
+      "relativePath": "/admin/assessment/statistics/route.ts",
+      "urlPattern": "/api/v1/admin/assessment/statistics",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 6,
+      "relativePath": "/admin/assessment/unlock-practice/route.ts",
+      "urlPattern": "/api/v1/admin/assessment/unlock-practice",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 7,
+      "relativePath": "/admin/assessment-attempts/route.ts",
+      "urlPattern": "/api/v1/admin/assessment-attempts",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Exam Attempt Lifecycle / Scoring"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 8,
+      "relativePath": "/admin/assessment-attempts/[id]/route.ts",
+      "urlPattern": "/api/v1/admin/assessment-attempts/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Exam Attempt Lifecycle / Scoring"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 9,
+      "relativePath": "/admin/assessments/route.ts",
+      "urlPattern": "/api/v1/admin/assessments",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 10,
+      "relativePath": "/admin/audit/route.ts",
+      "urlPattern": "/api/v1/admin/audit",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 11,
+      "relativePath": "/admin/curricula/route.ts",
+      "urlPattern": "/api/v1/admin/curricula",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 12,
+      "relativePath": "/admin/curricula/[id]/approve/route.ts",
+      "urlPattern": "/api/v1/admin/curricula/[id]/approve",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 13,
+      "relativePath": "/admin/curricula/[id]/archive/route.ts",
+      "urlPattern": "/api/v1/admin/curricula/[id]/archive",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 14,
+      "relativePath": "/admin/curricula/[id]/publish/route.ts",
+      "urlPattern": "/api/v1/admin/curricula/[id]/publish",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 15,
+      "relativePath": "/admin/curricula/[id]/restore/route.ts",
+      "urlPattern": "/api/v1/admin/curricula/[id]/restore",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 16,
+      "relativePath": "/admin/curricula/[id]/review/route.ts",
+      "urlPattern": "/api/v1/admin/curricula/[id]/review",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 17,
+      "relativePath": "/admin/curricula/[id]/route.ts",
+      "urlPattern": "/api/v1/admin/curricula/[id]",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 18,
+      "relativePath": "/admin/dashboard/route.ts",
+      "urlPattern": "/api/v1/admin/dashboard",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 19,
+      "relativePath": "/admin/diagnostic/attempts/route.ts",
+      "urlPattern": "/api/v1/admin/diagnostic/attempts",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 20,
+      "relativePath": "/admin/diagnostics/route.ts",
+      "urlPattern": "/api/v1/admin/diagnostics",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 21,
+      "relativePath": "/admin/diagnostics/[id]/inventory-check/route.ts",
+      "urlPattern": "/api/v1/admin/diagnostics/[id]/inventory-check",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 22,
+      "relativePath": "/admin/diagnostics/[id]/route.ts",
+      "urlPattern": "/api/v1/admin/diagnostics/[id]",
+      "methods": [
+        "GET",
+        "PUT",
+        "DELETE"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 23,
+      "relativePath": "/admin/evaluations/cost/route.ts",
+      "urlPattern": "/api/v1/admin/evaluations/cost",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 24,
+      "relativePath": "/admin/evaluations/dashboard/route.ts",
+      "urlPattern": "/api/v1/admin/evaluations/dashboard",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 25,
+      "relativePath": "/admin/evaluations/retry/route.ts",
+      "urlPattern": "/api/v1/admin/evaluations/retry",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 26,
+      "relativePath": "/admin/evaluations/route.ts",
+      "urlPattern": "/api/v1/admin/evaluations",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 27,
+      "relativePath": "/admin/evaluations/[id]/review/route.ts",
+      "urlPattern": "/api/v1/admin/evaluations/[id]/review",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 28,
+      "relativePath": "/admin/lessons/route.ts",
+      "urlPattern": "/api/v1/admin/lessons",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 29,
+      "relativePath": "/admin/lessons/[id]/route.ts",
+      "urlPattern": "/api/v1/admin/lessons/[id]",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 30,
+      "relativePath": "/admin/media/route.ts",
+      "urlPattern": "/api/v1/admin/media",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 31,
+      "relativePath": "/admin/mock/active-sessions/route.ts",
+      "urlPattern": "/api/v1/admin/mock/active-sessions",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 32,
+      "relativePath": "/admin/mock/blueprints/route.ts",
+      "urlPattern": "/api/v1/admin/mock/blueprints",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 33,
+      "relativePath": "/admin/mock/generate/route.ts",
+      "urlPattern": "/api/v1/admin/mock/generate",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 34,
+      "relativePath": "/admin/mock/integrity-logs/route.ts",
+      "urlPattern": "/api/v1/admin/mock/integrity-logs",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 35,
+      "relativePath": "/admin/mock/sessions/route.ts",
+      "urlPattern": "/api/v1/admin/mock/sessions",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 36,
+      "relativePath": "/admin/mock/templates/route.ts",
+      "urlPattern": "/api/v1/admin/mock/templates",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 37,
+      "relativePath": "/admin/mock/unlock/route.ts",
+      "urlPattern": "/api/v1/admin/mock/unlock",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 38,
+      "relativePath": "/admin/mock/unlock-attempt/route.ts",
+      "urlPattern": "/api/v1/admin/mock/unlock-attempt",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 39,
+      "relativePath": "/admin/observability/analytics/route.ts",
+      "urlPattern": "/api/v1/admin/observability/analytics",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 40,
+      "relativePath": "/admin/observability/metrics/route.ts",
+      "urlPattern": "/api/v1/admin/observability/metrics",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 41,
+      "relativePath": "/admin/passages/route.ts",
+      "urlPattern": "/api/v1/admin/passages",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 42,
+      "relativePath": "/admin/practice/attempts/route.ts",
+      "urlPattern": "/api/v1/admin/practice/attempts",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 43,
+      "relativePath": "/admin/practice/bulk-unlock/route.ts",
+      "urlPattern": "/api/v1/admin/practice/bulk-unlock",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 44,
+      "relativePath": "/admin/practice/reset/route.ts",
+      "urlPattern": "/api/v1/admin/practice/reset",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 45,
+      "relativePath": "/admin/practice/sessions/route.ts",
+      "urlPattern": "/api/v1/admin/practice/sessions",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 46,
+      "relativePath": "/admin/practice/statistics/route.ts",
+      "urlPattern": "/api/v1/admin/practice/statistics",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 47,
+      "relativePath": "/admin/practice/students/route.ts",
+      "urlPattern": "/api/v1/admin/practice/students",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 48,
+      "relativePath": "/admin/practice/unlock/route.ts",
+      "urlPattern": "/api/v1/admin/practice/unlock",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 49,
+      "relativePath": "/admin/programmes/route.ts",
+      "urlPattern": "/api/v1/admin/programmes",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 50,
+      "relativePath": "/admin/programmes/[programmeId]/modules/route.ts",
+      "urlPattern": "/api/v1/admin/programmes/[programmeId]/modules",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 51,
+      "relativePath": "/admin/prompts/route.ts",
+      "urlPattern": "/api/v1/admin/prompts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 52,
+      "relativePath": "/admin/question-bank/import/route.ts",
+      "urlPattern": "/api/v1/admin/question-bank/import",
+      "methods": [],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 53,
+      "relativePath": "/admin/questions/bulk/route.ts",
+      "urlPattern": "/api/v1/admin/questions/bulk",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 54,
+      "relativePath": "/admin/questions/bulk-import/route.ts",
+      "urlPattern": "/api/v1/admin/questions/bulk-import",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 55,
+      "relativePath": "/admin/questions/export/route.ts",
+      "urlPattern": "/api/v1/admin/questions/export",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Binary / CSV File Download"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": true,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 56,
+      "relativePath": "/admin/questions/import/commit/route.ts",
+      "urlPattern": "/api/v1/admin/questions/import/commit",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Bulk Question Import Batching"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 57,
+      "relativePath": "/admin/questions/import/history/route.ts",
+      "urlPattern": "/api/v1/admin/questions/import/history",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Bulk Question Import Batching"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 58,
+      "relativePath": "/admin/questions/import/rollback/route.ts",
+      "urlPattern": "/api/v1/admin/questions/import/rollback",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Bulk Question Import Batching"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 59,
+      "relativePath": "/admin/questions/import/route.ts",
+      "urlPattern": "/api/v1/admin/questions/import",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Bulk Question Import Batching"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 60,
+      "relativePath": "/admin/questions/import/validate/route.ts",
+      "urlPattern": "/api/v1/admin/questions/import/validate",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Bulk Question Import Batching"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 61,
+      "relativePath": "/admin/questions/route.ts",
+      "urlPattern": "/api/v1/admin/questions",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 62,
+      "relativePath": "/admin/questions/[id]/archive/route.ts",
+      "urlPattern": "/api/v1/admin/questions/[id]/archive",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 63,
+      "relativePath": "/admin/questions/[id]/create-version/route.ts",
+      "urlPattern": "/api/v1/admin/questions/[id]/create-version",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 64,
+      "relativePath": "/admin/questions/[id]/publish/route.ts",
+      "urlPattern": "/api/v1/admin/questions/[id]/publish",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 65,
+      "relativePath": "/admin/questions/[id]/restore/route.ts",
+      "urlPattern": "/api/v1/admin/questions/[id]/restore",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 66,
+      "relativePath": "/admin/questions/[id]/route.ts",
+      "urlPattern": "/api/v1/admin/questions/[id]",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 67,
+      "relativePath": "/admin/questions/[id]/upload-media/route.ts",
+      "urlPattern": "/api/v1/admin/questions/[id]/upload-media",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 68,
+      "relativePath": "/admin/reports/route.ts",
+      "urlPattern": "/api/v1/admin/reports",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 69,
+      "relativePath": "/admin/resources/route.ts",
+      "urlPattern": "/api/v1/admin/resources",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 70,
+      "relativePath": "/admin/resources/[id]/archive/route.ts",
+      "urlPattern": "/api/v1/admin/resources/[id]/archive",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 71,
+      "relativePath": "/admin/resources/[id]/publish/route.ts",
+      "urlPattern": "/api/v1/admin/resources/[id]/publish",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 72,
+      "relativePath": "/admin/resources/[id]/restore/route.ts",
+      "urlPattern": "/api/v1/admin/resources/[id]/restore",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 73,
+      "relativePath": "/admin/resources/[id]/route.ts",
+      "urlPattern": "/api/v1/admin/resources/[id]",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 74,
+      "relativePath": "/admin/resources/[id]/upload/route.ts",
+      "urlPattern": "/api/v1/admin/resources/[id]/upload",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Binary / CSV File Download"
+      ],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": true,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 75,
+      "relativePath": "/admin/rubrics/route.ts",
+      "urlPattern": "/api/v1/admin/rubrics",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 76,
+      "relativePath": "/admin/settings/route.ts",
+      "urlPattern": "/api/v1/admin/settings",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 77,
+      "relativePath": "/admin/students/[studentId]/assessment-history/route.ts",
+      "urlPattern": "/api/v1/admin/students/[studentId]/assessment-history",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 78,
+      "relativePath": "/admin/users/route.ts",
+      "urlPattern": "/api/v1/admin/users",
+      "methods": [
+        "GET",
+        "POST",
+        "PATCH"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 79,
+      "relativePath": "/admin/users/[id]/logout/route.ts",
+      "urlPattern": "/api/v1/admin/users/[id]/logout",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 80,
+      "relativePath": "/admin/users/[id]/mock-gate/route.ts",
+      "urlPattern": "/api/v1/admin/users/[id]/mock-gate",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 81,
+      "relativePath": "/admin/users/[id]/practice-gate/route.ts",
+      "urlPattern": "/api/v1/admin/users/[id]/practice-gate",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 82,
+      "relativePath": "/admin/users/[id]/resend-verification/route.ts",
+      "urlPattern": "/api/v1/admin/users/[id]/resend-verification",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 83,
+      "relativePath": "/admin/users/[id]/reset-password/route.ts",
+      "urlPattern": "/api/v1/admin/users/[id]/reset-password",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 84,
+      "relativePath": "/admin/users/[id]/restore/route.ts",
+      "urlPattern": "/api/v1/admin/users/[id]/restore",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 85,
+      "relativePath": "/admin/users/[id]/route.ts",
+      "urlPattern": "/api/v1/admin/users/[id]",
+      "methods": [
+        "DELETE"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 86,
+      "relativePath": "/admin/users/[id]/status/route.ts",
+      "urlPattern": "/api/v1/admin/users/[id]/status",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 87,
+      "relativePath": "/admin/users/[id]/unlock-account/route.ts",
+      "urlPattern": "/api/v1/admin/users/[id]/unlock-account",
+      "methods": [
+        "POST"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 88,
+      "relativePath": "/ai/benchmark/history/route.ts",
+      "urlPattern": "/api/v1/ai/benchmark/history",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 89,
+      "relativePath": "/ai/benchmark/regressions/route.ts",
+      "urlPattern": "/api/v1/ai/benchmark/regressions",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 90,
+      "relativePath": "/ai/benchmark/results/route.ts",
+      "urlPattern": "/api/v1/ai/benchmark/results",
+      "methods": [
+        "GET"
+      ],
+      "group": "results",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 91,
+      "relativePath": "/ai/benchmark/run/route.ts",
+      "urlPattern": "/api/v1/ai/benchmark/run",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 92,
+      "relativePath": "/ai/chat/route.ts",
+      "urlPattern": "/api/v1/ai/chat",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 93,
+      "relativePath": "/ai/deployment/decision/route.ts",
+      "urlPattern": "/api/v1/ai/deployment/decision",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 94,
+      "relativePath": "/ai/evaluations/route.ts",
+      "urlPattern": "/api/v1/ai/evaluations",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 95,
+      "relativePath": "/ai/evaluations/[id]/approve/route.ts",
+      "urlPattern": "/api/v1/ai/evaluations/[id]/approve",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 96,
+      "relativePath": "/ai/evaluations/[id]/override/route.ts",
+      "urlPattern": "/api/v1/ai/evaluations/[id]/override",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 97,
+      "relativePath": "/ai/evaluations/[id]/route.ts",
+      "urlPattern": "/api/v1/ai/evaluations/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 98,
+      "relativePath": "/ai/feedback/route.ts",
+      "urlPattern": "/api/v1/ai/feedback",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 99,
+      "relativePath": "/ai/history/route.ts",
+      "urlPattern": "/api/v1/ai/history",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 100,
+      "relativePath": "/ai/prompt/compare/route.ts",
+      "urlPattern": "/api/v1/ai/prompt/compare",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 101,
+      "relativePath": "/ai/prompt/history/route.ts",
+      "urlPattern": "/api/v1/ai/prompt/history",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 102,
+      "relativePath": "/ai/prompt/performance/route.ts",
+      "urlPattern": "/api/v1/ai/prompt/performance",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 103,
+      "relativePath": "/ai/prompt/register/route.ts",
+      "urlPattern": "/api/v1/ai/prompt/register",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 104,
+      "relativePath": "/ai/speaking/evaluate/route.ts",
+      "urlPattern": "/api/v1/ai/speaking/evaluate",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 105,
+      "relativePath": "/ai/writing/evaluate/route.ts",
+      "urlPattern": "/api/v1/ai/writing/evaluate",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 106,
+      "relativePath": "/analytics/admin/route.ts",
+      "urlPattern": "/api/v1/analytics/admin",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 107,
+      "relativePath": "/analytics/benchmarks/route.ts",
+      "urlPattern": "/api/v1/analytics/benchmarks",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 108,
+      "relativePath": "/analytics/catalog/route.ts",
+      "urlPattern": "/api/v1/analytics/catalog",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 109,
+      "relativePath": "/analytics/coach/route.ts",
+      "urlPattern": "/api/v1/analytics/coach",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 110,
+      "relativePath": "/analytics/cohorts/route.ts",
+      "urlPattern": "/api/v1/analytics/cohorts",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 111,
+      "relativePath": "/analytics/competencies/route.ts",
+      "urlPattern": "/api/v1/analytics/competencies",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 112,
+      "relativePath": "/analytics/dashboard/route.ts",
+      "urlPattern": "/api/v1/analytics/dashboard",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 113,
+      "relativePath": "/analytics/data-quality/route.ts",
+      "urlPattern": "/api/v1/analytics/data-quality",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 114,
+      "relativePath": "/analytics/evaluations/route.ts",
+      "urlPattern": "/api/v1/analytics/evaluations",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 115,
+      "relativePath": "/analytics/executive/route.ts",
+      "urlPattern": "/api/v1/analytics/executive",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 116,
+      "relativePath": "/analytics/export/jobs/route.ts",
+      "urlPattern": "/api/v1/analytics/export/jobs",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 117,
+      "relativePath": "/analytics/export/research/route.ts",
+      "urlPattern": "/api/v1/analytics/export/research",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 118,
+      "relativePath": "/analytics/exports/route.ts",
+      "urlPattern": "/api/v1/analytics/exports",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 119,
+      "relativePath": "/analytics/instructor/route.ts",
+      "urlPattern": "/api/v1/analytics/instructor",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 120,
+      "relativePath": "/analytics/metrics/route.ts",
+      "urlPattern": "/api/v1/analytics/metrics",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 121,
+      "relativePath": "/analytics/platform/route.ts",
+      "urlPattern": "/api/v1/analytics/platform",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 122,
+      "relativePath": "/analytics/practice/route.ts",
+      "urlPattern": "/api/v1/analytics/practice",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 123,
+      "relativePath": "/analytics/predictions/route.ts",
+      "urlPattern": "/api/v1/analytics/predictions",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 124,
+      "relativePath": "/analytics/refresh/route.ts",
+      "urlPattern": "/api/v1/analytics/refresh",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 125,
+      "relativePath": "/analytics/reports/route.ts",
+      "urlPattern": "/api/v1/analytics/reports",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 126,
+      "relativePath": "/analytics/student/route.ts",
+      "urlPattern": "/api/v1/analytics/student",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 127,
+      "relativePath": "/analytics/trends/route.ts",
+      "urlPattern": "/api/v1/analytics/trends",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 128,
+      "relativePath": "/analytics/warehouse/route.ts",
+      "urlPattern": "/api/v1/analytics/warehouse",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 129,
+      "relativePath": "/announcements/route.ts",
+      "urlPattern": "/api/v1/announcements",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 130,
+      "relativePath": "/assessment/answer/route.ts",
+      "urlPattern": "/api/v1/assessment/answer",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 131,
+      "relativePath": "/assessment/current/route.ts",
+      "urlPattern": "/api/v1/assessment/current",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 132,
+      "relativePath": "/assessment/history/route.ts",
+      "urlPattern": "/api/v1/assessment/history",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 133,
+      "relativePath": "/assessment/result/route.ts",
+      "urlPattern": "/api/v1/assessment/result",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 134,
+      "relativePath": "/assessment/resume/route.ts",
+      "urlPattern": "/api/v1/assessment/resume",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 135,
+      "relativePath": "/assessment/save/route.ts",
+      "urlPattern": "/api/v1/assessment/save",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 136,
+      "relativePath": "/assessment/start/route.ts",
+      "urlPattern": "/api/v1/assessment/start",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 137,
+      "relativePath": "/assessment/status/route.ts",
+      "urlPattern": "/api/v1/assessment/status",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 138,
+      "relativePath": "/assessment/submit/route.ts",
+      "urlPattern": "/api/v1/assessment/submit",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 139,
+      "relativePath": "/assessment-attempts/route.ts",
+      "urlPattern": "/api/v1/assessment-attempts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "assessment-attempts",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Exam Attempt Lifecycle / Scoring"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 140,
+      "relativePath": "/assessment-attempts/[id]/answers/route.ts",
+      "urlPattern": "/api/v1/assessment-attempts/[id]/answers",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "assessment-attempts",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Exam Attempt Lifecycle / Scoring"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 141,
+      "relativePath": "/assessment-attempts/[id]/questions/route.ts",
+      "urlPattern": "/api/v1/assessment-attempts/[id]/questions",
+      "methods": [
+        "GET"
+      ],
+      "group": "assessment-attempts",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Exam Attempt Lifecycle / Scoring"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 142,
+      "relativePath": "/assessment-attempts/[id]/result/route.ts",
+      "urlPattern": "/api/v1/assessment-attempts/[id]/result",
+      "methods": [
+        "GET"
+      ],
+      "group": "assessment-attempts",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Exam Attempt Lifecycle / Scoring"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 143,
+      "relativePath": "/assessment-attempts/[id]/route.ts",
+      "urlPattern": "/api/v1/assessment-attempts/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "assessment-attempts",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Exam Attempt Lifecycle / Scoring"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 144,
+      "relativePath": "/assessment-attempts/[id]/submit/route.ts",
+      "urlPattern": "/api/v1/assessment-attempts/[id]/submit",
+      "methods": [
+        "POST"
+      ],
+      "group": "assessment-attempts",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Exam Attempt Lifecycle / Scoring"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 145,
+      "relativePath": "/assessments/archive/route.ts",
+      "urlPattern": "/api/v1/assessments/archive",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 146,
+      "relativePath": "/assessments/preview/route.ts",
+      "urlPattern": "/api/v1/assessments/preview",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 147,
+      "relativePath": "/assessments/publish/route.ts",
+      "urlPattern": "/api/v1/assessments/publish",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 148,
+      "relativePath": "/assessments/route.ts",
+      "urlPattern": "/api/v1/assessments",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 149,
+      "relativePath": "/auth/forgot-password/route.ts",
+      "urlPattern": "/api/v1/auth/forgot-password",
+      "methods": [
+        "POST"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 150,
+      "relativePath": "/auth/login/route.ts",
+      "urlPattern": "/api/v1/auth/login",
+      "methods": [
+        "POST"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 151,
+      "relativePath": "/auth/logout/route.ts",
+      "urlPattern": "/api/v1/auth/logout",
+      "methods": [
+        "POST"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 152,
+      "relativePath": "/auth/mfa/enable/route.ts",
+      "urlPattern": "/api/v1/auth/mfa/enable",
+      "methods": [
+        "POST"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 153,
+      "relativePath": "/auth/mfa/verify/route.ts",
+      "urlPattern": "/api/v1/auth/mfa/verify",
+      "methods": [
+        "POST"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 154,
+      "relativePath": "/auth/refresh/route.ts",
+      "urlPattern": "/api/v1/auth/refresh",
+      "methods": [
+        "POST"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 155,
+      "relativePath": "/auth/register/route.ts",
+      "urlPattern": "/api/v1/auth/register",
+      "methods": [
+        "POST"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 156,
+      "relativePath": "/auth/reset-password/route.ts",
+      "urlPattern": "/api/v1/auth/reset-password",
+      "methods": [
+        "POST"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 157,
+      "relativePath": "/auth/session/route.ts",
+      "urlPattern": "/api/v1/auth/session",
+      "methods": [
+        "GET"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 158,
+      "relativePath": "/auth/verify-email/route.ts",
+      "urlPattern": "/api/v1/auth/verify-email",
+      "methods": [
+        "POST"
+      ],
+      "group": "auth",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Authentication / Session"
+      ],
+      "usesCookies": true,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 159,
+      "relativePath": "/blueprints/[id]/route.ts",
+      "urlPattern": "/api/v1/blueprints/[id]",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 160,
+      "relativePath": "/bookmarks/route.ts",
+      "urlPattern": "/api/v1/bookmarks",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 161,
+      "relativePath": "/bookmarks/[id]/route.ts",
+      "urlPattern": "/api/v1/bookmarks/[id]",
+      "methods": [
+        "DELETE"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 162,
+      "relativePath": "/broadcasts/route.ts",
+      "urlPattern": "/api/v1/broadcasts",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 163,
+      "relativePath": "/curricula/route.ts",
+      "urlPattern": "/api/v1/curricula",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 164,
+      "relativePath": "/curricula/[id]/route.ts",
+      "urlPattern": "/api/v1/curricula/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 165,
+      "relativePath": "/dashboard/achievements/route.ts",
+      "urlPattern": "/api/v1/dashboard/achievements",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 166,
+      "relativePath": "/dashboard/activity/route.ts",
+      "urlPattern": "/api/v1/dashboard/activity",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 167,
+      "relativePath": "/dashboard/calendar/route.ts",
+      "urlPattern": "/api/v1/dashboard/calendar",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 168,
+      "relativePath": "/dashboard/notifications/route.ts",
+      "urlPattern": "/api/v1/dashboard/notifications",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 169,
+      "relativePath": "/dashboard/route.ts",
+      "urlPattern": "/api/v1/dashboard",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 170,
+      "relativePath": "/dev/reset-demo-data/route.ts",
+      "urlPattern": "/api/v1/dev/reset-demo-data",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 171,
+      "relativePath": "/diagnostic/attempts/route.ts",
+      "urlPattern": "/api/v1/diagnostic/attempts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "diagnostics",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "HTTP Redirect"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": true,
+      "usesDatabase": false
+    },
+    {
+      "id": 172,
+      "relativePath": "/diagnostic/attempts/[id]/placement/route.ts",
+      "urlPattern": "/api/v1/diagnostic/attempts/[id]/placement",
+      "methods": [
+        "POST"
+      ],
+      "group": "diagnostics",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 173,
+      "relativePath": "/diagnostic/attempts/[id]/response/route.ts",
+      "urlPattern": "/api/v1/diagnostic/attempts/[id]/response",
+      "methods": [
+        "POST",
+        "PUT"
+      ],
+      "group": "diagnostics",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "HTTP Redirect"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": true,
+      "usesDatabase": false
+    },
+    {
+      "id": 174,
+      "relativePath": "/diagnostic/attempts/[id]/route.ts",
+      "urlPattern": "/api/v1/diagnostic/attempts/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "diagnostics",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "HTTP Redirect"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": true,
+      "usesDatabase": false
+    },
+    {
+      "id": 175,
+      "relativePath": "/diagnostic/attempts/[id]/submit/route.ts",
+      "urlPattern": "/api/v1/diagnostic/attempts/[id]/submit",
+      "methods": [
+        "POST"
+      ],
+      "group": "diagnostics",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "HTTP Redirect"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": true,
+      "usesDatabase": false
+    },
+    {
+      "id": 176,
+      "relativePath": "/diagnostic/config/[examType]/route.ts",
+      "urlPattern": "/api/v1/diagnostic/config/[examType]",
+      "methods": [
+        "GET"
+      ],
+      "group": "diagnostics",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 177,
+      "relativePath": "/evaluations/enqueue/route.ts",
+      "urlPattern": "/api/v1/evaluations/enqueue",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 178,
+      "relativePath": "/evaluations/results/route.ts",
+      "urlPattern": "/api/v1/evaluations/results",
+      "methods": [
+        "GET"
+      ],
+      "group": "results",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 179,
+      "relativePath": "/evaluations/route.ts",
+      "urlPattern": "/api/v1/evaluations",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 180,
+      "relativePath": "/evaluations/status/route.ts",
+      "urlPattern": "/api/v1/evaluations/status",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 181,
+      "relativePath": "/evaluations/[id]/approve/route.ts",
+      "urlPattern": "/api/v1/evaluations/[id]/approve",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 182,
+      "relativePath": "/evaluations/[id]/feedback/route.ts",
+      "urlPattern": "/api/v1/evaluations/[id]/feedback",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 183,
+      "relativePath": "/evaluations/[id]/review/route.ts",
+      "urlPattern": "/api/v1/evaluations/[id]/review",
+      "methods": [
+        "POST",
+        "PATCH"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 184,
+      "relativePath": "/evaluations/[id]/route.ts",
+      "urlPattern": "/api/v1/evaluations/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 185,
+      "relativePath": "/health/route.ts",
+      "urlPattern": "/api/v1/health",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 186,
+      "relativePath": "/identity/profiles/[id]/route.ts",
+      "urlPattern": "/api/v1/identity/profiles/[id]",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 187,
+      "relativePath": "/identity/users/route.ts",
+      "urlPattern": "/api/v1/identity/users",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 188,
+      "relativePath": "/identity/users/[id]/archive/route.ts",
+      "urlPattern": "/api/v1/identity/users/[id]/archive",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 189,
+      "relativePath": "/identity/users/[id]/restore/route.ts",
+      "urlPattern": "/api/v1/identity/users/[id]/restore",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 190,
+      "relativePath": "/identity/users/[id]/route.ts",
+      "urlPattern": "/api/v1/identity/users/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 191,
+      "relativePath": "/intelligence/analyze-mock/route.ts",
+      "urlPattern": "/api/v1/intelligence/analyze-mock",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 192,
+      "relativePath": "/intelligence/analyze-session/route.ts",
+      "urlPattern": "/api/v1/intelligence/analyze-session",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 193,
+      "relativePath": "/intelligence/profile/route.ts",
+      "urlPattern": "/api/v1/intelligence/profile",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 194,
+      "relativePath": "/intelligence/readiness/route.ts",
+      "urlPattern": "/api/v1/intelligence/readiness",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 195,
+      "relativePath": "/intelligence/recommendations/route.ts",
+      "urlPattern": "/api/v1/intelligence/recommendations",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 196,
+      "relativePath": "/intelligence/study-plan/route.ts",
+      "urlPattern": "/api/v1/intelligence/study-plan",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 197,
+      "relativePath": "/internal/ai/health/route.ts",
+      "urlPattern": "/api/v1/internal/ai/health",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 198,
+      "relativePath": "/lessons/route.ts",
+      "urlPattern": "/api/v1/lessons",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 199,
+      "relativePath": "/lessons/[id]/route.ts",
+      "urlPattern": "/api/v1/lessons/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 200,
+      "relativePath": "/me/route.ts",
+      "urlPattern": "/api/v1/me",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 201,
+      "relativePath": "/media/upload/route.ts",
+      "urlPattern": "/api/v1/media/upload",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Multipart / File Upload"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": true,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 202,
+      "relativePath": "/mock/answer/route.ts",
+      "urlPattern": "/api/v1/mock/answer",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 203,
+      "relativePath": "/mock/blueprints/route.ts",
+      "urlPattern": "/api/v1/mock/blueprints",
+      "methods": [
+        "GET"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 204,
+      "relativePath": "/mock/complete-section/route.ts",
+      "urlPattern": "/api/v1/mock/complete-section",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 205,
+      "relativePath": "/mock/history/route.ts",
+      "urlPattern": "/api/v1/mock/history",
+      "methods": [
+        "GET"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 206,
+      "relativePath": "/mock/integrity-event/route.ts",
+      "urlPattern": "/api/v1/mock/integrity-event",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 207,
+      "relativePath": "/mock/readiness/route.ts",
+      "urlPattern": "/api/v1/mock/readiness",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 208,
+      "relativePath": "/mock/result/[id]/route.ts",
+      "urlPattern": "/api/v1/mock/result/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 209,
+      "relativePath": "/mock/results/[attemptId]/route.ts",
+      "urlPattern": "/api/v1/mock/results/[attemptId]",
+      "methods": [
+        "GET"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 210,
+      "relativePath": "/mock/resume/route.ts",
+      "urlPattern": "/api/v1/mock/resume",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 211,
+      "relativePath": "/mock/review/route.ts",
+      "urlPattern": "/api/v1/mock/review",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 212,
+      "relativePath": "/mock/review/[id]/route.ts",
+      "urlPattern": "/api/v1/mock/review/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 213,
+      "relativePath": "/mock/save/route.ts",
+      "urlPattern": "/api/v1/mock/save",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 214,
+      "relativePath": "/mock/session/[id]/route.ts",
+      "urlPattern": "/api/v1/mock/session/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 215,
+      "relativePath": "/mock/sessions/[id]/submit/route.ts",
+      "urlPattern": "/api/v1/mock/sessions/[id]/submit",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 216,
+      "relativePath": "/mock/start/route.ts",
+      "urlPattern": "/api/v1/mock/start",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 217,
+      "relativePath": "/mock/statistics/route.ts",
+      "urlPattern": "/api/v1/mock/statistics",
+      "methods": [
+        "GET"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 218,
+      "relativePath": "/mock/submit/route.ts",
+      "urlPattern": "/api/v1/mock/submit",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 219,
+      "relativePath": "/mock/submit-section/route.ts",
+      "urlPattern": "/api/v1/mock/submit-section",
+      "methods": [
+        "POST"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 220,
+      "relativePath": "/mock/templates/route.ts",
+      "urlPattern": "/api/v1/mock/templates",
+      "methods": [
+        "GET"
+      ],
+      "group": "mock",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Official Mock Exam Simulation"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 221,
+      "relativePath": "/modules/[id]/route.ts",
+      "urlPattern": "/api/v1/modules/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 222,
+      "relativePath": "/notifications/admin-dashboard/route.ts",
+      "urlPattern": "/api/v1/notifications/admin-dashboard",
+      "methods": [
+        "GET"
+      ],
+      "group": "admin",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 223,
+      "relativePath": "/notifications/analytics/route.ts",
+      "urlPattern": "/api/v1/notifications/analytics",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 224,
+      "relativePath": "/notifications/route.ts",
+      "urlPattern": "/api/v1/notifications",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 225,
+      "relativePath": "/notifications/[id]/read/route.ts",
+      "urlPattern": "/api/v1/notifications/[id]/read",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 226,
+      "relativePath": "/practice/analytics/route.ts",
+      "urlPattern": "/api/v1/practice/analytics",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 227,
+      "relativePath": "/practice/complete/route.ts",
+      "urlPattern": "/api/v1/practice/complete",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Practice Engine Session"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 228,
+      "relativePath": "/practice/confidence/route.ts",
+      "urlPattern": "/api/v1/practice/confidence",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 229,
+      "relativePath": "/practice/current/route.ts",
+      "urlPattern": "/api/v1/practice/current",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 230,
+      "relativePath": "/practice/daily-goals/route.ts",
+      "urlPattern": "/api/v1/practice/daily-goals",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 231,
+      "relativePath": "/practice/focus-areas/route.ts",
+      "urlPattern": "/api/v1/practice/focus-areas",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 232,
+      "relativePath": "/practice/goals/route.ts",
+      "urlPattern": "/api/v1/practice/goals",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 233,
+      "relativePath": "/practice/history/route.ts",
+      "urlPattern": "/api/v1/practice/history",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 234,
+      "relativePath": "/practice/motivation/route.ts",
+      "urlPattern": "/api/v1/practice/motivation",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 235,
+      "relativePath": "/practice/pause/route.ts",
+      "urlPattern": "/api/v1/practice/pause",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 236,
+      "relativePath": "/practice/recommendations/route.ts",
+      "urlPattern": "/api/v1/practice/recommendations",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 237,
+      "relativePath": "/practice/recommendations/[id]/accept/route.ts",
+      "urlPattern": "/api/v1/practice/recommendations/[id]/accept",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 238,
+      "relativePath": "/practice/recommendations/[id]/reject/route.ts",
+      "urlPattern": "/api/v1/practice/recommendations/[id]/reject",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 239,
+      "relativePath": "/practice/results/route.ts",
+      "urlPattern": "/api/v1/practice/results",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 240,
+      "relativePath": "/practice/resume/route.ts",
+      "urlPattern": "/api/v1/practice/resume",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 241,
+      "relativePath": "/practice/retention/recalculate/route.ts",
+      "urlPattern": "/api/v1/practice/retention/recalculate",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 242,
+      "relativePath": "/practice/retention/route.ts",
+      "urlPattern": "/api/v1/practice/retention",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 243,
+      "relativePath": "/practice/retry/route.ts",
+      "urlPattern": "/api/v1/practice/retry",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 244,
+      "relativePath": "/practice/review/[id]/route.ts",
+      "urlPattern": "/api/v1/practice/review/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 245,
+      "relativePath": "/practice/review-queue/route.ts",
+      "urlPattern": "/api/v1/practice/review-queue",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 246,
+      "relativePath": "/practice/route.ts",
+      "urlPattern": "/api/v1/practice",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 247,
+      "relativePath": "/practice/start/route.ts",
+      "urlPattern": "/api/v1/practice/start",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Practice Engine Session"
+      ],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 248,
+      "relativePath": "/practice/[id]/route.ts",
+      "urlPattern": "/api/v1/practice/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 249,
+      "relativePath": "/practice/[id]/submit/route.ts",
+      "urlPattern": "/api/v1/practice/[id]/submit",
+      "methods": [
+        "POST"
+      ],
+      "group": "practice",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 250,
+      "relativePath": "/preferences/route.ts",
+      "urlPattern": "/api/v1/preferences",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 251,
+      "relativePath": "/progress/history/route.ts",
+      "urlPattern": "/api/v1/progress/history",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 252,
+      "relativePath": "/progress/route.ts",
+      "urlPattern": "/api/v1/progress",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 253,
+      "relativePath": "/questions/export/route.ts",
+      "urlPattern": "/api/v1/questions/export",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": true,
+      "highRiskReasons": [
+        "Binary / CSV File Download"
+      ],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": true,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 254,
+      "relativePath": "/questions/route.ts",
+      "urlPattern": "/api/v1/questions",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 255,
+      "relativePath": "/questions/search/route.ts",
+      "urlPattern": "/api/v1/questions/search",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 256,
+      "relativePath": "/questions/[id]/archive/route.ts",
+      "urlPattern": "/api/v1/questions/[id]/archive",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 257,
+      "relativePath": "/questions/[id]/retire/route.ts",
+      "urlPattern": "/api/v1/questions/[id]/retire",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 258,
+      "relativePath": "/questions/[id]/route.ts",
+      "urlPattern": "/api/v1/questions/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 259,
+      "relativePath": "/readiness/benchmark/route.ts",
+      "urlPattern": "/api/v1/readiness/benchmark",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 260,
+      "relativePath": "/readiness/cohort/route.ts",
+      "urlPattern": "/api/v1/readiness/cohort",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 261,
+      "relativePath": "/readiness/confidence/route.ts",
+      "urlPattern": "/api/v1/readiness/confidence",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 262,
+      "relativePath": "/readiness/contribution/route.ts",
+      "urlPattern": "/api/v1/readiness/contribution",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 263,
+      "relativePath": "/readiness/experiments/route.ts",
+      "urlPattern": "/api/v1/readiness/experiments",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 264,
+      "relativePath": "/readiness/experiments/[id]/complete/route.ts",
+      "urlPattern": "/api/v1/readiness/experiments/[id]/complete",
+      "methods": [
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 265,
+      "relativePath": "/readiness/experiments/[id]/start/route.ts",
+      "urlPattern": "/api/v1/readiness/experiments/[id]/start",
+      "methods": [
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 266,
+      "relativePath": "/readiness/features/route.ts",
+      "urlPattern": "/api/v1/readiness/features",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 267,
+      "relativePath": "/readiness/history/route.ts",
+      "urlPattern": "/api/v1/readiness/history",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 268,
+      "relativePath": "/readiness/instructor/route.ts",
+      "urlPattern": "/api/v1/readiness/instructor",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 269,
+      "relativePath": "/readiness/interventions/catalogue/route.ts",
+      "urlPattern": "/api/v1/readiness/interventions/catalogue",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 270,
+      "relativePath": "/readiness/latest/route.ts",
+      "urlPattern": "/api/v1/readiness/latest",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 271,
+      "relativePath": "/readiness/metrics/route.ts",
+      "urlPattern": "/api/v1/readiness/metrics",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 272,
+      "relativePath": "/readiness/outcomes/route.ts",
+      "urlPattern": "/api/v1/readiness/outcomes",
+      "methods": [
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 273,
+      "relativePath": "/readiness/pathway/route.ts",
+      "urlPattern": "/api/v1/readiness/pathway",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 274,
+      "relativePath": "/readiness/predictions/[id]/interventions/[intId]/activate/route.ts",
+      "urlPattern": "/api/v1/readiness/predictions/[id]/interventions/[intId]/activate",
+      "methods": [
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 275,
+      "relativePath": "/readiness/predictions/[id]/interventions/[intId]/complete/route.ts",
+      "urlPattern": "/api/v1/readiness/predictions/[id]/interventions/[intId]/complete",
+      "methods": [
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 276,
+      "relativePath": "/readiness/predictions/[id]/interventions/[intId]/discard/route.ts",
+      "urlPattern": "/api/v1/readiness/predictions/[id]/interventions/[intId]/discard",
+      "methods": [
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 277,
+      "relativePath": "/readiness/predictions/[id]/outcome/route.ts",
+      "urlPattern": "/api/v1/readiness/predictions/[id]/outcome",
+      "methods": [
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 278,
+      "relativePath": "/readiness/predictions/[id]/publish/route.ts",
+      "urlPattern": "/api/v1/readiness/predictions/[id]/publish",
+      "methods": [
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 279,
+      "relativePath": "/readiness/route.ts",
+      "urlPattern": "/api/v1/readiness",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 280,
+      "relativePath": "/readiness/scenario/route.ts",
+      "urlPattern": "/api/v1/readiness/scenario",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 281,
+      "relativePath": "/readiness/stability/route.ts",
+      "urlPattern": "/api/v1/readiness/stability",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 282,
+      "relativePath": "/readiness/student/route.ts",
+      "urlPattern": "/api/v1/readiness/student",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 283,
+      "relativePath": "/readiness/timeline/route.ts",
+      "urlPattern": "/api/v1/readiness/timeline",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 284,
+      "relativePath": "/readiness/velocity/route.ts",
+      "urlPattern": "/api/v1/readiness/velocity",
+      "methods": [
+        "GET"
+      ],
+      "group": "readiness",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 285,
+      "relativePath": "/reports/generate/route.ts",
+      "urlPattern": "/api/v1/reports/generate",
+      "methods": [
+        "POST"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 286,
+      "relativePath": "/reports/route.ts",
+      "urlPattern": "/api/v1/reports",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 287,
+      "relativePath": "/resources/search/route.ts",
+      "urlPattern": "/api/v1/resources/search",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 288,
+      "relativePath": "/resources/[id]/route.ts",
+      "urlPattern": "/api/v1/resources/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 289,
+      "relativePath": "/results/route.ts",
+      "urlPattern": "/api/v1/results",
+      "methods": [
+        "GET"
+      ],
+      "group": "results",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 290,
+      "relativePath": "/results/[studentId]/route.ts",
+      "urlPattern": "/api/v1/results/[studentId]",
+      "methods": [
+        "GET"
+      ],
+      "group": "results",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 291,
+      "relativePath": "/runtime/answer/route.ts",
+      "urlPattern": "/api/v1/runtime/answer",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "runtime",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 292,
+      "relativePath": "/runtime/checkpoint/route.ts",
+      "urlPattern": "/api/v1/runtime/checkpoint",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "runtime",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 293,
+      "relativePath": "/runtime/pause/route.ts",
+      "urlPattern": "/api/v1/runtime/pause",
+      "methods": [
+        "POST"
+      ],
+      "group": "runtime",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 294,
+      "relativePath": "/runtime/resume/route.ts",
+      "urlPattern": "/api/v1/runtime/resume",
+      "methods": [
+        "POST"
+      ],
+      "group": "runtime",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 295,
+      "relativePath": "/runtime/route.ts",
+      "urlPattern": "/api/v1/runtime",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "runtime",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 296,
+      "relativePath": "/runtime/start/route.ts",
+      "urlPattern": "/api/v1/runtime/start",
+      "methods": [
+        "POST"
+      ],
+      "group": "runtime",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 297,
+      "relativePath": "/runtime/submit/route.ts",
+      "urlPattern": "/api/v1/runtime/submit",
+      "methods": [
+        "POST"
+      ],
+      "group": "runtime",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 298,
+      "relativePath": "/runtime/telemetry/route.ts",
+      "urlPattern": "/api/v1/runtime/telemetry",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "runtime",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 299,
+      "relativePath": "/runtime/[id]/route.ts",
+      "urlPattern": "/api/v1/runtime/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "runtime",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 300,
+      "relativePath": "/student/achievements/route.ts",
+      "urlPattern": "/api/v1/student/achievements",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 301,
+      "relativePath": "/student/active-programme/route.ts",
+      "urlPattern": "/api/v1/student/active-programme",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 302,
+      "relativePath": "/student/archive/route.ts",
+      "urlPattern": "/api/v1/student/archive",
+      "methods": [
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 303,
+      "relativePath": "/student/assignments/route.ts",
+      "urlPattern": "/api/v1/student/assignments",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 304,
+      "relativePath": "/student/bookmarks/route.ts",
+      "urlPattern": "/api/v1/student/bookmarks",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 305,
+      "relativePath": "/student/bookmarks/[id]/route.ts",
+      "urlPattern": "/api/v1/student/bookmarks/[id]",
+      "methods": [
+        "DELETE"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 306,
+      "relativePath": "/student/current-assessment/route.ts",
+      "urlPattern": "/api/v1/student/current-assessment",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 307,
+      "relativePath": "/student/dashboard/route.ts",
+      "urlPattern": "/api/v1/student/dashboard",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 308,
+      "relativePath": "/student/diagnostic/attempt/[id]/route.ts",
+      "urlPattern": "/api/v1/student/diagnostic/attempt/[id]",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 309,
+      "relativePath": "/student/diagnostic/route.ts",
+      "urlPattern": "/api/v1/student/diagnostic",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 310,
+      "relativePath": "/student/diagnostic/start/route.ts",
+      "urlPattern": "/api/v1/student/diagnostic/start",
+      "methods": [
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 311,
+      "relativePath": "/student/enroll/route.ts",
+      "urlPattern": "/api/v1/student/enroll",
+      "methods": [
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 312,
+      "relativePath": "/student/exam-target/route.ts",
+      "urlPattern": "/api/v1/student/exam-target",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 313,
+      "relativePath": "/student/goals/route.ts",
+      "urlPattern": "/api/v1/student/goals",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 314,
+      "relativePath": "/student/goals/[id]/route.ts",
+      "urlPattern": "/api/v1/student/goals/[id]",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 315,
+      "relativePath": "/student/interventions/route.ts",
+      "urlPattern": "/api/v1/student/interventions",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 316,
+      "relativePath": "/student/interventions/[id]/route.ts",
+      "urlPattern": "/api/v1/student/interventions/[id]",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 317,
+      "relativePath": "/student/journey/route.ts",
+      "urlPattern": "/api/v1/student/journey",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 318,
+      "relativePath": "/student/learning-plan/route.ts",
+      "urlPattern": "/api/v1/student/learning-plan",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 319,
+      "relativePath": "/student/learning-profile/route.ts",
+      "urlPattern": "/api/v1/student/learning-profile",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 320,
+      "relativePath": "/student/notifications/preferences/route.ts",
+      "urlPattern": "/api/v1/student/notifications/preferences",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 321,
+      "relativePath": "/student/notifications/route.ts",
+      "urlPattern": "/api/v1/student/notifications",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 322,
+      "relativePath": "/student/notifications/[id]/read/route.ts",
+      "urlPattern": "/api/v1/student/notifications/[id]/read",
+      "methods": [
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 323,
+      "relativePath": "/student/profile/avatar/route.ts",
+      "urlPattern": "/api/v1/student/profile/avatar",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 324,
+      "relativePath": "/student/profile/route.ts",
+      "urlPattern": "/api/v1/student/profile",
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 325,
+      "relativePath": "/student/programmes/route.ts",
+      "urlPattern": "/api/v1/student/programmes",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 326,
+      "relativePath": "/student/programmes/[id]/route.ts",
+      "urlPattern": "/api/v1/student/programmes/[id]",
+      "methods": [
+        "PATCH"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 327,
+      "relativePath": "/student/progress/route.ts",
+      "urlPattern": "/api/v1/student/progress",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 328,
+      "relativePath": "/student/readiness/recalculate/route.ts",
+      "urlPattern": "/api/v1/student/readiness/recalculate",
+      "methods": [
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 329,
+      "relativePath": "/student/readiness/route.ts",
+      "urlPattern": "/api/v1/student/readiness",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 330,
+      "relativePath": "/student/results/route.ts",
+      "urlPattern": "/api/v1/student/results",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": true,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    },
+    {
+      "id": 331,
+      "relativePath": "/student/statistics/route.ts",
+      "urlPattern": "/api/v1/student/statistics",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 332,
+      "relativePath": "/student/study-session/end/route.ts",
+      "urlPattern": "/api/v1/student/study-session/end",
+      "methods": [
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 333,
+      "relativePath": "/student/study-session/start/route.ts",
+      "urlPattern": "/api/v1/student/study-session/start",
+      "methods": [
+        "POST"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 334,
+      "relativePath": "/student/timeline/route.ts",
+      "urlPattern": "/api/v1/student/timeline",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 335,
+      "relativePath": "/student/weak-skills/route.ts",
+      "urlPattern": "/api/v1/student/weak-skills",
+      "methods": [
+        "GET"
+      ],
+      "group": "student",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": false
+    },
+    {
+      "id": 336,
+      "relativePath": "/system/health/database/route.ts",
+      "urlPattern": "/api/v1/system/health/database",
+      "methods": [
+        "GET"
+      ],
+      "group": "other",
+      "isHighRisk": false,
+      "highRiskReasons": [],
+      "usesCookies": false,
+      "usesHeaders": false,
+      "usesFormData": false,
+      "usesStreaming": false,
+      "usesFileDownload": false,
+      "usesRedirect": false,
+      "usesDatabase": true
+    }
+  ]
+}
