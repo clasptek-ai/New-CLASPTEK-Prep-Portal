@@ -2,8 +2,8 @@
   "name": "@clasptek/domain-auth",
   "version": "1.0.0",
   "description": "Authentication Domain Bounded Context",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "build": "tsc -b",
     "typecheck": "tsc --noEmit"
