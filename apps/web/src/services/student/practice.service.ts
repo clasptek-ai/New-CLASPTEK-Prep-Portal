@@ -210,6 +210,38 @@ export const studentPracticeService = {
           : 1800
       : 0;
 
+    // Map PracticeEligibleQuestion (API shape) → AdminQuestion (component shape)
+    // API returns: { questionId, questionVersionId, code, prompt, itemType, difficulty, options: [{code, text}] }
+    // Component expects: { id, text, type, options: string[], correctAnswer, ... }
+    const mappedQuestions: AdminQuestion[] = (data.session.questions || []).map((q: any) => ({
+      id: q.questionId || q.id || '',
+      code: q.code || '',
+      exam: (data.session.exam || params.exam) as ExamType,
+      section: (data.session.section || params.section) as SectionType,
+      skill: data.session.skill || params.skill || '',
+      type: (q.itemType || q.type || 'MCQ') as QuestionType,
+      difficulty: (q.difficulty || params.difficulty || 'MEDIUM') as DifficultyLevel,
+      status: 'published' as any,
+      usages: ['PRACTICE'] as any,
+      estimatedTime: '2 min',
+      officialSource: '',
+      version: q.questionVersionId || '1',
+      language: 'EN',
+      tags: [],
+      text: q.prompt || q.text || 'Question',
+      // Options from API are [{code, text}] — extract text strings for the component
+      options: Array.isArray(q.options)
+        ? q.options.map((o: any) => (typeof o === 'string' ? o : o.text || o.code || String(o)))
+        : [],
+      correctAnswer: '', // Not sent to browser for security; evaluated server-side
+      explanation: q.explanation || '',
+      hash: '',
+      passageText: q.passageText || undefined,
+      audioUrl: q.audioUrl || undefined,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }));
+
     return {
       id: data.session.id,
       exam: data.session.exam,
@@ -217,7 +249,7 @@ export const studentPracticeService = {
       skill: data.session.skill,
       difficulty: data.session.difficulty,
       totalQuestions: data.session.totalQuestions,
-      questions: data.session.questions,
+      questions: mappedQuestions,
       answers: {},
       isCompleted: false,
       timeAllowedSeconds: timeAllowed,
@@ -233,14 +265,38 @@ export const studentPracticeService = {
     exam: ExamType
   ): Promise<PracticeSession> {
     const practiceRepo = RepositoryFactory.getPracticeRepository();
-    let rawScore = 0;
-    const total = Object.keys(answers).length;
+    const total = Object.keys(answers).length || 1;
 
-    Object.values(answers).forEach((ans) => {
-      if (ans.isCorrect) rawScore++;
-    });
+    // Submit to server for server-side scoring (correctAnswer is blank in client for security)
+    let scoreResult: BandScoreResult | undefined;
+    try {
+      const res = await fetch(`/api/v1/practice/${sessionId}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers, timeSpentSeconds }),
+      });
+      const serverData = await res.json();
+      if (res.ok && serverData.success) {
+        scoreResult = {
+          rawScore: serverData.correctCount ?? 0,
+          totalQuestions: serverData.totalQuestions ?? total,
+          percentage: Math.round(serverData.scorePercentage ?? 0),
+          bandOrScale: serverData.bandOrScale ?? `${Math.round(serverData.scorePercentage ?? 0)}%`,
+          label: serverData.label ?? 'Developing',
+        };
+      }
+    } catch {
+      // Server submission failed — fall back to client-side tally
+    }
 
-    const scoreResult = calculateBandOrScaleScore(exam, rawScore, total);
+    // Fallback: client-side count (will be 0 for MCQ since correctAnswer is blank)
+    if (!scoreResult) {
+      let rawScore = 0;
+      Object.values(answers).forEach((ans) => {
+        if (ans.isCorrect) rawScore++;
+      });
+      scoreResult = calculateBandOrScaleScore(exam, rawScore, total);
+    }
 
     const session: PracticeSession = {
       id: sessionId,
@@ -248,7 +304,7 @@ export const studentPracticeService = {
       section: 'Reading',
       skill: 'Custom Session',
       difficulty: 'MEDIUM',
-      totalQuestions: total,
+      totalQuestions: scoreResult.totalQuestions,
       questions: [],
       answers,
       isCompleted: true,
@@ -271,12 +327,6 @@ export const studentPracticeService = {
       } catch {
         // Fallback
       }
-    }
-
-    try {
-      await apiClient.post(`/api/v1/practice/${sessionId}/submit`, { answers, timeSpentSeconds });
-    } catch {
-      // Fallback saved client-side
     }
 
     return session;

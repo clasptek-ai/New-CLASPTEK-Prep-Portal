@@ -1,8 +1,5 @@
-'use client';
-
-import React from 'react';
-import { StudentPracticeDashboard } from '../../../features/student-practice/student-dashboard';
+import { AdaptivePracticeScreen } from '../../../features/practice/practice-screen';
 
 export default function Page() {
-  return <StudentPracticeDashboard />;
+  return <AdaptivePracticeScreen />;
 }

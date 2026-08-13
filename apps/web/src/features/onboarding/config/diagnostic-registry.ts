@@ -100,5 +100,5 @@ export function getDiagnosticDefinition(examType?: string): DiagnosticDefinition
   if (examType && diagnosticRegistry[examType]) {
     return diagnosticRegistry[examType];
   }
-  return diagnosticRegistry['English Proficiency'];
+  return diagnosticRegistry['IELTS Academic'] || diagnosticRegistry['English Proficiency'];
 }

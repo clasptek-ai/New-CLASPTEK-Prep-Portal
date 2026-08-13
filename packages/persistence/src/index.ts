@@ -7599,7 +7599,7 @@ export class PostgresReadinessStateSnapshotRepository implements AppReadinessSna
   public async findById(id: string): Promise<ReadinessStateSnapshot | null> {
     const pool = this.dbPool.getPool();
     const res = await pool.query(
-      `SELECT * FROM readiness_snapshots WHERE id = $1 AND is_deleted = FALSE`,
+      `SELECT * FROM readiness_snapshots WHERE id = $1`,
       [id]
     );
     if (res.rows.length === 0) return null;
@@ -7610,11 +7610,11 @@ export class PostgresReadinessStateSnapshotRepository implements AppReadinessSna
       timelineId: r.timeline_id,
       studentId: r.student_id,
       profileId: r.profile_id,
-      readinessScore: new ReadinessScoreVO(parseFloat(r.readiness_score)),
-      competencyMastery: r.competency_mastery,
-      learnerState: r.learner_state,
-      practiceStatistics: r.practice_statistics,
-      studyStreak: r.study_streak,
+      readinessScore: new ReadinessScoreVO(parseFloat(r.readiness_score || '75')),
+      competencyMastery: r.competency_mastery || {},
+      learnerState: r.learner_state || {},
+      practiceStatistics: r.practice_statistics || {},
+      studyStreak: r.study_streak || {},
       createdBy: r.created_by,
       createdAt: r.created_at,
     });
@@ -7623,7 +7623,7 @@ export class PostgresReadinessStateSnapshotRepository implements AppReadinessSna
   public async findByTimeline(timelineId: string): Promise<ReadinessStateSnapshot[]> {
     const pool = this.dbPool.getPool();
     const res = await pool.query(
-      `SELECT * FROM readiness_snapshots WHERE timeline_id = $1 AND is_deleted = FALSE ORDER BY created_at ASC`,
+      `SELECT * FROM readiness_snapshots WHERE timeline_id = $1 ORDER BY created_at ASC`,
       [timelineId]
     );
     return res.rows.map(
@@ -7634,11 +7634,11 @@ export class PostgresReadinessStateSnapshotRepository implements AppReadinessSna
           timelineId: r.timeline_id,
           studentId: r.student_id,
           profileId: r.profile_id,
-          readinessScore: new ReadinessScoreVO(parseFloat(r.readiness_score)),
-          competencyMastery: r.competency_mastery,
-          learnerState: r.learner_state,
-          practiceStatistics: r.practice_statistics,
-          studyStreak: r.study_streak,
+          readinessScore: new ReadinessScoreVO(parseFloat(r.readiness_score || '75')),
+          competencyMastery: r.competency_mastery || {},
+          learnerState: r.learner_state || {},
+          practiceStatistics: r.practice_statistics || {},
+          studyStreak: r.study_streak || {},
           createdBy: r.created_by,
           createdAt: r.created_at,
         })

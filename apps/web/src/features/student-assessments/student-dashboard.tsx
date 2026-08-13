@@ -1,51 +1,103 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, Button, Badge } from '../../components/ui/ui-components';
-import {
-  adminAssessmentsService,
-  AdminAssessmentConfig,
-} from '../../services/admin/assessments.service';
-import { BookOpen, Clock, FileText, Play, CheckCircle2 } from 'lucide-react';
+import { useAuthContext } from '@/providers/AuthProvider';
+import { BookOpen, Clock, FileText, Play, CheckCircle2, AlertCircle } from 'lucide-react';
+
+interface DiagnosticData {
+  assessment: {
+    id: string;
+    code: string;
+    title: string;
+    type: string;
+    durationMinutes: number;
+    totalQuestions: number;
+    instructions: string;
+    sections: Array<{ code: string; name: string; questionCount: number }>;
+  };
+  programme: {
+    id: string;
+    name: string;
+    examType: string;
+  };
+  hasActiveAttempt: boolean;
+  activeAttemptId: string | null;
+}
 
 function StudentAssessmentDashboardContent() {
-  const searchParams = useSearchParams();
-  const mode = (searchParams.get('mode') || '').toLowerCase();
+  const router = useRouter();
+  const { user } = useAuthContext();
 
-  const [assessments, setAssessments] = useState<AdminAssessmentConfig[]>([]);
+  const [diagnosticData, setDiagnosticData] = useState<DiagnosticData | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const isDiagnosticMode = mode === 'diagnostic';
+  const [error, setError] = useState<string | null>(null);
+  const [starting, setStarting] = useState(false);
 
   useEffect(() => {
-    async function load() {
+    async function loadCurrentDiagnostic() {
       setLoading(true);
+      setError(null);
       try {
-        const list = await adminAssessmentsService.getAssessments();
-        const published = list.filter((a) => a.status === 'PUBLISHED');
-
-        if (isDiagnosticMode) {
-          // Strictly exclude Mock exams when mode=diagnostic
-          const diagnostics = published.filter(
-            (a) =>
-              (a as any).type === 'DIAGNOSTIC' ||
-              (a as any).category === 'DIAGNOSTIC' ||
-              (a as any).usage === 'DIAGNOSTIC'
-          );
-          setAssessments(diagnostics);
+        const res = await fetch('/api/v1/student/current-assessment');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            setDiagnosticData(data);
+          } else {
+            setError(data.message || 'No active diagnostic found for your programme.');
+          }
         } else {
-          setAssessments(published);
+          setError('Failed to load active diagnostic assignment.');
         }
-      } catch (e) {
-        console.error(e);
+      } catch (e: any) {
+        console.error('Error loading current assessment:', e);
+        setError('Network error while retrieving diagnostic configuration.');
       } finally {
         setLoading(false);
       }
     }
-    load();
-  }, [isDiagnosticMode]);
+    loadCurrentDiagnostic();
+  }, []);
+
+  const handleStartDiagnostic = async () => {
+    if (!diagnosticData?.assessment) return;
+    setStarting(true);
+
+    try {
+      if (diagnosticData.hasActiveAttempt && diagnosticData.activeAttemptId) {
+        router.push(
+          `/student/assessments/player?attemptId=${encodeURIComponent(diagnosticData.activeAttemptId)}`
+        );
+        return;
+      }
+
+      const res = await fetch('/api/v1/assessment-attempts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assessmentId: diagnosticData.assessment.id,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.attemptId) {
+        router.push(`/student/assessments/player?attemptId=${encodeURIComponent(data.attemptId)}`);
+      } else {
+        setError(data.message || 'Failed to start diagnostic attempt.');
+        setStarting(false);
+      }
+    } catch (e) {
+      console.error('Failed to launch attempt:', e);
+      setError('Unable to initialize diagnostic session. Please try again.');
+      setStarting(false);
+    }
+  };
+
+  const assessment = diagnosticData?.assessment;
+  const programme = diagnosticData?.programme;
 
   return (
     <div
@@ -57,7 +109,7 @@ function StudentAssessmentDashboardContent() {
         boxSizing: 'border-box',
       }}
     >
-      {/* Top Header Banner */}
+      {/* Diagnostics Header Banner */}
       <div
         style={{
           padding: '2rem',
@@ -84,7 +136,7 @@ function StudentAssessmentDashboardContent() {
               textTransform: 'uppercase',
             }}
           >
-            {isDiagnosticMode ? 'PLACEMENT DIAGNOSTICS' : 'STUDENT ASSESSMENT CENTER'}
+            PLACEMENT DIAGNOSTICS
           </span>
           <h1
             style={{
@@ -94,24 +146,56 @@ function StudentAssessmentDashboardContent() {
               color: '#ffffff',
             }}
           >
-            {isDiagnosticMode
-              ? 'English Proficiency Diagnostic Assessment'
-              : 'Official Examination & Diagnostic Hub'}
+            Programme Diagnostic Placement Assessment
           </h1>
           <p style={{ margin: 0, fontSize: '0.9rem', color: '#cbd5e1', maxWidth: '640px' }}>
-            {isDiagnosticMode
-              ? '45-Minute Server-Authoritative Diagnostic Assessment evaluating Grammar (Foundation, Intermediate, Advanced), Reading Comprehension, and Essay & Letter Writing.'
-              : 'Access assigned mock examinations, timed practice sets, and placement diagnostics synced from your programme curriculum.'}
+            Establish your current level, identify your strengths and weaknesses, and personalize your preparation.
           </p>
         </div>
 
         <Badge variant="info">
-          {isDiagnosticMode ? 'Diagnostic Placement Engine' : 'Connected to Live Exam Registry'}
+          Canonical Diagnostic Engine Active
         </Badge>
       </div>
 
-      {/* Primary Canonical Diagnostic Card when mode=diagnostic */}
-      {isDiagnosticMode ? (
+      {/* Primary Canonical Diagnostic Card */}
+      {loading ? (
+        <Card
+          style={{
+            padding: '2.5rem',
+            backgroundColor: '#111827',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '16px',
+            textAlign: 'center',
+            color: '#94a3b8',
+          }}
+        >
+          Loading diagnostic assignment for your programme...
+        </Card>
+      ) : error || !assessment ? (
+        <Card
+          style={{
+            padding: '2rem',
+            backgroundColor: '#1e1b4b',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            borderRadius: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            color: '#f87171',
+          }}
+        >
+          <AlertCircle size={28} />
+          <div>
+            <h3 style={{ margin: '0 0 0.25rem', fontSize: '1.1rem', fontWeight: 800 }}>
+              Diagnostic Assignment Notice
+            </h3>
+            <p style={{ margin: 0, fontSize: '0.9rem', color: '#cbd5e1' }}>
+              {error || 'No published diagnostic assessment is currently assigned to your active programme.'}
+            </p>
+          </div>
+        </Card>
+      ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <h2
             style={{
@@ -125,7 +209,7 @@ function StudentAssessmentDashboardContent() {
             }}
           >
             <BookOpen size={20} color="#38bdf8" />
-            English Proficiency Diagnostic Placement (45 Minutes)
+            Your Programme Diagnostic ({programme?.name || 'Active Programme'})
           </h2>
 
           <Card
@@ -158,34 +242,38 @@ function StudentAssessmentDashboardContent() {
                     color: '#ffffff',
                   }}
                 >
-                  English Proficiency Diagnostic Assessment
+                  {assessment.title}
                 </h3>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>
-                  Total Duration: <strong>45 Minutes</strong> (Server Authoritative Session)
-                </p>
+                <div style={{ fontSize: '0.9rem', color: '#94a3b8', display: 'flex', gap: '1.5rem', marginTop: '0.25rem' }}>
+                  <span>Programme: <strong style={{ color: '#60a5fa' }}>{programme?.name}</strong></span>
+                  <span>Duration: <strong>{assessment.durationMinutes} Minutes</strong></span>
+                  <span>Questions: <strong>{assessment.totalQuestions} Items</strong></span>
+                </div>
               </div>
 
-              <Link
-                href="/student/assessments/player?examType=English%20Proficiency"
+              <Button
+                variant="primary"
+                disabled={starting}
+                onClick={handleStartDiagnostic}
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.65rem',
                   padding: '0.85rem 1.75rem',
-                  backgroundColor: '#2563eb',
-                  color: '#ffffff',
-                  fontWeight: 700,
-                  borderRadius: '10px',
-                  textDecoration: 'none',
                   fontSize: '0.95rem',
+                  fontWeight: 700,
                   boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
                 }}
               >
                 <Play size={18} />
-                <span>Start Diagnostic Assessment</span>
-              </Link>
+                <span>
+                  {starting
+                    ? 'Launching...'
+                    : diagnosticData?.hasActiveAttempt
+                    ? 'Resume Diagnostic'
+                    : 'Start Diagnostic'}
+                </span>
+              </Button>
             </div>
 
+            {/* Dynamic Section Outline Badges */}
             <div
               style={{
                 display: 'grid',
@@ -195,191 +283,25 @@ function StudentAssessmentDashboardContent() {
                 borderTop: '1px solid rgba(255, 255, 255, 0.08)',
               }}
             >
-              <div style={{ backgroundColor: '#1e293b', padding: '1rem', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700 }}>
-                  GRAMMAR SECTION
-                </div>
-                <div
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 800,
-                    color: '#38bdf8',
-                    marginTop: '0.25rem',
-                  }}
-                >
-                  30 Objective Questions
-                </div>
-                <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.25rem' }}>
-                  10 Foundation • 10 Intermediate • 10 Advanced
-                </div>
-              </div>
-
-              <div style={{ backgroundColor: '#1e293b', padding: '1rem', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700 }}>
-                  READING SECTION
-                </div>
-                <div
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 800,
-                    color: '#34d399',
-                    marginTop: '0.25rem',
-                  }}
-                >
-                  1 Passage / Group
-                </div>
-                <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.25rem' }}>
-                  Comprehension & Inference
-                </div>
-              </div>
-
-              <div style={{ backgroundColor: '#1e293b', padding: '1rem', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700 }}>
-                  WRITING SECTION
-                </div>
-                <div
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 800,
-                    color: '#a78bfa',
-                    marginTop: '0.25rem',
-                  }}
-                >
-                  2 Writing Tasks
-                </div>
-                <div style={{ fontSize: '0.75rem', color: '#cbd5e1', marginTop: '0.25rem' }}>
-                  1 Letter Writing • 1 Essay Writing
-                </div>
-              </div>
-            </div>
-          </Card>
-        </div>
-      ) : (
-        /* Regular Available Examinations Grid */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <h2
-            style={{
-              margin: 0,
-              fontSize: '1.25rem',
-              fontWeight: 800,
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
-          >
-            <BookOpen size={20} color="#38bdf8" />
-            Available Examinations ({assessments.length})
-          </h2>
-
-          {loading ? (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
-              Loading available examinations...
-            </div>
-          ) : assessments.length === 0 ? (
-            <Card
-              style={{
-                padding: '2rem',
-                textAlign: 'center',
-                backgroundColor: '#151d30',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
-              <p style={{ color: '#94a3b8', margin: 0 }}>
-                No published mock assessments currently scheduled for your programme.
-              </p>
-            </Card>
-          ) : (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: '1.25rem',
-              }}
-            >
-              {assessments.map((exam) => (
-                <Card
-                  key={exam.id}
-                  style={{
-                    padding: '1.5rem',
-                    backgroundColor: '#151d30',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '16px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1rem',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Badge variant="info">{exam.type}</Badge>
-                      <span style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 700 }}>
-                        ✓ READY TO TAKE
-                      </span>
-                    </div>
-
-                    <h3
-                      style={{
-                        margin: '0.25rem 0 0',
-                        fontSize: '1.1rem',
-                        fontWeight: 800,
-                        color: '#ffffff',
-                        lineHeight: 1.35,
-                      }}
-                    >
-                      {exam.title}
-                    </h3>
-
-                    <div
-                      style={{
-                        display: 'flex',
-                        gap: '1rem',
-                        fontSize: '0.8rem',
-                        color: '#94a3b8',
-                        marginTop: '0.25rem',
-                      }}
-                    >
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <Clock size={13} />
-                        {exam.durationMinutes || 60} mins
-                      </span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <FileText size={13} />
-                        {(exam as any).totalQuestions || 40} Questions
-                      </span>
-                    </div>
+              {(assessment.sections || []).map((sec, i) => (
+                <div key={i} style={{ backgroundColor: '#1e293b', padding: '1rem', borderRadius: '10px' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>
+                    {sec.name}
                   </div>
-
-                  <Link
-                    href={`/student/assessments/player?examType=${encodeURIComponent(exam.examType || 'English Proficiency')}`}
+                  <div
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.5rem',
-                      padding: '0.65rem 1rem',
-                      backgroundColor: '#2563eb',
-                      color: '#ffffff',
-                      fontWeight: 700,
-                      borderRadius: '8px',
-                      textDecoration: 'none',
-                      fontSize: '0.875rem',
+                      fontSize: '1.1rem',
+                      fontWeight: 800,
+                      color: i === 0 ? '#38bdf8' : i === 1 ? '#34d399' : '#a78bfa',
+                      marginTop: '0.25rem',
                     }}
                   >
-                    <Play size={14} />
-                    <span>Start Examination</span>
-                  </Link>
-                </Card>
+                    {sec.questionCount} {sec.code === 'WRITING' ? 'Tasks' : 'Items'}
+                  </div>
+                </div>
               ))}
             </div>
-          )}
+          </Card>
         </div>
       )}
     </div>
@@ -389,7 +311,7 @@ function StudentAssessmentDashboardContent() {
 export function StudentAssessmentDashboard() {
   return (
     <Suspense
-      fallback={<div style={{ padding: '2rem', color: '#94a3b8' }}>Loading Dashboard...</div>}
+      fallback={<div style={{ padding: '2rem', color: '#94a3b8' }}>Loading Diagnostics...</div>}
     >
       <StudentAssessmentDashboardContent />
     </Suspense>

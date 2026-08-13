@@ -1,5 +1,7 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuthContext } from '../../../providers/AuthProvider';
+import { StudentWorkspaceContext } from '../../../workspace/StudentWorkspaceContext';
 import { ProgrammeId, ProgrammeConfiguration } from '../models/programme-config';
 import { ProgrammeRegistry } from '../models/programme-registry';
 import {
@@ -56,16 +58,20 @@ export interface DashboardViewModel {
 
 export function useDashboardViewModel(): DashboardViewModel {
   const router = useRouter();
+  const { user, isLoading: authLoading } = useAuthContext();
+  const workspaceContext = useContext(StudentWorkspaceContext);
   const [activeProgrammeId, setActiveProgrammeId] = useState<ProgrammeId>('IELTS_ACADEMIC');
   const [calendarView, setCalendarView] = useState<'DAY' | 'WEEK' | 'MONTH'>('MONTH');
 
   // React Query Hooks
-  const { data: overview, isLoading, isError, refetch } = useDashboardOverview();
+  const { data: overview, isLoading: overviewLoading, isError, refetch } = useDashboardOverview();
   const { data: activity } = useDashboardActivity(1, 5);
   const { data: notifications } = useDashboardNotificationsQuery(1, 10);
   const { data: calendar } = useDashboardCalendarQuery(calendarView);
   const { data: achievements } = useDashboardAchievementsQuery();
   const markReadMutation = useMarkNotificationReadMutation();
+
+  const isLoading = authLoading || (overviewLoading && !overview);
 
   // Centralized Navigation Config (Rule 4: Avoid hardcoding routes in widgets)
   const navigationRoutes = useMemo<Record<string, string>>(
@@ -115,7 +121,7 @@ export function useDashboardViewModel(): DashboardViewModel {
     [markReadMutation]
   );
 
-  let registeredName = 'Student';
+  let registeredName = '';
   if (typeof window !== 'undefined') {
     try {
       const raw = localStorage.getItem('clasptek_onboarding_data');
@@ -132,8 +138,24 @@ export function useDashboardViewModel(): DashboardViewModel {
     }
   }
 
-  const studentName = overview?.profile.studentName || registeredName;
-  const avatarUrl = overview?.profile.avatarUrl;
+  // Hierarchical Name Resolution (zero fake text fallback):
+  // 1. Overview DTO (server-authoritative profile name)
+  // 2. Workspace Context student name (loaded concurrently)
+  // 3. Auth Context user name (available immediately from session token)
+  // 4. Onboarding localStorage registered name
+  const resolvedStudentName =
+    overview?.profile.studentName ||
+    workspaceContext?.student?.name ||
+    user?.name ||
+    registeredName;
+
+  const studentName = resolvedStudentName.trim()
+    ? resolvedStudentName.trim()
+    : authLoading
+      ? 'Loading...'
+      : 'Authenticated Student';
+
+  const avatarUrl = overview?.profile.avatarUrl || workspaceContext?.student?.avatarUrl;
   const studyStreakDays = overview?.profile.studyStreakDays ?? 0;
   const completedTasksCount = overview?.progress.lessonCompletionCount ?? 0;
   const totalTasksCount = overview?.progress.totalLessonsCount ?? 0;

@@ -82,9 +82,26 @@ export const HeroZone: React.FC<HeroZoneProps> = ({ studentName, config, studySt
               fontWeight: 800,
               color: '#f8fafc',
               letterSpacing: '-0.02em',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
             }}
           >
-            Welcome back, {studentName}
+            Welcome back,{}
+            {studentName === 'Loading...' ? (
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: '180px',
+                  height: '1.85rem',
+                  borderRadius: '6px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  animation: 'pulse 1.5s infinite ease-in-out',
+                }}
+              />
+            ) : (
+              <span>{studentName}</span>
+            )}
           </h1>
           <p
             style={{

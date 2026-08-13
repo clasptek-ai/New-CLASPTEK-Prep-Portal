@@ -43,8 +43,13 @@ export function DashboardHero({
             </Badge>
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-            Welcome back, {studentName}
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
+            Welcome back,{}
+            {studentName === 'Loading...' ? (
+              <span className="inline-block w-44 h-8 bg-slate-700/50 rounded animate-pulse" />
+            ) : (
+              <span>{studentName}</span>
+            )}
           </h1>
 
           <p className="text-sm md:text-base text-slate-300 leading-relaxed">

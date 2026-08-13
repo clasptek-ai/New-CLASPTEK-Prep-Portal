@@ -22,28 +22,15 @@ export async function GET(req: NextRequest) {
     // Retrieve timeline snapshot to pull competency maps
     const timeline = await ctx.getTimeline.execute(studentId, profileId);
     if (!timeline || timeline.snapshots.length === 0) {
-      // Mock fallbacks if empty
-      const tempId = await ctx.recordReadinessSnapshot.execute({
-        tenantId: '00000000-0000-0000-0000-000000000000',
-        studentId,
-        profileId,
-        readinessScore: 78,
-        competencyMastery: {
-          reading: 80,
-          writing: 60,
-          listening: 75,
-          speaking: 70,
-          grammar: 65,
-          vocabulary: 70,
-          studyconsistency: 80,
-        },
-        learnerState: {},
-        practiceStatistics: {},
-        studyStreak: {},
-        createdBy: session.userId,
+      return NextResponse.json({
+        hasData: false,
+        skillContributions: [
+          { skill: 'Reading', contribution: 25, status: 'INITIALIZING' },
+          { skill: 'Listening', contribution: 25, status: 'INITIALIZING' },
+          { skill: 'Writing', contribution: 25, status: 'INITIALIZING' },
+          { skill: 'Speaking', contribution: 25, status: 'INITIALIZING' },
+        ],
       });
-      const data = await ctx.getSkillContribution.execute(tempId);
-      return NextResponse.json(data);
     }
 
     const latestSnap = timeline.snapshots[timeline.snapshots.length - 1];

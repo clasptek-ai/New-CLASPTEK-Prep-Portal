@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge } from '../../components/ui/ui-components';
+import { Badge } from '../../components/ui/ui-components';
 import {
   studentPracticeService,
   PracticeSession,
@@ -10,101 +10,169 @@ import {
   CustomSessionParams,
 } from '../../services/student/practice.service';
 import {
-  ExamType,
-  SectionType,
-  QuestionType,
-  DifficultyLevel,
-} from '../../services/admin/questions.service';
-import {
   Zap,
   Target,
   BookOpen,
   Clock,
   Award,
-  ArrowRight,
-  CheckCircle2,
-  XCircle,
-  TrendingUp,
-  Star,
   Bookmark,
-  RotateCcw,
   Volume2,
-  AlertTriangle,
-  Play,
-  Check,
   Brain,
-  BarChart3,
-  Sliders,
+  Headphones,
+  PenTool,
+  Mic,
+  AlertCircle,
+  RotateCcw,
+  Check,
 } from 'lucide-react';
 
+interface ActiveProgrammeData {
+  programmeTitle: string;
+  examType: string;
+  targetScore?: string;
+  skills: string[];
+}
+
 export function AdaptivePracticeScreen() {
-  // Screen Stage: 'CONFIG' | 'SESSION' | 'REVIEW'
-  const [stage, setStage] = useState<'CONFIG' | 'SESSION' | 'REVIEW'>('CONFIG');
+  // Screen Stage: 'SKILL_SELECT' | 'SESSION' | 'REVIEW' | 'INSUFFICIENT_QUESTIONS'
+  const [stage, setStage] = useState<
+    'SKILL_SELECT' | 'SESSION' | 'REVIEW' | 'INSUFFICIENT_QUESTIONS'
+  >('SKILL_SELECT');
 
-  // Stage 1: Custom Session Configurator Form (Epic 3.1)
-  const [selectedExam, setSelectedExam] = useState<ExamType>('IELTS Academic');
-  const [selectedSection, setSelectedSection] = useState<SectionType>('Reading');
-  const [selectedSkill, setSelectedSkill] = useState<string>('Matching Headings');
-  const [selectedType, setSelectedType] = useState<QuestionType | 'ANY'>('ANY');
-  const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel | 'ANY'>('MEDIUM');
-  const [questionCount, setQuestionCount] = useState<number>(10);
-  const [isTimed, setIsTimed] = useState<boolean>(true);
+  // Student Active Programme Context
+  const [programmeData, setProgrammeData] = useState<ActiveProgrammeData>({
+    programmeTitle: 'IELTS Academic Prep',
+    examType: 'IELTS Academic',
+    targetScore: 'Band 7.5+',
+    skills: ['Reading', 'Listening', 'Writing', 'Speaking'],
+  });
 
-  // Stage 2: Active Session State (Epics 3.2 & 3.3)
+  const [activeTab, setActiveTab] = useState<string>('Reading');
+
+  // Active Session State
   const [activeSession, setActiveSession] = useState<PracticeSession | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
-  const [essayAnswer, setEssayAnswer] = useState<string>('');
+  const [textAnswer, setTextAnswer] = useState<string>('');
   const [sessionAnswers, setSessionAnswers] = useState<Record<string, PracticeAnswerItem>>({});
   const [secondsRemaining, setSecondsRemaining] = useState<number>(1800);
   const [itemTimeSeconds, setItemTimeSeconds] = useState<number>(0);
   const [bookmarkedSet, setBookmarkedSet] = useState<Set<string>>(new Set());
 
-  // Stage 3: Student Weak Skills & Review (Epics 3.5 & 3.6)
+  // Performance Data & Review State
   const [skillProgress, setSkillProgress] = useState<StudentSkillProgress[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // Load student active programme & skill progress on mount
   useEffect(() => {
-    async function loadProgress() {
-      const data = await studentPracticeService.getStudentSkillProgress();
-      setSkillProgress(data);
+    async function loadInitialData() {
+      try {
+        const res = await fetch('/api/v1/student/active-programme');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            setProgrammeData({
+              programmeTitle: data.programmeTitle,
+              examType: data.examType,
+              targetScore: data.targetScore,
+              skills: data.skills || ['Reading', 'Listening', 'Writing', 'Speaking'],
+            });
+            if (data.skills && data.skills.length > 0) {
+              setActiveTab(data.skills[0]);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to load active programme, using defaults');
+      }
+
+      const progress = await studentPracticeService.getStudentSkillProgress();
+      setSkillProgress(progress || []);
     }
-    loadProgress();
+    loadInitialData();
   }, []);
 
-  // Smart Timer Ticking
+  // Timer Ticking in Session
   useEffect(() => {
     let interval: any = null;
-    if (stage === 'SESSION' && isTimed && secondsRemaining > 0) {
+    if (stage === 'SESSION' && secondsRemaining > 0) {
       interval = setInterval(() => {
         setSecondsRemaining((prev) => (prev > 0 ? prev - 1 : 0));
         setItemTimeSeconds((prev) => prev + 1);
       }, 1000);
-    } else {
+    } else if (stage === 'SESSION') {
       interval = setInterval(() => {
         setItemTimeSeconds((prev) => prev + 1);
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [stage, isTimed, secondsRemaining]);
+  }, [stage, secondsRemaining]);
 
   function showToast(msg: string) {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   }
 
-  // Handle Launch Custom Session (Epic 3.1)
-  async function handleStartCustomSession() {
+  // Get skill icon
+  const getSkillIcon = (skillName: string) => {
+    const s = skillName.toLowerCase();
+    if (s.includes('reading')) return <BookOpen size={18} />;
+    if (s.includes('listening')) return <Headphones size={18} />;
+    if (s.includes('writing')) return <PenTool size={18} />;
+    if (s.includes('speaking')) return <Mic size={18} />;
+    if (s.includes('grammar')) return <Zap size={18} />;
+    if (s.includes('math')) return <Target size={18} />;
+    return <BookOpen size={18} />;
+  };
+
+  // Find ONE primary recommendation based on student's actual performance
+  const getRecommendation = () => {
+    const matched = skillProgress.find(
+      (p) =>
+        p.section.toLowerCase() === activeTab.toLowerCase() ||
+        p.skill.toLowerCase().includes(activeTab.toLowerCase())
+    );
+
+    if (matched && matched.accuracy > 0) {
+      return {
+        skillTitle: `${matched.section} — ${matched.skill}`,
+        accuracy: matched.accuracy,
+        statusText: `Your recent accuracy in this skill is ${matched.accuracy}%.`,
+        questionCount: 10,
+        difficulty: 'Medium',
+        section: matched.section,
+        skill: matched.skill,
+      };
+    }
+
+    // Default baseline prompt if student has no previous performance recorded
+    return {
+      skillTitle: `${activeTab} Practice Check`,
+      accuracy: null,
+      statusText: 'Start your first practice session to establish your baseline accuracy.',
+      questionCount: 10,
+      difficulty: 'Medium',
+      section: activeTab,
+      skill: activeTab,
+    };
+  };
+
+  const recommendation = getRecommendation();
+
+  // Start Practice Session for chosen skill
+  async function handleStartPractice(sectionName: string, skillName?: string) {
     setLoading(true);
+    setErrorMessage(null);
+
     const params: CustomSessionParams = {
-      exam: selectedExam,
-      section: selectedSection,
-      skill: selectedSkill,
-      questionType: selectedType,
-      difficulty: selectedDifficulty,
-      questionCount,
-      isTimed,
+      exam: programmeData.examType as any,
+      section: sectionName as any,
+      skill: skillName || `${sectionName} Practice`,
+      difficulty: 'MEDIUM',
+      questionCount: 10,
+      isTimed: true,
     };
 
     try {
@@ -113,12 +181,21 @@ export function AdaptivePracticeScreen() {
       setCurrentIndex(0);
       setSessionAnswers({});
       setSelectedAnswer('');
-      setEssayAnswer('');
+      setTextAnswer('');
       setSecondsRemaining(session.timeAllowedSeconds || 1800);
       setItemTimeSeconds(0);
       setStage('SESSION');
     } catch (err: any) {
-      showToast(err.message || 'Insufficient question inventory for selected criteria.');
+      if (
+        err.message?.includes('INSUFFICIENT') ||
+        err.message?.includes('Not enough') ||
+        err.status === 422
+      ) {
+        setErrorMessage('Not enough practice questions are currently available for this skill.');
+        setStage('INSUFFICIENT_QUESTIONS');
+      } else {
+        showToast(err.message || 'Unable to start practice session.');
+      }
     } finally {
       setLoading(false);
     }
@@ -126,7 +203,7 @@ export function AdaptivePracticeScreen() {
 
   const currentQuestion = activeSession?.questions[currentIndex];
 
-  // Record Answer for Current Question
+  // Handle option selection
   function handleSelectOption(option: string) {
     setSelectedAnswer(option);
     if (!currentQuestion) return;
@@ -144,22 +221,22 @@ export function AdaptivePracticeScreen() {
     }));
   }
 
-  // Toggle Question Bookmark (Epic 3.7)
+  // Handle bookmark toggle
   async function handleToggleBookmark(qId: string) {
     const nextSet = new Set(bookmarkedSet);
     const isBookmarked = !nextSet.has(qId);
     if (isBookmarked) {
       nextSet.add(qId);
-      showToast('Question saved to bookmarks revision list!');
+      showToast('Question bookmarked!');
     } else {
       nextSet.delete(qId);
-      showToast('Question removed from bookmarks.');
+      showToast('Bookmark removed.');
     }
     setBookmarkedSet(nextSet);
     await studentPracticeService.toggleBookmark(qId, isBookmarked);
   }
 
-  // Finish Practice Session & Generate Band Score (Epic 3.4)
+  // Submit Practice Session
   async function handleFinishSession() {
     if (!activeSession) return;
     setLoading(true);
@@ -183,813 +260,424 @@ export function AdaptivePracticeScreen() {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  const isWritingSkill =
+    activeSession?.section?.toLowerCase().includes('writing') ||
+    currentQuestion?.type === 'ESSAY';
+  const isSpeakingSkill =
+    activeSession?.section?.toLowerCase().includes('speaking') ||
+    currentQuestion?.type === 'SPEAKING';
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.75rem',
-        color: '#f8fafc',
-        fontFamily: 'Inter, system-ui, sans-serif',
-      }}
-    >
+    <div className="max-w-5xl mx-auto space-y-6 text-slate-100 font-sans p-2 md:p-4">
       {/* Toast Notification */}
       {toastMessage && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '24px',
-            right: '24px',
-            backgroundColor: '#3b82f6',
-            color: '#ffffff',
-            padding: '0.75rem 1.25rem',
-            borderRadius: '10px',
-            fontWeight: 700,
-            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          <Bookmark size={18} />
+        <div className="fixed bottom-6 right-6 bg-sky-500 text-white px-4 py-3 rounded-xl font-bold text-xs shadow-2xl z-50 flex items-center gap-2 animate-fade-in">
+          <Bookmark size={16} />
           {toastMessage}
         </div>
       )}
 
-      {/* STAGE 1: PRACTICE SESSION ENGINE LAUNCHER (EPIC 3.1) */}
-      {stage === 'CONFIG' && (
-        <>
-          {/* Header */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '1rem',
-            }}
-          >
+      {/* =========================================================================
+          STAGE 1: SKILL SELECTION INTERFACE (CHOOSE SKILL → START PRACTICE)
+          ========================================================================= */}
+      {stage === 'SKILL_SELECT' && (
+        <div className="space-y-8">
+          {/* Header & Programme Context Badges */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '0.35rem',
-                }}
-              >
-                <div
-                  style={{
-                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                    padding: '0.5rem',
-                    borderRadius: '8px',
-                    color: '#3b82f6',
-                  }}
-                >
-                  <Sliders size={24} />
-                </div>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-                  Customized Practice Engine
-                </h1>
-              </div>
-              <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: 0 }}>
-                Generate unlimited targeted practice sessions for IELTS, TOEFL, SAT, CELPIP &
-                English Proficiency.
+              <h1 className="text-2xl font-bold text-white tracking-tight">Practice</h1>
+              <p className="text-xs text-slate-400 mt-1">
+                Build your confidence one skill at a time.
               </p>
+            </div>
+
+            {/* Programme & Target Badges */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs">
+                <span className="text-slate-400 font-medium">Active Programme:</span>
+                <span className="font-bold text-sky-400">{programmeData.programmeTitle}</span>
+              </div>
+              {programmeData.targetScore && (
+                <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl text-xs">
+                  <span className="text-slate-400 font-medium">Target:</span>
+                  <span className="font-bold text-amber-400">{programmeData.targetScore}</span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Practice Session Generator Controls */}
-          <Card
-            style={{
-              padding: '1.75rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1.5rem',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '1.1rem',
-                fontWeight: 800,
-                color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              <Zap size={20} color="#fbbf24" />
-              Configure Practice Session Parameters
+          {/* DYNAMIC SKILL NAVIGATION TABS */}
+          <div className="flex overflow-x-auto pb-2 border-b border-slate-800 gap-2 scrollbar-none">
+            {programmeData.skills.map((skillName) => {
+              const isActive = activeTab.toLowerCase() === skillName.toLowerCase();
+              return (
+                <button
+                  key={skillName}
+                  onClick={() => setActiveTab(skillName)}
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                    isActive
+                      ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20'
+                      : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800/80'
+                  }`}
+                >
+                  {getSkillIcon(skillName)}
+                  {skillName}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* RECOMMENDED PRACTICE CARD */}
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Brain size={16} /> Recommended for you
+              </span>
+              <Badge variant="info">
+                {recommendation.questionCount} questions · {recommendation.difficulty}
+              </Badge>
             </div>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-                gap: '1.25rem',
-              }}
-            >
-              {/* 1. Target Exam */}
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#cbd5e1',
-                    marginBottom: '0.4rem',
-                  }}
-                >
-                  Target Examination *
-                </label>
-                <select
-                  value={selectedExam}
-                  onChange={(e) => setSelectedExam(e.target.value as ExamType)}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#ffffff',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="IELTS Academic">IELTS Academic</option>
-                  <option value="IELTS General Training">IELTS General Training</option>
-                  <option value="TOEFL iBT">TOEFL iBT</option>
-                  <option value="SAT">SAT</option>
-                  <option value="CELPIP">CELPIP</option>
-                  <option value="English Proficiency">English Proficiency</option>
-                </select>
-              </div>
-
-              {/* 2. Section */}
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#cbd5e1',
-                    marginBottom: '0.4rem',
-                  }}
-                >
-                  Exam Section *
-                </label>
-                <select
-                  value={selectedSection}
-                  onChange={(e) => setSelectedSection(e.target.value as SectionType)}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#ffffff',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="Reading">Reading</option>
-                  <option value="Listening">Listening</option>
-                  <option value="Writing">Writing</option>
-                  <option value="Speaking">Speaking</option>
-                  <option value="Math">Math</option>
-                  <option value="Grammar">Grammar</option>
-                </select>
-              </div>
-
-              {/* 3. Target Skill */}
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#cbd5e1',
-                    marginBottom: '0.4rem',
-                  }}
-                >
-                  Target Skill Area *
-                </label>
-                <select
-                  value={selectedSkill}
-                  onChange={(e) => setSelectedSkill(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#ffffff',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="Matching Headings">Matching Headings</option>
-                  <option value="True / False / Not Given">True / False / Not Given</option>
-                  <option value="Integrated Writing Logic">Integrated Writing Logic</option>
-                  <option value="Quadratic Equations & Math">Quadratic Equations & Math</option>
-                  <option value="Interactive Speaking Advice">Interactive Speaking Advice</option>
-                  <option value="General Skills Synthesis">General Skills Synthesis</option>
-                </select>
-              </div>
-
-              {/* 4. Question Type */}
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#cbd5e1',
-                    marginBottom: '0.4rem',
-                  }}
-                >
-                  Question Format
-                </label>
-                <select
-                  value={selectedType}
-                  onChange={(e) => setSelectedType(e.target.value as QuestionType | 'ANY')}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#ffffff',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="ANY">Any Question Format</option>
-                  <option value="MCQ">Multiple Choice (MCQ)</option>
-                  <option value="TRUE_FALSE_NOT_GIVEN">True / False / Not Given</option>
-                  <option value="FILL_IN_BLANK">Fill in Blank</option>
-                  <option value="ESSAY">Essay Task</option>
-                  <option value="SPEAKING">Speaking Task</option>
-                </select>
-              </div>
-
-              {/* 5. Difficulty */}
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#cbd5e1',
-                    marginBottom: '0.4rem',
-                  }}
-                >
-                  Difficulty Level
-                </label>
-                <select
-                  value={selectedDifficulty}
-                  onChange={(e) => setSelectedDifficulty(e.target.value as DifficultyLevel | 'ANY')}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#ffffff',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="ANY">Adaptive Mix</option>
-                  <option value="EASY">Easy</option>
-                  <option value="MEDIUM">Medium</option>
-                  <option value="HARD">Hard</option>
-                </select>
-              </div>
-
-              {/* 6. Question Count & Timing */}
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    color: '#cbd5e1',
-                    marginBottom: '0.4rem',
-                  }}
-                >
-                  Session Length (Questions)
-                </label>
-                <select
-                  value={questionCount}
-                  onChange={(e) => setQuestionCount(parseInt(e.target.value, 10))}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#ffffff',
-                    fontSize: '0.9rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value={5}>5 Questions (Quick Check)</option>
-                  <option value={10}>10 Questions (Standard)</option>
-                  <option value={15}>15 Questions (Intensive)</option>
-                  <option value={20}>20 Questions (Full Section Practice)</option>
-                </select>
-              </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">{recommendation.skillTitle}</h3>
+              <p className="text-xs text-slate-400 mt-1">{recommendation.statusText}</p>
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingTop: '1rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
-              <label
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.6rem',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  color: '#cbd5e1',
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={isTimed}
-                  onChange={(e) => setIsTimed(e.target.checked)}
-                  style={{ width: '18px', height: '18px', accentColor: '#3b82f6' }}
-                />
-                <span>Enable Exam Smart Countdown Timer (Simulate Test Conditions)</span>
-              </label>
-
-              <Button
-                variant="primary"
-                onClick={handleStartCustomSession}
+            <div className="pt-2">
+              <button
+                onClick={() =>
+                  handleStartPractice(recommendation.section, recommendation.skill)
+                }
                 disabled={loading}
-                style={{
-                  padding: '0.75rem 1.75rem',
-                  fontSize: '1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                }}
+                className="px-6 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl transition-colors shadow-lg shadow-sky-500/20 flex items-center gap-2 disabled:opacity-50"
               >
-                <Play size={18} />
-                {loading ? 'Generating Session...' : 'Start Practice Session'}
-              </Button>
+                {loading ? 'Starting Session...' : 'Start Practice →'}
+              </button>
             </div>
-          </Card>
+          </div>
 
-          {/* Student Weakness Detection Widget (Epic 3.6) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h2
-              style={{
-                fontSize: '1.2rem',
-                fontWeight: 800,
-                color: '#ffffff',
-                margin: 0,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              <Brain size={20} color="#ec4899" />
-              Skill Diagnostic & Weakness Tracker
+          {/* PRACTICE BY SKILL GRID */}
+          <div className="space-y-4">
+            <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+              Practice by skill
             </h2>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '1rem',
-              }}
-            >
-              {skillProgress.map((prog, idx) => (
-                <Card
-                  key={idx}
-                  style={{
-                    padding: '1.25rem',
-                    backgroundColor: '#111827',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.75rem',
-                  }}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {programmeData.skills.map((skillName) => (
+                <div
+                  key={skillName}
+                  className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all"
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff' }}>
-                      {prog.skill}
-                    </span>
-                    <Badge
-                      variant={
-                        prog.status === 'MASTERED'
-                          ? 'success'
-                          : prog.status === 'DEVELOPING'
-                            ? 'warning'
-                            : 'danger'
-                      }
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-slate-800 text-sky-400 rounded-xl">
+                        {getSkillIcon(skillName)}
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-white">{skillName}</h4>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          Targeted {skillName.toLowerCase()} practice for {programmeData.programmeTitle}.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex justify-end">
+                    <button
+                      onClick={() => handleStartPractice(skillName, `${skillName} Practice`)}
+                      disabled={loading}
+                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-sky-300 font-bold text-xs rounded-xl transition-colors flex items-center gap-1.5"
                     >
-                      {prog.status.replace('_', ' ')}
-                    </Badge>
+                      Practice →
+                    </button>
                   </div>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      fontSize: '0.85rem',
-                      color: '#94a3b8',
-                    }}
-                  >
-                    <span>Exam: {prog.exam}</span>
-                    <span>
-                      Accuracy: <strong>{prog.accuracy}%</strong>
-                    </span>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '8px',
-                      backgroundColor: '#1e293b',
-                      borderRadius: '4px',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: `${prog.accuracy}%`,
-                        height: '100%',
-                        backgroundColor:
-                          prog.accuracy >= 80
-                            ? '#10b981'
-                            : prog.accuracy >= 60
-                              ? '#f59e0b'
-                              : '#ef4444',
-                      }}
-                    />
-                  </div>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedExam(prog.exam);
-                      setSelectedSection(prog.section);
-                      setSelectedSkill(prog.skill);
-                      handleStartCustomSession();
-                    }}
-                    style={{
-                      marginTop: '0.5rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.4rem',
-                    }}
-                  >
-                    Target This Weakness <ArrowRight size={14} />
-                  </Button>
-                </Card>
+                </div>
               ))}
             </div>
           </div>
-        </>
-      )}
-
-      {/* STAGE 2: UNIVERSAL QUESTION DELIVERY ENGINE (EPICS 3.2 & 3.3) */}
-      {stage === 'SESSION' && activeSession && currentQuestion && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {/* Top Session Progress Bar & Smart Timer */}
-          <Card
-            style={{
-              padding: '1rem 1.5rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '12px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '1rem',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Badge variant="primary">{activeSession.exam}</Badge>
-              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc' }}>
-                Question {currentIndex + 1} of {activeSession.totalQuestions}
-              </span>
-            </div>
-
-            {/* Smart Timer Display */}
-            {isTimed && (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  fontSize: '1rem',
-                  fontWeight: 800,
-                  color: secondsRemaining < 300 ? '#ef4444' : '#38bdf8',
-                  backgroundColor: '#161e2e',
-                  padding: '0.4rem 0.85rem',
-                  borderRadius: '8px',
-                }}
-              >
-                <Clock size={18} />
-                <span>Timer: {formatTimer(secondsRemaining)}</span>
-              </div>
-            )}
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleToggleBookmark(currentQuestion.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                color: bookmarkedSet.has(currentQuestion.id) ? '#fbbf24' : '#cbd5e1',
-              }}
-            >
-              <Star
-                size={16}
-                fill={bookmarkedSet.has(currentQuestion.id) ? '#fbbf24' : 'transparent'}
-              />
-              {bookmarkedSet.has(currentQuestion.id) ? 'Bookmarked' : 'Bookmark'}
-            </Button>
-          </Card>
-
-          {/* Question Display Card */}
-          <Card
-            style={{
-              padding: '1.75rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1.5rem',
-            }}
-          >
-            {/* Metadata Tags */}
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-              <Badge variant="info">{currentQuestion.section}</Badge>
-              <Badge variant="neutral">{currentQuestion.skill}</Badge>
-              <Badge variant="warning">{currentQuestion.difficulty}</Badge>
-            </div>
-
-            {/* Question Text */}
-            <div
-              style={{ fontSize: '1.15rem', fontWeight: 700, color: '#ffffff', lineHeight: 1.6 }}
-            >
-              {currentQuestion.text}
-            </div>
-
-            {/* MCQ Options Renderer */}
-            {currentQuestion.options && currentQuestion.options.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {currentQuestion.options.map((opt, i) => {
-                  const isSelected = selectedAnswer === opt;
-                  return (
-                    <div
-                      key={i}
-                      onClick={() => handleSelectOption(opt)}
-                      style={{
-                        padding: '0.85rem 1.15rem',
-                        borderRadius: '10px',
-                        backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.15)' : '#1e293b',
-                        border: '1px solid',
-                        borderColor: isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.08)',
-                        color: isSelected ? '#60a5fa' : '#f8fafc',
-                        fontWeight: isSelected ? 700 : 500,
-                        fontSize: '0.95rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.75rem',
-                        transition: 'all 150ms ease',
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: '20px',
-                          height: '20px',
-                          borderRadius: '50%',
-                          border: '2px solid',
-                          borderColor: isSelected ? '#3b82f6' : '#64748b',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        {isSelected && (
-                          <div
-                            style={{
-                              width: '10px',
-                              height: '10px',
-                              borderRadius: '50%',
-                              backgroundColor: '#3b82f6',
-                            }}
-                          />
-                        )}
-                      </div>
-                      <span>{opt}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Essay Input Renderer */}
-            {currentQuestion.type === 'ESSAY' && (
-              <textarea
-                rows={6}
-                value={essayAnswer}
-                onChange={(e) => {
-                  setEssayAnswer(e.target.value);
-                  handleSelectOption(e.target.value);
-                }}
-                placeholder="Type your essay response here..."
-                style={{
-                  width: '100%',
-                  padding: '1rem',
-                  borderRadius: '10px',
-                  backgroundColor: '#1e293b',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#ffffff',
-                  fontSize: '0.95rem',
-                  outline: 'none',
-                }}
-              />
-            )}
-
-            {/* Session Navigation Footer */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                paddingTop: '1rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
-              <Button
-                variant="outline"
-                disabled={currentIndex === 0}
-                onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
-              >
-                Previous Question
-              </Button>
-
-              {currentIndex < activeSession.totalQuestions - 1 ? (
-                <Button
-                  variant="primary"
-                  onClick={() =>
-                    setCurrentIndex((prev) => Math.min(activeSession.totalQuestions - 1, prev + 1))
-                  }
-                >
-                  Next Question
-                </Button>
-              ) : (
-                <Button variant="success" onClick={handleFinishSession} disabled={loading}>
-                  Submit & Score Session
-                </Button>
-              )}
-            </div>
-          </Card>
         </div>
       )}
 
-      {/* STAGE 3: REVIEW MODE & BAND SCORE REPORT (EPICS 3.4 & 3.5) */}
-      {stage === 'REVIEW' && activeSession && activeSession.scoreResult && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-          {/* Score Result Hero Card */}
-          <Card
-            style={{
-              padding: '2rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '16px',
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '1rem',
-            }}
-          >
-            <Award size={48} color="#3b82f6" />
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-              Session Score Result
-            </h2>
-            <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#34d399' }}>
-              {activeSession.scoreResult.bandOrScale}
-            </div>
-            <div style={{ fontSize: '1rem', color: '#94a3b8' }}>
-              Classification: <strong>{activeSession.scoreResult.label}</strong> (
-              {activeSession.scoreResult.percentage}% Accuracy)
-            </div>
+      {/* =========================================================================
+          STAGE 2: QUESTION PRACTICE SESSION (FOCUSED UX)
+          ========================================================================= */}
+      {stage === 'SESSION' && activeSession && currentQuestion && (
+        <div className="space-y-6">
+          {/* Header & Progress Bar */}
+          <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3">
+            <div className="flex justify-between items-center text-xs">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-white text-sm">
+                  {programmeData.programmeTitle} — {activeSession.section}
+                </span>
+                <span className="text-slate-400 font-mono">
+                  Question {currentIndex + 1} of {activeSession.totalQuestions}
+                </span>
+              </div>
 
-            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <Button
-                variant="primary"
-                onClick={() => setStage('CONFIG')}
-                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-              >
-                <RotateCcw size={16} /> Practice Again
-              </Button>
-            </div>
-          </Card>
+              <div className="flex items-center gap-3">
+                {/* Timer */}
+                <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-sky-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
+                  <Clock size={14} />
+                  <span>{formatTimer(secondsRemaining)}</span>
+                </div>
 
-          {/* Question Breakdown List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-              Detailed Question Review & Explanations
-            </h3>
-
-            {activeSession.questions.map((q, idx) => {
-              const ans = activeSession.answers[q.id];
-              const isCorrect = ans?.isCorrect;
-
-              return (
-                <Card
-                  key={q.id}
-                  style={{
-                    padding: '1.25rem',
-                    backgroundColor: '#111827',
-                    border: '1px solid',
-                    borderColor: isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.75rem',
-                  }}
+                {/* Bookmark Toggle */}
+                <button
+                  onClick={() => handleToggleBookmark(currentQuestion.id)}
+                  className={`p-1.5 rounded-lg border transition-colors ${
+                    bookmarkedSet.has(currentQuestion.id)
+                      ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                  }`}
+                  title="Bookmark Question"
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc' }}>
-                      Question #{idx + 1} ({q.code})
-                    </span>
-                    <Badge variant={isCorrect ? 'success' : 'danger'}>
-                      {isCorrect ? 'Correct ✓' : 'Incorrect ✗'}
-                    </Badge>
-                  </div>
+                  <Bookmark
+                    size={15}
+                    fill={bookmarkedSet.has(currentQuestion.id) ? '#f59e0b' : 'transparent'}
+                  />
+                </button>
+              </div>
+            </div>
 
-                  <div style={{ fontSize: '0.95rem', color: '#ffffff', fontWeight: 600 }}>
-                    {q.text}
-                  </div>
+            {/* Progress Bar */}
+            <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
+              <div
+                className="bg-sky-500 h-full rounded-full transition-all duration-300"
+                style={{
+                  width: `${((currentIndex + 1) / activeSession.totalQuestions) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
 
-                  <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
-                    Your Answer:{' '}
-                    <strong style={{ color: isCorrect ? '#34d399' : '#fca5a5' }}>
-                      {ans?.userAnswer || 'Not Answered'}
-                    </strong>
-                  </div>
+          {/* Question Container */}
+          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-6">
+            {/* Reading Passage if available */}
+            {currentQuestion.passageText && (
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 max-h-60 overflow-y-auto leading-relaxed space-y-2">
+                <div className="font-bold text-slate-200 text-xs uppercase tracking-wider">
+                  Reading Passage
+                </div>
+                <div>{currentQuestion.passageText}</div>
+              </div>
+            )}
 
-                  <div style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
-                    Correct Answer: <strong style={{ color: '#34d399' }}>{q.correctAnswer}</strong>
-                  </div>
+            {/* Listening Audio Player if available */}
+            {currentQuestion.audioUrl && (
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+                <div className="font-bold text-slate-200 text-xs flex items-center gap-2">
+                  <Volume2 size={16} className="text-sky-400" /> Listening Prompt Audio
+                </div>
+                <audio controls className="w-full h-8">
+                  <source src={currentQuestion.audioUrl} type="audio/mpeg" />
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+            )}
 
-                  {q.explanation && (
-                    <div
-                      style={{
-                        backgroundColor: '#161e2e',
-                        padding: '0.75rem',
-                        borderRadius: '6px',
-                        fontSize: '0.85rem',
-                        color: '#94a3b8',
-                      }}
-                    >
-                      <strong>Rationale:</strong> {q.explanation}
-                    </div>
-                  )}
-                </Card>
-              );
-            })}
+            {/* Question Prompt Text */}
+            <div className="text-base font-bold text-white leading-relaxed">
+              {currentQuestion.text}
+            </div>
+
+            {/* MCQ / Radio Options (Only for non-writing / non-speaking) */}
+            {!isWritingSkill &&
+              !isSpeakingSkill &&
+              currentQuestion.options &&
+              currentQuestion.options.length > 0 && (
+                <div className="space-y-3">
+                  {currentQuestion.options.map((opt, idx) => {
+                    const isSelected = selectedAnswer === opt;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => handleSelectOption(opt)}
+                        className={`w-full text-left p-4 rounded-xl text-xs font-semibold flex items-center gap-3 transition-all border ${
+                          isSelected
+                            ? 'bg-sky-500/15 border-sky-500 text-sky-300'
+                            : 'bg-slate-950 border-slate-800/80 text-slate-300 hover:border-slate-700 hover:text-white'
+                        }`}
+                      >
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                            isSelected ? 'border-sky-500 bg-sky-500' : 'border-slate-600'
+                          }`}
+                        >
+                          {isSelected && <div className="w-2 h-2 rounded-full bg-slate-950" />}
+                        </div>
+                        <span>{opt}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+            {/* Writing Task Text Area (NO MCQ Radio Buttons) */}
+            {isWritingSkill && (
+              <div className="space-y-2">
+                <div className="text-xs text-slate-400 font-medium">
+                  Compose your response clearly in the space below:
+                </div>
+                <textarea
+                  rows={8}
+                  value={textAnswer}
+                  onChange={(e) => {
+                    setTextAnswer(e.target.value);
+                    handleSelectOption(e.target.value);
+                  }}
+                  placeholder="Type your essay response here..."
+                  className="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 leading-relaxed font-sans"
+                />
+                <div className="text-right text-[11px] text-slate-400 font-mono">
+                  Words: {textAnswer.trim() ? textAnswer.trim().split(/\s+/).length : 0}
+                </div>
+              </div>
+            )}
+
+            {/* Speaking Task Prompt Interface (NO MCQ Radio Buttons) */}
+            {isSpeakingSkill && (
+              <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 text-center space-y-4">
+                <div className="w-12 h-12 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center mx-auto border border-sky-500/20">
+                  <Mic size={24} />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-xs font-bold text-white">Oral Response Interface</h4>
+                  <p className="text-[11px] text-slate-400">
+                    Record your speaking response or summarize key notes below.
+                  </p>
+                </div>
+                <textarea
+                  rows={4}
+                  value={textAnswer}
+                  onChange={(e) => {
+                    setTextAnswer(e.target.value);
+                    handleSelectOption(e.target.value);
+                  }}
+                  placeholder="Type oral response transcript or key speaking points..."
+                  className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 leading-relaxed"
+                />
+              </div>
+            )}
+
+            {/* Navigation Footer */}
+            <div className="flex justify-between items-center pt-4 border-t border-slate-800">
+              <button
+                disabled={currentIndex === 0}
+                onClick={() => {
+                  const prevIdx = Math.max(0, currentIndex - 1);
+                  setCurrentIndex(prevIdx);
+                  const prevQ = activeSession.questions[prevIdx];
+                  setSelectedAnswer(sessionAnswers[prevQ.id]?.userAnswer || '');
+                }}
+                className="px-4 py-2 bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-xl disabled:opacity-40 transition-colors"
+              >
+                Previous
+              </button>
+
+              {currentIndex < activeSession.totalQuestions - 1 ? (
+                <button
+                  onClick={() => {
+                    const nextIdx = Math.min(activeSession.totalQuestions - 1, currentIndex + 1);
+                    setCurrentIndex(nextIdx);
+                    const nextQ = activeSession.questions[nextIdx];
+                    setSelectedAnswer(sessionAnswers[nextQ.id]?.userAnswer || '');
+                  }}
+                  className="px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl transition-colors shadow-md"
+                >
+                  Next
+                </button>
+              ) : (
+                <button
+                  onClick={handleFinishSession}
+                  disabled={loading}
+                  className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl transition-colors shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                >
+                  {loading ? 'Submitting...' : 'Submit Practice'}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          STAGE 3: INSUFFICIENT QUESTIONS STATE
+          ========================================================================= */}
+      {stage === 'INSUFFICIENT_QUESTIONS' && (
+        <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl text-center space-y-4 my-8">
+          <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto border border-amber-500/20">
+            <AlertCircle size={24} />
+          </div>
+
+          <h3 className="text-lg font-bold text-white">
+            Not enough practice questions are currently available for this skill.
+          </h3>
+
+          <p className="text-xs text-slate-400 max-w-md mx-auto">
+            Questions for <strong className="text-white">{activeTab}</strong> under{' '}
+            <strong className="text-sky-400">{programmeData.programmeTitle}</strong> are currently
+            being published. Please choose another skill to practise.
+          </p>
+
+          <div className="pt-4">
+            <button
+              onClick={() => setStage('SKILL_SELECT')}
+              className="px-6 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl transition-colors shadow-md"
+            >
+              Choose Another Skill
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          STAGE 4: POST-SUBMISSION RESULTS BREAKDOWN
+          ========================================================================= */}
+      {stage === 'REVIEW' && activeSession && activeSession.scoreResult && (
+        <div className="space-y-6">
+          {/* Hero Result Summary */}
+          <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl text-center space-y-4">
+            <Award size={48} className="text-sky-400 mx-auto" />
+            <h2 className="text-2xl font-bold text-white">Practice Complete</h2>
+            <p className="text-xs text-slate-400">
+              {programmeData.programmeTitle} — {activeSession.section}
+            </p>
+
+            <div className="flex justify-center items-center gap-6">
+              <div className="bg-slate-950 px-5 py-3 rounded-xl border border-slate-800 text-center">
+                <div className="text-[10px] text-slate-400 uppercase font-semibold">Score</div>
+                <div className="text-2xl font-black text-sky-400 mt-0.5">
+                  {activeSession.scoreResult.rawScore} / {activeSession.scoreResult.totalQuestions}
+                </div>
+              </div>
+
+              <div className="bg-slate-950 px-5 py-3 rounded-xl border border-slate-800 text-center">
+                <div className="text-[10px] text-slate-400 uppercase font-semibold">Accuracy</div>
+                <div className="text-2xl font-black text-emerald-400 mt-0.5">
+                  {activeSession.scoreResult.percentage}%
+                </div>
+              </div>
+            </div>
+
+            <div className="text-xs text-slate-300">
+              Performance Level: <strong className="text-sky-300">{activeSession.scoreResult.label}</strong> ({activeSession.scoreResult.bandOrScale})
+            </div>
+
+            <div className="flex justify-center gap-3 pt-4">
+              <button
+                onClick={() => setStage('SKILL_SELECT')}
+                className="px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl transition-colors shadow-md"
+              >
+                Practice Again
+              </button>
+              <button
+                onClick={() => (window.location.href = '/student/results')}
+                className="px-5 py-2.5 bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-xl transition-colors"
+              >
+                Back to My Results
+              </button>
+            </div>
           </div>
         </div>
       )}

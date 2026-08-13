@@ -24,6 +24,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from 'lucide-react';
 import { WorkspaceContext } from './WorkspaceContext';
 import { WorkspaceId, workspaceRegistry } from './workspace-registry';
@@ -31,6 +32,8 @@ import { RouteGuard } from '../components/auth/route-guard';
 import { TopNavigation } from '../shared/ui/navigation/TopNavigation';
 import { SidebarItem } from '../shared/ui/navigation/SidebarItem';
 import { Breadcrumb, BreadcrumbItem } from '../shared/ui/breadcrumb/Breadcrumb';
+import { useAuthContext } from '../providers/AuthProvider';
+import { useGlobalLogout } from '../features/auth/hooks/useGlobalLogout';
 
 interface WorkspaceShellProps {
   workspaceRole: WorkspaceId;
@@ -81,11 +84,10 @@ function getNavIcon(iconName: string) {
   }
 }
 
-import { useAuthContext } from '../providers/AuthProvider';
-
 export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps) {
   const context = useContext(WorkspaceContext);
   const { user: authUser, isLoading: authLoading } = useAuthContext();
+  const { handleLogout } = useGlobalLogout();
   const pathname = usePathname();
   const router = useRouter();
   const [switcherOpen, setSwitcherOpen] = useState(false);
@@ -152,6 +154,24 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
     setSwitcherOpen(false);
     const target = workspaceRegistry[id];
     router.push(target.defaultRoute);
+  };
+
+  const checkIsItemActive = (itemHref: string, currentPath: string | null): boolean => {
+    if (!currentPath) return false;
+    if (currentPath === itemHref) return true;
+    if (itemHref !== '/' && currentPath.startsWith(itemHref + '/')) return true;
+
+    // Route alias & nested path mappings for student workspace:
+    if (itemHref === '/dashboard' && (currentPath === '/student' || currentPath === '/student/welcome')) return true;
+    if (itemHref === '/student/practice' && (currentPath === '/practice' || currentPath.startsWith('/practice/'))) return true;
+    if (itemHref === '/student/assessments' && (currentPath === '/student/diagnostics' || currentPath.startsWith('/student/diagnostics/') || currentPath.startsWith('/student/assessments/'))) return true;
+    if (itemHref === '/student/mock' && (currentPath === '/student/mock-exams' || currentPath.startsWith('/student/mock-exams/'))) return true;
+    if (itemHref === '/learning-assistant' && (currentPath === '/student/learning-assistant' || currentPath.startsWith('/student/learning-assistant/') || currentPath === '/learning')) return true;
+    if (itemHref === '/readiness' && (currentPath === '/student/readiness' || currentPath.startsWith('/student/readiness/'))) return true;
+    if (itemHref === '/student/results' && (currentPath === '/student/result' || currentPath.startsWith('/student/results/'))) return true;
+    if (itemHref === '/profile' && (currentPath === '/student/settings' || currentPath.startsWith('/profile/'))) return true;
+
+    return false;
   };
 
   // Shared sidebar nav content used in both desktop sidebar and mobile drawer
@@ -248,7 +268,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
         }}
       >
         {currentWorkspace.navigation.map((item, idx) => {
-          const isActive = pathname === item.href;
+          const isActive = checkIsItemActive(item.href, pathname);
           return (
             <SidebarItem
               key={idx}
@@ -265,8 +285,52 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
           );
         })}
       </nav>
+
+      <div
+        style={{
+          padding: '0.5rem',
+          borderTop: '1px solid var(--border-subtle, rgba(255,255,255,0.07))',
+        }}
+      >
+        <SidebarItem
+          icon={<LogOut size={18} />}
+          label="Sign Out"
+          href="#"
+          isActive={false}
+          isCollapsed={!isMobile && collapsed}
+          onClick={() => {
+            handleLogout();
+            if (onNavClick) onNavClick();
+          }}
+        />
+      </div>
     </>
   );
+
+  const isExamPlayerPage =
+    pathname?.includes('/assessments/player') ||
+    pathname?.includes('/mock/player') ||
+    pathname?.includes('/practice/session');
+
+  if (isExamPlayerPage) {
+    return (
+      <RouteGuard
+        allowedRoles={workspaceRole === 'STUDENT' ? ['STUDENT'] : ['ADMINISTRATOR', 'SYSTEM_ADMIN']}
+      >
+        <div
+          style={{
+            minHeight: '100vh',
+            width: '100vw',
+            backgroundColor: 'var(--bg-app, #0b0f19)',
+            color: 'var(--text-primary, #f8fafc)',
+            overflowX: 'hidden',
+          }}
+        >
+          {children}
+        </div>
+      </RouteGuard>
+    );
+  }
 
   return (
     <RouteGuard

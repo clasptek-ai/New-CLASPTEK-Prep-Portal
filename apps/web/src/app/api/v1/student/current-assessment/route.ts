@@ -3,52 +3,81 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
+import { getCanonicalProgramme } from '@/lib/canonical-programme';
 
 export async function GET(req: NextRequest) {
   try {
-    const requestId = require('crypto').randomUUID();
-
     const session = await getAuthenticatedSession(req);
     const studentId =
       session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
 
+    if (!studentId) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'NO_AUTHENTICATED_USER',
+          message: 'User session is not authenticated or has expired.',
+        },
+        { status: 401 }
+      );
+    }
+
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
 
-    // 1. Resolve student's target programme
-    let studentProgramme = 'English Proficiency';
-    if (studentId) {
-      const profileRes = await pool
-        .query(`SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`, [
-          studentId,
-        ])
-        .catch(() => null);
-      if (profileRes && profileRes.rows.length > 0 && profileRes.rows[0].target_programme) {
-        studentProgramme = profileRes.rows[0].target_programme;
-      }
+    // 1. Resolve student's active enrollment (primary source) with fallback to profile and metadata
+    const enrollmentRes = await pool.query(
+      `SELECT 
+         spe.programme_id as enrollment_programme_id,
+         p.target_programme as profile_programme,
+         au.raw_user_meta_data->>'programme' as meta_programme
+       FROM auth.users au
+       LEFT JOIN public.profiles p ON p.user_id = au.id OR p.id = au.id
+       LEFT JOIN public.student_programme_enrollments spe 
+         ON spe.student_id = au.id AND spe.enrollment_status = 'ACTIVE'
+       WHERE au.id = $1
+       ORDER BY spe.enrolled_at DESC NULLS LAST
+       LIMIT 1`,
+      [studentId]
+    );
+
+    const row = enrollmentRes.rows[0];
+    const rawProgramme = row?.enrollment_programme_id || row?.profile_programme || row?.meta_programme;
+
+    if (!rawProgramme) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'NO_ACTIVE_PROGRAMME',
+          message: 'No active programme found for your student profile.',
+        },
+        { status: 404 }
+      );
     }
 
-    // 2. Check for active IN_PROGRESS attempt for candidate
+    // 2. Resolve canonical programme identity via shared helper
+    const canonicalProg = getCanonicalProgramme(rawProgramme);
+
+    // 3. Check for active IN_PROGRESS attempt for candidate
     let hasActiveAttempt = false;
     let activeAttemptId: string | null = null;
 
-    if (studentId) {
-      const activeRes = await pool.query(
-        `SELECT id FROM public.assessment_attempts 
-         WHERE student_id = $1 
-           AND status = 'IN_PROGRESS' 
-           AND (expires_at IS NULL OR expires_at > NOW())
-           AND deleted_at IS NULL
-         ORDER BY started_at DESC LIMIT 1`,
-        [studentId]
-      );
-      if (activeRes.rows.length > 0) {
-        hasActiveAttempt = true;
-        activeAttemptId = activeRes.rows[0].id;
-      }
+    const activeRes = await pool.query(
+      `SELECT id FROM public.assessment_attempts 
+       WHERE student_id = $1 
+         AND status = 'IN_PROGRESS' 
+         AND (expires_at IS NULL OR expires_at > NOW())
+         AND deleted_at IS NULL
+       ORDER BY started_at DESC LIMIT 1`,
+      [studentId]
+    );
+
+    if (activeRes.rows.length > 0) {
+      hasActiveAttempt = true;
+      activeAttemptId = activeRes.rows[0].id;
     }
 
-    // 3. Query active assigned PUBLISHED assessment definition for programme
+    // 4. Query active assigned PUBLISHED diagnostic assessment for programme using canonical ID or aliases
     const assignRes = await pool.query(
       `SELECT 
         ad.id,
@@ -63,38 +92,41 @@ export async function GET(req: NextRequest) {
         paa.programme_id as "assignedProgramme"
       FROM public.programme_assessment_assignments paa
       JOIN public.assessment_definitions ad ON ad.id = paa.assessment_definition_id
-      WHERE paa.programme_id = $1 
+      WHERE paa.programme_id = ANY($1::text[])
+        AND paa.assessment_type = 'DIAGNOSTIC'
         AND paa.is_active = true
         AND ad.status = 'PUBLISHED'
       LIMIT 1`,
-      [studentProgramme]
+      [canonicalProg.aliases]
     );
 
     let definition = assignRes.rows[0];
 
-    // Fallback: If no assignment, query default published definition
+    // Fallback: Query assessment_definitions by exam_type matching canonical aliases
     if (!definition) {
       const defRes = await pool.query(
         `SELECT 
           id, code, title, exam_type as "examType", duration_minutes as "durationMinutes",
           status, instructions, sections_config as "sectionsConfig", published_at as "publishedAt"
         FROM public.assessment_definitions
-        WHERE exam_type = $1 AND status = 'PUBLISHED'
+        WHERE exam_type = ANY($1::text[])
+          AND assessment_type = 'DIAGNOSTIC'
+          AND status = 'PUBLISHED'
         ORDER BY created_at DESC LIMIT 1`,
-        [studentProgramme]
+        [canonicalProg.aliases]
       );
       definition = defRes.rows[0];
     }
 
-    // Secondary fallback: English Proficiency Placement Assessment
+    // Secondary fallback: Default published placement assessment
     if (!definition) {
       const defaultRes = await pool.query(
         `SELECT 
           id, code, title, exam_type as "examType", duration_minutes as "durationMinutes",
           status, instructions, sections_config as "sectionsConfig", published_at as "publishedAt"
         FROM public.assessment_definitions
-        WHERE code = 'ENG-PROF-DIAG' AND status = 'PUBLISHED'
-        LIMIT 1`
+        WHERE (code = 'ENG-PROF-DIAG' OR assessment_type = 'DIAGNOSTIC') AND status = 'PUBLISHED'
+        ORDER BY created_at DESC LIMIT 1`
       );
       definition = defaultRes.rows[0];
     }
@@ -103,20 +135,22 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: 'NO_PUBLISHED_ASSESSMENT',
-          message: 'No published assessment found for your programme.',
+          error: 'NO_PUBLISHED_DIAGNOSTIC',
+          message: 'No diagnostic assessment is currently assigned to your programme.',
         },
         { status: 404 }
       );
     }
 
+    // Dynamic section outline resolution based on canonical assessment configuration
     const rawSections = definition.sectionsConfig || [
-      { code: 'GRAMMAR', name: 'Grammar & Structure', questionCount: 30, selection: 'BALANCED' },
-      { code: 'READING', name: 'Reading Comprehension', passages: 1 },
-      { code: 'WRITING', name: 'Writing Expression', tasks: ['ESSAY', 'LETTER'] },
+      { code: 'GRAMMAR', name: 'Structure & Grammar', questionCount: 30 },
+      { code: 'READING', name: 'Reading Comprehension', questionCount: 5, passages: 1 },
+      { code: 'WRITING', name: 'Writing Expression', questionCount: 2, tasks: ['TASK1', 'TASK2'] },
     ];
 
     const sections = rawSections.map((sec: any) => ({
+      code: sec.code || sec.name,
       name: sec.name || sec.code,
       questionCount:
         sec.questionCount || (sec.passages ? sec.passages * 5 : sec.tasks ? sec.tasks.length : 1),
@@ -129,24 +163,24 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: {
-        hasActiveAttempt,
-        activeAttemptId,
-        assessment: {
-          id: definition.id,
-          code: definition.code,
-          title: definition.title,
-          description: `Official placement assessment for ${studentProgramme}`,
-          instructions:
-            definition.instructions || 'Complete all sections within the allocated duration.',
-          durationMinutes: definition.durationMinutes || 45,
-          totalQuestions,
-          programme: {
-            id: studentProgramme.toLowerCase().replace(/\s+/g, '-'),
-            name: studentProgramme,
-          },
-          sections,
-        },
+      hasActiveAttempt,
+      activeAttemptId,
+      assessment: {
+        id: definition.id,
+        code: definition.code,
+        title: definition.title,
+        type: 'Placement Diagnostic',
+        durationMinutes: definition.durationMinutes || 45,
+        totalQuestions,
+        instructions:
+          definition.instructions ||
+          'Complete all sections independently within the allocated duration in a quiet environment.',
+        sections,
+      },
+      programme: {
+        id: canonicalProg.id,
+        name: canonicalProg.title,
+        examType: canonicalProg.id,
       },
       meta: {
         timestamp: new Date().toISOString(),
@@ -155,6 +189,15 @@ export async function GET(req: NextRequest) {
     });
   } catch (err: any) {
     console.error('GET /api/v1/student/current-assessment error:', err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'ASSESSMENT_LOOKUP_FAILED',
+        message: 'Unable to load your diagnostic. Please try again.',
+      },
+      { status: 500 }
+    );
   }
 }
+
+

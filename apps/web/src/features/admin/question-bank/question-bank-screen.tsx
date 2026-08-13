@@ -146,9 +146,11 @@ export function QuestionBankScreen() {
   async function _handleDeleteQuestion(id: string) {
     await adminQuestionsService.deleteQuestion(id);
     setQuestions((prev) => prev.filter((q) => q.id !== id));
+    setTotalQuestionsCount((prev) => Math.max(0, prev - 1));
     setDeleteConfirmId(null);
     if (previewQuestion?.id === id) setPreviewQuestion(null);
     showBanner('Question deleted from Question Bank.');
+    await loadData();
   }
 
   // Duplicate Check on Prompt Change
@@ -519,7 +521,7 @@ export function QuestionBankScreen() {
           }}
         >
           <Layers size={16} />
-          Question Repository ({totalQuestionsCount || (counts as any).ALL || 1250})
+          Question Repository ({loading ? '...' : totalQuestionsCount})
         </button>
 
         <button

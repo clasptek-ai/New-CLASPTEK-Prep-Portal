@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
 import { QuestionSelectionService } from '@/lib/question-selection-service';
+import { getCanonicalProgramme, isSameCanonicalProgramme } from '@/lib/canonical-programme';
 import { randomUUID } from 'crypto';
 
 /**
@@ -108,35 +109,71 @@ export async function POST(req: NextRequest) {
     try {
       await client.query('BEGIN');
 
-      // 1. Resolve student programme
-      let studentProgramme = 'English Proficiency';
-      const profileRes = await client
-        .query(`SELECT target_programme FROM public.profiles WHERE user_id = $1 OR id = $1`, [
-          studentId,
-        ])
-        .catch(() => null);
-      if (profileRes?.rows?.[0]?.target_programme) {
-        studentProgramme = profileRes.rows[0].target_programme;
-      }
+      // 1. Resolve student programme using primary enrollment source
+      const enrollmentRes = await client.query(
+        `SELECT 
+           spe.programme_id as enrollment_programme_id,
+           p.target_programme as profile_programme,
+           au.raw_user_meta_data->>'programme' as meta_programme
+         FROM auth.users au
+         LEFT JOIN public.profiles p ON p.user_id = au.id OR p.id = au.id
+         LEFT JOIN public.student_programme_enrollments spe 
+           ON spe.student_id = au.id AND spe.enrollment_status = 'ACTIVE'
+         WHERE au.id = $1
+         ORDER BY spe.enrolled_at DESC NULLS LAST
+         LIMIT 1`,
+        [studentId]
+      );
 
-      // 2. Resolve assessment definition
+      const row = enrollmentRes.rows[0];
+      const rawProgramme = row?.enrollment_programme_id || row?.profile_programme || row?.meta_programme || 'IELTS_ACADEMIC';
+      const canonicalStudentProg = getCanonicalProgramme(rawProgramme);
+
+      // 2. Resolve assessment definition with canonical programme ownership validation
       let definition: any = null;
 
       if (body.assessmentId) {
         const defRes = await client.query(
-          `SELECT * FROM public.assessment_definitions WHERE id = $1 AND status = 'PUBLISHED'`,
+          `SELECT ad.*, paa.programme_id as assigned_programme_id 
+           FROM public.assessment_definitions ad
+           LEFT JOIN public.programme_assessment_assignments paa 
+             ON paa.assessment_definition_id = ad.id AND paa.is_active = true
+           WHERE ad.id = $1 AND ad.status = 'PUBLISHED'`,
           [body.assessmentId]
         );
-        definition = defRes.rows[0];
+        const targetDef = defRes.rows[0];
+        if (targetDef) {
+          const targetProgKey = targetDef.assigned_programme_id || targetDef.exam_type || 'ENG-PROF-DIAG';
+          const matchesProgramme =
+            targetDef.code === 'ENG-PROF-DIAG' ||
+            isSameCanonicalProgramme(targetProgKey, canonicalStudentProg.id);
+
+          if (matchesProgramme) {
+            definition = targetDef;
+          } else {
+            await client.query('ROLLBACK');
+            return NextResponse.json(
+              {
+                success: false,
+                error: 'UNAUTHORIZED_ASSESSMENT_ASSIGNMENT',
+                message: 'The requested assessment is not assigned to your active programme.',
+                requestId,
+              },
+              { status: 403 }
+            );
+          }
+        }
       }
 
       if (!definition) {
         const assignRes = await client.query(
           `SELECT ad.* FROM public.programme_assessment_assignments paa
            JOIN public.assessment_definitions ad ON ad.id = paa.assessment_definition_id
-           WHERE paa.programme_id = $1 AND paa.is_active = true AND ad.status = 'PUBLISHED'
+           WHERE paa.programme_id = ANY($1::text[])
+             AND paa.is_active = true 
+             AND ad.status = 'PUBLISHED'
            LIMIT 1`,
-          [studentProgramme]
+          [canonicalStudentProg.aliases]
         );
         definition = assignRes.rows[0];
       }
@@ -144,9 +181,10 @@ export async function POST(req: NextRequest) {
       if (!definition) {
         const defRes = await client.query(
           `SELECT * FROM public.assessment_definitions
-           WHERE (exam_type = $1 OR code = 'ENG-PROF-DIAG') AND status = 'PUBLISHED'
+           WHERE (exam_type = ANY($1::text[]) OR code = 'ENG-PROF-DIAG') 
+             AND status = 'PUBLISHED'
            ORDER BY created_at DESC LIMIT 1`,
-          [studentProgramme]
+          [canonicalStudentProg.aliases]
         );
         definition = defRes.rows[0];
       }
@@ -230,7 +268,7 @@ export async function POST(req: NextRequest) {
       // 5. Generate attempt-aware, randomized paper snapshot via QuestionSelectionService
       const generatedSnapshot = await QuestionSelectionService.generatePaperSnapshot(client, {
         studentId,
-        examType: studentProgramme,
+        examType: canonicalStudentProg.title,
         grammarCount: 30,
         passageCount: 1,
         writingCount: 2,

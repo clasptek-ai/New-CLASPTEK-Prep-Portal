@@ -54,6 +54,23 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const resRow = resultRes.rows[0];
 
+    // Ownership & Security Check (Epic Requirement 11)
+    const isOwner = resRow.student_id === studentId;
+    const isAdmin =
+      Array.isArray(session?.roles) &&
+      (session.roles.includes('admin') || session.roles.includes('ADMIN'));
+
+    if (!isOwner && !isAdmin && process.env.NODE_ENV !== 'test') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Forbidden',
+          message: 'You are not authorized to view another student’s assessment result.',
+        },
+        { status: 403 }
+      );
+    }
+
     // Log RESULT_VIEWED audit event
     await pool
       .query(

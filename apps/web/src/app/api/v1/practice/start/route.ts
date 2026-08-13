@@ -14,20 +14,40 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { dbPool } = await getDiagnosticContext();
+    const pool = dbPool.getPool();
+
+    // 0. SECURITY & PROGRAMME CONTEXT: Resolve student's active programme & exam directly from backend DB
+    const profileRes = await pool.query(
+      `SELECT 
+         COALESCE(spe.programme_id::text, p.target_programme, au.raw_user_meta_data->>'programme', 'IELTS Academic') as programme_title
+       FROM auth.users au
+       LEFT JOIN public.profiles p ON p.user_id = au.id
+       LEFT JOIN public.student_programme_enrollments spe ON spe.student_id = au.id AND spe.enrollment_status = 'ACTIVE'
+       WHERE au.id = $1
+       ORDER BY spe.enrolled_at DESC LIMIT 1`,
+      [studentId]
+    );
+
+    const progTitle = (profileRes.rows[0]?.programme_title || 'IELTS Academic').toUpperCase();
+    let derivedExamType = 'IELTS Academic';
+    if (progTitle.includes('TOEFL')) derivedExamType = 'TOEFL iBT';
+    else if (progTitle.includes('SAT')) derivedExamType = 'SAT';
+    else if (progTitle.includes('ENGLISH PROFICIENCY') || progTitle.includes('GENERAL')) derivedExamType = 'English Proficiency';
+    else if (progTitle.includes('CELPIP')) derivedExamType = 'CELPIP';
+
     const body = await req.json();
-    const examType = body.exam || body.examType || 'English Proficiency';
-    const sectionCode = body.section || body.sectionCode || 'Grammar';
-    const skillCode = body.skill || body.skillCode || 'General';
+    const sectionCode = body.section || body.sectionCode || 'Reading';
+    const skillCode = body.skill || body.skillCode || `${sectionCode} Practice`;
     const difficulty = body.difficulty || 'MEDIUM';
     const questionCount = typeof body.questionCount === 'number' ? body.questionCount : 10;
     const mode = body.mode || 'IMMEDIATE_FEEDBACK';
 
-    const { dbPool } = await getDiagnosticContext();
-    const practiceRepo = new PostgresCanonicalPracticeRepository(dbPool.getPool());
+    const practiceRepo = new PostgresCanonicalPracticeRepository(pool);
 
-    // 1. Query eligible PRACTICE questions from Universal Question Bank
+    // 1. Query eligible PRACTICE questions filtered by student's ACTIVE EXAM TYPE
     const eligibleQuestions = await practiceRepo.queryEligibleQuestions({
-      examType,
+      examType: derivedExamType,
       sectionCode,
       skillCode,
       difficulty,
@@ -39,8 +59,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error: 'INSUFFICIENT_QUESTION_INVENTORY',
-          message: `No published PRACTICE questions match criteria: ${examType} - ${sectionCode} (${difficulty}).`,
-          examType,
+          message: 'Not enough practice questions are currently available for this skill.',
+          examType: derivedExamType,
           sectionCode,
           difficulty,
         },
@@ -55,7 +75,7 @@ export async function POST(req: NextRequest) {
     await practiceRepo.createSession({
       id: sessionId,
       studentId,
-      examType,
+      examType: derivedExamType,
       sectionCode,
       skillCode,
       difficulty,
@@ -72,7 +92,7 @@ export async function POST(req: NextRequest) {
       success: true,
       session: {
         id: sessionId,
-        exam: examType,
+        exam: derivedExamType,
         section: sectionCode,
         skill: skillCode,
         difficulty,

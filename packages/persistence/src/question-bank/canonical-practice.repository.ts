@@ -50,16 +50,25 @@ export class PostgresCanonicalPracticeRepository {
   ): Promise<PracticeEligibleQuestion[]> {
     const { examType, sectionCode, difficulty, questionCount, studentId } = filter;
 
-    // Extract recently used question IDs if studentId provided
+    // Extract recently used question IDs from both assessment attempts AND practice sessions if studentId provided
     const recentlyUsedIds = new Set<string>();
     if (studentId) {
       try {
         const historyRes = await this.pool.query(
           `SELECT DISTINCT question_id
-           FROM public.assessment_attempt_answers aaa
-           JOIN public.assessment_attempts aa ON aa.id = aaa.attempt_id
-           WHERE aa.student_id = $1 AND aa.status IN ('SUBMITTED', 'COMPLETED')
-           ORDER BY question_id LIMIT 300`,
+           FROM (
+             SELECT aaa.question_id
+             FROM public.assessment_attempt_answers aaa
+             JOIN public.assessment_attempts aa ON aa.id = aaa.attempt_id
+             WHERE aa.student_id = $1 AND aa.status IN ('SUBMITTED', 'COMPLETED')
+             UNION
+             SELECT qv.question_id
+             FROM public.practice_session_questions psq
+             JOIN public.practice_sessions ps ON ps.id = psq.session_id
+             JOIN public.question_versions qv ON qv.id = psq.question_version_id
+             WHERE ps.student_id = $1
+           ) combined_history
+           LIMIT 500`,
           [studentId]
         );
         historyRes.rows.forEach((r: any) => recentlyUsedIds.add(r.question_id));
