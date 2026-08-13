@@ -2,9 +2,8 @@
   "name": "@clasptek/design-system",
   "version": "3.0.0",
   "description": "Clasptek Design System (CDS) v1.0 enterprise UI component library",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "build": "tsc -b",
     "test": "vitest run"

@@ -54,6 +54,7 @@
     "@clasptek/domain-results": "workspace:*",
     "@clasptek/domain-security": "workspace:*",
     "@clasptek/domain-student-learning": "workspace:*",
+    "@clasptek/events": "workspace:*",
     "@clasptek/feature-flags": "workspace:*",
     "@clasptek/infrastructure-access-control": "workspace:*",
     "@clasptek/infrastructure-ai-providers": "workspace:*",

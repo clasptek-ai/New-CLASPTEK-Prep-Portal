@@ -206,6 +206,9 @@ importers:
       '@clasptek/domain-student-learning':
         specifier: workspace:*
         version: link:../../packages/domain/student-learning
+      '@clasptek/events':
+        specifier: workspace:*
+        version: link:../../packages/events
       '@clasptek/feature-flags':
         specifier: workspace:*
         version: link:../../packages/feature-flags
