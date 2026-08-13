@@ -107,6 +107,9 @@ importers:
       '@clasptek/application-identity-sync':
         specifier: workspace:*
         version: link:../../packages/application/identity-sync
+      '@clasptek/application-learning-analytics':
+        specifier: workspace:*
+        version: link:../../packages/application/learning-analytics
       '@clasptek/application-learning-assistant':
         specifier: workspace:*
         version: link:../../packages/application/learning-assistant
@@ -938,6 +941,9 @@ importers:
       '@clasptek/application-curriculum':
         specifier: workspace:*
         version: link:../application/curriculum
+      '@clasptek/application-diagnostic-placement':
+        specifier: workspace:*
+        version: link:../application/diagnostic-placement
       '@clasptek/application-exam-product':
         specifier: workspace:*
         version: link:../application/exam-product
@@ -995,6 +1001,9 @@ importers:
       '@clasptek/domain-curriculum':
         specifier: workspace:*
         version: link:../domain/curriculum
+      '@clasptek/domain-diagnostic-placement':
+        specifier: workspace:*
+        version: link:../domain/diagnostic-placement
       '@clasptek/domain-exam-product':
         specifier: workspace:*
         version: link:../domain/exam-product

@@ -32,6 +32,8 @@
     "@clasptek/application-prediction-engine": "workspace:*",
     "@clasptek/domain-learning-assistant": "workspace:*",
     "@clasptek/application-learning-assistant": "workspace:*",
+    "@clasptek/domain-diagnostic-placement": "workspace:*",
+    "@clasptek/application-diagnostic-placement": "workspace:*",
     "@clasptek/domain-learning-analytics": "workspace:*",
     "@clasptek/application-learning-analytics": "workspace:*",
     "@clasptek/domain-mock-examination": "workspace:*",

@@ -21,6 +21,7 @@
     "@clasptek/application-exam-product": "workspace:*",
     "@clasptek/application-identity": "workspace:*",
     "@clasptek/application-identity-sync": "workspace:*",
+    "@clasptek/application-learning-analytics": "workspace:*",
     "@clasptek/application-learning-assistant": "workspace:*",
     "@clasptek/application-learning-resources": "workspace:*",
     "@clasptek/application-mock-examination": "workspace:*",
