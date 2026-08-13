@@ -230,6 +230,12 @@ importers:
       '@clasptek/security':
         specifier: workspace:*
         version: link:../../packages/security
+      '@clasptek/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@clasptek/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
       '@clasptek/ui':
         specifier: workspace:*
         version: link:../../packages/ui

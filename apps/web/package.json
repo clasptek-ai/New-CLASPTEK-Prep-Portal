@@ -62,6 +62,8 @@
     "@clasptek/observability": "workspace:*",
     "@clasptek/persistence": "workspace:*",
     "@clasptek/security": "workspace:*",
+    "@clasptek/shared": "workspace:*",
+    "@clasptek/testing": "workspace:*",
     "@clasptek/ui": "workspace:*",
     "@clasptek/validation": "workspace:*",
     "@hookform/resolvers": "^5.4.0",
