@@ -151,6 +151,20 @@ export class SupabaseQuestionRepository implements IQuestionRepository {
   }
 
   async save(question: AdminQuestion): Promise<AdminQuestion> {
+    try {
+      const res = await fetch('/api/v1/admin/questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(question),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.id) question.id = json.id;
+      }
+    } catch (err) {
+      console.error('SupabaseQuestionRepository.save API error:', err);
+    }
+
     const localList = getLocalQuestions();
     const idx = localList.findIndex((q) => q.id === question.id);
     if (idx >= 0) {

@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
 
 export async function GET(req: NextRequest) {
@@ -92,23 +91,25 @@ export async function GET(req: NextRequest) {
 
       const tags: string[] = Array.isArray(payload.tags) ? payload.tags : [];
       const exam = tags[0] || payload.examType || 'English Proficiency';
-      const section = tags[1] || payload.section || 'Grammar';
 
-      const proficiencyLevel = (
-        r.proficiency_level ||
-        payload.difficulty ||
-        'MEDIUM'
-      ).toUpperCase();
+      const rawSection = tags[1] || payload.section || 'Grammar';
+      // TitleCase section string presentation (e.g. 'READING' -> 'Reading', 'GRAMMAR' -> 'Grammar')
+      const section = rawSection.charAt(0).toUpperCase() + rawSection.slice(1).toLowerCase();
+
+      // Preserve raw difficulty from payload, falling back to r.proficiency_level if missing
+      const difficulty = payload.difficulty || r.proficiency_level || 'MEDIUM';
+      const proficiencyLevel = r.proficiency_level || payload.proficiencyLevel || null;
 
       return {
         id: r.question_id,
         code: r.code,
         exam,
         section,
-        skill: r.grammar_topic || section,
-        subSkill: r.grammar_subtopic || '',
+        skill: r.grammar_topic || payload.skill || payload.topic || section,
+        subSkill: r.grammar_subtopic || payload.subSkill || '',
         type: payload.type || 'MCQ',
-        difficulty: proficiencyLevel,
+        difficulty,
+        proficiencyLevel,
         status:
           statusUpper === 'PUBLISHED'
             ? 'PUBLISHED'
@@ -118,11 +119,13 @@ export async function GET(req: NextRequest) {
                 ? 'UNDER_REVIEW'
                 : 'DRAFT',
         usages: Array.isArray(payload.usages) ? payload.usages : ['DIAGNOSTIC', 'PRACTICE'],
-        estimatedTime: '1.5 mins',
-        officialSource: 'Clasptek Question Bank',
+        estimatedTime: payload.estimatedTime || '1.5 mins',
+        officialSource: payload.officialSource || 'Clasptek Question Bank',
         version: `v${r.version_no}.0`,
         language: 'en-US',
         tags,
+        passageCode: payload.passageCode || null,
+        passageId: payload.passageId || payload.passage_id || null,
         text: r.prompt,
         options,
         correctAnswer: correctOpt ? correctOpt.option_text : options[0] || '',
@@ -148,7 +151,22 @@ export async function GET(req: NextRequest) {
       );
     }
     if (difficultyParam !== 'ALL') {
-      mappedQuestions = mappedQuestions.filter((q) => q.difficulty === difficultyParam);
+      mappedQuestions = mappedQuestions.filter((q) => {
+        const d = (q.difficulty || '').toUpperCase();
+        const p = (q.proficiencyLevel || '').toUpperCase();
+        const target = difficultyParam.toUpperCase();
+
+        if (target === 'MEDIUM') {
+          return d === 'MEDIUM' || d === 'INTERMEDIATE' || p === 'INTERMEDIATE';
+        }
+        if (target === 'EASY') {
+          return d === 'EASY' || d === 'FOUNDATION' || p === 'FOUNDATION';
+        }
+        if (target === 'HARD') {
+          return d === 'HARD' || d === 'ADVANCED' || p === 'ADVANCED';
+        }
+        return d === target || p === target;
+      });
     }
     if (usageParam) {
       mappedQuestions = mappedQuestions.filter((q) => q.usages.includes(usageParam));
@@ -196,8 +214,89 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    return NextResponse.json({ success: true, id: body.code || 'q-new-001' }, { status: 201 });
+    const { dbPool } = await getDiagnosticContext();
+    const pool = dbPool.getPool();
+
+    const code = body.code || `Q-${Date.now()}`;
+    const prompt = body.text || body.prompt || 'Untitled question prompt';
+    const exam = body.exam || 'English Proficiency';
+    const section = body.section || 'Reading';
+    const difficulty = (body.difficulty || 'MEDIUM').toUpperCase();
+    const skill = body.skill || 'General Skill';
+    const subSkill = body.subSkill || '';
+    const type = body.type || 'MCQ';
+    const options = Array.isArray(body.options) ? body.options : [];
+    const correctAnswer = body.correctAnswer || options[0] || '';
+    const explanation = body.explanation || '';
+    const usages = Array.isArray(body.usages) ? body.usages : ['DIAGNOSTIC', 'PRACTICE'];
+
+    const payload = {
+      type,
+      difficulty,
+      usages,
+      tags: [exam, section],
+      explanation,
+      skill,
+      subSkill,
+    };
+
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      const qRes = await client.query(
+        `INSERT INTO public.questions (id, code, status, tenant_id, created_at, updated_at)
+         VALUES (gen_random_uuid(), $1, $2, '00000000-0000-0000-0000-000000000000'::uuid, now(), now())
+         RETURNING id`,
+        [code, (body.status || 'DRAFT').toLowerCase()]
+      );
+      const questionId = qRes.rows[0].id;
+
+      const qvRes = await client.query(
+        `INSERT INTO public.question_versions
+         (id, question_id, version_no, status, prompt, payload, explanation, created_at, proficiency_level, grammar_topic, grammar_subtopic)
+         VALUES (gen_random_uuid(), $1, 1, $2, $3, $4, $5, now(), $6, $7, $8)
+         RETURNING id`,
+        [
+          questionId,
+          (body.status || 'DRAFT').toLowerCase(),
+          prompt,
+          JSON.stringify(payload),
+          explanation,
+          difficulty === 'EASY'
+            ? 'FOUNDATION'
+            : difficulty === 'HARD'
+              ? 'ADVANCED'
+              : 'INTERMEDIATE',
+          skill,
+          subSkill,
+        ]
+      );
+      const versionId = qvRes.rows[0].id;
+
+      if (options.length > 0) {
+        for (let idx = 0; idx < options.length; idx++) {
+          const optText = options[idx];
+          const optCode = String.fromCharCode(65 + idx);
+          const isCorrect = optText === correctAnswer || optCode === correctAnswer;
+
+          await client.query(
+            `INSERT INTO public.answer_options (id, question_version_id, option_code, option_text, is_correct, display_order)
+             VALUES (gen_random_uuid(), $1, $2, $3, $4, $5)`,
+            [versionId, optCode, optText, isCorrect, idx + 1]
+          );
+        }
+      }
+
+      await client.query('COMMIT');
+      return NextResponse.json({ success: true, id: questionId, code }, { status: 201 });
+    } catch (dbErr) {
+      await client.query('ROLLBACK');
+      throw dbErr;
+    } finally {
+      client.release();
+    }
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }

@@ -1154,7 +1154,17 @@ export function QuestionBankScreen() {
 
                 <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
                   Source: <strong>{pas.source || 'Standard'}</strong> | Words:{' '}
-                  <strong>{pas.wordCount}</strong>
+                  <strong>{pas.wordCount}</strong> | Linked Questions:{' '}
+                  <strong style={{ color: '#a78bfa' }}>
+                    {
+                      questions.filter(
+                        (q) =>
+                          (q.passageId && q.passageId === pas.id) ||
+                          (q.passageCode && q.passageCode === pas.code) ||
+                          (pas.questionIds && pas.questionIds.includes(q.id))
+                      ).length
+                    }
+                  </strong>
                 </div>
 
                 <p
@@ -1919,7 +1929,15 @@ export function QuestionBankScreen() {
                     marginTop: '2px',
                   }}
                 >
-                  {questions.filter((q) => q.passageId === previewPassage.id).length} Questions
+                  {
+                    questions.filter(
+                      (q) =>
+                        (q.passageId && q.passageId === previewPassage.id) ||
+                        (q.passageCode && q.passageCode === previewPassage.code) ||
+                        (previewPassage.questionIds && previewPassage.questionIds.includes(q.id))
+                    ).length
+                  }{' '}
+                  Questions
                 </div>
               </div>
               <div>
@@ -1981,7 +1999,12 @@ export function QuestionBankScreen() {
               >
                 Linked Questions & Answer Keys:
               </div>
-              {questions.filter((q) => q.passageId === previewPassage.id).length === 0 ? (
+              {questions.filter(
+                (q) =>
+                  (q.passageId && q.passageId === previewPassage.id) ||
+                  (q.passageCode && q.passageCode === previewPassage.code) ||
+                  (previewPassage.questionIds && previewPassage.questionIds.includes(q.id))
+              ).length === 0 ? (
                 <div
                   style={{
                     padding: '1rem',
@@ -2005,7 +2028,12 @@ export function QuestionBankScreen() {
                   }}
                 >
                   {questions
-                    .filter((q) => q.passageId === previewPassage.id)
+                    .filter(
+                      (q) =>
+                        (q.passageId && q.passageId === previewPassage.id) ||
+                        (q.passageCode && q.passageCode === previewPassage.code) ||
+                        (previewPassage.questionIds && previewPassage.questionIds.includes(q.id))
+                    )
                     .map((lq) => (
                       <div
                         key={lq.id}

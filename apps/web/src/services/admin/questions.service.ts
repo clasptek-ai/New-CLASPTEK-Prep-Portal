@@ -49,6 +49,7 @@ export interface SpeakingTaskSpec {
 
 export interface Passage {
   id: string;
+  code?: string;
   title: string;
   content: string;
   examType: ExamType;
@@ -95,6 +96,7 @@ export interface AdminQuestion {
   hints?: string[];
   groupId?: string;
   passageId?: string;
+  passageCode?: string;
   passageTitle?: string;
   passageText?: string;
   audioUrl?: string;
