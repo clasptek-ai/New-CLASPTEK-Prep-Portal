@@ -218,6 +218,14 @@ export const apiClient = {
     });
   },
 
+  put<T>(path: string, body?: any, options?: RequestOptions): Promise<T> {
+    return this.request<T>(path, {
+      ...options,
+      method: 'PUT',
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  },
+
   patch<T>(path: string, body?: any, options?: RequestOptions): Promise<T> {
     return this.request<T>(path, {
       ...options,

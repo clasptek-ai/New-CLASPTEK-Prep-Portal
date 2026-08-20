@@ -1,0 +1,200 @@
+{
+  "timestamp": "2026-08-20T19:52:39.077Z",
+  "epoch": 1787255559077,
+  "phase": "Phase 2A Pre-Change Snapshot",
+  "targetCodes": ["Q-READ-006", "Q-READ-007", "Q-READ-011", "Q-READ-024"],
+  "baselineAttemptAnswersCount": "522",
+  "baselineAttemptsCount": "34",
+  "questions": [
+    {
+      "question_id": "c3184e1a-81dc-4235-8771-6b9de6edd5b6",
+      "code": "Q-READ-006",
+      "created_at": "2026-07-31T21:30:50.497Z",
+      "current_version_id": null,
+      "version_id": "d96c663d-b3cc-4779-a885-bf5c92bab72d",
+      "version_no": 1,
+      "prompt": "The COVID-19 pandemic accelerated the transition to ________.",
+      "payload": {
+        "tags": ["IELTS Academic", "Reading"],
+        "type": "SENTENCE_COMPLETION",
+        "usages": ["DIAGNOSTIC", "PRACTICE", "MOCK"],
+        "mediaCode": null,
+        "difficulty": "INTERMEDIATE",
+        "explanation": "The passage provides “remote work” as the word or phrase that completes the sentence.",
+        "passageCode": "PAS-DIAG-001"
+      },
+      "explanation": null,
+      "version_status": "published",
+      "options": [
+        {
+          "id": "56a1d430-fd17-4993-b490-bfa019699157",
+          "option_code": "A",
+          "option_text": "True",
+          "is_correct": true,
+          "display_order": 1
+        },
+        {
+          "id": "9571968e-4d34-4a96-aecf-ca7abf4c5315",
+          "option_code": "B",
+          "option_text": "False",
+          "is_correct": false,
+          "display_order": 2
+        },
+        {
+          "id": "13f8dc85-0cd5-45ed-86a0-487067bdd257",
+          "option_code": "C",
+          "option_text": "Not Given",
+          "is_correct": false,
+          "display_order": 3
+        }
+      ],
+      "student_dependency_count": "7"
+    },
+    {
+      "question_id": "71fe5a6e-6f5f-46b8-a0e7-736d131af0ff",
+      "code": "Q-READ-007",
+      "created_at": "2026-07-31T21:30:50.497Z",
+      "current_version_id": null,
+      "version_id": "cded5ca9-8b6b-45b1-8129-ceb969f72808",
+      "version_no": 1,
+      "prompt": "Employees often enjoy greater ________.",
+      "payload": {
+        "tags": ["IELTS Academic", "Reading"],
+        "type": "SENTENCE_COMPLETION",
+        "usages": ["DIAGNOSTIC", "PRACTICE", "MOCK"],
+        "mediaCode": null,
+        "difficulty": "INTERMEDIATE",
+        "explanation": "The passage provides “flexibility” as the word or phrase that completes the sentence.",
+        "passageCode": "PAS-DIAG-001"
+      },
+      "explanation": null,
+      "version_status": "published",
+      "options": [
+        {
+          "id": "66896331-6cd9-4f8e-8435-9a63580b6b34",
+          "option_code": "A",
+          "option_text": "home",
+          "is_correct": true,
+          "display_order": 1
+        },
+        {
+          "id": "41cf348d-3cda-4b06-8a48-b2607c1ffcec",
+          "option_code": "B",
+          "option_text": "outer space",
+          "is_correct": false,
+          "display_order": 2
+        },
+        {
+          "id": "76f9af0d-96ad-46d0-9e0b-2597dff5e4b7",
+          "option_code": "C",
+          "option_text": "underwater laboratories",
+          "is_correct": false,
+          "display_order": 3
+        },
+        {
+          "id": "ef2d5b20-8ac8-4ecd-b730-c7734f97110d",
+          "option_code": "D",
+          "option_text": "manufacturing plants",
+          "is_correct": false,
+          "display_order": 4
+        }
+      ],
+      "student_dependency_count": "6"
+    },
+    {
+      "question_id": "a3ddf5c9-5988-4a31-a076-dce0fcc94785",
+      "code": "Q-READ-011",
+      "created_at": "2026-07-31T21:30:50.497Z",
+      "current_version_id": null,
+      "version_id": "c1623782-dbc2-4dd0-9895-7b7bcb9557bd",
+      "version_no": 1,
+      "prompt": "What is the main purpose of the passage?",
+      "payload": {
+        "tags": ["IELTS Academic", "Reading"],
+        "type": "MCQ",
+        "usages": ["DIAGNOSTIC", "PRACTICE", "MOCK"],
+        "mediaCode": null,
+        "difficulty": "INTERMEDIATE",
+        "explanation": "The passage supports option A: To describe only the disadvantages of fossil fuels.",
+        "passageCode": "PAS-DIAG-002"
+      },
+      "explanation": null,
+      "version_status": "published",
+      "options": [
+        {
+          "id": "81c873c5-fb10-4b60-a737-24bc8ab9110b",
+          "option_code": "A",
+          "option_text": "To describe only the disadvantages of fossil fuels",
+          "is_correct": true,
+          "display_order": 1
+        },
+        {
+          "id": "af7c5deb-7fa3-4550-91aa-6090a3d38afb",
+          "option_code": "B",
+          "option_text": "To explain renewable energy sources, their benefits, limitations, and development",
+          "is_correct": false,
+          "display_order": 2
+        },
+        {
+          "id": "84b743eb-aa8a-4384-b4b6-b0684a27aade",
+          "option_code": "C",
+          "option_text": "To compare public transport systems",
+          "is_correct": false,
+          "display_order": 3
+        },
+        {
+          "id": "30de7e39-5a92-440a-aa03-23eaa4df6101",
+          "option_code": "D",
+          "option_text": "To argue against solar power",
+          "is_correct": false,
+          "display_order": 4
+        }
+      ],
+      "student_dependency_count": "2"
+    },
+    {
+      "question_id": "d6aa7721-736d-460c-8692-0da3cd23d2c3",
+      "code": "Q-READ-024",
+      "created_at": "2026-07-31T21:30:50.497Z",
+      "current_version_id": null,
+      "version_id": "b12b8c78-659a-4a12-9338-48aad864ffbc",
+      "version_no": 1,
+      "prompt": "Reading can help reduce stress.",
+      "payload": {
+        "tags": ["IELTS Academic", "Reading"],
+        "type": "TRUE_FALSE_NOT_GIVEN",
+        "usages": ["DIAGNOSTIC", "PRACTICE", "MOCK"],
+        "mediaCode": null,
+        "difficulty": "INTERMEDIATE",
+        "explanation": "The statement is TRUE according to the information in the passage.",
+        "passageCode": "PAS-DIAG-003"
+      },
+      "explanation": null,
+      "version_status": "published",
+      "options": [
+        {
+          "id": "05654b3e-dec6-4bd5-8d7c-f01e8af0d1a5",
+          "option_code": "A",
+          "option_text": "True",
+          "is_correct": false,
+          "display_order": 1
+        },
+        {
+          "id": "ce301aea-8298-43ce-adc1-611bfd16a1b1",
+          "option_code": "B",
+          "option_text": "False",
+          "is_correct": true,
+          "display_order": 2
+        },
+        {
+          "id": "72cebb56-c999-4ab2-a9b7-5bdc8e80a6f6",
+          "option_code": "C",
+          "option_text": "Not Given",
+          "is_correct": false,
+          "display_order": 3
+        }
+      ],
+      "student_dependency_count": "2"
+    }
+  ]
+}

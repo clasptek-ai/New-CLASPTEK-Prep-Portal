@@ -19,7 +19,20 @@ export interface PracticeEligibleQuestion {
   difficulty: string;
   options: { code: string; text: string }[]; // Note: NO is_correct sent to browser
   passageId?: string;
+  passageCode?: string;
+  passageTitle?: string;
+  passageText?: string;
+  passageContent?: string;
+  groupCode?: string;
+  groupTitle?: string;
+  groupInstructions?: string;
+  contentTitle?: string;
+  contentType?: string;
+  sharedData?: any;
+  acceptedAnswers?: string[];
+  maxWords?: number;
   audioTrackId?: string;
+  audioUrl?: string;
   explanation?: string;
 }
 
@@ -105,12 +118,12 @@ export class PostgresCanonicalPracticeRepository {
 
     if (examType && examType !== 'ANY') {
       queryParams.push(`%${examType}%`);
-      sql += ` AND (qv.payload->>'examType' ILIKE $${queryParams.length} OR qv.payload->'tags' @> to_jsonb($${queryParams.length}::text) OR q.code ILIKE $${queryParams.length})`;
+      sql += ` AND (qv.payload->>'examType' ILIKE $${queryParams.length} OR qv.payload->>'tags' ILIKE $${queryParams.length} OR q.code ILIKE $${queryParams.length})`;
     }
 
     if (sectionCode && sectionCode !== 'ANY') {
       queryParams.push(`%${sectionCode}%`);
-      sql += ` AND (qv.payload->>'section' ILIKE $${queryParams.length} OR qv.payload->'tags' @> to_jsonb($${queryParams.length}::text) OR q.code ILIKE $${queryParams.length})`;
+      sql += ` AND (qv.payload->>'section' ILIKE $${queryParams.length} OR qv.payload->>'tags' ILIKE $${queryParams.length} OR q.code ILIKE $${queryParams.length})`;
     }
 
     if (difficulty && difficulty !== 'ANY') {
@@ -118,24 +131,65 @@ export class PostgresCanonicalPracticeRepository {
       sql += ` AND (qv.payload->>'difficulty' = $${queryParams.length})`;
     }
 
-    queryParams.push(questionCount * 3);
-    sql += ` ORDER BY random() LIMIT $${queryParams.length}`;
+    // For complete practice sets (e.g. questionCount >= 30 or Reading sets), order sequentially by code
+    if (questionCount >= 30 || (sectionCode && sectionCode.toLowerCase().includes('reading'))) {
+      queryParams.push(questionCount);
+      sql += ` ORDER BY q.code ASC LIMIT $${queryParams.length}`;
+    } else {
+      queryParams.push(questionCount * 3);
+      sql += ` ORDER BY random() LIMIT $${queryParams.length}`;
+    }
 
     const res = await this.pool.query(sql, queryParams);
 
     const rows = res.rows;
-    const unused = rows.filter((r: any) => !recentlyUsedIds.has(r.question_id));
-    const used = rows.filter((r: any) => recentlyUsedIds.has(r.question_id));
+    let selected = rows;
+    if (questionCount < 30 && (!sectionCode || !sectionCode.toLowerCase().includes('reading'))) {
+      const unused = rows.filter((r: any) => !recentlyUsedIds.has(r.question_id));
+      const used = rows.filter((r: any) => recentlyUsedIds.has(r.question_id));
+      selected = unused.slice(0, questionCount);
+      if (selected.length < questionCount) {
+        selected.push(...used.slice(0, questionCount - selected.length));
+      }
+    }
 
-    const selected = unused.slice(0, questionCount);
-    if (selected.length < questionCount) {
-      selected.push(...used.slice(0, questionCount - selected.length));
+    // Collect all passageCodes and groupCodes to batch fetch passage text & group headers
+    const passageCodesToFetch = new Set<string>();
+    const groupCodesToFetch = new Set<string>();
+
+    selected.forEach((r: any) => {
+      const payload = typeof r.payload === 'string' ? JSON.parse(r.payload) : r.payload || {};
+      if (payload.passageCode) passageCodesToFetch.add(payload.passageCode);
+      if (payload.groupCode) groupCodesToFetch.add(payload.groupCode);
+    });
+
+    const passageMap = new Map<string, any>();
+    if (passageCodesToFetch.size > 0) {
+      const pRes = await this.pool.query(
+        `SELECT id, code, title, content, word_count FROM public.reading_passages WHERE code = ANY($1::varchar[])`,
+        [Array.from(passageCodesToFetch)]
+      );
+      pRes.rows.forEach((p) => passageMap.set(p.code, p));
+    }
+
+    const groupMap = new Map<string, any>();
+    if (groupCodesToFetch.size > 0) {
+      const gRes = await this.pool.query(
+        `SELECT id, code, title, instructions, question_type, content_title, content_type, shared_data 
+         FROM public.question_groups WHERE code = ANY($1::varchar[])`,
+        [Array.from(groupCodesToFetch)]
+      );
+      gRes.rows.forEach((g) => groupMap.set(g.code, g));
     }
 
     const questions: PracticeEligibleQuestion[] = [];
 
     for (const r of selected) {
-      // Fetch options from answer_options table, stripping is_correct for browser payload
+      const payload = typeof r.payload === 'string' ? JSON.parse(r.payload) : r.payload || {};
+      const pData = payload.passageCode ? passageMap.get(payload.passageCode) : null;
+      const gData = payload.groupCode ? groupMap.get(payload.groupCode) : null;
+
+      // Fetch options from answer_options table
       const optRes = await this.pool.query(
         `SELECT option_code, option_text FROM public.answer_options 
          WHERE question_version_id = $1 ORDER BY display_order ASC`,
@@ -147,11 +201,11 @@ export class PostgresCanonicalPracticeRepository {
         text: o.option_text,
       }));
 
-      if (options.length === 0 && r.payload && Array.isArray(r.payload.options)) {
-        options = r.payload.options.map((optStr: string, idx: number) => ({
-          code: String.fromCharCode(65 + idx),
-          text: optStr,
-        }));
+      if (options.length === 0 && payload && Array.isArray(payload.options)) {
+        options = payload.options.map((opt: any, idx: number) => {
+          if (typeof opt === 'string') return { code: String.fromCharCode(65 + idx), text: opt };
+          return { code: opt.code || String.fromCharCode(65 + idx), text: opt.text || '' };
+        });
       }
 
       questions.push({
@@ -162,6 +216,18 @@ export class PostgresCanonicalPracticeRepository {
         itemType: r.item_type,
         difficulty: r.difficulty,
         options,
+        passageId: pData?.id || payload.passageId || undefined,
+        passageCode: payload.passageCode || pData?.code || undefined,
+        passageTitle: pData?.title || payload.passageTitle || undefined,
+        passageText: pData?.content || payload.passageText || undefined,
+        passageContent: pData?.content || undefined,
+        groupCode: payload.groupCode || gData?.code || undefined,
+        groupTitle: gData?.title || payload.groupTitle || undefined,
+        groupInstructions: gData?.instructions || payload.groupInstructions || undefined,
+        contentTitle: gData?.content_title || payload.contentTitle || undefined,
+        contentType: gData?.content_type || payload.contentType || undefined,
+        sharedData: gData?.shared_data || payload.sharedData || undefined,
+        acceptedAnswers: payload.acceptedAnswers || undefined,
       });
 
       if (questions.length >= questionCount) break;

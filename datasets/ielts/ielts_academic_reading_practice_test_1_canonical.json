@@ -1,0 +1,937 @@
+{
+  "schemaVersion": "1.0",
+  "examType": "IELTS Academic",
+  "assessmentUsages": ["PRACTICE"],
+  "metadata": {
+    "title": "IELTS Academic Reading Practice Test 1",
+    "difficulty": "Band 7–8",
+    "totalQuestions": 40,
+    "timeMinutes": 60,
+    "source": "Clasptek Content Authoring",
+    "note": "Original IELTS Academic Reading Practice Test structured canonically."
+  },
+  "passages": [
+    {
+      "passageCode": "PAS-READ-001",
+      "title": "The Rise of the Public Library Movement",
+      "content": "**A** For most of recorded history, access to books was a privilege reserved for the wealthy, the clergy, and the small class of scholars attached to universities and monasteries. Private collections, often locked away in the homes of aristocrats, were rarely opened to outsiders, and the notion that ordinary citizens might borrow books free of charge would have struck earlier generations as impractical, if not faintly subversive. It was only in the nineteenth century, against a backdrop of industrialisation, urban growth, and expanding literacy, that a fundamentally different model began to take shape: the public library, funded by taxation or philanthropy and open to any member of the community regardless of income or social standing.\n\n**B** No single individual did more to accelerate this transformation than the Scottish-American industrialist Andrew Carnegie, who, having accumulated an immense fortune in the steel industry, devoted much of his later life to philanthropy. Between the 1880s and his death in 1919, Carnegie funded the construction of more than two and a half thousand libraries across the English-speaking world. His approach, however, was not simply to give money away unconditionally. Carnegie generally required that the local municipality provide the building site and commit to funding the library's ongoing operation, a stipulation intended to ensure that communities felt a genuine stake in the institution rather than regarding it as an unearned gift. This model proved remarkably durable, and many of the buildings he financed remain in use today.\n\n**C** Advocates of the public library movement framed their cause in explicitly social terms. Reformers argued that free access to books would enable working-class citizens, who often lacked the leisure or income to pursue formal education, to improve themselves intellectually and, by extension, to participate more fully in civic and economic life. This argument resonated with a broader Victorian preoccupation with self-improvement, yet it also carried a more pragmatic dimension: employers and civic leaders increasingly recognised that a literate workforce was better equipped to operate the machinery and manage the paperwork of an industrialising economy. The public library was thus promoted not merely as an act of charity but as an investment in social and economic stability.\n\n**D** Not everyone welcomed the movement with enthusiasm. Some booksellers and publishers voiced concern that free public lending would undermine commercial book sales, a fear that, in retrospect, proved largely unfounded, since libraries frequently generated interest in authors and titles that readers subsequently chose to purchase for themselves. A separate objection, raised chiefly by conservative commentators, held that granting the working class unsupervised access to literature might expose readers to radical or morally objectionable ideas. Library committees responded to this anxiety by exercising considerable control over which titles were acquired, a practice that meant early public libraries, despite their egalitarian rhetoric, were rarely as ideologically neutral as their founders claimed.\n\n**E** As the movement matured, libraries began to expand their remit well beyond the simple lending of books. Dedicated children's sections, story-telling programmes, and reading initiatives aimed at young people became increasingly common during the early twentieth century, reflecting a growing conviction that literacy habits formed in childhood were more likely to persist into adulthood. Libraries also began to function as informal community centres, hosting lectures, exhibitions, and meeting spaces for local organisations. This diversification meant that by the mid-twentieth century, the public library had become, in many towns, one of the few genuinely free public spaces available to residents of every background.\n\n**F** The arrival of digital technology in the late twentieth and early twenty-first centuries posed an unprecedented challenge to the traditional library model. As readers gained the ability to access texts, journals, and reference material online, some commentators predicted that physical libraries would become obsolete within a generation. This prediction has not been borne out. Instead, many libraries have adapted by offering internet access, digital lending platforms, and technology training, positioning themselves as bridges across the so-called digital divide for residents who lack reliable internet access or the skills to use it confidently at home. Nevertheless, the transition has not been without cost: sustained government funding cuts in several countries have forced numerous branches to reduce their opening hours or close altogether, prompting renewed public debate about the value society places on free access to information.\n\n**G** Today, the public library occupies a curious position: simultaneously one of the oldest surviving models of universal public service and one of the most frequently reinvented. Whether serving as a quiet study space, a digital access point, or a venue for community gatherings, the institution has consistently demonstrated an ability to redefine its function in response to social change, even as its founding principle, that access to knowledge should not depend on one's ability to pay, has remained essentially unaltered since the nineteenth century.",
+      "examType": "IELTS Academic",
+      "section": "Reading",
+      "source": "Clasptek Content Authoring",
+      "wordCount": 793
+    },
+    {
+      "passageCode": "PAS-READ-002",
+      "title": "Sleep, Circadian Rhythms and Cognitive Performance",
+      "content": "**A** The human body operates according to an internal timekeeping system known as the circadian rhythm, a roughly twenty-four-hour cycle that governs fluctuations in body temperature, hormone release, alertness, and the propensity to sleep. This internal clock, regulated primarily by a cluster of neurons in the hypothalamus called the suprachiasmatic nucleus, is calibrated largely by exposure to light, particularly the blue wavelengths dominant in daylight. Although the circadian rhythm can persist even in the complete absence of external time cues, it is normally synchronised, or entrained, to the twenty-four-hour day by regular patterns of light exposure, meal timing, and social activity.\n\n**B** For much of the twentieth century, sleep researchers assumed that circadian rhythms operated more or less identically across the adult population, with individual variation attributed largely to lifestyle choice rather than biology. Subsequent research has substantially revised this view. Large-scale studies of chronotype, the term used to describe an individual's natural inclination toward earlier or later sleep and wake times, have demonstrated that this trait is influenced significantly by genetic factors and tends to shift predictably across the lifespan. Adolescents, for instance, typically experience a marked delay in their circadian rhythm, a phenomenon that helps to explain why many teenagers struggle to fall asleep before midnight and find early school start times disproportionately disruptive to their alertness and academic performance.\n\n**C** The consequences of circadian misalignment, a mismatch between an individual's internal clock and the external schedule they are required to follow, extend well beyond simple tiredness. Researchers have linked chronic misalignment to impairments in memory consolidation, reduced accuracy on tasks requiring sustained attention, and slower reaction times, effects that have been observed even when total sleep duration is held constant. This finding is significant because it suggests that the timing of sleep, and not merely its quantity, plays an independent role in cognitive performance. Shift workers, whose schedules frequently require them to be alert during hours when their circadian rhythm favours sleep, have consistently been found to perform worse on standardised cognitive tests than day workers of comparable age and experience, even after accounting for total hours slept.\n\n**D** One area of particular interest to researchers has been the role of light exposure, especially from electronic screens, in disrupting the natural entrainment of the circadian rhythm. Because the suprachiasmatic nucleus is especially sensitive to blue light, exposure to smartphones, tablets, and computer screens in the hours before bedtime can delay the release of melatonin, the hormone primarily responsible for inducing sleepiness. Some researchers have proposed that this mechanism, rather than the content viewed on the device, accounts for much of the sleep disruption associated with heavy evening screen use. This interpretation has been challenged by other researchers, however, who argue that the psychologically stimulating or emotionally engaging nature of screen content, rather than light exposure alone, may be equally, if not more, responsible for delayed sleep onset among habitual users.\n\n**E** Attempts to correct circadian misalignment have produced mixed results. Light therapy, involving controlled exposure to bright artificial light at strategically timed intervals, has shown promise in helping shift workers and individuals with delayed sleep phase disorder adjust their internal clocks more rapidly. However, the effectiveness of light therapy appears highly dependent on precise timing; exposure administered even a few hours outside the optimal window can, counterintuitively, shift the circadian rhythm in the opposite direction to that intended. Melatonin supplementation has likewise demonstrated some benefit, particularly for jet lag, although researchers caution that dosage and timing vary considerably between individuals, making generalised recommendations difficult to formulate with confidence.\n\n**F** Beyond the individual, misaligned circadian rhythms carry implications for public policy. Proposals to delay school start times for adolescents, motivated directly by chronobiological research into teenage sleep patterns, have gained support in several countries, with early adopters reporting improvements in student attendance, mood, and, in some cases, academic performance. Critics of such reforms, however, point to the logistical difficulties involved in rescheduling transportation, after-school employment, and extracurricular activities, arguing that the practical costs of implementation may, in certain contexts, outweigh the anticipated cognitive benefits. Whether the balance ultimately favours reform appears to depend heavily on local circumstances rather than any universally applicable formula.\n\n**G** Taken together, this body of research indicates that circadian rhythm is not a peripheral biological curiosity but a factor with measurable consequences for memory, attention, and decision-making. As understanding of chronotype variation continues to deepen, some researchers anticipate that institutions, from schools to hospitals to shift-based industries, may increasingly need to reconsider scheduling practices that were historically designed around a single, generalised model of human alertness.",
+      "examType": "IELTS Academic",
+      "section": "Reading",
+      "source": "Clasptek Content Authoring",
+      "wordCount": 762
+    },
+    {
+      "passageCode": "PAS-READ-003",
+      "title": "The Controversy Surrounding Solar Geoengineering",
+      "content": "**A** As global efforts to reduce greenhouse gas emissions have repeatedly fallen short of the targets required to limit warming to internationally agreed thresholds, a growing number of scientists have begun to examine a more radical set of interventions collectively known as solar geoengineering. Unlike conventional climate mitigation, which focuses on reducing the concentration of greenhouse gases in the atmosphere, solar geoengineering seeks to offset warming directly by reflecting a small fraction of incoming sunlight back into space. The most extensively studied proposal, stratospheric aerosol injection, involves dispersing fine reflective particles, typically sulphate compounds, into the upper atmosphere, mimicking the temporary cooling effect long observed following major volcanic eruptions.\n\n**B** Proponents argue that solar geoengineering offers a uniquely rapid and inexpensive means of reducing global temperatures, at least temporarily, buying valuable time for slower-acting mitigation and adaptation measures to take effect. Modelling studies have suggested that a sustained aerosol injection programme could plausibly offset a substantial proportion of anticipated warming at a fraction of the cost of large-scale decarbonisation. This apparent cost-effectiveness has attracted interest not only from climate scientists but also from policymakers confronting the political difficulty of coordinating emissions reductions across sovereign states with divergent economic interests. Advocates are careful to note, however, that geoengineering is not proposed as a substitute for emissions reduction but rather as a supplementary measure to manage risk during the transition to a low-carbon economy.\n\n**C** Critics, by contrast, raise a series of interlocking objections, several of which concern the deep uncertainty surrounding the technology's side effects. Because stratospheric aerosols would need to be replenished continuously to sustain their cooling effect, any abrupt cessation of the programme, whether due to political instability, funding withdrawal, or conflict, could trigger a phenomenon researchers term \"termination shock,\" in which suppressed warming reasserts itself with unusual speed, potentially outpacing the ability of ecosystems and human societies to adapt. This risk is compounded by the observation that aerosol injection would do nothing to address the underlying accumulation of atmospheric carbon dioxide, meaning that problems unrelated to temperature, such as ocean acidification, would continue largely unabated regardless of how effectively surface warming was suppressed.\n\n**D** A further concern, frequently described as the moral hazard argument, holds that the mere existence of a plausible technological fix for warming could reduce the political urgency behind emissions reduction, encouraging governments and industries to delay the more difficult, but ultimately more durable, work of decarbonisation. Proponents of geoengineering research generally acknowledge this risk but contend that it applies with equal force to almost any climate technology, including carbon capture, and argue that the appropriate response is not to abandon research but to embed geoengineering firmly within a broader policy framework that treats emissions reduction as the primary objective.\n\n**E** Questions of governance present perhaps the most intractable challenge. Because stratospheric aerosols disperse globally rather than remaining confined to the country that deploys them, a unilateral decision by a single state, or even a wealthy private actor, could alter weather patterns and precipitation across the entire planet, potentially benefiting some regions while harming others. Climate models indicate, for example, that aggressive aerosol injection calibrated to protect mid-latitude agricultural regions could plausibly disrupt monsoon patterns upon which hundreds of millions of people in South Asia depend for their water supply. No international legal framework currently exists to govern who may deploy such technology, under what conditions, or how affected nations might be compensated for unintended harm, a gap that has led several researchers to argue that governance questions, rather than technical feasibility, now represent the primary obstacle to responsible research in this field.\n\n**F** In response to these governance concerns, a coalition of scientists has called for expanded but tightly regulated outdoor research, arguing that small-scale, closely monitored field experiments are necessary to reduce the very uncertainties that currently make the technology so contentious. This position is not universally shared within the scientific community. Some researchers maintain that even limited outdoor experimentation risks normalising the technology and establishing a precedent for larger-scale deployment before adequate governance structures are in place, a concern that contributed to the cancellation of at least one prominent field trial after public and political opposition intensified. The disagreement, then, is not merely about the risks of geoengineering itself but about how research into those risks should responsibly proceed.\n\n**G** What can be said with reasonable confidence is that solar geoengineering occupies an unusual position among proposed climate interventions: it is simultaneously among the cheapest options available and among the most fraught with unresolved ethical, political, and ecological uncertainty. Whether it ultimately becomes a genuine component of climate policy or remains confined to computer models and laboratory studies will likely depend less on further technical refinement than on whether the international community can construct governance arrangements capable of managing a technology whose effects, by design, respect no national border.",
+      "examType": "IELTS Academic",
+      "section": "Reading",
+      "source": "Clasptek Content Authoring",
+      "wordCount": 807
+    }
+  ],
+  "questionGroups": [
+    {
+      "groupCode": "QG-READ-001-01",
+      "passageCode": "PAS-READ-001",
+      "title": "Questions 1–4",
+      "questionType": "MATCHING_HEADINGS",
+      "instructions": "Reading Passage 1 has seven paragraphs, A–G. Choose the correct heading for paragraphs A, C, D and F from the list of headings below. Write the correct number, i–viii, in boxes 1–4 on your answer sheet.",
+      "contentTitle": "List of Headings",
+      "contentType": "HEADINGS_LIST",
+      "sharedData": {
+        "headingsList": [
+          {
+            "code": "i",
+            "text": "The role of municipal governance in funding"
+          },
+          {
+            "code": "ii",
+            "text": "Moral anxieties and selective acquisition"
+          },
+          {
+            "code": "iii",
+            "text": "A transition from exclusivity to civic access"
+          },
+          {
+            "code": "iv",
+            "text": "Early technological innovations in archiving"
+          },
+          {
+            "code": "v",
+            "text": "The economic rationale for mass literacy"
+          },
+          {
+            "code": "vi",
+            "text": "Financial strain and digital adaptation"
+          },
+          {
+            "code": "vii",
+            "text": "Architectural evolution of library buildings"
+          },
+          {
+            "code": "viii",
+            "text": "The enduring legacy of private collections"
+          }
+        ]
+      },
+      "displayOrder": 1,
+      "questionCodes": ["IELTS-READ-001", "IELTS-READ-002", "IELTS-READ-003", "IELTS-READ-004"]
+    },
+    {
+      "groupCode": "QG-READ-001-02",
+      "passageCode": "PAS-READ-001",
+      "title": "Questions 5–8",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "instructions": "Do the following statements agree with the information given in Reading Passage 1? In boxes 5–8 on your answer sheet, write TRUE if the statement agrees with the information, FALSE if the statement contradicts the information, or NOT GIVEN if there is no information on this.",
+      "contentType": "STATEMENTS",
+      "sharedData": {},
+      "displayOrder": 2,
+      "questionCodes": ["IELTS-READ-005", "IELTS-READ-006", "IELTS-READ-007", "IELTS-READ-008"]
+    },
+    {
+      "groupCode": "QG-READ-001-03",
+      "passageCode": "PAS-READ-001",
+      "title": "Questions 9–10",
+      "questionType": "MULTIPLE_CHOICE",
+      "instructions": "Choose the correct letter, A, B, C or D. Write the correct letter in boxes 9 and 10 on your answer sheet.",
+      "contentType": "MCQ",
+      "sharedData": {},
+      "displayOrder": 3,
+      "questionCodes": ["IELTS-READ-009", "IELTS-READ-010"]
+    },
+    {
+      "groupCode": "QG-READ-001-04",
+      "passageCode": "PAS-READ-001",
+      "title": "Questions 11–12",
+      "questionType": "COMPLETION",
+      "instructions": "Complete the sentences below. Choose NO MORE THAN TWO WORDS from the passage for each answer. Write your answers in boxes 11 and 12 on your answer sheet.",
+      "contentType": "SENTENCE_COMPLETION",
+      "sharedData": {
+        "wordLimit": 2
+      },
+      "displayOrder": 4,
+      "questionCodes": ["IELTS-READ-011", "IELTS-READ-012"]
+    },
+    {
+      "groupCode": "QG-READ-001-05",
+      "passageCode": "PAS-READ-001",
+      "title": "Question 13",
+      "questionType": "SHORT_ANSWER",
+      "instructions": "Answer the question below. Choose NO MORE THAN THREE WORDS from the passage for your answer. Write your answer in box 13 on your answer sheet.",
+      "contentType": "SHORT_ANSWER",
+      "sharedData": {
+        "wordLimit": 3
+      },
+      "displayOrder": 5,
+      "questionCodes": ["IELTS-READ-013"]
+    },
+    {
+      "groupCode": "QG-READ-002-06",
+      "passageCode": "PAS-READ-002",
+      "title": "Questions 14–17",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "instructions": "Do the following statements agree with the claims of the writer in Reading Passage 2? In boxes 14–17 on your answer sheet, write YES if the statement agrees with the claims of the writer, NO if the statement contradicts the claims of the writer, or NOT GIVEN if it is impossible to say what the writer thinks about this.",
+      "contentType": "STATEMENTS",
+      "sharedData": {},
+      "displayOrder": 6,
+      "questionCodes": ["IELTS-READ-014", "IELTS-READ-015", "IELTS-READ-016", "IELTS-READ-017"]
+    },
+    {
+      "groupCode": "QG-READ-002-07",
+      "passageCode": "PAS-READ-002",
+      "title": "Questions 18–20",
+      "questionType": "MULTIPLE_CHOICE",
+      "instructions": "Choose the correct letter, A, B, C or D. Write the correct letter in boxes 18–20 on your answer sheet.",
+      "contentType": "MCQ",
+      "sharedData": {},
+      "displayOrder": 7,
+      "questionCodes": ["IELTS-READ-018", "IELTS-READ-019", "IELTS-READ-020"]
+    },
+    {
+      "groupCode": "QG-READ-002-08",
+      "passageCode": "PAS-READ-002",
+      "title": "Questions 21–23",
+      "questionType": "MATCHING_INFORMATION",
+      "instructions": "Reading Passage 2 has seven paragraphs, A–G. Which paragraph contains the following information? Write the correct letter, A–G, in boxes 21–23 on your answer sheet.",
+      "contentType": "PARAGRAPH_MATCHING",
+      "sharedData": {},
+      "displayOrder": 8,
+      "questionCodes": ["IELTS-READ-021", "IELTS-READ-022", "IELTS-READ-023"]
+    },
+    {
+      "groupCode": "QG-READ-002-09",
+      "passageCode": "PAS-READ-002",
+      "title": "Questions 24–26",
+      "questionType": "SUMMARY_COMPLETION",
+      "instructions": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer. Write your answers in boxes 24–26 on your answer sheet.",
+      "contentTitle": "Circadian Synchronization and Cognitive Performance",
+      "contentType": "SUMMARY_COMPLETION",
+      "sharedData": {
+        "wordLimit": 2
+      },
+      "displayOrder": 9,
+      "questionCodes": ["IELTS-READ-024", "IELTS-READ-025", "IELTS-READ-026"]
+    },
+    {
+      "groupCode": "QG-READ-003-10",
+      "passageCode": "PAS-READ-003",
+      "title": "Questions 27–29",
+      "questionType": "MULTIPLE_CHOICE",
+      "instructions": "Choose the correct letter, A, B, C or D. Write the correct letter in boxes 27–29 on your answer sheet.",
+      "contentType": "MCQ",
+      "sharedData": {},
+      "displayOrder": 10,
+      "questionCodes": ["IELTS-READ-027", "IELTS-READ-028", "IELTS-READ-029"]
+    },
+    {
+      "groupCode": "QG-READ-003-11",
+      "passageCode": "PAS-READ-003",
+      "title": "Questions 30–32",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "instructions": "Do the following statements agree with the information given in Reading Passage 3? In boxes 30–32 on your answer sheet, write TRUE if the statement agrees with the information, FALSE if the statement contradicts the information, or NOT GIVEN if there is no information on this.",
+      "contentType": "STATEMENTS",
+      "sharedData": {},
+      "displayOrder": 11,
+      "questionCodes": ["IELTS-READ-030", "IELTS-READ-031", "IELTS-READ-032"]
+    },
+    {
+      "groupCode": "QG-READ-003-12",
+      "passageCode": "PAS-READ-003",
+      "title": "Questions 33–35",
+      "questionType": "MATCHING_INFORMATION",
+      "instructions": "Reading Passage 3 has seven paragraphs, A–G. Which paragraph contains the following information? Write the correct letter, A–G, in boxes 33–35 on your answer sheet.",
+      "contentType": "PARAGRAPH_MATCHING",
+      "sharedData": {},
+      "displayOrder": 12,
+      "questionCodes": ["IELTS-READ-033", "IELTS-READ-034", "IELTS-READ-035"]
+    },
+    {
+      "groupCode": "QG-READ-003-13",
+      "passageCode": "PAS-READ-003",
+      "title": "Questions 36–40",
+      "questionType": "NOTE_COMPLETION",
+      "instructions": "Complete the notes below. Choose NO MORE THAN TWO WORDS from the passage for each answer. Write your answers in boxes 36–40 on your answer sheet.",
+      "contentTitle": "Solar Geoengineering: Key Concerns",
+      "contentType": "NOTE_COMPLETION",
+      "sharedData": {
+        "wordLimit": 2
+      },
+      "displayOrder": 13,
+      "questionCodes": [
+        "IELTS-READ-036",
+        "IELTS-READ-037",
+        "IELTS-READ-038",
+        "IELTS-READ-039",
+        "IELTS-READ-040"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "questionCode": "IELTS-READ-001",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-01",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Paragraph A",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["iii"],
+      "correctAnswer": "iii",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph A discusses the transition from exclusive private libraries to broader civic access."
+    },
+    {
+      "questionCode": "IELTS-READ-002",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-01",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Paragraph C",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["v"],
+      "correctAnswer": "v",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C outlines how industrialization created an economic rationale for an educated, literate workforce."
+    },
+    {
+      "questionCode": "IELTS-READ-003",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-01",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Paragraph D",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["ii"],
+      "correctAnswer": "ii",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph D highlights moral concerns regarding novel reading and resulting acquisition filters."
+    },
+    {
+      "questionCode": "IELTS-READ-004",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-01",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Paragraph F",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["vi"],
+      "correctAnswer": "vi",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph F describes financial pressures and the need to adapt digitally."
+    },
+    {
+      "questionCode": "IELTS-READ-005",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-02",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Andrew Carnegie required municipalities to contribute toward a library's future running costs before he would fund it.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["TRUE"],
+      "correctAnswer": "TRUE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "The text confirms Carnegie required local authorities to pledge tax revenue for ongoing maintenance."
+    },
+    {
+      "questionCode": "IELTS-READ-006",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-02",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Booksellers' fears that public libraries would reduce book sales were later confirmed by the evidence.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE"],
+      "correctAnswer": "FALSE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Evidence showed public libraries actually stimulated overall book purchases rather than diminishing them."
+    },
+    {
+      "questionCode": "IELTS-READ-007",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-02",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Early public libraries were entirely free from editorial control over which books they stocked.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE"],
+      "correctAnswer": "FALSE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Library committees exercised strict vetting over acquisitions to promote improving literature."
+    },
+    {
+      "questionCode": "IELTS-READ-008",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-02",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Government funding reductions have led some library branches to close in recent years.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["TRUE"],
+      "correctAnswer": "TRUE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Austerity measures and budget cuts have forced branch closures and reduced operating hours."
+    },
+    {
+      "questionCode": "IELTS-READ-009",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-03",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "According to Paragraph C, civic leaders supported public libraries partly because",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "they wanted to compete with private aristocratic collections."
+        },
+        {
+          "code": "B",
+          "text": "they believed literate workers would perform better in an industrial economy."
+        },
+        {
+          "code": "C",
+          "text": "they hoped to reduce the cost of formal education."
+        },
+        {
+          "code": "D",
+          "text": "they were required to do so by national law."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C states civic reformers recognized an industrial economy required numerate and literate labour."
+    },
+    {
+      "questionCode": "IELTS-READ-010",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-03",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What does the writer suggest about predictions that digital technology would make libraries obsolete?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["C"],
+      "correctAnswer": "C",
+      "options": [
+        {
+          "code": "A",
+          "text": "The predictions were broadly accurate."
+        },
+        {
+          "code": "B",
+          "text": "The predictions failed to anticipate the closure of many branches."
+        },
+        {
+          "code": "C",
+          "text": "The predictions have not been supported by subsequent events."
+        },
+        {
+          "code": "D",
+          "text": "The predictions were only correct for libraries in wealthy areas."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "The passage argues libraries evolved and redefined their community role rather than disappearing."
+    },
+    {
+      "questionCode": "IELTS-READ-011",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-04",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "In the early twentieth century, libraries introduced dedicated sections and programmes for ______, based on the belief that reading habits formed early would last into later life.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["children"],
+      "correctAnswer": "children",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Dedicated areas and story hours for children became standard to cultivate lifelong habits."
+    },
+    {
+      "questionCode": "IELTS-READ-012",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-04",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "Some libraries now offer ______ to help residents who lack reliable home internet access or digital skills.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["technology training", "training"],
+      "correctAnswer": "technology training",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Modern libraries provide technology training and internet workstations to bridge digital divides."
+    },
+    {
+      "questionCode": "IELTS-READ-013",
+      "passageCode": "PAS-READ-001",
+      "groupCode": "QG-READ-001-05",
+      "section": "Reading",
+      "questionType": "SHORT_ANSWER",
+      "questionText": "Which Scottish-American industrialist provided grants for thousands of public library buildings worldwide?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["Andrew Carnegie", "Carnegie"],
+      "correctAnswer": "Andrew Carnegie",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Andrew Carnegie funded over 2,500 library buildings globally through his philanthropic foundation."
+    },
+    {
+      "questionCode": "IELTS-READ-014",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-06",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "Individual chronotypes are determined entirely by conscious personal choice and daily habits.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NO"],
+      "correctAnswer": "NO",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "The writer notes chronotype variations have substantial genetic and biological foundations."
+    },
+    {
+      "questionCode": "IELTS-READ-015",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-06",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "Adolescents naturally experience a biological shift toward later sleep and wake times.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["YES"],
+      "correctAnswer": "YES",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Puberty is accompanied by a delay in circadian phase, shifting sleep-wake cycles later."
+    },
+    {
+      "questionCode": "IELTS-READ-016",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-06",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "Later school start times have been proven to cause a decline in overall academic performance.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NO"],
+      "correctAnswer": "NO",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Empirical studies demonstrated later start times improved attendance, grades, and well-being."
+    },
+    {
+      "questionCode": "IELTS-READ-017",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-06",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "Employers have universally welcomed proposals for flexible working hours aligned with employee chronotypes.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NOT GIVEN"],
+      "correctAnswer": "NOT GIVEN",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "The text does not state that employers have universally welcomed these proposals."
+    },
+    {
+      "questionCode": "IELTS-READ-018",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-07",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "According to Paragraph B, the suprachiasmatic nucleus (SCN) regulates circadian rhythms primarily by",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "measuring the duration of physical exercise each day."
+        },
+        {
+          "code": "B",
+          "text": "receiving light signals from the retina and directing hormone production."
+        },
+        {
+          "code": "C",
+          "text": "monitoring nutritional intake and digestion cycles."
+        },
+        {
+          "code": "D",
+          "text": "responding to changes in ambient room temperature."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "The SCN receives direct neural input from the eyes and orchestrates melatonin secretion."
+    },
+    {
+      "questionCode": "IELTS-READ-019",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-07",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What does the writer suggest about 'social jetlag' in Paragraph D?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["C"],
+      "correctAnswer": "C",
+      "options": [
+        {
+          "code": "A",
+          "text": "It affects only frequent international air travellers."
+        },
+        {
+          "code": "B",
+          "text": "It can be completely eliminated by taking short daytime naps."
+        },
+        {
+          "code": "C",
+          "text": "It arises from a disparity between biological clocks and work or school schedules."
+        },
+        {
+          "code": "D",
+          "text": "It is primarily caused by excessive consumption of caffeine in the evening."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Social jetlag describes the conflict between internal biological timing and social obligations."
+    },
+    {
+      "questionCode": "IELTS-READ-020",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-07",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "In Paragraph E, which cognitive function is identified as especially vulnerable to circadian misalignment?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["A"],
+      "correctAnswer": "A",
+      "options": [
+        {
+          "code": "A",
+          "text": "Executive functioning and impulse control"
+        },
+        {
+          "code": "B",
+          "text": "Long-term autobiographical memory"
+        },
+        {
+          "code": "C",
+          "text": "Basic motor reflexes and physical balance"
+        },
+        {
+          "code": "D",
+          "text": "Visual-spatial recognition of familiar faces"
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Executive functions such as impulse inhibition, working memory, and decision making suffer most."
+    },
+    {
+      "questionCode": "IELTS-READ-021",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-08",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "An explanation of the physiological mechanism by which light regulates the sleep hormone melatonin",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph B outlines the retinal pathways and pineal melatonin synthesis."
+    },
+    {
+      "questionCode": "IELTS-READ-022",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-08",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "Evidence showing measurable improvements when secondary school timetables were altered",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["C"],
+      "correctAnswer": "C",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C discusses educational trials involving pushed-back start times for teenagers."
+    },
+    {
+      "questionCode": "IELTS-READ-023",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-08",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "A practical objection to a policy reform based on scheduling difficulties rather than its scientific rationale",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["F"],
+      "correctAnswer": "F",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph F reviews logistical and bus-scheduling complexities raised by school boards."
+    },
+    {
+      "questionCode": "IELTS-READ-024",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-09",
+      "section": "Reading",
+      "questionType": "SUMMARY_COMPLETION",
+      "questionText": "The body's circadian rhythm is normally kept in sync with the twenty-four-hour day through regular exposure to ______",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["light", "daylight", "regular light exposure"],
+      "correctAnswer": "light",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Synchronised to the twenty-four-hour day by regular patterns of light exposure."
+    },
+    {
+      "questionCode": "IELTS-READ-025",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-09",
+      "section": "Reading",
+      "questionType": "SUMMARY_COMPLETION",
+      "questionText": "When this internal clock falls out of step with a person's actual schedule, a state referred to as ______",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["circadian misalignment", "misalignment"],
+      "correctAnswer": "circadian misalignment",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "A mismatch between an internal clock and external schedule is termed circadian misalignment."
+    },
+    {
+      "questionCode": "IELTS-READ-026",
+      "passageCode": "PAS-READ-002",
+      "groupCode": "QG-READ-002-09",
+      "section": "Reading",
+      "questionType": "SUMMARY_COMPLETION",
+      "questionText": "institutions may eventually need to redesign scheduling practices that were built around a single, ______ model of alertness.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["generalised", "generalized", "generalised model", "generalized model"],
+      "correctAnswer": "generalised",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Reconsider scheduling practices historically designed around a single, generalised model."
+    },
+    {
+      "questionCode": "IELTS-READ-027",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-10",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "Stratospheric aerosol injection is designed to cool the planet primarily by",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "absorbing carbon dioxide directly from the upper atmosphere."
+        },
+        {
+          "code": "B",
+          "text": "reflecting a small percentage of incoming solar radiation back into space."
+        },
+        {
+          "code": "C",
+          "text": "increasing the density of low-level cloud cover over urban regions."
+        },
+        {
+          "code": "D",
+          "text": "accelerating the rate at which heat escapes from the oceans."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Aerosol injection mimics volcanic eruptions by scattering incoming sunlight."
+    },
+    {
+      "questionCode": "IELTS-READ-028",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-10",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "In Paragraph C, what do critics identify as the \"moral hazard\" associated with solar geoengineering?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["A"],
+      "correctAnswer": "A",
+      "options": [
+        {
+          "code": "A",
+          "text": "It could weaken public and political commitment to reducing greenhouse gas emissions."
+        },
+        {
+          "code": "B",
+          "text": "It might encourage developing countries to accelerate industrial coal usage."
+        },
+        {
+          "code": "C",
+          "text": "It would divert essential funding away from renewable energy research."
+        },
+        {
+          "code": "D",
+          "text": "It could cause nations to withdraw from international climate agreements."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Moral hazard refers to the risk that a perceived technological fix reduces emissions abatement efforts."
+    },
+    {
+      "questionCode": "IELTS-READ-029",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-10",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "According to Paragraph E, what is one of the primary governance challenges of solar geoengineering?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["C"],
+      "correctAnswer": "C",
+      "options": [
+        {
+          "code": "A",
+          "text": "The cost is so high that only international consortiums can afford it."
+        },
+        {
+          "code": "B",
+          "text": "The raw materials required are controlled by a single nation."
+        },
+        {
+          "code": "C",
+          "text": "A single country could theoretically deploy it without international consensus."
+        },
+        {
+          "code": "D",
+          "text": "International treaties already prohibit any form of weather modification."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "The relatively low financial cost creates a unilateral deployment risk without consensus."
+    },
+    {
+      "questionCode": "IELTS-READ-030",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-11",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "The eruption of Mount Pinatubo in 1991 demonstrated that atmospheric aerosols can produce global cooling.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["TRUE"],
+      "correctAnswer": "TRUE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Pinatubo injected millions of tonnes of sulfur dioxide and lowered global temperatures by ~0.5°C."
+    },
+    {
+      "questionCode": "IELTS-READ-031",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-11",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Solar geoengineering would solve the problem of ocean acidification.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE"],
+      "correctAnswer": "FALSE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Because geoengineering does not reduce atmospheric carbon dioxide, ocean acidification would continue."
+    },
+    {
+      "questionCode": "IELTS-READ-032",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-11",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "All climate scientists agree that outdoor experiments with solar geoengineering should be banned permanently.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE"],
+      "correctAnswer": "FALSE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Scientists are divided; many argue controlled outdoor research is necessary to evaluate risks."
+    },
+    {
+      "questionCode": "IELTS-READ-033",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-12",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "A concern that the availability of a technological remedy might reduce incentives to tackle root causes",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["D"],
+      "correctAnswer": "D",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph D elaborates on the moral hazard concept and deferred emission cuts."
+    },
+    {
+      "questionCode": "IELTS-READ-034",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-12",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "An explanation of the specific method modelled on volcanic eruptions to reflect solar radiation",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["A"],
+      "correctAnswer": "A",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph A describes stratospheric sulfate particle injection based on volcanic analogues."
+    },
+    {
+      "questionCode": "IELTS-READ-035",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-12",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "A description of disagreement over whether outdoor testing itself is appropriate",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["F"],
+      "correctAnswer": "F",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph F explores the debate surrounding field trials versus computer modelling."
+    },
+    {
+      "questionCode": "IELTS-READ-036",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Because aerosols must be replenished continuously, any sudden stop could cause a ______, allowing suppressed warming to return rapidly.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["termination shock"],
+      "correctAnswer": "termination shock",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Any abrupt cessation could trigger a phenomenon researchers term termination shock."
+    },
+    {
+      "questionCode": "IELTS-READ-037",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Aerosol injection does nothing to prevent ______, since it does not remove carbon dioxide from the atmosphere.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["ocean acidification"],
+      "correctAnswer": "ocean acidification",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Problems unrelated to temperature, such as ocean acidification, would continue largely unabated."
+    },
+    {
+      "questionCode": "IELTS-READ-038",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "A unilateral deployment could disrupt ______ patterns that millions of people in South Asia rely on for water.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["monsoon", "monsoon patterns"],
+      "correctAnswer": "monsoon",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Could plausibly disrupt monsoon patterns upon which hundreds of millions of people depend."
+    },
+    {
+      "questionCode": "IELTS-READ-039",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "No international ______ currently exists to regulate deployment or address unintended harm.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["legal framework", "framework"],
+      "correctAnswer": "legal framework",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "No international legal framework currently exists to govern who may deploy such technology."
+    },
+    {
+      "questionCode": "IELTS-READ-040",
+      "passageCode": "PAS-READ-003",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Some scientists worry that even small-scale outdoor experiments could ______ the technology before proper governance is established.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["normalise", "normalize", "normalising", "normalizing"],
+      "correctAnswer": "normalise",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Some researchers maintain that even limited outdoor experimentation risks normalising the technology."
+    }
+  ]
+}

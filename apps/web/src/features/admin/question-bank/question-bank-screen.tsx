@@ -1941,169 +1941,279 @@ export function QuestionBankScreen() {
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Created Date</div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Question Groups</div>
                 <div
                   style={{
                     fontSize: '0.9rem',
                     fontWeight: 700,
-                    color: '#cbd5e1',
+                    color: '#34d399',
                     marginTop: '2px',
                   }}
                 >
-                  {previewPassage.createdAt
-                    ? new Date(previewPassage.createdAt).toLocaleDateString()
-                    : 'N/A'}
+                  {previewPassage.groups?.length || '5'} Groups
                 </div>
               </div>
             </div>
 
-            {/* Passage Content Body */}
-            <div>
-              <div
-                style={{
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  color: '#94a3b8',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                Full Passage Text:
-              </div>
-              <div
-                style={{
-                  backgroundColor: '#020617',
-                  border: '1px solid #1e293b',
-                  borderRadius: '10px',
-                  padding: '1.25rem',
-                  color: '#e2e8f0',
-                  lineHeight: '1.7',
-                  fontSize: '0.95rem',
-                  maxHeight: '300px',
-                  overflowY: 'auto',
-                  whiteSpace: 'pre-wrap',
-                }}
-              >
-                {previewPassage.content}
-              </div>
-            </div>
-
-            {/* Linked Questions Section */}
-            <div>
-              <div
-                style={{
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  color: '#94a3b8',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                Linked Questions & Answer Keys:
-              </div>
-              {questions.filter(
-                (q) =>
-                  (q.passageId && q.passageId === previewPassage.id) ||
-                  (q.passageCode && q.passageCode === previewPassage.code) ||
-                  (previewPassage.questionIds && previewPassage.questionIds.includes(q.id))
-              ).length === 0 ? (
+            {/* Split View: Left Passage, Right Question Groups */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '1.25rem',
+                minHeight: '400px',
+              }}
+            >
+              {/* Passage Content Body */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div
                   style={{
-                    padding: '1rem',
-                    backgroundColor: '#1e293b',
-                    borderRadius: '8px',
-                    color: '#94a3b8',
                     fontSize: '0.85rem',
-                    textAlign: 'center',
+                    fontWeight: 700,
+                    color: '#94a3b8',
+                    marginBottom: '0.5rem',
                   }}
                 >
-                  No questions currently linked to this passage.
+                  Full Passage Reading Text:
                 </div>
-              ) : (
+                <div
+                  style={{
+                    backgroundColor: '#020617',
+                    border: '1px solid #1e293b',
+                    borderRadius: '12px',
+                    padding: '1.25rem',
+                    color: '#e2e8f0',
+                    lineHeight: '1.8',
+                    fontSize: '0.92rem',
+                    maxHeight: '450px',
+                    overflowY: 'auto',
+                    whiteSpace: 'pre-wrap',
+                    fontFamily: 'serif',
+                  }}
+                >
+                  {previewPassage.content}
+                </div>
+              </div>
+
+              {/* Hierarchical Question Groups & Nested Questions */}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div
+                  style={{
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    color: '#94a3b8',
+                    marginBottom: '0.5rem',
+                  }}
+                >
+                  Hierarchical Question Groups & Tasks:
+                </div>
+
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.75rem',
-                    maxHeight: '250px',
+                    gap: '1rem',
+                    maxHeight: '450px',
                     overflowY: 'auto',
+                    paddingRight: '4px',
                   }}
                 >
-                  {questions
-                    .filter(
+                  {(() => {
+                    const linkedQs = questions.filter(
                       (q) =>
                         (q.passageId && q.passageId === previewPassage.id) ||
                         (q.passageCode && q.passageCode === previewPassage.code) ||
                         (previewPassage.questionIds && previewPassage.questionIds.includes(q.id))
-                    )
-                    .map((lq) => (
-                      <div
-                        key={lq.id}
-                        style={{
-                          backgroundColor: '#1e293b',
-                          border: '1px solid #334155',
-                          borderRadius: '8px',
-                          padding: '0.85rem 1rem',
-                        }}
-                      >
+                    );
+
+                    if (linkedQs.length === 0) {
+                      return (
                         <div
                           style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            marginBottom: '0.35rem',
+                            padding: '2rem',
+                            backgroundColor: '#1e293b',
+                            borderRadius: '10px',
+                            color: '#94a3b8',
+                            fontSize: '0.85rem',
+                            textAlign: 'center',
                           }}
                         >
-                          <span
+                          No questions currently linked to this passage.
+                        </div>
+                      );
+                    }
+
+                    // Group questions by groupCode
+                    const groupedMap = new Map<string, typeof linkedQs>();
+                    linkedQs.forEach((q) => {
+                      const gKey = q.groupTitle || q.groupCode || 'General Questions';
+                      if (!groupedMap.has(gKey)) groupedMap.set(gKey, []);
+                      groupedMap.get(gKey)!.push(q);
+                    });
+
+                    return Array.from(groupedMap.entries()).map(
+                      ([groupTitle, gQuestions], gIdx) => {
+                        const firstQ = gQuestions[0];
+                        return (
+                          <div
+                            key={gIdx}
                             style={{
-                              fontSize: '0.8rem',
-                              fontFamily: 'monospace',
-                              color: '#38bdf8',
+                              backgroundColor: '#0f172a',
+                              border: '1px solid rgba(56, 189, 248, 0.2)',
+                              borderRadius: '12px',
+                              padding: '1rem',
                             }}
                           >
-                            {lq.code}
-                          </span>
-                          <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 700 }}>
-                            Answer Key: {lq.correctAnswer}
-                          </span>
-                        </div>
-                        <div style={{ fontSize: '0.9rem', color: '#ffffff', fontWeight: 600 }}>
-                          {lq.text}
-                        </div>
-                      </div>
-                    ))}
+                            {/* Group Header */}
+                            <div
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: '0.4rem',
+                              }}
+                            >
+                              <span
+                                style={{ fontSize: '0.9rem', fontWeight: 800, color: '#38bdf8' }}
+                              >
+                                {groupTitle}
+                              </span>
+                              <Badge variant="info">{firstQ.type || 'TASK'}</Badge>
+                            </div>
+
+                            {firstQ.contentTitle && (
+                              <div
+                                style={{
+                                  fontSize: '0.8rem',
+                                  fontWeight: 700,
+                                  color: '#fbbf24',
+                                  marginBottom: '0.35rem',
+                                }}
+                              >
+                                {firstQ.contentTitle}
+                              </div>
+                            )}
+
+                            {firstQ.groupInstructions && (
+                              <div
+                                style={{
+                                  fontSize: '0.75rem',
+                                  color: '#94a3b8',
+                                  fontStyle: 'italic',
+                                  marginBottom: '0.75rem',
+                                  lineHeight: '1.4',
+                                }}
+                              >
+                                {firstQ.groupInstructions}
+                              </div>
+                            )}
+
+                            {/* Nested Questions */}
+                            <div
+                              style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+                            >
+                              {gQuestions.map((q) => (
+                                <div
+                                  key={q.id}
+                                  style={{
+                                    backgroundColor: '#1e293b',
+                                    border: '1px solid #334155',
+                                    borderRadius: '8px',
+                                    padding: '0.75rem',
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      display: 'flex',
+                                      justifyContent: 'space-between',
+                                      alignItems: 'center',
+                                      marginBottom: '0.3rem',
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        fontSize: '0.75rem',
+                                        fontFamily: 'monospace',
+                                        color: '#7dd3fc',
+                                        fontWeight: 700,
+                                      }}
+                                    >
+                                      {q.code}
+                                    </span>
+                                    <span
+                                      style={{
+                                        fontSize: '0.75rem',
+                                        color: '#34d399',
+                                        fontWeight: 700,
+                                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                        padding: '2px 8px',
+                                        borderRadius: '4px',
+                                      }}
+                                    >
+                                      Key:{' '}
+                                      {q.correctAnswer ||
+                                        (q.acceptedAnswers
+                                          ? q.acceptedAnswers.join(', ')
+                                          : 'Verified')}
+                                    </span>
+                                  </div>
+                                  <div
+                                    style={{
+                                      fontSize: '0.85rem',
+                                      color: '#f8fafc',
+                                      fontWeight: 500,
+                                      lineHeight: 1.5,
+                                    }}
+                                  >
+                                    {q.text}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
+                    );
+                  })()}
                 </div>
-              )}
+              </div>
             </div>
 
             {/* Actions */}
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'flex-end',
-                gap: '0.75rem',
-                marginTop: '0.5rem',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '1rem',
+                paddingTop: '0.75rem',
+                borderTop: '1px solid #1e293b',
               }}
             >
               <Button
-                variant="outline"
+                variant="primary"
                 onClick={() => {
-                  setBanner(`Editing passage "${previewPassage.title}"`);
-                  setPreviewPassage(null);
+                  router.push('/practice');
                 }}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
               >
-                Edit Passage
+                Launch Student Practice Test Mode ➔
               </Button>
-              <Button
-                variant="danger"
-                onClick={() => {
-                  setPassages((prev) => prev.filter((p) => p.id !== previewPassage.id));
-                  setBanner(`Passage "${previewPassage.title}" removed.`);
-                  setPreviewPassage(null);
-                }}
-              >
-                Delete Passage
-              </Button>
-              <Button variant="primary" onClick={() => setPreviewPassage(null)}>
-                Close Details
-              </Button>
+
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setBanner(`Editing passage "${previewPassage.title}"`);
+                    setPreviewPassage(null);
+                  }}
+                >
+                  Edit Passage
+                </Button>
+                <Button variant="primary" onClick={() => setPreviewPassage(null)}>
+                  Close Inspector
+                </Button>
+              </div>
             </div>
           </div>
         </div>

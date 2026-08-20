@@ -24,7 +24,7 @@ export interface MockBlueprintSection {
   questionCount: number;
   timeLimitMinutes: number;
   passingScorePercent: number;
-  difficultyDistribution: Record<DifficultyLevel, number>; // e.g. { EASY: 20, MEDIUM: 50, HARD: 30 }
+  difficultyDistribution: Partial<Record<DifficultyLevel, number>>; // e.g. { EASY: 20, MEDIUM: 50, HARD: 30 }
   instructions: string;
 }
 

@@ -12,19 +12,42 @@ export type ExamType =
 
 export type SectionType = 'Reading' | 'Listening' | 'Writing' | 'Speaking' | 'Math' | 'Grammar';
 export type QuestionType =
-  'MCQ' | 'FILL_IN_BLANK' | 'ESSAY' | 'SPEAKING' | 'MATCHING' | 'TRUE_FALSE_NOT_GIVEN';
+  | 'MCQ'
+  | 'MULTIPLE_CHOICE'
+  | 'FILL_IN_BLANK'
+  | 'COMPLETION'
+  | 'NOTE_COMPLETION'
+  | 'SUMMARY_COMPLETION'
+  | 'SENTENCE_COMPLETION'
+  | 'SHORT_ANSWER'
+  | 'ESSAY'
+  | 'SPEAKING'
+  | 'MATCHING'
+  | 'MATCHING_HEADINGS'
+  | 'MATCHING_INFORMATION'
+  | 'MATCHING_FEATURES'
+  | 'TRUE_FALSE_NOT_GIVEN'
+  | 'YES_NO_NOT_GIVEN';
 
-export type DifficultyLevel = 'EASY' | 'MEDIUM' | 'HARD';
+export type DifficultyLevel =
+  'EASY' | 'MEDIUM' | 'HARD' | 'INTERMEDIATE' | 'FOUNDATION' | 'ADVANCED';
 export type QuestionUsage = 'DIAGNOSTIC' | 'PRACTICE' | 'MOCK';
 
 export interface QuestionGroup {
   id: string;
-  title: string; // e.g. "Questions 1-5: Matching Headings"
+  code?: string;
+  title: string; // e.g. "Questions 1–4: Matching Headings"
   passageId?: string;
   audioUrl?: string;
   instructions: string;
-  type: QuestionType;
+  type?: QuestionType;
+  questionType?: QuestionType;
+  contentTitle?: string;
+  contentType?: string;
+  sharedData?: any;
+  displayOrder?: number;
   questionIds: string[];
+  questions?: AdminQuestion[];
 }
 
 export interface WritingTaskSpec {
@@ -57,8 +80,11 @@ export interface Passage {
   source?: string;
   wordCount: number;
   groupIds?: string[];
+  groups?: QuestionGroup[];
   questionIds: string[];
+  questions?: AdminQuestion[];
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface MediaAsset {
@@ -99,6 +125,13 @@ export interface AdminQuestion {
   passageCode?: string;
   passageTitle?: string;
   passageText?: string;
+  groupCode?: string;
+  groupTitle?: string;
+  groupInstructions?: string;
+  contentTitle?: string;
+  contentType?: string;
+  sharedData?: any;
+  acceptedAnswers?: string[];
   audioUrl?: string;
   imageUrl?: string;
   writingSpec?: WritingTaskSpec;
@@ -626,6 +659,14 @@ export const adminQuestionsService = {
 
   // Passage Management
   async getPassages(): Promise<Passage[]> {
+    try {
+      const res = await apiClient.get<any>('/api/v1/admin/passages');
+      if (res && res.success && Array.isArray(res.data) && res.data.length > 0) {
+        return res.data;
+      }
+    } catch (e) {
+      console.warn('Could not fetch passages from /api/v1/admin/passages, using repo fallback:', e);
+    }
     const repo = RepositoryFactory.getPassageRepository();
     const list = await repo.findAll();
     if (list && list.length > 0) return list;
@@ -633,6 +674,14 @@ export const adminQuestionsService = {
   },
 
   async addPassage(passage: Partial<Passage>): Promise<Passage> {
+    try {
+      const res = await apiClient.post<any>('/api/v1/admin/passages', passage);
+      if (res && res.success && res.passage) {
+        return res.passage;
+      }
+    } catch (e) {
+      console.warn('Could not add passage via /api/v1/admin/passages, using repo fallback:', e);
+    }
     const repo = RepositoryFactory.getPassageRepository();
     const newPassage: Passage = {
       id: passage.id || `pas-${Date.now()}`,
@@ -649,6 +698,18 @@ export const adminQuestionsService = {
     const existing = getStoredPassages();
     saveStoredPassages([newPassage, ...existing]);
     return newPassage;
+  },
+
+  async updatePassage(passage: Partial<Passage> & { id: string }): Promise<Passage | null> {
+    try {
+      const res = await apiClient.put<any>('/api/v1/admin/passages', passage);
+      if (res && res.success && res.passage) {
+        return res.passage;
+      }
+    } catch (e) {
+      console.warn('Could not update passage via /api/v1/admin/passages:', e);
+    }
+    return null;
   },
 
   // Media Library Management

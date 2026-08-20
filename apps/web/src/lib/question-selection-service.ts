@@ -65,11 +65,11 @@ export class QuestionSelectionService {
     // =======================================================================
     // 2. PASSAGE-LEVEL READING SELECTION
     // =======================================================================
-    const passagesRes = await client.query(`
+    const passagesRes = await client.query(
+      `
       SELECT DISTINCT rp.id, rp.code, rp.title, rp.content, rp.created_at
       FROM public.reading_passages rp
       JOIN public.questions q ON (
-        (q.code ILIKE '%' || rp.code || '%') OR 
         EXISTS (
           SELECT 1 FROM public.question_versions qv 
           WHERE qv.question_id = q.id AND (
@@ -80,8 +80,16 @@ export class QuestionSelectionService {
       )
       WHERE (rp.status = 'published' OR rp.status = 'PUBLISHED' OR rp.status IS NOT NULL)
         AND q.deleted_at IS NULL
+        AND (
+          -- Namespace isolation: Diagnostic Reading passages for English Proficiency diagnostic assessment
+          ($1 = 'English Proficiency' AND (rp.code LIKE 'PAS-DIAG-%' OR rp.code LIKE 'PAS-READ-004' OR rp.code LIKE 'PAS-READ-005' OR rp.exam_type = 'English Proficiency'))
+          OR ($1 != 'English Proficiency' AND rp.exam_type = $1)
+        )
+        AND rp.code NOT IN ('PAS-READ-001', 'PAS-READ-002', 'PAS-READ-003')
       ORDER BY rp.created_at DESC
-    `);
+    `,
+      [examType]
+    );
 
     const allPassages = passagesRes.rows;
     let selectedPassage: any = null;
@@ -99,16 +107,16 @@ export class QuestionSelectionService {
     let readingSnapshot: any = null;
 
     if (selectedPassage) {
-      // Query comprehension questions for the selected passage
+      // Query comprehension questions for the selected passage using exact payload passageCode mapping
       const compRes = await client.query(
         `SELECT q.id as question_id, q.code as question_code, qv.id as version_id, qv.prompt, qv.proficiency_level, qv.payload
          FROM public.questions q
          JOIN public.question_versions qv ON qv.question_id = q.id
          WHERE q.deleted_at IS NULL
            AND (qv.status = 'published' OR qv.status = 'PUBLISHED' OR qv.status IS NOT NULL)
-           AND (qv.payload->>'passageCode' = $1 OR qv.payload->>'passageCode' = $2 OR q.code ILIKE $3)
+           AND (qv.payload->>'passageCode' = $1 OR qv.payload->>'passageCode' = $2)
          ORDER BY q.code ASC`,
-        [selectedPassage.code, selectedPassage.id, `%${selectedPassage.code}%`]
+        [selectedPassage.code, selectedPassage.id]
       );
 
       let comprehensionQuestions: any[] = [];
@@ -314,10 +322,10 @@ export class QuestionSelectionService {
     // 4. WRITING TASKS SELECTION & ROTATION
     // =======================================================================
     const writingRes = await client.query(
-      `SELECT id, code, task_number, title, prompt, instructions, min_words, max_words
+      `SELECT id, code, task_number, title, prompt, instructions, min_words, max_words, time_recommended_minutes
        FROM public.writing_tasks
        WHERE exam_type = $1 OR exam_type IS NOT NULL
-       ORDER BY random()`,
+       ORDER BY task_number ASC`,
       [examType]
     );
 
@@ -345,6 +353,9 @@ export class QuestionSelectionService {
     }
 
     const selectedWriting = writingTasksPool.slice(0, writingCount);
+    // Sort strictly by task_number (Task 1 Letter, Task 2 Essay)
+    selectedWriting.sort((a, b) => (a.task_number || 1) - (b.task_number || 1));
+
     const writingSnapshot = selectedWriting.map((w, idx) => ({
       id: w.id,
       code: w.code,
@@ -352,10 +363,12 @@ export class QuestionSelectionService {
       title: w.title,
       prompt: w.prompt,
       instructions: w.instructions,
-      minWords: w.min_words || 150,
-      maxWords: w.max_words || 400,
-      itemType: 'ESSAY',
+      minWords: w.min_words || (w.task_number === 2 ? 250 : 150),
+      maxWords: w.max_words || (w.task_number === 2 ? 500 : 300),
+      timeRecommendedMinutes: w.time_recommended_minutes || (w.task_number === 2 ? 25 : 15),
+      itemType: w.task_number === 2 ? 'ESSAY' : 'LETTER',
       marks: 10,
+      order: idx + 1,
     }));
 
     return {
