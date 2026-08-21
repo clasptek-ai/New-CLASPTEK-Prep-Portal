@@ -6,15 +6,15 @@ let serverClient: SupabaseClient | null = null;
 export function getSupabaseServerClient(): SupabaseClient {
   if (serverClient) return serverClient;
 
-  const url =
-    process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    env.NEXT_PUBLIC_SUPABASE_URL ||
-    'https://placeholder.supabase.co';
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
     process.env.SUPABASE_SERVICE_ROLE_KEY ||
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    'placeholder-key';
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!url || !key) {
+    throw new Error('[SUPABASE_CONFIG_ERROR] Missing Supabase URL or Key in server environment.');
+  }
 
   serverClient = createClient(url, key, {
     auth: {

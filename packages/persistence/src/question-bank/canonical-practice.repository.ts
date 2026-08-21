@@ -126,9 +126,20 @@ export class PostgresCanonicalPracticeRepository {
       sql += ` AND (qv.payload->>'section' ILIKE $${queryParams.length} OR qv.payload->>'tags' ILIKE $${queryParams.length} OR q.code ILIKE $${queryParams.length})`;
     }
 
-    if (difficulty && difficulty !== 'ANY') {
-      queryParams.push(difficulty);
-      sql += ` AND (qv.payload->>'difficulty' = $${queryParams.length})`;
+    const diffEquivs =
+      difficulty && difficulty.toUpperCase() !== 'ANY' && difficulty.toUpperCase() !== 'ALL'
+        ? ['EASY', 'FOUNDATION', 'BEGINNER'].includes(difficulty.toUpperCase().trim())
+          ? ['EASY', 'FOUNDATION', 'BEGINNER']
+          : ['MEDIUM', 'INTERMEDIATE', 'MODERATE'].includes(difficulty.toUpperCase().trim())
+            ? ['MEDIUM', 'INTERMEDIATE', 'MODERATE']
+            : ['HARD', 'ADVANCED', 'EXPERT'].includes(difficulty.toUpperCase().trim())
+              ? ['HARD', 'ADVANCED', 'EXPERT']
+              : [difficulty.toUpperCase().trim()]
+        : null;
+
+    if (diffEquivs && diffEquivs.length > 0) {
+      queryParams.push(diffEquivs);
+      sql += ` AND (UPPER(qv.payload->>'difficulty') = ANY($${queryParams.length}::text[]))`;
     }
 
     // For complete practice sets (e.g. questionCount >= 30 or Reading sets), order sequentially by code
@@ -141,7 +152,6 @@ export class PostgresCanonicalPracticeRepository {
     }
 
     const res = await this.pool.query(sql, queryParams);
-
     const rows = res.rows;
     let selected = rows;
     if (questionCount < 30 && (!sectionCode || !sectionCode.toLowerCase().includes('reading'))) {

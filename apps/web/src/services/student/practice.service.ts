@@ -180,26 +180,20 @@ export const studentPracticeService = {
   },
 
   async createCustomSession(params: CustomSessionParams): Promise<PracticeSession> {
-    const res = await fetch('/api/v1/practice/start', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        exam: params.exam,
-        section: params.section,
-        skill: params.skill,
-        difficulty: params.difficulty,
-        questionCount: params.questionCount,
-        isTimed: params.isTimed,
-      }),
+    const data = await apiClient.post<any>('/api/v1/practice/start', {
+      exam: params.exam,
+      section: params.section,
+      skill: params.skill,
+      difficulty: params.difficulty,
+      questionCount: params.questionCount,
+      isTimed: params.isTimed,
     });
 
-    const data = await res.json();
-
-    if (!res.ok || data.error) {
-      if (data.error === 'INSUFFICIENT_QUESTION_INVENTORY') {
+    if (!data || data.error) {
+      if (data?.error === 'INSUFFICIENT_QUESTION_INVENTORY') {
         throw new Error(`INSUFFICIENT_QUESTION_INVENTORY: ${data.message}`);
       }
-      throw new Error(data.error || 'Failed to start practice session');
+      throw new Error(data?.error || 'Failed to start practice session');
     }
 
     const timeAllowed = params.isTimed

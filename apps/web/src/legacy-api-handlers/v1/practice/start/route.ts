@@ -6,12 +6,34 @@ import { getAuthenticatedSession } from '@/lib/auth-util';
 import { PostgresCanonicalPracticeRepository } from '@clasptek/persistence';
 import { randomUUID } from 'crypto';
 
+function normalizeExamType(rawExam?: string): string {
+  if (!rawExam) return 'IELTS Academic';
+  const upper = rawExam.toUpperCase().trim();
+  if (upper.includes('IELTS')) return 'IELTS Academic';
+  if (upper.includes('TOEFL')) return 'TOEFL iBT';
+  if (upper.includes('SAT')) return 'SAT';
+  if (upper.includes('CELPIP')) return 'CELPIP';
+  if (
+    upper.includes('ENGLISH') ||
+    upper.includes('PROFICIENCY') ||
+    upper.includes('GENERAL') ||
+    upper.includes('GRAMMAR')
+  ) {
+    return 'English Proficiency';
+  }
+  return rawExam.trim();
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const session = await getAuthenticatedSession(req);
-    const studentId = session?.userId || req.headers.get('x-student-id');
+    const authSession = await getAuthenticatedSession(req);
+    const studentId = authSession?.userId || req.headers.get('x-student-id');
+
     if (!studentId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json(
+        { error: 'AUTH_REQUIRED', message: 'Authentication required' },
+        { status: 401 }
+      );
     }
 
     const { dbPool } = await getDiagnosticContext();
@@ -29,14 +51,11 @@ export async function POST(req: NextRequest) {
       [studentId]
     );
 
-    const progTitle = (profileRes.rows[0]?.programme_title || 'IELTS Academic').toUpperCase();
-    let derivedExamType = 'IELTS Academic';
-    if (progTitle.includes('TOEFL')) derivedExamType = 'TOEFL iBT';
-    else if (progTitle.includes('SAT')) derivedExamType = 'SAT';
-    else if (progTitle.includes('ENGLISH PROFICIENCY') || progTitle.includes('GENERAL')) derivedExamType = 'English Proficiency';
-    else if (progTitle.includes('CELPIP')) derivedExamType = 'CELPIP';
+    const progTitle = profileRes.rows[0]?.programme_title || 'IELTS Academic';
+    const derivedExamType = normalizeExamType(progTitle);
 
     const body = await req.json();
+    const targetExamType = normalizeExamType(body.exam || body.examType || derivedExamType);
     const sectionCode = body.section || body.sectionCode || 'Reading';
     const skillCode = body.skill || body.skillCode || `${sectionCode} Practice`;
     const difficulty = body.difficulty || 'MEDIUM';
@@ -47,7 +66,7 @@ export async function POST(req: NextRequest) {
 
     // 1. Query eligible PRACTICE questions filtered by student's ACTIVE EXAM TYPE
     const eligibleQuestions = await practiceRepo.queryEligibleQuestions({
-      examType: derivedExamType,
+      examType: targetExamType,
       sectionCode,
       skillCode,
       difficulty,
@@ -59,8 +78,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error: 'INSUFFICIENT_QUESTION_INVENTORY',
-          message: 'Not enough practice questions are currently available for this skill.',
-          examType: derivedExamType,
+          message: `Not enough practice questions are currently available for ${targetExamType} ${sectionCode} at ${difficulty} difficulty.`,
+          examType: targetExamType,
           sectionCode,
           difficulty,
         },
@@ -75,7 +94,7 @@ export async function POST(req: NextRequest) {
     await practiceRepo.createSession({
       id: sessionId,
       studentId,
-      examType: derivedExamType,
+      examType: targetExamType,
       sectionCode,
       skillCode,
       difficulty,
@@ -92,7 +111,7 @@ export async function POST(req: NextRequest) {
       success: true,
       session: {
         id: sessionId,
-        exam: derivedExamType,
+        exam: targetExamType,
         section: sectionCode,
         skill: skillCode,
         difficulty,
