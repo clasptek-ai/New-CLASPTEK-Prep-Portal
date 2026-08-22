@@ -10,3 +10,4 @@ export * from './value-objects/EnglishFoundation';
 export * from './value-objects/LearningStage';
 export * from './events/DiagnosticEvents';
 export * from './services/PlacementEngine';
+export * from './services/BandScoreCalculator';

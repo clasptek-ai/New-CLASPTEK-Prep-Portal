@@ -75,20 +75,29 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           ? 'DEVELOPING'
           : 'NEEDS_IMPROVEMENT';
 
+    const tenantId = sessionRecord.tenant_id || session?.tenantId || req.headers.get('x-tenant-id');
+    if (!tenantId) {
+      return NextResponse.json(
+        { error: 'DATA_INTEGRITY_ERROR', message: 'Missing tenant_id in practice session record' },
+        { status: 422 }
+      );
+    }
+
     await pool.query(
       `INSERT INTO public.student_skill_profiles 
-       (id, student_id, skill_code, mastery_percentage, computed_stage, assessment_session_id, updated_at)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, now())
+       (id, student_id, skill_code, mastery_percentage, computed_stage, tenant_id, assessment_session_id, updated_at)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NULL, now())
        ON CONFLICT (student_id, skill_code) DO UPDATE SET
          mastery_percentage = EXCLUDED.mastery_percentage,
          computed_stage = EXCLUDED.computed_stage,
+         tenant_id = EXCLUDED.tenant_id,
          updated_at = now()`,
       [
         studentId,
-        sessionRecord.section_code || 'Grammar',
+        sessionRecord.section_code || sessionRecord.skill_code || 'Reading',
         scorePercentage,
         computedStage,
-        sessionId,
+        tenantId,
       ]
     );
 
