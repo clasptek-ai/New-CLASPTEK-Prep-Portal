@@ -32,6 +32,25 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const payload = body.payload || body;
 
+    const questionCount = Array.isArray(payload?.questions) ? payload.questions.length : 0;
+    const passageCount = Array.isArray(payload?.passages)
+      ? payload.passages.length
+      : Array.isArray(payload?.readingPassages)
+        ? payload.readingPassages.length
+        : Array.isArray(payload?.reading_passages)
+          ? payload.reading_passages.length
+          : 0;
+
+    console.log('[IMPORT_COMMIT_ROUTE_DIAGNOSTIC]', {
+      authenticatedUserId: session?.userId,
+      resolvedTenantId: tenantId,
+      tenantResolutionSource: session?.tenantSource || 'resolved_session_tenant',
+      isTenantUuidValid: isValidTenantUuid(tenantId),
+      questionCount,
+      passageCount,
+      tenantIdPassedToRepo: tenantId,
+    });
+
     const { dbPool } = await getDiagnosticContext();
     const importerRepo = new CanonicalJsonImporterRepository(dbPool.getPool());
 

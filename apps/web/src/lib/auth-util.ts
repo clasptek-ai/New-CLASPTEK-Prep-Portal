@@ -11,6 +11,7 @@ export interface AuthenticatedSession {
   profileId: string;
   roles: string[];
   tenantId?: string;
+  tenantSource?: string;
 }
 
 export function isValidTenantUuid(tenantId?: string | null): boolean {
@@ -18,11 +19,11 @@ export function isValidTenantUuid(tenantId?: string | null): boolean {
   return UUID_REGEX.test(tenantId.trim());
 }
 
-export function resolveAuthorizedTenant(
+export function resolveAuthorizedTenantInfo(
   user: any,
   roleNames: string[],
   requestedHeaderTenant?: string | null
-): string | undefined {
+): { tenantId?: string; source: string } {
   const isStaffOrAdmin = roleNames.some((r) =>
     ['ADMINISTRATOR', 'ADMIN', 'INSTRUCTOR', 'STAFF'].includes(r.toUpperCase())
   );
@@ -37,35 +38,43 @@ export function resolveAuthorizedTenant(
     const validAppTenant = appTenant.trim();
     if (headerTenant && isValidTenantUuid(headerTenant)) {
       if (headerTenant.toLowerCase() === validAppTenant.toLowerCase()) {
-        return validAppTenant;
+        return { tenantId: validAppTenant, source: 'app_metadata' };
       }
       // Only superadmin can switch to another validated tenant via header
       if (isSuperAdmin) {
-        return headerTenant;
+        return { tenantId: headerTenant, source: 'superadmin_header_override' };
       }
       // Non-superadmin cannot supply arbitrary x-tenant-id; enforce appTenant
-      return validAppTenant;
+      return { tenantId: validAppTenant, source: 'app_metadata_enforced' };
     }
-    return validAppTenant;
+    return { tenantId: validAppTenant, source: 'app_metadata' };
   }
 
   // 2. If staff/admin with explicit valid header
   if (isStaffOrAdmin && headerTenant && isValidTenantUuid(headerTenant)) {
-    return headerTenant;
+    return { tenantId: headerTenant, source: 'staff_header' };
   }
 
   // 3. If user_metadata contains valid tenant UUID
   if (isValidTenantUuid(userMetaTenant)) {
-    return userMetaTenant.trim();
+    return { tenantId: userMetaTenant.trim(), source: 'user_metadata' };
   }
 
   // 4. If staff/admin operating in system context
   if (isStaffOrAdmin) {
-    return CANONICAL_SYSTEM_TENANT_ID;
+    return { tenantId: CANONICAL_SYSTEM_TENANT_ID, source: 'staff_canonical_system' };
   }
 
   // 5. Default fallback for standard registered user in system context
-  return CANONICAL_SYSTEM_TENANT_ID;
+  return { tenantId: CANONICAL_SYSTEM_TENANT_ID, source: 'user_canonical_system' };
+}
+
+export function resolveAuthorizedTenant(
+  user: any,
+  roleNames: string[],
+  requestedHeaderTenant?: string | null
+): string | undefined {
+  return resolveAuthorizedTenantInfo(user, roleNames, requestedHeaderTenant).tenantId;
 }
 
 export async function getAuthenticatedSession(
@@ -172,13 +181,14 @@ export async function getAuthenticatedSession(
 
     // 5. Resolve authorized tenant
     const requestedTenantHeader = req.headers.get('x-tenant-id');
-    const resolvedTenantId = resolveAuthorizedTenant(user, roleNames, requestedTenantHeader);
+    const tenantInfo = resolveAuthorizedTenantInfo(user, roleNames, requestedTenantHeader);
 
     return {
       userId: user.id,
       profileId: 'profile-' + user.id,
       roles: roleNames,
-      tenantId: resolvedTenantId,
+      tenantId: tenantInfo.tenantId,
+      tenantSource: tenantInfo.source,
     };
   } catch (err: any) {
     console.error('getAuthenticatedSession error:', err);

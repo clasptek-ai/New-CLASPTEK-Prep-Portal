@@ -870,6 +870,18 @@ export class CanonicalJsonImporterRepository {
     const batchId = randomUUID();
     const batchCode = `BATCH-${Date.now().toString().slice(-6)}`;
 
+    console.log('[IMPORT_COMMIT_REPO_DIAGNOSTIC]', {
+      batchId,
+      batchCode,
+      uploadedBy,
+      tenantIdPassedToRepo: resolvedTenantId,
+      isTenantUuidValid: UUID_REGEX.test(resolvedTenantId),
+      totalQuestionsToInsert: normalized.questions.length,
+      totalPassagesToInsert: normalized.passages.length,
+      totalGroupsToInsert: normalized.questionGroups.length,
+      tenantIdPassedToQuestionInsert: resolvedTenantId,
+    });
+
     try {
       await client.query('BEGIN');
       await client.query('SET LOCAL statement_timeout = 300000');

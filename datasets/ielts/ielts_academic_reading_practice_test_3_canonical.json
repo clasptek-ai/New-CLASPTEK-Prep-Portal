@@ -1,0 +1,944 @@
+{
+  "schemaVersion": "1.0",
+  "examType": "IELTS Academic",
+  "assessmentUsages": ["PRACTICE"],
+  "metadata": {
+    "title": "IELTS Academic Reading Practice Test 3",
+    "difficulty": "INTERMEDIATE",
+    "totalQuestions": 40,
+    "timeMinutes": 60,
+    "source": "Clasptek Content Authoring",
+    "note": "Original IELTS Academic Reading practice test."
+  },
+  "passages": [
+    {
+      "passageCode": "PAS-READ-007",
+      "title": "The Global Journey of Coffee",
+      "content": "**A** Few agricultural commodities have travelled as far, or acquired as much cultural significance, as coffee. According to widely repeated tradition, the stimulating properties of the coffee plant were first observed in the highlands of Ethiopia, where herders noticed that their goats became unusually energetic after eating berries from a particular shrub. Whatever the precise origin, historical records confirm that by the fifteenth century, coffee cultivation and consumption had become firmly established in Yemen, from where the practice of roasting and brewing the bean spread steadily across the Arabian Peninsula and into the wider Ottoman world, carried along established trade routes that already connected the region to markets in North Africa, the Levant, and beyond.\n\n**B** For roughly two centuries, the coffee plant itself remained confined almost exclusively to the Arabian Peninsula, since exporting authorities, wary of losing their commercial advantage, generally prohibited the export of fertile, unroasted seeds. This monopoly was eventually broken, according to several historical accounts, through a combination of smuggling and diplomatic gift-giving, which allowed viable coffee plants to reach European colonial territories during the seventeenth and early eighteenth centuries. From these initial transplants, European colonial powers established coffee plantations across their tropical territories, including in the Caribbean, South America, and Southeast Asia, regions whose climates proved well suited to cultivation and whose colonial economies were increasingly organised around the production of export crops.\n\n**C** The subsequent expansion of coffee cultivation was inseparable from the broader and deeply troubling history of colonial plantation agriculture. In many of the regions where coffee took root, plantations depended heavily on enslaved or coerced labour, a reliance that shaped land ownership patterns, settlement structures, and social hierarchies in ways that continued to influence these societies long after formal abolition. Brazil, in particular, emerged during the nineteenth century as the world's dominant coffee producer, a position it retains today, with production expanding dramatically as new agricultural land was cleared and integrated into an increasingly global commodity trade. By the early twentieth century, coffee had become one of the most actively traded commodities on international markets, its price subject to fluctuations driven by weather events, disease outbreaks, and shifting patterns of demand in consuming countries.\n\n**D** Coffee cultivation today relies predominantly on two species: Coffea arabica, generally regarded as producing a more delicate and complex flavour, and Coffea canephora, more commonly known as robusta, which is hardier, higher yielding, and contains a greater concentration of caffeine. Arabica varieties are typically grown at higher elevations, where cooler temperatures slow the ripening of the coffee cherry and are widely believed to contribute to a more nuanced flavour profile, whereas robusta thrives at lower altitudes and is more resistant to certain pests and diseases that pose significant challenges for arabica producers. This agronomic distinction has considerable commercial significance, since arabica beans typically command a substantially higher market price than robusta, even though robusta remains indispensable to the industry, particularly for instant coffee production and as a lower-cost blending component.\n\n**E** In recent decades, the global coffee industry has confronted a series of interconnected challenges. Climate change poses perhaps the most serious long-term threat, since coffee cultivation, particularly of the more climate-sensitive arabica variety, depends on relatively narrow temperature and rainfall parameters. Researchers modelling future growing conditions have projected that substantial portions of land currently suitable for arabica cultivation may become unsuitable within coming decades, a prospect that has prompted growing interest in developing more resilient cultivars and in relocating production to higher elevations where such land remains available. Simultaneously, coffee-growing communities, many of whom operate small family farms rather than large plantations, have long grappled with price volatility, since global coffee prices are frequently set on international commodity exchanges with limited direct input from the smallholder farmers whose livelihoods depend most directly on the outcome.\n\n**F** In response to these pressures, a range of certification schemes, including fair trade and various forms of direct trade arrangement, have emerged with the stated aim of providing farmers with more stable and equitable prices. Evidence regarding the effectiveness of these schemes remains genuinely mixed: some studies have found measurable improvements in farmer income and community infrastructure in certified regions, while others have identified only modest benefits once the additional costs of certification, including inspection fees and compliance requirements, are taken into account. Critics further note that certification schemes, however well intentioned, address only a portion of the broader structural challenges facing smallholder coffee farmers, including limited access to credit, ageing tree stock, and constrained bargaining power relative to large multinational buyers and roasters.\n\n**G** Despite these challenges, global demand for coffee continues to grow, driven partly by expanding consumption in producing regions themselves and partly by the emergence of new consumer markets in parts of Asia where coffee culture has historically played a smaller role than tea. Whether the industry can reconcile this growing demand with the environmental and economic pressures confronting producers remains an open and, by most informed accounts, increasingly urgent question, one that will likely shape the geography of coffee cultivation for decades to come.",
+      "examType": "IELTS Academic",
+      "section": "Reading",
+      "wordCount": 840
+    },
+    {
+      "passageCode": "PAS-READ-008",
+      "title": "Urban Heat Islands and the Redesign of City Space",
+      "content": "**A** Cities are, on average, measurably warmer than the surrounding rural landscape, a phenomenon known as the urban heat island effect. This temperature differential, which can exceed several degrees Celsius during summer evenings in particular, arises primarily from the physical properties of common urban building materials, such as asphalt and concrete, which absorb solar radiation during the day and release it gradually after sunset, combined with the comparative scarcity of vegetation and open water, both of which cool surrounding air through the process of evapotranspiration. Additional contributing factors include waste heat generated by vehicles, air conditioning units, and industrial processes, as well as the geometry of densely built environments, which tends to trap heat between tall buildings and restrict the natural circulation of cooling breezes.\n\n**B** The consequences of urban heat islands extend well beyond simple discomfort. Elevated night-time temperatures have been linked to increased rates of heat-related illness and mortality, particularly among elderly residents, young children, and individuals with pre-existing cardiovascular or respiratory conditions, since the human body's capacity to recover from daytime heat exposure depends significantly on cooler overnight conditions. Public health researchers have observed that heat-related health risks tend to be unevenly distributed within cities, often correlating closely with socioeconomic factors, since lower-income neighbourhoods frequently contain less tree cover, fewer parks, and a higher proportion of heat-absorbing surfaces than wealthier districts, a disparity that some researchers attribute in part to historical patterns of urban planning and investment.\n\n**C** In addition to public health concerns, urban heat islands carry substantial economic implications. Elevated temperatures increase demand for air conditioning, driving up electricity consumption during precisely the periods when energy grids are already under the greatest strain, occasionally contributing to blackouts during severe heatwaves. Some economists have further argued that persistent heat exposure reduces outdoor worker productivity and may deter certain forms of tourism and outdoor commercial activity during the hottest months, although quantifying these effects with precision has proven methodologically difficult, since isolating the economic impact of heat from other contributing seasonal factors requires careful statistical control.\n\n**D** Urban planners and researchers have proposed, and in some cases implemented, a range of interventions intended to mitigate the heat island effect. Increasing urban tree cover ranks among the most consistently effective strategies, since trees provide direct shade while also cooling the surrounding air through evapotranspiration; several city governments have consequently launched ambitious tree-planting initiatives, though such programmes require sustained maintenance and can take years, or even decades, to yield substantial cooling benefits as trees mature. Reflective or \"cool\" roofing and paving materials, engineered to reflect rather than absorb solar radiation, offer a comparatively rapid alternative, since existing surfaces can often be resurfaced or coated without the lengthy establishment period required by vegetation.\n\n**E** Green roofs and living walls, which incorporate vegetation directly into building surfaces, represent a further category of intervention, offering cooling benefits alongside additional advantages such as improved stormwater management and habitat provision for urban wildlife. However, the installation and maintenance costs associated with green roofs remain considerably higher than those of conventional roofing, a constraint that has, to date, limited widespread adoption outside of subsidised public buildings or jurisdictions where local regulations mandate or incentivise their use. Researchers have also cautioned that the cooling benefits of green infrastructure vary considerably depending on climate, building design, and the specific plant species selected, meaning that interventions successful in one city cannot necessarily be assumed to produce comparable results elsewhere without local adaptation.\n\n**F** A more structural approach to mitigating urban heat involves rethinking the layout and geometry of cities themselves, an approach sometimes described as heat-sensitive urban design. This includes orienting streets and buildings to maximise natural ventilation, preserving corridors of open space that allow cooler air to flow from surrounding rural areas into city centres, and limiting the density of tall buildings in locations where their geometry would otherwise trap heat. Such measures are considerably more difficult to retrofit into existing cities than to incorporate into new developments, meaning that rapidly urbanising regions, particularly in parts of Asia and Africa where substantial new urban infrastructure is currently under construction, may possess a distinct opportunity to avoid heat island effects that older, more established cities now struggle to reverse.\n\n**G** Taken together, the available evidence suggests that no single intervention is likely to resolve the urban heat island effect in isolation; rather, meaningful progress appears to depend on combining vegetation-based strategies, reflective materials, and structural design principles within a coordinated planning framework, one that explicitly accounts for the uneven distribution of heat-related risk across different neighbourhoods rather than treating the problem as uniform across an entire city.",
+      "examType": "IELTS Academic",
+      "section": "Reading",
+      "wordCount": 769
+    },
+    {
+      "passageCode": "PAS-READ-009",
+      "title": "The Economic Debate Surrounding Universal Basic Income",
+      "content": "**A** As automation, demographic change, and shifting labour-market structures have prompted renewed anxiety about long-term employment security, the concept of universal basic income, a regular, unconditional cash payment provided to all citizens regardless of employment status or income level, has moved from the margins of academic economic discussion into mainstream policy debate. Although variants of the idea can be traced back centuries, contemporary interest has been driven substantially by concerns that technological change may eliminate categories of employment more rapidly than new forms of work emerge to replace them, alongside a separate but related critique of existing welfare systems, which many argue impose excessive administrative complexity and inadvertently discourage recipients from seeking employment due to the abrupt withdrawal of benefits once earnings exceed certain thresholds.\n\n**B** Proponents of universal basic income advance several distinct, though related, arguments. Some emphasise its potential to reduce poverty directly and unconditionally, without requiring recipients to navigate the bureaucratic eligibility requirements that characterise many existing welfare programmes. Others argue that a guaranteed income floor would grant workers greater bargaining power in negotiations with employers, since the threat of destitution, which some economists argue currently compels workers to accept undesirable employment conditions, would be substantially diminished. A further, more philosophical strand of advocacy holds that unconditional income recognises unpaid labour, such as caregiving and community work, as valuable contributions to society that existing wage-based economic systems fail to compensate or adequately acknowledge.\n\n**C** Critics, meanwhile, raise a series of substantive objections. The most immediate concerns the cost: providing a meaningful, universal payment to an entire national population would require government expenditure on a scale that, according to most economic modelling, could not be financed through modest adjustments to existing tax structures alone, necessitating either substantial tax increases, the elimination of existing welfare programmes to redirect funding, or some combination of the two, each of which carries distinct political and distributional consequences that remain contested among economists. A second objection concerns labour supply: some economists have expressed concern that guaranteed income, by reducing the immediate financial necessity of employment, could meaningfully reduce workforce participation, a possibility disputed by other researchers who point to limited evidence of substantial withdrawal from employment in existing pilot programmes.\n\n**D** Empirical evidence on these questions remains genuinely limited, since large-scale, permanent implementation of universal basic income has not yet occurred anywhere in the world. Several smaller-scale pilot programmes, conducted in various countries and typically involving randomly selected participants receiving payments over a fixed period, have generated data that researchers continue to analyse, though such pilots face an important methodological limitation: participants in time-limited trials, aware that payments will eventually cease, may behave differently than they would under a genuinely permanent programme, meaning that pilot results may not straightforwardly generalise to a full national rollout. Some pilot studies have reported modest improvements in reported wellbeing, mental health, and financial stability among recipients, alongside limited evidence of significant reductions in overall employment, though sample sizes and programme durations have generally been too limited to permit confident, generalisable conclusions.\n\n**E** An alternative but related policy proposal, sometimes framed as a compromise between universal basic income and existing welfare structures, involves a negative income tax, under which individuals earning below a certain threshold receive a payment from the government rather than paying tax, with the payment gradually withdrawn as earned income rises. Proponents argue that this approach preserves a stronger incentive to work relative to a flat, unconditional payment, since additional earned income always increases a recipient's total income, whereas critics counter that negative income tax schemes reintroduce precisely the administrative complexity and means-testing that basic income was originally intended to eliminate, potentially recreating many of the bureaucratic inefficiencies associated with conventional welfare systems.\n\n**F** The debate is further complicated by disagreement over what problem basic income is actually intended to solve. Some advocates frame it primarily as a response to anticipated technological unemployment, a justification that depends heavily on contested predictions about the pace and scale of future automation. Others present it chiefly as a simplification of existing welfare bureaucracy, a justification that does not depend on any particular assumption about future labour markets and could, in principle, be evaluated largely on current administrative and distributional grounds. This lack of consensus regarding the policy's underlying rationale has, according to several policy analysts, made it considerably more difficult to design pilot programmes and evaluation criteria capable of definitively resolving the broader debate.\n\n**G** Ultimately, the available evidence permits neither confident endorsement nor confident rejection of universal basic income as a large-scale national policy. What existing pilot data does suggest, with reasonable consistency, is that modest, time-limited cash transfers tend to produce measurable improvements in recipient wellbeing without triggering the widespread workforce withdrawal that some critics have predicted, although whether these encouraging but limited findings would persist under a genuinely universal and permanent scheme remains, for now, an open empirical question that only sustained, large-scale implementation could ultimately resolve.",
+      "examType": "IELTS Academic",
+      "section": "Reading",
+      "wordCount": 822
+    }
+  ],
+  "questionGroups": [
+    {
+      "groupCode": "QG-READ-003-01",
+      "passageCode": "PAS-READ-007",
+      "title": "Questions 1–4",
+      "questionType": "MATCHING_HEADINGS",
+      "instructions": "Reading Passage 1 has seven paragraphs, A–G. Choose the correct heading for paragraphs B, C, E, and F from the list of headings below.",
+      "contentTitle": "List of Headings",
+      "contentType": "HEADINGS_LIST",
+      "sharedData": {
+        "headingsList": [
+          {
+            "code": "i",
+            "text": "The uncertain origins of coffee's stimulating effects"
+          },
+          {
+            "code": "ii",
+            "text": "Two species with different commercial qualities"
+          },
+          {
+            "code": "iii",
+            "text": "The breaking of a regional monopoly on cultivation"
+          },
+          {
+            "code": "iv",
+            "text": "Efforts to secure fairer outcomes for farmers"
+          },
+          {
+            "code": "v",
+            "text": "The rise of Brazil and the darker history of plantation labour"
+          },
+          {
+            "code": "vi",
+            "text": "Growing consumer demand in new markets"
+          },
+          {
+            "code": "vii",
+            "text": "Threats posed by climate change and price instability"
+          }
+        ]
+      },
+      "displayOrder": 1,
+      "questionCodes": ["IELTS-READ-081", "IELTS-READ-082", "IELTS-READ-083", "IELTS-READ-084"]
+    },
+    {
+      "groupCode": "QG-READ-003-02",
+      "passageCode": "PAS-READ-007",
+      "title": "Questions 5–8",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "instructions": "Do the following statements agree with the information given in Reading Passage 1? Write TRUE if the statement agrees with the information, FALSE if the statement contradicts the information, or NOT GIVEN if there is no information on this.",
+      "contentTitle": "",
+      "contentType": "NONE",
+      "sharedData": {},
+      "displayOrder": 2,
+      "questionCodes": ["IELTS-READ-085", "IELTS-READ-086", "IELTS-READ-087", "IELTS-READ-088"]
+    },
+    {
+      "groupCode": "QG-READ-003-03",
+      "passageCode": "PAS-READ-007",
+      "title": "Questions 9–10",
+      "questionType": "MULTIPLE_CHOICE",
+      "instructions": "Choose the correct letter, A, B, C, or D.",
+      "contentTitle": "Multiple Choice",
+      "contentType": "OPTIONS",
+      "sharedData": {},
+      "displayOrder": 3,
+      "questionCodes": ["IELTS-READ-089", "IELTS-READ-090"]
+    },
+    {
+      "groupCode": "QG-READ-003-04",
+      "passageCode": "PAS-READ-007",
+      "title": "Questions 11–12",
+      "questionType": "COMPLETION",
+      "instructions": "Complete the sentences below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "contentTitle": "Sentence Completion",
+      "contentType": "COMPLETION",
+      "sharedData": {
+        "maxWords": 2
+      },
+      "displayOrder": 4,
+      "questionCodes": ["IELTS-READ-091", "IELTS-READ-092"]
+    },
+    {
+      "groupCode": "QG-READ-003-05",
+      "passageCode": "PAS-READ-007",
+      "title": "Question 13",
+      "questionType": "SHORT_ANSWER",
+      "instructions": "Answer the question below. Use NO MORE THAN THREE WORDS from the passage.",
+      "contentTitle": "Short Answer",
+      "contentType": "SHORT_ANSWER",
+      "sharedData": {
+        "maxWords": 3
+      },
+      "displayOrder": 5,
+      "questionCodes": ["IELTS-READ-093"]
+    },
+    {
+      "groupCode": "QG-READ-003-06",
+      "passageCode": "PAS-READ-008",
+      "title": "Questions 14–17",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "instructions": "Do the following statements agree with the views of the writer in Reading Passage 2? Write YES if the statement agrees with the views of the writer, NO if the statement contradicts the views of the writer, or NOT GIVEN if it is impossible to say what the writer thinks about this.",
+      "contentTitle": "",
+      "contentType": "NONE",
+      "sharedData": {},
+      "displayOrder": 6,
+      "questionCodes": ["IELTS-READ-094", "IELTS-READ-095", "IELTS-READ-096", "IELTS-READ-097"]
+    },
+    {
+      "groupCode": "QG-READ-003-07",
+      "passageCode": "PAS-READ-008",
+      "title": "Questions 18–20",
+      "questionType": "MULTIPLE_CHOICE",
+      "instructions": "Choose the correct letter, A, B, C, or D.",
+      "contentTitle": "Multiple Choice",
+      "contentType": "OPTIONS",
+      "sharedData": {},
+      "displayOrder": 7,
+      "questionCodes": ["IELTS-READ-098", "IELTS-READ-099", "IELTS-READ-100"]
+    },
+    {
+      "groupCode": "QG-READ-003-08",
+      "passageCode": "PAS-READ-008",
+      "title": "Questions 21–23",
+      "questionType": "MATCHING_INFORMATION",
+      "instructions": "Reading Passage 2 has seven paragraphs, A–G. Which paragraph contains the following information? Choose the correct letter, A–G.",
+      "contentTitle": "Paragraphs A–G",
+      "contentType": "PARAGRAPH_LIST",
+      "sharedData": {
+        "paragraphs": ["A", "B", "C", "D", "E", "F", "G"]
+      },
+      "displayOrder": 8,
+      "questionCodes": ["IELTS-READ-101", "IELTS-READ-102", "IELTS-READ-103"]
+    },
+    {
+      "groupCode": "QG-READ-003-09",
+      "passageCode": "PAS-READ-008",
+      "title": "Questions 24–26",
+      "questionType": "COMPLETION",
+      "instructions": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "contentTitle": "Summary Completion",
+      "contentType": "COMPLETION",
+      "sharedData": {
+        "maxWords": 2
+      },
+      "displayOrder": 9,
+      "questionCodes": ["IELTS-READ-104", "IELTS-READ-105", "IELTS-READ-106"]
+    },
+    {
+      "groupCode": "QG-READ-003-10",
+      "passageCode": "PAS-READ-009",
+      "title": "Questions 27–29",
+      "questionType": "MULTIPLE_CHOICE",
+      "instructions": "Choose the correct letter, A, B, C, or D.",
+      "contentTitle": "Multiple Choice",
+      "contentType": "OPTIONS",
+      "sharedData": {},
+      "displayOrder": 10,
+      "questionCodes": ["IELTS-READ-107", "IELTS-READ-108", "IELTS-READ-109"]
+    },
+    {
+      "groupCode": "QG-READ-003-11",
+      "passageCode": "PAS-READ-009",
+      "title": "Questions 30–32",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "instructions": "Do the following statements agree with the information given in Reading Passage 3? Write TRUE if the statement agrees with the information, FALSE if the statement contradicts the information, or NOT GIVEN if there is no information on this.",
+      "contentTitle": "",
+      "contentType": "NONE",
+      "sharedData": {},
+      "displayOrder": 11,
+      "questionCodes": ["IELTS-READ-110", "IELTS-READ-111", "IELTS-READ-112"]
+    },
+    {
+      "groupCode": "QG-READ-003-12",
+      "passageCode": "PAS-READ-009",
+      "title": "Questions 33–35",
+      "questionType": "MATCHING_INFORMATION",
+      "instructions": "Look at the following statements and match each with the correct paragraph, A–G, from Reading Passage 3. Choose the correct letter for each statement.",
+      "contentTitle": "Paragraphs A–G",
+      "contentType": "PARAGRAPH_LIST",
+      "sharedData": {
+        "paragraphs": ["A", "B", "C", "D", "E", "F", "G"]
+      },
+      "displayOrder": 12,
+      "questionCodes": ["IELTS-READ-113", "IELTS-READ-114", "IELTS-READ-115"]
+    },
+    {
+      "groupCode": "QG-READ-003-13",
+      "passageCode": "PAS-READ-009",
+      "title": "Questions 36–40",
+      "questionType": "COMPLETION",
+      "instructions": "Complete the notes below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "contentTitle": "Universal Basic Income: Key Debates",
+      "contentType": "NOTE_COMPLETION",
+      "sharedData": {
+        "maxWords": 2
+      },
+      "displayOrder": 13,
+      "questionCodes": [
+        "IELTS-READ-116",
+        "IELTS-READ-117",
+        "IELTS-READ-118",
+        "IELTS-READ-119",
+        "IELTS-READ-120"
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "questionCode": "IELTS-READ-081",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-01",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Paragraph B",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["iii"],
+      "correctAnswer": "iii",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph B describes how the export monopoly on coffee seeds was eventually broken through smuggling and diplomacy."
+    },
+    {
+      "questionCode": "IELTS-READ-082",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-01",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Paragraph C",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["v"],
+      "correctAnswer": "v",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C discusses Brazil's rise to dominance and the reliance of plantations on enslaved or coerced labour."
+    },
+    {
+      "questionCode": "IELTS-READ-083",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-01",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Paragraph E",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["vii"],
+      "correctAnswer": "vii",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph E focuses on climate change and price volatility as major challenges facing the coffee industry."
+    },
+    {
+      "questionCode": "IELTS-READ-084",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-01",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Paragraph F",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["iv"],
+      "correctAnswer": "iv",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph F discusses certification schemes such as fair trade aimed at securing better outcomes for farmers."
+    },
+    {
+      "questionCode": "IELTS-READ-085",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-02",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Authorities in the Arabian Peninsula tried to prevent the export of fertile coffee seeds for a period of roughly two centuries.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["TRUE"],
+      "correctAnswer": "TRUE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph B states that the coffee plant remained confined to the Arabian Peninsula for roughly two centuries because authorities generally prohibited the export of fertile seeds."
+    },
+    {
+      "questionCode": "IELTS-READ-086",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-02",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Brazil became the world's leading coffee producer during the nineteenth century and remains the leading producer today.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["TRUE"],
+      "correctAnswer": "TRUE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C states that Brazil emerged during the nineteenth century as the world's dominant coffee producer and retains that position today."
+    },
+    {
+      "questionCode": "IELTS-READ-087",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-02",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Robusta beans generally sell for a higher market price than arabica beans.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE"],
+      "correctAnswer": "FALSE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph D states that arabica beans typically command a substantially higher market price than robusta."
+    },
+    {
+      "questionCode": "IELTS-READ-088",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-02",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "All certification schemes have been proven to significantly increase farmer income.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE"],
+      "correctAnswer": "FALSE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph F says evidence about certification effectiveness remains genuinely mixed."
+    },
+    {
+      "questionCode": "IELTS-READ-089",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-03",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "According to Paragraph D, why is arabica coffee typically grown at higher elevations?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "Higher elevations reduce the cost of land."
+        },
+        {
+          "code": "B",
+          "text": "Cooler temperatures slow cherry ripening in ways believed to improve flavour."
+        },
+        {
+          "code": "C",
+          "text": "Robusta cannot be grown at any elevation."
+        },
+        {
+          "code": "D",
+          "text": "Pests are entirely absent at high elevations."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph D explains that cooler temperatures at higher elevations slow cherry ripening and are widely believed to contribute to a more nuanced flavour profile."
+    },
+    {
+      "questionCode": "IELTS-READ-090",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-03",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What does Paragraph F suggest about certification schemes such as fair trade?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["C"],
+      "correctAnswer": "C",
+      "options": [
+        {
+          "code": "A",
+          "text": "They have been shown to have no effect whatsoever on farmer income."
+        },
+        {
+          "code": "B",
+          "text": "Their benefits are consistently large across all certified regions."
+        },
+        {
+          "code": "C",
+          "text": "Evidence about their effectiveness is mixed, and they do not address every structural challenge farmers face."
+        },
+        {
+          "code": "D",
+          "text": "They have eliminated the need for farmers to access credit."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph F states that evidence is genuinely mixed and that certification addresses only part of the broader structural challenges facing smallholder farmers."
+    },
+    {
+      "questionCode": "IELTS-READ-091",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-04",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "Coffee plantations in many colonial territories depended heavily on enslaved or ______ labour.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["coerced"],
+      "correctAnswer": "coerced",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C states that plantations depended heavily on enslaved or coerced labour."
+    },
+    {
+      "questionCode": "IELTS-READ-092",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-04",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "Researchers have projected that land currently suitable for arabica cultivation may become unsuitable due to ______.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["climate change"],
+      "correctAnswer": "climate change",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph E identifies climate change as perhaps the most serious long-term threat to land suitable for arabica cultivation."
+    },
+    {
+      "questionCode": "IELTS-READ-093",
+      "passageCode": "PAS-READ-007",
+      "groupCode": "QG-READ-003-05",
+      "section": "Reading",
+      "questionType": "SHORT_ANSWER",
+      "questionText": "Besides expanding consumption in producing regions, what else is driving continued growth in global coffee demand?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["new consumer markets"],
+      "correctAnswer": "new consumer markets",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph G identifies the emergence of new consumer markets in parts of Asia as another driver of coffee demand growth."
+    },
+    {
+      "questionCode": "IELTS-READ-094",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-06",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "Heat-related health risks are distributed evenly across all neighbourhoods within a city.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NO"],
+      "correctAnswer": "NO",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph B states that heat-related health risks tend to be unevenly distributed within cities and correlate with socioeconomic factors."
+    },
+    {
+      "questionCode": "IELTS-READ-095",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-06",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "Green infrastructure that succeeds in one city can automatically be assumed to work equally well in another without adaptation.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NO"],
+      "correctAnswer": "NO",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph E says cooling benefits vary considerably and interventions cannot necessarily be assumed to transfer successfully without local adaptation."
+    },
+    {
+      "questionCode": "IELTS-READ-096",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-06",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "Structural, heat-sensitive design measures are easier to implement in new developments than to retrofit into existing cities.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["YES"],
+      "correctAnswer": "YES",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph F states that structural measures are considerably more difficult to retrofit into existing cities than to incorporate into new developments."
+    },
+    {
+      "questionCode": "IELTS-READ-097",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-06",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "A single intervention, applied on its own, is likely to fully resolve the urban heat island effect.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NO"],
+      "correctAnswer": "NO",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph G states that no single intervention is likely to resolve the urban heat island effect in isolation."
+    },
+    {
+      "questionCode": "IELTS-READ-098",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-07",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "According to Paragraph A, which factor contributes to the urban heat island effect by restricting the flow of cooling air?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "The scarcity of open water"
+        },
+        {
+          "code": "B",
+          "text": "The geometry of densely built environments"
+        },
+        {
+          "code": "C",
+          "text": "Waste heat from vehicles"
+        },
+        {
+          "code": "D",
+          "text": "The absorption properties of asphalt"
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph A states that the geometry of densely built environments traps heat between tall buildings and restricts natural circulation of cooling breezes."
+    },
+    {
+      "questionCode": "IELTS-READ-099",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-07",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What does Paragraph B suggest about the distribution of heat-related health risk within cities?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "It affects all income groups in exactly the same way."
+        },
+        {
+          "code": "B",
+          "text": "It tends to correlate with socioeconomic factors such as tree cover and surface type."
+        },
+        {
+          "code": "C",
+          "text": "It is unrelated to historical urban planning decisions."
+        },
+        {
+          "code": "D",
+          "text": "It primarily affects tourists rather than residents."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph B links uneven heat-related health risk to socioeconomic factors including tree cover and heat-absorbing surfaces."
+    },
+    {
+      "questionCode": "IELTS-READ-100",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-07",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "Why do reflective or \"cool\" roofing materials offer a comparatively rapid solution, according to Paragraph D?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "They are cheaper than tree-planting programmes."
+        },
+        {
+          "code": "B",
+          "text": "They can often be applied to existing surfaces without the lengthy establishment period trees require."
+        },
+        {
+          "code": "C",
+          "text": "They eliminate the need for air conditioning entirely."
+        },
+        {
+          "code": "D",
+          "text": "They require no maintenance once installed."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph D says reflective materials can often be resurfaced or coated without the lengthy establishment period required by vegetation."
+    },
+    {
+      "questionCode": "IELTS-READ-101",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-08",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "A description of how elevated urban temperatures can strain electricity grids",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["C"],
+      "correctAnswer": "C",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C explains that higher temperatures increase air-conditioning demand and electricity consumption when grids are already under strain."
+    },
+    {
+      "questionCode": "IELTS-READ-102",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-08",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "An explanation of why isolating the economic impact of heat from other factors is methodologically difficult",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["C"],
+      "correctAnswer": "C",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C states that quantifying the economic effects of heat is methodologically difficult because other seasonal factors must be controlled."
+    },
+    {
+      "questionCode": "IELTS-READ-103",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-08",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "A description of the additional benefits, beyond cooling, offered by green roofs",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["E"],
+      "correctAnswer": "E",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph E describes additional benefits of green roofs including improved stormwater management and habitat provision for urban wildlife."
+    },
+    {
+      "questionCode": "IELTS-READ-104",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-09",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "Cities tend to be warmer than surrounding rural areas largely because materials such as asphalt and concrete absorb solar radiation and release it after ______.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["sunset"],
+      "correctAnswer": "sunset",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph A states that asphalt and concrete absorb solar radiation during the day and release it gradually after sunset."
+    },
+    {
+      "questionCode": "IELTS-READ-105",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-09",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "This effect is worsened by a lack of vegetation, since plants and open water cool the air through a process called ______.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["evapotranspiration"],
+      "correctAnswer": "evapotranspiration",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph A names evapotranspiration as the cooling process associated with vegetation and open water."
+    },
+    {
+      "questionCode": "IELTS-READ-106",
+      "passageCode": "PAS-READ-008",
+      "groupCode": "QG-READ-003-09",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "Effective mitigation appears to require combining several strategies within a coordinated planning framework that accounts for the ______ distribution of heat-related risk across neighbourhoods.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["uneven"],
+      "correctAnswer": "uneven",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph G refers to the uneven distribution of heat-related risk across different neighbourhoods."
+    },
+    {
+      "questionCode": "IELTS-READ-107",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-10",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "According to Paragraph A, what is one criticism of existing welfare systems mentioned by the writer?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "They provide payments that are too generous."
+        },
+        {
+          "code": "B",
+          "text": "They can discourage employment due to the abrupt withdrawal of benefits above certain income thresholds."
+        },
+        {
+          "code": "C",
+          "text": "They are entirely unrelated to concerns about automation."
+        },
+        {
+          "code": "D",
+          "text": "They have already been replaced by universal basic income in most countries."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph A says existing welfare systems may discourage employment because benefits can be withdrawn abruptly once earnings exceed certain thresholds."
+    },
+    {
+      "questionCode": "IELTS-READ-108",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-10",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "According to Paragraph B, how might a guaranteed income floor affect workers' negotiating position?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "It would eliminate the need for employment contracts."
+        },
+        {
+          "code": "B",
+          "text": "It could increase bargaining power by reducing workers' fear of destitution."
+        },
+        {
+          "code": "C",
+          "text": "It would require employers to raise wages by law."
+        },
+        {
+          "code": "D",
+          "text": "It would have no effect on employment negotiations."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph B states that a guaranteed income floor could give workers greater bargaining power because the threat of destitution would be reduced."
+    },
+    {
+      "questionCode": "IELTS-READ-109",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-10",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What methodological limitation of basic income pilot programmes is described in Paragraph D?",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "options": [
+        {
+          "code": "A",
+          "text": "Pilots have never included randomly selected participants."
+        },
+        {
+          "code": "B",
+          "text": "Participants' awareness that payments are temporary may cause them to behave differently than under a permanent scheme."
+        },
+        {
+          "code": "C",
+          "text": "Pilot programmes have consistently shown large reductions in employment."
+        },
+        {
+          "code": "D",
+          "text": "No pilot programmes have ever measured wellbeing or mental health."
+        }
+      ],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph D explains that participants who know payments will eventually cease may behave differently from people receiving a genuinely permanent programme."
+    },
+    {
+      "questionCode": "IELTS-READ-110",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-11",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "A large-scale, permanent universal basic income programme has already been implemented in at least one country.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE"],
+      "correctAnswer": "FALSE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph D states that large-scale, permanent implementation of universal basic income has not yet occurred anywhere in the world."
+    },
+    {
+      "questionCode": "IELTS-READ-111",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-11",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Economists agree unanimously on how a universal basic income programme should be financed.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE"],
+      "correctAnswer": "FALSE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C states that the financing consequences remain contested among economists."
+    },
+    {
+      "questionCode": "IELTS-READ-112",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-11",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Negative income tax schemes gradually reduce the payment as a recipient's earned income increases.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["TRUE"],
+      "correctAnswer": "TRUE",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph E states that the negative income tax payment is gradually withdrawn as earned income rises."
+    },
+    {
+      "questionCode": "IELTS-READ-113",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-12",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "A description of disagreement over the fundamental purpose that basic income is meant to serve",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["F"],
+      "correctAnswer": "F",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph F describes disagreement over what problem basic income is actually intended to solve."
+    },
+    {
+      "questionCode": "IELTS-READ-114",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-12",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "An explanation of a specific alternative policy that gradually withdraws payments as income rises",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["E"],
+      "correctAnswer": "E",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph E describes negative income tax as a policy in which payments are gradually withdrawn as earned income rises."
+    },
+    {
+      "questionCode": "IELTS-READ-115",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-12",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "A concern that funding a universal payment would likely require substantial tax increases or cuts to existing welfare programmes",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["C"],
+      "correctAnswer": "C",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C states that funding would require substantial tax increases, elimination of existing welfare programmes, or a combination."
+    },
+    {
+      "questionCode": "IELTS-READ-116",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "Supporters argue basic income could reduce poverty without requiring recipients to navigate complex ______ requirements.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["eligibility"],
+      "correctAnswer": "eligibility",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph B refers to bureaucratic eligibility requirements that basic income would avoid."
+    },
+    {
+      "questionCode": "IELTS-READ-117",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "Critics worry that guaranteed income could reduce ______ by lowering the immediate financial need to work.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["workforce participation"],
+      "correctAnswer": "workforce participation",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph C states that guaranteed income could meaningfully reduce workforce participation."
+    },
+    {
+      "questionCode": "IELTS-READ-118",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "Pilot programmes are limited because participants know payments are ______, which may affect their behaviour.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["time-limited"],
+      "correctAnswer": "time-limited",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph D describes pilots as time-limited trials in which payments eventually cease."
+    },
+    {
+      "questionCode": "IELTS-READ-119",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "A negative income tax gradually withdraws payments as a recipient's ______ rises.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["earned income"],
+      "correctAnswer": "earned income",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph E states that the payment is withdrawn as earned income rises."
+    },
+    {
+      "questionCode": "IELTS-READ-120",
+      "passageCode": "PAS-READ-009",
+      "groupCode": "QG-READ-003-13",
+      "section": "Reading",
+      "questionType": "COMPLETION",
+      "questionText": "Disagreement over the policy's underlying ______ has made designing conclusive evaluation criteria more difficult.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["rationale"],
+      "correctAnswer": "rationale",
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "Paragraph F refers to disagreement over the policy's underlying rationale."
+    }
+  ]
+}
