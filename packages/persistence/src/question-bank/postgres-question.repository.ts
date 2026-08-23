@@ -48,6 +48,14 @@ export class PostgresQuestionRepository implements QuestionRepository {
       }
 
       // 1. Save core question row
+      const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const tenantId =
+        question.tenantId &&
+        typeof question.tenantId === 'string' &&
+        UUID_REGEX.test(question.tenantId.trim())
+          ? question.tenantId.trim()
+          : '00000000-0000-0000-0000-000000000000';
+
       await client.query(
         `
         INSERT INTO public.questions (id, code, parent_question_id, current_version_id, status, tenant_id, lock_version, updated_at)
@@ -56,8 +64,10 @@ export class PostgresQuestionRepository implements QuestionRepository {
           parent_question_id = EXCLUDED.parent_question_id,
           current_version_id = EXCLUDED.current_version_id,
           status = EXCLUDED.status,
+          tenant_id = EXCLUDED.tenant_id,
           lock_version = public.questions.lock_version + 1,
           updated_at = now()
+        WHERE public.questions.tenant_id = EXCLUDED.tenant_id OR public.questions.tenant_id = '00000000-0000-0000-0000-000000000000'::uuid
       `,
         [
           question.id,
@@ -65,7 +75,7 @@ export class PostgresQuestionRepository implements QuestionRepository {
           question.parentQuestionId,
           question.currentVersionId,
           question.status.value,
-          question.tenantId,
+          tenantId,
           question.lockVersion,
         ]
       );

@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
-import { getAuthenticatedSession } from '@/lib/auth-util';
+import { getAuthenticatedSession, isValidTenantUuid } from '@/lib/auth-util';
 import { CanonicalJsonImporterRepository } from '@clasptek/persistence';
 
 export async function POST(req: NextRequest) {
@@ -16,13 +16,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
+    const tenantId = session?.tenantId;
+    if (!tenantId || !isValidTenantUuid(tenantId)) {
+      return NextResponse.json(
+        {
+          error: 'INVALID_TENANT_CONTEXT',
+          message: 'A valid authorized tenant context is required for Question Bank import.',
+          referenceCode: 'INVALID_TENANT_CONTEXT',
+          failingOperation: 'RESOLVE_TENANT_CONTEXT',
+        },
+        { status: 400 }
+      );
+    }
+
     const body = await req.json();
     const payload = body.payload || body;
 
     const { dbPool } = await getDiagnosticContext();
     const importerRepo = new CanonicalJsonImporterRepository(dbPool.getPool());
 
-    const result = await importerRepo.importJsonBatch(payload, session?.userId || 'admin-user');
+    const result = await importerRepo.importJsonBatch(
+      payload,
+      session?.userId || 'admin-user',
+      tenantId
+    );
 
     return NextResponse.json({
       success: true,
@@ -32,20 +49,29 @@ export async function POST(req: NextRequest) {
     });
   } catch (err: any) {
     console.error('[IMPORT COMMIT FAILED]:', err);
+    const isTenantError =
+      err.failingOperation === 'RESOLVE_TENANT_CONTEXT' ||
+      err.message?.includes('INVALID_TENANT_CONTEXT') ||
+      err.message?.includes('tenant context');
+
     return NextResponse.json(
       {
         success: false,
-        error:
-          err.message ||
-          'The Question Bank could not complete this import. No questions were committed.',
-        referenceCode: 'IMPORT_COMMIT_FAILED',
+        error: isTenantError
+          ? 'INVALID_TENANT_CONTEXT'
+          : err.message ||
+            'The Question Bank could not complete this import. No questions were committed.',
+        message: isTenantError
+          ? 'A valid authorized tenant context is required for Question Bank import.'
+          : err.message,
+        referenceCode: isTenantError ? 'INVALID_TENANT_CONTEXT' : 'IMPORT_COMMIT_FAILED',
         errorType: err.code || err.name || 'DATABASE_ERROR',
         dbMessage: err.detail || err.message,
         failingOperation: err.failingOperation || 'IMPORT_COMMIT',
         failingRecord: err.failingRecord || null,
         details: err.message,
       },
-      { status: 500 }
+      { status: isTenantError ? 400 : 500 }
     );
   }
 }

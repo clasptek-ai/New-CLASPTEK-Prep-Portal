@@ -835,10 +835,23 @@ export class CanonicalJsonImporterRepository {
 
   public async importJsonBatch(
     rawPayload: any,
-    uploadedBy: string = 'admin-001'
+    uploadedBy: string = 'admin-001',
+    tenantId?: string
   ): Promise<{ batchId: string; batchCode: string; importedCount: number }> {
     let currentStep = 'VALIDATION';
     let currentRecord: any = null;
+
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!tenantId || typeof tenantId !== 'string' || !UUID_REGEX.test(tenantId.trim())) {
+      const tenantErr: any = new Error(
+        'A valid authorized tenant context (UUID) is required for Question Bank import.'
+      );
+      tenantErr.failingOperation = 'RESOLVE_TENANT_CONTEXT';
+      tenantErr.failingRecord = null;
+      tenantErr.referenceCode = 'INVALID_TENANT_CONTEXT';
+      throw tenantErr;
+    }
+    const resolvedTenantId = tenantId.trim();
 
     const normalized = this.normalizePayload(rawPayload);
     const validation = this.validateJsonPayload(rawPayload);
@@ -896,12 +909,13 @@ export class CanonicalJsonImporterRepository {
         currentRecord = p.passageCode;
         const pRes = await client.query(
           `INSERT INTO public.reading_passages 
-           (id, code, title, content, exam_type, section, source, word_count, status, created_at, updated_at)
-           VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, 'published', now(), now())
+           (id, code, title, content, exam_type, section, source, word_count, status, tenant_id, created_at, updated_at)
+           VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, 'published', $8, now(), now())
            ON CONFLICT (code) DO UPDATE SET
              title = EXCLUDED.title,
              content = EXCLUDED.content,
              word_count = EXCLUDED.word_count,
+             tenant_id = EXCLUDED.tenant_id,
              updated_at = now()
            RETURNING id, code`,
           [
@@ -912,6 +926,7 @@ export class CanonicalJsonImporterRepository {
             p.section,
             p.source || 'Clasptek Question Bank',
             p.wordCount,
+            resolvedTenantId,
           ]
         );
         if (pRes.rows.length > 0) {
@@ -936,8 +951,8 @@ export class CanonicalJsonImporterRepository {
         const pId = passageIdMap.get(g.passageCode) || null;
         const gRes = await client.query(
           `INSERT INTO public.question_groups
-           (id, code, passage_id, title, instructions, question_type, content_title, content_type, shared_data, display_order, created_at, updated_at)
-           VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, now(), now())
+           (id, code, passage_id, title, instructions, question_type, content_title, content_type, shared_data, display_order, tenant_id, created_at, updated_at)
+           VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, now(), now())
            ON CONFLICT (code) DO UPDATE SET
              passage_id = EXCLUDED.passage_id,
              title = EXCLUDED.title,
@@ -947,6 +962,7 @@ export class CanonicalJsonImporterRepository {
              content_type = EXCLUDED.content_type,
              shared_data = EXCLUDED.shared_data,
              display_order = EXCLUDED.display_order,
+             tenant_id = EXCLUDED.tenant_id,
              updated_at = now()
            RETURNING id, code`,
           [
@@ -959,6 +975,7 @@ export class CanonicalJsonImporterRepository {
             g.contentType || null,
             JSON.stringify(g.sharedData || {}),
             g.displayOrder || 1,
+            resolvedTenantId,
           ]
         );
         if (gRes.rows.length > 0) {
@@ -993,10 +1010,8 @@ export class CanonicalJsonImporterRepository {
           const gId = q.groupCode ? groupIdMap.get(q.groupCode) || null : null;
 
           const base = qParams.length;
-          qClauses.push(
-            `($${base + 1}, $${base + 2}, now(), $${base + 3}, '00000000-0000-0000-0000-000000000000'::uuid)`
-          );
-          qParams.push(qId, code, batchId);
+          qClauses.push(`($${base + 1}, $${base + 2}, now(), $${base + 3}, $${base + 4})`);
+          qParams.push(qId, code, batchId, resolvedTenantId);
 
           preparedItems.push({
             qId,
@@ -1029,7 +1044,10 @@ export class CanonicalJsonImporterRepository {
           `INSERT INTO public.questions (id, code, created_at, import_batch_id, tenant_id)
            VALUES ${qClauses.join(', ')}
            ON CONFLICT (code) WHERE deleted_at IS NULL 
-           DO UPDATE SET import_batch_id = EXCLUDED.import_batch_id, updated_at = now()
+           DO UPDATE SET
+             import_batch_id = EXCLUDED.import_batch_id,
+             tenant_id = EXCLUDED.tenant_id,
+             updated_at = now()
            RETURNING id, code`,
           qParams
         );

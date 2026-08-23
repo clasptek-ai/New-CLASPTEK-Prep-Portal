@@ -1136,6 +1136,7 @@ export {
 export { PostgresQuestionRepository } from './question-bank/postgres-question.repository';
 export { PostgresQuestionReviewRepository } from './question-bank/postgres-question-review.repository';
 export { PostgresQuestionImportRepository } from './question-bank/postgres-question-import.repository';
+export { CanonicalJsonImporterRepository } from './question-bank/canonical-json-importer.repository';
 
 // ═══════════════════════════════════════════════════════════════════
 // STUDENT LEARNING JOURNEY — PERSISTENCE REPOSITORIES
@@ -7598,10 +7599,7 @@ export class PostgresReadinessStateSnapshotRepository implements AppReadinessSna
 
   public async findById(id: string): Promise<ReadinessStateSnapshot | null> {
     const pool = this.dbPool.getPool();
-    const res = await pool.query(
-      `SELECT * FROM readiness_snapshots WHERE id = $1`,
-      [id]
-    );
+    const res = await pool.query(`SELECT * FROM readiness_snapshots WHERE id = $1`, [id]);
     if (res.rows.length === 0) return null;
     const r = res.rows[0];
     return new ReadinessStateSnapshot({

@@ -3,11 +3,69 @@ import { createSupabaseServerClient } from '@clasptek/persistence';
 import { cookies } from 'next/headers';
 import { getAuthContext } from './auth-context';
 
+export const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const CANONICAL_SYSTEM_TENANT_ID = '00000000-0000-0000-0000-000000000000';
+
 export interface AuthenticatedSession {
   userId: string;
   profileId: string;
   roles: string[];
   tenantId?: string;
+}
+
+export function isValidTenantUuid(tenantId?: string | null): boolean {
+  if (!tenantId || typeof tenantId !== 'string') return false;
+  return UUID_REGEX.test(tenantId.trim());
+}
+
+export function resolveAuthorizedTenant(
+  user: any,
+  roleNames: string[],
+  requestedHeaderTenant?: string | null
+): string | undefined {
+  const isStaffOrAdmin = roleNames.some((r) =>
+    ['ADMINISTRATOR', 'ADMIN', 'INSTRUCTOR', 'STAFF'].includes(r.toUpperCase())
+  );
+  const isSuperAdmin = roleNames.some((r) => ['ADMINISTRATOR', 'ADMIN'].includes(r.toUpperCase()));
+
+  const appTenant = user?.app_metadata?.tenant_id || user?.app_metadata?.tenantId;
+  const userMetaTenant = user?.user_metadata?.tenant_id || user?.user_metadata?.tenantId;
+  const headerTenant = requestedHeaderTenant ? requestedHeaderTenant.trim() : null;
+
+  // 1. If trusted app_metadata tenant_id exists and is valid
+  if (isValidTenantUuid(appTenant)) {
+    const validAppTenant = appTenant.trim();
+    if (headerTenant && isValidTenantUuid(headerTenant)) {
+      if (headerTenant.toLowerCase() === validAppTenant.toLowerCase()) {
+        return validAppTenant;
+      }
+      // Only superadmin can switch to another validated tenant via header
+      if (isSuperAdmin) {
+        return headerTenant;
+      }
+      // Non-superadmin cannot supply arbitrary x-tenant-id; enforce appTenant
+      return validAppTenant;
+    }
+    return validAppTenant;
+  }
+
+  // 2. If staff/admin with explicit valid header
+  if (isStaffOrAdmin && headerTenant && isValidTenantUuid(headerTenant)) {
+    return headerTenant;
+  }
+
+  // 3. If user_metadata contains valid tenant UUID
+  if (isValidTenantUuid(userMetaTenant)) {
+    return userMetaTenant.trim();
+  }
+
+  // 4. If staff/admin operating in system context
+  if (isStaffOrAdmin) {
+    return CANONICAL_SYSTEM_TENANT_ID;
+  }
+
+  // 5. Default fallback for standard registered user in system context
+  return CANONICAL_SYSTEM_TENANT_ID;
 }
 
 export async function getAuthenticatedSession(
@@ -112,10 +170,15 @@ export async function getAuthenticatedSession(
       }
     }
 
+    // 5. Resolve authorized tenant
+    const requestedTenantHeader = req.headers.get('x-tenant-id');
+    const resolvedTenantId = resolveAuthorizedTenant(user, roleNames, requestedTenantHeader);
+
     return {
       userId: user.id,
       profileId: 'profile-' + user.id,
       roles: roleNames,
+      tenantId: resolvedTenantId,
     };
   } catch (err: any) {
     console.error('getAuthenticatedSession error:', err);

@@ -211,8 +211,32 @@ export async function GET(req: NextRequest) {
   }
 }
 
+import { getAuthenticatedSession, isValidTenantUuid } from '@/lib/auth-util';
+
 export async function POST(req: NextRequest) {
   try {
+    const session = await getAuthenticatedSession(req);
+    const isStaff = session?.roles.some((r) =>
+      ['ADMINISTRATOR', 'ADMIN', 'INSTRUCTOR', 'STAFF'].includes(r.toUpperCase())
+    );
+
+    if (!isStaff && process.env.NODE_ENV !== 'development') {
+      return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
+
+    const tenantId = session?.tenantId;
+    if (!tenantId || !isValidTenantUuid(tenantId)) {
+      return NextResponse.json(
+        {
+          error: 'INVALID_TENANT_CONTEXT',
+          message: 'A valid authorized tenant context is required to create questions.',
+          referenceCode: 'INVALID_TENANT_CONTEXT',
+          failingOperation: 'RESOLVE_TENANT_CONTEXT',
+        },
+        { status: 400 }
+      );
+    }
+
     const body = await req.json();
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
@@ -246,9 +270,9 @@ export async function POST(req: NextRequest) {
 
       const qRes = await client.query(
         `INSERT INTO public.questions (id, code, status, tenant_id, created_at, updated_at)
-         VALUES (gen_random_uuid(), $1, $2, '00000000-0000-0000-0000-000000000000'::uuid, now(), now())
+         VALUES (gen_random_uuid(), $1, $2, $3, now(), now())
          RETURNING id`,
-        [code, (body.status || 'DRAFT').toLowerCase()]
+        [code, (body.status || 'DRAFT').toLowerCase(), tenantId]
       );
       const questionId = qRes.rows[0].id;
 
@@ -297,6 +321,16 @@ export async function POST(req: NextRequest) {
       client.release();
     }
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: err.message,
+        referenceCode:
+          err.failingOperation === 'RESOLVE_TENANT_CONTEXT'
+            ? 'INVALID_TENANT_CONTEXT'
+            : 'QUESTION_CREATION_FAILED',
+      },
+      { status: err.failingOperation === 'RESOLVE_TENANT_CONTEXT' ? 400 : 500 }
+    );
   }
 }

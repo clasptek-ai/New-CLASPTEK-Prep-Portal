@@ -98,8 +98,8 @@ async function testE2EAssessmentSubmissionPipeline() {
       console.log('   Populating minimal questions to satisfy paper snapshot generation...');
       for (let i = 0; i < 30; i++) {
         const qIdRes = await client.query(
-          `INSERT INTO public.questions (id, code, created_at, updated_at)
-           VALUES (gen_random_uuid(), $1, NOW(), NOW()) RETURNING id`,
+          `INSERT INTO public.questions (id, code, tenant_id, created_at, updated_at)
+           VALUES (gen_random_uuid(), $1, '00000000-0000-0000-0000-000000000000'::uuid, NOW(), NOW()) RETURNING id`,
           [`Q-TEST-${i + 1}`]
         );
         const qId = qIdRes.rows[0].id;
