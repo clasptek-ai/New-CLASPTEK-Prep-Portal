@@ -1,0 +1,832 @@
+{
+  "schemaVersion": "1.0",
+  "examType": "IELTS Academic",
+  "assessmentUsages": ["PRACTICE"],
+  "metadata": {
+    "title": "IELTS Academic Reading Practice Test 2",
+    "testNumber": 2,
+    "difficulty": "INTERMEDIATE",
+    "totalQuestions": 40,
+    "timeMinutes": 60,
+    "source": "CLASPTEK Official IELTS Content Repository",
+    "version": "1.0"
+  },
+  "passages": [
+    {
+      "passageCode": "PAS-READ-004",
+      "title": "The Architecture of Termite Mounds and Biomimetic Engineering",
+      "section": "Reading",
+      "examType": "IELTS Academic",
+      "wordCount": 840,
+      "content": "Termite mounds are among the most intricate bio-architectural structures on Earth. Built primarily by Macrotermes bellicosus in sub-Saharan Africa, these towering structures of soil, saliva, and digested wood can reach heights of up to eight meters. Despite extreme external temperature fluctuations that can swing between 40°C during daylight hours and below 2°C at night, the core temperature within the mound remains remarkably constant at approximately 30°C. For decades, entomologists and architects hypothesized that the mounds functioned as passive air-conditioning systems driven purely by convective air currents—a theory famously popularised by biologist Martin Lüscher in the 1960s.\n\nAccording to the classical convective model, metabolic heat produced by millions of termites and their subterranean fungus gardens generates a rising plume of warm, carbon-dioxide-rich air through a central chimney. As this air rises, cooler air is pulled into lateral tunnels near the base of the mound. However, recent micro-sensor telemetry conducted by Scott Turner and J. Scott has challenged this tidy paradigm. Turner discovered that mound walls are semi-permeable membranes that breathe in response to turbulent wind fluctuations on the exterior, creating an oscillatory tidal flow analogous to human pulmonary respiration.\n\nThe architectural implications of these findings are profound. In Harare, Zimbabwe, architect Mick Pearce collaborated with engineering firm Arup to construct the Eastgate Centre, a mid-rise commercial complex inspired by termite thermodynamics. The building has no conventional active heating or air-conditioning system. Instead, it relies on high thermal mass concrete, floor-level vents, and rooftop chimneys that utilise nocturnal cool air to purge heat accumulated during the working day. As a result, the Eastgate Centre consumes over 35 percent less energy than conventional Zimbabwean office towers, saving millions of dollars in capital expenditure and operating overheads.\n\nBuilding upon Pearce's breakthrough, contemporary sustainable architects are exploring adaptive building envelopes that mimic the porous, breathing walls of Macrotermes mounds. By integrating 3D-printed porous clay tiles and fluidic oscillators, modern structures can regulate internal humidity and carbon dioxide without electro-mechanical fans. This bio-inspired paradigm represents a shift from mechanical energy-intensive climate control toward dynamic, responsive structural thermodynamics."
+    },
+    {
+      "passageCode": "PAS-READ-005",
+      "title": "The Evolution and Ecology of Deep-Sea Hydrothermal Vent Ecosystems",
+      "section": "Reading",
+      "examType": "IELTS Academic",
+      "wordCount": 920,
+      "content": "A. Deep below the photic zone of the world's oceans, along the divergent boundaries of mid-ocean tectonic ridges, hydrothermal vents discharge superheated, mineral-saturated fluids into the abyssal waters. First discovered in 1977 by oceanographers aboard the research submersible Alvin near the Galápagos Rift, these underwater geysers shattered the long-standing biological dogma that all complex life on Earth is fundamentally reliant upon solar irradiance and photosynthetic primary production.\n\nB. The geological genesis of hydrothermal vents is driven by seawater percolating down through fractures in the newly formed oceanic crust. As the water descends toward magmatic chambers several kilometers beneath the seafloor, it is heated to temperatures exceeding 400°C. Under extreme hydrostatic pressure, the fluid remains liquid rather than vaporising. It leaches heavy metals and sulfide minerals from the surrounding basaltic rocks before erupting back into the near-freezing (2°C) deep ocean. The precipitate forms towering mineral structures commonly designated as 'black smokers' or 'white smokers', depending on their mineral chemistry.\n\nC. In this sunless, high-pressure habitat, the bedrock of the food web is chemoautotrophic bacteria and archaea. Rather than harvesting photons, these microorganisms oxidise toxic hydrogen sulfide, methane, and ferrous iron to synthesise organic compounds from dissolved inorganic carbon. This biochemical pathway, termed chemosynthesis, provides the energetic foundation for bizarre and highly endemic faunal communities that exhibit extraordinary physiological adaptations.\n\nD. Chief among these vent specialists is the giant tube worm, Riftia pachyptila. Reaching lengths of up to two meters, Riftia possesses neither a mouth, gut, nor digestive tract. Instead, it harbors billions of endosymbiotic sulfur-oxidising bacteria within a specialised, highly vascularised organ called the trophosome. The worm delivers hydrogen sulfide, oxygen, and carbon dioxide to its symbionts via a unique hemoglobin molecule that can bind sulfide and oxygen simultaneously without suffering sulfide poisoning.\n\nE. Hydrothermal vents are ephemeral environments. Volcanic eruptions, seismic events, or mineral clogging can abruptly terminate fluid flow, causing entire vent colonies to starve within a few years. Conversely, new volcanic rifts open unpredictably elsewhere along the ridge. How sessile and slow-moving organisms colonise newly formed vents separated by hundreds of kilometers of barren abyssal plains remains an active area of biogeographical inquiry. Recent hydrodynamic modeling suggests that buoyant vent plumes generate deep-sea ocean currents that transport pelagic larvae across abyssal gaps.\n\nF. Today, deep-sea hydrothermal vents face unprecedented threats from proposed seabed mining operations. The polymetallic sulfide deposits surrounding active and inactive vents contain lucrative concentrations of copper, gold, silver, zinc, and rare earth elements essential for green energy technologies. Marine conservationists warn that commercial dredging would cause irreversible habitat obliteration, plume sediment toxicity, and genetic fragmentation of evolutionary lineages that have survived undisturbed for hundreds of millions of years."
+    },
+    {
+      "passageCode": "PAS-READ-006",
+      "title": "Machine Learning, Algorithmic Decision-Making, and Human Cognition",
+      "section": "Reading",
+      "examType": "IELTS Academic",
+      "wordCount": 960,
+      "content": "The rapid integration of machine learning algorithms into critical decision-making sectors—including judicial sentencing, credit underwriting, medical diagnostics, and algorithmic governance—has initiated a paradigm shift in human institutional decision-making. Proponents assert that probabilistic algorithmic models eliminate subjective human cognitive biases, such as confirmation bias, fatigue, and affective prejudice. However, cognitive scientists and computational ethicists increasingly argue that replacing human judgment with algorithmic scoring introduces subtle, systemic vulnerabilities that alter human cognitive autonomy and entrench historical inequities.\n\nA primary cognitive consequence of ubiquitous algorithmic assistance is automation bias: the well-documented human propensity to uncritically trust automated suggestions over one's own clinical, legal, or analytical perception. When decision-makers are provided with algorithmic risk assessments or predictive scores, they exhibit significant reluctance to overrule automated recommendations, particularly in high-stakes environments where personal liability is scrutinized. This cognitive deference degrades human domain expertise over time, creating a self-reinforcing reliance where operators become incapable of evaluating anomalous edge cases that fall outside the algorithm's training distribution.\n\nFurthermore, algorithms trained on historical data inevitably reflect and amplify the structural asymmetries embedded within those datasets. When an algorithmic recidivism tool evaluates arrest records, it treats historical policing disparities as objective predictive indicators of future criminality. This creates recursive feedback loops: demographic cohorts identified as higher risk are subjected to disproportionate surveillance, generating higher rates of recorded infractions, which in turn reinforces the model's predictive validity. What appears to be an objective mathematical calculation is, in reality, the codification and institutionalization of historical prejudice.\n\nThe epistemological opacity of modern deep neural networks—frequently referred to as the 'black box' problem—compounds these cognitive and ethical challenges. Unlike traditional decision-tree systems that yield deterministic, interpretable logic trails, multi-layered deep learning architectures generate predictions via billions of non-linear parameter weightings. Consequently, human clinicians or magistrates cannot evaluate the causal reasoning behind an algorithmic output; they are presented merely with a confidence metric. The inability to interrogate the machine's underlying rationale fundamentally undermines procedural justice, informed consent, and deliberative governance.\n\nAddressing these cognitive and structural dilemmas requires a transition from automated decision-making to 'hybrid cognitive systems' that preserve human agency and critical skepticism. Regulatory frameworks such as the European Union's Artificial Intelligence Act emphasize the requirement for meaningful human-in-the-loop oversight, algorithmic explainability, and rigorous pre-deployment adversarial testing. Ultimately, machine learning systems must be designed not as authoritative decision-makers that supplant human discretion, but as cognitive scaffolding that augments human analytical rigor while preserving ethical accountability."
+    }
+  ],
+  "questionGroups": [
+    {
+      "groupCode": "QG-READ-002-01",
+      "passageCode": "PAS-READ-004",
+      "title": "Questions 1–6",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "instructions": "Do the following statements agree with the information given in Reading Passage 1?\nIn boxes 1–6 on your answer sheet, choose:\nTRUE if the statement agrees with the information\nFALSE if the statement contradicts the information\nNOT GIVEN if there is no information on this",
+      "contentType": "STATEMENTS",
+      "displayOrder": 1,
+      "questionCodes": [
+        "IELTS-READ-041",
+        "IELTS-READ-042",
+        "IELTS-READ-043",
+        "IELTS-READ-044",
+        "IELTS-READ-045",
+        "IELTS-READ-046"
+      ]
+    },
+    {
+      "groupCode": "QG-READ-002-02",
+      "passageCode": "PAS-READ-004",
+      "title": "Questions 7–10",
+      "questionType": "NOTE_COMPLETION",
+      "instructions": "Complete the notes below.\nChoose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "contentType": "NOTES",
+      "contentTitle": "Biomimetic Architectural Innovations",
+      "sharedData": {
+        "wordLimit": 2
+      },
+      "displayOrder": 2,
+      "questionCodes": ["IELTS-READ-047", "IELTS-READ-048", "IELTS-READ-049", "IELTS-READ-050"]
+    },
+    {
+      "groupCode": "QG-READ-002-03",
+      "passageCode": "PAS-READ-004",
+      "title": "Questions 11–13",
+      "questionType": "MULTIPLE_CHOICE",
+      "instructions": "Choose the correct letter, A, B, C or D.\nWrite the correct letter in boxes 11–13 on your answer sheet.",
+      "contentType": "MCQ",
+      "displayOrder": 3,
+      "questionCodes": ["IELTS-READ-051", "IELTS-READ-052", "IELTS-READ-053"]
+    },
+    {
+      "groupCode": "QG-READ-002-04",
+      "passageCode": "PAS-READ-005",
+      "title": "Questions 14–19",
+      "questionType": "MATCHING_HEADINGS",
+      "instructions": "Reading Passage 2 has six sections, A–F.\nChoose the correct heading for each section from the list of headings below.\nWrite the correct number, i–viii, in boxes 14–19 on your answer sheet.",
+      "contentType": "HEADINGS_LIST",
+      "contentTitle": "List of Headings",
+      "sharedData": {
+        "headingsList": [
+          {
+            "code": "i",
+            "text": "Geological formation and hydrothermal mechanics"
+          },
+          {
+            "code": "ii",
+            "text": "The discovery that challenged biological dogma"
+          },
+          {
+            "code": "iii",
+            "text": "Ecological dispersal across ocean ridges"
+          },
+          {
+            "code": "iv",
+            "text": "Commercial extraction threats to fragile communities"
+          },
+          {
+            "code": "v",
+            "text": "Chemosynthetic primary production in deep water"
+          },
+          {
+            "code": "vi",
+            "text": "Symbiotic adaptations of specialized megafauna"
+          },
+          {
+            "code": "vii",
+            "text": "Photosynthetic limits in the twilight zone"
+          },
+          {
+            "code": "viii",
+            "text": "Atmospheric pressure variations at sea level"
+          }
+        ]
+      },
+      "displayOrder": 4,
+      "questionCodes": [
+        "IELTS-READ-054",
+        "IELTS-READ-055",
+        "IELTS-READ-056",
+        "IELTS-READ-057",
+        "IELTS-READ-058",
+        "IELTS-READ-059"
+      ]
+    },
+    {
+      "groupCode": "QG-READ-002-05",
+      "passageCode": "PAS-READ-005",
+      "title": "Questions 20–23",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "instructions": "Do the following statements agree with the claims of the writer in Reading Passage 2?\nIn boxes 20–23 on your answer sheet, choose:\nYES if the statement agrees with the claims of the writer\nNO if the statement contradicts the claims of the writer\nNOT GIVEN if it is impossible to say what the writer thinks about this",
+      "contentType": "STATEMENTS",
+      "displayOrder": 5,
+      "questionCodes": ["IELTS-READ-060", "IELTS-READ-061", "IELTS-READ-062", "IELTS-READ-063"]
+    },
+    {
+      "groupCode": "QG-READ-002-06",
+      "passageCode": "PAS-READ-005",
+      "title": "Questions 24–26",
+      "questionType": "SUMMARY_COMPLETION",
+      "instructions": "Complete the summary below.\nChoose ONE WORD ONLY from the passage for each answer.",
+      "contentType": "SUMMARY",
+      "contentTitle": "The Biology of Riftia Pachyptila",
+      "sharedData": {
+        "wordLimit": 1
+      },
+      "displayOrder": 6,
+      "questionCodes": ["IELTS-READ-064", "IELTS-READ-065", "IELTS-READ-066"]
+    },
+    {
+      "groupCode": "QG-READ-002-07",
+      "passageCode": "PAS-READ-006",
+      "title": "Questions 27–31",
+      "questionType": "MATCHING_INFORMATION",
+      "instructions": "Which paragraph contains the following information?\nWrite the correct letter, A–E, in boxes 27–31 on your answer sheet.",
+      "contentType": "PARAGRAPH_MATCHING",
+      "displayOrder": 7,
+      "questionCodes": [
+        "IELTS-READ-067",
+        "IELTS-READ-068",
+        "IELTS-READ-069",
+        "IELTS-READ-070",
+        "IELTS-READ-071"
+      ]
+    },
+    {
+      "groupCode": "QG-READ-002-08",
+      "passageCode": "PAS-READ-006",
+      "title": "Questions 32–36",
+      "questionType": "MULTIPLE_CHOICE",
+      "instructions": "Choose the correct letter, A, B, C or D.\nWrite the correct letter in boxes 32–36 on your answer sheet.",
+      "contentType": "MCQ",
+      "displayOrder": 8,
+      "questionCodes": [
+        "IELTS-READ-072",
+        "IELTS-READ-073",
+        "IELTS-READ-074",
+        "IELTS-READ-075",
+        "IELTS-READ-076"
+      ]
+    },
+    {
+      "groupCode": "QG-READ-002-09",
+      "passageCode": "PAS-READ-006",
+      "title": "Questions 37–40",
+      "questionType": "SENTENCE_COMPLETION",
+      "instructions": "Complete the sentences below.\nChoose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "contentType": "SENTENCES",
+      "sharedData": {
+        "wordLimit": 2
+      },
+      "displayOrder": 9,
+      "questionCodes": ["IELTS-READ-077", "IELTS-READ-078", "IELTS-READ-079", "IELTS-READ-080"]
+    }
+  ],
+  "questions": [
+    {
+      "questionCode": "IELTS-READ-041",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-01",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Macrotermes bellicosus mounds maintain an internal temperature of around 30°C despite large external shifts.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["TRUE", "True", "T"],
+      "correctAnswer": "TRUE",
+      "explanation": "The passage explicitly states that the core temperature remains remarkably constant at approximately 30°C despite external temperature swings."
+    },
+    {
+      "questionCode": "IELTS-READ-042",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-01",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Martin Lüscher proved conclusively that wind oscillations drive air circulation in termite mounds.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE", "False", "F"],
+      "correctAnswer": "FALSE",
+      "explanation": "Lüscher proposed the convective model, whereas Scott Turner discovered the wind-driven oscillatory flow."
+    },
+    {
+      "questionCode": "IELTS-READ-043",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-01",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Scott Turner utilized micro-sensor telemetry to study gas exchange across mound walls.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["TRUE", "True", "T"],
+      "correctAnswer": "TRUE",
+      "explanation": "Paragraph 2 mentions micro-sensor telemetry conducted by Scott Turner and J. Scott."
+    },
+    {
+      "questionCode": "IELTS-READ-044",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-01",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "The Eastgate Centre in Zimbabwe requires auxiliary air-conditioners during the hottest months.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["FALSE", "False", "F"],
+      "correctAnswer": "FALSE",
+      "explanation": "The passage states the building has no conventional active heating or air-conditioning system."
+    },
+    {
+      "questionCode": "IELTS-READ-045",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-01",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Mick Pearce studied entomology before pursuing a career in architecture.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NOT GIVEN", "Not Given", "NG"],
+      "correctAnswer": "NOT GIVEN",
+      "explanation": "The text describes Mick Pearce as an architect collaborating with Arup, but provides no details on his earlier studies."
+    },
+    {
+      "questionCode": "IELTS-READ-046",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-01",
+      "section": "Reading",
+      "questionType": "TRUE_FALSE_NOT_GIVEN",
+      "questionText": "Contemporary architects are using 3D-printed porous clay tiles to regulate indoor environments.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["TRUE", "True", "T"],
+      "correctAnswer": "TRUE",
+      "explanation": "Paragraph 4 states that architects integrate 3D-printed porous clay tiles and fluidic oscillators."
+    },
+    {
+      "questionCode": "IELTS-READ-047",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-02",
+      "section": "Reading",
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "Mound walls function like semi-permeable membranes that generate an oscillatory ______ flow.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["tidal", "tidal flow"],
+      "correctAnswer": "tidal",
+      "explanation": "Paragraph 2 mentions creating an oscillatory tidal flow analogous to human pulmonary respiration."
+    },
+    {
+      "questionCode": "IELTS-READ-048",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-02",
+      "section": "Reading",
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "The Eastgate Centre relies on high ______ concrete to absorb thermal energy during the day.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["thermal mass"],
+      "correctAnswer": "thermal mass",
+      "explanation": "Paragraph 3 states it relies on high thermal mass concrete."
+    },
+    {
+      "questionCode": "IELTS-READ-049",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-02",
+      "section": "Reading",
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "The commercial complex uses rooftop ______ to discharge heat accumulated during office hours.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["chimneys"],
+      "correctAnswer": "chimneys",
+      "explanation": "Paragraph 3 notes rooftop chimneys that utilise nocturnal cool air to purge heat."
+    },
+    {
+      "questionCode": "IELTS-READ-050",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-02",
+      "section": "Reading",
+      "questionType": "NOTE_COMPLETION",
+      "questionText": "The bio-inspired system achieves over 35 percent reduction in ______ compared to standard buildings.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["energy", "energy consumption"],
+      "correctAnswer": "energy",
+      "explanation": "Paragraph 3 states the building consumes over 35 percent less energy."
+    },
+    {
+      "questionCode": "IELTS-READ-051",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-03",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What was the primary assumption of Martin Lüscher’s original termite mound theory?",
+      "difficulty": "INTERMEDIATE",
+      "options": [
+        {
+          "code": "A",
+          "text": "Air movement is powered by external wind turbulence."
+        },
+        {
+          "code": "B",
+          "text": "Internal air currents are driven purely by convective heat plumes."
+        },
+        {
+          "code": "C",
+          "text": "Termites physically pump air using mechanical body movements."
+        },
+        {
+          "code": "D",
+          "text": "Subterranean water channels cool incoming atmospheric air."
+        }
+      ],
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "explanation": "Paragraph 1 explains that Lüscher hypothesized passive air conditioning driven purely by convective air currents."
+    },
+    {
+      "questionCode": "IELTS-READ-052",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-03",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "Scott Turner’s research compared gas exchange in termite mounds to which physiological process?",
+      "difficulty": "INTERMEDIATE",
+      "options": [
+        {
+          "code": "A",
+          "text": "Plant transpiration"
+        },
+        {
+          "code": "B",
+          "text": "Arterial blood circulation"
+        },
+        {
+          "code": "C",
+          "text": "Human pulmonary respiration"
+        },
+        {
+          "code": "D",
+          "text": "Insect tracheal diffusion"
+        }
+      ],
+      "acceptedAnswers": ["C"],
+      "correctAnswer": "C",
+      "explanation": "Paragraph 2 states the oscillatory tidal flow is analogous to human pulmonary respiration."
+    },
+    {
+      "questionCode": "IELTS-READ-053",
+      "passageCode": "PAS-READ-004",
+      "groupCode": "QG-READ-002-03",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What is the main goal of modern bio-inspired architecture as described in the final paragraph?",
+      "difficulty": "INTERMEDIATE",
+      "options": [
+        {
+          "code": "A",
+          "text": "To transition from energy-heavy climate control to responsive thermodynamics"
+        },
+        {
+          "code": "B",
+          "text": "To eliminate the use of concrete in commercial structures entirely"
+        },
+        {
+          "code": "C",
+          "text": "To replace all human architectural design with algorithmic models"
+        },
+        {
+          "code": "D",
+          "text": "To build multi-story residential towers solely out of unbaked clay"
+        }
+      ],
+      "acceptedAnswers": ["A"],
+      "correctAnswer": "A",
+      "explanation": "Paragraph 4 concludes that this represents a shift from mechanical energy-intensive climate control toward dynamic, responsive structural thermodynamics."
+    },
+    {
+      "questionCode": "IELTS-READ-054",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-04",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Section A",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["ii"],
+      "correctAnswer": "ii",
+      "explanation": "Section A discusses the 1977 discovery that shattered the biological dogma that all complex life depends on solar energy."
+    },
+    {
+      "questionCode": "IELTS-READ-055",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-04",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Section B",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["i"],
+      "correctAnswer": "i",
+      "explanation": "Section B describes how seawater descends into magmatic chambers, heats to 400°C, and precipitates as mineral chimneys."
+    },
+    {
+      "questionCode": "IELTS-READ-056",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-04",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Section C",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["v"],
+      "correctAnswer": "v",
+      "explanation": "Section C details chemosynthetic primary production by bacteria oxidizing hydrogen sulfide in deep water."
+    },
+    {
+      "questionCode": "IELTS-READ-057",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-04",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Section D",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["vi"],
+      "correctAnswer": "vi",
+      "explanation": "Section D details the symbiotic adaptations of Riftia pachyptila with its trophosome and specialized hemoglobin."
+    },
+    {
+      "questionCode": "IELTS-READ-058",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-04",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Section E",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["iii"],
+      "correctAnswer": "iii",
+      "explanation": "Section E examines how vent species disperse across ocean ridges via buoyant plumes and currents."
+    },
+    {
+      "questionCode": "IELTS-READ-059",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-04",
+      "section": "Reading",
+      "questionType": "MATCHING_HEADINGS",
+      "questionText": "Section F",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["iv"],
+      "correctAnswer": "iv",
+      "explanation": "Section F addresses the commercial extraction and deep-sea mining threats to fragile hydrothermal ecosystems."
+    },
+    {
+      "questionCode": "IELTS-READ-060",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-05",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "High hydrostatic pressure prevents 400°C hydrothermal fluid from turning into steam.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["YES", "Yes", "Y"],
+      "correctAnswer": "YES",
+      "explanation": "Section B confirms that under extreme hydrostatic pressure, the fluid remains liquid rather than vaporising."
+    },
+    {
+      "questionCode": "IELTS-READ-061",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-05",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "Chemoautotrophic vent bacteria use sunlight to synthesize organic matter.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NO", "No", "N"],
+      "correctAnswer": "NO",
+      "explanation": "Section C states they do not harvest photons, but oxidize toxic hydrogen sulfide, methane, and iron instead."
+    },
+    {
+      "questionCode": "IELTS-READ-062",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-05",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "Hydrothermal vents remain active at the same location indefinitely.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NO", "No", "N"],
+      "correctAnswer": "NO",
+      "explanation": "Section E notes hydrothermal vents are ephemeral environments that can terminate fluid flow within a few years."
+    },
+    {
+      "questionCode": "IELTS-READ-063",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-05",
+      "section": "Reading",
+      "questionType": "YES_NO_NOT_GIVEN",
+      "questionText": "International mining corporations have agreed to halt all seabed extraction plans near active vents.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["NOT GIVEN", "Not Given", "NG"],
+      "correctAnswer": "NOT GIVEN",
+      "explanation": "Section F discusses proposed seabed mining and conservationists’ warnings, but does not state that mining corporations agreed to halt plans."
+    },
+    {
+      "questionCode": "IELTS-READ-064",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-06",
+      "section": "Reading",
+      "questionType": "SUMMARY_COMPLETION",
+      "questionText": "Riftia pachyptila lacks a digestive system and houses sulfur-oxidizing bacteria inside a specialized organ termed the ______.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["trophosome"],
+      "correctAnswer": "trophosome",
+      "explanation": "Section D states it harbors bacteria within a specialised organ called the trophosome."
+    },
+    {
+      "questionCode": "IELTS-READ-065",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-06",
+      "section": "Reading",
+      "questionType": "SUMMARY_COMPLETION",
+      "questionText": "The worm transports necessary chemical compounds to its symbionts utilizing a distinct form of ______ that resists toxic poisoning.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["hemoglobin", "haemoglobin"],
+      "correctAnswer": "hemoglobin",
+      "explanation": "Section D mentions a unique hemoglobin molecule that binds sulfide and oxygen simultaneously."
+    },
+    {
+      "questionCode": "IELTS-READ-066",
+      "passageCode": "PAS-READ-005",
+      "groupCode": "QG-READ-002-06",
+      "section": "Reading",
+      "questionType": "SUMMARY_COMPLETION",
+      "questionText": "Pelagic ______ are transported across abyssal gaps by deep-sea currents generated by rising vent plumes.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["larvae"],
+      "correctAnswer": "larvae",
+      "explanation": "Section E explains that buoyant vent plumes generate currents that transport pelagic larvae."
+    },
+    {
+      "questionCode": "IELTS-READ-067",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-07",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "A description of how automated scoring causes human professional skills to diminish over time",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["B", "Paragraph B"],
+      "correctAnswer": "B",
+      "explanation": "Paragraph 2 describes how cognitive deference degrades human domain expertise over time."
+    },
+    {
+      "questionCode": "IELTS-READ-068",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-07",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "An explanation of the recursive feedback loop that reinforces demographic biases in training data",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["C", "Paragraph C"],
+      "correctAnswer": "C",
+      "explanation": "Paragraph 3 details recursive feedback loops where cohorts identified as higher risk face disproportionate surveillance."
+    },
+    {
+      "questionCode": "IELTS-READ-069",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-07",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "The legal and epistemological difficulties posed by non-interpretable neural network architectures",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["D", "Paragraph D"],
+      "correctAnswer": "D",
+      "explanation": "Paragraph 4 addresses the black box problem and multi-layered parameter weightings that prevent causal auditing."
+    },
+    {
+      "questionCode": "IELTS-READ-070",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-07",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "A summary of regulatory frameworks advocating for hybrid human-machine cognitive systems",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["E", "Paragraph E"],
+      "correctAnswer": "E",
+      "explanation": "Paragraph 5 mentions the European Union Artificial Intelligence Act and human-in-the-loop oversight."
+    },
+    {
+      "questionCode": "IELTS-READ-071",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-07",
+      "section": "Reading",
+      "questionType": "MATCHING_INFORMATION",
+      "questionText": "An initial outline of claims regarding how algorithms supposedly eliminate human cognitive prejudices",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["A", "Paragraph A"],
+      "correctAnswer": "A",
+      "explanation": "Paragraph 1 outlines proponents’ claims that models eliminate subjective cognitive biases."
+    },
+    {
+      "questionCode": "IELTS-READ-072",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-08",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What defines \"automation bias\" as introduced in the second paragraph?",
+      "difficulty": "INTERMEDIATE",
+      "options": [
+        {
+          "code": "A",
+          "text": "The preference of machines to select standard training data over anomalies"
+        },
+        {
+          "code": "B",
+          "text": "The tendency of humans to uncritically accept algorithmic suggestions"
+        },
+        {
+          "code": "C",
+          "text": "The deliberate manipulation of statistical weights by software programmers"
+        },
+        {
+          "code": "D",
+          "text": "The systematic exclusion of female candidates from algorithmic training sets"
+        }
+      ],
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "explanation": "Paragraph 2 defines automation bias as the human propensity to uncritically trust automated suggestions."
+    },
+    {
+      "questionCode": "IELTS-READ-073",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-08",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "Why do decision-makers hesitate to overrule automated recommendations in high-stakes settings?",
+      "difficulty": "INTERMEDIATE",
+      "options": [
+        {
+          "code": "A",
+          "text": "Because overriding the system requires complex cryptographic authorization"
+        },
+        {
+          "code": "B",
+          "text": "Because they fear personal liability if their independent judgment proves erroneous"
+        },
+        {
+          "code": "C",
+          "text": "Because machine learning algorithms have never produced an incorrect assessment"
+        },
+        {
+          "code": "D",
+          "text": "Because manual record-keeping is strictly forbidden by institutional law"
+        }
+      ],
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "explanation": "Paragraph 2 notes reluctance to overrule automated recommendations, particularly where personal liability is scrutinized."
+    },
+    {
+      "questionCode": "IELTS-READ-074",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-08",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "According to paragraph 3, what is the consequence of training recidivism algorithms on historic policing data?",
+      "difficulty": "INTERMEDIATE",
+      "options": [
+        {
+          "code": "A",
+          "text": "It completely eliminates racial disparities in criminal sentencing."
+        },
+        {
+          "code": "B",
+          "text": "It codifies and reinforces historical enforcement biases under the guise of mathematical objectivity."
+        },
+        {
+          "code": "C",
+          "text": "It accelerates judicial case clearance rates without any statistical errors."
+        },
+        {
+          "code": "D",
+          "text": "It causes machine learning software to permanently crash on edge cases."
+        }
+      ],
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "explanation": "Paragraph 3 concludes that it leads to the codification and institutionalization of historical prejudice."
+    },
+    {
+      "questionCode": "IELTS-READ-075",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-08",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "What is the core issue of the \"black box\" problem in deep neural networks?",
+      "difficulty": "INTERMEDIATE",
+      "options": [
+        {
+          "code": "A",
+          "text": "The hardware components are too fragile to operate in standard data centers."
+        },
+        {
+          "code": "B",
+          "text": "Multi-layered non-linear parameters prevent humans from tracing causal reasoning."
+        },
+        {
+          "code": "C",
+          "text": "The data inputs must be stored on physical optical media rather than servers."
+        },
+        {
+          "code": "D",
+          "text": "Users cannot view the final numerical confidence metric produced by the system."
+        }
+      ],
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "explanation": "Paragraph 4 states that multi-layered deep learning architectures generate predictions via billions of non-linear parameter weightings that humans cannot causally interrogate."
+    },
+    {
+      "questionCode": "IELTS-READ-076",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-08",
+      "section": "Reading",
+      "questionType": "MULTIPLE_CHOICE",
+      "questionText": "How does the author characterize the optimal role of machine learning systems in decision-making?",
+      "difficulty": "INTERMEDIATE",
+      "options": [
+        {
+          "code": "A",
+          "text": "As autonomous arbiters that replace fallible human judges"
+        },
+        {
+          "code": "B",
+          "text": "As cognitive scaffolding that augments human rigor while maintaining accountability"
+        },
+        {
+          "code": "C",
+          "text": "As temporary prototypes that should be discontinued across all institutions"
+        },
+        {
+          "code": "D",
+          "text": "As marketing tools designed strictly for public relations"
+        }
+      ],
+      "acceptedAnswers": ["B"],
+      "correctAnswer": "B",
+      "explanation": "Paragraph 5 states systems must be designed as cognitive scaffolding that augments human analytical rigor while preserving ethical accountability."
+    },
+    {
+      "questionCode": "IELTS-READ-077",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-09",
+      "section": "Reading",
+      "questionType": "SENTENCE_COMPLETION",
+      "questionText": "Algorithmic models were initially promoted as tools to eliminate human ______ like confirmation bias.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["cognitive biases"],
+      "correctAnswer": "cognitive biases",
+      "explanation": "Paragraph 1 mentions eliminating subjective human cognitive biases."
+    },
+    {
+      "questionCode": "IELTS-READ-078",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-09",
+      "section": "Reading",
+      "questionType": "SENTENCE_COMPLETION",
+      "questionText": "Human operators become unable to effectively judge ______ that differ from the algorithm’s training data.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["edge cases", "anomalous edge cases"],
+      "correctAnswer": "edge cases",
+      "explanation": "Paragraph 2 notes operators become incapable of evaluating anomalous edge cases."
+    },
+    {
+      "questionCode": "IELTS-READ-079",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-09",
+      "section": "Reading",
+      "questionType": "SENTENCE_COMPLETION",
+      "questionText": "Deep learning systems provide users with an output value along with a ______ rather than explainable logic.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["confidence metric"],
+      "correctAnswer": "confidence metric",
+      "explanation": "Paragraph 4 states they are presented merely with a confidence metric."
+    },
+    {
+      "questionCode": "IELTS-READ-080",
+      "passageCode": "PAS-READ-006",
+      "groupCode": "QG-READ-002-09",
+      "section": "Reading",
+      "questionType": "SENTENCE_COMPLETION",
+      "questionText": "European regulations mandate meaningful ______ oversight for artificial intelligence applications in critical domains.",
+      "difficulty": "INTERMEDIATE",
+      "acceptedAnswers": ["human-in-the-loop", "human in the loop"],
+      "correctAnswer": "human-in-the-loop",
+      "explanation": "Paragraph 5 highlights the requirement for meaningful human-in-the-loop oversight."
+    }
+  ]
+}

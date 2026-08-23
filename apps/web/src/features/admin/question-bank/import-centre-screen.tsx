@@ -20,7 +20,6 @@ import {
   AlertTriangle,
   ChevronDown,
 } from 'lucide-react';
-import { adminQuestionsService } from '../../../services/admin/questions.service';
 
 export function downloadEnterpriseCSVTemplate() {
   const headers = [
@@ -78,7 +77,8 @@ export function downloadEnterpriseJSONTemplate() {
         passageCode: 'IELTS-READ-P001',
         title: 'The Evolution of Maritime Trade Networks',
         passageType: 'READING',
-        content: 'Maritime trade has served as the backbone of international commerce for over two millennia...',
+        content:
+          'Maritime trade has served as the backbone of international commerce for over two millennia...',
       },
     ],
     questions: [
@@ -107,7 +107,8 @@ export function downloadEnterpriseJSONTemplate() {
         topic: 'Past Perfect Tense',
         difficulty: 'INTERMEDIATE',
         questionType: 'MULTIPLE_CHOICE',
-        questionText: "Choose the correct verb tense: 'By the time we arrived, she _____ her presentation.'",
+        questionText:
+          "Choose the correct verb tense: 'By the time we arrived, she _____ her presentation.'",
         options: [
           { code: 'A', text: 'has finished' },
           { code: 'B', text: 'had finished' },
@@ -115,7 +116,8 @@ export function downloadEnterpriseJSONTemplate() {
           { code: 'D', text: 'will finish' },
         ],
         correctAnswer: 'B',
-        explanation: "Past perfect 'had finished' expresses an action completed prior to another past moment.",
+        explanation:
+          "Past perfect 'had finished' expresses an action completed prior to another past moment.",
         usages: ['PRACTICE', 'MOCK'],
       },
       {
@@ -144,7 +146,8 @@ export function downloadEnterpriseJSONTemplate() {
         topic: 'Academic Task 1',
         difficulty: 'INTERMEDIATE',
         questionType: 'ESSAY',
-        questionText: 'Summarize the information by selecting and reporting the main features of the chart provided.',
+        questionText:
+          'Summarize the information by selecting and reporting the main features of the chart provided.',
         explanation: 'Describe overall trend, highest/lowest data points, and key comparisons.',
         usages: ['DIAGNOSTIC', 'PRACTICE'],
       },
@@ -285,9 +288,7 @@ export function QuestionBankImportCentreScreen() {
 
       if (data.success && data.validation) {
         const val = data.validation;
-        const mismatch = Boolean(
-          val.errors?.some((e: any) => e.itemCode === 'PROGRAMME_MISMATCH')
-        );
+        const mismatch = Boolean(val.errors?.some((e: any) => e.itemCode === 'PROGRAMME_MISMATCH'));
 
         setImportResult({
           success: val.isValid && !mismatch,
@@ -318,7 +319,15 @@ export function QuestionBankImportCentreScreen() {
           intermediateCount: 0,
           advancedCount: 0,
           programmeMismatch: false,
-          errors: [{ rowNumber: 0, itemCode: 'API_ERROR', field: 'validation', error: data.error || 'Validation failed', recommendation: 'Retry validation' }],
+          errors: [
+            {
+              rowNumber: 0,
+              itemCode: 'API_ERROR',
+              field: 'validation',
+              error: data.error || 'Validation failed',
+              recommendation: 'Retry validation',
+            },
+          ],
           warnings: [],
         });
       }
@@ -336,7 +345,15 @@ export function QuestionBankImportCentreScreen() {
         intermediateCount: 0,
         advancedCount: 0,
         programmeMismatch: false,
-        errors: [{ rowNumber: 0, itemCode: 'CLIENT_ERROR', field: 'file', error: err.message || 'Failed to read file', recommendation: 'Select a valid file' }],
+        errors: [
+          {
+            rowNumber: 0,
+            itemCode: 'CLIENT_ERROR',
+            field: 'file',
+            error: err.message || 'Failed to read file',
+            recommendation: 'Select a valid file',
+          },
+        ],
         warnings: [],
       });
     }
@@ -489,7 +506,9 @@ export function QuestionBankImportCentreScreen() {
                   alignItems: 'center',
                   gap: '0.5rem',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.15)')}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.15)')
+                }
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
                 <Code2 size={15} color="#38bdf8" /> Universal Template (JSON)
@@ -513,7 +532,9 @@ export function QuestionBankImportCentreScreen() {
                   alignItems: 'center',
                   gap: '0.5rem',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.15)')}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.15)')
+                }
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
                 <FileText size={15} color="#34d399" /> Universal Template (CSV)
@@ -848,15 +869,23 @@ export function QuestionBankImportCentreScreen() {
               border: importResult.programmeMismatch
                 ? '1px solid #f59e0b'
                 : importResult.success
-                ? '1px solid rgba(52, 211, 153, 0.4)'
-                : '1px solid rgba(239, 68, 68, 0.4)',
+                  ? '1px solid rgba(52, 211, 153, 0.4)'
+                  : '1px solid rgba(239, 68, 68, 0.4)',
               display: 'flex',
               flexDirection: 'column',
               gap: '1.25rem',
             }}
           >
             {/* Validation Banner */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '0.75rem',
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                 {importResult.programmeMismatch ? (
                   <AlertTriangle size={22} color="#f59e0b" />
@@ -869,8 +898,20 @@ export function QuestionBankImportCentreScreen() {
                   Validation Results for {importResult.fileName}
                 </span>
               </div>
-              <Badge variant={importResult.programmeMismatch ? 'warning' : importResult.success ? 'success' : 'danger'}>
-                {importResult.programmeMismatch ? 'PROGRAMME_MISMATCH' : importResult.success ? 'VALIDATED' : 'ERRORS DETECTED'}
+              <Badge
+                variant={
+                  importResult.programmeMismatch
+                    ? 'warning'
+                    : importResult.success
+                      ? 'success'
+                      : 'danger'
+                }
+              >
+                {importResult.programmeMismatch
+                  ? 'PROGRAMME_MISMATCH'
+                  : importResult.success
+                    ? 'VALIDATED'
+                    : 'ERRORS DETECTED'}
               </Badge>
             </div>
 
@@ -893,8 +934,9 @@ export function QuestionBankImportCentreScreen() {
                     PROGRAMME_MISMATCH WARNING
                   </div>
                   <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '2px' }}>
-                    Selected UI Programme: <strong style={{ color: '#fff' }}>{selectedProgramme}</strong> |
-                    JSON Exam Type: <strong style={{ color: '#f59e0b' }}>{importResult.jsonExamType}</strong>
+                    Selected UI Programme:{' '}
+                    <strong style={{ color: '#fff' }}>{selectedProgramme}</strong> | JSON Exam Type:{' '}
+                    <strong style={{ color: '#f59e0b' }}>{importResult.jsonExamType}</strong>
                   </div>
                 </div>
                 <Button
@@ -902,10 +944,19 @@ export function QuestionBankImportCentreScreen() {
                   onClick={() => {
                     if (importResult.jsonExamType) {
                       setSelectedProgramme(importResult.jsonExamType);
-                      processFile(new File([JSON.stringify(parsedJsonPayload)], importResult.fileName, { type: 'application/json' }));
+                      processFile(
+                        new File([JSON.stringify(parsedJsonPayload)], importResult.fileName, {
+                          type: 'application/json',
+                        })
+                      );
                     }
                   }}
-                  style={{ backgroundColor: '#f59e0b', color: '#000', fontWeight: 700, fontSize: '0.8rem' }}
+                  style={{
+                    backgroundColor: '#f59e0b',
+                    color: '#000',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                  }}
                 >
                   Align UI to {importResult.jsonExamType}
                 </Button>
@@ -936,7 +987,13 @@ export function QuestionBankImportCentreScreen() {
               </div>
               <div>
                 <div style={{ fontSize: '0.75rem', color: '#ef4444' }}>Errors / Failed</div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: importResult.invalidCount > 0 ? '#ef4444' : '#94a3b8' }}>
+                <div
+                  style={{
+                    fontSize: '1.2rem',
+                    fontWeight: 800,
+                    color: importResult.invalidCount > 0 ? '#ef4444' : '#94a3b8',
+                  }}
+                >
                   {importResult.invalidCount}
                 </div>
               </div>
@@ -969,13 +1026,40 @@ export function QuestionBankImportCentreScreen() {
             {/* Error Detail Table */}
             {importResult.errors.length > 0 && (
               <div style={{ marginTop: '0.5rem' }}>
-                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ef4444', marginBottom: '0.5rem' }}>
+                <div
+                  style={{
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    color: '#ef4444',
+                    marginBottom: '0.5rem',
+                  }}
+                >
                   Validation Errors & Remediation Guidance ({importResult.errors.length}):
                 </div>
-                <div style={{ overflowX: 'auto', maxHeight: '200px', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
+                <div
+                  style={{
+                    overflowX: 'auto',
+                    maxHeight: '200px',
+                    borderRadius: '8px',
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                  }}
+                >
+                  <table
+                    style={{
+                      width: '100%',
+                      borderCollapse: 'collapse',
+                      fontSize: '0.8rem',
+                      textAlign: 'left',
+                    }}
+                  >
                     <thead>
-                      <tr style={{ backgroundColor: '#161e2e', color: '#cbd5e1', borderBottom: '1px solid #1e293b' }}>
+                      <tr
+                        style={{
+                          backgroundColor: '#161e2e',
+                          color: '#cbd5e1',
+                          borderBottom: '1px solid #1e293b',
+                        }}
+                      >
                         <th style={{ padding: '0.5rem 0.75rem' }}>Row #</th>
                         <th style={{ padding: '0.5rem 0.75rem' }}>Code</th>
                         <th style={{ padding: '0.5rem 0.75rem' }}>Field</th>
@@ -985,12 +1069,22 @@ export function QuestionBankImportCentreScreen() {
                     </thead>
                     <tbody>
                       {importResult.errors.map((err, i) => (
-                        <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#f87171' }}>
+                        <tr
+                          key={i}
+                          style={{
+                            borderBottom: '1px solid rgba(255,255,255,0.05)',
+                            color: '#f87171',
+                          }}
+                        >
                           <td style={{ padding: '0.5rem 0.75rem' }}>{err.rowNumber || '-'}</td>
-                          <td style={{ padding: '0.5rem 0.75rem', fontWeight: 700 }}>{err.itemCode}</td>
+                          <td style={{ padding: '0.5rem 0.75rem', fontWeight: 700 }}>
+                            {err.itemCode}
+                          </td>
                           <td style={{ padding: '0.5rem 0.75rem' }}>{err.field}</td>
                           <td style={{ padding: '0.5rem 0.75rem' }}>{err.error}</td>
-                          <td style={{ padding: '0.5rem 0.75rem', color: '#94a3b8' }}>{err.recommendation}</td>
+                          <td style={{ padding: '0.5rem 0.75rem', color: '#94a3b8' }}>
+                            {err.recommendation}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -1026,13 +1120,13 @@ export function QuestionBankImportCentreScreen() {
                       router.push('/admin/question-bank');
                     } else {
                       alert(
-                        `Import Failed\n\nThe Question Bank could not complete this import.\nNo questions were committed.\n\nReference: ${commitData.referenceCode || 'IMPORT_COMMIT_FAILED'}`
+                        `Import Failed\n\n${commitData.error || 'The Question Bank could not complete this import.'}\n\nOperation: ${commitData.failingOperation || 'IMPORT_COMMIT'}\nDetail: ${commitData.dbMessage || commitData.details || 'No additional details'}\nReference: ${commitData.referenceCode || 'IMPORT_COMMIT_FAILED'}`
                       );
                     }
                   } catch (err: any) {
                     setIsSimulating(false);
                     alert(
-                      `Import Failed\n\nThe Question Bank could not complete this import.\nNo questions were committed.\n\nReference: IMPORT_COMMIT_FAILED`
+                      `Import Failed\n\nNetwork or server communication failure.\nDetail: ${err.message || 'Unknown error'}\nReference: IMPORT_NETWORK_FAILED`
                     );
                   }
                 }}
@@ -1045,7 +1139,8 @@ export function QuestionBankImportCentreScreen() {
                   alignItems: 'center',
                 }}
               >
-                <CheckCircle2 size={16} /> Import Valid Questions ({importResult.validQuestions}) to Question Bank
+                <CheckCircle2 size={16} /> Import Valid Questions ({importResult.validQuestions}) to
+                Question Bank
               </Button>
 
               <Button

@@ -132,23 +132,34 @@ export class CanonicalJsonImporterRepository {
    * with explicit question groups, deduplicated instructions, and clean individual prompts.
    */
   public normalizePayload(payload: any): NormalizedPackage {
-    const examType = payload.examType || 'English Proficiency';
+    const examType = payload.examType || payload.exam_type || 'English Proficiency';
     const assessmentUsages = Array.isArray(payload.assessmentUsages)
       ? payload.assessmentUsages
-      : ['PRACTICE'];
+      : Array.isArray(payload.assessment_usages)
+        ? payload.assessment_usages
+        : ['PRACTICE'];
 
-    const passages = (Array.isArray(payload.passages) ? payload.passages : []).map(
-      (p: any, idx: number) => ({
-        passageCode: p.passageCode || p.code || `PAS-READ-${String(idx + 1).padStart(3, '0')}`,
-        title: p.title || `Reading Passage ${idx + 1}`,
-        content: p.content || '',
-        examType: p.examType || examType,
-        section: p.section || 'Reading',
-        source: p.source || payload.metadata?.source || 'Clasptek Question Bank',
-        wordCount:
-          p.wordCount || (p.content ? p.content.trim().split(/\s+/).filter(Boolean).length : 0),
-      })
-    );
+    const rawPassages = Array.isArray(payload.passages)
+      ? payload.passages
+      : Array.isArray(payload.readingPassages)
+        ? payload.readingPassages
+        : Array.isArray(payload.reading_passages)
+          ? payload.reading_passages
+          : [];
+
+    const passages = rawPassages.map((p: any, idx: number) => ({
+      passageCode:
+        p.passageCode || p.passage_code || p.code || `PAS-READ-${String(idx + 1).padStart(3, '0')}`,
+      title: p.title || `Reading Passage ${idx + 1}`,
+      content: p.content || '',
+      examType: p.examType || p.exam_type || examType,
+      section: p.section || 'Reading',
+      source: p.source || payload.metadata?.source || 'Clasptek Question Bank',
+      wordCount:
+        p.wordCount ||
+        p.word_count ||
+        (p.content ? p.content.trim().split(/\s+/).filter(Boolean).length : 0),
+    }));
 
     const rawQuestions = Array.isArray(payload.questions) ? payload.questions : [];
     const normalizedQuestions: NormalizedQuestion[] = [];
@@ -159,19 +170,30 @@ export class CanonicalJsonImporterRepository {
     passages.forEach((p: any) => passageMap.set(p.passageCode, p));
 
     // If payload already has explicit questionGroups defined
-    if (Array.isArray(payload.questionGroups) && payload.questionGroups.length > 0) {
-      payload.questionGroups.forEach((g: any, gIdx: number) => {
+    const rawGroups = Array.isArray(payload.questionGroups)
+      ? payload.questionGroups
+      : Array.isArray(payload.question_groups)
+        ? payload.question_groups
+        : [];
+
+    if (rawGroups.length > 0) {
+      rawGroups.forEach((g: any, gIdx: number) => {
         questionGroups.push({
-          groupCode: g.groupCode || g.code || `QG-${gIdx + 1}`,
-          passageCode: g.passageCode || passages[0]?.passageCode || 'PAS-READ-001',
+          groupCode: g.groupCode || g.group_code || g.code || `QG-${gIdx + 1}`,
+          passageCode:
+            g.passageCode || g.passage_code || passages[0]?.passageCode || 'PAS-READ-001',
           title: g.title || `Group ${gIdx + 1}`,
-          instructions: g.instructions || '',
-          questionType: (g.questionType || 'MCQ').toUpperCase(),
-          contentType: g.contentType,
-          contentTitle: g.contentTitle,
-          sharedData: g.sharedData || {},
-          displayOrder: g.displayOrder || gIdx + 1,
-          questionCodes: Array.isArray(g.questionCodes) ? g.questionCodes : [],
+          instructions: g.instructions || g.instruction || '',
+          questionType: (g.questionType || g.question_type || g.type || 'MCQ').toUpperCase(),
+          contentType: g.contentType || g.content_type,
+          contentTitle: g.contentTitle || g.content_title,
+          sharedData: g.sharedData || g.shared_data || {},
+          displayOrder: g.displayOrder || g.display_order || gIdx + 1,
+          questionCodes: Array.isArray(g.questionCodes)
+            ? g.questionCodes
+            : Array.isArray(g.question_codes)
+              ? g.question_codes
+              : [],
         });
       });
     }
@@ -180,15 +202,27 @@ export class CanonicalJsonImporterRepository {
 
     for (let i = 0; i < rawQuestions.length; i++) {
       const q = rawQuestions[i];
-      const qCode = q.questionCode || q.code || `IELTS-READ-${String(qCounter).padStart(3, '0')}`;
-      const pCode = q.passageCode || passages[0]?.passageCode || 'PAS-READ-001';
-      const rawPrompt = (q.questionText || q.prompt || q.text || '').toString().trim();
-      const qType = (q.questionType || q.type || 'MCQ').toUpperCase();
-      const correctAnswer = (q.correctAnswer || '').toString().trim();
+      const qCode =
+        q.questionCode ||
+        q.question_code ||
+        q.code ||
+        `IELTS-READ-${String(qCounter).padStart(3, '0')}`;
+      const pCode = q.passageCode || q.passage_code || passages[0]?.passageCode || 'PAS-READ-001';
+      const gCode = q.groupCode || q.group_code || q.group || undefined;
+      const rawPrompt = (q.questionText || q.question_text || q.prompt || q.text || '')
+        .toString()
+        .trim();
+      const qType = (q.questionType || q.question_type || q.type || 'MCQ').toUpperCase();
+      const correctAnswer = (q.correctAnswer || q.correct_answer || '').toString().trim();
       const explanation = q.explanation || '';
-      const usages = Array.isArray(q.usages) && q.usages.length > 0 ? q.usages : assessmentUsages;
+      const usages =
+        Array.isArray(q.usages) && q.usages.length > 0
+          ? q.usages
+          : Array.isArray(q.assessmentUsages)
+            ? q.assessmentUsages
+            : assessmentUsages;
       const difficulty = (q.difficulty || 'INTERMEDIATE').toString().toUpperCase();
-      const proficiencyLevel = q.proficiencyLevel || null;
+      const proficiencyLevel = q.proficiencyLevel || q.proficiency_level || null;
       const topic = q.topic || '';
       const skill = q.skill || 'READING';
       const section = q.section || 'Reading';
@@ -451,6 +485,7 @@ export class CanonicalJsonImporterRepository {
       normalizedQuestions.push({
         questionCode: qCode,
         passageCode: pCode,
+        groupCode: gCode,
         prompt: cleanPrompt,
         questionType: qType,
         correctAnswer,
@@ -459,14 +494,14 @@ export class CanonicalJsonImporterRepository {
         usages,
         difficulty,
         proficiencyLevel,
-        grammarTopic: q.grammarTopic || q.topic || null,
-        grammarSubtopic: q.grammarSubtopic || q.subtopic || null,
+        grammarTopic: q.grammarTopic || q.grammar_topic || q.topic || null,
+        grammarSubtopic: q.grammarSubtopic || q.grammar_subtopic || q.subtopic || null,
         explanation,
         topic,
         skill,
         section,
         examType,
-        mediaCode: q.mediaCode || null,
+        mediaCode: q.mediaCode || q.media_code || null,
       });
 
       qCounter++;
@@ -478,18 +513,28 @@ export class CanonicalJsonImporterRepository {
       questionGroups.push(...generatedGroups);
     }
 
-    // Assign groupCode to questions
+    // Assign groupCode to questions from group's questionCodes
     questionGroups.forEach((g) => {
       g.questionCodes.forEach((code) => {
         const qItem = normalizedQuestions.find((nq) => nq.questionCode === code);
-        if (qItem) {
+        if (qItem && !qItem.groupCode) {
           qItem.groupCode = g.groupCode;
         }
       });
     });
 
+    // Also ensure group's questionCodes contains the question if question had groupCode
+    normalizedQuestions.forEach((qItem) => {
+      if (qItem.groupCode) {
+        const g = questionGroups.find((grp) => grp.groupCode === qItem.groupCode);
+        if (g && !g.questionCodes.includes(qItem.questionCode)) {
+          g.questionCodes.push(qItem.questionCode);
+        }
+      }
+    });
+
     return {
-      schemaVersion: payload.schemaVersion || '1.0',
+      schemaVersion: payload.schemaVersion || payload.schema_version || '1.0',
       examType,
       assessmentUsages,
       metadata: payload.metadata || {},
@@ -792,14 +837,20 @@ export class CanonicalJsonImporterRepository {
     rawPayload: any,
     uploadedBy: string = 'admin-001'
   ): Promise<{ batchId: string; batchCode: string; importedCount: number }> {
+    let currentStep = 'VALIDATION';
+    let currentRecord: any = null;
+
     const normalized = this.normalizePayload(rawPayload);
     const validation = this.validateJsonPayload(rawPayload);
 
     if (!validation.isValid) {
       const errorMsgs = validation.errors.map((e) => `[${e.itemCode}] ${e.error}`).join('; ');
-      throw new Error(
+      const valError: any = new Error(
         `JSON validation failed with ${validation.errors.length} errors: ${errorMsgs}`
       );
+      valError.failingOperation = 'VALIDATION';
+      valError.failingRecord = validation.errors[0]?.itemCode || null;
+      throw valError;
     }
 
     const client = await this.pool.connect();
@@ -817,6 +868,8 @@ export class CanonicalJsonImporterRepository {
           : null;
 
       // 1. Insert Import Batch Record
+      currentStep = 'PERSIST_BATCH_RECORD';
+      currentRecord = batchCode;
       await client.query(
         `INSERT INTO public.question_import_batches
          (id, batch_code, file_name, schema_version, exam_type, uploaded_by, status, total_records, successful_records, failed_records, warning_count, metadata, created_at)
@@ -837,8 +890,10 @@ export class CanonicalJsonImporterRepository {
       );
 
       // 2. Persist Reading Passages
+      currentStep = 'PERSIST_PASSAGES';
       const passageIdMap = new Map<string, string>();
       for (const p of normalized.passages) {
+        currentRecord = p.passageCode;
         const pRes = await client.query(
           `INSERT INTO public.reading_passages 
            (id, code, title, content, exam_type, section, source, word_count, status, created_at, updated_at)
@@ -865,15 +920,19 @@ export class CanonicalJsonImporterRepository {
       }
 
       // Also retrieve any existing passages mapped by code
-      const existingPassages = await client.query(
-        `SELECT id, code FROM public.reading_passages WHERE code = ANY($1::varchar[])`,
-        [normalized.passages.map((p) => p.passageCode)]
-      );
-      existingPassages.rows.forEach((r) => passageIdMap.set(r.code, r.id));
+      if (normalized.passages.length > 0) {
+        const existingPassages = await client.query(
+          `SELECT id, code FROM public.reading_passages WHERE code = ANY($1::varchar[])`,
+          [normalized.passages.map((p) => p.passageCode)]
+        );
+        existingPassages.rows.forEach((r) => passageIdMap.set(r.code, r.id));
+      }
 
       // 3. Persist Question Groups
+      currentStep = 'PERSIST_QUESTION_GROUPS';
       const groupIdMap = new Map<string, string>();
       for (const g of normalized.questionGroups) {
+        currentRecord = g.groupCode;
         const pId = passageIdMap.get(g.passageCode) || null;
         const gRes = await client.query(
           `INSERT INTO public.question_groups
@@ -893,13 +952,13 @@ export class CanonicalJsonImporterRepository {
           [
             g.groupCode,
             pId,
-            g.title,
-            g.instructions,
-            g.questionType,
+            g.title || 'Question Group',
+            g.instructions || '',
+            g.questionType || 'MCQ',
             g.contentTitle || null,
             g.contentType || null,
             JSON.stringify(g.sharedData || {}),
-            g.displayOrder,
+            g.displayOrder || 1,
           ]
         );
         if (gRes.rows.length > 0) {
@@ -907,11 +966,13 @@ export class CanonicalJsonImporterRepository {
         }
       }
 
-      const existingGroups = await client.query(
-        `SELECT id, code FROM public.question_groups WHERE code = ANY($1::varchar[])`,
-        [normalized.questionGroups.map((g) => g.groupCode)]
-      );
-      existingGroups.rows.forEach((r) => groupIdMap.set(r.code, r.id));
+      if (normalized.questionGroups.length > 0) {
+        const existingGroups = await client.query(
+          `SELECT id, code FROM public.question_groups WHERE code = ANY($1::varchar[])`,
+          [normalized.questionGroups.map((g) => g.groupCode)]
+        );
+        existingGroups.rows.forEach((r) => groupIdMap.set(r.code, r.id));
+      }
 
       // 4. Persist Questions, Question Versions, and Answer Options in batches of 25
       const questions = normalized.questions;
@@ -962,6 +1023,8 @@ export class CanonicalJsonImporterRepository {
         });
 
         // Upsert questions
+        currentStep = 'PERSIST_QUESTIONS';
+        currentRecord = chunk.map((q) => q.questionCode).join(', ');
         const qRes = await client.query(
           `INSERT INTO public.questions (id, code, created_at, import_batch_id, tenant_id)
            VALUES ${qClauses.join(', ')}
@@ -975,6 +1038,7 @@ export class CanonicalJsonImporterRepository {
         qRes.rows.forEach((r) => codeToIdMap.set(r.code, r.id));
 
         // Prepare Question Versions
+        currentStep = 'PERSIST_QUESTION_VERSIONS';
         const qvClauses: string[] = [];
         const qvParams: any[] = [];
 
@@ -1041,6 +1105,7 @@ export class CanonicalJsonImporterRepository {
         existingVersionsRes.rows.forEach((r) => qidToQvIdMap.set(r.question_id, r.id));
 
         // Insert / update Answer Options
+        currentStep = 'PERSIST_ANSWER_OPTIONS';
         const optClauses: string[] = [];
         const optParams: any[] = [];
 
@@ -1068,15 +1133,20 @@ export class CanonicalJsonImporterRepository {
             `INSERT INTO public.answer_options
              (id, question_version_id, option_code, option_text, is_correct, display_order)
              VALUES ${optClauses.join(', ')}
-             ON CONFLICT (question_version_id, option_code) DO NOTHING`,
+             ON CONFLICT (question_version_id, option_code) DO UPDATE SET
+               option_text = EXCLUDED.option_text,
+               is_correct = EXCLUDED.is_correct,
+               display_order = EXCLUDED.display_order`,
             optParams
           );
         }
 
         // Link questions into question_group_items
+        currentStep = 'PERSIST_GROUP_ITEMS';
         for (let idx = 0; idx < preparedItems.length; idx++) {
           const item = preparedItems[idx];
           const actualQId = codeToIdMap.get(item.code) || item.qId;
+          currentRecord = `${item.groupCode || 'N/A'} -> ${item.code}`;
           if (item.groupId) {
             await client.query(
               `INSERT INTO public.question_group_items (id, group_id, question_id, display_order, created_at)
@@ -1091,6 +1161,7 @@ export class CanonicalJsonImporterRepository {
       }
 
       // Update import batch status to COMPLETED
+      currentStep = 'COMPLETE_BATCH';
       await client.query(
         `UPDATE public.question_import_batches SET
            status = 'COMPLETED',
@@ -1102,8 +1173,10 @@ export class CanonicalJsonImporterRepository {
 
       await client.query('COMMIT');
       return { batchId, batchCode, importedCount };
-    } catch (err) {
+    } catch (err: any) {
       await client.query('ROLLBACK');
+      err.failingOperation = currentStep;
+      err.failingRecord = currentRecord;
       throw err;
     } finally {
       client.release();

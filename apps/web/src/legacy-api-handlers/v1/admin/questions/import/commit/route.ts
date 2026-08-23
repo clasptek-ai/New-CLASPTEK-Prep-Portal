@@ -35,9 +35,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'The Question Bank could not complete this import. No questions were committed.',
+        error:
+          err.message ||
+          'The Question Bank could not complete this import. No questions were committed.',
         referenceCode: 'IMPORT_COMMIT_FAILED',
-        details: process.env.NODE_ENV === 'development' ? err.message : undefined,
+        errorType: err.code || err.name || 'DATABASE_ERROR',
+        dbMessage: err.detail || err.message,
+        failingOperation: err.failingOperation || 'IMPORT_COMMIT',
+        failingRecord: err.failingRecord || null,
+        details: err.message,
       },
       { status: 500 }
     );
