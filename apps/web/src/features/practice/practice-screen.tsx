@@ -665,7 +665,7 @@ export function AdaptivePracticeScreen() {
                       <img
                         src={currentQuestion.imageUrl}
                         alt="Question Visual Stimulus Diagram"
-                        className="max-h-[460px] w-full object-contain"
+                        className="max-h-115 w-full object-contain"
                       />
                     </div>
                   </div>
