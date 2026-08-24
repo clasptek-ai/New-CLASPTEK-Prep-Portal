@@ -15,9 +15,7 @@ export async function POST(req: NextRequest) {
     }
 
     const tenantId =
-      session?.tenantId ||
-      req.headers.get('x-tenant-id') ||
-      '00000000-0000-0000-0000-000000000000';
+      session?.tenantId || req.headers.get('x-tenant-id') || '00000000-0000-0000-0000-000000000000';
 
     const body = await req.json().catch(() => ({}));
     const requestedExamType = body.exam || body.examType;
@@ -32,6 +30,27 @@ export async function POST(req: NextRequest) {
     if (blueprintId) {
       const cleanBpId = String(blueprintId).replace(/^(tmpl-|bp-)/, '');
       bp = await mockRepo.getBlueprintById(cleanBpId);
+
+      // Check if blueprint exists in DB but is locked/inactive
+      if (!bp) {
+        const rawCheck = await pool.query(
+          `SELECT id, status, title FROM public.mock_blueprints WHERE id::text = $1 OR exam_code = $1`,
+          [cleanBpId]
+        );
+        if (
+          rawCheck.rows.length > 0 &&
+          rawCheck.rows[0].status !== 'PUBLISHED' &&
+          rawCheck.rows[0].status !== 'APPROVED'
+        ) {
+          return NextResponse.json(
+            {
+              error: 'MOCK_EXAM_LOCKED',
+              message: `The mock examination "${rawCheck.rows[0].title}" is currently locked by the administrator and is unavailable for student attempts.`,
+            },
+            { status: 403 }
+          );
+        }
+      }
     }
 
     if (!bp && requestedExamType) {
@@ -39,15 +58,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (!bp) {
-      // Default to IELTS Academic if neither found
-      bp = await mockRepo.getBlueprintByExamType('IELTS Academic');
-    }
-
-    if (!bp) {
       return NextResponse.json(
         {
           error: 'NO_ACTIVE_MOCK_BLUEPRINT',
-          message: `No active blueprint found for ${requestedExamType || 'IELTS Academic'}.`,
+          message: `No active or published mock blueprint found for ${requestedExamType || 'the requested examination'}.`,
         },
         { status: 404 }
       );
@@ -89,8 +103,7 @@ export async function POST(req: NextRequest) {
     if (!isStaffOrAdmin) {
       const enrolledNames: string[] = userRow?.enrolled_product_names || [];
       const enrolledCodes: string[] = userRow?.enrolled_product_codes || [];
-      const targetProgramme =
-        userRow?.target_programme || userRow?.raw_user_meta_data?.programme;
+      const targetProgramme = userRow?.target_programme || userRow?.raw_user_meta_data?.programme;
 
       const authorizedProgrammes = [...enrolledNames, ...enrolledCodes];
       if (targetProgramme) authorizedProgrammes.push(targetProgramme);
