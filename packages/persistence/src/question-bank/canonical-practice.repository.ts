@@ -33,6 +33,7 @@ export interface PracticeEligibleQuestion {
   maxWords?: number;
   audioTrackId?: string;
   audioUrl?: string;
+  imageUrl?: string;
   explanation?: string;
 }
 
@@ -238,6 +239,7 @@ export class PostgresCanonicalPracticeRepository {
         contentType: gData?.content_type || payload.contentType || undefined,
         sharedData: gData?.shared_data || payload.sharedData || undefined,
         acceptedAnswers: payload.acceptedAnswers || undefined,
+        imageUrl: payload.imageUrl || payload.mediaUrl || undefined,
       });
 
       if (questions.length >= questionCount) break;

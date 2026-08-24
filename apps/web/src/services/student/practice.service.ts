@@ -329,6 +329,7 @@ export const studentPracticeService = {
       contentType: q.contentType || undefined,
       sharedData: q.sharedData || undefined,
       audioUrl: q.audioUrl || undefined,
+      imageUrl: q.imageUrl || q.mediaUrl || undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }));

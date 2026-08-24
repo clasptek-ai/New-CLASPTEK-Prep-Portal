@@ -26,7 +26,7 @@ export interface JsonValidationResult {
 
 export interface NormalizedQuestionGroup {
   groupCode: string;
-  passageCode: string;
+  passageCode?: string | null | undefined;
   title: string;
   instructions: string;
   questionType: string;
@@ -39,7 +39,7 @@ export interface NormalizedQuestionGroup {
 
 export interface NormalizedQuestion {
   questionCode: string;
-  passageCode: string;
+  passageCode?: string | null;
   groupCode?: string;
   prompt: string;
   questionType: string;
@@ -57,6 +57,7 @@ export interface NormalizedQuestion {
   section?: string;
   examType?: string;
   mediaCode?: string | null;
+  imageUrl?: string | null;
 }
 
 export interface NormalizedPackage {
@@ -122,6 +123,9 @@ export class CanonicalJsonImporterRepository {
     'FILL_IN_BLANK',
     'SHORT_ANSWER',
     'ESSAY',
+    'WRITING_TASK_1',
+    'WRITING_TASK_2',
+    'WRITING',
     'SPEAKING_PROMPT',
   ]);
 
@@ -207,7 +211,8 @@ export class CanonicalJsonImporterRepository {
         q.question_code ||
         q.code ||
         `IELTS-READ-${String(qCounter).padStart(3, '0')}`;
-      const pCode = q.passageCode || q.passage_code || passages[0]?.passageCode || 'PAS-READ-001';
+      const pCode =
+        q.passageCode || q.passage_code || (passages.length > 0 ? passages[0]?.passageCode : null);
       const gCode = q.groupCode || q.group_code || q.group || undefined;
       const rawPrompt = (q.questionText || q.question_text || q.prompt || q.text || '')
         .toString()
@@ -222,10 +227,26 @@ export class CanonicalJsonImporterRepository {
             ? q.assessmentUsages
             : assessmentUsages;
       const difficulty = (q.difficulty || 'INTERMEDIATE').toString().toUpperCase();
-      const proficiencyLevel = q.proficiencyLevel || q.proficiency_level || null;
+      const rawProf = (q.proficiencyLevel || q.proficiency_level || '')
+        .toString()
+        .toUpperCase()
+        .trim();
+      let proficiencyLevel: string | null = null;
+      if (['A1', 'A2', 'FOUNDATION', 'BEGINNER', 'EASY'].includes(rawProf)) {
+        proficiencyLevel = 'FOUNDATION';
+      } else if (['B1', 'B2', 'INTERMEDIATE', 'MODERATE', 'MEDIUM'].includes(rawProf)) {
+        proficiencyLevel = 'INTERMEDIATE';
+      } else if (['C1', 'C2', 'ADVANCED', 'HARD', 'EXPERT'].includes(rawProf)) {
+        proficiencyLevel = 'ADVANCED';
+      } else if (['FOUNDATION', 'INTERMEDIATE', 'ADVANCED'].includes(rawProf)) {
+        proficiencyLevel = rawProf;
+      }
       const topic = q.topic || '';
-      const skill = q.skill || 'READING';
-      const section = q.section || 'Reading';
+      const section =
+        q.section || (qType.includes('WRITE') || qType.includes('ESSAY') ? 'Writing' : 'Reading');
+      const skill = q.skill || (section.toLowerCase().includes('writing') ? 'WRITING' : 'READING');
+      const imageUrl =
+        (q.imageUrl || q.mediaUrl || q.image_url || q.image || '').toString().trim() || null;
 
       // 1. Strip trailing group instruction headers from prompt
       let cleanPrompt = rawPrompt;
@@ -502,6 +523,7 @@ export class CanonicalJsonImporterRepository {
         section,
         examType,
         mediaCode: q.mediaCode || q.media_code || null,
+        imageUrl,
       });
 
       qCounter++;
@@ -565,7 +587,7 @@ export class CanonicalJsonImporterRepository {
           (currentGroup.questionType === 'MCQ' && q.questionType === 'MULTIPLE_CHOICE'));
 
       if (!currentGroup || !samePassage || !sameType) {
-        const pNum = q.passageCode.replace(/\D/g, '') || '001';
+        const pNum = (q.passageCode ? q.passageCode.replace(/\D/g, '') : '') || '001';
         const gCode = `QG-READ-${pNum}-${String(groupIdx).padStart(2, '0')}`;
 
         let instructions = '';
@@ -778,8 +800,21 @@ export class CanonicalJsonImporterRepository {
         });
       }
 
-      // Correct Answer Check
-      if (!q.correctAnswer && (!q.acceptedAnswers || q.acceptedAnswers.length === 0)) {
+      // Correct Answer Check (not required for subjective writing essays or speaking prompts)
+      const isOpenEnded = [
+        'WRITING_TASK_1',
+        'WRITING_TASK_2',
+        'WRITING',
+        'ESSAY',
+        'SPEAKING_PROMPT',
+        'SPEAKING',
+      ].includes(q.questionType);
+
+      if (
+        !isOpenEnded &&
+        !q.correctAnswer &&
+        (!q.acceptedAnswers || q.acceptedAnswers.length === 0)
+      ) {
         itemHasError = true;
         errors.push({
           rowNumber: rowNo,
@@ -960,7 +995,7 @@ export class CanonicalJsonImporterRepository {
       const groupIdMap = new Map<string, string>();
       for (const g of normalized.questionGroups) {
         currentRecord = g.groupCode;
-        const pId = passageIdMap.get(g.passageCode) || null;
+        const pId = (g.passageCode ? passageIdMap.get(g.passageCode) : null) || null;
         const gRes = await client.query(
           `INSERT INTO public.question_groups
            (id, code, passage_id, title, instructions, question_type, content_title, content_type, shared_data, display_order, tenant_id, created_at, updated_at)
@@ -1018,7 +1053,7 @@ export class CanonicalJsonImporterRepository {
           const qId = randomUUID();
           const qvId = randomUUID();
           const code = q.questionCode || `Q-${Date.now()}-${i + idx}`;
-          const pId = passageIdMap.get(q.passageCode) || null;
+          const pId = (q.passageCode ? passageIdMap.get(q.passageCode) : null) || null;
           const gId = q.groupCode ? groupIdMap.get(q.groupCode) || null : null;
 
           const base = qParams.length;
@@ -1046,6 +1081,7 @@ export class CanonicalJsonImporterRepository {
             acceptedAnswers: q.acceptedAnswers || [],
             options: q.options || [],
             correctAnswer: q.correctAnswer,
+            imageUrl: q.imageUrl || null,
           });
         });
 
@@ -1097,6 +1133,7 @@ export class CanonicalJsonImporterRepository {
             sharedData: groupMeta?.sharedData || undefined,
             acceptedAnswers: item.acceptedAnswers,
             options: item.options,
+            imageUrl: item.imageUrl || undefined,
           };
 
           const qvBase = qvParams.length;
@@ -1183,6 +1220,70 @@ export class CanonicalJsonImporterRepository {
                VALUES (gen_random_uuid(), $1, $2, $3, now())
                ON CONFLICT (group_id, question_id) DO UPDATE SET display_order = EXCLUDED.display_order`,
               [item.groupId, actualQId, idx + 1]
+            );
+          }
+        }
+
+        // Link question media assets & question_media_links
+        currentStep = 'PERSIST_QUESTION_MEDIA';
+        for (const item of preparedItems) {
+          if (item.imageUrl) {
+            const actualQId = codeToIdMap.get(item.code) || item.qId;
+            const actualQvId = qidToQvIdMap.get(actualQId) || item.qvId;
+            currentRecord = `MEDIA -> ${item.code} (${item.imageUrl})`;
+
+            const mediaCode = item.code
+              ? `MED-${item.code}`
+              : `MED-${randomUUID().substring(0, 8)}`;
+            const title = `${item.code} Visual Stimulus Diagram`;
+            const tagsJson = JSON.stringify([
+              item.examType || 'IELTS Academic',
+              item.section || 'Writing',
+              'STIMULUS',
+            ]);
+
+            // Find or create media_asset
+            let mediaAssetId = randomUUID();
+            const existingAssetRes = await client.query(
+              `SELECT id FROM public.media_assets WHERE url = $1 AND tenant_id = $2 LIMIT 1`,
+              [item.imageUrl, resolvedTenantId]
+            );
+
+            if (existingAssetRes.rows.length > 0) {
+              mediaAssetId = existingAssetRes.rows[0].id;
+            } else {
+              const insertMediaRes = await client.query(
+                `INSERT INTO public.media_assets 
+                 (id, code, title, type, url, bucket_path, size_bytes, exam_type, tags, status, tenant_id, created_at, updated_at)
+                 VALUES ($1, $2, $3, 'IMAGE', $4, $5, 102400, $6, $7::jsonb, 'PUBLISHED', $8, now(), now())
+                 ON CONFLICT (code) DO UPDATE SET
+                   url = EXCLUDED.url,
+                   updated_at = now()
+                 RETURNING id`,
+                [
+                  mediaAssetId,
+                  mediaCode,
+                  title,
+                  item.imageUrl,
+                  item.imageUrl,
+                  item.examType || 'IELTS Academic',
+                  tagsJson,
+                  resolvedTenantId,
+                ]
+              );
+              if (insertMediaRes.rows.length > 0) {
+                mediaAssetId = insertMediaRes.rows[0].id;
+              }
+            }
+
+            // Insert into question_media_links
+            await client.query(
+              `INSERT INTO public.question_media_links
+               (id, question_id, question_version_id, media_asset_id, association_type, display_order, created_at)
+               VALUES (gen_random_uuid(), $1, $2, $3, 'STIMULUS', 1, now())
+               ON CONFLICT (question_id, media_asset_id, association_type) DO UPDATE SET
+                 question_version_id = EXCLUDED.question_version_id`,
+              [actualQId, actualQvId, mediaAssetId]
             );
           }
         }

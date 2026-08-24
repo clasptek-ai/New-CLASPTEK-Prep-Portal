@@ -26,6 +26,7 @@ import {
   ChevronRight,
   FileText,
   HelpCircle,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 interface ActiveProgrammeData {
@@ -651,6 +652,25 @@ export function AdaptivePracticeScreen() {
                   </div>
                 )}
 
+                {/* Visual Stimulus Diagram / Image (Writing Task 1 / Reading diagrams) */}
+                {currentQuestion.imageUrl && (
+                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <div className="font-bold text-slate-200 text-xs flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <ImageIcon size={16} className="text-sky-400" /> Visual Stimulus Diagram
+                      </span>
+                      <Badge variant="info">IELTS Academic Task 1</Badge>
+                    </div>
+                    <div className="rounded-xl overflow-hidden border border-slate-800 bg-white p-4 flex items-center justify-center shadow-inner">
+                      <img
+                        src={currentQuestion.imageUrl}
+                        alt="Question Visual Stimulus Diagram"
+                        className="max-h-[460px] w-full object-contain"
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {/* QUESTION PROMPT (Clean, without repeated group instruction headers) */}
                 <div className="space-y-2">
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
@@ -801,16 +821,44 @@ export function AdaptivePracticeScreen() {
 
                 {/* Writing Task TextArea */}
                 {isWritingSkill && (
-                  <div className="space-y-2 pt-2">
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center justify-between text-xs text-slate-400">
+                      <span>Type your essay response:</span>
+                      <span className="font-mono text-sky-400">
+                        {currentQuestion.type === 'WRITING_TASK_1'
+                          ? 'Minimum 150 words'
+                          : 'Minimum 250 words'}
+                      </span>
+                    </div>
                     <textarea
-                      rows={8}
+                      rows={12}
                       value={textAnswer}
                       onChange={(e) => handleSelectOption(e.target.value)}
-                      placeholder="Compose your IELTS essay response here..."
-                      className="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 leading-relaxed font-sans"
+                      placeholder={
+                        currentQuestion.type === 'WRITING_TASK_1'
+                          ? 'Summarise the diamond manufacturing process from mining to retailer (at least 150 words)...'
+                          : 'Write your essay response stating reasons and examples (at least 250 words)...'
+                      }
+                      className="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 leading-relaxed font-sans"
                     />
-                    <div className="text-right text-[11px] text-slate-400 font-mono">
-                      Words: {textAnswer.trim() ? textAnswer.trim().split(/\s+/).length : 0}
+                    <div className="flex justify-between items-center text-xs font-mono">
+                      <span className="text-slate-500">IELTS Academic Assessment Editor</span>
+                      {(() => {
+                        const wordCount = textAnswer.trim()
+                          ? textAnswer.trim().split(/\s+/).length
+                          : 0;
+                        const minWords = currentQuestion.type === 'WRITING_TASK_1' ? 150 : 250;
+                        const isSatisfied = wordCount >= minWords;
+                        return (
+                          <span
+                            className={
+                              isSatisfied ? 'text-emerald-400 font-bold' : 'text-amber-400'
+                            }
+                          >
+                            Words: {wordCount} / {minWords} {isSatisfied ? '✓' : ''}
+                          </span>
+                        );
+                      })()}
                     </div>
                   </div>
                 )}

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "1.0",
+  "examType": "IELTS Academic",
+  "metadata": {
+    "title": "IELTS Academic Writing Mock Practice 1",
+    "section": "Writing",
+    "durationMinutes": 60,
+    "totalQuestions": 2,
+    "source": "Clasptek IELTS Academic Writing Preparation",
+    "description": "Complete 60-minute IELTS Academic Writing Mock Practice with Task 1 (Process Diagram) and Task 2 (Discursive Opinion Essay)."
+  },
+  "passages": [],
+  "questionGroups": [
+    {
+      "groupCode": "QG-WRITE-001-01",
+      "title": "Task 1: Process Diagram",
+      "instructions": "You should spend about 20 minutes on this task. Write at least 150 words.",
+      "questionType": "WRITING_TASK_1",
+      "contentTitle": "Processing of Diamonds from Mine to Retailer",
+      "contentType": "PROCESS_DIAGRAM"
+    },
+    {
+      "groupCode": "QG-WRITE-001-02",
+      "title": "Task 2: Discursive Essay",
+      "instructions": "You should spend about 40 minutes on this task. Write at least 250 words.",
+      "questionType": "WRITING_TASK_2",
+      "contentTitle": "The Value of Learning About the Past",
+      "contentType": "ESSAY_PROMPT"
+    }
+  ],
+  "questions": [
+    {
+      "questionCode": "IELTS-WRITE-001",
+      "passageCode": null,
+      "groupCode": "QG-WRITE-001-01",
+      "section": "Writing",
+      "skill": "Writing Task 1",
+      "questionType": "WRITING_TASK_1",
+      "questionText": "The process shows diamonds moving from the mine to the retailer. Summarise the information by selecting and reporting the main features, and making relevant comparisons.",
+      "difficulty": "INTERMEDIATE",
+      "proficiencyLevel": "B2",
+      "topic": "Industrial Processes & Manufacturing",
+      "imageUrl": "/images/stimuli/rough-diamond-process.png",
+      "acceptedAnswers": [],
+      "correctAnswer": null,
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "This is an IELTS Academic Writing Task 1 process-diagram task. Summarise the branching diamond production process from mining and sorting into low grade (industrial uses, cut and shaped, tested for hardness, priced, sent to retailers) and high grade (cosmetic uses, computer analysis, cut by hand or machine, polished, given a rating, priced, sent to retailers) and make relevant comparisons. Write at least 150 words."
+    },
+    {
+      "questionCode": "IELTS-WRITE-002",
+      "passageCode": null,
+      "groupCode": "QG-WRITE-001-02",
+      "section": "Writing",
+      "skill": "Writing Task 2",
+      "questionType": "WRITING_TASK_2",
+      "questionText": "Learning about the past has no value for those of us living in the present. To what extent do you agree or disagree? Give reasons for your answer and include any relevant examples from your own knowledge or experience.",
+      "difficulty": "INTERMEDIATE",
+      "proficiencyLevel": "B2",
+      "topic": "History & Society",
+      "acceptedAnswers": [],
+      "correctAnswer": null,
+      "options": [],
+      "usages": ["PRACTICE"],
+      "explanation": "This is an IELTS Academic Writing Task 2 opinion essay task. Formulate a well-structured argumentative essay stating your position clearly with supporting reasons and relevant examples. Write at least 250 words."
+    }
+  ]
+}
