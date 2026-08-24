@@ -1,6 +1,13 @@
 import { Pool } from 'pg';
 import { ServerEnvironment } from '@clasptek/configuration';
 import { Logger } from '@clasptek/observability';
+import dns from 'dns';
+
+try {
+  dns.setServers(['8.8.8.8', '1.1.1.1']);
+} catch {
+  /* ignore */
+}
 
 declare global {
   // Global singleton instance for Next.js dev server & hot reloading
@@ -44,7 +51,9 @@ export class DatabasePool {
           client.release();
           this.isConnected = true;
           return;
-        } catch {}
+        } catch {
+          /* ignore */
+        }
       }
       this.isConnected = false;
       this.pool = null;
@@ -59,7 +68,9 @@ export class DatabasePool {
         );
         try {
           await globalThis.__globalPgPool.end();
-        } catch {}
+        } catch {
+          /* ignore */
+        }
         globalThis.__globalPgPool = undefined;
       } else {
         try {
@@ -75,7 +86,9 @@ export class DatabasePool {
           );
           try {
             await globalThis.__globalPgPool.end();
-          } catch {}
+          } catch {
+            /* ignore */
+          }
           globalThis.__globalPgPool = undefined;
         }
       }

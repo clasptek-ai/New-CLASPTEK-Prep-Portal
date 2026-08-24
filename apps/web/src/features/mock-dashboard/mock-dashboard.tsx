@@ -4,18 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button, Badge } from '../../components/ui/ui-components';
 import { mockGeneratorService } from '../mock-engine/application/mock-generator.service';
 import { MockTemplate, MockSession, MockResult } from '../mock-engine/domain/mock-blueprint';
-import {
-  Award,
-  Clock,
-  Play,
-  CheckCircle2,
-  TrendingUp,
-  RotateCcw,
-  ShieldCheck,
-  Zap,
-  BookOpen,
-  FileText,
-} from 'lucide-react';
+import { IELTSExamEngine } from '../mock-engine/components/IELTSExamEngine';
+import { Award, Clock, Play } from 'lucide-react';
 
 export interface MockDashboardProps {
   availableTemplates?: { id: string; title: string; durationMinutes: number }[];
@@ -29,8 +19,8 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
   const [loading, setLoading] = useState(true);
 
   // Active Player View State
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [, setCurrentSectionIndex] = useState(0);
+  const [, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswerMap, setSelectedAnswerMap] = useState<Record<string, string>>({});
   const [viewState, setViewState] = useState<'DASHBOARD' | 'PLAYER' | 'RESULT'>('DASHBOARD');
 
@@ -48,6 +38,43 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
     }
     load();
   }, []);
+
+  // Restore active session and answers on page load
+  useEffect(() => {
+    try {
+      const savedSession = localStorage.getItem('clasptek_active_mock_session');
+      const savedAnswers = localStorage.getItem('clasptek_active_mock_answers');
+      if (savedSession) {
+        const parsed = JSON.parse(savedSession);
+        if (parsed?.id) {
+          setActiveSession(parsed);
+          if (savedAnswers) setSelectedAnswerMap(JSON.parse(savedAnswers));
+          setViewState('PLAYER');
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  // Autosave active session and answers on changes
+  useEffect(() => {
+    if (activeSession && viewState === 'PLAYER') {
+      try {
+        localStorage.setItem('clasptek_active_mock_session', JSON.stringify(activeSession));
+        localStorage.setItem('clasptek_active_mock_answers', JSON.stringify(selectedAnswerMap));
+      } catch {
+        /* ignore */
+      }
+    } else if (viewState === 'RESULT') {
+      try {
+        localStorage.removeItem('clasptek_active_mock_session');
+        localStorage.removeItem('clasptek_active_mock_answers');
+      } catch {
+        /* ignore */
+      }
+    }
+  }, [activeSession, selectedAnswerMap, viewState]);
 
   async function handleLaunchMock(templateId: string) {
     if (onStart) onStart(templateId);
@@ -79,9 +106,6 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
     setViewState('RESULT');
     setLoading(false);
   }
-
-  const currentSection = activeSession?.template?.sections[currentSectionIndex];
-  const currentQuestion = currentSection?.questions[currentQuestionIndex];
 
   return (
     <div
@@ -284,297 +308,16 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
         </>
       )}
 
-      {/* VIEW 2: FULL MOCK PLAYER ENVIRONMENT */}
-      {viewState === 'PLAYER' && activeSession && currentQuestion && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {/* Top Proctoring & Timer Header Bar */}
-          <Card
-            style={{
-              padding: '1rem 1.5rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '12px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '1rem',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <Badge variant="danger">LIVE EXAM MODE</Badge>
-              <span style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff' }}>
-                {activeSession.exam} - {currentSection?.sectionName}
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div
-                style={{
-                  fontSize: '1rem',
-                  fontWeight: 800,
-                  color: '#38bdf8',
-                  backgroundColor: '#161e2e',
-                  padding: '0.4rem 0.85rem',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                }}
-              >
-                <Clock size={18} /> {activeSession?.template?.totalDurationMinutes || 120} Mins Allocated
-              </div>
-
-              <Button variant="success" size="sm" onClick={handleSubmitMock}>
-                Submit Exam
-              </Button>
-            </div>
-          </Card>
-
-          {/* Section Navigation Tabs */}
-          <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto' }}>
-            {(activeSession?.template?.sections || []).map((sec, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  setCurrentSectionIndex(idx);
-                  setCurrentQuestionIndex(0);
-                }}
-                style={{
-                  padding: '0.6rem 1.25rem',
-                  borderRadius: '8px',
-                  border: 'none',
-                  backgroundColor: currentSectionIndex === idx ? '#2563eb' : '#111827',
-                  color: currentSectionIndex === idx ? '#ffffff' : '#94a3b8',
-                  fontWeight: 700,
-                  fontSize: '0.875rem',
-                  cursor: 'pointer',
-                }}
-              >
-                Section {idx + 1}: {sec.sectionName} ({sec.questions.length} Qs)
-              </button>
-            ))}
-          </div>
-
-          {/* Question Display Card */}
-          <Card
-            style={{
-              padding: '2rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '16px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1.5rem',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span
-                style={{
-                  fontSize: '0.85rem',
-                  fontFamily: 'monospace',
-                  color: '#38bdf8',
-                  fontWeight: 700,
-                }}
-              >
-                {currentQuestion.code} | Question {currentQuestionIndex + 1} of{' '}
-                {currentSection?.questions.length}
-              </span>
-              <Badge variant="neutral">{currentQuestion.skill}</Badge>
-            </div>
-
-            <div
-              style={{ fontSize: '1.15rem', fontWeight: 700, color: '#ffffff', lineHeight: 1.6 }}
-            >
-              {currentQuestion.text}
-            </div>
-
-            {/* Visual Stimulus Diagram */}
-            {(currentQuestion as any).imageUrl && (
-              <div
-                style={{
-                  backgroundColor: '#030712',
-                  padding: '1rem',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.75rem',
-                }}
-              >
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#38bdf8' }}>
-                  Visual Stimulus Diagram
-                </div>
-                <div
-                  style={{
-                    backgroundColor: '#ffffff',
-                    padding: '1rem',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <img
-                    src={(currentQuestion as any).imageUrl}
-                    alt="Question Visual Stimulus Diagram"
-                    style={{ maxHeight: '460px', width: '100%', objectFit: 'contain' }}
-                  />
-                </div>
-              </div>
-            )}
-
-            {/* Options Renderer */}
-            {currentQuestion.options && currentQuestion.options.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {currentQuestion.options.map((opt, i) => {
-                  const isSelected = selectedAnswerMap[currentQuestion.id] === opt;
-                  return (
-                    <div
-                      key={i}
-                      onClick={() =>
-                        setSelectedAnswerMap((prev) => ({ ...prev, [currentQuestion.id]: opt }))
-                      }
-                      style={{
-                        padding: '0.85rem 1.15rem',
-                        borderRadius: '10px',
-                        backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.15)' : '#1e293b',
-                        border: '1px solid',
-                        borderColor: isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.08)',
-                        color: isSelected ? '#60a5fa' : '#f8fafc',
-                        fontWeight: isSelected ? 700 : 500,
-                        fontSize: '0.95rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.75rem',
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: '20px',
-                          height: '20px',
-                          borderRadius: '50%',
-                          border: '2px solid',
-                          borderColor: isSelected ? '#3b82f6' : '#64748b',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        {isSelected && (
-                          <div
-                            style={{
-                              width: '10px',
-                              height: '10px',
-                              borderRadius: '50%',
-                              backgroundColor: '#3b82f6',
-                            }}
-                          />
-                        )}
-                      </div>
-                      <span>{opt}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Writing / Open-Ended Response Textarea */}
-            {(!currentQuestion.options || currentQuestion.options.length === 0) && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <textarea
-                  rows={10}
-                  value={selectedAnswerMap[currentQuestion.id] || ''}
-                  onChange={(e) =>
-                    setSelectedAnswerMap((prev) => ({
-                      ...prev,
-                      [currentQuestion.id]: e.target.value,
-                    }))
-                  }
-                  placeholder="Type your official examination essay / response here..."
-                  style={{
-                    width: '100%',
-                    backgroundColor: '#1e293b',
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                    borderRadius: '10px',
-                    padding: '1rem',
-                    color: '#f8fafc',
-                    fontSize: '1rem',
-                    lineHeight: 1.6,
-                    fontFamily: 'inherit',
-                    resize: 'vertical',
-                    boxSizing: 'border-box',
-                  }}
-                />
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    fontSize: '0.85rem',
-                    color: '#94a3b8',
-                  }}
-                >
-                  <span>
-                    Word Count:{' '}
-                    <strong style={{ color: '#38bdf8' }}>
-                      {(selectedAnswerMap[currentQuestion.id] || '')
-                        .trim()
-                        .split(/\s+/)
-                        .filter(Boolean).length}
-                    </strong>{' '}
-                    words
-                  </span>
-                  <span>
-                    Required Minimum:{' '}
-                    <strong>
-                      {currentQuestion.code?.includes('WRITE-001') ||
-                      currentQuestion.type === 'WRITING_TASK_1'
-                        ? '150'
-                        : '250'}{' '}
-                      words
-                    </strong>
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Item Navigation */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                paddingTop: '1rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
-              <Button
-                variant="outline"
-                disabled={currentQuestionIndex === 0}
-                onClick={() => setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))}
-              >
-                Previous Item
-              </Button>
-
-              {currentSection && currentQuestionIndex < currentSection.questions.length - 1 ? (
-                <Button
-                  variant="primary"
-                  onClick={() =>
-                    setCurrentQuestionIndex((prev) =>
-                      Math.min(currentSection.questions.length - 1, prev + 1)
-                    )
-                  }
-                >
-                  Next Item
-                </Button>
-              ) : (
-                <Button variant="success" onClick={handleSubmitMock}>
-                  Complete Section / Submit Exam
-                </Button>
-              )}
-            </div>
-          </Card>
-        </div>
+      {/* VIEW 2: IELTS SECTION-AWARE EXAM ENGINE */}
+      {viewState === 'PLAYER' && activeSession && (
+        <IELTSExamEngine
+          session={activeSession as any}
+          selectedAnswerMap={selectedAnswerMap}
+          onAnswerChange={(questionId, answer) =>
+            setSelectedAnswerMap((prev) => ({ ...prev, [questionId]: answer }))
+          }
+          onSubmit={handleSubmitMock}
+        />
       )}
 
       {/* VIEW 3: OFFICIAL MOCK RESULT & BAND CONVERSION */}

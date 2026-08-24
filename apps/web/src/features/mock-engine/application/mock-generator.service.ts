@@ -3,22 +3,11 @@ import {
   MockTemplate,
   MockSession,
   MockResult,
-  MockIntegrityLog,
   DEFAULT_MOCK_BLUEPRINTS,
 } from '../domain/mock-blueprint';
-import { AnswerEvaluatorRegistry } from '../domain/answer-evaluator-strategy';
-import {
-  adminQuestionsService,
-  AdminQuestion,
-  ExamType,
-  SectionType,
-} from '../../../services/admin/questions.service';
-import { calculateBandOrScaleScore } from '../../../services/student/practice.service';
-
+import { adminQuestionsService, ExamType } from '../../../services/admin/questions.service';
 const BLUEPRINTS_STORAGE_KEY = 'clasptek_mock_blueprints';
 const TEMPLATES_STORAGE_KEY = 'clasptek_mock_templates';
-const SESSIONS_STORAGE_KEY = 'clasptek_mock_sessions';
-const RESULTS_STORAGE_KEY = 'clasptek_mock_results';
 
 function getStoredBlueprints(): MockBlueprint[] {
   if (typeof window === 'undefined') return DEFAULT_MOCK_BLUEPRINTS;
@@ -54,23 +43,6 @@ function getStoredTemplates(): MockTemplate[] {
 function saveTemplates(templates: MockTemplate[]) {
   if (typeof window !== 'undefined') {
     localStorage.setItem(TEMPLATES_STORAGE_KEY, JSON.stringify(templates));
-  }
-}
-
-function getStoredSessions(): MockSession[] {
-  if (typeof window === 'undefined') return [];
-  const raw = localStorage.getItem(SESSIONS_STORAGE_KEY);
-  if (!raw) return [];
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
-}
-
-function saveSessions(sessions: MockSession[]) {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(SESSIONS_STORAGE_KEY, JSON.stringify(sessions));
   }
 }
 
@@ -215,7 +187,14 @@ export const mockGeneratorService = {
         text: q.prompt,
         difficulty: q.difficulty,
         options: (q.options || []).map((opt: any) => (typeof opt === 'string' ? opt : opt.text)),
+        optionCodes: (q.options || []).map((opt: any) =>
+          typeof opt === 'string' ? opt : opt.code
+        ),
         imageUrl: q.imageUrl || undefined,
+        passage: q.passage || undefined,
+        group: q.group || undefined,
+        audio: q.audio || undefined,
+        speaking: q.speaking || undefined,
         status: 'PUBLISHED',
       })),
     }));
@@ -283,7 +262,8 @@ export const mockGeneratorService = {
         totalQuestions: 40,
         percentage: data.scorePercentage || 0,
         bandOrScale: data.officialScoreLabel || 'Estimated Mock Score',
-        label: data.evaluationState === 'EVALUATING' ? 'Provisional (Subjective Pending)' : 'Scored',
+        label:
+          data.evaluationState === 'EVALUATING' ? 'Provisional (Subjective Pending)' : 'Scored',
       },
       timeSpentSeconds: 3600,
       completedAt: data.submittedAt || new Date().toISOString(),

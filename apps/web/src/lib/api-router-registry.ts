@@ -31,7 +31,10 @@ async function wrapper_get_admin_assessment_statistics(req: any, params: Record<
 apiRouter.get('/admin/assessment/statistics', wrapper_get_admin_assessment_statistics);
 import { POST as post_admin_assessment_unlock_practice } from '@/legacy-api-handlers/v1/admin/assessment/unlock-practice/route';
 
-async function wrapper_post_admin_assessment_unlock_practice(req: any, params: Record<string, string>) {
+async function wrapper_post_admin_assessment_unlock_practice(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_admin_assessment_unlock_practice as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/admin/assessment/unlock-practice', wrapper_post_admin_assessment_unlock_practice);
@@ -127,10 +130,18 @@ async function wrapper_post_admin_diagnostics(req: any, params: Record<string, s
 apiRouter.post('/admin/diagnostics', wrapper_post_admin_diagnostics);
 import { GET as get_admin_diagnostics_id_inventory_check } from '@/legacy-api-handlers/v1/admin/diagnostics/[id]/inventory-check/route';
 
-async function wrapper_get_admin_diagnostics_id_inventory_check(req: any, params: Record<string, string>) {
-  return (get_admin_diagnostics_id_inventory_check as any)(req, { params: Promise.resolve(params) });
+async function wrapper_get_admin_diagnostics_id_inventory_check(
+  req: any,
+  params: Record<string, string>
+) {
+  return (get_admin_diagnostics_id_inventory_check as any)(req, {
+    params: Promise.resolve(params),
+  });
 }
-apiRouter.get('/admin/diagnostics/:id/inventory-check', wrapper_get_admin_diagnostics_id_inventory_check);
+apiRouter.get(
+  '/admin/diagnostics/:id/inventory-check',
+  wrapper_get_admin_diagnostics_id_inventory_check
+);
 import { GET as get_admin_diagnostics_id } from '@/legacy-api-handlers/v1/admin/diagnostics/[id]/route';
 
 async function wrapper_get_admin_diagnostics_id(req: any, params: Record<string, string>) {
@@ -319,10 +330,18 @@ async function wrapper_get_admin_programmes(req: any, params: Record<string, str
 apiRouter.get('/admin/programmes', wrapper_get_admin_programmes);
 import { GET as get_admin_programmes_programmeId_modules } from '@/legacy-api-handlers/v1/admin/programmes/[programmeId]/modules/route';
 
-async function wrapper_get_admin_programmes_programmeId_modules(req: any, params: Record<string, string>) {
-  return (get_admin_programmes_programmeId_modules as any)(req, { params: Promise.resolve(params) });
+async function wrapper_get_admin_programmes_programmeId_modules(
+  req: any,
+  params: Record<string, string>
+) {
+  return (get_admin_programmes_programmeId_modules as any)(req, {
+    params: Promise.resolve(params),
+  });
 }
-apiRouter.get('/admin/programmes/:programmeId/modules', wrapper_get_admin_programmes_programmeId_modules);
+apiRouter.get(
+  '/admin/programmes/:programmeId/modules',
+  wrapper_get_admin_programmes_programmeId_modules
+);
 import { GET as get_admin_prompts } from '@/legacy-api-handlers/v1/admin/prompts/route';
 
 async function wrapper_get_admin_prompts(req: any, params: Record<string, string>) {
@@ -361,19 +380,28 @@ async function wrapper_get_admin_questions_export(req: any, params: Record<strin
 apiRouter.get('/admin/questions/export', wrapper_get_admin_questions_export);
 import { POST as post_admin_questions_import_commit } from '@/legacy-api-handlers/v1/admin/questions/import/commit/route';
 
-async function wrapper_post_admin_questions_import_commit(req: any, params: Record<string, string>) {
+async function wrapper_post_admin_questions_import_commit(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_admin_questions_import_commit as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/admin/questions/import/commit', wrapper_post_admin_questions_import_commit);
 import { GET as get_admin_questions_import_history } from '@/legacy-api-handlers/v1/admin/questions/import/history/route';
 
-async function wrapper_get_admin_questions_import_history(req: any, params: Record<string, string>) {
+async function wrapper_get_admin_questions_import_history(
+  req: any,
+  params: Record<string, string>
+) {
   return (get_admin_questions_import_history as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.get('/admin/questions/import/history', wrapper_get_admin_questions_import_history);
 import { POST as post_admin_questions_import_rollback } from '@/legacy-api-handlers/v1/admin/questions/import/rollback/route';
 
-async function wrapper_post_admin_questions_import_rollback(req: any, params: Record<string, string>) {
+async function wrapper_post_admin_questions_import_rollback(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_admin_questions_import_rollback as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/admin/questions/import/rollback', wrapper_post_admin_questions_import_rollback);
@@ -385,7 +413,10 @@ async function wrapper_post_admin_questions_import(req: any, params: Record<stri
 apiRouter.post('/admin/questions/import', wrapper_post_admin_questions_import);
 import { POST as post_admin_questions_import_validate } from '@/legacy-api-handlers/v1/admin/questions/import/validate/route';
 
-async function wrapper_post_admin_questions_import_validate(req: any, params: Record<string, string>) {
+async function wrapper_post_admin_questions_import_validate(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_admin_questions_import_validate as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/admin/questions/import/validate', wrapper_post_admin_questions_import_validate);
@@ -409,10 +440,16 @@ async function wrapper_post_admin_questions_id_archive(req: any, params: Record<
 apiRouter.post('/admin/questions/:id/archive', wrapper_post_admin_questions_id_archive);
 import { POST as post_admin_questions_id_create_version } from '@/legacy-api-handlers/v1/admin/questions/[id]/create-version/route';
 
-async function wrapper_post_admin_questions_id_create_version(req: any, params: Record<string, string>) {
+async function wrapper_post_admin_questions_id_create_version(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_admin_questions_id_create_version as any)(req, { params: Promise.resolve(params) });
 }
-apiRouter.post('/admin/questions/:id/create-version', wrapper_post_admin_questions_id_create_version);
+apiRouter.post(
+  '/admin/questions/:id/create-version',
+  wrapper_post_admin_questions_id_create_version
+);
 import { POST as post_admin_questions_id_publish } from '@/legacy-api-handlers/v1/admin/questions/[id]/publish/route';
 
 async function wrapper_post_admin_questions_id_publish(req: any, params: Record<string, string>) {
@@ -433,7 +470,10 @@ async function wrapper_patch_admin_questions_id(req: any, params: Record<string,
 apiRouter.patch('/admin/questions/:id', wrapper_patch_admin_questions_id);
 import { POST as post_admin_questions_id_upload_media } from '@/legacy-api-handlers/v1/admin/questions/[id]/upload-media/route';
 
-async function wrapper_post_admin_questions_id_upload_media(req: any, params: Record<string, string>) {
+async function wrapper_post_admin_questions_id_upload_media(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_admin_questions_id_upload_media as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/admin/questions/:id/upload-media', wrapper_post_admin_questions_id_upload_media);
@@ -511,10 +551,18 @@ async function wrapper_patch_admin_settings(req: any, params: Record<string, str
 apiRouter.patch('/admin/settings', wrapper_patch_admin_settings);
 import { GET as get_admin_students_studentId_assessment_history } from '@/legacy-api-handlers/v1/admin/students/[studentId]/assessment-history/route';
 
-async function wrapper_get_admin_students_studentId_assessment_history(req: any, params: Record<string, string>) {
-  return (get_admin_students_studentId_assessment_history as any)(req, { params: Promise.resolve(params) });
+async function wrapper_get_admin_students_studentId_assessment_history(
+  req: any,
+  params: Record<string, string>
+) {
+  return (get_admin_students_studentId_assessment_history as any)(req, {
+    params: Promise.resolve(params),
+  });
 }
-apiRouter.get('/admin/students/:studentId/assessment-history', wrapper_get_admin_students_studentId_assessment_history);
+apiRouter.get(
+  '/admin/students/:studentId/assessment-history',
+  wrapper_get_admin_students_studentId_assessment_history
+);
 import { GET as get_admin_users } from '@/legacy-api-handlers/v1/admin/users/route';
 
 async function wrapper_get_admin_users(req: any, params: Record<string, string>) {
@@ -547,19 +595,31 @@ async function wrapper_patch_admin_users_id_mock_gate(req: any, params: Record<s
 apiRouter.patch('/admin/users/:id/mock-gate', wrapper_patch_admin_users_id_mock_gate);
 import { PATCH as patch_admin_users_id_practice_gate } from '@/legacy-api-handlers/v1/admin/users/[id]/practice-gate/route';
 
-async function wrapper_patch_admin_users_id_practice_gate(req: any, params: Record<string, string>) {
+async function wrapper_patch_admin_users_id_practice_gate(
+  req: any,
+  params: Record<string, string>
+) {
   return (patch_admin_users_id_practice_gate as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.patch('/admin/users/:id/practice-gate', wrapper_patch_admin_users_id_practice_gate);
 import { POST as post_admin_users_id_resend_verification } from '@/legacy-api-handlers/v1/admin/users/[id]/resend-verification/route';
 
-async function wrapper_post_admin_users_id_resend_verification(req: any, params: Record<string, string>) {
+async function wrapper_post_admin_users_id_resend_verification(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_admin_users_id_resend_verification as any)(req, { params: Promise.resolve(params) });
 }
-apiRouter.post('/admin/users/:id/resend-verification', wrapper_post_admin_users_id_resend_verification);
+apiRouter.post(
+  '/admin/users/:id/resend-verification',
+  wrapper_post_admin_users_id_resend_verification
+);
 import { POST as post_admin_users_id_reset_password } from '@/legacy-api-handlers/v1/admin/users/[id]/reset-password/route';
 
-async function wrapper_post_admin_users_id_reset_password(req: any, params: Record<string, string>) {
+async function wrapper_post_admin_users_id_reset_password(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_admin_users_id_reset_password as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/admin/users/:id/reset-password', wrapper_post_admin_users_id_reset_password);
@@ -583,7 +643,10 @@ async function wrapper_patch_admin_users_id_status(req: any, params: Record<stri
 apiRouter.patch('/admin/users/:id/status', wrapper_patch_admin_users_id_status);
 import { POST as post_admin_users_id_unlock_account } from '@/legacy-api-handlers/v1/admin/users/[id]/unlock-account/route';
 
-async function wrapper_post_admin_users_id_unlock_account(req: any, params: Record<string, string>) {
+async function wrapper_post_admin_users_id_unlock_account(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_admin_users_id_unlock_account as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/admin/users/:id/unlock-account', wrapper_post_admin_users_id_unlock_account);
@@ -925,13 +988,19 @@ async function wrapper_post_assessment_attempts(req: any, params: Record<string,
 apiRouter.post('/assessment-attempts', wrapper_post_assessment_attempts);
 import { PATCH as patch_assessment_attempts_id_answers } from '@/legacy-api-handlers/v1/assessment-attempts/[id]/answers/route';
 
-async function wrapper_patch_assessment_attempts_id_answers(req: any, params: Record<string, string>) {
+async function wrapper_patch_assessment_attempts_id_answers(
+  req: any,
+  params: Record<string, string>
+) {
   return (patch_assessment_attempts_id_answers as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.patch('/assessment-attempts/:id/answers', wrapper_patch_assessment_attempts_id_answers);
 import { GET as get_assessment_attempts_id_questions } from '@/legacy-api-handlers/v1/assessment-attempts/[id]/questions/route';
 
-async function wrapper_get_assessment_attempts_id_questions(req: any, params: Record<string, string>) {
+async function wrapper_get_assessment_attempts_id_questions(
+  req: any,
+  params: Record<string, string>
+) {
   return (get_assessment_attempts_id_questions as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.get('/assessment-attempts/:id/questions', wrapper_get_assessment_attempts_id_questions);
@@ -949,7 +1018,10 @@ async function wrapper_get_assessment_attempts_id(req: any, params: Record<strin
 apiRouter.get('/assessment-attempts/:id', wrapper_get_assessment_attempts_id);
 import { POST as post_assessment_attempts_id_submit } from '@/legacy-api-handlers/v1/assessment-attempts/[id]/submit/route';
 
-async function wrapper_post_assessment_attempts_id_submit(req: any, params: Record<string, string>) {
+async function wrapper_post_assessment_attempts_id_submit(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_assessment_attempts_id_submit as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/assessment-attempts/:id/submit', wrapper_post_assessment_attempts_id_submit);
@@ -1135,19 +1207,28 @@ async function wrapper_post_diagnostic_attempts(req: any, params: Record<string,
 apiRouter.post('/diagnostic/attempts', wrapper_post_diagnostic_attempts);
 import { POST as post_diagnostic_attempts_id_placement } from '@/legacy-api-handlers/v1/diagnostic/attempts/[id]/placement/route';
 
-async function wrapper_post_diagnostic_attempts_id_placement(req: any, params: Record<string, string>) {
+async function wrapper_post_diagnostic_attempts_id_placement(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_diagnostic_attempts_id_placement as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/diagnostic/attempts/:id/placement', wrapper_post_diagnostic_attempts_id_placement);
 import { POST as post_diagnostic_attempts_id_response } from '@/legacy-api-handlers/v1/diagnostic/attempts/[id]/response/route';
 
-async function wrapper_post_diagnostic_attempts_id_response(req: any, params: Record<string, string>) {
+async function wrapper_post_diagnostic_attempts_id_response(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_diagnostic_attempts_id_response as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/diagnostic/attempts/:id/response', wrapper_post_diagnostic_attempts_id_response);
 import { PUT as put_diagnostic_attempts_id_response } from '@/legacy-api-handlers/v1/diagnostic/attempts/[id]/response/route';
 
-async function wrapper_put_diagnostic_attempts_id_response(req: any, params: Record<string, string>) {
+async function wrapper_put_diagnostic_attempts_id_response(
+  req: any,
+  params: Record<string, string>
+) {
   return (put_diagnostic_attempts_id_response as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.put('/diagnostic/attempts/:id/response', wrapper_put_diagnostic_attempts_id_response);
@@ -1159,7 +1240,10 @@ async function wrapper_get_diagnostic_attempts_id(req: any, params: Record<strin
 apiRouter.get('/diagnostic/attempts/:id', wrapper_get_diagnostic_attempts_id);
 import { POST as post_diagnostic_attempts_id_submit } from '@/legacy-api-handlers/v1/diagnostic/attempts/[id]/submit/route';
 
-async function wrapper_post_diagnostic_attempts_id_submit(req: any, params: Record<string, string>) {
+async function wrapper_post_diagnostic_attempts_id_submit(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_diagnostic_attempts_id_submit as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/diagnostic/attempts/:id/submit', wrapper_post_diagnostic_attempts_id_submit);
@@ -1433,6 +1517,12 @@ async function wrapper_post_mock_start(req: any, params: Record<string, string>)
   return (post_mock_start as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/mock/start', wrapper_post_mock_start);
+import { POST as post_mock_speaking_upload } from '@/legacy-api-handlers/v1/mock/speaking/upload/route';
+
+async function wrapper_post_mock_speaking_upload(req: any, params: Record<string, string>) {
+  return (post_mock_speaking_upload as any)(req, { params: Promise.resolve(params) });
+}
+apiRouter.post('/mock/speaking/upload', wrapper_post_mock_speaking_upload);
 import { GET as get_mock_statistics } from '@/legacy-api-handlers/v1/mock/statistics/route';
 
 async function wrapper_get_mock_statistics(req: any, params: Record<string, string>) {
@@ -1567,16 +1657,28 @@ async function wrapper_get_practice_recommendations(req: any, params: Record<str
 apiRouter.get('/practice/recommendations', wrapper_get_practice_recommendations);
 import { POST as post_practice_recommendations_id_accept } from '@/legacy-api-handlers/v1/practice/recommendations/[id]/accept/route';
 
-async function wrapper_post_practice_recommendations_id_accept(req: any, params: Record<string, string>) {
+async function wrapper_post_practice_recommendations_id_accept(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_practice_recommendations_id_accept as any)(req, { params: Promise.resolve(params) });
 }
-apiRouter.post('/practice/recommendations/:id/accept', wrapper_post_practice_recommendations_id_accept);
+apiRouter.post(
+  '/practice/recommendations/:id/accept',
+  wrapper_post_practice_recommendations_id_accept
+);
 import { POST as post_practice_recommendations_id_reject } from '@/legacy-api-handlers/v1/practice/recommendations/[id]/reject/route';
 
-async function wrapper_post_practice_recommendations_id_reject(req: any, params: Record<string, string>) {
+async function wrapper_post_practice_recommendations_id_reject(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_practice_recommendations_id_reject as any)(req, { params: Promise.resolve(params) });
 }
-apiRouter.post('/practice/recommendations/:id/reject', wrapper_post_practice_recommendations_id_reject);
+apiRouter.post(
+  '/practice/recommendations/:id/reject',
+  wrapper_post_practice_recommendations_id_reject
+);
 import { GET as get_practice_results } from '@/legacy-api-handlers/v1/practice/results/route';
 
 async function wrapper_get_practice_results(req: any, params: Record<string, string>) {
@@ -1591,7 +1693,10 @@ async function wrapper_post_practice_resume(req: any, params: Record<string, str
 apiRouter.post('/practice/resume', wrapper_post_practice_resume);
 import { POST as post_practice_retention_recalculate } from '@/legacy-api-handlers/v1/practice/retention/recalculate/route';
 
-async function wrapper_post_practice_retention_recalculate(req: any, params: Record<string, string>) {
+async function wrapper_post_practice_retention_recalculate(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_practice_retention_recalculate as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/practice/retention/recalculate', wrapper_post_practice_retention_recalculate);
@@ -1753,13 +1858,22 @@ async function wrapper_post_readiness_experiments(req: any, params: Record<strin
 apiRouter.post('/readiness/experiments', wrapper_post_readiness_experiments);
 import { POST as post_readiness_experiments_id_complete } from '@/legacy-api-handlers/v1/readiness/experiments/[id]/complete/route';
 
-async function wrapper_post_readiness_experiments_id_complete(req: any, params: Record<string, string>) {
+async function wrapper_post_readiness_experiments_id_complete(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_readiness_experiments_id_complete as any)(req, { params: Promise.resolve(params) });
 }
-apiRouter.post('/readiness/experiments/:id/complete', wrapper_post_readiness_experiments_id_complete);
+apiRouter.post(
+  '/readiness/experiments/:id/complete',
+  wrapper_post_readiness_experiments_id_complete
+);
 import { POST as post_readiness_experiments_id_start } from '@/legacy-api-handlers/v1/readiness/experiments/[id]/start/route';
 
-async function wrapper_post_readiness_experiments_id_start(req: any, params: Record<string, string>) {
+async function wrapper_post_readiness_experiments_id_start(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_readiness_experiments_id_start as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/readiness/experiments/:id/start', wrapper_post_readiness_experiments_id_start);
@@ -1789,7 +1903,10 @@ async function wrapper_get_readiness_instructor(req: any, params: Record<string,
 apiRouter.get('/readiness/instructor', wrapper_get_readiness_instructor);
 import { GET as get_readiness_interventions_catalogue } from '@/legacy-api-handlers/v1/readiness/interventions/catalogue/route';
 
-async function wrapper_get_readiness_interventions_catalogue(req: any, params: Record<string, string>) {
+async function wrapper_get_readiness_interventions_catalogue(
+  req: any,
+  params: Record<string, string>
+) {
   return (get_readiness_interventions_catalogue as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.get('/readiness/interventions/catalogue', wrapper_get_readiness_interventions_catalogue);
@@ -1825,31 +1942,61 @@ async function wrapper_get_readiness_pathway(req: any, params: Record<string, st
 apiRouter.get('/readiness/pathway', wrapper_get_readiness_pathway);
 import { POST as post_readiness_predictions_id_interventions_intId_activate } from '@/legacy-api-handlers/v1/readiness/predictions/[id]/interventions/[intId]/activate/route';
 
-async function wrapper_post_readiness_predictions_id_interventions_intId_activate(req: any, params: Record<string, string>) {
-  return (post_readiness_predictions_id_interventions_intId_activate as any)(req, { params: Promise.resolve(params) });
+async function wrapper_post_readiness_predictions_id_interventions_intId_activate(
+  req: any,
+  params: Record<string, string>
+) {
+  return (post_readiness_predictions_id_interventions_intId_activate as any)(req, {
+    params: Promise.resolve(params),
+  });
 }
-apiRouter.post('/readiness/predictions/:id/interventions/:intId/activate', wrapper_post_readiness_predictions_id_interventions_intId_activate);
+apiRouter.post(
+  '/readiness/predictions/:id/interventions/:intId/activate',
+  wrapper_post_readiness_predictions_id_interventions_intId_activate
+);
 import { POST as post_readiness_predictions_id_interventions_intId_complete } from '@/legacy-api-handlers/v1/readiness/predictions/[id]/interventions/[intId]/complete/route';
 
-async function wrapper_post_readiness_predictions_id_interventions_intId_complete(req: any, params: Record<string, string>) {
-  return (post_readiness_predictions_id_interventions_intId_complete as any)(req, { params: Promise.resolve(params) });
+async function wrapper_post_readiness_predictions_id_interventions_intId_complete(
+  req: any,
+  params: Record<string, string>
+) {
+  return (post_readiness_predictions_id_interventions_intId_complete as any)(req, {
+    params: Promise.resolve(params),
+  });
 }
-apiRouter.post('/readiness/predictions/:id/interventions/:intId/complete', wrapper_post_readiness_predictions_id_interventions_intId_complete);
+apiRouter.post(
+  '/readiness/predictions/:id/interventions/:intId/complete',
+  wrapper_post_readiness_predictions_id_interventions_intId_complete
+);
 import { POST as post_readiness_predictions_id_interventions_intId_discard } from '@/legacy-api-handlers/v1/readiness/predictions/[id]/interventions/[intId]/discard/route';
 
-async function wrapper_post_readiness_predictions_id_interventions_intId_discard(req: any, params: Record<string, string>) {
-  return (post_readiness_predictions_id_interventions_intId_discard as any)(req, { params: Promise.resolve(params) });
+async function wrapper_post_readiness_predictions_id_interventions_intId_discard(
+  req: any,
+  params: Record<string, string>
+) {
+  return (post_readiness_predictions_id_interventions_intId_discard as any)(req, {
+    params: Promise.resolve(params),
+  });
 }
-apiRouter.post('/readiness/predictions/:id/interventions/:intId/discard', wrapper_post_readiness_predictions_id_interventions_intId_discard);
+apiRouter.post(
+  '/readiness/predictions/:id/interventions/:intId/discard',
+  wrapper_post_readiness_predictions_id_interventions_intId_discard
+);
 import { POST as post_readiness_predictions_id_outcome } from '@/legacy-api-handlers/v1/readiness/predictions/[id]/outcome/route';
 
-async function wrapper_post_readiness_predictions_id_outcome(req: any, params: Record<string, string>) {
+async function wrapper_post_readiness_predictions_id_outcome(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_readiness_predictions_id_outcome as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/readiness/predictions/:id/outcome', wrapper_post_readiness_predictions_id_outcome);
 import { POST as post_readiness_predictions_id_publish } from '@/legacy-api-handlers/v1/readiness/predictions/[id]/publish/route';
 
-async function wrapper_post_readiness_predictions_id_publish(req: any, params: Record<string, string>) {
+async function wrapper_post_readiness_predictions_id_publish(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_readiness_predictions_id_publish as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/readiness/predictions/:id/publish', wrapper_post_readiness_predictions_id_publish);
@@ -2185,16 +2332,25 @@ async function wrapper_patch_student_learning_profile(req: any, params: Record<s
 apiRouter.patch('/student/learning-profile', wrapper_patch_student_learning_profile);
 import { GET as get_student_notifications_preferences } from '@/legacy-api-handlers/v1/student/notifications/preferences/route';
 
-async function wrapper_get_student_notifications_preferences(req: any, params: Record<string, string>) {
+async function wrapper_get_student_notifications_preferences(
+  req: any,
+  params: Record<string, string>
+) {
   return (get_student_notifications_preferences as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.get('/student/notifications/preferences', wrapper_get_student_notifications_preferences);
 import { PATCH as patch_student_notifications_preferences } from '@/legacy-api-handlers/v1/student/notifications/preferences/route';
 
-async function wrapper_patch_student_notifications_preferences(req: any, params: Record<string, string>) {
+async function wrapper_patch_student_notifications_preferences(
+  req: any,
+  params: Record<string, string>
+) {
   return (patch_student_notifications_preferences as any)(req, { params: Promise.resolve(params) });
 }
-apiRouter.patch('/student/notifications/preferences', wrapper_patch_student_notifications_preferences);
+apiRouter.patch(
+  '/student/notifications/preferences',
+  wrapper_patch_student_notifications_preferences
+);
 import { GET as get_student_notifications } from '@/legacy-api-handlers/v1/student/notifications/route';
 
 async function wrapper_get_student_notifications(req: any, params: Record<string, string>) {
@@ -2203,7 +2359,10 @@ async function wrapper_get_student_notifications(req: any, params: Record<string
 apiRouter.get('/student/notifications', wrapper_get_student_notifications);
 import { POST as post_student_notifications_id_read } from '@/legacy-api-handlers/v1/student/notifications/[id]/read/route';
 
-async function wrapper_post_student_notifications_id_read(req: any, params: Record<string, string>) {
+async function wrapper_post_student_notifications_id_read(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_student_notifications_id_read as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/student/notifications/:id/read', wrapper_post_student_notifications_id_read);
@@ -2251,7 +2410,10 @@ async function wrapper_get_student_progress(req: any, params: Record<string, str
 apiRouter.get('/student/progress', wrapper_get_student_progress);
 import { POST as post_student_readiness_recalculate } from '@/legacy-api-handlers/v1/student/readiness/recalculate/route';
 
-async function wrapper_post_student_readiness_recalculate(req: any, params: Record<string, string>) {
+async function wrapper_post_student_readiness_recalculate(
+  req: any,
+  params: Record<string, string>
+) {
   return (post_student_readiness_recalculate as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/student/readiness/recalculate', wrapper_post_student_readiness_recalculate);

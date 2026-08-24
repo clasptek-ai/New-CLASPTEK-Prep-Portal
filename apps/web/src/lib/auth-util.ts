@@ -113,6 +113,15 @@ export async function getAuthenticatedSession(
       bearerToken = authHeader.trim();
     }
 
+    const allCookies = cookieStore.getAll();
+    const hasAuthCookie = allCookies.some(
+      (c: any) => c.name.includes('auth-token') || c.name.startsWith('sb-')
+    );
+
+    if (!bearerToken && !hasAuthCookie) {
+      return null;
+    }
+
     // 2. Create Supabase SSR server client using standard helper from persistence package
     const supabase = createSupabaseServerClient(supabaseUrl, supabaseAnonKey, {
       getAll() {
