@@ -52,7 +52,8 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
   async function handleLaunchMock(templateId: string) {
     if (onStart) onStart(templateId);
     setLoading(true);
-    const session = await mockGeneratorService.startSession(templateId);
+    const tmpl = templates.find((t) => t.id === templateId || t.blueprintId === templateId);
+    const session = await mockGeneratorService.startSession(templateId, undefined, tmpl?.exam);
     setActiveSession(session);
     setCurrentSectionIndex(0);
     setCurrentQuestionIndex(0);
@@ -388,6 +389,40 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
               {currentQuestion.text}
             </div>
 
+            {/* Visual Stimulus Diagram */}
+            {(currentQuestion as any).imageUrl && (
+              <div
+                style={{
+                  backgroundColor: '#030712',
+                  padding: '1rem',
+                  borderRadius: '12px',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#38bdf8' }}>
+                  Visual Stimulus Diagram
+                </div>
+                <div
+                  style={{
+                    backgroundColor: '#ffffff',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <img
+                    src={(currentQuestion as any).imageUrl}
+                    alt="Question Visual Stimulus Diagram"
+                    style={{ maxHeight: '460px', width: '100%', objectFit: 'contain' }}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Options Renderer */}
             {currentQuestion.options && currentQuestion.options.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -441,6 +476,66 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                     </div>
                   );
                 })}
+              </div>
+            )}
+
+            {/* Writing / Open-Ended Response Textarea */}
+            {(!currentQuestion.options || currentQuestion.options.length === 0) && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <textarea
+                  rows={10}
+                  value={selectedAnswerMap[currentQuestion.id] || ''}
+                  onChange={(e) =>
+                    setSelectedAnswerMap((prev) => ({
+                      ...prev,
+                      [currentQuestion.id]: e.target.value,
+                    }))
+                  }
+                  placeholder="Type your official examination essay / response here..."
+                  style={{
+                    width: '100%',
+                    backgroundColor: '#1e293b',
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                    borderRadius: '10px',
+                    padding: '1rem',
+                    color: '#f8fafc',
+                    fontSize: '1rem',
+                    lineHeight: 1.6,
+                    fontFamily: 'inherit',
+                    resize: 'vertical',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: '0.85rem',
+                    color: '#94a3b8',
+                  }}
+                >
+                  <span>
+                    Word Count:{' '}
+                    <strong style={{ color: '#38bdf8' }}>
+                      {(selectedAnswerMap[currentQuestion.id] || '')
+                        .trim()
+                        .split(/\s+/)
+                        .filter(Boolean).length}
+                    </strong>{' '}
+                    words
+                  </span>
+                  <span>
+                    Required Minimum:{' '}
+                    <strong>
+                      {currentQuestion.code?.includes('WRITE-001') ||
+                      currentQuestion.type === 'WRITING_TASK_1'
+                        ? '150'
+                        : '250'}{' '}
+                      words
+                    </strong>
+                  </span>
+                </div>
               </div>
             )}
 

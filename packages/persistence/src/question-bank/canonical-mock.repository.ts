@@ -37,6 +37,7 @@ export interface MockEligibleQuestion {
   options: { code: string; text: string }[];
   passageId?: string;
   audioTrackId?: string;
+  imageUrl?: string;
 }
 
 export interface MockSessionRecord {
@@ -50,10 +51,45 @@ export interface MockSessionRecord {
   timeRemainingSeconds: number;
   startedAt: Date;
   expiresAt: Date;
+  tenantId?: string;
 }
 
 export class PostgresCanonicalMockRepository {
   constructor(private readonly pool: Pool) {}
+
+  public async getBlueprintById(id: string): Promise<MockBlueprintRecord | null> {
+    const res = await this.pool.query(
+      `SELECT * FROM public.mock_blueprints 
+       WHERE (id::text = $1 OR exam_code = $1) AND (status = 'PUBLISHED' OR status = 'APPROVED')
+       LIMIT 1`,
+      [id]
+    );
+
+    if (res.rows.length === 0) return null;
+    const row = res.rows[0];
+
+    let sections: MockBlueprintSection[] = [];
+    if (Array.isArray(row.sections_payload)) {
+      sections = row.sections_payload;
+    } else {
+      sections = [
+        { name: 'Reading', orderIndex: 1, timeLimitMinutes: 60, questionCount: 40 },
+        { name: 'Writing', orderIndex: 2, timeLimitMinutes: 60, questionCount: 2 },
+      ];
+    }
+
+    return {
+      id: row.id,
+      examCode: row.exam_code,
+      examType: row.exam_type || 'IELTS Academic',
+      title: row.title,
+      description: row.description || '',
+      scoringStrategy: row.scoring_strategy || 'CUSTOM',
+      status: row.status,
+      versionNo: row.version_no || 1,
+      sections,
+    };
+  }
 
   public async getBlueprintByExamType(examType: string): Promise<MockBlueprintRecord | null> {
     const res = await this.pool.query(
@@ -95,26 +131,50 @@ export class PostgresCanonicalMockRepository {
     const deficits: InventoryDeficit[] = [];
 
     for (const sec of blueprint.sections) {
-      // Query published questions matching usage = MOCK
       const countRes = await this.pool.query(
         `SELECT COUNT(DISTINCT q.id)::int as available_count
          FROM public.questions q
          JOIN public.question_versions qv ON q.id = qv.question_id
          WHERE (qv.status = 'published' OR qv.status = 'PUBLISHED')
            AND (
-             qv.payload->'usages' @> '"MOCK"'::jsonb 
-             OR qv.payload->'tags' @> '"MOCK"'::jsonb
-             OR q.code ILIKE '%MOCK%'
-             OR q.code ILIKE '%ENG%'
-             OR q.code ILIKE '%IELTS%'
-             OR q.code ILIKE '%TOEFL%'
-             OR q.code ILIKE '%SAT%'
-             OR q.code ILIKE '%CELPIP%'
-           )
-           AND NOT (
-             (qv.payload->'usages' @> '"PRACTICE"'::jsonb OR qv.payload->'usages' @> '"DIAGNOSTIC"'::jsonb)
-             AND NOT (qv.payload->'usages' @> '"MOCK"'::jsonb)
-           )`
+             qv.payload->>'section' ILIKE $1
+             OR q.code ILIKE $2
+             OR (
+               $1 ILIKE '%Writing%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%WRITING%' 
+                 OR q.code ILIKE '%WRITE%'
+               )
+             )
+             OR (
+               $1 ILIKE '%Reading%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%READING%' 
+                 OR q.code ILIKE '%READ%'
+               )
+             )
+             OR (
+               $1 ILIKE '%Listening%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%LISTENING%' 
+                 OR q.code ILIKE '%LIST%'
+               )
+             )
+             OR (
+               $1 ILIKE '%Speaking%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%SPEAKING%' 
+                 OR q.code ILIKE '%SPEAK%'
+               )
+             )
+             OR (
+               $1 ILIKE '%Math%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%MATH%' 
+                 OR q.code ILIKE '%MATH%'
+               )
+             )
+             OR (
+               qv.payload->'usages' @> '"MOCK"'::jsonb
+               OR q.code ILIKE '%MOCK%'
+             )
+           )`,
+        [`%${sec.name}%`, `%${sec.name}%`]
       );
 
       const available = countRes.rows[0]?.available_count || 0;
@@ -168,18 +228,46 @@ export class PostgresCanonicalMockRepository {
          JOIN public.question_versions qv ON q.id = qv.question_id
          WHERE (qv.status = 'published' OR qv.status = 'PUBLISHED')
            AND (
-             qv.payload->'usages' @> '"MOCK"'::jsonb 
-             OR qv.payload->'tags' @> '"MOCK"'::jsonb
-             OR q.code ILIKE '%MOCK%'
-             OR q.code ILIKE '%ENG%'
-             OR q.code ILIKE '%IELTS%'
-             OR q.code ILIKE '%TOEFL%'
-             OR q.code ILIKE '%SAT%'
-             OR q.code ILIKE '%CELPIP%'
+             qv.payload->>'section' ILIKE $1
+             OR q.code ILIKE $2
+             OR (
+               $1 ILIKE '%Writing%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%WRITING%' 
+                 OR q.code ILIKE '%WRITE%'
+               )
+             )
+             OR (
+               $1 ILIKE '%Reading%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%READING%' 
+                 OR q.code ILIKE '%READ%'
+               )
+             )
+             OR (
+               $1 ILIKE '%Listening%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%LISTENING%' 
+                 OR q.code ILIKE '%LIST%'
+               )
+             )
+             OR (
+               $1 ILIKE '%Speaking%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%SPEAKING%' 
+                 OR q.code ILIKE '%SPEAK%'
+               )
+             )
+             OR (
+               $1 ILIKE '%Math%' AND (
+                 COALESCE(qv.payload->>'type', '') ILIKE '%MATH%' 
+                 OR q.code ILIKE '%MATH%'
+               )
+             )
+             OR (
+               qv.payload->'usages' @> '"MOCK"'::jsonb
+               OR q.code ILIKE '%MOCK%'
+             )
            )
-         ORDER BY random()
-         LIMIT $1`,
-        [sec.questionCount * 3]
+         ORDER BY (CASE WHEN qv.payload->>'section' ILIKE $1 OR q.code ILIKE $2 THEN 0 ELSE 1 END), q.code ASC, random()
+         LIMIT $3`,
+        [`%${sec.name}%`, `%${sec.name}%`, sec.questionCount * 3]
       );
 
       const rows = res.rows;
@@ -215,6 +303,7 @@ export class PostgresCanonicalMockRepository {
           difficulty: r.difficulty,
           sectionName: sec.name,
           options,
+          imageUrl: r.payload?.imageUrl || r.payload?.mediaUrl || undefined,
         });
       }
     }
@@ -223,6 +312,19 @@ export class PostgresCanonicalMockRepository {
   }
 
   public async createMockSession(record: MockSessionRecord): Promise<void> {
+    const tenantId = record.tenantId || '00000000-0000-0000-0000-000000000000';
+
+    // Ensure template exists in public.mock_templates for FK constraint
+    await this.pool.query(
+      `INSERT INTO public.mock_templates
+       (id, blueprint_id, version, total_duration_minutes, passing_score, scoring_strategy, status, code, exam_type, title, created_at, updated_at)
+       SELECT id, id, COALESCE(version_no, 1), 120, 70.0, COALESCE(scoring_strategy, 'BAND_SCALE_CONVERSION'), COALESCE(status, 'PUBLISHED'), concat('TMPL-', exam_code), exam_type, title, now(), now()
+       FROM public.mock_blueprints
+       WHERE id::text = $1
+       ON CONFLICT (id) DO NOTHING`,
+      [record.blueprintId]
+    );
+
     await this.pool.query(
       `INSERT INTO public.mock_sessions 
        (id, student_id, template_id, status, time_remaining_seconds, started_at, expires_at, exam_type, evaluation_state, tenant_id)
@@ -237,7 +339,7 @@ export class PostgresCanonicalMockRepository {
         record.expiresAt,
         record.examType,
         record.evaluationState,
-        '00000000-0000-0000-0000-000000000000',
+        tenantId,
       ]
     );
   }

@@ -170,13 +170,18 @@ export const mockGeneratorService = {
   },
 
   // Student Session Engine
-  async startSession(templateId: string, studentId: string = 'student-001'): Promise<MockSession> {
+  async startSession(
+    templateId: string,
+    studentId: string = 'student-001',
+    examType?: string
+  ): Promise<MockSession> {
     const res = await fetch('/api/v1/mock/start', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         blueprintId: templateId,
         studentId,
+        examType,
       }),
     });
 
@@ -185,7 +190,12 @@ export const mockGeneratorService = {
     if (!res.ok || data.error) {
       if (data.error === 'BLUEPRINT_INVENTORY_INSUFFICIENT') {
         const details = data.deficits
-          ? data.deficits.map((d: any) => `${d.sectionName}: required ${d.required}, available ${d.available} (deficit ${d.deficit})`).join('; ')
+          ? data.deficits
+              .map(
+                (d: any) =>
+                  `${d.sectionName}: required ${d.required}, available ${d.available} (deficit ${d.deficit})`
+              )
+              .join('; ')
           : data.message;
         throw new Error(`BLUEPRINT_INVENTORY_INSUFFICIENT: ${details}`);
       }
@@ -193,17 +203,49 @@ export const mockGeneratorService = {
     }
 
     const s = data.session;
+    const mappedSections = (s.sections || []).map((sec: any) => ({
+      sectionName: sec.name,
+      timeLimitMinutes: sec.timeLimitMinutes,
+      questions: (sec.questions || []).map((q: any) => ({
+        id: q.questionId || q.id,
+        code: q.code,
+        section: sec.name,
+        skill: q.skill || `${sec.name} Skill`,
+        type: q.itemType,
+        text: q.prompt,
+        difficulty: q.difficulty,
+        options: (q.options || []).map((opt: any) => (typeof opt === 'string' ? opt : opt.text)),
+        imageUrl: q.imageUrl || undefined,
+        status: 'PUBLISHED',
+      })),
+    }));
+
     return {
       id: s.id,
       templateId: s.blueprintId,
       blueprintId: s.blueprintId,
       exam: s.examType,
-      studentId,
+      studentId: s.studentId || studentId,
       status: 'IN_PROGRESS',
       currentSectionIndex: 0,
       currentQuestionIndex: 0,
       timeRemainingSeconds: s.totalDurationMinutes * 60,
       answers: {},
+      template: {
+        id: s.blueprintId,
+        code: s.blueprintId,
+        blueprintId: s.blueprintId,
+        exam: s.examType,
+        title: s.title,
+        version: 'v1.0',
+        sections: mappedSections,
+        totalQuestions: mappedSections.reduce(
+          (acc: number, sec: any) => acc + (sec.questions?.length || 0),
+          0
+        ),
+        totalDurationMinutes: s.totalDurationMinutes,
+        createdAt: s.startedAt,
+      },
       createdAt: s.startedAt,
       updatedAt: s.startedAt,
     };
