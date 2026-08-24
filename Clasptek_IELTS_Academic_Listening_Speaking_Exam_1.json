@@ -1,0 +1,819 @@
+{
+  "schemaVersion": "1.0",
+  "packageType": "IELTS_STANDARD_ORIGINAL_ASSESSMENT",
+  "examType": "IELTS Academic",
+  "title": "Clasptek IELTS Academic Listening & Speaking Examination 1",
+  "contentStatus": "Original content written to align with IELTS format and task specifications; not official IELTS material.",
+  "listening": {
+    "testId": "CLASPTEK-IELTS-A-LISTENING-001",
+    "durationMinutes": 30,
+    "paperTransferMinutes": 10,
+    "parts": [
+      {
+        "part": 1,
+        "title": "Community Garden Membership",
+        "context": "Everyday social situation; conversation between two speakers.",
+        "speakers": ["Maya (garden coordinator)", "Daniel (prospective member)"],
+        "questionTypes": ["form_completion", "multiple_choice", "short_answer"],
+        "questions": [
+          {
+            "id": "IELTS-L1-001",
+            "number": 1,
+            "type": "form_completion",
+            "instruction": "Write ONE WORD AND/OR A NUMBER.",
+            "prompt": "Daniel's surname: ______",
+            "answer": "Hughes",
+            "skill": "specific_information",
+            "difficulty": "easy"
+          },
+          {
+            "id": "IELTS-L1-002",
+            "number": 2,
+            "type": "form_completion",
+            "instruction": "Write ONE WORD AND/OR A NUMBER.",
+            "prompt": "The garden is located beside the ______ Centre.",
+            "answer": "Riverside",
+            "skill": "specific_information",
+            "difficulty": "easy"
+          },
+          {
+            "id": "IELTS-L1-003",
+            "number": 3,
+            "type": "form_completion",
+            "instruction": "Write ONE WORD AND/OR A NUMBER.",
+            "prompt": "The annual membership fee is £______.",
+            "answer": "48",
+            "skill": "numbers",
+            "difficulty": "easy"
+          },
+          {
+            "id": "IELTS-L1-004",
+            "number": 4,
+            "type": "form_completion",
+            "instruction": "Write ONE WORD AND/OR A NUMBER.",
+            "prompt": "Members normally work in the garden on ______ afternoons.",
+            "answer": "Saturday",
+            "skill": "specific_information",
+            "difficulty": "easy"
+          },
+          {
+            "id": "IELTS-L1-005",
+            "number": 5,
+            "type": "form_completion",
+            "instruction": "Write NO MORE THAN TWO WORDS.",
+            "prompt": "New members receive a pair of ______.",
+            "answer": "garden gloves",
+            "skill": "specific_information",
+            "difficulty": "easy"
+          },
+          {
+            "id": "IELTS-L1-006",
+            "number": 6,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "Why does Daniel want to join the garden?",
+            "options": [
+              "A. He wants to grow vegetables for a restaurant.",
+              "B. He wants practical gardening experience.",
+              "C. He needs a place to store gardening equipment."
+            ],
+            "answer": "B",
+            "skill": "purpose",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L1-007",
+            "number": 7,
+            "type": "form_completion",
+            "instruction": "Write ONE WORD ONLY.",
+            "prompt": "The tool shed is opened by the ______.",
+            "answer": "coordinator",
+            "skill": "specific_information",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L1-008",
+            "number": 8,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "What should members do if they cannot attend their assigned session?",
+            "options": [
+              "A. Ask another member to cover it.",
+              "B. Pay an additional fee.",
+              "C. Wait until the next monthly meeting."
+            ],
+            "answer": "A",
+            "skill": "understanding procedures",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L1-009",
+            "number": 9,
+            "type": "short_answer",
+            "instruction": "Write NO MORE THAN TWO WORDS.",
+            "prompt": "What does the garden produce get sold at?",
+            "answer": "Saturday market",
+            "skill": "specific_information",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L1-010",
+            "number": 10,
+            "type": "form_completion",
+            "instruction": "Write ONE WORD ONLY.",
+            "prompt": "Daniel is especially interested in learning about ______.",
+            "answer": "composting",
+            "skill": "specific_information",
+            "difficulty": "medium"
+          }
+        ],
+        "script": "MAYA: Good morning. Riverside Community Garden. How can I help you?\n\nDANIEL: Hi. I'd like to find out about joining. I moved into the area recently, and I'm hoping to do a bit more gardening.\n\nMAYA: Certainly. Let me take a few details first. What's your name?\n\nDANIEL: Daniel Hughes. H-U-G-H-E-S.\n\nMAYA: Thank you, Daniel. And have you found the garden yet?\n\nDANIEL: I think so. Is it the one behind the old library?\n\nMAYA: That's our previous site. We moved two years ago. We're now beside the Riverside Centre, on Mill Road.\n\nDANIEL: Right. I know where that is.\n\nMAYA: Membership is quite straightforward. The annual fee is forty-eight pounds, which covers tools, seeds and basic training.\n\nDANIEL: That's reasonable. How often are members expected to come?\n\nMAYA: Most people join a Saturday afternoon session. We ask each member to attend at least three sessions a month, although you can come more often if you wish.\n\nDANIEL: Do I need to bring my own tools?\n\nMAYA: No. We provide the tools. New members also receive a pair of garden gloves, so you don't need to buy those either.\n\nDANIEL: That's useful. I'm actually hoping to learn rather than just grow things. I've got a small balcony at home and want to get better at growing food.\n\nMAYA: Then you'll fit in well. We have beginners' sessions every month.\n\nDANIEL: Great. What made you set the garden up in the first place?\n\nMAYA: The original aim was to bring neighbours together, but we've gradually added educational activities.\n\nDANIEL: And what happens to everything we grow?\n\nMAYA: Members can take some produce home. Anything left over is sold at the Saturday market, and the money goes back into the garden.\n\nDANIEL: Sounds good. What about access to the tools? Is the shed always open?\n\nMAYA: No. The coordinator opens it at the start of each session and locks it again afterwards. We keep a record of what is taken out.\n\nDANIEL: And if I sign up for Saturday but can't make it one week?\n\nMAYA: Just let us know as soon as possible and ask another member to cover your place. We try not to leave a session short-staffed.\n\nDANIEL: Understood. One last thing. I'm particularly interested in making my own compost. Is that something you teach?\n\nMAYA: Absolutely. Composting is one of our most popular workshops. We run one next month.\n\nDANIEL: Perfect. I think I'll join.\n\nMAYA: Excellent. I'll just give you the registration form..."
+      },
+      {
+        "part": 2,
+        "title": "Orientation Talk: University Study Hub",
+        "context": "Social/educational monologue by one speaker.",
+        "speakers": ["Dr Helen Morris, Student Services Manager"],
+        "questionTypes": ["matching", "map_labelling", "multiple_choice"],
+        "questions": [
+          {
+            "id": "IELTS-L2-011",
+            "number": 11,
+            "type": "matching",
+            "instruction": "Choose the correct letter, A–G.",
+            "prompt": "Which facility is associated with each activity? 11 Quiet individual study",
+            "options": {
+              "A": "Media Lab",
+              "B": "Writing Centre",
+              "C": "Research Library",
+              "D": "Collaboration Lounge",
+              "E": "Language Studio",
+              "F": "Careers Room",
+              "G": "Wellbeing Suite"
+            },
+            "answer": "C",
+            "skill": "matching",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L2-012",
+            "number": 12,
+            "type": "matching",
+            "instruction": "Choose the correct letter, A–G.",
+            "prompt": "12 Practising presentations",
+            "options": {
+              "A": "Media Lab",
+              "B": "Writing Centre",
+              "C": "Research Library",
+              "D": "Collaboration Lounge",
+              "E": "Language Studio",
+              "F": "Careers Room",
+              "G": "Wellbeing Suite"
+            },
+            "answer": "A",
+            "skill": "matching",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L2-013",
+            "number": 13,
+            "type": "matching",
+            "instruction": "Choose the correct letter, A–G.",
+            "prompt": "13 Getting feedback on an essay",
+            "options": {
+              "A": "Media Lab",
+              "B": "Writing Centre",
+              "C": "Research Library",
+              "D": "Collaboration Lounge",
+              "E": "Language Studio",
+              "F": "Careers Room",
+              "G": "Wellbeing Suite"
+            },
+            "answer": "B",
+            "skill": "matching",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L2-014",
+            "number": 14,
+            "type": "matching",
+            "instruction": "Choose the correct letter, A–G.",
+            "prompt": "14 Preparing for an interview",
+            "options": {
+              "A": "Media Lab",
+              "B": "Writing Centre",
+              "C": "Research Library",
+              "D": "Collaboration Lounge",
+              "E": "Language Studio",
+              "F": "Careers Room",
+              "G": "Wellbeing Suite"
+            },
+            "answer": "F",
+            "skill": "matching",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L2-015",
+            "number": 15,
+            "type": "map_labelling",
+            "instruction": "Choose the correct letter, A–H.",
+            "prompt": "15 The café",
+            "mapOptions": {
+              "A": "north entrance",
+              "B": "Media Lab",
+              "C": "Research Library",
+              "D": "Café",
+              "E": "Writing Centre",
+              "F": "Collaboration Lounge",
+              "G": "Careers Room",
+              "H": "Wellbeing Suite"
+            },
+            "answer": "D",
+            "skill": "following a map",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L2-016",
+            "number": 16,
+            "type": "map_labelling",
+            "instruction": "Choose the correct letter, A–H.",
+            "prompt": "16 The Collaboration Lounge",
+            "mapOptions": {
+              "A": "north entrance",
+              "B": "Media Lab",
+              "C": "Research Library",
+              "D": "Café",
+              "E": "Writing Centre",
+              "F": "Collaboration Lounge",
+              "G": "Careers Room",
+              "H": "Wellbeing Suite"
+            },
+            "answer": "F",
+            "skill": "following a map",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L2-017",
+            "number": 17,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "What is the main change to the Hub this semester?",
+            "options": [
+              "A. It now opens earlier.",
+              "B. Several rooms can be booked online.",
+              "C. Printing is no longer available."
+            ],
+            "answer": "B",
+            "skill": "main idea",
+            "difficulty": "medium"
+          },
+          {
+            "id": "IELTS-L2-018",
+            "number": 18,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "Why has the Media Lab been moved?",
+            "options": [
+              "A. The old room was too small.",
+              "B. The equipment required better ventilation.",
+              "C. Students complained about noise."
+            ],
+            "answer": "B",
+            "skill": "reason",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L2-019",
+            "number": 19,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "When is the Hub busiest?",
+            "options": ["A. Monday mornings", "B. Wednesday afternoons", "C. Thursday evenings"],
+            "answer": "B",
+            "skill": "specific_information",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L2-020",
+            "number": 20,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "What does Dr Morris recommend students do before booking a room?",
+            "options": [
+              "A. Check the equipment list.",
+              "B. Contact the security desk.",
+              "C. Read the room-use guidelines."
+            ],
+            "answer": "C",
+            "skill": "recommendation",
+            "difficulty": "hard"
+          }
+        ],
+        "script": "Good afternoon, everyone, and welcome to the University Study Hub. I'm Dr Helen Morris, the Student Services Manager, and this short orientation is designed to help you make better use of the building.\n\nThe Hub has changed quite a bit this semester. The most important change is that several rooms can now be booked online. You don't have to come to reception simply to reserve a space, although reception staff are still available if you need assistance.\n\nLet me start with the facilities. If you're looking for a quiet place to work alone, the Research Library is the best option. It has individual desks, and the silent-study area is on the upper floor.\n\nIf you need to practise a presentation, don't use the library. Instead, book the Media Lab. It has a large screen, recording equipment and adjustable lighting. The Media Lab was moved from its old location because some of the equipment needed better ventilation.\n\nFor students who want feedback on an essay, the Writing Centre is the place to go. Advisers won't rewrite your work for you, but they can help you identify problems with structure, argument and academic style.\n\nThe Careers Room is where you'll find support for job applications and interviews. If you've never had an interview in English, you can book a practice session there.\n\nThe Language Studio is available for language practice, while the Collaboration Lounge is designed for group work. And finally, the Wellbeing Suite provides a quieter space for students who need a break or want to attend a short wellbeing session.\n\nNow, a quick orientation to the building itself. Imagine you're standing at the north entrance. The Research Library is directly ahead of you. If you turn right, you'll find the café. The Writing Centre is beyond the library, on the left-hand side. The Collaboration Lounge is opposite the Writing Centre, near the central staircase. The Careers Room is farther down the same corridor.\n\nThe online booking system is particularly useful because the Hub is busiest on Wednesday afternoons. If you're planning group work at that time, book early.\n\nBefore you reserve any room, however, I strongly recommend reading the room-use guidelines. Some spaces have restrictions on food, recording or the number of people allowed in them. It will save you time and prevent problems later.\n\nThat's all for the main orientation. There are maps available at reception, and the online booking page contains photographs of each room."
+      },
+      {
+        "part": 3,
+        "title": "Student Research Project: Urban Green Roofs",
+        "context": "Educational discussion between two students, with a tutor joining briefly.",
+        "speakers": ["Nina (student)", "Owen (student)", "Dr Patel (tutor)"],
+        "questionTypes": ["multiple_choice", "matching", "sentence_completion"],
+        "questions": [
+          {
+            "id": "IELTS-L3-021",
+            "number": 21,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "Why did Nina and Owen change their original research question?",
+            "options": [
+              "A. There was not enough published research.",
+              "B. Their first question was too broad.",
+              "C. The tutor rejected their data."
+            ],
+            "answer": "B",
+            "skill": "understanding change of plan",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L3-022",
+            "number": 22,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "What does Dr Patel suggest they measure?",
+            "options": [
+              "A. The age of the buildings",
+              "B. Surface temperature",
+              "C. Annual rainfall"
+            ],
+            "answer": "B",
+            "skill": "specific information",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L3-023",
+            "number": 23,
+            "type": "matching",
+            "instruction": "Choose the correct letter, A–E.",
+            "prompt": "Which method will each student mainly use? 23 Nina",
+            "options": {
+              "A": "interviews",
+              "B": "satellite images",
+              "C": "temperature sensors",
+              "D": "online questionnaires",
+              "E": "building plans"
+            },
+            "answer": "C",
+            "skill": "matching",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L3-024",
+            "number": 24,
+            "type": "matching",
+            "instruction": "Choose the correct letter, A–E.",
+            "prompt": "24 Owen",
+            "options": {
+              "A": "interviews",
+              "B": "satellite images",
+              "C": "temperature sensors",
+              "D": "online questionnaires",
+              "E": "building plans"
+            },
+            "answer": "B",
+            "skill": "matching",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L3-025",
+            "number": 25,
+            "type": "sentence_completion",
+            "instruction": "Write NO MORE THAN TWO WORDS.",
+            "prompt": "The researchers are particularly interested in the difference between ______ roofs and conventional roofs.",
+            "answer": "vegetated",
+            "skill": "specific information",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L3-026",
+            "number": 26,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "What problem do Nina and Owen have with their sample?",
+            "options": [
+              "A. Some buildings are inaccessible.",
+              "B. The buildings are too far apart.",
+              "C. The roofs are all the same age."
+            ],
+            "answer": "A",
+            "skill": "problem identification",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L3-027",
+            "number": 27,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "What does Dr Patel say about the questionnaire?",
+            "options": [
+              "A. It should be removed completely.",
+              "B. It should be used as supporting evidence.",
+              "C. It should be sent only to building owners."
+            ],
+            "answer": "B",
+            "skill": "evaluating advice",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L3-028",
+            "number": 28,
+            "type": "sentence_completion",
+            "instruction": "Write NO MORE THAN TWO WORDS.",
+            "prompt": "The final report should distinguish between ______ and correlation.",
+            "answer": "causation",
+            "skill": "academic vocabulary",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L3-029",
+            "number": 29,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "When will the students collect their first measurements?",
+            "options": ["A. This Friday", "B. Next Monday", "C. In two weeks"],
+            "answer": "B",
+            "skill": "specific information",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L3-030",
+            "number": 30,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "What is the tutor's final recommendation?",
+            "options": [
+              "A. Reduce the number of buildings.",
+              "B. Add a second city for comparison.",
+              "C. Keep the study focused on one city."
+            ],
+            "answer": "C",
+            "skill": "understanding recommendation",
+            "difficulty": "hard"
+          }
+        ],
+        "script": "NINA: So, are we ready to show Dr Patel the revised plan?\n\nOWEN: I think so. We've narrowed the project down quite a lot.\n\nDR PATEL: Good. I read your first outline. What changed?\n\nNINA: The original question was about whether green roofs improve cities generally. We realised that was far too broad. So now we're asking whether vegetated roofs are associated with lower daytime surface temperatures in the central districts of one city.\n\nDR PATEL: Much better. What exactly will you measure?\n\nOWEN: We thought we'd look at air quality, rainfall and temperature.\n\nDR PATEL: Drop rainfall. It isn't central to your question. Surface temperature is the most direct measure, so make that your primary variable.\n\nNINA: That's what I thought too. I'll handle the temperature sensors.\n\nOWEN: And I'll work with satellite images. They're useful because we can compare a larger number of roofs.\n\nDR PATEL: Exactly. But be careful about assuming the images tell you everything. Some roof surfaces will be difficult to classify.\n\nNINA: We also wanted to use a questionnaire.\n\nDR PATEL: What would you ask?\n\nNINA: Building managers about maintenance, how often the roof is watered, whether plants have been replaced...\n\nDR PATEL: That's useful contextual information. Don't make it your main evidence, though. Treat it as supporting evidence.\n\nOWEN: We've got another problem. Some of the buildings on our list are inaccessible. We can't get permission to put sensors on them.\n\nDR PATEL: Then don't force it. You can use satellite data for those sites, but be transparent about the difference in methods.\n\nNINA: We're especially interested in the difference between vegetated roofs and conventional roofs.\n\nDR PATEL: Good. And remember a crucial distinction in the report: causation and correlation are not the same thing.\n\nOWEN: So even if green roofs are cooler, we can't automatically say the vegetation caused the difference.\n\nDR PATEL: Correct. Other factors, such as building height, roof material or surrounding shade, might contribute.\n\nNINA: When should we start collecting data?\n\nOWEN: We can install the sensors next Monday.\n\nDR PATEL: Fine. Try to take measurements at comparable times of day. Otherwise you'll introduce another source of variation.\n\nOWEN: Should we add another city as a comparison?\n\nDR PATEL: No. Not at this stage. Keep the study focused on one city. A smaller, well-controlled study will be stronger than a rushed comparison.\n\nNINA: That makes sense.\n\nDR PATEL: Good. Revise the methods section, and send it to me before you begin fieldwork."
+      },
+      {
+        "part": 4,
+        "title": "Lecture: The Psychology of Wayfinding",
+        "context": "Academic lecture; one speaker.",
+        "speakers": ["Professor Elaine Carter"],
+        "questionTypes": ["note_completion", "multiple_choice", "summary_completion"],
+        "questions": [
+          {
+            "id": "IELTS-L4-031",
+            "number": 31,
+            "type": "note_completion",
+            "instruction": "Write NO MORE THAN TWO WORDS.",
+            "prompt": "Early studies of navigation focused heavily on ______ and landmarks.",
+            "answer": "maps",
+            "skill": "main idea",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L4-032",
+            "number": 32,
+            "type": "note_completion",
+            "instruction": "Write ONE WORD ONLY.",
+            "prompt": "People often remember a route as a sequence of ______.",
+            "answer": "actions",
+            "skill": "specific information",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L4-033",
+            "number": 33,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "Why can a familiar route become difficult after a road closure?",
+            "options": [
+              "A. People lose confidence in their memory.",
+              "B. Their usual sequence of actions is interrupted.",
+              "C. They become distracted by traffic."
+            ],
+            "answer": "B",
+            "skill": "cause and effect",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L4-034",
+            "number": 34,
+            "type": "note_completion",
+            "instruction": "Write ONE WORD ONLY.",
+            "prompt": "Good signs should reduce the amount of ______ a traveller has to make.",
+            "answer": "guessing",
+            "skill": "specific information",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L4-035",
+            "number": 35,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "Which group is most likely to benefit from highly consistent signage?",
+            "options": [
+              "A. Experienced local drivers",
+              "B. People navigating an unfamiliar environment",
+              "C. People who travel the same route daily"
+            ],
+            "answer": "B",
+            "skill": "application",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L4-036",
+            "number": 36,
+            "type": "summary_completion",
+            "instruction": "Write NO MORE THAN TWO WORDS.",
+            "prompt": "A landmark is particularly useful when it is visually ______.",
+            "answer": "distinctive",
+            "skill": "specific information",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L4-037",
+            "number": 37,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "What does the lecturer say about digital navigation systems?",
+            "options": [
+              "A. They always improve spatial memory.",
+              "B. They can reduce the need to build an internal map.",
+              "C. They are less accurate than printed maps."
+            ],
+            "answer": "B",
+            "skill": "understanding qualification",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L4-038",
+            "number": 38,
+            "type": "note_completion",
+            "instruction": "Write ONE WORD ONLY.",
+            "prompt": "Researchers distinguish between knowing a route and knowing the surrounding ______.",
+            "answer": "environment",
+            "skill": "conceptual understanding",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L4-039",
+            "number": 39,
+            "type": "summary_completion",
+            "instruction": "Write NO MORE THAN TWO WORDS.",
+            "prompt": "For inclusive design, information should be available through more than one ______.",
+            "answer": "channel",
+            "skill": "main idea",
+            "difficulty": "hard"
+          },
+          {
+            "id": "IELTS-L4-040",
+            "number": 40,
+            "type": "multiple_choice",
+            "instruction": "Choose the correct letter, A, B or C.",
+            "prompt": "What is the lecturer's main conclusion?",
+            "options": [
+              "A. Better navigation depends on combining several kinds of information.",
+              "B. Digital maps should replace physical signs.",
+              "C. People should rely less on landmarks."
+            ],
+            "answer": "A",
+            "skill": "main conclusion",
+            "difficulty": "hard"
+          }
+        ],
+        "script": "Good morning. Today I'd like to talk about wayfinding: how people decide where to go and how they construct an understanding of the spaces around them.\n\nFor many years, researchers studying navigation focused heavily on maps and landmarks. That work was useful, but it did not fully explain how people navigate in everyday situations. When we move through a familiar environment, we don't necessarily carry a detailed map in our heads.\n\nInstead, people often remember a route as a sequence of actions: leave the station, cross the square, turn left, walk past the bank, and so on. This is efficient because we don't need to analyse the whole environment every time we travel.\n\nHowever, this strategy has a weakness. Imagine that a road is closed or a familiar shop disappears. Suddenly, the sequence of actions no longer works. The traveller may know perfectly well where the destination is, but the usual route has been interrupted.\n\nThis has important implications for the design of public spaces. Signs should reduce the amount of guessing a traveller has to make. A sign that appears too late, uses ambiguous symbols or points in several possible directions creates unnecessary cognitive effort.\n\nThis matters particularly for people navigating an unfamiliar environment. Someone who visits a hospital for the first time, for example, cannot depend on the same learned routines as a regular visitor.\n\nLandmarks also play a major role. A landmark is most useful when it is visually distinctive. A large sculpture, unusual building or clearly visible tower may be remembered more easily than a row of identical offices.\n\nThere is another distinction worth making. Researchers separate knowing a route from knowing the surrounding environment. A person may be able to travel successfully from A to B without being able to explain where B is in relation to other locations.\n\nDigital navigation has made this distinction even more interesting. Turn-by-turn systems are extremely useful, but because they provide instructions at each stage, they may reduce the need for the traveller to build an internal map. That is not necessarily a problem, but it changes what kind of knowledge the traveller develops.\n\nSo, what does good wayfinding design look like? There is no single answer. A well-designed environment combines clear signs, distinctive landmarks, consistent visual information and, increasingly, digital assistance.\n\nFor inclusive design, information should also be available through more than one channel. Visual signs are important, but audible announcements, tactile information and accessible digital tools can support people who cannot use one particular form of information effectively.\n\nThe central point, then, is that navigation is not simply a matter of reading a map. Human wayfinding involves memory, action, perception and decision-making. The most effective systems recognise that people use these sources of information together."
+      }
+    ],
+    "totalQuestions": 40,
+    "instructions": [
+      "You will hear four recordings.",
+      "You will hear each recording once only.",
+      "There are 40 questions.",
+      "Each question carries one mark.",
+      "Follow the word limit given for each task.",
+      "Incorrect spelling and grammar may result in loss of the mark."
+    ],
+    "scoring": {
+      "rawScoreMax": 40,
+      "bandConversion": [
+        {
+          "raw": "39-40",
+          "band": 9.0
+        },
+        {
+          "raw": "37-38",
+          "band": 8.5
+        },
+        {
+          "raw": "35-36",
+          "band": 8.0
+        },
+        {
+          "raw": "32-34",
+          "band": 7.5
+        },
+        {
+          "raw": "30-31",
+          "band": 7.0
+        },
+        {
+          "raw": "27-29",
+          "band": 6.5
+        },
+        {
+          "raw": "23-26",
+          "band": 6.0
+        },
+        {
+          "raw": "18-22",
+          "band": 5.5
+        },
+        {
+          "raw": "16-17",
+          "band": 5.0
+        },
+        {
+          "raw": "13-15",
+          "band": 4.5
+        },
+        {
+          "raw": "11-12",
+          "band": 4.0
+        },
+        {
+          "raw": "9-10",
+          "band": 3.5
+        },
+        {
+          "raw": "7-8",
+          "band": 3.0
+        },
+        {
+          "raw": "5-6",
+          "band": 2.5
+        }
+      ],
+      "note": "Raw-to-band boundaries can vary by test version in official IELTS scoring. Use the configured conversion as a practice/exam-engine conversion and keep the table versioned."
+    }
+  },
+  "speaking": {
+    "testId": "CLASPTEK-IELTS-A-SPEAKING-001",
+    "durationMinutes": "11-14",
+    "delivery": "Examiner-led interview; recorded.",
+    "parts": [
+      {
+        "part": 1,
+        "title": "Introduction and Interview",
+        "durationMinutes": "4-5",
+        "examinerInstructions": "Begin with identity confirmation and a brief introduction. Ask questions in a natural conversational manner. Use the selected topic set; do not ask every question if timing is reached.",
+        "topicSets": [
+          {
+            "topic": "Study and Learning",
+            "questions": [
+              "Are you working or are you a student?",
+              "What do you enjoy most about your studies?",
+              "Is there anything you find difficult about studying?",
+              "How do you usually prepare for an important examination?",
+              "Do you think your approach to learning has changed as you have become older?"
+            ]
+          },
+          {
+            "topic": "Technology in Daily Life",
+            "questions": [
+              "How often do you use technology during the day?",
+              "What piece of technology do you use most?",
+              "Has technology changed the way you communicate with people?",
+              "Is there any technology you would find difficult to live without?",
+              "Do you think people rely too much on technology?"
+            ]
+          },
+          {
+            "topic": "Places in Your Area",
+            "questions": [
+              "What is your neighbourhood like?",
+              "What place do you enjoy visiting there?",
+              "Are there any places you would like to see improved?",
+              "Do you prefer spending time in busy places or quiet places?",
+              "How might your area change in the future?"
+            ]
+          }
+        ]
+      },
+      {
+        "part": 2,
+        "title": "Individual Long Turn",
+        "durationMinutes": "3-4",
+        "preparationSeconds": 60,
+        "speakingSeconds": 120,
+        "cueCard": {
+          "topic": "Describe a skill that you learned and found useful.",
+          "prompts": ["what the skill is", "when and how you learned it", "how you have used it"],
+          "finalPrompt": "and explain why you think this skill is useful."
+        },
+        "examinerFollowUp": [
+          "Do you still use this skill regularly?",
+          "Would you recommend learning it to other people?"
+        ]
+      },
+      {
+        "part": 3,
+        "title": "Two-Way Discussion",
+        "durationMinutes": "4-5",
+        "theme": "Skills, Education and the Future of Work",
+        "questions": [
+          "What kinds of skills are most important for young people to develop today?",
+          "Why do some people continue learning new skills after they finish formal education?",
+          "Do you think schools give enough attention to practical skills?",
+          "How might employers' expectations of workers change over the next ten years?",
+          "Should universities focus more on preparing students for specific jobs, or on developing broader abilities?",
+          "What are the advantages and disadvantages of learning a skill independently rather than through a formal course?",
+          "Do you think artificial intelligence will change the kinds of skills people need?",
+          "How can governments and employers help adults who need to learn new skills later in life?"
+        ]
+      }
+    ],
+    "assessment": {
+      "criteria": [
+        {
+          "name": "Fluency and Coherence",
+          "weight": 25,
+          "bandRange": "0-9"
+        },
+        {
+          "name": "Lexical Resource",
+          "weight": 25,
+          "bandRange": "0-9"
+        },
+        {
+          "name": "Grammatical Range and Accuracy",
+          "weight": 25,
+          "bandRange": "0-9"
+        },
+        {
+          "name": "Pronunciation",
+          "weight": 25,
+          "bandRange": "0-9"
+        }
+      ],
+      "overallCalculation": "Average the four criterion scores; round to the nearest whole or half band according to IELTS-style rounding.",
+      "bandDescriptorOperationalGuidance": {
+        "9": "Expert: fluent, precise, highly flexible; wide and natural vocabulary; highly accurate grammar; effortless intelligibility.",
+        "8": "Very strong: fluent with only occasional hesitation; wide vocabulary and flexible structures; generally accurate; easy to understand.",
+        "7": "Good: can speak at length with some hesitation; sufficient range for precise meaning; generally controlled grammar; pronunciation supports communication.",
+        "6": "Competent: can sustain a conversation but may show repetition, hesitation or limited flexibility; adequate vocabulary; mix of simple and complex structures with errors that rarely impede communication.",
+        "5": "Modest: can maintain basic communication but relies on repetition and limited structures; vocabulary may be insufficient for precision; errors may cause some difficulty.",
+        "4": "Limited: frequent pauses and reformulation; limited vocabulary and grammar; pronunciation may cause frequent difficulty.",
+        "3": "Extremely limited: communicates only basic ideas with frequent breakdowns.",
+        "2": "Intermittent: very little communicative language beyond isolated words or memorised expressions.",
+        "1": "Non-user: essentially no ability to use language beyond isolated words.",
+        "0": "Did not attempt the test."
+      }
+    }
+  },
+  "engineRules": {
+    "listening": [
+      "Present Parts 1-4 in order.",
+      "Questions must remain in the same order as the information in the recording.",
+      "Audio is played once only in examination mode.",
+      "Do not reveal answers, transcripts or explanatory feedback until submission.",
+      "Enforce word limits during validation.",
+      "For spelling-sensitive completion items, compare against accepted-answer variants configured by the content author.",
+      "Award one mark per correct Listening question.",
+      "Record raw score out of 40 before band conversion.",
+      "Store item-level response, correctness, response time and final score."
+    ],
+    "speaking": [
+      "Do not expose model answers during examination mode.",
+      "Part 2 preparation timer is 60 seconds.",
+      "Part 2 speaking timer is 120 seconds.",
+      "Part 3 should remain linked thematically to Part 2.",
+      "Record the candidate response for examiner/AI assessment.",
+      "Score the four official criteria independently.",
+      "Do not average individual Part scores directly; calculate the four criterion scores and then the overall Speaking band.",
+      "Keep examiner comments separate from the numeric score.",
+      "Store audio, transcript, criterion scores, overall band and feedback as separate assessment fields."
+    ]
+  },
+  "metadata": {
+    "authoringStandard": "IELTS-aligned original content",
+    "contentCopyright": "Original Clasptek content; not copied from IELTS official tests.",
+    "validationRequired": [
+      "Audio-script answer alignment",
+      "Question order alignment",
+      "Word-limit validation",
+      "Answer-key validation",
+      "Speaking timing validation",
+      "Scoring validation",
+      "No duplicate item IDs",
+      "No duplicate question numbers"
+    ]
+  }
+}
