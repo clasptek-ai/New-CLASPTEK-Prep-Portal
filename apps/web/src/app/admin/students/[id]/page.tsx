@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Card, Button, Badge } from '@/components/ui/ui-components';
 import { adminUsersService, AdminUserRecord } from '@/services/admin/users.service';
 import { AttemptInspectorModal } from '@/features/admin/attempt-review/attempt-review-console';
@@ -16,7 +16,6 @@ import {
   History,
   ShieldCheck,
   Mail,
-  Phone,
   Calendar,
   Lock,
   Unlock,
@@ -24,8 +23,6 @@ import {
   KeyRound,
   UserX,
   UserCheck,
-  Search,
-  Filter,
   Eye,
 } from 'lucide-react';
 
@@ -58,7 +55,6 @@ interface AssessmentAttemptHistoryItem {
 
 export default function StudentProfilePage() {
   const params = useParams();
-  const router = useRouter();
   const studentId = params?.id as string;
 
   const [student, setStudent] = useState<AdminUserRecord | null>(null);
@@ -96,7 +92,7 @@ export default function StudentProfilePage() {
     async function fetchHistory() {
       setHistoryLoading(true);
       try {
-        const targetId = student?.email || student?.id || studentId;
+        const targetId = student?.id || studentId;
         const res = await fetch(
           `/api/v1/admin/students/${encodeURIComponent(targetId)}/assessment-history`
         );
@@ -844,6 +840,7 @@ export default function StudentProfilePage() {
       {selectedAttemptId && (
         <AttemptInspectorModal
           attemptId={selectedAttemptId}
+          studentId={student?.id || studentId}
           onClose={() => setSelectedAttemptId(null)}
         />
       )}

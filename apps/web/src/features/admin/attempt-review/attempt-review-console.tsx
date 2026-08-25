@@ -73,9 +73,11 @@ export interface AttemptDetailBundle {
 
 export function AttemptInspectorModal({
   attemptId,
+  studentId,
   onClose,
 }: {
   attemptId: string;
+  studentId?: string;
   onClose: () => void;
 }) {
   const [detailBundle, setDetailBundle] = useState<AttemptDetailBundle | null>(null);
@@ -88,7 +90,10 @@ export function AttemptInspectorModal({
     async function fetchDetail() {
       setDetailLoading(true);
       try {
-        const res = await fetch(`/api/v1/admin/assessment-attempts/${attemptId}`);
+        const url = studentId
+          ? `/api/v1/admin/assessment-attempts/${attemptId}?studentId=${encodeURIComponent(studentId)}`
+          : `/api/v1/admin/assessment-attempts/${attemptId}`;
+        const res = await fetch(url);
         const data = await res.json();
         if (data.data) {
           setDetailBundle(data.data);
@@ -100,7 +105,7 @@ export function AttemptInspectorModal({
       }
     }
     fetchDetail();
-  }, [attemptId]);
+  }, [attemptId, studentId]);
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
@@ -313,7 +318,7 @@ export function AttemptInspectorModal({
                     </div>
                     <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-300 leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap font-sans">
                       {detailBundle.paperSnapshot.readingPassage?.content ||
-                        'No reading passage recorded.'}
+                        'Reading passage was not captured in this attempt snapshot.'}
                     </div>
                   </div>
 
@@ -375,21 +380,36 @@ export function AttemptInspectorModal({
                     const ansObj = detailBundle.answers[wt.id];
                     const essayText =
                       ansObj?.responsePayload?.text ||
+                      ansObj?.responsePayload?.textResponse ||
                       ansObj?.responsePayload ||
                       'No essay response recorded.';
+                    const textStr =
+                      typeof essayText === 'string' ? essayText : JSON.stringify(essayText);
+                    const wordCount = textStr.trim().split(/\s+/).filter(Boolean).length;
+                    const aiEval =
+                      wt.aiEvaluation ||
+                      (ansObj?.responsePayload?.status ? ansObj.responsePayload : null);
 
                     return (
                       <div
                         key={wt.id || idx}
                         className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3"
                       >
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center flex-wrap gap-2">
                           <span className="font-bold text-sky-400 uppercase">
                             Writing Task {wt.taskNumber || idx + 1}: {wt.title}
                           </span>
-                          <span className="text-slate-400 font-mono">
-                            Min {wt.minWords || 150} Words
-                          </span>
+                          <div className="flex items-center gap-3">
+                            <span className="text-slate-400 font-mono text-[11px]">
+                              Word Count: <strong className="text-white">{wordCount}</strong> / Min{' '}
+                              {wt.minWords || 150}
+                            </span>
+                            {aiEval && (
+                              <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-bold font-mono">
+                                {aiEval.scoreLabel || aiEval.status || 'AI EVALUATED'}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <p className="text-slate-300 font-medium bg-slate-900 p-3 rounded-lg border border-slate-800">
@@ -401,9 +421,20 @@ export function AttemptInspectorModal({
                             Candidate Essay Response:
                           </div>
                           <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200 font-mono leading-relaxed whitespace-pre-wrap">
-                            {String(essayText)}
+                            {textStr}
                           </div>
                         </div>
+
+                        {aiEval?.feedback && (
+                          <div className="bg-purple-950/30 border border-purple-800/40 p-3.5 rounded-xl space-y-1 mt-2">
+                            <div className="text-[10px] font-bold text-purple-400 uppercase">
+                              AI Examiner Evaluation & Feedback:
+                            </div>
+                            <p className="text-slate-300 text-xs leading-relaxed">
+                              {aiEval.feedback}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -412,9 +443,36 @@ export function AttemptInspectorModal({
 
               {/* TAB 5: SPEAKING */}
               {activeTab === 'SPEAKING' && (
-                <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3 text-center text-slate-400">
-                  <div className="font-bold text-sky-400 uppercase">Oral & Speaking Evaluation</div>
-                  <p>Audio recording & transcript evaluation pipeline active.</p>
+                <div className="space-y-4">
+                  {detailBundle.paperSnapshot.speakingItems?.length > 0 ? (
+                    detailBundle.paperSnapshot.speakingItems.map((spk: any, idx: number) => (
+                      <div
+                        key={spk.id || idx}
+                        className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3"
+                      >
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-sky-400 uppercase">
+                            Speaking Part {spk.partNumber || idx + 1}
+                          </span>
+                          <span className="text-slate-400 font-mono text-[11px]">
+                            Duration: {spk.durationSeconds || 0}s
+                          </span>
+                        </div>
+                        {spk.audioUrl && (
+                          <div className="bg-slate-900 p-3 rounded-xl border border-slate-800">
+                            <audio controls src={spk.audioUrl} className="w-full h-10" />
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2 text-center text-slate-400">
+                      <div className="font-bold text-sky-400 uppercase">
+                        Oral & Speaking Evaluation
+                      </div>
+                      <p>No speaking audio recordings captured in this attempt snapshot.</p>
+                    </div>
+                  )}
                 </div>
               )}
 

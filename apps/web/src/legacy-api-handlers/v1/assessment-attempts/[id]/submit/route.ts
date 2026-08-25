@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
 import { extractSelectedOptionCode } from '@/lib/scoring/extractSelectedOptionCode';
+import { PostgresSubjectiveEvaluationRepository } from '@clasptek/persistence';
 import { randomUUID } from 'crypto';
 
 /**
@@ -450,6 +451,69 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       console.info(
         `[SUBMISSION_SUCCESS] requestId=${requestId} attemptId=${attemptId} score=${totalScore}`
       );
+
+      // ===================================================================
+      // ASYNC AI WRITING EVALUATION — fires after transaction commit
+      // Non-blocking: does not delay the HTTP response to the student.
+      // ===================================================================
+      if (writingPending && writingTasks.length > 0) {
+        const subjectiveRepo = new PostgresSubjectiveEvaluationRepository(pool);
+        for (const task of writingTasks) {
+          const candidateAnswer = candidateAnswers.get(task.id);
+          const candidateText =
+            typeof candidateAnswer === 'string'
+              ? candidateAnswer
+              : candidateAnswer?.text ||
+                candidateAnswer?.content ||
+                JSON.stringify(candidateAnswer || '');
+
+          if (!candidateText || candidateText.trim().length === 0) {
+            console.warn(
+              `[WRITING_EVAL_SKIP] requestId=${requestId} taskId=${task.id} reason=EMPTY_RESPONSE`
+            );
+            continue;
+          }
+
+          // Determine task type from the snapshot
+          const taskType = task.taskType || (task.taskNumber === 1 ? 'TASK_1' : 'TASK_2');
+
+          // Enqueue the evaluation job
+          subjectiveRepo
+            .enqueueEvaluation({
+              studentId,
+              assessmentType: 'DIAGNOSTIC',
+              sessionId: attemptId,
+              responseId: task.id,
+              skill: 'Writing',
+              rawResponseReference: candidateText,
+              examType: 'IELTS Academic',
+              taskType,
+              taskPrompt: task.prompt || task.question || '',
+            })
+            .then(async (enqueued) => {
+              console.info(
+                `[WRITING_EVAL_QUEUED] requestId=${requestId} evaluationId=${enqueued.id} taskId=${task.id} taskType=${taskType}`
+              );
+              // Fire the actual OpenAI evaluation asynchronously
+              try {
+                const evalResult = await subjectiveRepo.evaluateSubjectiveJob(enqueued.id);
+                console.info(
+                  `[WRITING_EVAL_COMPLETE] requestId=${requestId} evaluationId=${enqueued.id} band=${evalResult.record.scoreLabel}`
+                );
+              } catch (evalErr: any) {
+                console.error(
+                  `[WRITING_EVAL_FAILED] requestId=${requestId} evaluationId=${enqueued.id} error="${evalErr.message}"`
+                );
+                // Evaluation status is already set to FAILED in the repository — no fabricated score
+              }
+            })
+            .catch((enqueueErr: any) => {
+              console.error(
+                `[WRITING_EVAL_ENQUEUE_FAILED] requestId=${requestId} taskId=${task.id} error="${enqueueErr.message}"`
+              );
+            });
+        }
+      }
 
       return NextResponse.json({
         success: true,

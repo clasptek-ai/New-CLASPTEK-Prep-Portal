@@ -1,4 +1,12 @@
 import { z } from 'zod';
+import {
+  IELTSWritingEvaluationSchema,
+  type IELTSWritingEvaluationOutput,
+} from '../openai/OpenAISchema';
+import {
+  IELTSSpeakingEvaluationSchema,
+  type IELTSSpeakingEvaluationOutput,
+} from '../openai/OpenAISchema';
 
 export const EvaluationResponseSchema = z.object({
   overallBand: z
@@ -31,5 +39,13 @@ export class EvaluationSchema {
 
   public static validateGemini(rawObj: unknown): EvaluationResponseOutput {
     return this.validate(rawObj);
+  }
+
+  public static validateOpenAIWriting(rawObj: unknown): IELTSWritingEvaluationOutput {
+    return IELTSWritingEvaluationSchema.parse(rawObj);
+  }
+
+  public static validateOpenAISpeaking(rawObj: unknown): IELTSSpeakingEvaluationOutput {
+    return IELTSSpeakingEvaluationSchema.parse(rawObj);
   }
 }

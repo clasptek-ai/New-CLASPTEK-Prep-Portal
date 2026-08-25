@@ -62,6 +62,21 @@ export class QuestionSelectionService {
       historyPassageRes.rows.map((r: any) => r.passage_id)
     );
 
+    // Normalize exam type for accurate passage and inventory mapping
+    let normalizedExamType = examType || 'English Proficiency';
+    const lower = normalizedExamType.toLowerCase();
+    if (lower.includes('ielts')) {
+      normalizedExamType = 'IELTS Academic';
+    } else if (lower.includes('english proficiency') || lower.includes('core')) {
+      normalizedExamType = 'English Proficiency';
+    } else if (lower.includes('toefl')) {
+      normalizedExamType = 'TOEFL';
+    } else if (lower.includes('sat')) {
+      normalizedExamType = 'SAT';
+    } else if (lower.includes('celpip')) {
+      normalizedExamType = 'CELPIP';
+    }
+
     // =======================================================================
     // 2. PASSAGE-LEVEL READING SELECTION
     // =======================================================================
@@ -81,14 +96,15 @@ export class QuestionSelectionService {
       WHERE (rp.status = 'published' OR rp.status = 'PUBLISHED' OR rp.status IS NOT NULL)
         AND q.deleted_at IS NULL
         AND (
-          -- Namespace isolation: Diagnostic Reading passages for English Proficiency diagnostic assessment
-          ($1 = 'English Proficiency' AND (rp.code LIKE 'PAS-DIAG-%' OR rp.code LIKE 'PAS-READ-004' OR rp.code LIKE 'PAS-READ-005' OR rp.exam_type = 'English Proficiency'))
-          OR ($1 != 'English Proficiency' AND rp.exam_type = $1)
+          rp.exam_type = $1
+          OR rp.exam_type = $2
+          OR ($1 = 'English Proficiency' AND (rp.code LIKE 'PAS-DIAG-%' OR rp.code LIKE 'PAS-READ-004' OR rp.code LIKE 'PAS-READ-005' OR rp.exam_type = 'English Proficiency'))
+          OR ($1 = 'IELTS Academic' AND (rp.exam_type = 'IELTS Academic' OR rp.code LIKE 'PAS-READ-%' OR rp.code LIKE 'PAS-MOCK-%'))
         )
         AND rp.code NOT IN ('PAS-READ-001', 'PAS-READ-002', 'PAS-READ-003')
       ORDER BY rp.created_at DESC
     `,
-      [examType]
+      [normalizedExamType, examType]
     );
 
     const allPassages = passagesRes.rows;
@@ -370,6 +386,17 @@ export class QuestionSelectionService {
       marks: 10,
       order: idx + 1,
     }));
+
+    if (
+      _passageCount > 0 &&
+      (!readingSnapshot ||
+        !readingSnapshot.content ||
+        readingSnapshot.comprehensionQuestions?.length === 0)
+    ) {
+      throw new Error(
+        `DIAGNOSTIC_INSUFFICIENT_INVENTORY: Reading passage inventory could not be assembled for examType "${examType}" (normalized: "${normalizedExamType}")`
+      );
+    }
 
     return {
       grammarQuestions: grammarSnapshot,

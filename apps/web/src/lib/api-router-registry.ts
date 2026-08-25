@@ -563,6 +563,12 @@ apiRouter.get(
   '/admin/students/:studentId/assessment-history',
   wrapper_get_admin_students_studentId_assessment_history
 );
+import { GET as get_admin_submissions_audit } from '@/legacy-api-handlers/v1/admin/submissions/audit/route';
+
+async function wrapper_get_admin_submissions_audit(req: any, params: Record<string, string>) {
+  return (get_admin_submissions_audit as any)(req, { params: Promise.resolve(params) });
+}
+apiRouter.get('/admin/submissions/audit', wrapper_get_admin_submissions_audit);
 import { GET as get_admin_users } from '@/legacy-api-handlers/v1/admin/users/route';
 
 async function wrapper_get_admin_users(req: any, params: Record<string, string>) {

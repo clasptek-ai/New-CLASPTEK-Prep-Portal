@@ -8,12 +8,6 @@ export interface GeminiConfiguration {
   useMock?: boolean | undefined;
 }
 
-export interface OpenAIConfiguration {
-  apiKey: string;
-  model: string;
-  timeoutMs: number;
-}
-
 export const GeminiConfigSchema = z.object({
   apiKey: z
     .string({

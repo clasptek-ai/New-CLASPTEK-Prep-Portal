@@ -1,4 +1,4 @@
-import { GeminiConfiguration, OpenAIConfiguration } from './GeminiConfiguration';
+import { GeminiConfiguration } from './GeminiConfiguration';
 import { GoogleGenAI as RealGoogleGenAI } from '@google/genai';
 
 export type GoogleGenAI = any;
@@ -33,10 +33,6 @@ export class MockGoogleGenAI {
   constructor(public readonly config: { apiKey: string }) {}
 }
 
-export class OpenAI {
-  constructor(public readonly config: { apiKey: string }) {}
-}
-
 export class AIClientFactory {
   public createGeminiClient(config: GeminiConfiguration): any {
     if (config.useMock === true) {
@@ -55,9 +51,5 @@ export class AIClientFactory {
       // Fallback to Mock SDK if initialization fails
     }
     return new MockGoogleGenAI({ apiKey: config.apiKey });
-  }
-
-  public createOpenAIClient(config: OpenAIConfiguration): OpenAI {
-    return new OpenAI({ apiKey: config.apiKey });
   }
 }

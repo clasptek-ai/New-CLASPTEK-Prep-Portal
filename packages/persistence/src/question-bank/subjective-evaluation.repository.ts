@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import { ProviderModule } from '@clasptek/infrastructure-ai-providers';
 
 export interface SubjectiveEvaluationRequest {
   id?: string;
@@ -12,6 +13,10 @@ export interface SubjectiveEvaluationRequest {
   examType?: string;
   rawResponseReference: string; // text content for writing, permanent media URL for speaking
   transcript?: string;
+  taskType?: 'TASK_1' | 'TASK_2';
+  taskPrompt?: string;
+  partNumber?: number;
+  questionPrompt?: string;
 }
 
 export interface CriterionResult {
@@ -68,7 +73,13 @@ export class PostgresSubjectiveEvaluationRepository {
         req.skill,
         req.rawResponseReference,
         req.transcript || null,
-        JSON.stringify({ examType: req.examType || 'IELTS Academic' }),
+        JSON.stringify({
+          examType: req.examType || 'IELTS Academic',
+          taskType: req.taskType || 'TASK_2',
+          taskPrompt: req.taskPrompt || '',
+          partNumber: req.partNumber || 1,
+          questionPrompt: req.questionPrompt || '',
+        }),
       ]
     );
 
@@ -113,8 +124,8 @@ export class PostgresSubjectiveEvaluationRepository {
     const row = selRes.rows[0];
     const skill: 'Writing' | 'Speaking' = row.skill;
     const meta = row.metadata || {};
-    const examType: string = meta.examType || 'IELTS Academic';
     const content = row.raw_response_reference || '';
+    const transcript = row.transcript || '';
 
     // Check for empty or corrupted payload
     if (!content || content.trim().length === 0) {
@@ -129,64 +140,79 @@ export class PostgresSubjectiveEvaluationRepository {
       throw new Error(`Cannot evaluate empty response payload for ${evaluationId}`);
     }
 
-    // 2. Perform Rubric-Driven Scoring Strategy based on examType and skill
+    // 2. Get the OpenAI provider — NO FALLBACK to Gemini
+    const providerManager = ProviderModule.initFromEnv();
+    const openaiProvider = providerManager.getProvider('OPENAI');
+
+    if (!openaiProvider) {
+      await this.pool.query(
+        `UPDATE public.subjective_evaluations SET
+           status = 'FAILED',
+           last_error = 'OPENAI_PROVIDER_UNAVAILABLE: OpenAI provider is not configured. IELTS subjective grading requires OpenAI.',
+           failed_at = now()
+         WHERE id = $1`,
+        [evaluationId]
+      );
+      throw new Error(
+        `OpenAI provider is not available for subjective evaluation ${evaluationId}. ` +
+          `IELTS Writing and Speaking grading requires OpenAI. No fallback is permitted.`
+      );
+    }
+
+    // 3. Perform real AI evaluation via OpenAI
     let criteria: CriterionResult[] = [];
     let overallScore = 0;
     let scoreLabel = '';
     let feedback = '';
 
-    if (examType.includes('IELTS')) {
+    try {
       if (skill === 'Writing') {
-        criteria = [
-          { criterionName: 'Task Response', score: 7.0, maxScore: 9.0, feedback: 'Well developed response to writing prompt.' },
-          { criterionName: 'Coherence & Cohesion', score: 6.5, maxScore: 9.0, feedback: 'Clear paragraph organization with good transitions.' },
-          { criterionName: 'Lexical Resource', score: 7.0, maxScore: 9.0, feedback: 'Varied academic vocabulary used accurately.' },
-          { criterionName: 'Grammatical Range & Accuracy', score: 6.5, maxScore: 9.0, feedback: 'Good range of complex structures.' },
-        ];
-        overallScore = 6.8;
-        scoreLabel = 'Band 7.0';
-        feedback = 'Strong academic writing structure with good task fulfillment.';
+        const result = await this.evaluateWritingViaOpenAI(
+          openaiProvider,
+          content,
+          meta.taskType || 'TASK_2',
+          meta.taskPrompt || '',
+          row.student_id,
+          evaluationId
+        );
+        criteria = result.criteria;
+        overallScore = result.overallScore;
+        scoreLabel = result.scoreLabel;
+        feedback = result.feedback;
       } else {
-        criteria = [
-          { criterionName: 'Fluency & Coherence', score: 7.0, maxScore: 9.0, feedback: 'Speaks fluently with rare hesitations.' },
-          { criterionName: 'Lexical Resource', score: 6.5, maxScore: 9.0, feedback: 'Effective use of idiom and vocabulary.' },
-          { criterionName: 'Grammatical Range & Accuracy', score: 6.5, maxScore: 9.0, feedback: 'Produces accurate sentence structures.' },
-          { criterionName: 'Pronunciation', score: 7.0, maxScore: 9.0, feedback: 'Clear articulation and natural intonation.' },
-        ];
-        overallScore = 6.8;
-        scoreLabel = 'Band 7.0';
-        feedback = 'Clear articulation and coherent oral expression.';
+        // Speaking: use transcript if available, otherwise use content
+        const speakingText = transcript || content;
+        const result = await this.evaluateSpeakingViaOpenAI(
+          openaiProvider,
+          speakingText,
+          meta.partNumber || 1,
+          meta.questionPrompt || '',
+          row.student_id,
+          evaluationId
+        );
+        criteria = result.criteria;
+        overallScore = result.overallScore;
+        scoreLabel = result.scoreLabel;
+        feedback = result.feedback;
       }
-    } else if (examType.includes('TOEFL')) {
-      criteria = [
-        { criterionName: 'Delivery & Intonation', score: 24, maxScore: 30, feedback: 'Clear pace and intelligible delivery.' },
-        { criterionName: 'Language Use', score: 25, maxScore: 30, feedback: 'Effective grammar and word choice.' },
-        { criterionName: 'Topic Development', score: 24, maxScore: 30, feedback: 'Sufficient detail and logical elaboration.' },
-      ];
-      overallScore = 24.3;
-      scoreLabel = '24 / 30';
-      feedback = 'High proficiency output on TOEFL iBT rubric scale.';
-    } else if (examType.includes('CELPIP')) {
-      criteria = [
-        { criterionName: 'Content & Coherence', score: 9.0, maxScore: 12.0, feedback: 'Clear ideas with appropriate details.' },
-        { criterionName: 'Vocabulary & Listenability', score: 9.0, maxScore: 12.0, feedback: 'Natural tone and precise vocabulary.' },
-      ];
-      overallScore = 9.0;
-      scoreLabel = 'CLB 9';
-      feedback = 'Fluent performance meeting Canadian Language Benchmark Level 9.';
-    } else {
-      // English Proficiency (Foundation / Intermediate - NO IELTS bands!)
-      criteria = [
-        { criterionName: 'Task Completion', score: 75.0, maxScore: 100.0, feedback: 'Adequately addresses the requested prompt.' },
-        { criterionName: 'Grammar Accuracy', score: 70.0, maxScore: 100.0, feedback: 'Good control of core grammatical forms.' },
-        { criterionName: 'Vocabulary & Clarity', score: 75.0, maxScore: 100.0, feedback: 'Clear expression appropriate for intermediate level.' },
-      ];
-      overallScore = 73.3;
-      scoreLabel = 'Intermediate Proficiency (73%)';
-      feedback = 'Solid English Proficiency progress output.';
+    } catch (aiError: any) {
+      // OpenAI failed — mark as FAILED, NEVER fabricate scores
+      const errorMsg = aiError?.message || 'Unknown OpenAI evaluation error';
+      console.error(
+        `[SUBJECTIVE_EVAL_FAIL] evaluationId=${evaluationId} skill=${skill} error="${errorMsg}"`
+      );
+      await this.pool.query(
+        `UPDATE public.subjective_evaluations SET
+           status = 'FAILED',
+           last_error = $1,
+           failed_at = now()
+         WHERE id = $2`,
+        [`OPENAI_EVALUATION_FAILED: ${errorMsg.substring(0, 500)}`, evaluationId]
+      );
+      throw new Error(`OpenAI evaluation failed for ${evaluationId}: ${errorMsg}`);
     }
 
-    // 3. Persist evaluation completion & criteria records
+    // 4. Persist evaluation completion & criteria records
     await this.pool.query(
       `UPDATE public.subjective_evaluations SET
          status = 'COMPLETED',
@@ -199,7 +225,10 @@ export class PostgresSubjectiveEvaluationRepository {
     );
 
     // Clean old criteria records before inserting fresh ones
-    await this.pool.query(`DELETE FROM public.subjective_evaluation_criteria WHERE evaluation_id = $1`, [evaluationId]);
+    await this.pool.query(
+      `DELETE FROM public.subjective_evaluation_criteria WHERE evaluation_id = $1`,
+      [evaluationId]
+    );
 
     for (const c of criteria) {
       await this.pool.query(
@@ -210,7 +239,7 @@ export class PostgresSubjectiveEvaluationRepository {
       );
     }
 
-    // 4. Recalculate parent session results
+    // 5. Recalculate parent session results
     await this.recalculateSessionResults(row.session_id, row.assessment_type);
 
     return {
@@ -233,6 +262,146 @@ export class PostgresSubjectiveEvaluationRepository {
       },
       criteria,
     };
+  }
+
+  /**
+   * Evaluate IELTS Writing via OpenAI — returns structured criterion scores.
+   * NO FALLBACK. If OpenAI fails, the error propagates to the caller.
+   */
+  private async evaluateWritingViaOpenAI(
+    provider: any,
+    candidateResponse: string,
+    taskType: 'TASK_1' | 'TASK_2',
+    taskPrompt: string,
+    studentId: string,
+    evaluationId: string
+  ): Promise<{
+    criteria: CriterionResult[];
+    overallScore: number;
+    scoreLabel: string;
+    feedback: string;
+  }> {
+    const context = {
+      provider: 'OPENAI',
+      model: process.env.OPENAI_IELTS_GRADING_MODEL || 'gpt-4o',
+      prompt: candidateResponse,
+      timeout: parseInt(process.env.OPENAI_TIMEOUT || '60000', 10),
+      temperature: 0.2,
+      maxTokens: 2048,
+      rubric: { taskType, taskPrompt },
+      studentId,
+      submissionId: evaluationId,
+      jobId: evaluationId,
+      retryAttempt: 0,
+      evaluationType: 'WRITING' as const,
+    };
+
+    const result = await provider.evaluateWriting(context);
+
+    // Extract criterion scores from the result's feedback sections
+    const criterionSections =
+      result.feedbackSections?.filter((s: any) => s.sectionType === 'CRITERION') || [];
+
+    const taskCriterionName = taskType === 'TASK_1' ? 'Task Achievement' : 'Task Response';
+
+    // Parse the band scores from criterion feedback content
+    const criteria: CriterionResult[] = [];
+    const criteriaMapping = [
+      { code: 'taskAchievement', name: taskCriterionName },
+      { code: 'coherenceCohesion', name: 'Coherence & Cohesion' },
+      { code: 'lexicalResource', name: 'Lexical Resource' },
+      { code: 'grammaticalRangeAccuracy', name: 'Grammatical Range & Accuracy' },
+    ];
+
+    for (const cm of criteriaMapping) {
+      const section = criterionSections.find((s: any) => s.criterionCode === cm.code);
+      const bandMatch = section?.content?.match(/Band ([\d.]+)/);
+      const score = bandMatch ? parseFloat(bandMatch[1]) : result.rawScore || 0;
+      criteria.push({
+        criterionName: cm.name,
+        score,
+        maxScore: 9.0,
+        feedback: section?.content || '',
+      });
+    }
+
+    const overallScore = result.rawScore || result.bandScore?.numericEquivalent || 0;
+    const scoreLabel = `Band ${this.roundToNearestHalf(overallScore)}`;
+    const feedback = result.evaluationNotes || '';
+
+    return { criteria, overallScore: this.roundToNearestHalf(overallScore), scoreLabel, feedback };
+  }
+
+  /**
+   * Evaluate IELTS Speaking via OpenAI — returns structured criterion scores.
+   * NO FALLBACK. If OpenAI fails, the error propagates to the caller.
+   */
+  private async evaluateSpeakingViaOpenAI(
+    provider: any,
+    transcript: string,
+    partNumber: number,
+    questionPrompt: string,
+    studentId: string,
+    evaluationId: string
+  ): Promise<{
+    criteria: CriterionResult[];
+    overallScore: number;
+    scoreLabel: string;
+    feedback: string;
+  }> {
+    const context = {
+      provider: 'OPENAI',
+      model: process.env.OPENAI_IELTS_GRADING_MODEL || 'gpt-4o',
+      prompt: transcript,
+      timeout: parseInt(process.env.OPENAI_TIMEOUT || '60000', 10),
+      temperature: 0.2,
+      maxTokens: 2048,
+      rubric: { partNumber, questionPrompt },
+      studentId,
+      submissionId: evaluationId,
+      jobId: evaluationId,
+      retryAttempt: 0,
+      evaluationType: 'SPEAKING' as const,
+    };
+
+    const result = await provider.evaluateSpeaking(context);
+
+    const criterionSections =
+      result.feedbackSections?.filter((s: any) => s.sectionType === 'CRITERION') || [];
+
+    const criteria: CriterionResult[] = [];
+    const criteriaMapping = [
+      { code: 'fluencyCoherence', name: 'Fluency & Coherence' },
+      { code: 'lexicalResource', name: 'Lexical Resource' },
+      { code: 'grammaticalRangeAccuracy', name: 'Grammatical Range & Accuracy' },
+      { code: 'pronunciation', name: 'Pronunciation' },
+    ];
+
+    for (const cm of criteriaMapping) {
+      const section = criterionSections.find((s: any) => s.criterionCode === cm.code);
+      const bandMatch = section?.content?.match(/Band ([\d.]+)/);
+      const score = bandMatch ? parseFloat(bandMatch[1]) : result.rawScore || 0;
+      criteria.push({
+        criterionName: cm.name,
+        score,
+        maxScore: 9.0,
+        feedback: section?.content || '',
+      });
+    }
+
+    const overallScore = result.rawScore || result.bandScore?.numericEquivalent || 0;
+    const scoreLabel = `Band ${this.roundToNearestHalf(overallScore)}`;
+    const feedback = result.evaluationNotes || '';
+
+    return { criteria, overallScore: this.roundToNearestHalf(overallScore), scoreLabel, feedback };
+  }
+
+  /**
+   * IELTS band rounding: round to nearest 0.5.
+   * .25 rounds up to next .5, .75 rounds up to next whole.
+   */
+  private roundToNearestHalf(score: number): number {
+    return Math.round(score * 2) / 2;
   }
 
   public async recalculateSessionResults(sessionId: string, assessmentType: string): Promise<void> {
@@ -336,7 +505,10 @@ export class PostgresSubjectiveEvaluationRepository {
       [adjustedScore, scoreLabel, reviewerId, notes, evaluationId]
     );
 
-    const sel = await this.pool.query(`SELECT session_id, assessment_type FROM public.subjective_evaluations WHERE id = $1`, [evaluationId]);
+    const sel = await this.pool.query(
+      `SELECT session_id, assessment_type FROM public.subjective_evaluations WHERE id = $1`,
+      [evaluationId]
+    );
     if (sel.rows.length > 0) {
       await this.recalculateSessionResults(sel.rows[0].session_id, sel.rows[0].assessment_type);
     }

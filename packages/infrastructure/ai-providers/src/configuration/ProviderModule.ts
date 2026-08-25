@@ -3,10 +3,17 @@ import { GeminiClient } from '../gemini/GeminiClient';
 import { GeminiGateway } from '../gemini/GeminiGateway';
 import { GeminiProvider } from '../gemini/GeminiProvider';
 import { GeminiConfiguration, GeminiConfigurationLoader } from './GeminiConfiguration';
+import { OpenAIConfigurationLoader, OpenAIConfiguration } from './OpenAIConfiguration';
+import { OpenAIClient } from '../openai/OpenAIClient';
+import { OpenAIGateway } from '../openai/OpenAIGateway';
+import { OpenAIProvider } from '../openai/OpenAIProvider';
 import { MockAIProvider } from '@clasptek/domain-ai-evaluation';
 
 export class ProviderModule {
-  public static init(geminiConfig: GeminiConfiguration): AIProviderManager {
+  public static init(
+    geminiConfig: GeminiConfiguration,
+    openaiConfig?: OpenAIConfiguration | null
+  ): AIProviderManager {
     const manager = new AIProviderManager();
 
     // 1. Construct and Register Google Gemini Provider
@@ -19,18 +26,28 @@ export class ProviderModule {
     const mock = new MockAIProvider();
     manager.register(mock);
 
-    // 3. Stubs for future OpenAI Provider registration
-    // const openaiClient = new OpenAIClient(openaiConfig);
-    // const openaiProvider = new OpenAIProvider(openaiClient);
-    // manager.register(openaiProvider);
-
-    // 4. Stubs for future Anthropic Provider registration
-    // const anthropicProvider = new AnthropicProvider(anthropicClient);
-    // manager.register(anthropicProvider);
-
-    // 5. Stubs for future Azure OpenAI Provider registration
-    // const azureProvider = new AzureOpenAIProvider(azureClient);
-    // manager.register(azureProvider);
+    // 3. Construct and Register OpenAI Provider (if configured)
+    if (openaiConfig) {
+      try {
+        const openaiClient = new OpenAIClient(openaiConfig);
+        const openaiGateway = new OpenAIGateway(openaiClient);
+        const openaiProvider = new OpenAIProvider(openaiGateway);
+        manager.register(openaiProvider);
+        console.info(
+          `[PROVIDER_MODULE] OpenAI provider registered successfully. Model: ${openaiConfig.model}, Whisper: ${openaiConfig.whisperModel}`
+        );
+      } catch (err: any) {
+        console.error(
+          `[PROVIDER_MODULE] Failed to register OpenAI provider: ${err.message}. IELTS subjective grading will NOT be available.`
+        );
+        // Do NOT fall back to Gemini for IELTS subjective grading.
+        // The evaluateSubjectiveJob caller must handle the missing OPENAI provider.
+      }
+    } else {
+      console.warn(
+        '[PROVIDER_MODULE] OPENAI_API_KEY not configured. OpenAI provider NOT registered. IELTS subjective grading will NOT be available.'
+      );
+    }
 
     return manager;
   }
@@ -39,6 +56,7 @@ export class ProviderModule {
     env: Record<string, string | undefined> = process.env
   ): AIProviderManager {
     const geminiConfig = GeminiConfigurationLoader.fromEnv(env);
-    return this.init(geminiConfig);
+    const openaiConfig = OpenAIConfigurationLoader.fromEnv(env);
+    return this.init(geminiConfig, openaiConfig);
   }
 }

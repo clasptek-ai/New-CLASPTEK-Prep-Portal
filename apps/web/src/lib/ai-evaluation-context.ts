@@ -45,6 +45,7 @@ import {
   DeploymentDecisionEngine,
   MockAIProvider,
 } from '@clasptek/domain-ai-evaluation';
+import { ProviderModule } from '@clasptek/infrastructure-ai-providers';
 
 export interface AiEvaluationContext {
   // Commands
@@ -96,8 +97,16 @@ export function getAiEvaluationContext(): AiEvaluationContext {
   const decisionRepo = new PostgresDeploymentDecisionRepository(dbPool);
 
   const comparisonEngine = new PromptComparisonEngine();
-  const provider = new MockAIProvider();
-  const benchmarkEngine = new BenchmarkEngine(provider);
+
+  // Use real providers from ProviderModule (includes OpenAI if configured)
+  const providerManager = ProviderModule.initFromEnv();
+  const registeredProviders = providerManager.getRegisteredProviders();
+  // For benchmark engine, use the first available provider (preferring OpenAI)
+  const benchmarkProvider =
+    registeredProviders.find((p) => p.provider === 'OPENAI') ||
+    registeredProviders.find((p) => p.provider === 'GEMINI') ||
+    new MockAIProvider();
+  const benchmarkEngine = new BenchmarkEngine(benchmarkProvider);
   const regressionEngine = new RegressionDetectionEngine();
   const decisionEngine = new DeploymentDecisionEngine();
 

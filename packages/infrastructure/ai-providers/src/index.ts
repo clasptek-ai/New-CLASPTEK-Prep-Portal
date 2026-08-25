@@ -1,4 +1,5 @@
 export * from './configuration/GeminiConfiguration';
+export * from './configuration/OpenAIConfiguration';
 export * from './configuration/AIClientFactory';
 export * from './configuration/AIProviderManager';
 export * from './configuration/ProviderModule';
@@ -7,5 +8,11 @@ export * from './gemini/GeminiGateway';
 export * from './gemini/GeminiSchema';
 export * from './gemini/GeminiMapper';
 export * from './gemini/GeminiProvider';
+export * from './openai/OpenAIClient';
+export * from './openai/OpenAIGateway';
+export * from './openai/OpenAISchema';
+export * from './openai/OpenAIMapper';
+export * from './openai/OpenAIPrompts';
+export * from './openai/OpenAIProvider';
 export * from './parsing/AIResponseParser';
 export * from './validation/EvaluationSchema';

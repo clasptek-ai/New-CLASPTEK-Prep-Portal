@@ -28,6 +28,7 @@
     "@clasptek/application-assessment-runtime": "workspace:*",
     "@clasptek/domain-ai-evaluation": "workspace:*",
     "@clasptek/application-ai-evaluation": "workspace:*",
+    "@clasptek/infrastructure-ai-providers": "workspace:*",
     "@clasptek/domain-prediction-engine": "workspace:*",
     "@clasptek/application-prediction-engine": "workspace:*",
     "@clasptek/domain-learning-assistant": "workspace:*",
