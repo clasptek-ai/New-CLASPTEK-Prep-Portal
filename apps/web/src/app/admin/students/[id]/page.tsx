@@ -147,9 +147,15 @@ export default function StudentProfilePage() {
   }
 
   const filteredAttempts = historyAttempts.filter((att) => {
-    if (categoryFilter !== 'ALL' && att.category !== categoryFilter) return false;
-    if (examTypeFilter !== 'ALL' && att.examType !== examTypeFilter) return false;
-    if (statusFilter !== 'ALL' && att.status !== statusFilter) return false;
+    if (categoryFilter !== 'ALL' && att.category?.toUpperCase() !== categoryFilter.toUpperCase())
+      return false;
+    if (examTypeFilter !== 'ALL') {
+      const examLower = (att.examType || '').toLowerCase();
+      const filterLower = examTypeFilter.toLowerCase();
+      if (!examLower.includes(filterLower) && !filterLower.includes(examLower)) return false;
+    }
+    if (statusFilter !== 'ALL' && att.status?.toUpperCase() !== statusFilter.toUpperCase())
+      return false;
     return true;
   });
 

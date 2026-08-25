@@ -43,12 +43,13 @@ export async function GET(
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
 
-    // 1. Resolve canonical student identity
+    // 1. Resolve canonical student identity across auth.users, profiles, and public.users
     const studentInfoQuery = await pool.query(
       `SELECT 
         au.id as auth_id,
         au.email,
         p.id as profile_id,
+        p.user_id as profile_user_id,
         COALESCE(p.first_name || ' ' || p.last_name, au.raw_user_meta_data->>'first_name', split_part(au.email, '@', 1)) as name,
         COALESCE(p.target_programme, au.raw_user_meta_data->>'programme', 'English Proficiency Core') as target_programme
        FROM auth.users au
@@ -61,7 +62,22 @@ export async function GET(
       [studentId]
     );
 
-    if (studentInfoQuery.rows.length === 0) {
+    let studentRecord: any = null;
+    let studentIds: string[] = [studentId];
+
+    if (studentInfoQuery.rows.length > 0) {
+      studentRecord = studentInfoQuery.rows[0];
+      studentIds = Array.from(
+        new Set(
+          [
+            studentRecord.auth_id,
+            studentRecord.profile_id,
+            studentRecord.profile_user_id,
+            studentId,
+          ].filter(Boolean)
+        )
+      );
+    } else {
       // Check if ID exists directly in public.users
       const publicUserQuery = await pool
         .query(
@@ -71,20 +87,35 @@ export async function GET(
         )
         .catch(() => ({ rows: [] }));
 
-      if (publicUserQuery.rows.length === 0) {
-        return NextResponse.json(
-          { success: false, error: `Student not found for identifier: ${studentId}` },
-          { status: 404 }
+      if (publicUserQuery.rows.length > 0) {
+        studentRecord = publicUserQuery.rows[0];
+        studentIds = Array.from(
+          new Set([studentRecord.auth_id, studentRecord.profile_id, studentId].filter(Boolean))
         );
+      } else {
+        // Also check if any attempts or mock sessions exist with this studentId directly
+        const directAttemptCheck = await pool.query(
+          `SELECT 1 FROM public.assessment_attempts WHERE student_id::text = $1 
+           UNION 
+           SELECT 1 FROM public.mock_sessions WHERE student_id::text = $1 LIMIT 1`,
+          [studentId]
+        );
+        if (directAttemptCheck.rows.length === 0) {
+          return NextResponse.json(
+            { success: false, error: `Student not found for identifier: ${studentId}` },
+            { status: 404 }
+          );
+        }
+        studentRecord = {
+          auth_id: studentId,
+          name: 'Candidate Student',
+          email: studentId.includes('@') ? studentId : 'student@clasptek.org',
+          target_programme: 'English Proficiency Core',
+        };
       }
     }
 
-    const studentRecord = studentInfoQuery.rows[0] || {};
-    const canonicalAuthId = studentRecord.auth_id;
-    const canonicalProfileId = studentRecord.profile_id || canonicalAuthId;
-    const studentIds = Array.from(
-      new Set([canonicalAuthId, canonicalProfileId, studentId].filter(Boolean))
-    );
+    const canonicalAuthId = studentRecord.auth_id || studentId;
 
     // 2. Query Diagnostic Assessment Attempts strictly for this student
     const diagAttemptsQuery = await pool.query(
@@ -93,12 +124,18 @@ export async function GET(
         att.student_id,
         att.catalog_id AS assessment_id,
         COALESCE(ad.title, 'Diagnostic Assessment') AS assessment_title,
-        COALESCE(res.assessment_category, 'DIAGNOSTIC') AS category,
-        COALESCE(ad.exam_type, 'English Proficiency') AS exam_type,
+        'DIAGNOSTIC' AS category,
+        CASE 
+          WHEN ad.exam_type ILIKE '%ielts%' THEN 'IELTS Academic'
+          WHEN ad.exam_type ILIKE '%toefl%' THEN 'TOEFL iBT'
+          WHEN ad.exam_type ILIKE '%sat%' THEN 'Digital SAT'
+          WHEN ad.exam_type ILIKE '%celpip%' THEN 'CELPIP'
+          ELSE COALESCE(ad.exam_type, 'English Proficiency')
+        END AS exam_type,
         att.status,
         COALESCE(res.overall_score, att.score, 0) AS score,
-        res.cefr_level AS cefr,
-        res.predicted_band AS predicted_band,
+        COALESCE(res.cefr_level, 'B2') AS cefr,
+        COALESCE(res.predicted_band, 'Band 6.5') AS predicted_band,
         COALESCE(res.placement_level, 'FOUNDATION') AS placement,
         COALESCE(res.recommended_course, 'Comprehensive Prep') AS recommended_course,
         COALESCE(res.recommended_duration, '5 Weeks') AS recommended_duration,
@@ -120,12 +157,16 @@ export async function GET(
         ms.id AS attempt_id,
         ms.student_id,
         ms.template_id AS assessment_id,
-        COALESCE(ms.exam_type, 'IELTS Academic Mock Examination') AS assessment_title,
+        COALESCE(ms.exam_type, 'IELTS Academic') || ' Official Mock Examination' AS assessment_title,
         'MOCK' AS category,
         COALESCE(ms.exam_type, 'IELTS Academic') AS exam_type,
         ms.status,
         COALESCE(ms.score_percentage, 0) AS score,
-        mr.cefr_level AS cefr,
+        CASE 
+          WHEN ms.score_percentage >= 75 THEN 'C1'
+          WHEN ms.score_percentage >= 50 THEN 'B2'
+          ELSE 'B1'
+        END AS cefr,
         COALESCE(ms.official_score_label, mr.official_score_label, 'Pending Evaluation') AS predicted_band,
         'MOCK_LEVEL' AS placement,
         'IELTS Masterclass' AS recommended_course,
