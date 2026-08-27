@@ -78,14 +78,15 @@ function AssessmentPlayerContent() {
           })
         );
 
-        // Map ALL child comprehension questions for the reading passage
+        // Map ALL child comprehension questions for the reading passage dynamically
         const readingCompQs: PlayerQuestion[] = (readingPassage?.comprehensionQuestions || []).map(
           (cq: any, cIdx: number) => ({
             id: cq.id || `comp-${cIdx}`,
             versionId: cq.versionId || `compv-${cIdx}`,
             code: cq.code || `ENG-READ-${(cIdx + 1).toString().padStart(2, '0')}`,
             prompt: cq.prompt || 'Based on the passage, answer the following question.',
-            itemType: 'MCQ' as const,
+            itemType: (cq.itemType || cq.questionType || 'MCQ') as any,
+            questionType: cq.questionType || 'MCQ',
             options: cq.options || [],
             passageTitle: readingPassage?.title || 'Reading Passage',
             passageContent: readingPassage?.content || '',

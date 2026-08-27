@@ -152,7 +152,14 @@ export async function GET(req: NextRequest) {
         questionCode: r.question_code,
         passageCode: r.passage_code,
         prompt: r.prompt,
-        studentAnswer: r.response_payload?.selectedOptionCode || r.response_payload,
+        studentAnswer:
+          r.response_payload?.selectedOptionCode ||
+          r.response_payload?.textResponse ||
+          r.response_payload?.text ||
+          r.response_payload?.answer ||
+          (typeof r.response_payload === 'string'
+            ? r.response_payload
+            : JSON.stringify(r.response_payload)),
         isCorrect: r.is_correct,
         score: r.is_correct ? 1 : 0,
         submissionTimestamp: r.updated_at,

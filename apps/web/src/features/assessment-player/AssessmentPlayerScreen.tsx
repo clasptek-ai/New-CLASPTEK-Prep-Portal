@@ -20,9 +20,37 @@ export interface PlayerQuestion {
   id: string;
   versionId: string;
   code: string;
+  order?: number;
   prompt: string;
   itemType:
-    'MCQ' | 'FILL_IN_BLANK' | 'ESSAY' | 'SPEAKING_PROMPT' | 'MATCHING' | 'TRUE_FALSE_NOT_GIVEN';
+    | 'MCQ'
+    | 'MULTIPLE_CHOICE'
+    | 'TFNG'
+    | 'TRUE_FALSE_NOT_GIVEN'
+    | 'YNNG'
+    | 'YES_NO_NOT_GIVEN'
+    | 'INPUT'
+    | 'COMPLETION'
+    | 'SENTENCE_COMPLETION'
+    | 'SHORT_ANSWER'
+    | 'SHORT_RESPONSE'
+    | 'GAP_FILL'
+    | 'FILL_IN_BLANK'
+    | 'FILL_IN_THE_BLANK'
+    | 'SUMMARY_COMPLETION'
+    | 'TABLE_COMPLETION'
+    | 'DIAGRAM_COMPLETION'
+    | 'MATCHING'
+    | 'MATCHING_HEADINGS'
+    | 'MATCHING_INFORMATION'
+    | 'MATCHING_FEATURES'
+    | 'MATCHING_SENTENCE_ENDINGS'
+    | 'ESSAY'
+    | 'LETTER'
+    | 'WRITING'
+    | 'SPEAKING_PROMPT'
+    | string;
+  questionType?: string;
   options?: { code: string; text: string }[];
   passageTitle?: string;
   passageContent?: string;
@@ -408,13 +436,220 @@ export function AssessmentPlayerScreen({
               {currentQuestion?.prompt}
             </h2>
 
-            {/* Explicit Fail-Safe Item Renderer Switch */}
+            {/* Explicit Fail-Safe Item Renderer */}
             {(() => {
-              switch (currentQuestion?.itemType) {
-                case 'MCQ':
+              if (!currentQuestion) {
+                return (
+                  <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 text-xs">
+                    No active question selected.
+                  </div>
+                );
+              }
+
+              const rawType = (currentQuestion.itemType || currentQuestion.questionType || 'MCQ')
+                .toString()
+                .toUpperCase()
+                .replace(/[\s-]/g, '_');
+
+              const isTFNG =
+                rawType === 'TRUE_FALSE_NOT_GIVEN' ||
+                rawType === 'TFNG' ||
+                (currentQuestion.prompt?.toUpperCase().includes('TRUE') &&
+                  currentQuestion.prompt?.toUpperCase().includes('FALSE') &&
+                  currentQuestion.prompt?.toUpperCase().includes('NOT GIVEN'));
+
+              const isYNNG =
+                rawType === 'YES_NO_NOT_GIVEN' ||
+                rawType === 'YNNG' ||
+                (currentQuestion.prompt?.toUpperCase().includes('YES') &&
+                  currentQuestion.prompt?.toUpperCase().includes('NO') &&
+                  currentQuestion.prompt?.toUpperCase().includes('NOT GIVEN'));
+
+              const isInput =
+                rawType === 'INPUT' ||
+                rawType === 'COMPLETION' ||
+                rawType === 'SENTENCE_COMPLETION' ||
+                rawType === 'SHORT_ANSWER' ||
+                rawType === 'SHORT_RESPONSE' ||
+                rawType === 'GAP_FILL' ||
+                rawType === 'FILL_IN_BLANK' ||
+                rawType === 'FILL_IN_THE_BLANK' ||
+                rawType === 'SUMMARY_COMPLETION' ||
+                rawType === 'TABLE_COMPLETION' ||
+                rawType === 'DIAGRAM_COMPLETION' ||
+                (Array.isArray(currentQuestion.options) &&
+                  currentQuestion.options.length === 0 &&
+                  rawType !== 'ESSAY' &&
+                  rawType !== 'SPEAKING_PROMPT');
+
+              const isMatching =
+                rawType === 'MATCHING' ||
+                rawType === 'MATCHING_HEADINGS' ||
+                rawType === 'MATCHING_INFORMATION' ||
+                rawType === 'MATCHING_FEATURES' ||
+                rawType === 'MATCHING_SENTENCE_ENDINGS';
+
+              const isWriting =
+                rawType === 'ESSAY' || rawType === 'LETTER' || rawType === 'WRITING';
+
+              const isSpeaking = rawType === 'SPEAKING_PROMPT' || rawType === 'SPEAKING';
+
+              // ── 1. INPUT / COMPLETION / SHORT ANSWER ───────────────────────
+              if (isInput) {
+                const currentVal =
+                  answers[currentQuestion.id]?.textResponse ??
+                  answers[currentQuestion.id]?.text ??
+                  answers[currentQuestion.id]?.answer ??
+                  '';
+
+                return (
+                  <div className="space-y-3">
+                    <div className="text-xs font-semibold text-sky-400">
+                      ✏️ Type your answer below:
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={currentVal}
+                        onChange={(e) => handleTextChange(currentQuestion.id, e.target.value)}
+                        onBlur={(e) =>
+                          autosaveResponse(currentQuestion.id, {
+                            textResponse: e.target.value,
+                            sectionCode: currentSection.name,
+                          })
+                        }
+                        placeholder="Type your completion answer here..."
+                        aria-label={`Answer for ${currentQuestion.code || 'question'}`}
+                        className="w-full bg-slate-950 border-2 border-slate-700 hover:border-slate-600 focus:border-sky-500 rounded-xl p-4 text-sm md:text-base text-white placeholder-slate-500 focus:outline-none transition-colors shadow-inner font-mono"
+                        autoComplete="off"
+                        autoCapitalize="off"
+                        spellCheck="false"
+                      />
+                    </div>
+                    <div className="flex justify-between items-center text-[11px] text-slate-400">
+                      <span>Answers are case-insensitive and autosaved.</span>
+                      {currentVal ? (
+                        <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                          <CheckCircle2 size={12} /> Answer entered
+                        </span>
+                      ) : (
+                        <span className="text-amber-400/80">Input required</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+
+              // ── 2. TRUE / FALSE / NOT GIVEN ─────────────────────────────────
+              if (isTFNG) {
+                const tfngOptions =
+                  currentQuestion.options && currentQuestion.options.length >= 2
+                    ? currentQuestion.options
+                    : [
+                        { code: 'TRUE', text: 'TRUE' },
+                        { code: 'FALSE', text: 'FALSE' },
+                        { code: 'NOT_GIVEN', text: 'NOT GIVEN' },
+                      ];
+
+                return (
+                  <div className="space-y-3">
+                    <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Select one answer:
+                    </div>
+                    {tfngOptions.map((opt) => {
+                      const selectedCode = (
+                        answers[currentQuestion.id]?.selectedOptionCode || ''
+                      ).toUpperCase();
+                      const isSelected =
+                        selectedCode === opt.code.toUpperCase() ||
+                        (selectedCode === 'A' && opt.code.toUpperCase() === 'TRUE') ||
+                        (selectedCode === 'B' && opt.code.toUpperCase() === 'FALSE') ||
+                        (selectedCode === 'C' && opt.code.toUpperCase() === 'NOT_GIVEN');
+
+                      return (
+                        <button
+                          key={opt.code}
+                          onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
+                          className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
+                            isSelected
+                              ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                              : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                          }`}
+                        >
+                          <span className="text-xs md:text-sm flex items-center space-x-3">
+                            <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
+                              {opt.code.substring(0, 1)}
+                            </span>
+                            <span>{opt.text}</span>
+                          </span>
+                          {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              }
+
+              // ── 3. YES / NO / NOT GIVEN ─────────────────────────────────────
+              if (isYNNG) {
+                const ynngOptions =
+                  currentQuestion.options && currentQuestion.options.length >= 2
+                    ? currentQuestion.options
+                    : [
+                        { code: 'YES', text: 'YES' },
+                        { code: 'NO', text: 'NO' },
+                        { code: 'NOT_GIVEN', text: 'NOT GIVEN' },
+                      ];
+
+                return (
+                  <div className="space-y-3">
+                    <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                      Select one answer:
+                    </div>
+                    {ynngOptions.map((opt) => {
+                      const selectedCode = (
+                        answers[currentQuestion.id]?.selectedOptionCode || ''
+                      ).toUpperCase();
+                      const isSelected =
+                        selectedCode === opt.code.toUpperCase() ||
+                        (selectedCode === 'A' && opt.code.toUpperCase() === 'YES') ||
+                        (selectedCode === 'B' && opt.code.toUpperCase() === 'NO') ||
+                        (selectedCode === 'C' && opt.code.toUpperCase() === 'NOT_GIVEN');
+
+                      return (
+                        <button
+                          key={opt.code}
+                          onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
+                          className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
+                            isSelected
+                              ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                              : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                          }`}
+                        >
+                          <span className="text-xs md:text-sm flex items-center space-x-3">
+                            <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
+                              {opt.code.substring(0, 1)}
+                            </span>
+                            <span>{opt.text}</span>
+                          </span>
+                          {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              }
+
+              // ── 4. MATCHING ────────────────────────────────────────────────
+              if (isMatching) {
+                const matchingOptions = currentQuestion.options || [];
+                if (matchingOptions.length >= 2) {
                   return (
                     <div className="space-y-3">
-                      {(currentQuestion.options || []).map((opt) => {
+                      <div className="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-2">
+                        Select corresponding match:
+                      </div>
+                      {matchingOptions.map((opt) => {
                         const isSelected =
                           answers[currentQuestion.id]?.selectedOptionCode === opt.code;
                         return (
@@ -439,101 +674,109 @@ export function AssessmentPlayerScreen({
                       })}
                     </div>
                   );
-
-                case 'TRUE_FALSE_NOT_GIVEN':
-                  return (
-                    <div className="space-y-3">
-                      {[
-                        { code: 'A', text: 'True' },
-                        { code: 'B', text: 'False' },
-                        { code: 'C', text: 'Not Given' },
-                      ].map((opt) => {
-                        const isSelected =
-                          answers[currentQuestion?.id || '']?.selectedOptionCode === opt.code;
-                        return (
-                          <button
-                            key={opt.code}
-                            onClick={() =>
-                              currentQuestion && handleSelectOption(currentQuestion.id, opt.code)
-                            }
-                            className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
-                              isSelected
-                                ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
-                                : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                            }`}
-                          >
-                            <span className="text-xs md:text-sm flex items-center space-x-3">
-                              <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
-                                {opt.code}
-                              </span>
-                              <span>{opt.text}</span>
-                            </span>
-                            {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  );
-
-                case 'FILL_IN_BLANK':
-                  return (
-                    <div className="space-y-2">
-                      <input
-                        type="text"
-                        value={answers[currentQuestion?.id || '']?.textResponse || ''}
-                        onChange={(e) =>
-                          currentQuestion && handleTextChange(currentQuestion.id, e.target.value)
-                        }
-                        placeholder="Type your answer here..."
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500 font-mono"
-                      />
-                    </div>
-                  );
-
-                case 'ESSAY':
-                  return (
-                    <div className="space-y-2">
-                      <textarea
-                        rows={8}
-                        value={answers[currentQuestion?.id || '']?.textResponse || ''}
-                        onChange={(e) =>
-                          currentQuestion && handleTextChange(currentQuestion.id, e.target.value)
-                        }
-                        placeholder="Type your response here..."
-                        inputMode="text"
-                        enterKeyHint="enter"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500"
-                      />
-                      <div className="text-right text-[11px] text-slate-400 font-mono">
-                        Word Count:{' '}
-                        {
-                          (answers[currentQuestion?.id || '']?.textResponse || '')
-                            .trim()
-                            .split(/\s+/)
-                            .filter(Boolean).length
-                        }
-                      </div>
-                    </div>
-                  );
-
-                case 'SPEAKING_PROMPT':
-                  return (
-                    <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2">
-                      <p className="text-xs text-slate-300">Speaking Audio Recorder</p>
-                      <p className="text-[11px] text-slate-400">
-                        Record your oral response for evaluation.
-                      </p>
-                    </div>
-                  );
-
-                default:
-                  return (
-                    <div className="p-4 bg-red-950/40 border border-red-800/60 rounded-xl text-red-200 text-xs font-mono">
-                      ⚠️ Unsupported Question Item Type:{' '}
-                      <strong>{String(currentQuestion?.itemType || 'UNKNOWN')}</strong>
-                    </div>
-                  );
+                }
               }
+
+              // ── 5. MULTIPLE CHOICE (MCQ) ───────────────────────────────────
+              if (currentQuestion.options && currentQuestion.options.length >= 2) {
+                return (
+                  <div className="space-y-3">
+                    {currentQuestion.options.map((opt) => {
+                      const isSelected =
+                        answers[currentQuestion.id]?.selectedOptionCode === opt.code;
+                      return (
+                        <button
+                          key={opt.code}
+                          onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
+                          className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
+                            isSelected
+                              ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                              : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                          }`}
+                        >
+                          <span className="text-xs md:text-sm flex items-center space-x-3">
+                            <span className="w-6 h-6 rounded-full border border-slate-700 flex items-center justify-center text-xs font-mono">
+                              {opt.code}
+                            </span>
+                            <span>{opt.text}</span>
+                          </span>
+                          {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              }
+
+              // ── 6. ESSAY / WRITING TASK ────────────────────────────────────
+              if (isWriting) {
+                return (
+                  <div className="space-y-2">
+                    <textarea
+                      rows={8}
+                      value={answers[currentQuestion?.id || '']?.textResponse || ''}
+                      onChange={(e) =>
+                        currentQuestion && handleTextChange(currentQuestion.id, e.target.value)
+                      }
+                      onBlur={(e) =>
+                        autosaveResponse(currentQuestion.id, {
+                          textResponse: e.target.value,
+                          sectionCode: currentSection.name,
+                        })
+                      }
+                      placeholder="Type your response here..."
+                      inputMode="text"
+                      enterKeyHint="enter"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500"
+                    />
+                    <div className="text-right text-[11px] text-slate-400 font-mono">
+                      Word Count:{' '}
+                      {
+                        (answers[currentQuestion?.id || '']?.textResponse || '')
+                          .trim()
+                          .split(/\s+/)
+                          .filter(Boolean).length
+                      }
+                    </div>
+                  </div>
+                );
+              }
+
+              // ── 7. SPEAKING PROMPT ─────────────────────────────────────────
+              if (isSpeaking) {
+                return (
+                  <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2">
+                    <p className="text-xs text-slate-300">Speaking Audio Recorder</p>
+                    <p className="text-[11px] text-slate-400">
+                      Record your oral response for evaluation.
+                    </p>
+                  </div>
+                );
+              }
+
+              // ── 8. STRUCTURED DIAGNOSTIC FAIL-SAFE RECOVERY ─────────────────
+              console.error(
+                `READING_QUESTION_RENDER_ERROR questionId=${currentQuestion.id} questionType=${rawType} reason=MISSING_OPTIONS_OR_TYPE`
+              );
+
+              return (
+                <div className="space-y-3">
+                  <div className="text-xs font-semibold text-amber-400">✏️ Enter your answer:</div>
+                  <input
+                    type="text"
+                    value={answers[currentQuestion.id]?.textResponse || ''}
+                    onChange={(e) => handleTextChange(currentQuestion.id, e.target.value)}
+                    onBlur={(e) =>
+                      autosaveResponse(currentQuestion.id, {
+                        textResponse: e.target.value,
+                        sectionCode: currentSection.name,
+                      })
+                    }
+                    placeholder="Type your answer here..."
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500 font-mono"
+                  />
+                </div>
+              );
             })()}
           </div>
 

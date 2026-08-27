@@ -326,14 +326,38 @@ export function AttemptInspectorModal({
                     {detailBundle.paperSnapshot.readingPassage?.comprehensionQuestions?.map(
                       (cq: any, idx: number) => {
                         const ansObj = detailBundle.answers[cq.id];
+                        const rawPayload = ansObj?.responsePayload;
+                        const isInputType =
+                          cq.itemType === 'INPUT' ||
+                          cq.itemType === 'COMPLETION' ||
+                          cq.itemType === 'SENTENCE_COMPLETION' ||
+                          cq.itemType === 'SHORT_ANSWER' ||
+                          cq.itemType === 'SHORT_RESPONSE' ||
+                          cq.itemType === 'GAP_FILL' ||
+                          cq.itemType === 'FILL_IN_BLANK' ||
+                          (!cq.options?.length && Array.isArray(cq.acceptedAnswers));
+
+                        const candidateText =
+                          typeof rawPayload === 'string'
+                            ? rawPayload
+                            : typeof rawPayload === 'object' && rawPayload !== null
+                              ? rawPayload.textResponse ||
+                                rawPayload.text ||
+                                rawPayload.answer ||
+                                rawPayload.value ||
+                                rawPayload.selectedOptionCode ||
+                                '-'
+                              : '-';
+
                         const selectedCode =
-                          extractSelectedOptionCode(ansObj?.responsePayload) || '-';
-                        const isCorrect = ansObj?.isCorrect;
+                          extractSelectedOptionCode(rawPayload) || candidateText || '-';
+
+                        const isCorrect = Boolean(ansObj?.isCorrect);
 
                         return (
                           <div
                             key={cq.id || idx}
-                            className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2"
+                            className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3"
                           >
                             <div className="flex justify-between items-start font-semibold text-slate-200">
                               <div>
@@ -345,15 +369,56 @@ export function AttemptInspectorModal({
                                 {isCorrect ? '✓ Correct' : '✗ Incorrect'}
                               </span>
                             </div>
-                            <div className="flex gap-4 font-mono text-[11px] pt-1">
+
+                            {/* If question has options (MCQ / TFNG / Matching), show them */}
+                            {Array.isArray(cq.options) && cq.options.length > 0 && (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                {cq.options.map((opt: any) => {
+                                  const isOptSelected =
+                                    String(selectedCode).toUpperCase() ===
+                                    String(opt.code).toUpperCase();
+                                  const isOptCorrect =
+                                    String(cq.correctOptionCode).toUpperCase() ===
+                                    String(opt.code).toUpperCase();
+
+                                  return (
+                                    <div
+                                      key={opt.code}
+                                      className={`p-2 rounded-lg border flex items-center gap-2 ${
+                                        isOptCorrect
+                                          ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
+                                          : isOptSelected
+                                            ? 'border-rose-500/40 bg-rose-500/10 text-rose-300'
+                                            : 'border-slate-800 bg-slate-900 text-slate-400'
+                                      }`}
+                                    >
+                                      <span className="w-5 h-5 rounded-full border border-slate-700 flex items-center justify-center text-[10px] font-mono">
+                                        {opt.code}
+                                      </span>
+                                      <span>{opt.text}</span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* Response and Correct Answer Summary */}
+                            <div className="flex flex-wrap gap-4 font-mono text-[11px] pt-1 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
                               <div>
-                                Correct:{' '}
+                                <span className="text-slate-400">
+                                  {isInputType ? 'Accepted Answers:' : 'Correct Option:'}{' '}
+                                </span>
                                 <span className="text-emerald-400 font-bold">
-                                  {cq.correctOptionCode || 'B'}
+                                  {isInputType
+                                    ? Array.isArray(cq.acceptedAnswers) &&
+                                      cq.acceptedAnswers.length > 0
+                                      ? cq.acceptedAnswers.join(' | ')
+                                      : cq.correctOptionCode || '-'
+                                    : cq.correctOptionCode || 'A'}
                                 </span>
                               </div>
                               <div>
-                                Student Choice:{' '}
+                                <span className="text-slate-400">Candidate Response: </span>
                                 <span
                                   className={
                                     isCorrect
@@ -361,7 +426,7 @@ export function AttemptInspectorModal({
                                       : 'text-rose-400 font-bold'
                                   }
                                 >
-                                  {String(selectedCode)}
+                                  {String(isInputType ? candidateText : selectedCode)}
                                 </span>
                               </div>
                             </div>

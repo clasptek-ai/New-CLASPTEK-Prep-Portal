@@ -191,12 +191,18 @@ export class QuestionSelectionService {
 
           // If prompt explicitly mentions TRUE/FALSE/NOT GIVEN or YES/NO/NOT GIVEN
           const promptText = (r.prompt || '').toUpperCase();
-          const isTFNGPrompt = promptText.includes('TRUE') && promptText.includes('FALSE') && promptText.includes('NOT GIVEN');
-          const isYNNGPrompt = promptText.includes('YES') && promptText.includes('NO') && promptText.includes('NOT GIVEN');
+          const isTFNGPrompt =
+            promptText.includes('TRUE') &&
+            promptText.includes('FALSE') &&
+            promptText.includes('NOT GIVEN');
+          const isYNNGPrompt =
+            promptText.includes('YES') &&
+            promptText.includes('NO') &&
+            promptText.includes('NOT GIVEN');
 
           if (rawType === 'TRUE_FALSE_NOT_GIVEN' || rawType === 'TFNG' || isTFNGPrompt) {
             questionType = 'TRUE_FALSE_NOT_GIVEN';
-            itemType = 'MCQ';
+            itemType = 'TFNG';
             opts = TFNG_OPTIONS;
             if (!correctCode && payload.correctAnswer) {
               correctCode = payload.correctAnswer.toUpperCase().replace(/\s+/g, '_');
@@ -204,7 +210,7 @@ export class QuestionSelectionService {
             correctCode = correctCode || 'TRUE';
           } else if (rawType === 'YES_NO_NOT_GIVEN' || rawType === 'YNNG' || isYNNGPrompt) {
             questionType = 'YES_NO_NOT_GIVEN';
-            itemType = 'MCQ';
+            itemType = 'YNNG';
             opts = YNNG_OPTIONS;
             if (!correctCode && payload.correctAnswer) {
               correctCode = payload.correctAnswer.toUpperCase().replace(/\s+/g, '_');
@@ -215,15 +221,17 @@ export class QuestionSelectionService {
             rawType === 'SHORT_RESPONSE' ||
             rawType === 'COMPLETION' ||
             rawType === 'GAP_FILL' ||
+            rawType === 'FILL_IN_BLANK' ||
             rawType === 'FILL_IN_THE_BLANK' ||
             rawType === 'SUMMARY_COMPLETION' ||
             rawType === 'SENTENCE_COMPLETION' ||
             rawType === 'TABLE_COMPLETION' ||
-            rawType === 'DIAGRAM_COMPLETION'
+            rawType === 'DIAGRAM_COMPLETION' ||
+            rawType === 'INPUT'
           ) {
             questionType = rawType;
             itemType = 'INPUT';
-            opts = []; // Input-based question
+            opts = []; // Input-based question — options NOT required
             correctCode = '';
           } else if (
             rawType === 'MATCHING_HEADINGS' ||
@@ -233,15 +241,12 @@ export class QuestionSelectionService {
             rawType === 'MATCHING'
           ) {
             questionType = rawType;
-            itemType = 'MCQ';
+            itemType = 'MATCHING';
 
             // Resolve options from payload sharedData or headingsList if answer_options empty
             if (opts.length < 2) {
               const headings =
-                payload.sharedData?.headingsList ||
-                payload.headingsList ||
-                payload.options ||
-                [];
+                payload.sharedData?.headingsList || payload.headingsList || payload.options || [];
               if (headings.length >= 2) {
                 opts = headings.map((h: any) => ({
                   code: h.code || h.id || String(h),
@@ -268,6 +273,50 @@ export class QuestionSelectionService {
             correctCode = correctCode || opts[0]?.code || 'A';
           }
 
+          // Extract complete accepted answers for input-based questions
+          let acceptedAnswers: string[] | undefined = undefined;
+          if (itemType === 'INPUT') {
+            const list: string[] = [];
+            if (Array.isArray(payload.acceptedAnswers)) list.push(...payload.acceptedAnswers);
+            if (Array.isArray(payload.acceptableAnswers)) list.push(...payload.acceptableAnswers);
+            if (Array.isArray(payload.validAnswers)) list.push(...payload.validAnswers);
+            if (Array.isArray(payload.correctAnswers)) list.push(...payload.correctAnswers);
+            if (payload.correctAnswer && typeof payload.correctAnswer === 'string')
+              list.push(payload.correctAnswer);
+            if (payload.acceptedAnswer && typeof payload.acceptedAnswer === 'string')
+              list.push(payload.acceptedAnswer);
+
+            // Extract from option text if database answer_options had correct answer row
+            const verOpts = compOptsByVer.get(r.version_id) || [];
+            const correctOpt = verOpts.find(
+              (o: any) => o.isCorrect || o.code === compCorrectByVer.get(r.version_id)
+            );
+            if (correctOpt?.text) list.push(correctOpt.text);
+
+            // Extract from explanation quotes if present
+            if (payload.explanation && typeof payload.explanation === 'string') {
+              const matches = payload.explanation.match(/[“"']([^“”"']{1,50})[”"']/g);
+              if (matches) {
+                matches.forEach((m: string) => {
+                  const cleaned = m.replace(/[“"']/g, '').trim();
+                  if (cleaned.length > 0 && !cleaned.includes('statement is')) {
+                    list.push(cleaned);
+                  }
+                });
+              }
+            }
+
+            acceptedAnswers = Array.from(
+              new Set(list.map((s) => String(s).trim()).filter(Boolean))
+            );
+            if (acceptedAnswers.length === 0) {
+              const promptWords = (r.prompt || '').match(/______\s*([a-zA-Z0-9\s]+)/);
+              if (promptWords && promptWords[1]) {
+                acceptedAnswers = [promptWords[1].trim()];
+              }
+            }
+          }
+
           return {
             id: r.question_id,
             versionId: r.version_id,
@@ -278,13 +327,7 @@ export class QuestionSelectionService {
             itemType,
             options: opts,
             correctOptionCode: itemType === 'INPUT' ? null : correctCode,
-            // For input-based questions, store accepted answers from payload
-            acceptedAnswers:
-              itemType === 'INPUT'
-                ? payload.acceptedAnswers ||
-                  payload.correctAnswers ||
-                  (payload.correctAnswer ? [payload.correctAnswer] : [])
-                : undefined,
+            acceptedAnswers,
             marks: 1,
             order: idx + 1,
           };
@@ -424,13 +467,15 @@ export class QuestionSelectionService {
 
     const grammarSnapshot = shuffledGrammarRows.map((r, i) => {
       const opts = optionsByVersion.get(r.version_id) || [
-        { code: 'A', text: 'Option A', isCorrect: false },
-        { code: 'B', text: 'Option B', isCorrect: true },
+        { code: 'A', text: 'Option A', isCorrect: true },
+        { code: 'B', text: 'Option B', isCorrect: false },
         { code: 'C', text: 'Option C', isCorrect: false },
         { code: 'D', text: 'Option D', isCorrect: false },
       ];
       const correctCode =
-        correctByVersion.get(r.version_id) || opts.find((o) => o.isCorrect)?.code || 'B';
+        correctByVersion.get(r.version_id) ||
+        opts.find((o) => o.isCorrect)?.code ||
+        (opts.length > 0 ? opts[0].code : 'A');
       return {
         id: r.question_id,
         versionId: r.version_id,

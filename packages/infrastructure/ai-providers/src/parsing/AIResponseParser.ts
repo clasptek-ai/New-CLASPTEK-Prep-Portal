@@ -6,6 +6,7 @@ export class AIResponseParser {
 
     let jsonText = text.trim();
 
+    // 1. Check for markdown code block
     const markdownBlockRegex = /```(?:json)?\s*([\s\S]*?)```/;
     const markdownMatch = text.match(markdownBlockRegex);
 
@@ -23,9 +24,15 @@ export class AIResponseParser {
     try {
       return JSON.parse(jsonText);
     } catch (error: any) {
-      throw new Error(
-        `AI response JSON parsing failed: ${error.message}. Input segment: ${jsonText.substring(0, 100)}`
-      );
+      // 2. Try removing trailing commas or repairing partial JSON
+      try {
+        const cleaned = jsonText.replace(/,\s*([}\]])/g, '$1');
+        return JSON.parse(cleaned);
+      } catch {
+        throw new Error(
+          `AI response JSON parsing failed: ${error.message}. Input segment: ${jsonText.substring(0, 100)}`
+        );
+      }
     }
   }
 }

@@ -1,13 +1,13 @@
 import { Pool } from 'pg';
 
 export type StudentPreAssessmentState =
-  | 'PRE_ASSESSMENT_NOT_STARTED'
-  | 'PRE_ASSESSMENT_IN_PROGRESS'
-  | 'PRE_ASSESSMENT_COMPLETED';
+  'PRE_ASSESSMENT_NOT_STARTED' | 'PRE_ASSESSMENT_IN_PROGRESS' | 'PRE_ASSESSMENT_COMPLETED';
 
 export interface StudentAssessmentStatusResult {
   state: StudentPreAssessmentState;
   hasCompletedPreAssessment: boolean;
+  preAssessmentRequired: boolean;
+  nextAssessment: 'PRE_ASSESSMENT' | 'MOCK' | 'PRACTICE';
   hasActiveAttempt: boolean;
   activeAttemptId: string | null;
   completedAttemptId: string | null;
@@ -43,6 +43,8 @@ export async function getStudentAssessmentState(
     return {
       state: 'PRE_ASSESSMENT_NOT_STARTED',
       hasCompletedPreAssessment: false,
+      preAssessmentRequired: true,
+      nextAssessment: 'PRE_ASSESSMENT',
       hasActiveAttempt: false,
       activeAttemptId: null,
       completedAttemptId: null,
@@ -89,6 +91,8 @@ export async function getStudentAssessmentState(
     return {
       state: 'PRE_ASSESSMENT_COMPLETED',
       hasCompletedPreAssessment: true,
+      preAssessmentRequired: false,
+      nextAssessment: 'MOCK',
       hasActiveAttempt: false,
       activeAttemptId: null,
       completedAttemptId: completedAttempt.id,
@@ -109,6 +113,8 @@ export async function getStudentAssessmentState(
     return {
       state: 'PRE_ASSESSMENT_IN_PROGRESS',
       hasCompletedPreAssessment: false,
+      preAssessmentRequired: true,
+      nextAssessment: 'PRE_ASSESSMENT',
       hasActiveAttempt: true,
       activeAttemptId: activeAttempt.id,
       completedAttemptId: null,
@@ -121,6 +127,8 @@ export async function getStudentAssessmentState(
   return {
     state: 'PRE_ASSESSMENT_NOT_STARTED',
     hasCompletedPreAssessment: false,
+    preAssessmentRequired: true,
+    nextAssessment: 'PRE_ASSESSMENT',
     hasActiveAttempt: false,
     activeAttemptId: null,
     completedAttemptId: null,

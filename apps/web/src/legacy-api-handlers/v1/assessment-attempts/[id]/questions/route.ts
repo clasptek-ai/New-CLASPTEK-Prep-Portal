@@ -113,19 +113,25 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         code: rp.code,
         title: rp.title,
         content: rp.content,
-        comprehensionQuestions: (rp.comprehensionQuestions || []).map((cq: any) => ({
+        comprehensionQuestions: (rp.comprehensionQuestions || []).map((cq: any, cIdx: number) => ({
           id: cq.id,
           versionId: cq.versionId,
           code: cq.code,
+          order: cq.order || cIdx + 1,
+          questionNumber: cq.order || cIdx + 1,
           prompt: cq.prompt,
           questionType: cq.questionType || 'MCQ',
           itemType: cq.itemType || 'MCQ',
+          section: 'Reading',
+          passageId: rp.id,
+          passageCode: rp.code,
           options: (cq.options || []).map((o: any) => ({
             code: o.code,
             text: o.text,
           })),
           marks: cq.marks || 1,
-          // INTENTIONALLY OMITTED: correctOptionCode, isCorrect, answerKey, acceptedAnswers
+          // SECURITY INVARIANT: Strictly hide correct answers from student client
+          // INTENTIONALLY OMITTED: correctOptionCode, isCorrect, answerKey, acceptedAnswers, correctAnswer, gradingFeedback
         })),
       };
     }

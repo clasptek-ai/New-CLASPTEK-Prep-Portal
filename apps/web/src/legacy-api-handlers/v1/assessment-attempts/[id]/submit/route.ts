@@ -142,7 +142,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         { correct: boolean; selectedCode: string | null; correctCode: string }
       > = {};
 
-      grammarQs.forEach((q: any) => {
+      for (const q of grammarQs) {
         const itemMarks = Number(q.marks) || 1;
         grammarTotal += itemMarks;
         const raw = candidateAnswers.get(q.id);
@@ -158,7 +158,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
           selectedCode,
           correctCode: q.correctOptionCode || '?',
         };
-      });
+
+        // Persist is_correct to assessment_attempt_answers
+        await client
+          .query(
+            `UPDATE public.assessment_attempt_answers 
+             SET is_correct = $1, updated_at = NOW() 
+             WHERE attempt_id = $2 AND question_id = $3`,
+            [isCorrect, attemptId, q.id]
+          )
+          .catch(() => null);
+      }
 
       const grammarRaw = grammarTotal > 0 ? (grammarCorrect / grammarTotal) * 100 : 0;
 
@@ -168,23 +178,40 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       let readingCorrect = 0;
       let readingTotal = 0;
 
-      comprehensionQs.forEach((q: any) => {
+      for (const q of comprehensionQs) {
         const itemMarks = Number(q.marks) || 1;
         readingTotal += itemMarks;
         const raw = candidateAnswers.get(q.id);
 
         let isCorrect = false;
-        if (q.itemType === 'INPUT' || (!q.options?.length && q.acceptedAnswers)) {
+        const isInputQuestion =
+          q.itemType === 'INPUT' ||
+          q.itemType === 'COMPLETION' ||
+          q.itemType === 'SENTENCE_COMPLETION' ||
+          q.itemType === 'SHORT_ANSWER' ||
+          q.itemType === 'SHORT_RESPONSE' ||
+          q.itemType === 'GAP_FILL' ||
+          q.itemType === 'FILL_IN_BLANK' ||
+          (!q.options?.length && Array.isArray(q.acceptedAnswers) && q.acceptedAnswers.length > 0);
+
+        if (isInputQuestion) {
           // Input/completion question type
-          const candidateText =
+          const rawText =
             typeof raw === 'string'
-              ? raw.trim().toLowerCase()
+              ? raw
               : typeof raw === 'object' && raw !== null
-                ? (raw.text || raw.answer || raw.value || '').toString().trim().toLowerCase()
+                ? raw.textResponse ||
+                  raw.text ||
+                  raw.answer ||
+                  raw.value ||
+                  raw.rawResponseReference ||
+                  ''
                 : '';
 
+          const candidateText = String(rawText).replace(/\s+/g, ' ').trim().toLowerCase();
+
           const accepted: string[] = Array.isArray(q.acceptedAnswers)
-            ? q.acceptedAnswers.map((a: any) => String(a).trim().toLowerCase())
+            ? q.acceptedAnswers.map((a: any) => String(a).replace(/\s+/g, ' ').trim().toLowerCase())
             : [];
 
           if (candidateText && accepted.length > 0) {
@@ -200,7 +227,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         }
 
         if (isCorrect) readingCorrect += itemMarks;
-      });
+
+        // Persist is_correct to assessment_attempt_answers for admin review inspector
+        await client
+          .query(
+            `UPDATE public.assessment_attempt_answers 
+             SET is_correct = $1, updated_at = NOW() 
+             WHERE attempt_id = $2 AND question_id = $3`,
+            [isCorrect, attemptId, q.id]
+          )
+          .catch(() => null);
+      }
 
       const readingRaw = readingTotal > 0 ? (readingCorrect / readingTotal) * 100 : 0;
 

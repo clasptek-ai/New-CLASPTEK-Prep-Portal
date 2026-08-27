@@ -66,15 +66,21 @@ export class GeminiGateway {
       config: {
         systemInstruction: systemPrompt,
         temperature: options?.temperature ?? 0.2,
-        maxOutputTokens: options?.maxTokens ?? 2048,
+        maxOutputTokens: options?.maxTokens ?? 8192,
         responseMimeType: 'application/json',
       },
     });
 
-    const textContent = rawResponse.candidates?.[0]?.content?.parts?.[0]?.text;
+    const candidate = rawResponse.candidates?.[0];
+    const parts = candidate?.content?.parts || [];
+    const textContent =
+      typeof rawResponse.text === 'string' && rawResponse.text.length > 0
+        ? rawResponse.text
+        : parts.map((p: any) => p.text || '').join('');
+
     if (!textContent) {
       throw new Error(
-        `Gemini returned empty response. Model: ${model}, finish_reason: ${rawResponse.candidates?.[0]?.finishReason || 'unknown'}`
+        `Gemini returned empty response. Model: ${model}, finish_reason: ${candidate?.finishReason || 'unknown'}`
       );
     }
 
