@@ -12,9 +12,30 @@ function LoginPageContent() {
   const sessionTimeout = searchParams.get('timeout') === 'true';
   const signedOut =
     searchParams.get('signedOut') === 'true' || searchParams.get('logout') === 'true';
+  const emailConfirmed = searchParams.get('confirmed') === '1';
+  const confirmationFailed = searchParams.get('error') === 'confirmation_failed';
 
   return (
     <AuthShell title="Welcome Back" subtitle="Sign in to continue your Clasptek learning portal.">
+      {emailConfirmed && (
+        <Alert variant="success" className="mb-4">
+          <AlertTitle>Email Confirmed</AlertTitle>
+          <AlertDescription>
+            Your email has been confirmed successfully. Please sign in to access your account.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {confirmationFailed && (
+        <Alert variant="warning" className="mb-4">
+          <AlertTitle>Confirmation Failed</AlertTitle>
+          <AlertDescription>
+            Your email confirmation link may have expired or already been used. Please request a new
+            confirmation email or contact support.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {sessionTimeout && (
         <Alert variant="warning" className="mb-4">
           <AlertTitle>Session Expired</AlertTitle>

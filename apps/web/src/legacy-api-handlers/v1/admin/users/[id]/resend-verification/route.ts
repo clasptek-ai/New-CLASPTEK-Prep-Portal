@@ -51,7 +51,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // 2. Resend verification email via Supabase Auth Admin
     const supabaseAdmin = getSupabaseServerClient();
     const appUrl = getAppUrl(process.env);
-    const redirectTo = `${appUrl}/auth/callback?next=/student/welcome`;
+    const redirectTo = `${appUrl}/auth/confirm`;
 
     const { error: resendErr } = await supabaseAdmin.auth.resend({
       type: 'signup',

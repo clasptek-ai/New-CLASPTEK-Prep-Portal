@@ -7,47 +7,146 @@ import {
 } from '@clasptek/domain-ai-evaluation';
 import { GeminiGateway } from './GeminiGateway';
 import { AIResponseParser } from '../parsing/AIResponseParser';
-import { EvaluationSchema } from '../validation/EvaluationSchema';
 import { GeminiMapper } from './GeminiMapper';
+import { GeminiPrompts } from './GeminiPrompts';
+import { GeminiWritingEvaluationSchema, GeminiSpeakingEvaluationSchema } from './GeminiSchema';
 
+/**
+ * Google Gemini IELTS Provider — implements the AIProvider interface for real
+ * IELTS Writing and Speaking evaluation via the Google Gemini API.
+ *
+ * NO FALLBACK: If Gemini is unavailable, this provider throws.
+ * The caller must set status = FAILED, never fabricate scores.
+ */
 export class GeminiProvider implements AIProvider {
   public readonly id = 'gemini-provider-v1';
-  public readonly name = 'Google Gemini Provider';
+  public readonly name = 'Google Gemini IELTS Provider';
   public readonly provider = 'GEMINI';
 
   constructor(private readonly gateway: GeminiGateway) {}
 
+  /**
+   * Evaluate IELTS Writing using Gemini chat completions.
+   *
+   * The context.prompt is expected to contain the candidate's essay text.
+   * The context.rubric may contain: { taskType, taskPrompt, stimulusContext }
+   */
   public async evaluateWriting(context: EvaluationExecutionContext): Promise<EvaluationResult> {
-    const rawRes = await this.gateway.generate(context.prompt);
-    const textContent = rawRes.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!textContent) {
-      throw new Error('No candidate content parts found in Gemini response');
+    const taskType: 'TASK_1' | 'TASK_2' = context.rubric?.taskType || 'TASK_2';
+    const taskPrompt: string = context.rubric?.taskPrompt || '';
+    const candidateResponse: string = context.prompt;
+
+    if (!candidateResponse || candidateResponse.trim().length === 0) {
+      throw new Error('Cannot evaluate empty writing response');
     }
 
-    const rawObj = AIResponseParser.parseJsonBlock(textContent);
-    const verifiedOutput = EvaluationSchema.validateGemini(rawObj);
+    const systemPrompt = GeminiPrompts.buildWritingSystemPrompt(taskType);
+    const stimulusContext =
+      context.rubric?.stimulusContext || context.rubric?.stimulusDescription || '';
+    const userPrompt = GeminiPrompts.buildWritingUserPrompt(
+      taskPrompt,
+      candidateResponse,
+      taskType,
+      stimulusContext
+    );
 
-    return GeminiMapper.mapToEvaluationResult(
-      verifiedOutput,
+    const response = await this.gateway.generateChatCompletion(systemPrompt, userPrompt, {
+      temperature: context.temperature,
+      maxTokens: context.maxTokens,
+    });
+
+    const rawObj = AIResponseParser.parseJsonBlock(response.content);
+    const validated = GeminiWritingEvaluationSchema.parse(rawObj);
+
+    return GeminiMapper.mapWritingToEvaluationResult(
+      validated,
       context.studentId,
       context.submissionId,
       context.jobId
     );
   }
 
+  /**
+   * Evaluate IELTS Speaking using Gemini chat completions.
+   *
+   * If context.rubric.audioBuffer is provided and no transcript exists,
+   * the gateway will first transcribe the audio using Gemini's native audio understanding.
+   *
+   * The context.prompt is expected to contain the transcript (or will be populated after transcription).
+   * The context.rubric may contain: { partNumber, questionPrompt, audioBuffer, audioFilename }
+   */
   public async evaluateSpeaking(context: EvaluationExecutionContext): Promise<EvaluationResult> {
-    return this.evaluateWriting(context);
+    let transcript = context.prompt;
+    const partNumber: number = context.rubric?.partNumber || 1;
+    const questionPrompt: string = context.rubric?.questionPrompt || '';
+
+    // If we have audio but no transcript, transcribe first using Gemini's native audio
+    if ((!transcript || transcript.trim().length === 0) && context.rubric?.audioBuffer) {
+      const audioBuffer = Buffer.isBuffer(context.rubric.audioBuffer)
+        ? context.rubric.audioBuffer
+        : Buffer.from(context.rubric.audioBuffer);
+      const filename = context.rubric?.audioFilename || 'speaking.webm';
+
+      const transcription = await this.gateway.transcribeAudio(audioBuffer, filename);
+      transcript = transcription.text;
+    }
+
+    if (!transcript || transcript.trim().length === 0) {
+      throw new Error(
+        'Cannot evaluate speaking: no transcript provided and no audio available for transcription'
+      );
+    }
+
+    const systemPrompt = GeminiPrompts.buildSpeakingSystemPrompt();
+    const userPrompt = GeminiPrompts.buildSpeakingUserPrompt(
+      partNumber,
+      questionPrompt,
+      transcript
+    );
+
+    const response = await this.gateway.generateChatCompletion(systemPrompt, userPrompt, {
+      temperature: context.temperature,
+      maxTokens: context.maxTokens,
+    });
+
+    const rawObj = AIResponseParser.parseJsonBlock(response.content);
+    const validated = GeminiSpeakingEvaluationSchema.parse(rawObj);
+
+    return GeminiMapper.mapSpeakingToEvaluationResult(
+      validated,
+      context.studentId,
+      context.submissionId,
+      context.jobId
+    );
   }
 
   public async health(): Promise<EvaluationHealth> {
-    return {
-      provider: 'GEMINI',
-      isHealthy: true,
-      latencyMs: 120,
-      circuitState: 'CLOSED',
-      consecutiveFailures: 0,
-      lastCheckedAt: new Date(),
-    };
+    try {
+      const response = await this.gateway.generateChatCompletion(
+        'You are a health check assistant. Respond with valid JSON.',
+        'Return: {"status": "ok"}',
+        { temperature: 0, maxTokens: 20 }
+      );
+      const isHealthy = response.content.includes('ok');
+
+      return {
+        provider: 'GEMINI',
+        isHealthy,
+        latencyMs: 0,
+        circuitState: isHealthy ? 'CLOSED' : 'OPEN',
+        consecutiveFailures: isHealthy ? 0 : 1,
+        lastCheckedAt: new Date(),
+      };
+    } catch {
+      return {
+        provider: 'GEMINI',
+        isHealthy: false,
+        latencyMs: 0,
+        circuitState: 'OPEN',
+        consecutiveFailures: 1,
+        lastCheckedAt: new Date(),
+      };
+    }
   }
 
   public estimateCost(inputTokens: number, outputTokens: number): CostEstimate {

@@ -172,10 +172,32 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         const itemMarks = Number(q.marks) || 1;
         readingTotal += itemMarks;
         const raw = candidateAnswers.get(q.id);
-        const selectedCode = extractSelectedOptionCode(raw);
 
-        const isCorrect =
-          selectedCode !== null && q.correctOptionCode && selectedCode === q.correctOptionCode;
+        let isCorrect = false;
+        if (q.itemType === 'INPUT' || (!q.options?.length && q.acceptedAnswers)) {
+          // Input/completion question type
+          const candidateText =
+            typeof raw === 'string'
+              ? raw.trim().toLowerCase()
+              : typeof raw === 'object' && raw !== null
+                ? (raw.text || raw.answer || raw.value || '').toString().trim().toLowerCase()
+                : '';
+
+          const accepted: string[] = Array.isArray(q.acceptedAnswers)
+            ? q.acceptedAnswers.map((a: any) => String(a).trim().toLowerCase())
+            : [];
+
+          if (candidateText && accepted.length > 0) {
+            isCorrect = accepted.includes(candidateText);
+          }
+        } else {
+          // Option-based question type (MCQ, TFNG, YNNG, MATCHING)
+          const selectedCode = extractSelectedOptionCode(raw);
+          isCorrect =
+            selectedCode !== null &&
+            Boolean(q.correctOptionCode) &&
+            selectedCode.toUpperCase() === String(q.correctOptionCode).toUpperCase();
+        }
 
         if (isCorrect) readingCorrect += itemMarks;
       });

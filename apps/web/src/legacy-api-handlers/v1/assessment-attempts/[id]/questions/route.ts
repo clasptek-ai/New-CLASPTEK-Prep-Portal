@@ -118,13 +118,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           versionId: cq.versionId,
           code: cq.code,
           prompt: cq.prompt,
+          questionType: cq.questionType || 'MCQ',
           itemType: cq.itemType || 'MCQ',
           options: (cq.options || []).map((o: any) => ({
             code: o.code,
             text: o.text,
           })),
           marks: cq.marks || 1,
-          // INTENTIONALLY OMITTED: correctOptionCode, isCorrect, answerKey
+          // INTENTIONALLY OMITTED: correctOptionCode, isCorrect, answerKey, acceptedAnswers
         })),
       };
     }

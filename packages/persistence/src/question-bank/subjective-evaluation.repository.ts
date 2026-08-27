@@ -103,6 +103,8 @@ export class PostgresSubjectiveEvaluationRepository {
   public async evaluateSubjectiveJob(
     evaluationId: string
   ): Promise<{ record: SubjectiveEvaluationRecord; criteria: CriterionResult[] }> {
+    const gradingStartedAt = new Date();
+
     // 1. Mark status = EVALUATING
     await this.pool.query(
       `UPDATE public.subjective_evaluations SET
@@ -140,26 +142,30 @@ export class PostgresSubjectiveEvaluationRepository {
       throw new Error(`Cannot evaluate empty response payload for ${evaluationId}`);
     }
 
-    // 2. Get the OpenAI provider — NO FALLBACK to Gemini
+    // 2. Resolve the configured AI grading provider
     const providerManager = ProviderModule.initFromEnv();
-    const openaiProvider = providerManager.getProvider('OPENAI');
+    const providerCode = ProviderModule.resolveGradingProvider();
+    const provider = providerManager.getProvider(providerCode);
 
-    if (!openaiProvider) {
+    if (!provider) {
+      const errorMsg = `AI_PROVIDER_UNAVAILABLE: ${providerCode} provider is not configured. IELTS subjective grading requires a configured AI provider (AI_GRADING_PROVIDER=${providerCode}).`;
       await this.pool.query(
         `UPDATE public.subjective_evaluations SET
            status = 'FAILED',
-           last_error = 'OPENAI_PROVIDER_UNAVAILABLE: OpenAI provider is not configured. IELTS subjective grading requires OpenAI.',
+           last_error = $1,
            failed_at = now()
-         WHERE id = $1`,
-        [evaluationId]
+         WHERE id = $2`,
+        [errorMsg, evaluationId]
       );
       throw new Error(
-        `OpenAI provider is not available for subjective evaluation ${evaluationId}. ` +
-          `IELTS Writing and Speaking grading requires OpenAI. No fallback is permitted.`
+        `${providerCode} provider is not available for subjective evaluation ${evaluationId}. ${errorMsg}`
       );
     }
 
-    // 3. Perform real AI evaluation via OpenAI
+    const providerName = provider.provider;
+    const modelName = (provider as any).gateway?.getModelCode?.() || providerCode;
+
+    // 3. Perform real AI evaluation via configured provider
     let criteria: CriterionResult[] = [];
     let overallScore = 0;
     let scoreLabel = '';
@@ -167,8 +173,9 @@ export class PostgresSubjectiveEvaluationRepository {
 
     try {
       if (skill === 'Writing') {
-        const result = await this.evaluateWritingViaOpenAI(
-          openaiProvider,
+        const result = await this.evaluateWritingViaProvider(
+          provider,
+          providerCode,
           content,
           meta.taskType || 'TASK_2',
           meta.taskPrompt || '',
@@ -182,8 +189,9 @@ export class PostgresSubjectiveEvaluationRepository {
       } else {
         // Speaking: use transcript if available, otherwise use content
         const speakingText = transcript || content;
-        const result = await this.evaluateSpeakingViaOpenAI(
-          openaiProvider,
+        const result = await this.evaluateSpeakingViaProvider(
+          provider,
+          providerCode,
           speakingText,
           meta.partNumber || 1,
           meta.questionPrompt || '',
@@ -196,10 +204,10 @@ export class PostgresSubjectiveEvaluationRepository {
         feedback = result.feedback;
       }
     } catch (aiError: any) {
-      // OpenAI failed — mark as FAILED, NEVER fabricate scores
-      const errorMsg = aiError?.message || 'Unknown OpenAI evaluation error';
+      // AI provider failed — mark as FAILED, NEVER fabricate scores
+      const errorMsg = aiError?.message || `Unknown ${providerCode} evaluation error`;
       console.error(
-        `[SUBJECTIVE_EVAL_FAIL] evaluationId=${evaluationId} skill=${skill} error="${errorMsg}"`
+        `[SUBJECTIVE_EVAL_FAIL] evaluationId=${evaluationId} skill=${skill} provider=${providerCode} error="${errorMsg}"`
       );
       await this.pool.query(
         `UPDATE public.subjective_evaluations SET
@@ -207,21 +215,37 @@ export class PostgresSubjectiveEvaluationRepository {
            last_error = $1,
            failed_at = now()
          WHERE id = $2`,
-        [`OPENAI_EVALUATION_FAILED: ${errorMsg.substring(0, 500)}`, evaluationId]
+        [`AI_EVALUATION_FAILED [${providerCode}]: ${errorMsg.substring(0, 500)}`, evaluationId]
       );
-      throw new Error(`OpenAI evaluation failed for ${evaluationId}: ${errorMsg}`);
+      throw new Error(`${providerCode} evaluation failed for ${evaluationId}: ${errorMsg}`);
     }
 
-    // 4. Persist evaluation completion & criteria records
+    const gradingCompletedAt = new Date();
+
+    // 4. Persist evaluation completion, criteria records, and observability metadata
     await this.pool.query(
       `UPDATE public.subjective_evaluations SET
          status = 'COMPLETED',
          overall_score = $1,
          score_label = $2,
          feedback = $3,
-         completed_at = now()
-       WHERE id = $4`,
-      [overallScore, scoreLabel, feedback, evaluationId]
+         completed_at = now(),
+         metadata = metadata || $4::jsonb
+       WHERE id = $5`,
+      [
+        overallScore,
+        scoreLabel,
+        feedback,
+        JSON.stringify({
+          grading_provider: providerName,
+          grading_model: modelName,
+          grading_status: 'completed',
+          grading_started_at: gradingStartedAt.toISOString(),
+          grading_completed_at: gradingCompletedAt.toISOString(),
+          grading_duration_ms: gradingCompletedAt.getTime() - gradingStartedAt.getTime(),
+        }),
+        evaluationId,
+      ]
     );
 
     // Clean old criteria records before inserting fresh ones
@@ -258,18 +282,19 @@ export class PostgresSubjectiveEvaluationRepository {
         feedback,
         attemptCount: row.attempt_count + 1,
         createdAt: row.created_at,
-        completedAt: new Date(),
+        completedAt: gradingCompletedAt,
       },
       criteria,
     };
   }
 
   /**
-   * Evaluate IELTS Writing via OpenAI — returns structured criterion scores.
-   * NO FALLBACK. If OpenAI fails, the error propagates to the caller.
+   * Evaluate IELTS Writing via the configured provider — returns structured criterion scores.
+   * NO FALLBACK. If the provider fails, the error propagates to the caller.
    */
-  private async evaluateWritingViaOpenAI(
+  private async evaluateWritingViaProvider(
     provider: any,
+    providerCode: string,
     candidateResponse: string,
     taskType: 'TASK_1' | 'TASK_2',
     taskPrompt: string,
@@ -281,11 +306,21 @@ export class PostgresSubjectiveEvaluationRepository {
     scoreLabel: string;
     feedback: string;
   }> {
+    // Resolve model from env based on active provider
+    const model =
+      providerCode === 'OPENAI'
+        ? process.env.OPENAI_IELTS_GRADING_MODEL || 'gpt-4o'
+        : process.env.GEMINI_MODEL || 'gemini-2.5-pro';
+    const timeout =
+      providerCode === 'OPENAI'
+        ? parseInt(process.env.OPENAI_TIMEOUT || '60000', 10)
+        : parseInt(process.env.GEMINI_TIMEOUT || '30000', 10);
+
     const context = {
-      provider: 'OPENAI',
-      model: process.env.OPENAI_IELTS_GRADING_MODEL || 'gpt-4o',
+      provider: providerCode,
+      model,
       prompt: candidateResponse,
-      timeout: parseInt(process.env.OPENAI_TIMEOUT || '60000', 10),
+      timeout,
       temperature: 0.2,
       maxTokens: 2048,
       rubric: { taskType, taskPrompt },
@@ -333,11 +368,12 @@ export class PostgresSubjectiveEvaluationRepository {
   }
 
   /**
-   * Evaluate IELTS Speaking via OpenAI — returns structured criterion scores.
-   * NO FALLBACK. If OpenAI fails, the error propagates to the caller.
+   * Evaluate IELTS Speaking via the configured provider — returns structured criterion scores.
+   * NO FALLBACK. If the provider fails, the error propagates to the caller.
    */
-  private async evaluateSpeakingViaOpenAI(
+  private async evaluateSpeakingViaProvider(
     provider: any,
+    providerCode: string,
     transcript: string,
     partNumber: number,
     questionPrompt: string,
@@ -349,11 +385,20 @@ export class PostgresSubjectiveEvaluationRepository {
     scoreLabel: string;
     feedback: string;
   }> {
+    const model =
+      providerCode === 'OPENAI'
+        ? process.env.OPENAI_IELTS_GRADING_MODEL || 'gpt-4o'
+        : process.env.GEMINI_MODEL || 'gemini-2.5-pro';
+    const timeout =
+      providerCode === 'OPENAI'
+        ? parseInt(process.env.OPENAI_TIMEOUT || '60000', 10)
+        : parseInt(process.env.GEMINI_TIMEOUT || '30000', 10);
+
     const context = {
-      provider: 'OPENAI',
-      model: process.env.OPENAI_IELTS_GRADING_MODEL || 'gpt-4o',
+      provider: providerCode,
+      model,
       prompt: transcript,
-      timeout: parseInt(process.env.OPENAI_TIMEOUT || '60000', 10),
+      timeout,
       temperature: 0.2,
       maxTokens: 2048,
       rubric: { partNumber, questionPrompt },
@@ -481,6 +526,10 @@ export class PostgresSubjectiveEvaluationRepository {
       feedback: r.feedback,
       createdAt: r.created_at,
       completedAt: r.completed_at,
+      // Grading observability
+      gradingProvider: r.metadata?.grading_provider || null,
+      gradingModel: r.metadata?.grading_model || null,
+      gradingDurationMs: r.metadata?.grading_duration_ms || null,
     }));
   }
 

@@ -20,6 +20,7 @@ export function middleware(request: NextRequest) {
   // Explicit Public & Auth Recovery Route Pass-Through Guarantee
   const isPublicOrRecoveryRoute =
     pathname.startsWith('/auth/callback') ||
+    pathname.startsWith('/auth/confirm') ||
     pathname.startsWith('/reset-password') ||
     pathname.startsWith('/forgot-password') ||
     pathname.startsWith('/login') ||

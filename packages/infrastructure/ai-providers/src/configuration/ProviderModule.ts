@@ -26,7 +26,7 @@ export class ProviderModule {
     const mock = new MockAIProvider();
     manager.register(mock);
 
-    // 3. Construct and Register OpenAI Provider (if configured)
+    // 3. Construct and Register OpenAI Provider (if configured — retained as rollback option)
     if (openaiConfig) {
       try {
         const openaiClient = new OpenAIClient(openaiConfig);
@@ -34,19 +34,13 @@ export class ProviderModule {
         const openaiProvider = new OpenAIProvider(openaiGateway);
         manager.register(openaiProvider);
         console.info(
-          `[PROVIDER_MODULE] OpenAI provider registered successfully. Model: ${openaiConfig.model}, Whisper: ${openaiConfig.whisperModel}`
+          `[PROVIDER_MODULE] OpenAI provider registered (rollback). Model: ${openaiConfig.model}, Whisper: ${openaiConfig.whisperModel}`
         );
       } catch (err: any) {
-        console.error(
-          `[PROVIDER_MODULE] Failed to register OpenAI provider: ${err.message}. IELTS subjective grading will NOT be available.`
+        console.warn(
+          `[PROVIDER_MODULE] OpenAI provider registration failed (rollback unavailable): ${err.message}`
         );
-        // Do NOT fall back to Gemini for IELTS subjective grading.
-        // The evaluateSubjectiveJob caller must handle the missing OPENAI provider.
       }
-    } else {
-      console.warn(
-        '[PROVIDER_MODULE] OPENAI_API_KEY not configured. OpenAI provider NOT registered. IELTS subjective grading will NOT be available.'
-      );
     }
 
     return manager;
@@ -58,5 +52,26 @@ export class ProviderModule {
     const geminiConfig = GeminiConfigurationLoader.fromEnv(env);
     const openaiConfig = OpenAIConfigurationLoader.fromEnv(env);
     return this.init(geminiConfig, openaiConfig);
+  }
+
+  /**
+   * Resolve the active grading provider code from environment configuration.
+   *
+   * Priority:
+   *   1. AI_GRADING_PROVIDER env var (e.g. 'gemini' or 'openai')
+   *   2. Default: 'GEMINI' (production default)
+   *
+   * This determines which registered provider handles IELTS subjective grading.
+   * OpenAI is retained only as a controlled rollback option.
+   */
+  public static resolveGradingProvider(
+    env: Record<string, string | undefined> = process.env
+  ): string {
+    const configured = env.AI_GRADING_PROVIDER?.trim()?.toUpperCase();
+    if (configured === 'OPENAI' || configured === 'GEMINI' || configured === 'MOCK') {
+      return configured;
+    }
+    // Default to GEMINI for production
+    return 'GEMINI';
   }
 }

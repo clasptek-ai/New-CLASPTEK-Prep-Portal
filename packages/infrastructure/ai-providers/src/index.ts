@@ -8,6 +8,7 @@ export * from './gemini/GeminiGateway';
 export * from './gemini/GeminiSchema';
 export * from './gemini/GeminiMapper';
 export * from './gemini/GeminiProvider';
+export * from './gemini/GeminiPrompts';
 export * from './openai/OpenAIClient';
 export * from './openai/OpenAIGateway';
 export * from './openai/OpenAISchema';

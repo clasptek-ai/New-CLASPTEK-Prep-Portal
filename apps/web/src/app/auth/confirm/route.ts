@@ -7,12 +7,22 @@ import { cookies } from 'next/headers';
 import { EmailOtpType } from '@supabase/supabase-js';
 
 /**
- * Auth Callback Route Handler
- * Exchanges Supabase PKCE code or OTP token_hash for active session cookies.
- * Guarantees recovery flows always land on /reset-password and never fall back to homepage.
+ * Email Confirmation Route Handler — /auth/confirm
  *
- * NOTE: Signup/email confirmation flows are handled by /auth/confirm.
- * If a confirmation token arrives here, it is forwarded to /auth/confirm.
+ * DEDICATED to signup email confirmation only.
+ * This route MUST NOT handle password recovery.
+ *
+ * Flow:
+ *   1. Read token_hash + type from query params
+ *   2. Reject if type is 'recovery' (that belongs to /auth/callback)
+ *   3. Exchange OTP token for session via Supabase verifyOtp
+ *   4. On success: redirect to /login?confirmed=1
+ *   5. On failure: redirect to /login?error=confirmation_failed
+ *
+ * This route NEVER calls:
+ *   - resetPasswordForEmail()
+ *   - updateUser({ password: ... })
+ *   - redirects to /reset-password or /change-password
  */
 export async function GET(req: NextRequest) {
   const appUrl = getAppUrl(process.env);
@@ -25,38 +35,21 @@ export async function GET(req: NextRequest) {
   const errorCode = requestUrl.searchParams.get('error_code');
   const errorDesc = requestUrl.searchParams.get('error_description');
 
-  // GUARD: Forward signup/email_change confirmation tokens to /auth/confirm
-  // This ensures email confirmation NEVER enters the password recovery flow.
-  if (type === 'signup' || type === 'email_change' || type === 'email') {
-    const confirmParams = requestUrl.searchParams.toString();
-    return NextResponse.redirect(`${appUrl}/auth/confirm?${confirmParams}`);
+  // SECURITY: If this is a recovery flow, redirect to /auth/callback immediately
+  // This route is exclusively for email confirmation.
+  if (type === 'recovery') {
+    const params = requestUrl.searchParams.toString();
+    return NextResponse.redirect(`${appUrl}/auth/callback?${params}`);
   }
-
-  const rawNext =
-    requestUrl.searchParams.get('next') ||
-    (type === 'recovery' ? '/reset-password' : '/student/welcome');
-
-  // Open Redirect Security Check: Ensure next is a relative path starting with a single '/'
-  const isRelativePath =
-    rawNext.startsWith('/') &&
-    !rawNext.startsWith('//') &&
-    !rawNext.startsWith('/\\') &&
-    !rawNext.includes(':');
-
-  const safeNext = isRelativePath
-    ? rawNext
-    : type === 'recovery'
-      ? '/reset-password'
-      : '/student/welcome';
 
   // Handle explicit Supabase Auth Error params (e.g. otp_expired / access_denied)
   if (errorParam || errorCode || errorDesc) {
     const errorQuery = new URLSearchParams();
-    errorQuery.set('error', 'invalid_token');
+    errorQuery.set('error', 'confirmation_failed');
     if (errorCode) errorQuery.set('error_code', errorCode);
     if (errorDesc) errorQuery.set('error_description', errorDesc);
 
-    return NextResponse.redirect(`${appUrl}/reset-password?${errorQuery.toString()}`);
+    return NextResponse.redirect(`${appUrl}/login?${errorQuery.toString()}`);
   }
 
   const config = loadEnvironment(process.env);
@@ -96,22 +89,28 @@ export async function GET(req: NextRequest) {
     }
   );
 
-  const isRecoveryFlow = type === 'recovery' || safeNext.includes('reset-password');
-  const failureRedirectUrl = isRecoveryFlow
-    ? `${appUrl}/reset-password?error=invalid_token&error_code=otp_expired`
-    : `${appUrl}/login?error=invalid_token&error_code=otp_expired`;
+  const failureRedirectUrl = `${appUrl}/login?error=confirmation_failed&error_code=otp_expired`;
 
-  // 1. Verify OTP token_hash if provided (e.g. Supabase Auth Recovery or Confirmation link)
+  // 1. Verify OTP token_hash if provided (email confirmation link)
   if (token_hash && type) {
+    // Only accept confirmation-related types
+    const allowedTypes: EmailOtpType[] = ['signup', 'email_change', 'email'];
+    if (!allowedTypes.includes(type)) {
+      console.warn(`[AUTH_CONFIRM] Rejected unexpected type="${type}" in /auth/confirm`);
+      return NextResponse.redirect(failureRedirectUrl);
+    }
+
     try {
       const { error } = await supabase.auth.verifyOtp({ token_hash, type });
       if (!error) {
-        return NextResponse.redirect(`${appUrl}${safeNext}`);
+        console.info(`[AUTH_CONFIRM] Email confirmed successfully via type="${type}"`);
+        return NextResponse.redirect(`${appUrl}/login?confirmed=1`);
       }
-      console.error('verifyOtp error in /auth/callback:', error.message);
+      console.error(`[AUTH_CONFIRM] verifyOtp error: ${error.message}`);
       return NextResponse.redirect(failureRedirectUrl);
     } catch (err) {
-      console.error('verifyOtp exception in /auth/callback:', err);
+      console.error('[AUTH_CONFIRM] verifyOtp exception:', err);
+      return NextResponse.redirect(failureRedirectUrl);
     }
   }
 
@@ -120,15 +119,17 @@ export async function GET(req: NextRequest) {
     try {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
       if (!error) {
-        return NextResponse.redirect(`${appUrl}${safeNext}`);
+        console.info('[AUTH_CONFIRM] Email confirmed successfully via PKCE code exchange');
+        return NextResponse.redirect(`${appUrl}/login?confirmed=1`);
       }
-      console.error('exchangeCodeForSession error in /auth/callback:', error.message);
+      console.error(`[AUTH_CONFIRM] exchangeCodeForSession error: ${error.message}`);
       return NextResponse.redirect(failureRedirectUrl);
     } catch (err) {
-      console.error('exchangeCodeForSession exception in /auth/callback:', err);
+      console.error('[AUTH_CONFIRM] exchangeCodeForSession exception:', err);
+      return NextResponse.redirect(failureRedirectUrl);
     }
   }
 
-  // Token expired, missing, or invalid -> redirect contextually
+  // No valid token or code — redirect to login with error
   return NextResponse.redirect(failureRedirectUrl);
 }

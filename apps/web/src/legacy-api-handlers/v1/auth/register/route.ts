@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     );
 
     const appUrl = getAppUrl(process.env);
-    const emailRedirectTo = `${appUrl}/auth/callback?next=/student/welcome`;
+    const emailRedirectTo = `${appUrl}/auth/confirm`;
 
     const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({
       email: normalizedEmail,

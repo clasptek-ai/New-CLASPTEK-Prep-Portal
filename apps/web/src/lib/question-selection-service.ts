@@ -161,18 +161,102 @@ export class QuestionSelectionService {
           }
         });
 
+        // Auto-generated fixed options for standardized question types
+        const TFNG_OPTIONS = [
+          { code: 'TRUE', text: 'TRUE' },
+          { code: 'FALSE', text: 'FALSE' },
+          { code: 'NOT_GIVEN', text: 'NOT GIVEN' },
+        ];
+        const YNNG_OPTIONS = [
+          { code: 'YES', text: 'YES' },
+          { code: 'NO', text: 'NO' },
+          { code: 'NOT_GIVEN', text: 'NOT GIVEN' },
+        ];
+
         comprehensionQuestions = compRes.rows.map((r: any, idx: number) => {
-          const opts = compOptsByVer.get(r.version_id) || [];
-          const correctCode = compCorrectByVer.get(r.version_id) || opts[0]?.code || 'A';
+          const payload = r.payload || {};
+          const rawType = (payload.questionType || 'MCQ').toUpperCase().replace(/[\s-]/g, '_');
+
+          // Determine the resolved question type and item type
+          let questionType = 'MCQ';
+          let itemType = 'MCQ';
+          let opts = compOptsByVer.get(r.version_id) || [];
+          let correctCode = compCorrectByVer.get(r.version_id) || '';
+
+          if (rawType === 'TRUE_FALSE_NOT_GIVEN' || rawType === 'TFNG') {
+            questionType = 'TRUE_FALSE_NOT_GIVEN';
+            itemType = 'MCQ';
+            opts = TFNG_OPTIONS;
+            // If correct answer was stored as text like 'TRUE', map to code
+            if (!correctCode && payload.correctAnswer) {
+              correctCode = payload.correctAnswer.toUpperCase().replace(/\s+/g, '_');
+            }
+            correctCode = correctCode || 'TRUE';
+          } else if (rawType === 'YES_NO_NOT_GIVEN' || rawType === 'YNNG') {
+            questionType = 'YES_NO_NOT_GIVEN';
+            itemType = 'MCQ';
+            opts = YNNG_OPTIONS;
+            if (!correctCode && payload.correctAnswer) {
+              correctCode = payload.correctAnswer.toUpperCase().replace(/\s+/g, '_');
+            }
+            correctCode = correctCode || 'YES';
+          } else if (
+            rawType === 'COMPLETION' ||
+            rawType === 'GAP_FILL' ||
+            rawType === 'FILL_IN_THE_BLANK'
+          ) {
+            questionType = 'COMPLETION';
+            itemType = 'INPUT';
+            opts = []; // No options for input-based questions
+            correctCode = '';
+          } else if (rawType === 'SHORT_ANSWER' || rawType === 'SHORT_RESPONSE') {
+            questionType = 'SHORT_ANSWER';
+            itemType = 'INPUT';
+            opts = [];
+            correctCode = '';
+          } else if (
+            rawType === 'MATCHING_HEADINGS' ||
+            rawType === 'MATCHING_INFORMATION' ||
+            rawType === 'MATCHING'
+          ) {
+            questionType = rawType;
+            itemType = 'MCQ';
+            // Matching questions must have options from DB
+            if (opts.length < 2) {
+              throw new Error(
+                `PREASSESSMENT_READING_INVALID_QUESTION_OPTIONS: ${rawType} question "${r.question_code || r.question_id}" requires ≥2 matching options but has ${opts.length}. passageCode="${selectedPassage.code}"`
+              );
+            }
+            correctCode = correctCode || opts[0]?.code || 'A';
+          } else {
+            // Default: MCQ — must have options
+            questionType = 'MCQ';
+            itemType = 'MCQ';
+            if (opts.length < 2) {
+              throw new Error(
+                `PREASSESSMENT_READING_INVALID_QUESTION_OPTIONS: MCQ question "${r.question_code || r.question_id}" requires ≥2 options but has ${opts.length}. passageCode="${selectedPassage.code}"`
+              );
+            }
+            correctCode = correctCode || opts[0]?.code || 'A';
+          }
+
           return {
             id: r.question_id,
             versionId: r.version_id,
             code: r.question_code || `ENG-READ-${(idx + 1).toString().padStart(2, '0')}`,
             prompt: r.prompt,
             proficiencyLevel: r.proficiency_level || 'INTERMEDIATE',
-            itemType: 'MCQ',
+            questionType,
+            itemType,
             options: opts,
-            correctOptionCode: correctCode,
+            correctOptionCode: itemType === 'INPUT' ? null : correctCode,
+            // For input-based questions, store accepted answers from payload
+            acceptedAnswers:
+              itemType === 'INPUT'
+                ? payload.acceptedAnswers ||
+                  payload.correctAnswers ||
+                  (payload.correctAnswer ? [payload.correctAnswer] : [])
+                : undefined,
             marks: 1,
             order: idx + 1,
           };

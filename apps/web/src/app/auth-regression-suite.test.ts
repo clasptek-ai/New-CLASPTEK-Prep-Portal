@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { getAppUrl } from '@clasptek/configuration';
 import { NextRequest } from 'next/server';
 import { GET as handleAuthCallback } from './auth/callback/route';
+import { GET as handleAuthConfirm } from './auth/confirm/route';
 import { validatePasswordStrength } from '@/lib/auth/reset-password';
 import { extractSelectedOptionCode } from '@/lib/scoring/extractSelectedOptionCode';
 
@@ -29,24 +30,98 @@ describe('Phase 9: Comprehensive Authentication & Assessment System Regression S
     process.env = originalEnv;
   });
 
-  it('1. Registration confirmation email redirect URL includes /auth/callback?next=/student/welcome', () => {
+  // =========================================================================
+  // TEST A: Registration confirmation email redirect targets /auth/confirm
+  // =========================================================================
+  it('A. Registration confirmation email redirect URL targets /auth/confirm', () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
     const appUrl = getAppUrl(process.env);
-    const emailRedirectTo = `${appUrl}/auth/callback?next=/student/welcome`;
+    const emailRedirectTo = `${appUrl}/auth/confirm`;
 
-    expect(emailRedirectTo).toBe('https://portal.clasptek.org/auth/callback?next=/student/welcome');
+    expect(emailRedirectTo).toBe('https://portal.clasptek.org/auth/confirm');
     expect(emailRedirectTo).not.toContain('localhost');
+    expect(emailRedirectTo).not.toContain('/auth/callback');
+    expect(emailRedirectTo).not.toContain('reset-password');
+    expect(emailRedirectTo).not.toContain('change-password');
   });
 
-  it('2. Password recovery email redirect URL includes /auth/callback?next=/reset-password', () => {
+  // =========================================================================
+  // TEST B: Confirmation flow uses /auth/confirm, NOT /auth/callback recovery
+  // =========================================================================
+  it('B. Confirmation link URL pattern does NOT include change-password or reset-password', () => {
+    process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
+    const appUrl = getAppUrl(process.env);
+    const confirmUrl = `${appUrl}/auth/confirm`;
+
+    expect(confirmUrl).not.toContain('change-password');
+    expect(confirmUrl).not.toContain('reset-password');
+    expect(confirmUrl).toContain('/auth/confirm');
+  });
+
+  // =========================================================================
+  // TEST C: /auth/callback forwards signup tokens to /auth/confirm
+  // =========================================================================
+  it('C. /auth/callback forwards type=signup tokens to /auth/confirm', async () => {
+    process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
+    const req = new NextRequest(
+      'https://portal.clasptek.org/auth/callback?type=signup&token_hash=test123'
+    );
+    const res = await handleAuthCallback(req);
+
+    expect(res.status).toBe(307);
+    const location = res.headers.get('location') || '';
+    expect(location).toContain('/auth/confirm');
+    expect(location).toContain('type=signup');
+    expect(location).not.toContain('/reset-password');
+  });
+
+  // =========================================================================
+  // TEST D: /auth/confirm redirects to /login?confirmed=1 on missing/expired token
+  // =========================================================================
+  it('D. /auth/confirm with missing token redirects to /login with error', async () => {
+    process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
+    const req = new NextRequest('https://portal.clasptek.org/auth/confirm');
+    const res = await handleAuthConfirm(req);
+
+    expect(res.status).toBe(307);
+    const location = res.headers.get('location') || '';
+    expect(location).toContain('login');
+    expect(location).toContain('error=confirmation_failed');
+    expect(location).not.toContain('/reset-password');
+    expect(location).not.toContain('/change-password');
+  });
+
+  // =========================================================================
+  // TEST E: /auth/confirm rejects recovery tokens (redirects to /auth/callback)
+  // =========================================================================
+  it('E. /auth/confirm rejects type=recovery and forwards to /auth/callback', async () => {
+    process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
+    const req = new NextRequest(
+      'https://portal.clasptek.org/auth/confirm?type=recovery&token_hash=abc123'
+    );
+    const res = await handleAuthConfirm(req);
+
+    expect(res.status).toBe(307);
+    const location = res.headers.get('location') || '';
+    expect(location).toContain('/auth/callback');
+  });
+
+  // =========================================================================
+  // TEST F: Password recovery still works independently via /auth/callback
+  // =========================================================================
+  it('F. Password recovery email redirect URL remains /auth/callback?next=/reset-password', () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
     const appUrl = getAppUrl(process.env);
     const redirectTo = `${appUrl}/auth/callback?next=/reset-password`;
 
     expect(redirectTo).toBe('https://portal.clasptek.org/auth/callback?next=/reset-password');
+    expect(redirectTo).not.toContain('/auth/confirm');
   });
 
-  it('3. Double-clicking or accessing invalid recovery token redirects to /reset-password?error=invalid_token', async () => {
+  // =========================================================================
+  // TEST G: Invalid recovery token via /auth/callback redirects to /reset-password?error
+  // =========================================================================
+  it('G. Invalid recovery token redirects to /reset-password?error=invalid_token', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
     const req = new NextRequest('https://portal.clasptek.org/auth/callback?type=recovery');
     const res = await handleAuthCallback(req);
@@ -57,20 +132,13 @@ describe('Phase 9: Comprehensive Authentication & Assessment System Regression S
     );
   });
 
-  it('4. Double-clicking or accessing invalid confirmation token redirects to /login?error=invalid_token', async () => {
-    process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
-    const req = new NextRequest('https://portal.clasptek.org/auth/callback?type=signup');
-    const res = await handleAuthCallback(req);
-
-    expect(res.status).toBe(307);
-    expect(res.headers.get('location')).toContain(
-      'https://portal.clasptek.org/login?error=invalid_token'
-    );
-  });
-
-  it('5. Open redirect injections (e.g. external URL or protocol relative path) are rejected safely', async () => {
+  // =========================================================================
+  // TEST H: Open redirect injections are rejected in both /auth/callback and /auth/confirm
+  // =========================================================================
+  it('H. Open redirect injections are rejected safely', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
 
+    // Test in /auth/callback
     const reqExternal = new NextRequest(
       'https://portal.clasptek.org/auth/callback?next=https://evil.com/phishing&type=recovery'
     );
@@ -88,8 +156,20 @@ describe('Phase 9: Comprehensive Authentication & Assessment System Regression S
       'https://portal.clasptek.org/reset-password'
     );
     expect(resProtocolRel.headers.get('location')).not.toContain('//evil.com');
+
+    // Test in /auth/confirm — error params don't allow redirect injection
+    const reqConfirmError = new NextRequest(
+      'https://portal.clasptek.org/auth/confirm?error=access_denied&error_description=test'
+    );
+    const resConfirmError = await handleAuthConfirm(reqConfirmError);
+    const confirmLocation = resConfirmError.headers.get('location') || '';
+    expect(confirmLocation).toContain('login');
+    expect(confirmLocation).not.toContain('evil.com');
   });
 
+  // =========================================================================
+  // EXISTING TESTS — Password strength and option code extraction
+  // =========================================================================
   it('6. Password strength validation enforces all 5 security criteria', () => {
     const weak = validatePasswordStrength('weak');
     expect(weak.isValid).toBe(false);

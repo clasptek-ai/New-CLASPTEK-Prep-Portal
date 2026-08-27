@@ -301,8 +301,15 @@ export async function POST(req: NextRequest) {
     // 5. Dispatch confirmation email via Supabase Auth
     const { getAppUrl } = await import('@clasptek/configuration');
     const appUrl = getAppUrl(process.env);
-    const redirectTo = `${appUrl}/auth/callback?next=/student/welcome`;
-    await supabaseAdmin.auth.resetPasswordForEmail(trimmedEmail, { redirectTo }).catch(() => null);
+    const redirectTo = `${appUrl}/auth/confirm`;
+    // Use auth.resend for confirmation, NOT resetPasswordForEmail
+    await supabaseAdmin.auth
+      .resend({
+        type: 'signup',
+        email: trimmedEmail,
+        options: { emailRedirectTo: redirectTo },
+      })
+      .catch(() => null);
 
     // 6. Log audit event
     await pool
