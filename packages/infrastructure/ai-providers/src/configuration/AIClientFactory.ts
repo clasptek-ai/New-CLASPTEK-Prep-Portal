@@ -9,15 +9,18 @@ export class MockGoogleGenAI {
     generateContent: async (args: { model: string; contents: string }): Promise<any> => {
       if (!args.contents) throw new Error('Contents are required');
       const text = JSON.stringify({
+        taskType: 'TASK_2',
         overallBand: 7.5,
         criteria: {
-          taskAchievement: 7,
-          coherence: 8,
-          lexicalResource: 8,
-          grammar: 7,
+          taskAchievement: 7.5,
+          coherenceCohesion: 7.5,
+          lexicalResource: 7.5,
+          grammaticalRangeAccuracy: 7.5,
         },
-        feedback: 'Coherent essay with slight vocabulary limitations.',
-        improvements: ['Use broader range of synonyms.', 'Vary sentence structure.'],
+        feedback: 'Coherent essay with accurate sentence structures and well-developed arguments throughout.',
+        strengths: ['Clear structure and progression', 'Good variety of vocabulary'],
+        weaknesses: ['Minor lexical inaccuracies'],
+        improvements: ['Practice expanding complex sentence forms.'],
       });
       return {
         candidates: [

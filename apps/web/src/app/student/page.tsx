@@ -28,6 +28,12 @@ interface StudentLearningData {
     estimatedMins: number;
   };
   learningModules: LearningModule[];
+  assessmentState?: {
+    state: 'PRE_ASSESSMENT_NOT_STARTED' | 'PRE_ASSESSMENT_IN_PROGRESS' | 'PRE_ASSESSMENT_COMPLETED';
+    hasCompletedPreAssessment: boolean;
+    hasActiveAttempt: boolean;
+    activeAttemptId: string | null;
+  };
 }
 
 export default function StudentLearningDashboardPage() {
@@ -37,13 +43,15 @@ export default function StudentLearningDashboardPage() {
   useEffect(() => {
     async function loadDashboard() {
       try {
-        const [res, profRes] = await Promise.all([
+        const [res, profRes, stateRes] = await Promise.all([
           fetch('/api/v1/assessment/result').catch(() => null),
           fetch('/api/v1/student/profile').catch(() => null),
+          fetch('/api/v1/student/assessment-state').catch(() => null),
         ]);
 
         const resData = res ? await res.json().catch(() => ({})) : {};
         const profData = profRes ? await profRes.json().catch(() => ({})) : {};
+        const stateData = stateRes ? await stateRes.json().catch(() => ({})) : {};
 
         let progName = 'English Proficiency Core Foundation';
         let cefr = 'B1';
@@ -107,6 +115,14 @@ export default function StudentLearningDashboardPage() {
               status: 'LOCKED',
             },
           ],
+          assessmentState: stateData.success
+            ? {
+                state: stateData.state,
+                hasCompletedPreAssessment: stateData.hasCompletedPreAssessment,
+                hasActiveAttempt: stateData.hasActiveAttempt,
+                activeAttemptId: stateData.activeAttemptId,
+              }
+            : undefined,
         });
       } catch (err) {
         console.error('Failed to load learning dashboard:', err);
@@ -131,8 +147,42 @@ export default function StudentLearningDashboardPage() {
     );
   }
 
+  const isPreAssessmentPending =
+    data?.assessmentState &&
+    data.assessmentState.state !== 'PRE_ASSESSMENT_COMPLETED' &&
+    !data.assessmentState.hasCompletedPreAssessment;
+
   return (
     <div className="max-w-7xl mx-auto my-6 p-6 md:p-8 text-white space-y-8 font-sans">
+      {/* Priority Foundation Pre-Assessment Banner for New Students */}
+      {isPreAssessmentPending && (
+        <div className="bg-linear-to-r from-amber-500/20 via-slate-900 to-sky-950 border-2 border-amber-500/50 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xl">
+          <div className="space-y-1">
+            <span className="px-2.5 py-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-md text-[10px] font-bold uppercase tracking-wider">
+              {data?.assessmentState?.state === 'PRE_ASSESSMENT_IN_PROGRESS' ? 'IN PROGRESS' : 'REQUIRED FIRST STEP'}
+            </span>
+            <h2 className="text-lg font-bold text-white">
+              {data?.assessmentState?.state === 'PRE_ASSESSMENT_IN_PROGRESS'
+                ? 'Resume Your Diagnostic Pre-Assessment'
+                : 'Complete Your Diagnostic Pre-Assessment First'}
+            </h2>
+            <p className="text-xs text-slate-300 max-w-2xl">
+              Before taking mock examinations, complete your diagnostic pre-assessment to establish your baseline proficiency and unlock your full personalized curriculum.
+            </p>
+          </div>
+          <Link
+            href="/student/assessments"
+            className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-xl transition-all shrink-0 flex items-center space-x-2 shadow-lg shadow-amber-500/20"
+          >
+            <span>
+              {data?.assessmentState?.state === 'PRE_ASSESSMENT_IN_PROGRESS'
+                ? 'Continue Pre-Assessment →'
+                : 'Start Pre-Assessment →'}
+            </span>
+          </Link>
+        </div>
+      )}
+
       {/* Top Banner */}
       <div className="bg-linear-to-r from-sky-900/40 via-slate-900 to-purple-900/30 border border-sky-500/20 p-6 md:p-8 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-xl">
         <div className="space-y-2 max-w-2xl">

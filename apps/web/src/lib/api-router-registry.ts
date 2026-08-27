@@ -2216,6 +2216,12 @@ async function wrapper_delete_student_bookmarks_id(req: any, params: Record<stri
   return (delete_student_bookmarks_id as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.delete('/student/bookmarks/:id', wrapper_delete_student_bookmarks_id);
+import { GET as get_student_assessment_state } from '@/legacy-api-handlers/v1/student/assessment-state/route';
+
+async function wrapper_get_student_assessment_state(req: any, params: Record<string, string>) {
+  return (get_student_assessment_state as any)(req, { params: Promise.resolve(params) });
+}
+apiRouter.get('/student/assessment-state', wrapper_get_student_assessment_state);
 import { GET as get_student_current_assessment } from '@/legacy-api-handlers/v1/student/current-assessment/route';
 
 async function wrapper_get_student_current_assessment(req: any, params: Record<string, string>) {

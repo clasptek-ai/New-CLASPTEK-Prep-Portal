@@ -7,14 +7,16 @@ import { QuestionSelectionService } from '@/lib/question-selection-service';
 import { getCanonicalProgramme, isSameCanonicalProgramme } from '@/lib/canonical-programme';
 import { randomUUID } from 'crypto';
 
+import { getStudentAssessmentState } from '@/lib/student-assessment-state';
+
 /**
  * GET /api/v1/assessment-attempts
- * Returns active IN_PROGRESS attempt for authenticated candidate
+ * Returns canonical assessment attempts list and active attempt state for authenticated candidate
  */
 export async function GET(req: NextRequest) {
   const requestId = randomUUID();
-
   const startTime = Date.now();
+
   try {
     const session = await getAuthenticatedSession(req);
     const studentId =
@@ -32,43 +34,41 @@ export async function GET(req: NextRequest) {
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
 
-    const activeRes = await pool.query(
-      `SELECT id, status, started_at, expires_at, catalog_id FROM public.assessment_attempts
-       WHERE student_id = $1
-         AND status = 'IN_PROGRESS'
-         AND (expires_at IS NULL OR expires_at > NOW())
-         AND deleted_at IS NULL
-       ORDER BY started_at DESC LIMIT 1`,
-      [studentId]
-    );
+    const stateResult = await getStudentAssessmentState(pool, studentId);
 
-    if (activeRes.rows.length > 0) {
-      const active = activeRes.rows[0];
+    if (stateResult.hasActiveAttempt && stateResult.activeAttemptId) {
+      const activeAttemptObj = stateResult.attempts.find((a) => a.id === stateResult.activeAttemptId);
       console.log(
-        `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: ${studentId} | CandidateID: ${studentId} | AssessmentID: ${active.catalog_id} | AttemptID: ${active.id} | Endpoint: GET /api/v1/assessment-attempts | Result: SUCCESS_ACTIVE | Duration: ${Date.now() - startTime}ms`
+        `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: ${studentId} | CandidateID: ${studentId} | AssessmentID: ${activeAttemptObj?.catalogId || 'N/A'} | AttemptID: ${stateResult.activeAttemptId} | Endpoint: GET /api/v1/assessment-attempts | Result: SUCCESS_ACTIVE | Duration: ${Date.now() - startTime}ms`
       );
       return NextResponse.json({
         success: true,
         hasActiveAttempt: true,
         data: {
-          attemptId: active.id,
-          status: active.status,
-          startedAt: active.started_at,
-          expiresAt: active.expires_at,
-          catalogId: active.catalog_id,
+          attemptId: stateResult.activeAttemptId,
+          status: activeAttemptObj?.status || 'IN_PROGRESS',
+          startedAt: activeAttemptObj?.startedAt,
+          expiresAt: activeAttemptObj?.expiresAt,
+          catalogId: activeAttemptObj?.catalogId,
         },
-        attemptId: active.id, // Backward-compat top-level fallback
+        attemptId: stateResult.activeAttemptId,
+        state: stateResult.state,
+        attempts: stateResult.attempts,
         meta: { timestamp: new Date().toISOString(), version: 1, requestId },
       });
     }
 
     console.log(
-      `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: ${studentId} | CandidateID: ${studentId} | AssessmentID: N/A | AttemptID: NONE | Endpoint: GET /api/v1/assessment-attempts | Result: SUCCESS_NO_ACTIVE | Duration: ${Date.now() - startTime}ms`
+      `[AUTH_TELEMETRY] RequestID: ${requestId} | UserID: ${studentId} | CandidateID: ${studentId} | AssessmentID: N/A | AttemptID: NONE | Endpoint: GET /api/v1/assessment-attempts | Result: SUCCESS_NO_ACTIVE (${stateResult.state}) | Duration: ${Date.now() - startTime}ms`
     );
     return NextResponse.json({
       success: true,
       hasActiveAttempt: false,
       data: null,
+      state: stateResult.state,
+      completedAttemptId: stateResult.completedAttemptId,
+      latestScore: stateResult.latestScore,
+      attempts: stateResult.attempts,
       meta: { timestamp: new Date().toISOString(), version: 1, requestId },
     });
   } catch (err: any) {

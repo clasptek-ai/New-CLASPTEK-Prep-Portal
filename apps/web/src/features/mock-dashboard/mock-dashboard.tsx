@@ -24,14 +24,27 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
   const [selectedAnswerMap, setSelectedAnswerMap] = useState<Record<string, string>>({});
   const [viewState, setViewState] = useState<'DASHBOARD' | 'PLAYER' | 'RESULT'>('DASHBOARD');
 
+  const [assessmentState, setAssessmentState] = useState<{
+    state: 'PRE_ASSESSMENT_NOT_STARTED' | 'PRE_ASSESSMENT_IN_PROGRESS' | 'PRE_ASSESSMENT_COMPLETED';
+    hasCompletedPreAssessment: boolean;
+  } | null>(null);
+  const [launchError, setLaunchError] = useState<string | null>(null);
+
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        const tmpls = await mockGeneratorService.getTemplates();
+        const [tmpls, stateRes] = await Promise.all([
+          mockGeneratorService.getTemplates().catch(() => []),
+          fetch('/api/v1/student/assessment-state').catch(() => null),
+        ]);
         setTemplates(tmpls);
+        if (stateRes && stateRes.ok) {
+          const stateJson = await stateRes.json().catch(() => ({}));
+          if (stateJson.success) setAssessmentState(stateJson);
+        }
       } catch (e) {
-        console.error('Failed to load mock templates', e);
+        console.error('Failed to load mock dashboard data', e);
       } finally {
         setLoading(false);
       }
@@ -77,16 +90,23 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
   }, [activeSession, selectedAnswerMap, viewState]);
 
   async function handleLaunchMock(templateId: string) {
+    setLaunchError(null);
     if (onStart) onStart(templateId);
     setLoading(true);
-    const tmpl = templates.find((t) => t.id === templateId || t.blueprintId === templateId);
-    const session = await mockGeneratorService.startSession(templateId, undefined, tmpl?.exam);
-    setActiveSession(session);
-    setCurrentSectionIndex(0);
-    setCurrentQuestionIndex(0);
-    setSelectedAnswerMap({});
-    setViewState('PLAYER');
-    setLoading(false);
+    try {
+      const tmpl = templates.find((t) => t.id === templateId || t.blueprintId === templateId);
+      const session = await mockGeneratorService.startSession(templateId, undefined, tmpl?.exam);
+      setActiveSession(session);
+      setCurrentSectionIndex(0);
+      setCurrentQuestionIndex(0);
+      setSelectedAnswerMap({});
+      setViewState('PLAYER');
+    } catch (err: any) {
+      console.error('Failed to launch mock:', err);
+      setLaunchError(err.message || 'Unable to launch mock examination.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleSubmitMock() {
@@ -165,6 +185,85 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
 
             <Badge variant="success">Proctoring & Integrity System Active</Badge>
           </div>
+
+          {/* Launch Error Notice */}
+          {launchError && (
+            <div
+              style={{
+                padding: '1rem 1.25rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                border: '1px solid rgba(239, 68, 68, 0.35)',
+                borderRadius: '12px',
+                color: '#fca5a5',
+                fontSize: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+              }}
+            >
+              <span>{launchError}</span>
+            </div>
+          )}
+
+          {/* Pre-Assessment Gating Guidance Banner */}
+          {assessmentState &&
+            assessmentState.state !== 'PRE_ASSESSMENT_COMPLETED' &&
+            !assessmentState.hasCompletedPreAssessment && (
+              <div
+                style={{
+                  padding: '1.25rem 1.5rem',
+                  backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                  border: '1.5px solid rgba(245, 158, 11, 0.4)',
+                  borderRadius: '14px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '1rem',
+                }}
+              >
+                <div>
+                  <span
+                    style={{
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                      letterSpacing: '0.05em',
+                      padding: '0.2rem 0.5rem',
+                      borderRadius: '4px',
+                      backgroundColor: 'rgba(245, 158, 11, 0.25)',
+                      color: '#fbbf24',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    FOUNDATION REQUIRED
+                  </span>
+                  <h3 style={{ margin: '0.4rem 0 0.2rem', fontSize: '1.1rem', fontWeight: 800, color: '#ffffff' }}>
+                    Complete Pre-Assessment Before Mock Examinations
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
+                    Your diagnostic Pre-Assessment establishes your starting academic profile and is required before attempting timed full-length simulations.
+                  </p>
+                </div>
+
+                <a
+                  href="/student/assessments"
+                  style={{
+                    padding: '0.65rem 1.25rem',
+                    backgroundColor: '#f59e0b',
+                    color: '#0f172a',
+                    fontWeight: 800,
+                    fontSize: '0.85rem',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  <span>Start Pre-Assessment →</span>
+                </a>
+              </div>
+            )}
 
           {/* Readiness Band Score Prediction Widget */}
           <Card

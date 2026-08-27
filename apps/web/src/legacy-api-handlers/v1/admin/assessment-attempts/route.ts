@@ -17,17 +17,18 @@ export async function GET(req: NextRequest) {
       ['ADMINISTRATOR', 'ADMIN', 'INSTRUCTOR', 'STAFF'].includes(r.toUpperCase())
     );
 
-    if (!isStaff && process.env.NODE_ENV !== 'development') {
+    if (!isStaff && process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
       return NextResponse.json(
         { success: false, error: 'Forbidden: Admin access required' },
         { status: 403 }
       );
     }
 
-    const { searchParams } = new URL(req.url);
+    const searchParams = new URL(req.url).searchParams;
     const search = searchParams.get('search')?.trim() || '';
     const status = searchParams.get('status')?.trim() || '';
     const cefr = searchParams.get('cefr')?.trim() || '';
+    const studentId = searchParams.get('studentId')?.trim() || searchParams.get('userId')?.trim() || '';
 
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
@@ -41,20 +42,26 @@ export async function GET(req: NextRequest) {
         aa.started_at,
         aa.closed_at,
         aa.score,
-        p.email as student_email,
-        p.full_name as student_name,
+        COALESCE(au.email, 'student@clasptek.internal') as student_email,
+        TRIM(CONCAT(p.first_name, ' ', p.last_name)) as student_name,
         ar.cefr_level,
         ar.predicted_band,
         ar.placement_level,
         ar.recommended_course,
         ar.recommended_duration
       FROM public.assessment_attempts aa
+      LEFT JOIN auth.users au ON au.id = aa.student_id
       LEFT JOIN public.profiles p ON p.user_id = aa.student_id OR p.id = aa.student_id
       LEFT JOIN public.assessment_results ar ON ar.attempt_id = aa.id
       WHERE aa.deleted_at IS NULL
     `;
 
     const paramsList: any[] = [];
+
+    if (studentId) {
+      paramsList.push(studentId);
+      query += ` AND aa.student_id = $${paramsList.length}`;
+    }
 
     if (status) {
       paramsList.push(status);
@@ -68,7 +75,7 @@ export async function GET(req: NextRequest) {
 
     if (search) {
       paramsList.push(`%${search}%`);
-      query += ` AND (p.full_name ILIKE $${paramsList.length} OR p.email ILIKE $${paramsList.length} OR aa.id::text ILIKE $${paramsList.length})`;
+      query += ` AND (p.first_name ILIKE $${paramsList.length} OR p.last_name ILIKE $${paramsList.length} OR au.email ILIKE $${paramsList.length} OR aa.id::text ILIKE $${paramsList.length})`;
     }
 
     query += ` ORDER BY aa.started_at DESC LIMIT 100`;

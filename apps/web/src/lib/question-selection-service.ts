@@ -82,27 +82,20 @@ export class QuestionSelectionService {
     // =======================================================================
     const passagesRes = await client.query(
       `
-      SELECT DISTINCT rp.id, rp.code, rp.title, rp.content, rp.created_at
+      SELECT rp.id, rp.code, rp.title, rp.content, rp.exam_type
       FROM public.reading_passages rp
-      JOIN public.questions q ON (
-        EXISTS (
-          SELECT 1 FROM public.question_versions qv 
-          WHERE qv.question_id = q.id AND (
-            qv.payload->>'passageCode' = rp.code OR 
-            qv.payload->>'passageCode' = rp.id::text
-          )
-        )
-      )
       WHERE (rp.status = 'published' OR rp.status = 'PUBLISHED' OR rp.status IS NOT NULL)
-        AND q.deleted_at IS NULL
         AND (
           rp.exam_type = $1
           OR rp.exam_type = $2
-          OR ($1 = 'English Proficiency' AND (rp.code LIKE 'PAS-DIAG-%' OR rp.code LIKE 'PAS-READ-004' OR rp.code LIKE 'PAS-READ-005' OR rp.exam_type = 'English Proficiency'))
-          OR ($1 = 'IELTS Academic' AND (rp.exam_type = 'IELTS Academic' OR rp.code LIKE 'PAS-READ-%' OR rp.code LIKE 'PAS-MOCK-%'))
+          OR ($1 = 'English Proficiency' AND (rp.code LIKE 'PAS-DIAG-%' OR rp.code LIKE 'PAS-READ-%' OR rp.exam_type = 'English Proficiency'))
+          OR ($1 = 'IELTS Academic' AND (rp.code LIKE 'PAS-DIAG-%' OR rp.exam_type = 'IELTS Academic' OR rp.code LIKE 'PAS-READ-%'))
+          OR rp.code LIKE 'PAS-DIAG-%'
         )
         AND rp.code NOT IN ('PAS-READ-001', 'PAS-READ-002', 'PAS-READ-003')
-      ORDER BY rp.created_at DESC
+      ORDER BY 
+        CASE WHEN rp.code LIKE 'PAS-DIAG-%' THEN 0 ELSE 1 END ASC,
+        rp.created_at DESC
     `,
       [normalizedExamType, examType]
     );
@@ -115,9 +108,13 @@ export class QuestionSelectionService {
       const unusedPassages = allPassages.filter((p) => !recentlyUsedPassageIds.has(p.id));
       const poolToUse = unusedPassages.length > 0 ? unusedPassages : allPassages;
 
+      // Select from highest priority group
+      const diagPassages = poolToUse.filter((p) => String(p.code).startsWith('PAS-DIAG-'));
+      const selectionPool = diagPassages.length > 0 ? diagPassages : poolToUse;
+
       // Randomly select 1 passage from pool
-      const randomIndex = Math.floor(Math.random() * poolToUse.length);
-      selectedPassage = poolToUse[randomIndex];
+      const randomIndex = Math.floor(Math.random() * selectionPool.length);
+      selectedPassage = selectionPool[randomIndex];
     }
 
     let readingSnapshot: any = null;
@@ -175,7 +172,16 @@ export class QuestionSelectionService {
 
         comprehensionQuestions = compRes.rows.map((r: any, idx: number) => {
           const payload = r.payload || {};
-          const rawType = (payload.questionType || 'MCQ').toUpperCase().replace(/[\s-]/g, '_');
+          const rawType = (
+            payload.type ||
+            payload.questionType ||
+            payload.itemType ||
+            r.base_question_type ||
+            'MCQ'
+          )
+            .toString()
+            .toUpperCase()
+            .replace(/[\s-]/g, '_');
 
           // Determine the resolved question type and item type
           let questionType = 'MCQ';
@@ -183,16 +189,20 @@ export class QuestionSelectionService {
           let opts = compOptsByVer.get(r.version_id) || [];
           let correctCode = compCorrectByVer.get(r.version_id) || '';
 
-          if (rawType === 'TRUE_FALSE_NOT_GIVEN' || rawType === 'TFNG') {
+          // If prompt explicitly mentions TRUE/FALSE/NOT GIVEN or YES/NO/NOT GIVEN
+          const promptText = (r.prompt || '').toUpperCase();
+          const isTFNGPrompt = promptText.includes('TRUE') && promptText.includes('FALSE') && promptText.includes('NOT GIVEN');
+          const isYNNGPrompt = promptText.includes('YES') && promptText.includes('NO') && promptText.includes('NOT GIVEN');
+
+          if (rawType === 'TRUE_FALSE_NOT_GIVEN' || rawType === 'TFNG' || isTFNGPrompt) {
             questionType = 'TRUE_FALSE_NOT_GIVEN';
             itemType = 'MCQ';
             opts = TFNG_OPTIONS;
-            // If correct answer was stored as text like 'TRUE', map to code
             if (!correctCode && payload.correctAnswer) {
               correctCode = payload.correctAnswer.toUpperCase().replace(/\s+/g, '_');
             }
             correctCode = correctCode || 'TRUE';
-          } else if (rawType === 'YES_NO_NOT_GIVEN' || rawType === 'YNNG') {
+          } else if (rawType === 'YES_NO_NOT_GIVEN' || rawType === 'YNNG' || isYNNGPrompt) {
             questionType = 'YES_NO_NOT_GIVEN';
             itemType = 'MCQ';
             opts = YNNG_OPTIONS;
@@ -201,27 +211,45 @@ export class QuestionSelectionService {
             }
             correctCode = correctCode || 'YES';
           } else if (
+            rawType === 'SHORT_ANSWER' ||
+            rawType === 'SHORT_RESPONSE' ||
             rawType === 'COMPLETION' ||
             rawType === 'GAP_FILL' ||
-            rawType === 'FILL_IN_THE_BLANK'
+            rawType === 'FILL_IN_THE_BLANK' ||
+            rawType === 'SUMMARY_COMPLETION' ||
+            rawType === 'SENTENCE_COMPLETION' ||
+            rawType === 'TABLE_COMPLETION' ||
+            rawType === 'DIAGRAM_COMPLETION'
           ) {
-            questionType = 'COMPLETION';
+            questionType = rawType;
             itemType = 'INPUT';
-            opts = []; // No options for input-based questions
-            correctCode = '';
-          } else if (rawType === 'SHORT_ANSWER' || rawType === 'SHORT_RESPONSE') {
-            questionType = 'SHORT_ANSWER';
-            itemType = 'INPUT';
-            opts = [];
+            opts = []; // Input-based question
             correctCode = '';
           } else if (
             rawType === 'MATCHING_HEADINGS' ||
             rawType === 'MATCHING_INFORMATION' ||
+            rawType === 'MATCHING_FEATURES' ||
+            rawType === 'MATCHING_SENTENCE_ENDINGS' ||
             rawType === 'MATCHING'
           ) {
             questionType = rawType;
             itemType = 'MCQ';
-            // Matching questions must have options from DB
+
+            // Resolve options from payload sharedData or headingsList if answer_options empty
+            if (opts.length < 2) {
+              const headings =
+                payload.sharedData?.headingsList ||
+                payload.headingsList ||
+                payload.options ||
+                [];
+              if (headings.length >= 2) {
+                opts = headings.map((h: any) => ({
+                  code: h.code || h.id || String(h),
+                  text: h.text || h.label || String(h),
+                }));
+              }
+            }
+
             if (opts.length < 2) {
               throw new Error(
                 `PREASSESSMENT_READING_INVALID_QUESTION_OPTIONS: ${rawType} question "${r.question_code || r.question_id}" requires ≥2 matching options but has ${opts.length}. passageCode="${selectedPassage.code}"`
