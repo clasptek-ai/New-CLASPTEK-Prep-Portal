@@ -61,7 +61,7 @@ describe('Password Reset & Auth Callback Verification', () => {
 
   it('4 & 5. Missing or invalid PKCE recovery code redirects to /reset-password?error=invalid_token', async () => {
     process.env.NEXT_PUBLIC_APP_URL = 'https://portal.clasptek.org';
-    const req = new NextRequest('https://portal.clasptek.org/auth/callback');
+    const req = new NextRequest('https://portal.clasptek.org/auth/callback?type=recovery');
     const res = await handleAuthCallback(req);
 
     expect(res.status).toBe(307); // NextResponse.redirect status
@@ -82,7 +82,7 @@ describe('Password Reset & Auth Callback Verification', () => {
 
     // Attempt open redirect via external domain
     const reqExternal = new NextRequest(
-      'https://portal.clasptek.org/auth/callback?next=https://evil.com/phishing'
+      'https://portal.clasptek.org/auth/callback?next=https://evil.com/phishing&type=recovery'
     );
     const resExternal = await handleAuthCallback(reqExternal);
     expect(resExternal.headers.get('location')).toContain(
@@ -91,7 +91,7 @@ describe('Password Reset & Auth Callback Verification', () => {
 
     // Attempt open redirect via protocol-relative path '//evil.com'
     const reqProtocolRel = new NextRequest(
-      'https://portal.clasptek.org/auth/callback?next=//evil.com'
+      'https://portal.clasptek.org/auth/callback?next=//evil.com&type=recovery'
     );
     const resProtocolRel = await handleAuthCallback(reqProtocolRel);
     expect(resProtocolRel.headers.get('location')).toContain(

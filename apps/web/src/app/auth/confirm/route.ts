@@ -16,7 +16,7 @@ import { EmailOtpType } from '@supabase/supabase-js';
  *   1. Read token_hash + type from query params
  *   2. Reject if type is 'recovery' (that belongs to /auth/callback)
  *   3. Exchange OTP token for session via Supabase verifyOtp
- *   4. On success: redirect to /login?confirmed=1
+ *   4. On success: redirect to / (CLASPTEK PREP PORTAL HOMEPAGE)
  *   5. On failure: redirect to /login?error=confirmation_failed
  *
  * This route NEVER calls:
@@ -104,7 +104,7 @@ export async function GET(req: NextRequest) {
       const { error } = await supabase.auth.verifyOtp({ token_hash, type });
       if (!error) {
         console.info(`[AUTH_CONFIRM] Email confirmed successfully via type="${type}"`);
-        return NextResponse.redirect(`${appUrl}/login?confirmed=1`);
+        return NextResponse.redirect(`${appUrl}/`);
       }
       console.error(`[AUTH_CONFIRM] verifyOtp error: ${error.message}`);
       return NextResponse.redirect(failureRedirectUrl);
@@ -120,7 +120,7 @@ export async function GET(req: NextRequest) {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
       if (!error) {
         console.info('[AUTH_CONFIRM] Email confirmed successfully via PKCE code exchange');
-        return NextResponse.redirect(`${appUrl}/login?confirmed=1`);
+        return NextResponse.redirect(`${appUrl}/`);
       }
       console.error(`[AUTH_CONFIRM] exchangeCodeForSession error: ${error.message}`);
       return NextResponse.redirect(failureRedirectUrl);
