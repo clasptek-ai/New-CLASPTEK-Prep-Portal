@@ -52,10 +52,86 @@ export function WritingSectionEngine({
   const isUnderMinimum = wordCount < minWords && wordCount > 0;
   const isAdequate = wordCount >= minWords;
 
+  const [mobileTab, setMobileTab] = useState<'PROMPT' | 'EDITOR'>('EDITOR');
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 72px)' }}>
+    <div
+      className="writing-engine-root"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        flex: 1,
+        minHeight: 0,
+        overflow: 'hidden',
+      }}
+    >
+      {/* ── MOBILE VIEW TOGGLE ──────────────────────────── */}
+      <div
+        className="writing-mobile-toggle"
+        style={{
+          display: 'none',
+          padding: '0.45rem 0.75rem',
+          backgroundColor: '#1a1400',
+          borderBottom: '1px solid rgba(245, 158, 11, 0.25)',
+          gap: '0.5rem',
+          flexShrink: 0,
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setMobileTab('PROMPT')}
+          aria-label="View task prompt and stimulus"
+          style={{
+            flex: 1,
+            minHeight: '44px',
+            borderRadius: '8px',
+            border:
+              mobileTab === 'PROMPT' ? '2px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
+            backgroundColor: mobileTab === 'PROMPT' ? 'rgba(245, 158, 11, 0.25)' : '#0f172a',
+            color: mobileTab === 'PROMPT' ? '#fbbf24' : '#94a3b8',
+            fontWeight: 800,
+            fontSize: '0.82rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.4rem',
+            touchAction: 'manipulation',
+          }}
+        >
+          <span>📋 {taskLabel} Prompt</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMobileTab('EDITOR')}
+          aria-label="View essay response editor"
+          style={{
+            flex: 1,
+            minHeight: '44px',
+            borderRadius: '8px',
+            border:
+              mobileTab === 'EDITOR' ? '2px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
+            backgroundColor: mobileTab === 'EDITOR' ? 'rgba(245, 158, 11, 0.25)' : '#0f172a',
+            color: mobileTab === 'EDITOR' ? '#fbbf24' : '#94a3b8',
+            fontWeight: 800,
+            fontSize: '0.82rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.4rem',
+            touchAction: 'manipulation',
+          }}
+        >
+          <span>✍️ Response ({wordCount} words)</span>
+        </button>
+      </div>
+
       {/* ── TASK TABS ──────────────────────────────────── */}
       <div
+        className="writing-task-tabs-bar"
         style={{
           padding: '0.65rem 1.5rem',
           backgroundColor: '#1a1400',
@@ -63,6 +139,7 @@ export function WritingSectionEngine({
           display: 'flex',
           alignItems: 'center',
           gap: '0.75rem',
+          flexShrink: 0,
         }}
       >
         <Pen size={16} color="#f59e0b" />
@@ -92,6 +169,7 @@ export function WritingSectionEngine({
                   fontWeight: 700,
                   fontSize: '0.8rem',
                   cursor: 'pointer',
+                  minHeight: '38px',
                   transition: 'all 0.15s',
                 }}
               >
@@ -104,11 +182,11 @@ export function WritingSectionEngine({
       </div>
 
       {/* ── MAIN WRITING AREA ────────────────────────── */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', minHeight: 0, overflow: 'hidden' }}>
         {/* Left: Task prompt + stimulus */}
         <div
+          className="writing-pane-prompt"
           style={{
-            width: '42%',
             backgroundColor: '#0f172a',
             borderRight: '3px solid rgba(245, 158, 11, 0.2)',
             overflowY: 'auto',
@@ -237,8 +315,8 @@ export function WritingSectionEngine({
 
         {/* Right: Essay editor */}
         <div
+          className="writing-pane-editor"
           style={{
-            width: '58%',
             display: 'flex',
             flexDirection: 'column',
             backgroundColor: '#111827',
@@ -403,6 +481,40 @@ export function WritingSectionEngine({
           </div>
         </div>
       </div>
+
+      {/* Responsive Styles */}
+      <style>{`
+        @media (max-width: 839px) {
+          .writing-mobile-toggle {
+            display: flex !important;
+          }
+          .writing-task-tabs-bar {
+            padding: 0.4rem 0.85rem !important;
+          }
+          .writing-pane-prompt {
+            width: 100% !important;
+            display: ${mobileTab === 'PROMPT' ? 'flex !important' : 'none !important'};
+            border-right: none !important;
+          }
+          .writing-pane-editor {
+            width: 100% !important;
+            display: ${mobileTab === 'EDITOR' ? 'flex !important' : 'none !important'};
+          }
+        }
+        @media (min-width: 840px) {
+          .writing-mobile-toggle {
+            display: none !important;
+          }
+          .writing-pane-prompt {
+            width: 42% !important;
+            display: flex !important;
+          }
+          .writing-pane-editor {
+            width: 58% !important;
+            display: flex !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

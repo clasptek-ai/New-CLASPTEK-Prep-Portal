@@ -16,4 +16,8 @@ export class GeminiClient {
   public getModelCode(): string {
     return this.config.model;
   }
+
+  public getTimeoutMs(): number {
+    return this.config.timeoutMs;
+  }
 }

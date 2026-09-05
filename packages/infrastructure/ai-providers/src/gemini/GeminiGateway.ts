@@ -49,47 +49,76 @@ export class GeminiGateway {
    * Gemini API uses the system instruction in the config and user prompt in contents.
    */
   public async generateChatCompletion(
-    systemPrompt: string,
-    userPrompt: string,
-    options?: { temperature?: number; maxTokens?: number }
+    systemPromptOrInput: string | { systemInstruction: string; userPrompt: string },
+    userPromptOrOptions?: string | { temperature?: number; maxTokens?: number; timeout?: number },
+    options?: { temperature?: number; maxTokens?: number; timeout?: number }
   ): Promise<GeminiChatResponse> {
+    let systemPrompt: string;
+    let userPrompt: string;
+    let opts: { temperature?: number; maxTokens?: number; timeout?: number } | undefined;
+
+    if (typeof systemPromptOrInput === 'object' && systemPromptOrInput !== null) {
+      systemPrompt = systemPromptOrInput.systemInstruction;
+      userPrompt = systemPromptOrInput.userPrompt;
+      opts = typeof userPromptOrOptions === 'object' ? userPromptOrOptions : options;
+    } else {
+      systemPrompt = systemPromptOrInput;
+      userPrompt = typeof userPromptOrOptions === 'string' ? userPromptOrOptions : '';
+      opts = options;
+    }
+
     if (!systemPrompt || !userPrompt) {
       throw new Error('System prompt and user prompt are required for Gemini chat completion');
     }
 
     const sdkClient = this.client.getRawClient();
     const model = this.client.getModelCode();
+    const timeoutMs = opts?.timeout ?? options?.timeout ?? this.client.getTimeoutMs();
 
-    const rawResponse = await sdkClient.models.generateContent({
-      model: model,
-      contents: userPrompt,
-      config: {
-        systemInstruction: systemPrompt,
-        temperature: options?.temperature ?? 0.2,
-        maxOutputTokens: options?.maxTokens ?? 8192,
-        responseMimeType: 'application/json',
-      },
+    let timer: NodeJS.Timeout | null = null;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        reject(new Error(`Gemini API request timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
     });
 
-    const candidate = rawResponse.candidates?.[0];
-    const parts = candidate?.content?.parts || [];
-    const textContent =
-      typeof rawResponse.text === 'string' && rawResponse.text.length > 0
-        ? rawResponse.text
-        : parts.map((p: any) => p.text || '').join('');
+    try {
+      const rawResponse = await Promise.race([
+        sdkClient.models.generateContent({
+          model: model,
+          contents: userPrompt,
+          config: {
+            systemInstruction: systemPrompt,
+            temperature: opts?.temperature ?? options?.temperature ?? 0.2,
+            maxOutputTokens: opts?.maxTokens ?? options?.maxTokens ?? 8192,
+            responseMimeType: 'application/json',
+          },
+        }),
+        timeoutPromise,
+      ]);
 
-    if (!textContent) {
-      throw new Error(
-        `Gemini returned empty response. Model: ${model}, finish_reason: ${candidate?.finishReason || 'unknown'}`
-      );
+      const candidate = rawResponse.candidates?.[0];
+      const parts = candidate?.content?.parts || [];
+      const textContent =
+        typeof rawResponse.text === 'string' && rawResponse.text.length > 0
+          ? rawResponse.text
+          : parts.map((p: any) => p.text || '').join('');
+
+      if (!textContent) {
+        throw new Error(
+          `Gemini returned empty response. Model: ${model}, finish_reason: ${candidate?.finishReason || 'unknown'}`
+        );
+      }
+
+      return {
+        content: textContent,
+        model: model,
+        totalTokens: rawResponse.usageMetadata?.totalTokenCount ?? 0,
+        finishReason: candidate?.finishReason || 'unknown',
+      };
+    } finally {
+      if (timer) clearTimeout(timer);
     }
-
-    return {
-      content: textContent,
-      model: model,
-      totalTokens: rawResponse.usageMetadata?.totalTokenCount ?? 0,
-      finishReason: rawResponse.candidates?.[0]?.finishReason || 'unknown',
-    };
   }
 
   /**

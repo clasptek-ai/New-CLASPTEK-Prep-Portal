@@ -197,7 +197,17 @@ export function ListeningSectionEngine({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 72px)' }}>
+    <div
+      className="listening-engine-root"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        flex: 1,
+        minHeight: 0,
+        overflow: 'hidden',
+      }}
+    >
       {/* ── AUDIO PLAYER BAR ────────────────────────────── */}
       <div
         style={{
@@ -293,9 +303,10 @@ export function ListeningSectionEngine({
       </div>
 
       {/* ── QUESTIONS AREA ────────────────────────────── */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', minHeight: 0, overflow: 'hidden' }}>
         {/* Question navigator sidebar */}
         <div
+          className="listening-sidebar"
           style={{
             width: '80px',
             backgroundColor: '#0f0b1e',
@@ -305,6 +316,7 @@ export function ListeningSectionEngine({
             display: 'flex',
             flexDirection: 'column',
             gap: '0.35rem',
+            flexShrink: 0,
           }}
         >
           {questions.map((q, idx) => {
@@ -330,6 +342,7 @@ export function ListeningSectionEngine({
                   fontSize: '0.75rem',
                   cursor: 'pointer',
                   textAlign: 'center',
+                  minHeight: '36px',
                   transition: 'all 0.15s',
                 }}
               >
@@ -341,7 +354,57 @@ export function ListeningSectionEngine({
         </div>
 
         {/* Main question panel */}
-        <div style={{ flex: 1, padding: '1.5rem 2rem', overflowY: 'auto' }}>
+        <div
+          className="listening-question-panel"
+          style={{ flex: 1, padding: '1.5rem 2rem', overflowY: 'auto' }}
+        >
+          {/* Mobile horizontal question picker */}
+          <div
+            className="listening-mobile-picker"
+            style={{
+              display: 'none',
+              overflowX: 'auto',
+              gap: '0.4rem',
+              paddingBottom: '0.75rem',
+              marginBottom: '1rem',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              WebkitOverflowScrolling: 'touch',
+            }}
+          >
+            {questions.map((q, idx) => {
+              const isActive = idx === currentQuestionIndex;
+              const isAnswered = !!answers[q.id];
+              return (
+                <button
+                  key={q.id}
+                  onClick={() => setCurrentQuestionIndex(idx)}
+                  style={{
+                    flexShrink: 0,
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '8px',
+                    border: isActive
+                      ? '2px solid #8b5cf6'
+                      : isAnswered
+                        ? '1px solid #10b981'
+                        : '1px solid rgba(255, 255, 255, 0.1)',
+                    backgroundColor: isActive
+                      ? 'rgba(139, 92, 246, 0.25)'
+                      : isAnswered
+                        ? 'rgba(16, 185, 129, 0.15)'
+                        : '#1e293b',
+                    color: isActive ? '#a78bfa' : isAnswered ? '#34d399' : '#94a3b8',
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                  }}
+                >
+                  {idx + 1}
+                </button>
+              );
+            })}
+          </div>
+
           {currentQ && (
             <div style={{ maxWidth: '700px', margin: '0 auto' }}>
               {/* Group instructions */}
@@ -479,6 +542,29 @@ export function ListeningSectionEngine({
           )}
         </div>
       </div>
+
+      {/* Responsive Styles */}
+      <style>{`
+        @media (max-width: 699px) {
+          .listening-sidebar {
+            display: none !important;
+          }
+          .listening-mobile-picker {
+            display: flex !important;
+          }
+          .listening-question-panel {
+            padding: 1rem !important;
+          }
+        }
+        @media (min-width: 700px) {
+          .listening-sidebar {
+            display: flex !important;
+          }
+          .listening-mobile-picker {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

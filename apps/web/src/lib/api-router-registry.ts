@@ -244,6 +244,12 @@ async function wrapper_get_admin_mock_sessions(req: any, params: Record<string, 
   return (get_admin_mock_sessions as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.get('/admin/mock/sessions', wrapper_get_admin_mock_sessions);
+import { GET as get_admin_mock_sessions_id } from '@/legacy-api-handlers/v1/admin/mock/sessions/[id]/route';
+
+async function wrapper_get_admin_mock_sessions_id(req: any, params: Record<string, string>) {
+  return (get_admin_mock_sessions_id as any)(req, { params: Promise.resolve(params) });
+}
+apiRouter.get('/admin/mock/sessions/:id', wrapper_get_admin_mock_sessions_id);
 import { GET as get_admin_mock_templates } from '@/legacy-api-handlers/v1/admin/mock/templates/route';
 
 async function wrapper_get_admin_mock_templates(req: any, params: Record<string, string>) {

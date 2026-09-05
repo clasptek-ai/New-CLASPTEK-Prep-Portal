@@ -2,7 +2,16 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Card, Badge } from '../../../components/ui/ui-components';
-import { Mic, Play, Square, RotateCcw, ChevronRight, Timer, MessageSquare } from 'lucide-react';
+import {
+  Mic,
+  MicOff,
+  Play,
+  Square,
+  RotateCcw,
+  ChevronRight,
+  Timer,
+  MessageSquare,
+} from 'lucide-react';
 
 interface SpeakingQuestion {
   id: string;
@@ -44,6 +53,8 @@ export function SpeakingSectionEngine({
 }: Props) {
   const [activePromptIndex, setActivePromptIndex] = useState(0);
   const [recordingState, setRecordingState] = useState<RecordingState>('IDLE');
+  const [microphoneUnavailable, setMicrophoneUnavailable] = useState(false);
+  const [micErrorMessage, setMicErrorMessage] = useState<string | null>(null);
   const [prepTimer, setPrepTimer] = useState(0);
   const [recordTimer, setRecordTimer] = useState(0);
   const [, setAudioBlob] = useState<Blob | null>(null);
@@ -54,6 +65,17 @@ export function SpeakingSectionEngine({
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const playbackRef = useRef<HTMLAudioElement | null>(null);
+
+  // Proactive check for mediaDevices / audio input support
+  useEffect(() => {
+    if (
+      typeof navigator !== 'undefined' &&
+      (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function')
+    ) {
+      setMicrophoneUnavailable(true);
+      setMicErrorMessage('Microphone access is not supported in this browser environment.');
+    }
+  }, []);
 
   const currentQ = questions[activePromptIndex];
   const partNumber = currentQ?.speaking?.partNumber || 1;
@@ -92,8 +114,21 @@ export function SpeakingSectionEngine({
 
   // Start recording
   const startRecording = useCallback(async () => {
+    if (
+      typeof navigator === 'undefined' ||
+      !navigator.mediaDevices ||
+      typeof navigator.mediaDevices.getUserMedia !== 'function'
+    ) {
+      setMicrophoneUnavailable(true);
+      setMicErrorMessage('Microphone access is not supported in this browser environment.');
+      setRecordingState('IDLE');
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      setMicrophoneUnavailable(false);
+      setMicErrorMessage(null);
       const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
       mediaRecorderRef.current = recorder;
       chunksRef.current = [];
@@ -152,12 +187,21 @@ export function SpeakingSectionEngine({
           return prev - 1;
         });
       }, 1000);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Microphone access denied:', err);
-      // Fallback: allow text input
+      setMicrophoneUnavailable(true);
+      const isDenied =
+        err?.name === 'NotAllowedError' ||
+        err?.name === 'PermissionDeniedError' ||
+        err?.message?.includes('Permission denied');
+      setMicErrorMessage(
+        isDenied
+          ? 'Microphone permission was denied by the browser. You may continue through the prompts without an audio recording.'
+          : 'Microphone hardware is unavailable or not detected. You may continue through the prompts without an audio recording.'
+      );
       setRecordingState('IDLE');
     }
-  }, [speakTime, currentQ?.id, onAnswer]);
+  }, [speakTime, currentQ?.id, onAnswer, sessionId, partNumber]);
 
   const stopRecording = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -219,26 +263,33 @@ export function SpeakingSectionEngine({
 
   return (
     <div
+      className="speaking-engine-root"
       style={{
         display: 'flex',
         flexDirection: 'column',
-        height: 'calc(100vh - 72px)',
+        height: '100%',
+        flex: 1,
+        minHeight: 0,
+        overflowY: 'auto',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        boxSizing: 'border-box',
       }}
     >
       <audio ref={playbackRef} onEnded={() => setIsPlayingBack(false)} />
 
       {/* ── SPEAKING INTERFACE ──────────────────────── */}
       <div
+        className="speaking-interface-card"
         style={{
           maxWidth: '680px',
           width: '100%',
-          padding: '2rem',
+          padding: '1.5rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           gap: '1.5rem',
+          boxSizing: 'border-box',
         }}
       >
         {/* Part label */}
@@ -558,6 +609,77 @@ export function SpeakingSectionEngine({
               </>
             )}
           </button>
+        )}
+
+        {/* ── FALLBACK CONTINUATION WHEN MICROPHONE UNAVAILABLE ── */}
+        {recordingState === 'IDLE' && microphoneUnavailable && (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.85rem',
+              width: '100%',
+              maxWidth: '540px',
+              marginTop: '0.5rem',
+            }}
+          >
+            <div
+              style={{
+                padding: '0.75rem 1.1rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+                borderRadius: '10px',
+                color: '#fca5a5',
+                fontSize: '0.85rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.65rem',
+                width: '100%',
+                boxSizing: 'border-box',
+                textAlign: 'left',
+                lineHeight: 1.5,
+              }}
+            >
+              <MicOff size={18} color="#ef4444" style={{ flexShrink: 0 }} />
+              <span>
+                {micErrorMessage ||
+                  'Microphone recording is unavailable. You may continue through the prompts without an audio recording.'}
+              </span>
+            </div>
+
+            <button
+              onClick={moveToNext}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.7rem 1.75rem',
+                borderRadius: '10px',
+                border: 'none',
+                background:
+                  activePromptIndex < questions.length - 1
+                    ? 'linear-gradient(135deg, #10b981, #059669)'
+                    : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                color: '#ffffff',
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                fontWeight: 700,
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+                transition: 'transform 0.15s',
+              }}
+            >
+              {activePromptIndex < questions.length - 1 ? (
+                <>
+                  Continue to Next Prompt <ChevronRight size={16} />
+                </>
+              ) : (
+                <>
+                  Complete Speaking ({answeredCount}/{questions.length})
+                </>
+              )}
+            </button>
+          </div>
         )}
 
         {/* Progress dots */}

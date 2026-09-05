@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, Button } from '../../../components/ui/ui-components';
-import { Clock, Send, BookOpen, Headphones, Pen, Mic } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { ListeningSectionEngine } from './ListeningSectionEngine';
 import { ReadingSectionEngine } from './ReadingSectionEngine';
 import { WritingSectionEngine } from './WritingSectionEngine';
@@ -29,19 +29,14 @@ interface IELTSExamEngineProps {
   onSubmit: () => void;
 }
 
-const SECTION_ICONS: Record<string, React.ReactNode> = {
-  Listening: <Headphones size={16} />,
-  Reading: <BookOpen size={16} />,
-  Writing: <Pen size={16} />,
-  Speaking: <Mic size={16} />,
-};
-
 const SECTION_COLORS: Record<string, string> = {
   Listening: '#8b5cf6',
   Reading: '#3b82f6',
   Writing: '#f59e0b',
   Speaking: '#10b981',
 };
+
+import { MockExamFullscreenShell } from './MockExamFullscreenShell';
 
 export function IELTSExamEngine({
   session,
@@ -86,12 +81,6 @@ export function IELTSExamEngine({
   const activeSection = sections[activeSectionIndex];
   const activeTimer = sectionTimers[activeSectionIndex] ?? 0;
 
-  const formatTime = (s: number) => {
-    const m = Math.floor(s / 60);
-    const sec = s % 60;
-    return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-  };
-
   const answeredInSection =
     activeSection?.questions.filter((q: any) => selectedAnswerMap[q.id])?.length ?? 0;
   const totalInSection = activeSection?.questions.length ?? 0;
@@ -111,177 +100,43 @@ export function IELTSExamEngine({
     }
   }, [activeSectionIndex, sections.length]);
 
-  const timerWarning = activeTimer > 0 && activeTimer <= 300; // 5 min warning
-  const timerCritical = activeTimer > 0 && activeTimer <= 60;
-
   const sectionColor = SECTION_COLORS[activeSection?.sectionName] || '#3b82f6';
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0',
-        color: '#f8fafc',
-        fontFamily: 'Inter, system-ui, sans-serif',
-        minHeight: '100vh',
-        backgroundColor: '#0b0f19',
+    <MockExamFullscreenShell
+      headerProps={{
+        examTitle: session.template.title || 'IELTS Academic',
+        sectionName: activeSection?.sectionName || 'Exam Section',
+        sectionIndex: activeSectionIndex,
+        totalSections: sections.length,
+        timeRemainingSeconds: activeTimer,
+        answeredCount: answeredInSection,
+        totalQuestionsCount: totalInSection,
+        sectionColor: sectionColor,
+        sections: sections.map((s, idx) => ({
+          name: s.sectionName,
+          isComplete: sectionCompleted[idx],
+          isCurrent: idx === activeSectionIndex,
+        })),
+        onSelectSection: (idx) => {
+          if (sectionCompleted[idx] || idx <= activeSectionIndex) {
+            setActiveSectionIndex(idx);
+          }
+        },
       }}
+      isExamActive={true}
     >
-      {/* ── EXAM HEADER BAR ───────────────────────────────── */}
+      {/* ── SECTION RENDERER ────────────────────────────────── */}
       <div
         style={{
+          flex: 1,
+          height: '100%',
+          minHeight: 0,
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0.75rem 1.5rem',
-          backgroundColor: '#111827',
-          borderBottom: `2px solid ${sectionColor}`,
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
+          flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
-        {/* Left: Exam title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div
-            style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              background: `linear-gradient(135deg, ${sectionColor}, ${sectionColor}88)`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {SECTION_ICONS[activeSection?.sectionName] || <BookOpen size={16} />}
-          </div>
-          <div>
-            <div
-              style={{
-                fontSize: '0.7rem',
-                color: '#94a3b8',
-                fontWeight: 600,
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-              }}
-            >
-              {session.template.title || 'IELTS Academic'} • Clasptek Full Simulation
-            </div>
-            <div style={{ fontSize: '1rem', fontWeight: 800, color: '#ffffff' }}>
-              {activeSection?.sectionName}{' '}
-              {activeSection?.sectionName === 'Speaking'
-                ? '(Part-Timed Assessment)'
-                : `— Section ${activeSectionIndex + 1} of ${sections.length}`}
-            </div>
-          </div>
-        </div>
-
-        {/* Center: Section tabs */}
-        <div style={{ display: 'flex', gap: '0.35rem' }}>
-          {sections.map((sec, idx) => {
-            const isActive = idx === activeSectionIndex;
-            const isComplete = sectionCompleted[idx];
-            const secColor = SECTION_COLORS[sec.sectionName] || '#64748b';
-
-            return (
-              <button
-                key={idx}
-                onClick={() => {
-                  if (isComplete || idx <= activeSectionIndex) {
-                    setActiveSectionIndex(idx);
-                  }
-                }}
-                disabled={idx > activeSectionIndex && !isComplete}
-                style={{
-                  padding: '0.4rem 0.85rem',
-                  borderRadius: '8px',
-                  border: isActive ? `2px solid ${secColor}` : '2px solid transparent',
-                  backgroundColor: isActive ? `${secColor}22` : isComplete ? '#1e293b' : '#0f172a',
-                  color: isActive ? '#ffffff' : isComplete ? '#94a3b8' : '#475569',
-                  fontWeight: 700,
-                  fontSize: '0.75rem',
-                  cursor: idx <= activeSectionIndex || isComplete ? 'pointer' : 'not-allowed',
-                  opacity: idx > activeSectionIndex && !isComplete ? 0.5 : 1,
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                }}
-              >
-                {SECTION_ICONS[sec.sectionName]}
-                {sec.sectionName}
-                {isComplete && <span style={{ color: '#34d399' }}>✓</span>}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Right: Timer + progress */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
-              Progress: {answeredInSection}/{totalInSection}
-            </div>
-            <div
-              style={{
-                width: '120px',
-                height: '4px',
-                backgroundColor: '#1e293b',
-                borderRadius: '2px',
-                overflow: 'hidden',
-                marginTop: '3px',
-              }}
-            >
-              <div
-                style={{
-                  width: `${totalInSection > 0 ? (answeredInSection / totalInSection) * 100 : 0}%`,
-                  height: '100%',
-                  backgroundColor: sectionColor,
-                  transition: 'width 0.3s',
-                  borderRadius: '2px',
-                }}
-              />
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.4rem 0.85rem',
-              borderRadius: '10px',
-              backgroundColor: timerCritical
-                ? 'rgba(220, 38, 38, 0.2)'
-                : timerWarning
-                  ? 'rgba(245, 158, 11, 0.2)'
-                  : 'rgba(255, 255, 255, 0.05)',
-              border: `1px solid ${timerCritical ? '#dc2626' : timerWarning ? '#f59e0b' : 'rgba(255,255,255,0.08)'}`,
-            }}
-          >
-            <Clock
-              size={16}
-              color={timerCritical ? '#ef4444' : timerWarning ? '#f59e0b' : '#94a3b8'}
-              style={timerCritical ? { animation: 'pulse 1s infinite' } : undefined}
-            />
-            <span
-              style={{
-                fontFamily: 'JetBrains Mono, monospace',
-                fontSize: '1.1rem',
-                fontWeight: 800,
-                color: timerCritical ? '#ef4444' : timerWarning ? '#f59e0b' : '#f8fafc',
-              }}
-            >
-              {formatTime(activeTimer)}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── SECTION RENDERER ────────────────────────────────── */}
-      <div style={{ flex: 1, padding: '0' }}>
         {activeSection?.sectionName === 'Listening' && (
           <ListeningSectionEngine
             questions={activeSection.questions}
@@ -412,6 +267,6 @@ export function IELTSExamEngine({
           50% { opacity: 0.4; }
         }
       `}</style>
-    </div>
+    </MockExamFullscreenShell>
   );
 }

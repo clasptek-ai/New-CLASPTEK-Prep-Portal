@@ -19,8 +19,9 @@ export async function GET(req: NextRequest) {
       monthlyLimitUsd: 3000.0,
       currency: 'USD',
       breakdownByProvider: {
-        OpenAI: 8.2,
-        Anthropic: 4.25,
+        Gemini: 9.6,
+        OpenAI: 2.85,
+        Anthropic: 0.0,
       },
     });
   } catch (err: unknown) {

@@ -95,7 +95,12 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
     setLoading(true);
     try {
       const tmpl = templates.find((t) => t.id === templateId || t.blueprintId === templateId);
-      const session = await mockGeneratorService.startSession(templateId, undefined, tmpl?.exam);
+      const resolvedBlueprintId = tmpl?.blueprintId || templateId;
+      const session = await mockGeneratorService.startSession(
+        resolvedBlueprintId,
+        undefined,
+        tmpl?.exam
+      );
       setActiveSession(session);
       setCurrentSectionIndex(0);
       setCurrentQuestionIndex(0);
@@ -235,13 +240,22 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                       textTransform: 'uppercase',
                     }}
                   >
-                    FOUNDATION REQUIRED
+                    RECOMMENDED FOUNDATION
                   </span>
-                  <h3 style={{ margin: '0.4rem 0 0.2rem', fontSize: '1.1rem', fontWeight: 800, color: '#ffffff' }}>
-                    Complete Pre-Assessment Before Mock Examinations
+                  <h3
+                    style={{
+                      margin: '0.4rem 0 0.2rem',
+                      fontSize: '1.1rem',
+                      fontWeight: 800,
+                      color: '#ffffff',
+                    }}
+                  >
+                    Pre-Assessment Recommended for Baseline Profile
                   </h3>
                   <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
-                    Your diagnostic Pre-Assessment establishes your starting academic profile and is required before attempting timed full-length simulations.
+                    Completing your diagnostic Pre-Assessment establishes your starting academic
+                    profile. You can also proceed directly to official full-length mock simulations
+                    below.
                   </p>
                 </div>
 

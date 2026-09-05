@@ -171,6 +171,11 @@ export class PostgresSubjectiveEvaluationRepository {
     let scoreLabel = '';
     let feedback = '';
 
+    let executedProvider = providerName;
+    let executedModel = modelName;
+    let isFallback = false;
+    let fallbackFrom: string | null = null;
+
     try {
       if (skill === 'Writing') {
         const result = await this.evaluateWritingViaProvider(
@@ -204,20 +209,102 @@ export class PostgresSubjectiveEvaluationRepository {
         feedback = result.feedback;
       }
     } catch (aiError: any) {
-      // AI provider failed — mark as FAILED, NEVER fabricate scores
       const errorMsg = aiError?.message || `Unknown ${providerCode} evaluation error`;
-      console.error(
-        `[SUBJECTIVE_EVAL_FAIL] evaluationId=${evaluationId} skill=${skill} provider=${providerCode} error="${errorMsg}"`
-      );
-      await this.pool.query(
-        `UPDATE public.subjective_evaluations SET
-           status = 'FAILED',
-           last_error = $1,
-           failed_at = now()
-         WHERE id = $2`,
-        [`AI_EVALUATION_FAILED [${providerCode}]: ${errorMsg.substring(0, 500)}`, evaluationId]
-      );
-      throw new Error(`${providerCode} evaluation failed for ${evaluationId}: ${errorMsg}`);
+
+      // Check if emergency fallback is explicitly enabled
+      const emergencyFallbackEnabled = process.env.ENABLE_EMERGENCY_AI_FALLBACK === 'true';
+      if (providerCode === 'GEMINI' && emergencyFallbackEnabled) {
+        console.warn(
+          `[SUBJECTIVE_EVAL_EMERGENCY_FALLBACK] evaluationId=${evaluationId} primary=${providerCode} failed="${errorMsg}". Invoking OpenAI rollback provider.`
+        );
+        const fallbackProvider = providerManager.getProvider('OPENAI');
+        if (fallbackProvider) {
+          try {
+            if (skill === 'Writing') {
+              const fbResult = await this.evaluateWritingViaProvider(
+                fallbackProvider,
+                'OPENAI',
+                content,
+                meta.taskType || 'TASK_2',
+                meta.taskPrompt || '',
+                row.student_id,
+                evaluationId
+              );
+              criteria = fbResult.criteria;
+              overallScore = fbResult.overallScore;
+              scoreLabel = fbResult.scoreLabel;
+              feedback = fbResult.feedback;
+            } else {
+              const speakingText = transcript || content;
+              const fbResult = await this.evaluateSpeakingViaProvider(
+                fallbackProvider,
+                'OPENAI',
+                speakingText,
+                meta.partNumber || 1,
+                meta.questionPrompt || '',
+                row.student_id,
+                evaluationId
+              );
+              criteria = fbResult.criteria;
+              overallScore = fbResult.overallScore;
+              scoreLabel = fbResult.scoreLabel;
+              feedback = fbResult.feedback;
+            }
+            executedProvider = 'OPENAI';
+            executedModel = (fallbackProvider as any).gateway?.getModelCode?.() || 'gpt-4o';
+            isFallback = true;
+            fallbackFrom = 'GEMINI';
+          } catch (fbError: any) {
+            const fbMsg = fbError?.message || 'Emergency fallback failed';
+            console.error(
+              `[SUBJECTIVE_EVAL_FALLBACK_FAILED] evaluationId=${evaluationId} fallback=OPENAI error="${fbMsg}"`
+            );
+            await this.pool.query(
+              `UPDATE public.subjective_evaluations SET
+                 status = 'FAILED',
+                 last_error = $1,
+                 failed_at = now()
+               WHERE id = $2`,
+              [
+                `AI_EVALUATION_FAILED [GEMINI_AND_FALLBACK_OPENAI]: ${errorMsg.substring(0, 250)} | ${fbMsg.substring(0, 250)}`,
+                evaluationId,
+              ]
+            );
+            throw new Error(
+              `Both primary GEMINI and emergency fallback OPENAI failed for ${evaluationId}: ${errorMsg} | ${fbMsg}`
+            );
+          }
+        } else {
+          await this.pool.query(
+            `UPDATE public.subjective_evaluations SET
+               status = 'FAILED',
+               last_error = $1,
+               failed_at = now()
+             WHERE id = $2`,
+            [
+              `AI_EVALUATION_FAILED [${providerCode}]: ${errorMsg.substring(0, 500)} (Fallback OPENAI not configured)`,
+              evaluationId,
+            ]
+          );
+          throw new Error(
+            `${providerCode} evaluation failed and emergency fallback unavailable: ${errorMsg}`
+          );
+        }
+      } else {
+        // AI provider failed and emergency fallback is false — mark as FAILED, NEVER fabricate scores
+        console.error(
+          `[SUBJECTIVE_EVAL_FAIL] evaluationId=${evaluationId} skill=${skill} provider=${providerCode} error="${errorMsg}"`
+        );
+        await this.pool.query(
+          `UPDATE public.subjective_evaluations SET
+             status = 'FAILED',
+             last_error = $1,
+             failed_at = now()
+           WHERE id = $2`,
+          [`AI_EVALUATION_FAILED [${providerCode}]: ${errorMsg.substring(0, 500)}`, evaluationId]
+        );
+        throw new Error(`${providerCode} evaluation failed for ${evaluationId}: ${errorMsg}`);
+      }
     }
 
     const gradingCompletedAt = new Date();
@@ -237,8 +324,10 @@ export class PostgresSubjectiveEvaluationRepository {
         scoreLabel,
         feedback,
         JSON.stringify({
-          grading_provider: providerName,
-          grading_model: modelName,
+          grading_provider: executedProvider,
+          grading_model: executedModel,
+          is_fallback: isFallback,
+          fallback_from: fallbackFrom,
           grading_status: 'completed',
           grading_started_at: gradingStartedAt.toISOString(),
           grading_completed_at: gradingCompletedAt.toISOString(),
@@ -310,7 +399,7 @@ export class PostgresSubjectiveEvaluationRepository {
     const model =
       providerCode === 'OPENAI'
         ? process.env.OPENAI_IELTS_GRADING_MODEL || 'gpt-4o'
-        : process.env.GEMINI_MODEL || 'gemini-2.5-pro';
+        : process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     const timeout =
       providerCode === 'OPENAI'
         ? parseInt(process.env.OPENAI_TIMEOUT || '60000', 10)
@@ -388,7 +477,7 @@ export class PostgresSubjectiveEvaluationRepository {
     const model =
       providerCode === 'OPENAI'
         ? process.env.OPENAI_IELTS_GRADING_MODEL || 'gpt-4o'
-        : process.env.GEMINI_MODEL || 'gemini-2.5-pro';
+        : process.env.GEMINI_MODEL || 'gemini-2.5-flash';
     const timeout =
       providerCode === 'OPENAI'
         ? parseInt(process.env.OPENAI_TIMEOUT || '60000', 10)
@@ -471,21 +560,91 @@ export class PostgresSubjectiveEvaluationRepository {
     const label = avgRes.rows[0]?.label || 'Scored';
 
     if (assessmentType === 'MOCK') {
+      // 1. Fetch completed subjective evaluation scores for Writing and Speaking
+      const subRes = await this.pool.query(
+        `SELECT skill, AVG(overall_score)::numeric as avg_band
+         FROM public.subjective_evaluations 
+         WHERE session_id = $1 AND status = 'COMPLETED'
+         GROUP BY skill`,
+        [sessionId]
+      );
+
+      let writingBand: number | null = null;
+      let speakingBand: number | null = null;
+      for (const row of subRes.rows) {
+        if (row.skill === 'Writing') writingBand = parseFloat(row.avg_band || '0');
+        if (row.skill === 'Speaking') speakingBand = parseFloat(row.avg_band || '0');
+      }
+
+      // 2. Fetch existing section scores from mock_section_scores
+      const secScoresRes = await this.pool.query(
+        `SELECT mss.*, mr.id as res_id
+         FROM public.mock_results mr
+         LEFT JOIN public.mock_section_scores mss ON mss.result_id = mr.id
+         WHERE mr.session_id = $1`,
+        [sessionId]
+      );
+
+      const resultId = secScoresRes.rows[0]?.res_id;
+      let listeningBand = 0;
+      let readingBand = 0;
+
+      for (const row of secScoresRes.rows) {
+        if (row.section_id === '00000000-0000-0000-0001-000000000001') {
+          listeningBand = parseFloat(row.scaled_score || '0');
+        } else if (row.section_id === '00000000-0000-0000-0001-000000000002') {
+          readingBand = parseFloat(row.scaled_score || '0');
+        }
+      }
+
+      if (resultId) {
+        if (writingBand !== null) {
+          await this.pool.query(
+            `INSERT INTO public.mock_section_scores (id, result_id, section_id, raw_score, scaled_score, max_score, accuracy_pct)
+             VALUES (gen_random_uuid(), $1, '00000000-0000-0000-0001-000000000003', $2, $2, 9.0, ($2/9.0)*100)
+             ON CONFLICT (id) DO NOTHING`,
+            [resultId, writingBand]
+          );
+        }
+        if (speakingBand !== null) {
+          await this.pool.query(
+            `INSERT INTO public.mock_section_scores (id, result_id, section_id, raw_score, scaled_score, max_score, accuracy_pct)
+             VALUES (gen_random_uuid(), $1, '00000000-0000-0000-0001-000000000004', $2, $2, 9.0, ($2/9.0)*100)
+             ON CONFLICT (id) DO NOTHING`,
+            [resultId, speakingBand]
+          );
+        }
+      }
+
+      // Compute overall IELTS band from available skills
+      const validBands = [listeningBand, readingBand, writingBand, speakingBand].filter(
+        (b): b is number => b !== null && b > 0
+      );
+      const overallBand =
+        validBands.length > 0
+          ? this.roundToNearestHalf(validBands.reduce((a, b) => a + b, 0) / validBands.length)
+          : 0;
+
+      const finalLabel =
+        overallBand > 0 ? `Official Mock Score: Band ${overallBand.toFixed(1)}` : label;
+
       await this.pool.query(
         `UPDATE public.mock_sessions SET
            evaluation_state = 'COMPLETED',
-           official_score_label = $1,
+           official_scaled_score = $1,
+           official_score_label = $2,
            updated_at = now()
-         WHERE id = $2`,
-        [label, sessionId]
+         WHERE id = $3`,
+        [overallBand, finalLabel, sessionId]
       );
 
       await this.pool.query(
         `UPDATE public.mock_results SET
            status = 'PUBLISHED',
-           official_score_label = $1
-         WHERE session_id = $2`,
-        [label, sessionId]
+           official_scaled_score = $1,
+           official_score_label = $2
+         WHERE session_id = $3`,
+        [overallBand, finalLabel, sessionId]
       );
     }
   }

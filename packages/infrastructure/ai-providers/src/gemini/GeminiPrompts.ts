@@ -1,169 +1,317 @@
 /**
  * Production IELTS Grading Prompts for Google Gemini.
  *
- * These prompts instruct the AI to act as a certified IELTS examiner
- * and return structured JSON evaluation data.
- *
- * Mirrors the OpenAIPrompts class for provider parity.
+ * Implements official IELTS examiner system and user prompts for CLASPTEK Prep Portal.
  */
+
+export interface WritingEvaluationInput {
+  taskType: 'TASK_1' | 'TASK_2';
+  taskPrompt: string;
+  response: string;
+  stimulusContext?: string;
+}
+
+export interface SpeakingEvaluationInput {
+  part: number;
+  prompt: string;
+  transcript: string;
+}
+
+const IELTS_SYSTEM_PROMPT = `You are a professional IELTS examiner and AI evaluation engine for CLASPTEK Prep Portal.
+
+Your responsibility is to evaluate IELTS candidates objectively and consistently according to the IELTS assessment criteria.
+
+CRITICAL EVALUATION RULES:
+
+1. Evaluate only the evidence contained in the supplied task, candidate response, transcript, and/or audio.
+2. Never fabricate candidate content, errors, strengths, weaknesses, or evidence.
+3. Never infer abilities that are not demonstrated by the candidate.
+4. Do not reward vocabulary simply because it appears advanced or unusual.
+5. Do not penalize opinions or ideas because they differ from your own.
+6. Apply IELTS band descriptors consistently and conservatively.
+7. Every criterion score MUST be between 0.0 and 9.0.
+8. Every criterion score MUST use 0.5 increments only.
+9. Do not output scores such as 6.2, 7.3, or 8.8.
+10. The overall band MUST be calculated from the criterion scores.
+11. Do not independently guess the overall band.
+12. The application server is responsible for final deterministic overall-band calculation.
+13. Return ONLY the requested JSON object.
+14. Do not return Markdown, code fences, commentary, or additional properties.
+15. If evidence is insufficient to evaluate a criterion reliably, evaluate only the available evidence and do not invent missing evidence.
+16. Never generate a successful evaluation merely because the candidate submitted an answer.
+
+IELTS BAND SCALE:
+
+0.0 = Did not attempt / no meaningful response
+0.5–8.5 = Intermediate performance levels according to IELTS descriptors
+9.0 = Expert performance
+
+Use the official IELTS assessment concepts rather than superficial keyword matching.
+`;
 
 export class GeminiPrompts {
   /**
-   * Build the IELTS Academic Writing system prompt.
-   * Instructs the model to evaluate as a certified IELTS examiner.
+   * Object-style prompt generator for Writing evaluation (consumed by GeminiGateway / GeminiProvider).
    */
-  public static buildWritingSystemPrompt(taskType: 'TASK_1' | 'TASK_2'): string {
-    const taskCriterionName = taskType === 'TASK_1' ? 'Task Achievement' : 'Task Response';
-    const taskCriterionDesc =
-      taskType === 'TASK_1'
-        ? `How well the candidate addresses all requirements of the Task 1 prompt and visual stimulus (chart, graph, diagram, map, or process).
-Specifically evaluate:
-- Selection and reporting of main features / key stages
-- Provision of a clear overview summarizing major trends, differences, or stages
-- Accurate sequencing and factual consistency with the supplied stimulus
-- Appropriate comparisons where relevant
-- Minimum 150-word requirement fulfillment (penalize if underlength or missing overview)`
-        : `How well the candidate addresses all parts of the task, presents a fully developed position with relevant, extended and supported ideas, and meets the minimum 250-word requirement.`;
+  public static writing(input: WritingEvaluationInput) {
+    const taskWordCount = input.taskType === 'TASK_1' ? '150-word' : '250-word';
+    const stimulusSection = input.stimulusContext
+      ? `\nVISUAL STIMULUS CONTEXT / DESCRIPTION:\n${input.stimulusContext}\n`
+      : '';
 
-    return `You are a certified IELTS Academic Writing examiner. You must evaluate the candidate's response using the official IELTS Academic Writing band descriptors (Bands 0–9, in 0.5 increments).
+    return {
+      systemInstruction: IELTS_SYSTEM_PROMPT,
+      userPrompt: `Evaluate the following IELTS Writing response.
 
-You MUST evaluate using exactly four criteria:
+TASK TYPE:
+${input.taskType}
 
-1. **${taskCriterionName}** (reported as "taskAchievement" in JSON):
-   ${taskCriterionDesc}
+TASK QUESTION:
+${input.taskPrompt}
+${stimulusSection}
+CANDIDATE RESPONSE:
+${input.response}
 
-2. **Coherence & Cohesion** (reported as "coherenceCohesion" in JSON):
-   Evaluate logical organization, paragraphing, use of cohesive devices, and progression of ideas.
+Evaluate the candidate using the following four IELTS Writing criteria (must fulfill minimum ${taskWordCount} requirement):
 
-3. **Lexical Resource** (reported as "lexicalResource" in JSON):
-   Evaluate range and accuracy of vocabulary, use of less common items, awareness of style and collocation, spelling accuracy.
+1. TASK ACHIEVEMENT / TASK RESPONSE
 
-4. **Grammatical Range & Accuracy** (reported as "grammaticalRangeAccuracy" in JSON):
-   Evaluate range of sentence structures, accuracy, use of complex sentences, punctuation.
+For Task 1:
+- Addressing the task requirements
+- Providing a clear overview
+- Selecting and reporting key features
+- Making relevant comparisons
+- Accuracy of reported information
+- Appropriate development
 
-SCORING RULES:
-- Each criterion score MUST be a number from 0 to 9 in 0.5 increments (e.g., 5.0, 5.5, 6.0, 6.5, 7.0).
-- The overall band is the arithmetic mean of the four criteria, rounded to the nearest 0.5.
-  - If the average ends in .25, round UP to the next 0.5 (e.g., 6.25 → 6.5).
-  - If the average ends in .75, round UP to the next whole band (e.g., 6.75 → 7.0).
-${taskType === 'TASK_2' ? '\n- Task 2 carries DOUBLE the weight of Task 1 in official IELTS scoring. Evaluate Task 2 with this significance in mind.' : ''}
+For Task 2:
+- Addressing every part of the question
+- Presenting a clear position
+- Developing ideas logically
+- Providing relevant explanations and examples
+- Maintaining relevance throughout
 
-FEEDBACK RULES:
-- Your feedback MUST reference specific parts of the candidate's actual response.
-- Do NOT generate generic or templated feedback.
-- For Task 1: specifically reference whether the candidate provided a clear overview and accurately reported key features/stages of the visual stimulus.
-- Provide at least 2 specific strengths observed in the response.
-- Provide at least 2 specific weaknesses observed in the response.
-- Provide at least 2 actionable improvement suggestions.
+2. COHERENCE AND COHESION
 
-You MUST respond with valid JSON only. Do not include any text outside the JSON object.
+Evaluate:
+- Logical organization
+- Paragraphing
+- Progression of ideas
+- Cohesive devices
+- Referencing and substitution
+- Natural rather than mechanical cohesion
 
-Required JSON structure:
+3. LEXICAL RESOURCE
+
+Evaluate:
+- Range of vocabulary
+- Precision
+- Word choice
+- Collocation
+- Paraphrasing
+- Spelling
+- Word formation
+- Natural and appropriate vocabulary use
+
+Do not award a high score simply for using uncommon vocabulary.
+
+4. GRAMMATICAL RANGE AND ACCURACY
+
+Evaluate:
+- Variety of structures
+- Complex sentence control
+- Accuracy
+- Sentence formation
+- Agreement
+- Tenses
+- Articles
+- Prepositions
+- Punctuation
+- Frequency and impact of errors
+
+Do not award a high score merely because complex structures are attempted.
+
+FEEDBACK:
+
+Provide useful examiner-style feedback based specifically on the candidate's response.
+
+The feedback must:
+- Explain the principal reasons for the scores.
+- Identify specific strengths.
+- Identify specific weaknesses.
+- Provide actionable improvements.
+- Refer to evidence actually present in the response.
+- Never fabricate quotations or examples.
+
+Return exactly:
+
 {
-  "overallBand": <number>,
-  "taskType": "${taskType}",
+  "overallBand": number,
+  "taskType": "${input.taskType}",
   "criteria": {
-    "taskAchievement": <number>,
-    "coherenceCohesion": <number>,
-    "lexicalResource": <number>,
-    "grammaticalRangeAccuracy": <number>
+    "taskAchievement": number,
+    "coherenceCohesion": number,
+    "lexicalResource": number,
+    "grammaticalRangeAccuracy": number
   },
-  "feedback": "<detailed overall feedback referencing the candidate's actual response>",
-  "strengths": ["<strength 1>", "<strength 2>", ...],
-  "weaknesses": ["<weakness 1>", "<weakness 2>", ...],
-  "improvements": ["<improvement 1>", "<improvement 2>", ...]
-}`;
+  "feedback": string,
+  "strengths": string[],
+  "weaknesses": string[],
+  "improvements": string[]
+}
+
+All criterion scores must be 0.0–9.0 in 0.5 increments.
+
+Do not add any other fields.`,
+    };
   }
 
   /**
-   * Build the IELTS Writing user prompt containing the task, stimulus details, and candidate response.
+   * Object-style prompt generator for Speaking evaluation (consumed by GeminiGateway / GeminiProvider).
    */
+  public static speaking(input: SpeakingEvaluationInput) {
+    return {
+      systemInstruction: IELTS_SYSTEM_PROMPT,
+      userPrompt: `Evaluate the following IELTS Speaking performance.
+
+PART:
+${String(input.part).startsWith('Part') ? input.part : `Part ${input.part}`}
+
+QUESTION / PROMPT:
+${input.prompt}
+
+CANDIDATE TRANSCRIPT:
+${input.transcript}
+
+Evaluate the candidate using these four IELTS Speaking criteria:
+
+1. FLUENCY AND COHERENCE
+
+Evaluate:
+- Speed and flow of speech
+- Hesitation
+- Pausing
+- Repetition
+- Self-correction
+- Ability to extend answers
+- Logical connection of ideas
+- Ability to maintain discourse
+
+Do not confuse natural thinking pauses with serious fluency problems.
+
+2. LEXICAL RESOURCE
+
+Evaluate:
+- Range of vocabulary
+- Precision
+- Flexibility
+- Paraphrasing
+- Collocation
+- Appropriacy
+- Repetition
+- Ability to express meaning effectively
+
+Do not award a high score merely because advanced words appear.
+
+3. GRAMMATICAL RANGE AND ACCURACY
+
+Evaluate:
+- Range of grammatical structures
+- Complex structures
+- Accuracy
+- Tenses
+- Agreement
+- Articles
+- Prepositions
+- Sentence construction
+- Frequency and impact of errors
+
+4. PRONUNCIATION
+
+Evaluate:
+- Individual sounds
+- Word stress
+- Sentence stress
+- Rhythm
+- Intonation
+- Connected speech
+- Clarity
+- Ease of understanding
+
+Important:
+Do not infer pronunciation problems from grammar or vocabulary errors.
+If audio is supplied, use the audio as the primary pronunciation evidence.
+If only a transcript is supplied, assess pronunciation conservatively and do not fabricate pronunciation errors.
+
+FEEDBACK:
+
+Provide examiner-style feedback based only on the candidate evidence.
+
+Identify:
+- Strong aspects of performance
+- Main weaknesses
+- Specific areas for improvement
+- Practical improvements that could increase the candidate's IELTS performance
+
+Never fabricate words, pronunciation errors, or examples that are not supported by the supplied evidence.
+
+Return exactly:
+
+{
+  "overallBand": number,
+  "criteria": {
+    "fluencyCoherence": number,
+    "lexicalResource": number,
+    "grammaticalRangeAccuracy": number,
+    "pronunciation": number
+  },
+  "feedback": string,
+  "strengths": string[],
+  "weaknesses": string[],
+  "improvements": string[]
+}
+
+All criterion scores must be 0.0–9.0 in 0.5 increments.
+
+Do not add any other fields.`,
+    };
+  }
+
+  // --- Backward-Compatible Static Helper Methods ---
+
+  public static buildWritingSystemPrompt(taskType: 'TASK_1' | 'TASK_2'): string {
+    const taskName = taskType === 'TASK_1' ? 'Task Achievement' : 'Task Response';
+    const wordCount = taskType === 'TASK_1' ? '150-word' : '250-word';
+    return `${IELTS_SYSTEM_PROMPT}\nCriteria to assess: ${taskName}, Coherence & Cohesion, Lexical Resource, Grammatical Range & Accuracy (minimum ${wordCount} requirement).`;
+  }
+
   public static buildWritingUserPrompt(
     taskPrompt: string,
     candidateResponse: string,
     taskType: 'TASK_1' | 'TASK_2',
     stimulusContext?: string
   ): string {
-    const taskLabel = taskType === 'TASK_1' ? 'Task 1' : 'Task 2';
-    return `## IELTS Academic Writing ${taskLabel}
-
-### Task Prompt:
-${taskPrompt || '[No specific task prompt provided — evaluate the response on its own merit]'}
-${stimulusContext ? `\n### Visual Stimulus Context / Description:\n${stimulusContext}\n` : ''}
-### Candidate Response:
-${candidateResponse}
-
-Evaluate this response against the IELTS Academic Writing ${taskLabel} band descriptors. Return your evaluation as the specified JSON structure.`;
+    return GeminiPrompts.writing({
+      taskType,
+      taskPrompt,
+      response: candidateResponse,
+      ...(stimulusContext ? { stimulusContext } : {}),
+    }).userPrompt;
   }
 
-  /**
-   * Build the IELTS Speaking system prompt.
-   * Instructs the model to evaluate speaking transcript as a certified IELTS examiner.
-   */
   public static buildSpeakingSystemPrompt(): string {
-    return `You are a certified IELTS Speaking examiner. You must evaluate the candidate's spoken response (provided as a transcript) using the official IELTS Speaking band descriptors (Bands 0–9, in 0.5 increments).
-
-You MUST evaluate using exactly four criteria:
-
-1. **Fluency & Coherence** (reported as "fluencyCoherence" in JSON):
-   Evaluate the ability to speak at length without noticeable effort or loss of coherence, speech rate, use of discourse markers, self-correction, and logical sequencing of ideas.
-
-2. **Lexical Resource** (reported as "lexicalResource" in JSON):
-   Evaluate range of vocabulary, ability to discuss topics at length using appropriate vocabulary, use of idiomatic language, paraphrasing ability, and precision.
-
-3. **Grammatical Range & Accuracy** (reported as "grammaticalRangeAccuracy" in JSON):
-   Evaluate range of sentence structures, accuracy, use of complex sentences, error frequency, and impact of errors on communication.
-
-4. **Pronunciation** (reported as "pronunciation" in JSON):
-   Note: Since this evaluation is performed on transcript text, evaluate phonological and articulation awareness reflected in phrasing, natural discourse rhythm, word selection, and phonetic transcription markers. Full acoustic pronunciation analysis requires audio recording evaluation.
-
-SCORING RULES:
-- Each criterion score MUST be a number from 0 to 9 in 0.5 increments.
-- The overall band is the arithmetic mean of the four criteria, rounded to the nearest 0.5.
-  - If the average ends in .25, round UP to the next 0.5.
-  - If the average ends in .75, round UP to the next whole band.
-
-FEEDBACK RULES:
-- Your feedback MUST reference specific parts of the candidate's actual spoken response.
-- Do NOT generate generic or templated feedback.
-- Provide at least 2 specific strengths observed.
-- Provide at least 2 specific weaknesses observed.
-- Provide at least 2 actionable improvement suggestions.
-
-You MUST respond with valid JSON only. Do not include any text outside the JSON object.
-
-Required JSON structure:
-{
-  "overallBand": <number>,
-  "criteria": {
-    "fluencyCoherence": <number>,
-    "lexicalResource": <number>,
-    "grammaticalRangeAccuracy": <number>,
-    "pronunciation": <number>
-  },
-  "feedback": "<detailed overall feedback referencing the candidate's actual speech>",
-  "strengths": ["<strength 1>", "<strength 2>", ...],
-  "weaknesses": ["<weakness 1>", "<weakness 2>", ...],
-  "improvements": ["<improvement 1>", "<improvement 2>", ...]
-}`;
+    return `${IELTS_SYSTEM_PROMPT}\nCriteria to assess: Fluency & Coherence, Lexical Resource, Grammatical Range & Accuracy, Pronunciation.`;
   }
 
-  /**
-   * Build the IELTS Speaking user prompt containing the question and transcript.
-   */
   public static buildSpeakingUserPrompt(
     partNumber: number,
     questionPrompt: string,
     transcript: string
   ): string {
-    return `## IELTS Speaking Part ${partNumber}
-
-### Examiner Question/Prompt:
-${questionPrompt || `[IELTS Speaking Part ${partNumber} question]`}
-
-### Candidate Spoken Response (Transcript):
-${transcript}
-
-Evaluate this spoken response against the IELTS Speaking band descriptors. Return your evaluation as the specified JSON structure.`;
+    return GeminiPrompts.speaking({
+      part: partNumber,
+      prompt: questionPrompt,
+      transcript,
+    }).userPrompt;
   }
 }

@@ -795,28 +795,275 @@ export class PostgresCanonicalMockRepository {
 
   public async saveMockQuestionSnapshots(
     sessionId: string,
-    questions: MockEligibleQuestion[]
+    questions: MockEligibleQuestion[],
+    blueprintVersion: string = 'v1.0'
   ): Promise<void> {
     if (questions.length === 0) return;
     const values: any[] = [sessionId];
     const clauses: string[] = [];
     questions.forEach((q, idx) => {
-      const offset = 1 + idx * 3;
-      values.push(q.questionId, q.questionVersionId, idx + 1);
-      clauses.push(`(gen_random_uuid(), $1, $${offset + 1}, $${offset + 2}, $${offset + 3})`);
+      const offset = 1 + idx * 5;
+      const snapshotPayload = {
+        questionId: q.questionId,
+        questionVersionId: q.questionVersionId,
+        code: q.code,
+        prompt: q.prompt,
+        itemType: q.itemType,
+        difficulty: q.difficulty,
+        sectionName: q.sectionName,
+        options: q.options,
+        imageUrl: q.imageUrl,
+        passage: q.passage,
+        group: q.group,
+        audio: q.audio,
+        speaking: q.speaking,
+      };
+      values.push(
+        q.questionId,
+        q.questionVersionId || null,
+        blueprintVersion || 'v1.0',
+        idx + 1,
+        JSON.stringify(snapshotPayload)
+      );
+      clauses.push(
+        `(gen_random_uuid(), $1, $${offset + 1}, $${offset + 2}, $${offset + 3}, $${offset + 4}, $${offset + 5}, now())`
+      );
     });
 
-    await this.pool
-      .query(
+    try {
+      await this.pool.query(
         `INSERT INTO public.session_question_snapshots
-         (id, session_id, question_id, question_version_id, display_order)
-         VALUES ${clauses.join(', ')}
-         ON CONFLICT (session_id, question_id) DO NOTHING`,
+         (id, session_id, question_id, question_version_id, blueprint_version, display_order, snapshot_payload, created_at)
+         VALUES ${clauses.join(', ')}`,
         values
-      )
-      .catch(() => {
-        // Handle optional snapshot insert
-      });
+      );
+    } catch (err: any) {
+      console.error(
+        `[MOCK_SNAPSHOT_ERROR] Failed to save question snapshots for session ${sessionId}:`,
+        err
+      );
+      throw new Error(`Failed to persist question snapshots: ${err.message}`);
+    }
+  }
+
+  public async getSessionQuestionSnapshots(sessionId: string): Promise<any[]> {
+    const res = await this.pool.query(
+      `SELECT * FROM public.session_question_snapshots
+       WHERE session_id = $1
+       ORDER BY display_order ASC`,
+      [sessionId]
+    );
+    return res.rows.map((r) => ({
+      id: r.id,
+      sessionId: r.session_id,
+      questionId: r.question_id,
+      questionVersionId: r.question_version_id,
+      blueprintVersion: r.blueprint_version,
+      displayOrder: r.display_order,
+      snapshotPayload:
+        typeof r.snapshot_payload === 'string'
+          ? JSON.parse(r.snapshot_payload)
+          : r.snapshot_payload,
+      createdAt: r.created_at,
+    }));
+  }
+
+  public async saveMockAttemptAndAnswers(params: {
+    sessionId: string;
+    studentId: string;
+    answers: Array<{
+      questionId: string;
+      sectionId?: string;
+      studentAnswer?: string | null;
+      selectedOption?: string | null;
+      textResponse?: string | null;
+      timeSpentMs?: number;
+      confidenceLevel?: string;
+      isCorrect?: boolean | null;
+      isAnswered: boolean;
+      state: 'ANSWERED' | 'SKIPPED' | 'UNANSWERED';
+      extraPayload?: any;
+    }>;
+    sectionScores?: Array<{
+      sectionId: string;
+      rawScore: number;
+      scaledScore: number;
+      maxScore: number;
+      accuracyPct: number;
+    }>;
+  }): Promise<string> {
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      // 1. Upsert mock_attempts
+      const existingAttempt = await client.query(
+        `SELECT id FROM public.mock_attempts WHERE session_id = $1 LIMIT 1`,
+        [params.sessionId]
+      );
+
+      let attemptId = existingAttempt.rows[0]?.id;
+      const answeredCount = params.answers.filter((a) => a.isAnswered).length;
+
+      if (!attemptId) {
+        const insRes = await client.query(
+          `INSERT INTO public.mock_attempts
+           (id, session_id, student_id, current_question_index, answers_count, flagged_questions, created_at, updated_at)
+           VALUES (gen_random_uuid(), $1, $2, $3, $4, '[]'::jsonb, now(), now())
+           RETURNING id`,
+          [params.sessionId, params.studentId, params.answers.length, answeredCount]
+        );
+        attemptId = insRes.rows[0].id;
+      } else {
+        await client.query(
+          `UPDATE public.mock_attempts SET
+             answers_count = $1,
+             updated_at = now()
+           WHERE id = $2`,
+          [answeredCount, attemptId]
+        );
+      }
+
+      // 2. Insert mock_attempt_answers for every question (including skipped/unanswered)
+      if (params.answers.length > 0) {
+        await client.query(`DELETE FROM public.mock_attempt_answers WHERE attempt_id = $1`, [
+          attemptId,
+        ]);
+
+        for (const ans of params.answers) {
+          const answerPayload = {
+            studentAnswer: ans.studentAnswer ?? null,
+            selectedOption: ans.selectedOption ?? null,
+            textResponse: ans.textResponse ?? null,
+            isAnswered: ans.isAnswered,
+            state: ans.state,
+            ...(ans.extraPayload || {}),
+          };
+
+          const validSectionId =
+            ans.sectionId &&
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(ans.sectionId)
+              ? ans.sectionId
+              : '00000000-0000-0000-0000-000000000001';
+
+          await client.query(
+            `INSERT INTO public.mock_attempt_answers
+             (id, attempt_id, question_id, section_id, answer_payload, time_spent_ms, confidence_level, is_correct, created_at)
+             VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, now())`,
+            [
+              attemptId,
+              ans.questionId,
+              validSectionId,
+              JSON.stringify(answerPayload),
+              ans.timeSpentMs || 0,
+              ans.confidenceLevel || 'MEDIUM',
+              ans.isCorrect ?? null,
+            ]
+          );
+        }
+      }
+
+      // 3. Save section scores if provided
+      if (params.sectionScores && params.sectionScores.length > 0) {
+        const resLookup = await client.query(
+          `SELECT id FROM public.mock_results WHERE session_id = $1 LIMIT 1`,
+          [params.sessionId]
+        );
+
+        let resultId = resLookup.rows[0]?.id;
+        if (!resultId) {
+          const insRes = await client.query(
+            `INSERT INTO public.mock_results
+             (id, session_id, student_id, overall_raw_score, official_scaled_score, official_score_label, percentile, status, scored_at)
+             VALUES (gen_random_uuid(), $1, $2, 0, 0, 'Pending', 0, 'PENDING', now())
+             RETURNING id`,
+            [params.sessionId, params.studentId]
+          );
+          resultId = insRes.rows[0].id;
+        }
+
+        await client.query(`DELETE FROM public.mock_section_scores WHERE result_id = $1`, [
+          resultId,
+        ]);
+
+        for (const sec of params.sectionScores) {
+          const validSecId =
+            sec.sectionId &&
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sec.sectionId)
+              ? sec.sectionId
+              : '00000000-0000-0000-0000-000000000001';
+
+          await client.query(
+            `INSERT INTO public.mock_section_scores
+             (id, result_id, section_id, raw_score, scaled_score, max_score, accuracy_pct)
+             VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6)`,
+            [resultId, validSecId, sec.rawScore, sec.scaledScore, sec.maxScore, sec.accuracyPct]
+          );
+        }
+      }
+
+      await client.query('COMMIT');
+      return attemptId;
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
+
+  public async getMockAttemptWithAnswers(sessionId: string): Promise<any | null> {
+    const attemptRes = await this.pool.query(
+      `SELECT * FROM public.mock_attempts WHERE session_id = $1 LIMIT 1`,
+      [sessionId]
+    );
+    if (attemptRes.rows.length === 0) return null;
+    const attempt = attemptRes.rows[0];
+
+    const answersRes = await this.pool.query(
+      `SELECT maa.*, q.code as question_code 
+       FROM public.mock_attempt_answers maa
+       LEFT JOIN public.questions q ON q.id = maa.question_id
+       WHERE maa.attempt_id = $1
+       ORDER BY maa.created_at ASC`,
+      [attempt.id]
+    );
+
+    return {
+      ...attempt,
+      answers: answersRes.rows.map((r) => ({
+        id: r.id,
+        attemptId: r.attempt_id,
+        questionId: r.question_id,
+        questionCode: r.question_code,
+        sectionId: r.section_id,
+        answerPayload:
+          typeof r.answer_payload === 'string' ? JSON.parse(r.answer_payload) : r.answer_payload,
+        timeSpentMs: r.time_spent_ms,
+        confidenceLevel: r.confidence_level,
+        isCorrect: r.is_correct,
+        createdAt: r.created_at,
+      })),
+    };
+  }
+
+  public async getMockSectionScores(sessionId: string): Promise<any[]> {
+    const res = await this.pool.query(
+      `SELECT mss.*, mr.session_id 
+       FROM public.mock_section_scores mss
+       JOIN public.mock_results mr ON mr.id = mss.result_id
+       WHERE mr.session_id = $1`,
+      [sessionId]
+    );
+    return res.rows.map((r) => ({
+      id: r.id,
+      resultId: r.result_id,
+      sectionId: r.section_id,
+      rawScore: parseFloat(r.raw_score || 0),
+      scaledScore: parseFloat(r.scaled_score || 0),
+      maxScore: parseFloat(r.max_score || 0),
+      accuracyPct: parseFloat(r.accuracy_pct || 0),
+    }));
   }
 
   public async evaluateObjectiveAnswer(
@@ -913,9 +1160,12 @@ export class PostgresCanonicalMockRepository {
 
   public async getAdminMockSessions(filters?: { examType?: string }): Promise<any[]> {
     let query = `
-      SELECT ms.*, u.email as student_email
+      SELECT ms.*, 
+             COALESCE(au.email, 'student@clasptek.ai') as student_email,
+             COALESCE(NULLIF(TRIM(p.first_name || ' ' || p.last_name), ''), au.raw_user_meta_data->>'first_name', split_part(au.email, '@', 1), 'Candidate') as student_name
       FROM public.mock_sessions ms
-      LEFT JOIN public.users u ON u.id = ms.student_id
+      LEFT JOIN auth.users au ON au.id::text = ms.student_id::text
+      LEFT JOIN public.profiles p ON (p.user_id = ms.student_id OR p.id = ms.student_id)
       WHERE ms.status IS NOT NULL
     `;
     const params: any[] = [];
@@ -931,7 +1181,9 @@ export class PostgresCanonicalMockRepository {
     return res.rows.map((r) => ({
       sessionId: r.id,
       studentId: r.student_id,
-      studentEmail: r.student_email || 'student@clasptek.com',
+      studentName: r.student_name || 'Candidate',
+      studentEmail: r.student_email || 'student@clasptek.ai',
+      candidateNumber: `CGA-${String(r.student_id).slice(0, 8).toUpperCase()}`,
       examType: r.exam_type,
       status: r.status,
       evaluationState: r.evaluation_state || 'IN_PROGRESS',

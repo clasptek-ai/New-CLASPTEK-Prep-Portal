@@ -9,7 +9,11 @@ import { GeminiGateway } from './GeminiGateway';
 import { AIResponseParser } from '../parsing/AIResponseParser';
 import { GeminiMapper } from './GeminiMapper';
 import { GeminiPrompts } from './GeminiPrompts';
-import { GeminiWritingEvaluationSchema, GeminiSpeakingEvaluationSchema } from './GeminiSchema';
+import {
+  GeminiWritingEvaluationSchema,
+  GeminiSpeakingEvaluationSchema,
+  roundToHalfBand,
+} from './GeminiSchema';
 
 /**
  * Google Gemini IELTS Provider — implements the AIProvider interface for real
@@ -40,26 +44,40 @@ export class GeminiProvider implements AIProvider {
       throw new Error('Cannot evaluate empty writing response');
     }
 
-    const systemPrompt = GeminiPrompts.buildWritingSystemPrompt(taskType);
     const stimulusContext =
       context.rubric?.stimulusContext || context.rubric?.stimulusDescription || '';
-    const userPrompt = GeminiPrompts.buildWritingUserPrompt(
-      taskPrompt,
-      candidateResponse,
+    const promptInput = GeminiPrompts.writing({
       taskType,
-      stimulusContext
-    );
+      taskPrompt,
+      response: candidateResponse,
+      stimulusContext,
+    });
 
-    const response = await this.gateway.generateChatCompletion(systemPrompt, userPrompt, {
+    const response = await this.gateway.generateChatCompletion(promptInput, {
       temperature: context.temperature,
       maxTokens: context.maxTokens,
+      timeout: context.timeout,
     });
 
     const rawObj = AIResponseParser.parseJsonBlock(response.content);
     const validated = GeminiWritingEvaluationSchema.parse(rawObj);
 
+    // CRITICAL: Deterministic server-side overallBand calculation (do not trust Gemini's overallBand)
+    const serverCalculatedBand = roundToHalfBand(
+      (validated.criteria.taskAchievement +
+        validated.criteria.coherenceCohesion +
+        validated.criteria.lexicalResource +
+        validated.criteria.grammaticalRangeAccuracy) /
+        4
+    );
+
+    const evaluatedPayload = {
+      ...validated,
+      overallBand: serverCalculatedBand,
+    };
+
     return GeminiMapper.mapWritingToEvaluationResult(
-      validated,
+      evaluatedPayload,
       context.studentId,
       context.submissionId,
       context.jobId
@@ -97,23 +115,37 @@ export class GeminiProvider implements AIProvider {
       );
     }
 
-    const systemPrompt = GeminiPrompts.buildSpeakingSystemPrompt();
-    const userPrompt = GeminiPrompts.buildSpeakingUserPrompt(
-      partNumber,
-      questionPrompt,
-      transcript
-    );
+    const promptInput = GeminiPrompts.speaking({
+      part: partNumber,
+      prompt: questionPrompt,
+      transcript,
+    });
 
-    const response = await this.gateway.generateChatCompletion(systemPrompt, userPrompt, {
+    const response = await this.gateway.generateChatCompletion(promptInput, {
       temperature: context.temperature,
       maxTokens: context.maxTokens,
+      timeout: context.timeout,
     });
 
     const rawObj = AIResponseParser.parseJsonBlock(response.content);
     const validated = GeminiSpeakingEvaluationSchema.parse(rawObj);
 
+    // CRITICAL: Deterministic server-side overallBand calculation (do not trust Gemini's overallBand)
+    const serverCalculatedBand = roundToHalfBand(
+      (validated.criteria.fluencyCoherence +
+        validated.criteria.lexicalResource +
+        validated.criteria.grammaticalRangeAccuracy +
+        validated.criteria.pronunciation) /
+        4
+    );
+
+    const evaluatedPayload = {
+      ...validated,
+      overallBand: serverCalculatedBand,
+    };
+
     return GeminiMapper.mapSpeakingToEvaluationResult(
-      validated,
+      evaluatedPayload,
       context.studentId,
       context.submissionId,
       context.jobId

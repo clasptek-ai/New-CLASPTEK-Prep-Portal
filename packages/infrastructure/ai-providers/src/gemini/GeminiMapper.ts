@@ -5,16 +5,18 @@ import {
   EvaluationRecommendation,
 } from '@clasptek/domain-ai-evaluation';
 import { randomUUID } from 'crypto';
-import type {
-  GeminiEvaluationOutput,
-  GeminiWritingEvaluationOutput,
-  GeminiSpeakingEvaluationOutput,
+import {
+  roundToHalfBand,
+  type GeminiEvaluationOutput,
+  type GeminiWritingEvaluationOutput,
+  type GeminiSpeakingEvaluationOutput,
 } from './GeminiSchema';
 
 export class GeminiMapper {
   /**
    * Map validated IELTS Writing evaluation output to an EvaluationResult.
    * Full criterion-level feedback sections for admin inspector visibility.
+   * Enforces deterministic server-side overallBand calculation from criteria scores.
    */
   public static mapWritingToEvaluationResult(
     output: GeminiWritingEvaluationOutput,
@@ -24,6 +26,15 @@ export class GeminiMapper {
   ): EvaluationResult {
     const resultId = `res-${randomUUID()}`;
 
+    // Deterministic server-side overallBand calculation from criteria
+    const serverCalculatedBand = roundToHalfBand(
+      (output.criteria.taskAchievement +
+        output.criteria.coherenceCohesion +
+        output.criteria.lexicalResource +
+        output.criteria.grammaticalRangeAccuracy) /
+        4
+    );
+
     const res = new EvaluationResult({
       id: resultId,
       jobId,
@@ -31,10 +42,10 @@ export class GeminiMapper {
       studentId,
       submissionId,
       questionType: 'WRITING',
-      rawScore: output.overallBand,
+      rawScore: serverCalculatedBand,
       maxScore: 9.0,
-      bandScore: new BandScore(`Band ${output.overallBand}`, output.overallBand),
-      isCorrect: output.overallBand >= 6.0,
+      bandScore: new BandScore(`Band ${serverCalculatedBand}`, serverCalculatedBand),
+      isCorrect: serverCalculatedBand >= 6.0,
       evaluationNotes: output.feedback,
     });
 
@@ -125,6 +136,15 @@ export class GeminiMapper {
   ): EvaluationResult {
     const resultId = `res-${randomUUID()}`;
 
+    // Deterministic server-side overallBand calculation from criteria
+    const serverCalculatedBand = roundToHalfBand(
+      (output.criteria.fluencyCoherence +
+        output.criteria.lexicalResource +
+        output.criteria.grammaticalRangeAccuracy +
+        output.criteria.pronunciation) /
+        4
+    );
+
     const res = new EvaluationResult({
       id: resultId,
       jobId,
@@ -132,10 +152,10 @@ export class GeminiMapper {
       studentId,
       submissionId,
       questionType: 'SPEAKING',
-      rawScore: output.overallBand,
+      rawScore: serverCalculatedBand,
       maxScore: 9.0,
-      bandScore: new BandScore(`Band ${output.overallBand}`, output.overallBand),
-      isCorrect: output.overallBand >= 6.0,
+      bandScore: new BandScore(`Band ${serverCalculatedBand}`, serverCalculatedBand),
+      isCorrect: serverCalculatedBand >= 6.0,
       evaluationNotes: output.feedback,
     });
 

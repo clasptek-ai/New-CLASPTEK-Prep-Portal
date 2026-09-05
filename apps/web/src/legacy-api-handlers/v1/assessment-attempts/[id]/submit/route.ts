@@ -553,7 +553,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
               console.info(
                 `[WRITING_EVAL_QUEUED] requestId=${requestId} evaluationId=${enqueued.id} taskId=${task.id} taskType=${taskType}`
               );
-              // Fire the actual OpenAI evaluation asynchronously
+              // Fire the actual AI evaluation asynchronously (Google Gemini primary)
               try {
                 const evalResult = await subjectiveRepo.evaluateSubjectiveJob(enqueued.id);
                 console.info(

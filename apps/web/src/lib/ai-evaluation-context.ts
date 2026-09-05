@@ -101,10 +101,10 @@ export function getAiEvaluationContext(): AiEvaluationContext {
   // Use real providers from ProviderModule (includes OpenAI if configured)
   const providerManager = ProviderModule.initFromEnv();
   const registeredProviders = providerManager.getRegisteredProviders();
-  // For benchmark engine, use the first available provider (preferring OpenAI)
+  // For benchmark engine, use the active provider (preferring Gemini, with OpenAI as rollback)
   const benchmarkProvider =
-    registeredProviders.find((p) => p.provider === 'OPENAI') ||
     registeredProviders.find((p) => p.provider === 'GEMINI') ||
+    registeredProviders.find((p) => p.provider === 'OPENAI') ||
     new MockAIProvider();
   const benchmarkEngine = new BenchmarkEngine(benchmarkProvider);
   const regressionEngine = new RegressionDetectionEngine();

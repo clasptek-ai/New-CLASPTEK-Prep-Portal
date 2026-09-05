@@ -40,6 +40,17 @@ export const adminProviderService = {
           supportsSync: true,
         },
         {
+          id: 'gemini',
+          name: 'Google Gemini API',
+          category: 'AI',
+          supportsOAuth: false,
+          supportsApiKeys: true,
+          supportsWebhooks: false,
+          status: 'stable',
+          versionCompatibility: 'Gemini 2.5 Flash',
+          supportsSync: false,
+        },
+        {
           id: 'openai',
           name: 'OpenAI API',
           category: 'AI',
@@ -83,12 +94,12 @@ export const adminProviderService = {
       return [
         {
           id: 'c1',
-          providerId: 'openai',
-          name: 'Primary OpenAI Production Key',
+          providerId: 'gemini',
+          name: 'Primary Google Gemini Production Key',
           status: 'CONNECTED',
-          lastSync: '2026-07-16T12:00:00Z',
-          latencyMs: 250,
-          rotationDueDate: '2026-10-15',
+          lastSync: '2026-09-05T12:00:00Z',
+          latencyMs: 140,
+          rotationDueDate: '2026-12-31',
         },
         {
           id: 'c2',

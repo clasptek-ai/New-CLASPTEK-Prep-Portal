@@ -15,7 +15,7 @@ describe('Sprint 3.7.1 Real Gemini API Integration Verification', () => {
     async () => {
       const config = GeminiConfigurationLoader.fromEnv({
         GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-        GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+        GEMINI_MODEL: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
         GEMINI_TIMEOUT: process.env.GEMINI_TIMEOUT || '30000',
       });
 

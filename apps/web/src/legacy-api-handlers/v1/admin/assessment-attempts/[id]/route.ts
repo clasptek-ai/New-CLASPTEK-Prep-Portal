@@ -220,78 +220,271 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       }
 
       // Fetch Mock Result
-      const mrRes = await pool.query(`SELECT * FROM public.mock_results WHERE session_id = $1`, [
-        attemptId,
-      ]);
+      const mrRes = await pool.query(
+        `SELECT * FROM public.mock_results WHERE session_id = $1 ORDER BY scored_at DESC LIMIT 1`,
+        [attemptId]
+      );
       const mr = mrRes.rows[0] || null;
+
+      // Fetch Question Snapshots (ordered by display_order ASC)
+      const snapshotsRes = await pool.query(
+        `SELECT id, question_id, question_version_id, passage_version_id, display_order, blueprint_version, snapshot_payload
+         FROM public.session_question_snapshots
+         WHERE session_id = $1
+         ORDER BY display_order ASC`,
+        [attemptId]
+      );
+
+      // Fetch Candidate Attempt & Answers from mock_attempt_answers
+      const attemptAnswersRes = await pool.query(
+        `SELECT ma.id as attempt_id, ma.current_question_index, ma.answers_count,
+                maa.id as answer_id, maa.question_id, maa.section_id, maa.answer_payload,
+                maa.time_spent_ms, maa.is_correct, maa.created_at as answer_created_at
+         FROM public.mock_attempts ma
+         LEFT JOIN public.mock_attempt_answers maa ON maa.attempt_id = ma.id
+         WHERE ma.session_id = $1`,
+        [attemptId]
+      );
+
+      const answersMap: Record<string, any> = {};
+      attemptAnswersRes.rows.forEach((r) => {
+        if (r.question_id) {
+          answersMap[r.question_id] = {
+            answerId: r.answer_id,
+            sectionId: r.section_id,
+            responsePayload: r.answer_payload,
+            isCorrect: r.is_correct,
+            timeSpentMs: r.time_spent_ms,
+            updatedAt: r.answer_created_at,
+          };
+        }
+      });
+
+      // Fetch Mock Section Scores
+      const secScoresRes = await pool.query(
+        `SELECT mss.* 
+         FROM public.mock_section_scores mss
+         JOIN public.mock_results mr ON mr.id = mss.result_id
+         WHERE mr.session_id = $1`,
+        [attemptId]
+      );
+
+      const sectionScoresMap: Record<string, any> = {};
+      secScoresRes.rows.forEach((row) => {
+        sectionScoresMap[row.section_id] = {
+          id: row.id,
+          sectionId: row.section_id,
+          rawScore: parseFloat(row.raw_score || 0),
+          scaledScore: parseFloat(row.scaled_score || 0),
+          maxScore: parseFloat(row.max_score || 0),
+          accuracyPct: parseFloat(row.accuracy_pct || 0),
+        };
+      });
 
       // Fetch Subjective Evaluations (Writing & Speaking)
       const subRes = await pool.query(
         `SELECT se.*, 
-                json_agg(json_build_object('criterionName', sec.criterion_name, 'score', sec.score, 'maxScore', sec.max_score, 'feedback', sec.feedback)) as criteria
+                COALESCE(
+                  json_agg(
+                    json_build_object(
+                      'criterionName', sec.criterion_name,
+                      'score', sec.score,
+                      'maxScore', sec.max_score,
+                      'feedback', sec.feedback
+                    )
+                  ) FILTER (WHERE sec.id IS NOT NULL),
+                  '[]'::json
+                ) as criteria
          FROM public.subjective_evaluations se
          LEFT JOIN public.subjective_evaluation_criteria sec ON se.id = sec.evaluation_id
          WHERE se.session_id = $1
-         GROUP BY se.id`,
+         GROUP BY se.id
+         ORDER BY se.created_at ASC`,
         [attemptId]
       );
 
       // Fetch Speaking Recordings
       const spkRes = await pool.query(
-        `SELECT * FROM public.speaking_recordings WHERE session_id = $1 ORDER BY created_at ASC`,
+        `SELECT * FROM public.speaking_recordings WHERE session_id = $1 ORDER BY part_number ASC, created_at ASC`,
         [attemptId]
       );
 
-      // Fetch Mock Answers if available
-      const answersMap: Record<string, any> = {};
-      subRes.rows.forEach((sub: any) => {
-        answersMap[sub.response_id || sub.id] = {
-          responsePayload: {
-            text: sub.raw_response_reference,
-            transcript: sub.transcript,
-            skill: sub.skill,
-            status: sub.status,
-            overallScore: sub.overall_score,
-            scoreLabel: sub.score_label,
-            feedback: sub.feedback,
-            criteria: sub.criteria,
-          },
-          isCorrect: sub.status === 'COMPLETED' ? sub.overall_score >= 6.0 : null,
-          timeSpentMs: 0,
-          updatedAt: sub.completed_at || sub.created_at,
+      const listeningQuestions: any[] = [];
+      const readingQuestions: any[] = [];
+      const writingQuestions: any[] = [];
+      const speakingQuestions: any[] = [];
+      const readingPassagesMap: Record<string, any> = {};
+
+      snapshotsRes.rows.forEach((row, idx) => {
+        const payload = row.snapshot_payload || {};
+        const qId = row.question_id || payload.questionId;
+        const ansObj = answersMap[qId];
+
+        const formattedItem = {
+          id: qId,
+          questionId: qId,
+          questionVersionId: row.question_version_id || payload.questionVersionId,
+          displayOrder: row.display_order || idx + 1,
+          code: payload.code || `Q-${idx + 1}`,
+          prompt: payload.prompt || '',
+          itemType: payload.itemType || 'MCQ',
+          difficulty: payload.difficulty || 'MEDIUM',
+          sectionName: payload.sectionName || 'Listening',
+          options: payload.options || [],
+          correctOptionCode:
+            payload.options?.find((o: any) => o.isCorrect)?.code ||
+            payload.correctOptionCode ||
+            'A',
+          acceptedAnswers: payload.acceptedAnswers || [],
+          audio: payload.audio || null,
+          passage: payload.passage || null,
+          group: payload.group || null,
+          candidateAnswer:
+            ansObj?.responsePayload?.studentAnswer ??
+            ansObj?.responsePayload?.selectedOption ??
+            ansObj?.responsePayload?.textResponse ??
+            ansObj?.responsePayload ??
+            null,
+          isAnswered: ansObj?.responsePayload?.isAnswered ?? ansObj !== undefined,
+          isCorrect: ansObj?.isCorrect ?? null,
+          timeSpentMs: ansObj?.timeSpentMs ?? 0,
+        };
+
+        const secName = (payload.sectionName || '').toLowerCase();
+        if (secName.includes('listen') || payload.audio) {
+          listeningQuestions.push(formattedItem);
+        } else if (secName.includes('read') || payload.passage) {
+          readingQuestions.push(formattedItem);
+          if (payload.passage?.id) {
+            readingPassagesMap[payload.passage.id] = payload.passage;
+          }
+        } else if (secName.includes('write') || payload.itemType === 'ESSAY') {
+          writingQuestions.push(formattedItem);
+        } else if (secName.includes('speak') || payload.speaking) {
+          speakingQuestions.push(formattedItem);
+        } else {
+          if (listeningQuestions.length < 40) listeningQuestions.push(formattedItem);
+          else if (readingQuestions.length < 40) readingQuestions.push(formattedItem);
+          else writingQuestions.push(formattedItem);
+        }
+      });
+
+      // Format writing tasks
+      const writingTasks = (
+        writingQuestions.length > 0
+          ? writingQuestions
+          : [
+              { id: 'wt1', prompt: 'Task 1: Academic Report', itemType: 'ESSAY' },
+              { id: 'wt2', prompt: 'Task 2: Discursive Essay', itemType: 'ESSAY' },
+            ]
+      ).map((wq, idx) => {
+        const taskNumber = idx + 1;
+        const matchingEval =
+          subRes.rows.find(
+            (s: any) =>
+              s.skill === 'Writing' &&
+              (s.question_id === wq.id ||
+                s.metadata?.taskType === `TASK_${taskNumber}` ||
+                s.response_id === `writing-task-${taskNumber}`)
+          ) || subRes.rows.filter((s: any) => s.skill === 'Writing')[idx];
+
+        const ansObj = answersMap[wq.id];
+        const submittedEssay =
+          matchingEval?.raw_response_reference ||
+          ansObj?.responsePayload?.textResponse ||
+          ansObj?.responsePayload?.studentAnswer ||
+          (typeof ansObj?.responsePayload === 'string' ? ansObj.responsePayload : '');
+
+        return {
+          id: wq.id,
+          taskNumber,
+          title: taskNumber === 1 ? 'Task 1: Academic Report' : 'Task 2: Discursive Essay',
+          prompt:
+            wq.prompt ||
+            matchingEval?.metadata?.taskPrompt ||
+            (taskNumber === 1 ? 'IELTS Academic Writing Task 1' : 'IELTS Academic Writing Task 2'),
+          minWords: taskNumber === 1 ? 150 : 250,
+          itemType: 'ESSAY',
+          studentEssay: submittedEssay,
+          aiEvaluation: matchingEval
+            ? {
+                status: matchingEval.status,
+                overallScore: matchingEval.overall_score
+                  ? parseFloat(matchingEval.overall_score)
+                  : null,
+                scoreLabel: matchingEval.score_label || null,
+                feedback: matchingEval.feedback || null,
+                gradingProvider: matchingEval.metadata?.grading_provider || 'gemini',
+                gradingModel: matchingEval.metadata?.grading_model || 'gemini-2.5-flash',
+                isFallback: Boolean(matchingEval.metadata?.is_fallback),
+                fallbackFrom: matchingEval.metadata?.fallback_from || null,
+                criteria: matchingEval.criteria || [],
+              }
+            : null,
         };
       });
 
-      // Assemble mock examination paper snapshot
-      const writingTasks = subRes.rows
-        .filter((s: any) => s.skill === 'Writing')
-        .map((s: any) => ({
-          id: s.response_id || s.id,
-          taskNumber: s.metadata?.taskType === 'TASK_1' ? 1 : 2,
-          title:
-            s.metadata?.taskType === 'TASK_1'
-              ? 'Task 1: Academic Report'
-              : 'Task 2: Discursive Essay',
-          prompt: s.metadata?.taskPrompt || 'IELTS Academic Writing Task',
-          minWords: s.metadata?.taskType === 'TASK_1' ? 150 : 250,
-          itemType: 'ESSAY',
-          aiEvaluation: {
-            status: s.status,
-            overallScore: s.overall_score,
-            scoreLabel: s.score_label,
-            feedback: s.feedback,
-            criteria: s.criteria,
-          },
-        }));
+      // Format speaking items
+      const speakingItems = (
+        speakingQuestions.length > 0
+          ? speakingQuestions
+          : [
+              { id: 'spk1', prompt: 'Part 1: Introduction' },
+              { id: 'spk2', prompt: 'Part 2: Long Turn' },
+              { id: 'spk3', prompt: 'Part 3: Discussion' },
+            ]
+      ).map((sq, idx) => {
+        const partNumber = idx + 1;
+        const rec =
+          spkRes.rows.find((r: any) => r.part_number === partNumber || r.question_id === sq.id) ||
+          spkRes.rows[idx];
+        const matchingEval =
+          subRes.rows.find(
+            (s: any) =>
+              s.skill === 'Speaking' &&
+              (s.question_id === sq.id ||
+                s.metadata?.partNumber === partNumber ||
+                s.response_id === `speaking-part-${partNumber}`)
+          ) || subRes.rows.filter((s: any) => s.skill === 'Speaking')[idx];
 
-      const speakingItems = spkRes.rows.map((spk: any, idx: number) => ({
-        id: spk.id,
-        partNumber: spk.part_number || idx + 1,
-        questionId: spk.question_id,
-        audioUrl: spk.audio_url,
-        durationSeconds: spk.duration_seconds,
-        createdAt: spk.created_at,
-      }));
+        const ansObj = answersMap[sq.id];
+        const transcript =
+          matchingEval?.transcript ||
+          matchingEval?.raw_response_reference ||
+          ansObj?.responsePayload?.transcript ||
+          ansObj?.responsePayload?.textResponse ||
+          '';
+
+        return {
+          id: sq.id,
+          partNumber,
+          prompt: sq.prompt,
+          transcript,
+          audioUrl: rec?.audio_url || null,
+          durationSeconds: rec?.duration_seconds || 0,
+          aiEvaluation: matchingEval
+            ? {
+                status: matchingEval.status,
+                overallScore: matchingEval.overall_score
+                  ? parseFloat(matchingEval.overall_score)
+                  : null,
+                scoreLabel: matchingEval.score_label || null,
+                feedback: matchingEval.feedback || null,
+                gradingProvider: matchingEval.metadata?.grading_provider || 'gemini',
+                gradingModel: matchingEval.metadata?.grading_model || 'gemini-2.5-flash',
+                isFallback: Boolean(matchingEval.metadata?.is_fallback),
+                fallbackFrom: matchingEval.metadata?.fallback_from || null,
+                criteria: matchingEval.criteria || [],
+              }
+            : null,
+        };
+      });
+
+      // Reading Passage
+      const defaultPassage = Object.values(readingPassagesMap)[0] || {
+        title: 'IELTS Academic Reading',
+        content: 'Reading section recorded in canonical mock examination package.',
+      };
 
       const mockPaperSnapshot = {
         snapshotVersion: 1,
@@ -301,12 +494,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           title: `${ms.exam_type || 'IELTS Academic'} Official Mock Examination`,
           durationMinutes: 165,
         },
-        grammarQuestions: [],
+        grammarQuestions: listeningQuestions,
+        listeningQuestions,
         readingPassage: {
-          title: 'IELTS Academic Mock Reading Section (3 Passages)',
-          content: 'Reading section recorded in canonical mock examination package.',
-          comprehensionQuestions: [],
+          title: defaultPassage.title || 'IELTS Academic Mock Reading Section',
+          content: defaultPassage.content || 'Reading passage captured from session snapshots.',
+          comprehensionQuestions: readingQuestions,
         },
+        readingPassages: Object.values(readingPassagesMap),
         writingTasks,
         speakingItems,
       };
@@ -326,12 +521,31 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                 payload: {
                   scorePercentage: ms.score_percentage,
                   officialScoreLabel: ms.official_score_label,
+                  evaluationState: ms.evaluation_state,
                 },
                 timestamp: ms.submitted_at,
               },
             ]
           : []),
+        ...subRes.rows.map((s: any) => ({
+          id: `eval-${s.id}`,
+          eventType: `AI_EVALUATION_${s.status}`,
+          payload: {
+            skill: s.skill,
+            score: s.overall_score,
+            provider: s.metadata?.grading_provider,
+            model: s.metadata?.grading_model,
+            isFallback: s.metadata?.is_fallback,
+          },
+          timestamp: s.completed_at || s.failed_at || s.created_at,
+        })),
       ];
+
+      const overallBand = mr?.official_scaled_score
+        ? parseFloat(mr.official_scaled_score)
+        : ms.official_scaled_score
+          ? parseFloat(ms.official_scaled_score)
+          : 0;
 
       return NextResponse.json({
         success: true,
@@ -341,8 +555,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             studentId: ms.student_id,
             studentName: ms.student_name || 'Candidate',
             studentEmail: ms.student_email || 'student@clasptek.ai',
+            candidateNumber: `CGA-${ms.student_id.slice(0, 8).toUpperCase()}`,
             status: ms.status,
+            evaluationState: ms.evaluation_state,
             score: parseFloat(ms.score_percentage || '0'),
+            officialScaledScore: overallBand,
+            officialScoreLabel:
+              ms.official_score_label ||
+              (overallBand ? `Band ${overallBand.toFixed(1)}` : 'Pending Evaluation'),
             durationMinutes: ms.time_remaining_seconds
               ? Math.round((9900 - ms.time_remaining_seconds) / 60)
               : 165,
@@ -351,42 +571,69 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             expiresAt: ms.expires_at,
           },
           result: {
-            overallScore: parseFloat(mr?.official_scaled_score || ms.official_scaled_score || '0'),
-            cefrLevel: mr?.cefr_level || 'B2',
+            overallScore: overallBand,
+            cefrLevel:
+              mr?.cefr_level || (overallBand >= 7.5 ? 'C1' : overallBand >= 5.5 ? 'B2' : 'B1'),
             predictedBand:
-              mr?.official_score_label || ms.official_score_label || 'Pending Evaluation',
-            placementLevel: 'MOCK_EXAMINATION',
+              mr?.official_score_label ||
+              ms.official_score_label ||
+              (overallBand ? `Band ${overallBand.toFixed(1)}` : 'Pending Evaluation'),
+            placementLevel: 'OFFICIAL_MOCK_EXAMINATION',
             recommendedCourse: 'IELTS Academic Masterclass',
             recommendedDuration: '8 Weeks',
             sectionScores: [
               {
                 sectionCode: 'Listening',
                 sectionName: 'Listening Comprehension',
-                scorePercentage: parseFloat(ms.score_percentage || '0'),
+                scorePercentage:
+                  listeningQuestions.length > 0
+                    ? Math.round(
+                        (listeningQuestions.filter((q) => q.isCorrect).length /
+                          listeningQuestions.length) *
+                          100
+                      )
+                    : 0,
+                rawScore: listeningQuestions.filter((q) => q.isCorrect).length,
               },
               {
                 sectionCode: 'Reading',
                 sectionName: 'Academic Reading',
-                scorePercentage: parseFloat(ms.score_percentage || '0'),
+                scorePercentage:
+                  readingQuestions.length > 0
+                    ? Math.round(
+                        (readingQuestions.filter((q) => q.isCorrect).length /
+                          readingQuestions.length) *
+                          100
+                      )
+                    : 0,
+                rawScore: readingQuestions.filter((q) => q.isCorrect).length,
               },
               {
                 sectionCode: 'Writing',
                 sectionName: 'Academic Writing',
-                scorePercentage: parseFloat(ms.score_percentage || '0'),
-                evaluationState: ms.evaluation_state,
+                scorePercentage: writingTasks[0]?.aiEvaluation?.overallScore
+                  ? writingTasks[0].aiEvaluation.overallScore * 10
+                  : 0,
+                scaledScore: writingTasks[0]?.aiEvaluation?.overallScore || 0,
+                evaluationState: writingTasks[0]?.aiEvaluation?.status || ms.evaluation_state,
               },
               {
                 sectionCode: 'Speaking',
                 sectionName: 'Speaking Evaluation',
-                scorePercentage: parseFloat(ms.score_percentage || '0'),
-                evaluationState: ms.evaluation_state,
+                scorePercentage: speakingItems[0]?.aiEvaluation?.overallScore
+                  ? speakingItems[0].aiEvaluation.overallScore * 10
+                  : 0,
+                scaledScore: speakingItems[0]?.aiEvaluation?.overallScore || 0,
+                evaluationState: speakingItems[0]?.aiEvaluation?.status || ms.evaluation_state,
               },
             ],
-            strengths: ['Official Exam Timing Adherence'],
+            strengths: ['Official Test Timing & Protocol Adherence'],
             weaknesses:
               ms.evaluation_state === 'EVALUATING' ? ['Subjective Evaluation Pending'] : [],
             aiFeedback: {
-              summary: ms.official_score_label || 'Mock session recorded. AI evaluation active.',
+              summary:
+                ms.official_score_label ||
+                'Mock examination session recorded. AI evaluation active.',
               nextSteps: 'Review section-level feedback and recommended practice units.',
             },
           },

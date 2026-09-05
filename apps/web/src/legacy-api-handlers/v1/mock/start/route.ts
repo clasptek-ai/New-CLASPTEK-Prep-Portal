@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { getDiagnosticContext } from '@/lib/diagnostic-context';
 import { getAuthenticatedSession } from '@/lib/auth-util';
-import { getStudentAssessmentState } from '@/lib/student-assessment-state';
+
 import { PostgresCanonicalMockRepository } from '@clasptek/persistence';
 import { randomUUID } from 'crypto';
 
@@ -102,18 +102,7 @@ export async function POST(req: NextRequest) {
     );
 
     if (!isStaffOrAdmin) {
-      // 2a. Pre-Assessment Gating: Student must complete Pre-Assessment before starting a Mock Exam
-      const assessmentState = await getStudentAssessmentState(pool, studentId);
-      if (!assessmentState.hasCompletedPreAssessment) {
-        return NextResponse.json(
-          {
-            error: 'PRE_ASSESSMENT_REQUIRED',
-            message: 'You must complete your diagnostic Pre-Assessment before attempting Mock Examinations.',
-            preAssessmentState: assessmentState.state,
-          },
-          { status: 403 }
-        );
-      }
+      // 2a. Programme Authorization — students must be enrolled in a matching programme
       const enrolledNames: string[] = userRow?.enrolled_product_names || [];
       const enrolledCodes: string[] = userRow?.enrolled_product_codes || [];
       const targetProgramme = userRow?.target_programme || userRow?.raw_user_meta_data?.programme;
@@ -221,7 +210,8 @@ export async function POST(req: NextRequest) {
     });
 
     // 7. Save question snapshots
-    await mockRepo.saveMockQuestionSnapshots(sessionId, mockQuestions);
+    const bpVersion = bp.versionNo ? `v${bp.versionNo}.0` : 'v1.0';
+    await mockRepo.saveMockQuestionSnapshots(sessionId, mockQuestions, bpVersion);
 
     // Group questions by section for player rendering
     const sections = bp.sections.map((sec: any) => ({

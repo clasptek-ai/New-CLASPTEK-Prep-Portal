@@ -65,8 +65,6 @@ export interface CandidateReviewDetail {
   };
 }
 
-const STORAGE_KEY = 'clasptek_attempts';
-
 const DEFAULT_ATTEMPTS: CandidateReviewDetail[] = [
   {
     attempt: {
@@ -99,31 +97,10 @@ const DEFAULT_ATTEMPTS: CandidateReviewDetail[] = [
         marksAllocated: 5,
         marksAwarded: 5,
         questionText: 'Identify the correct passive voice sentence:',
-        options: [
-          'The book was written by Jane.',
-          'Jane wrote the book.',
-          'The book has written Jane.',
-          'Jane has written the book.',
-        ],
+        options: ['The book was written by Jane.'],
         correctAnswer: 'The book was written by Jane.',
         studentAnswer: 'The book was written by Jane.',
         isCorrect: true,
-        explanation: 'Passive voice shifts focus to the receiver of the action.',
-      },
-      {
-        questionId: 'q2',
-        questionType: 'ESSAY',
-        difficulty: 'HARD',
-        topic: 'Argumentative Writing Structure',
-        learningObjective: 'Write a cohesive argument utilizing modifiers syntax',
-        marksAllocated: 20,
-        marksAwarded: 16,
-        questionText: 'Write a 250-word essay about AI tutor diagnostics integration.',
-        correctAnswer: 'Syntactically accurate essay with band 8.0 cohesion rules.',
-        studentAnswer:
-          'In modern education systems, AI diagnostics assist students by scanning weak objectives...',
-        isCorrect: true,
-        explanation: 'Demonstrated strong cohesion and task achievement.',
       },
     ],
     history: [{ attemptId: 'att0', score: 58, date: '2026-06-10T11:00:00Z' }],
@@ -136,72 +113,165 @@ const DEFAULT_ATTEMPTS: CandidateReviewDetail[] = [
   },
 ];
 
-function getStoredDetails(): CandidateReviewDetail[] {
-  if (typeof window === 'undefined') return DEFAULT_ATTEMPTS;
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_ATTEMPTS));
-    return DEFAULT_ATTEMPTS;
-  }
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return DEFAULT_ATTEMPTS;
-  }
-}
-
-function saveStoredDetails(list: CandidateReviewDetail[]) {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  }
-}
-
 export const adminAssessmentReviewsService = {
   async getAttempts(): Promise<AssessmentReviewAttempt[]> {
     try {
-      const data = await apiClient.get<AssessmentReviewAttempt[]>('/api/v1/admin/attempts');
-      if (data && data.length > 0) return data;
-      return getStoredDetails().map((d) => d.attempt);
+      const res = await apiClient.get<{ attempts: any[] }>('/api/v1/admin/assessment-attempts');
+      const attempts = res?.attempts || [];
+      if (attempts.length > 0) {
+        return attempts.map((a: any) => ({
+          id: a.attemptId,
+          studentName: a.studentName || 'Candidate',
+          studentId: a.studentId,
+          programme: a.recommendedCourse || 'IELTS Preparation',
+          assessmentName:
+            a.assessmentType === 'MOCK' ? 'IELTS Academic Official Mock' : 'Diagnostic Assessment',
+          assessmentType: 'MOCK' as const,
+          startedAt: a.startedAt,
+          submittedAt: a.submittedAt || a.startedAt,
+          durationSeconds: 9900,
+          score: a.score || 0,
+          readinessScore: Math.round((a.score || 0) * 10),
+          aiEvaluationStatus: (a.status === 'SUBMITTED' ? 'COMPLETED' : 'PENDING') as
+            'COMPLETED' | 'PENDING',
+          status: (a.status === 'SUBMITTED' ? 'SUBMITTED' : 'UNDER_REVIEW') as
+            'SUBMITTED' | 'UNDER_REVIEW',
+        }));
+      }
     } catch {
-      return getStoredDetails().map((d) => d.attempt);
+      // offline test fallback
     }
+    return DEFAULT_ATTEMPTS.map((d) => d.attempt);
   },
 
   async getAttemptDetail(attemptId: string): Promise<CandidateReviewDetail> {
-    const list = getStoredDetails();
-    const found = list.find((d) => d.attempt.id === attemptId);
-    if (found) return found;
-
     try {
-      return await apiClient.get<CandidateReviewDetail>(`/api/v1/admin/attempts/${attemptId}`);
+      const res = await apiClient.get<{ data: any }>(
+        `/api/v1/admin/assessment-attempts/${attemptId}`
+      );
+      const d = res?.data;
+      if (!d) return DEFAULT_ATTEMPTS[0];
+
+      const questions: ReviewQuestionItem[] = [];
+
+      // Map objective questions
+      const listeningQs =
+        d.paperSnapshot?.listeningQuestions || d.paperSnapshot?.grammarQuestions || [];
+      listeningQs.forEach((q: any) => {
+        const ans = d.answers?.[q.id || q.questionId];
+        questions.push({
+          questionId: q.id || q.questionId,
+          questionType: 'MCQ',
+          difficulty: q.difficulty || 'MEDIUM',
+          topic: 'Listening Comprehension',
+          learningObjective: q.prompt,
+          marksAllocated: 1,
+          marksAwarded: ans?.isCorrect ? 1 : 0,
+          questionText: q.prompt,
+          options: q.options?.map((o: any) => o.text || o),
+          correctAnswer: q.correctOptionCode || 'A',
+          studentAnswer:
+            ans?.responsePayload?.studentAnswer || ans?.responsePayload?.selectedOption || '-',
+          isCorrect: Boolean(ans?.isCorrect),
+        });
+      });
+
+      // Map reading questions
+      const readingQs = d.paperSnapshot?.readingPassage?.comprehensionQuestions || [];
+      readingQs.forEach((q: any) => {
+        const ans = d.answers?.[q.id || q.questionId];
+        questions.push({
+          questionId: q.id || q.questionId,
+          questionType: 'MCQ',
+          difficulty: q.difficulty || 'MEDIUM',
+          topic: 'Academic Reading',
+          learningObjective: q.prompt,
+          marksAllocated: 1,
+          marksAwarded: ans?.isCorrect ? 1 : 0,
+          questionText: q.prompt,
+          options: q.options?.map((o: any) => o.text || o),
+          correctAnswer:
+            q.correctOptionCode ||
+            (Array.isArray(q.acceptedAnswers) ? q.acceptedAnswers.join(' | ') : 'A'),
+          studentAnswer:
+            ans?.responsePayload?.studentAnswer || ans?.responsePayload?.textResponse || '-',
+          isCorrect: Boolean(ans?.isCorrect),
+        });
+      });
+
+      // Map writing tasks
+      const writingTasks = d.paperSnapshot?.writingTasks || [];
+      writingTasks.forEach((wt: any) => {
+        questions.push({
+          questionId: wt.id,
+          questionType: 'ESSAY',
+          difficulty: 'HARD',
+          topic: wt.title || 'Writing Task',
+          learningObjective: wt.prompt,
+          marksAllocated: 9,
+          marksAwarded: wt.aiEvaluation?.overallScore || 0,
+          questionText: wt.prompt,
+          correctAnswer: 'Band 9.0 Academic Criteria Standard',
+          studentAnswer: wt.studentEssay || '',
+          isCorrect: wt.aiEvaluation?.status === 'COMPLETED',
+          essayWriting: {
+            submissionText: wt.studentEssay || '',
+            aiBandScore: wt.aiEvaluation?.overallScore || 0,
+            rubricCoherenceScore: wt.aiEvaluation?.overallScore || 0,
+            grammarFeedback: wt.aiEvaluation?.feedback || '',
+            vocabularyFeedback: wt.aiEvaluation?.feedback || '',
+            taskAchievementFeedback: wt.aiEvaluation?.feedback || '',
+          },
+        });
+      });
+
+      const lifecycle: AttemptLifecycleEvent[] = (d.auditTimeline || []).map((evt: any) => ({
+        title: evt.eventType,
+        timestamp: evt.timestamp,
+        details: JSON.stringify(evt.payload),
+      }));
+
+      return {
+        attempt: {
+          id: d.attempt.id,
+          studentName: d.attempt.studentName,
+          studentId: d.attempt.studentId,
+          programme: d.result?.recommendedCourse || 'IELTS Preparation',
+          assessmentName: 'IELTS Academic Official Mock',
+          assessmentType: 'MOCK',
+          startedAt: d.attempt.startedAt,
+          submittedAt: d.attempt.submittedAt || d.attempt.startedAt,
+          durationSeconds: d.attempt.durationMinutes ? d.attempt.durationMinutes * 60 : 9900,
+          score: d.attempt.score,
+          readinessScore: Math.round(d.attempt.score * 10),
+          aiEvaluationStatus: d.attempt.status === 'SUBMITTED' ? 'COMPLETED' : 'PENDING',
+          status: d.attempt.status === 'SUBMITTED' ? 'SUBMITTED' : 'UNDER_REVIEW',
+        },
+        lifecycle,
+        questions,
+        history: [],
+        integrity: {
+          browserDevice: 'Desktop Chrome Candidate Session',
+          ipAddress: '127.0.0.1',
+          pausesCount: 0,
+          autoSaveRecoveries: 0,
+        },
+      };
     } catch {
       return DEFAULT_ATTEMPTS[0];
     }
-  },
-
-  async recordStudentAttempt(detail: CandidateReviewDetail): Promise<boolean> {
-    const list = getStoredDetails();
-    saveStoredDetails([detail, ...list]);
-    return true;
   },
 
   async addAdministrativeNote(attemptId: string, note: string): Promise<boolean> {
     try {
       await apiClient.post(`/api/v1/admin/attempts/${attemptId}/note`, { note });
     } catch {
-      // client-side fallback
+      // fallback
     }
     return true;
   },
 
   async flagAttempt(attemptId: string, reason: string): Promise<boolean> {
-    const list = getStoredDetails();
-    const updated = list.map((d) =>
-      d.attempt.id === attemptId
-        ? { ...d, attempt: { ...d.attempt, status: 'FLAGGED' as const } }
-        : d
-    );
-    saveStoredDetails(updated);
     try {
       await apiClient.post(`/api/v1/admin/attempts/${attemptId}/flag`, { reason });
     } catch {

@@ -10,8 +10,8 @@ export async function GET(req: NextRequest) {
     const session = await getAuthenticatedSession(req);
 
     // Verify Admin or Instructor role
-    const isStaff = session?.roles.some((r) =>
-      ['ADMINISTRATOR', 'ADMIN', 'INSTRUCTOR', 'STAFF'].includes(r.toUpperCase())
+    const isStaff = session?.roles?.some((r) =>
+      ['SUPER_ADMIN', 'ADMINISTRATOR', 'ADMIN', 'INSTRUCTOR', 'STAFF'].includes(r.toUpperCase())
     );
 
     if (!isStaff && process.env.NODE_ENV !== 'development') {

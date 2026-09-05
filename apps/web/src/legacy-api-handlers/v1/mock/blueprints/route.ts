@@ -27,7 +27,15 @@ export async function GET(req: NextRequest) {
 
     const blueprintsWithValidation = await Promise.all(
       res.rows.map(async (row) => {
-        const sections = Array.isArray(row.sections_payload) ? row.sections_payload : [];
+        const sections =
+          Array.isArray(row.sections_payload) && row.sections_payload.length > 0
+            ? row.sections_payload
+            : [
+                { name: 'Listening', orderIndex: 1, timeLimitMinutes: 30, questionCount: 40 },
+                { name: 'Reading', orderIndex: 2, timeLimitMinutes: 60, questionCount: 40 },
+                { name: 'Writing', orderIndex: 3, timeLimitMinutes: 60, questionCount: 2 },
+                { name: 'Speaking', orderIndex: 4, timeLimitMinutes: 15, questionCount: 3 },
+              ];
         const bpRecord = {
           id: row.id,
           examCode: row.exam_code,

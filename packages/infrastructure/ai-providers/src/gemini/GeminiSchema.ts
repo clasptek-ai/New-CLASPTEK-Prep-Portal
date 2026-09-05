@@ -107,3 +107,11 @@ export const GeminiEvaluationSchema = z.object({
 });
 
 export type GeminiEvaluationOutput = z.infer<typeof GeminiEvaluationSchema>;
+
+/**
+ * Deterministic IELTS band rounding:
+ * Round to nearest 0.5. Ties (.25 and .75) round up to the next half or whole band.
+ */
+export function roundToHalfBand(score: number): number {
+  return Math.round(score * 2) / 2;
+}

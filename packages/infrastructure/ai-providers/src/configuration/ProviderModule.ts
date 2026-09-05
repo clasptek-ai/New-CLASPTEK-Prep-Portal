@@ -68,8 +68,17 @@ export class ProviderModule {
     env: Record<string, string | undefined> = process.env
   ): string {
     const configured = env.AI_GRADING_PROVIDER?.trim()?.toUpperCase();
-    if (configured === 'OPENAI' || configured === 'GEMINI' || configured === 'MOCK') {
+    if (configured === 'OPENAI' || configured === 'GEMINI') {
       return configured;
+    }
+    if (configured === 'MOCK') {
+      if (env.NODE_ENV !== 'production') {
+        return 'MOCK';
+      }
+      console.warn(
+        '[PROVIDER_MODULE] MOCK provider rejected in production environment. Forcing GEMINI.'
+      );
+      return 'GEMINI';
     }
     // Default to GEMINI for production
     return 'GEMINI';
