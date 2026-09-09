@@ -1066,18 +1066,100 @@ export class PostgresCanonicalMockRepository {
     }));
   }
 
+  /**
+   * Evaluate a student's objective answer for a given question version.
+   *
+   * Strategy:
+   * 1. For MCQ-style types (MULTIPLE_CHOICE, MATCHING, MAP_LABELLING, etc.):
+   *    - Check answer_options table first (is_correct flag)
+   *    - Fall back to payload.correctAnswer if no answer_options record exists
+   * 2. For all text-completion types (FORM_COMPLETION, NOTE_COMPLETION, TFNG, etc.):
+   *    - Use payload.correctAnswer and payload.acceptedAnswers with safe normalization
+   *    - Normalization: trim + lowercase + collapse whitespace ONLY
+   *    - Hyphens, apostrophes, and spaces are preserved (not stripped)
+   * 3. If no answer key exists anywhere: return false (NEVER auto-correct as A or B)
+   *
+   * SECURITY: answer keys are never sent to the client. This is the authoritative
+   * server-side evaluator. Client-side evaluation is for UX only and must not be trusted.
+   */
   public async evaluateObjectiveAnswer(
     questionVersionId: string,
-    userOptionCode: string
+    userAnswer: string,
+    itemType?: string
   ): Promise<boolean> {
-    const res = await this.pool.query(
-      `SELECT is_correct FROM public.answer_options
-       WHERE question_version_id = $1 AND option_code = $2 LIMIT 1`,
-      [questionVersionId, userOptionCode]
+    // Reject empty answers immediately
+    if (!userAnswer || userAnswer.trim() === '') return false;
+
+    const MCQ_STYLE_TYPES = new Set([
+      'MULTIPLE_CHOICE', 'MCQ', 'MATCHING', 'MAP_LABELLING',
+      'MATCHING_HEADINGS', 'MATCHING_INFORMATION', 'MATCHING_FEATURES',
+      'MATCHING_SENTENCE_ENDINGS',
+    ]);
+
+    const upperType = (itemType || '').toUpperCase();
+    const isMCQStyle = MCQ_STYLE_TYPES.has(upperType);
+
+    // Safe text normalization: trim + lowercase + collapse whitespace only
+    const normalizeAnswer = (text: string): string =>
+      text.trim().toLowerCase().replace(/\s+/g, ' ');
+
+    const normUser = normalizeAnswer(userAnswer);
+
+    // --- MCQ-style: try answer_options table first ---
+    if (isMCQStyle || !upperType) {
+      const optRes = await this.pool.query(
+        `SELECT is_correct FROM public.answer_options
+         WHERE question_version_id = $1 AND LOWER(option_code) = LOWER($2) LIMIT 1`,
+        [questionVersionId, userAnswer.trim()]
+      );
+      if (optRes.rows.length > 0) {
+        return optRes.rows[0].is_correct === true;
+      }
+      // answer_options not found — fall through to payload check
+    }
+
+    // --- All types: check payload.correctAnswer and payload.acceptedAnswers ---
+    const payloadRes = await this.pool.query(
+      `SELECT payload->>'correctAnswer' AS correct_answer,
+              payload->'acceptedAnswers' AS accepted_answers
+       FROM public.question_versions
+       WHERE id = $1 LIMIT 1`,
+      [questionVersionId]
     );
 
-    if (res.rows.length === 0) return userOptionCode === 'A' || userOptionCode === 'B';
-    return res.rows[0].is_correct === true;
+    if (payloadRes.rows.length === 0) {
+      // Question version not found — fail safely, never auto-mark correct
+      console.warn(
+        `[EVAL_WARN] No question_version found for id=${questionVersionId}. Returning false.`
+      );
+      return false;
+    }
+
+    const { correct_answer, accepted_answers } = payloadRes.rows[0];
+
+    if (!correct_answer) {
+      // No answer key stored — fail safely (NEVER return A/B fallback)
+      console.warn(
+        `[EVAL_WARN] No correctAnswer in payload for qvId=${questionVersionId} type=${upperType}. Returning false.`
+      );
+      return false;
+    }
+
+    // Check correctAnswer
+    if (normalizeAnswer(correct_answer) === normUser) return true;
+
+    // Check acceptedAnswers array
+    if (accepted_answers) {
+      const acceptedArr: string[] = Array.isArray(accepted_answers)
+        ? accepted_answers
+        : JSON.parse(typeof accepted_answers === 'string' ? accepted_answers : JSON.stringify(accepted_answers));
+
+      for (const aa of acceptedArr) {
+        if (typeof aa === 'string' && normalizeAnswer(aa) === normUser) return true;
+      }
+    }
+
+    return false;
   }
 
   public async updateMockSessionResult(

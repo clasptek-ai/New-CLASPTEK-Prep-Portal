@@ -120,79 +120,221 @@ export function ListeningSectionEngine({
 
   // Determine input type based on question type
   const renderInput = (q: ListeningQuestion) => {
-    const hasOptions = q.options && q.options.length > 0;
+    const rawType = (q.type || '').toUpperCase().trim();
+    const currentAnswer = answers[q.id] || '';
 
-    if (hasOptions) {
-      // MCQ or dropdown-style
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {q.options!.map((opt, i) => {
-            const code = q.optionCodes?.[i] || String.fromCharCode(65 + i);
-            const isSelected = answers[q.id] === code;
-            return (
-              <div
-                key={i}
-                onClick={() => onAnswer(q.id, code)}
-                style={{
-                  padding: '0.65rem 1rem',
-                  borderRadius: '8px',
-                  backgroundColor: isSelected ? 'rgba(139, 92, 246, 0.15)' : '#1e293b',
-                  border: `1px solid ${isSelected ? '#8b5cf6' : 'rgba(255, 255, 255, 0.08)'}`,
-                  color: isSelected ? '#a78bfa' : '#f8fafc',
-                  fontWeight: isSelected ? 700 : 500,
-                  fontSize: '0.9rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.65rem',
-                  transition: 'all 0.15s',
-                }}
-              >
-                <div
-                  style={{
-                    width: '22px',
-                    height: '22px',
-                    borderRadius: '50%',
-                    border: `2px solid ${isSelected ? '#8b5cf6' : '#475569'}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    fontSize: '0.7rem',
-                    fontWeight: 800,
-                    color: isSelected ? '#8b5cf6' : '#64748b',
-                  }}
-                >
-                  {code}
-                </div>
-                <span>{opt}</span>
-              </div>
-            );
-          })}
-        </div>
-      );
+    // Normalize options if present
+    const normalizedOptions: { code: string; text: string }[] = (q.options || []).map((opt: any, i: number) => {
+      if (typeof opt === 'object' && opt !== null) {
+        return {
+          code: opt.code || q.optionCodes?.[i] || String.fromCharCode(65 + i),
+          text: opt.text || opt.label || '',
+        };
+      }
+      return {
+        code: q.optionCodes?.[i] || String.fromCharCode(65 + i),
+        text: String(opt),
+      };
+    });
+
+    // ── 1. MAP LABELLING / PLAN / DIAGRAM ─────────────────────────────────
+    if (rawType === 'MAP_LABELLING' || rawType === 'PLAN_MAP_DIAGRAM') {
+      if (normalizedOptions.length > 0) {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}>
+            <div style={{ fontSize: '0.78rem', color: '#c4b5fd', fontWeight: 600 }}>
+              Select the correct location label from the map:
+            </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '0.6rem',
+              }}
+            >
+              {normalizedOptions.map((opt) => {
+                const isSelected = currentAnswer.toUpperCase() === opt.code.toUpperCase();
+                return (
+                  <div
+                    key={opt.code}
+                    onClick={() => onAnswer(q.id, opt.code)}
+                    style={{
+                      padding: '0.65rem 0.85rem',
+                      borderRadius: '8px',
+                      backgroundColor: isSelected ? 'rgba(139, 92, 246, 0.25)' : '#1e293b',
+                      border: `2px solid ${isSelected ? '#8b5cf6' : 'rgba(255, 255, 255, 0.08)'}`,
+                      color: isSelected ? '#c4b5fd' : '#f8fafc',
+                      fontWeight: isSelected ? 700 : 500,
+                      fontSize: '0.88rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.65rem',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '26px',
+                        height: '26px',
+                        borderRadius: '6px',
+                        border: `2px solid ${isSelected ? '#8b5cf6' : '#475569'}`,
+                        backgroundColor: isSelected ? '#8b5cf6' : 'rgba(255, 255, 255, 0.05)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        fontSize: '0.75rem',
+                        fontWeight: 800,
+                        color: isSelected ? '#ffffff' : '#94a3b8',
+                      }}
+                    >
+                      {opt.code}
+                    </div>
+                    <span style={{ fontSize: '0.85rem' }}>{opt.text}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      }
     }
 
-    // Short answer / completion / fill-in-the-blank
+    // ── 2. MATCHING ─────────────────────────────────────────────────────
+    if (rawType === 'MATCHING') {
+      if (normalizedOptions.length > 0) {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <div style={{ fontSize: '0.78rem', color: '#c4b5fd', fontWeight: 600 }}>
+              Select the matching option:
+            </div>
+            {normalizedOptions.map((opt) => {
+              const isSelected = currentAnswer.toUpperCase() === opt.code.toUpperCase();
+              return (
+                <div
+                  key={opt.code}
+                  onClick={() => onAnswer(q.id, opt.code)}
+                  style={{
+                    padding: '0.65rem 1rem',
+                    borderRadius: '8px',
+                    backgroundColor: isSelected ? 'rgba(139, 92, 246, 0.2)' : '#1e293b',
+                    border: `1px solid ${isSelected ? '#8b5cf6' : 'rgba(255, 255, 255, 0.08)'}`,
+                    color: isSelected ? '#a78bfa' : '#f8fafc',
+                    fontWeight: isSelected ? 700 : 500,
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? '#8b5cf6' : '#475569'}`,
+                      backgroundColor: isSelected ? '#8b5cf6' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      color: isSelected ? '#ffffff' : '#64748b',
+                    }}
+                  >
+                    {opt.code}
+                  </div>
+                  <span>{opt.text}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+    }
+
+    // ── 3. MULTIPLE CHOICE / MCQ ────────────────────────────────────────
+    if (rawType === 'MULTIPLE_CHOICE' || rawType === 'MCQ' || normalizedOptions.length > 0) {
+      if (normalizedOptions.length > 0) {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+            {normalizedOptions.map((opt) => {
+              const isSelected = currentAnswer.toUpperCase() === opt.code.toUpperCase();
+              return (
+                <div
+                  key={opt.code}
+                  onClick={() => onAnswer(q.id, opt.code)}
+                  style={{
+                    padding: '0.65rem 1rem',
+                    borderRadius: '8px',
+                    backgroundColor: isSelected ? 'rgba(139, 92, 246, 0.2)' : '#1e293b',
+                    border: `1px solid ${isSelected ? '#8b5cf6' : 'rgba(255, 255, 255, 0.08)'}`,
+                    color: isSelected ? '#a78bfa' : '#f8fafc',
+                    fontWeight: isSelected ? 700 : 500,
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? '#8b5cf6' : '#475569'}`,
+                      backgroundColor: isSelected ? '#8b5cf6' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      color: isSelected ? '#ffffff' : '#64748b',
+                    }}
+                  >
+                    {opt.code}
+                  </div>
+                  <span>{opt.text}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+    }
+
+    // ── 4. COMPLETION / SHORT ANSWER / GAP FILL ──────────────────────────
     return (
-      <input
-        type="text"
-        value={answers[q.id] || ''}
-        onChange={(e) => onAnswer(q.id, e.target.value)}
-        placeholder="Type your answer..."
-        style={{
-          width: '100%',
-          backgroundColor: '#1e293b',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          borderRadius: '8px',
-          padding: '0.65rem 1rem',
-          color: '#f8fafc',
-          fontSize: '0.95rem',
-          fontFamily: 'inherit',
-          boxSizing: 'border-box',
-          outline: 'none',
-        }}
-      />
+      <div style={{ marginTop: '0.5rem' }}>
+        <input
+          type="text"
+          value={currentAnswer}
+          onChange={(e) => onAnswer(q.id, e.target.value)}
+          placeholder="Type your answer..."
+          style={{
+            width: '100%',
+            backgroundColor: '#1e293b',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: '8px',
+            padding: '0.75rem 1rem',
+            color: '#f8fafc',
+            fontSize: '0.95rem',
+            fontFamily: 'inherit',
+            boxSizing: 'border-box',
+            outline: 'none',
+            transition: 'border-color 0.15s ease',
+          }}
+          onFocus={(e) => (e.target.style.borderColor = '#8b5cf6')}
+          onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)')}
+        />
+      </div>
     );
   };
 

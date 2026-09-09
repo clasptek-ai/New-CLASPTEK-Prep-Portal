@@ -286,30 +286,80 @@ export class PostgresCanonicalPracticeRepository {
 
   public async evaluateObjectiveAnswer(
     questionVersionId: string,
-    userOptionCode: string
+    userOptionCode: string,
+    itemType?: string
   ): Promise<{ isCorrect: boolean; explanation?: string }> {
-    const res = await this.pool.query(
-      `SELECT is_correct FROM public.answer_options 
-       WHERE question_version_id = $1 AND option_code = $2 LIMIT 1`,
-      [questionVersionId, userOptionCode]
-    );
+    const MCQ_STYLE_TYPES = new Set([
+      'MULTIPLE_CHOICE', 'MCQ', 'MATCHING', 'MAP_LABELLING',
+      'MATCHING_HEADINGS', 'MATCHING_INFORMATION', 'MATCHING_FEATURES',
+      'MATCHING_SENTENCE_ENDINGS',
+    ]);
 
+    const upperType = (itemType || '').toUpperCase();
+    const isMCQStyle = MCQ_STYLE_TYPES.has(upperType);
+
+    const normalizeAnswer = (text: string): string =>
+      text.trim().toLowerCase().replace(/\s+/g, ' ');
+    const normUser = normalizeAnswer(userOptionCode || '');
+
+    // Get explanation
     const expRes = await this.pool.query(
       `SELECT explanation FROM public.question_versions WHERE id = $1 LIMIT 1`,
       [questionVersionId]
     );
+    const explanation = expRes.rows[0]?.explanation || undefined;
 
-    const explanation =
-      expRes.rows[0]?.explanation || 'Option A is the correct answer based on question key.';
-
-    if (res.rows.length === 0) {
-      return { isCorrect: userOptionCode === 'A' || userOptionCode === 'B', explanation };
+    if (!userOptionCode || userOptionCode.trim() === '') {
+      return { isCorrect: false, explanation };
     }
 
-    return {
-      isCorrect: res.rows[0].is_correct === true,
-      explanation,
-    };
+    // For MCQ-style: check answer_options table first
+    if (isMCQStyle || !upperType) {
+      const res = await this.pool.query(
+        `SELECT is_correct FROM public.answer_options
+         WHERE question_version_id = $1 AND LOWER(option_code) = LOWER($2) LIMIT 1`,
+        [questionVersionId, userOptionCode.trim()]
+      );
+      if (res.rows.length > 0) {
+        return { isCorrect: res.rows[0].is_correct === true, explanation };
+      }
+      // fall through to payload check
+    }
+
+    // Check payload.correctAnswer and acceptedAnswers (all types)
+    const payloadRes = await this.pool.query(
+      `SELECT payload->>'correctAnswer' AS correct_answer,
+              payload->'acceptedAnswers' AS accepted_answers
+       FROM public.question_versions WHERE id = $1 LIMIT 1`,
+      [questionVersionId]
+    );
+
+    if (payloadRes.rows.length === 0) {
+      return { isCorrect: false, explanation };
+    }
+
+    const { correct_answer, accepted_answers } = payloadRes.rows[0];
+    if (!correct_answer) {
+      // No answer key — fail safely, never auto-correct
+      return { isCorrect: false, explanation };
+    }
+
+    if (normalizeAnswer(correct_answer) === normUser) {
+      return { isCorrect: true, explanation };
+    }
+
+    if (accepted_answers) {
+      const arr: string[] = Array.isArray(accepted_answers)
+        ? accepted_answers
+        : JSON.parse(typeof accepted_answers === 'string' ? accepted_answers : '[]');
+      for (const aa of arr) {
+        if (typeof aa === 'string' && normalizeAnswer(aa) === normUser) {
+          return { isCorrect: true, explanation };
+        }
+      }
+    }
+
+    return { isCorrect: false, explanation };
   }
 
   public async completeSession(

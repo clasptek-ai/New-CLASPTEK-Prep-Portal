@@ -83,78 +83,377 @@ export function ReadingSectionEngine({
   );
 
   const renderInput = (q: ReadingQuestion) => {
-    const hasOptions = q.options && q.options.length > 0;
+    const rawType = (q.type || '').toUpperCase().trim();
+    const currentAnswer = answers[q.id] || '';
 
-    if (hasOptions) {
+    // Normalize options if present
+    const normalizedOptions: { code: string; text: string }[] = (q.options || []).map((opt: any, i: number) => {
+      if (typeof opt === 'object' && opt !== null) {
+        return {
+          code: opt.code || q.optionCodes?.[i] || String.fromCharCode(65 + i),
+          text: opt.text || opt.label || '',
+        };
+      }
+      return {
+        code: q.optionCodes?.[i] || String.fromCharCode(65 + i),
+        text: String(opt),
+      };
+    });
+
+    // ── 1. TRUE / FALSE / NOT GIVEN ─────────────────────────────────────
+    if (rawType === 'TRUE_FALSE_NOT_GIVEN' || rawType === 'TFNG') {
+      const tfngChoices = ['TRUE', 'FALSE', 'NOT GIVEN'];
       return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {q.options!.map((opt, i) => {
-            const code = q.optionCodes?.[i] || String.fromCharCode(65 + i);
-            const isSelected = answers[q.id] === code;
-            return (
-              <div
-                key={i}
-                onClick={() => onAnswer(q.id, code)}
-                style={{
-                  padding: '0.55rem 0.85rem',
-                  borderRadius: '8px',
-                  backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.15)' : '#1e293b',
-                  border: `1px solid ${isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.08)'}`,
-                  color: isSelected ? '#60a5fa' : '#f8fafc',
-                  fontWeight: isSelected ? 700 : 500,
-                  fontSize: '0.88rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.65rem',
-                  transition: 'all 0.15s',
-                }}
-              >
-                <div
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}>
+          <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>
+            Select one: TRUE, FALSE, or NOT GIVEN
+          </div>
+          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+            {tfngChoices.map((choice) => {
+              const isSelected = currentAnswer.toUpperCase() === choice;
+              return (
+                <button
+                  key={choice}
+                  type="button"
+                  onClick={() => onAnswer(q.id, choice)}
                   style={{
-                    width: '22px',
-                    height: '22px',
-                    borderRadius: '50%',
-                    border: `2px solid ${isSelected ? '#3b82f6' : '#475569'}`,
+                    flex: '1 1 120px',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.25)' : '#1e293b',
+                    border: `2px solid ${isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)'}`,
+                    color: isSelected ? '#60a5fa' : '#f8fafc',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    flexShrink: 0,
-                    fontSize: '0.7rem',
-                    fontWeight: 800,
-                    color: isSelected ? '#3b82f6' : '#64748b',
+                    gap: '0.5rem',
+                    transition: 'all 0.15s ease',
                   }}
                 >
-                  {code}
-                </div>
-                <span>{opt}</span>
-              </div>
-            );
-          })}
+                  <div
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? '#3b82f6' : '#64748b'}`,
+                      backgroundColor: isSelected ? '#3b82f6' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {isSelected && <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#ffffff' }} />}
+                  </div>
+                  <span>{choice}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       );
     }
 
-    // Short answer / fill-in
+    // ── 2. YES / NO / NOT GIVEN ─────────────────────────────────────────
+    if (rawType === 'YES_NO_NOT_GIVEN' || rawType === 'YNNG') {
+      const ynngChoices = ['YES', 'NO', 'NOT GIVEN'];
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}>
+          <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>
+            Select one: YES, NO, or NOT GIVEN
+          </div>
+          <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+            {ynngChoices.map((choice) => {
+              const isSelected = currentAnswer.toUpperCase() === choice;
+              return (
+                <button
+                  key={choice}
+                  type="button"
+                  onClick={() => onAnswer(q.id, choice)}
+                  style={{
+                    flex: '1 1 120px',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.25)' : '#1e293b',
+                    border: `2px solid ${isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)'}`,
+                    color: isSelected ? '#60a5fa' : '#f8fafc',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? '#3b82f6' : '#64748b'}`,
+                      backgroundColor: isSelected ? '#3b82f6' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {isSelected && <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#ffffff' }} />}
+                  </div>
+                  <span>{choice}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    // ── 3. MATCHING HEADINGS ────────────────────────────────────────────
+    if (rawType === 'MATCHING_HEADINGS') {
+      const headingsList: { code: string; text: string }[] =
+        q.group?.sharedData?.headingsList ||
+        (q as any).sharedData?.headingsList ||
+        (normalizedOptions.length > 0 ? normalizedOptions : []);
+
+      if (headingsList.length > 0) {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>
+              Select the matching heading for this section:
+            </div>
+            {headingsList.map((h) => {
+              const isSelected = currentAnswer.toLowerCase() === h.code.toLowerCase();
+              return (
+                <div
+                  key={h.code}
+                  onClick={() => onAnswer(q.id, h.code)}
+                  style={{
+                    padding: '0.65rem 0.95rem',
+                    borderRadius: '8px',
+                    backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.18)' : '#1e293b',
+                    border: `1px solid ${isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.08)'}`,
+                    color: isSelected ? '#60a5fa' : '#f8fafc',
+                    fontWeight: isSelected ? 700 : 500,
+                    fontSize: '0.88rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '28px',
+                      height: '24px',
+                      borderRadius: '6px',
+                      border: `2px solid ${isSelected ? '#3b82f6' : '#475569'}`,
+                      backgroundColor: isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.04)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      color: isSelected ? '#ffffff' : '#94a3b8',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {h.code}
+                  </div>
+                  <span style={{ lineHeight: 1.4 }}>{h.text}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+    }
+
+    // ── 4. MATCHING INFORMATION / FEATURES / SENTENCE ENDINGS ──────────
+    if (
+      rawType === 'MATCHING_INFORMATION' ||
+      rawType === 'MATCHING_FEATURES' ||
+      rawType === 'MATCHING_SENTENCE_ENDINGS' ||
+      rawType === 'MATCHING'
+    ) {
+      if (normalizedOptions.length > 0) {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>
+              Select the matching item:
+            </div>
+            {normalizedOptions.map((opt) => {
+              const isSelected = currentAnswer.toUpperCase() === opt.code.toUpperCase();
+              return (
+                <div
+                  key={opt.code}
+                  onClick={() => onAnswer(q.id, opt.code)}
+                  style={{
+                    padding: '0.65rem 0.95rem',
+                    borderRadius: '8px',
+                    backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.18)' : '#1e293b',
+                    border: `1px solid ${isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.08)'}`,
+                    color: isSelected ? '#60a5fa' : '#f8fafc',
+                    fontWeight: isSelected ? 700 : 500,
+                    fontSize: '0.88rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '26px',
+                      height: '26px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? '#3b82f6' : '#475569'}`,
+                      backgroundColor: isSelected ? '#3b82f6' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      color: isSelected ? '#ffffff' : '#64748b',
+                    }}
+                  >
+                    {opt.code}
+                  </div>
+                  <span>{opt.text}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      } else {
+        // Fallback for paragraph matching (A–G / A–H)
+        const paragraphChoices = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}>
+            <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>
+              Select matching paragraph letter:
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {paragraphChoices.map((letter) => {
+                const isSelected = currentAnswer.toUpperCase() === letter;
+                return (
+                  <button
+                    key={letter}
+                    type="button"
+                    onClick={() => onAnswer(q.id, letter)}
+                    style={{
+                      width: '44px',
+                      height: '44px',
+                      borderRadius: '8px',
+                      backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.3)' : '#1e293b',
+                      border: `2px solid ${isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)'}`,
+                      color: isSelected ? '#60a5fa' : '#f8fafc',
+                      fontWeight: 800,
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    {letter}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      }
+    }
+
+    // ── 5. MULTIPLE CHOICE / MCQ ────────────────────────────────────────
+    if (rawType === 'MULTIPLE_CHOICE' || rawType === 'MCQ' || normalizedOptions.length > 0) {
+      if (normalizedOptions.length > 0) {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+            {normalizedOptions.map((opt) => {
+              const isSelected = currentAnswer.toUpperCase() === opt.code.toUpperCase();
+              return (
+                <div
+                  key={opt.code}
+                  onClick={() => onAnswer(q.id, opt.code)}
+                  style={{
+                    padding: '0.65rem 0.95rem',
+                    borderRadius: '8px',
+                    backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.18)' : '#1e293b',
+                    border: `1px solid ${isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.08)'}`,
+                    color: isSelected ? '#60a5fa' : '#f8fafc',
+                    fontWeight: isSelected ? 700 : 500,
+                    fontSize: '0.88rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: '26px',
+                      height: '26px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? '#3b82f6' : '#475569'}`,
+                      backgroundColor: isSelected ? '#3b82f6' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      fontSize: '0.75rem',
+                      fontWeight: 800,
+                      color: isSelected ? '#ffffff' : '#64748b',
+                    }}
+                  >
+                    {opt.code}
+                  </div>
+                  <span>{opt.text}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+    }
+
+    // ── 6. TEXT / COMPLETION INPUT (FORM, NOTE, SUMMARY, SENTENCE, TABLE, SHORT ANSWER) ──
     return (
-      <input
-        type="text"
-        value={answers[q.id] || ''}
-        onChange={(e) => onAnswer(q.id, e.target.value)}
-        placeholder="Type your answer..."
-        style={{
-          width: '100%',
-          backgroundColor: '#1e293b',
-          border: '1px solid rgba(255, 255, 255, 0.12)',
-          borderRadius: '8px',
-          padding: '0.65rem 1rem',
-          color: '#f8fafc',
-          fontSize: '0.95rem',
-          fontFamily: 'inherit',
-          boxSizing: 'border-box',
-          outline: 'none',
-        }}
-      />
+      <div style={{ marginTop: '0.5rem' }}>
+        <input
+          type="text"
+          value={currentAnswer}
+          onChange={(e) => onAnswer(q.id, e.target.value)}
+          placeholder="Type your answer..."
+          style={{
+            width: '100%',
+            backgroundColor: '#1e293b',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: '8px',
+            padding: '0.75rem 1rem',
+            color: '#f8fafc',
+            fontSize: '0.95rem',
+            fontFamily: 'inherit',
+            boxSizing: 'border-box',
+            outline: 'none',
+            transition: 'border-color 0.15s ease',
+          }}
+          onFocus={(e) => (e.target.style.borderColor = '#3b82f6')}
+          onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)')}
+        />
+      </div>
     );
   };
 

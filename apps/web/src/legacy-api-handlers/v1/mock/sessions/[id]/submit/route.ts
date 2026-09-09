@@ -17,12 +17,13 @@ export const IELTS_SECTION_IDS = {
 };
 
 function calculateIELTSListeningBand(rawCorrect: number): number {
+  // Official IELTS Academic Listening Band Score conversion table
   if (rawCorrect >= 39) return 9.0;
   if (rawCorrect >= 37) return 8.5;
   if (rawCorrect >= 35) return 8.0;
   if (rawCorrect >= 32) return 7.5;
   if (rawCorrect >= 30) return 7.0;
-  if (rawCorrect >= 26) return 6.5;
+  if (rawCorrect >= 27) return 6.5; // NOTE: 26 → 6.0 (not 6.5), per official IELTS conversion
   if (rawCorrect >= 23) return 6.0;
   if (rawCorrect >= 18) return 5.5;
   if (rawCorrect >= 16) return 5.0;
@@ -31,10 +32,12 @@ function calculateIELTSListeningBand(rawCorrect: number): number {
   if (rawCorrect >= 8) return 3.5;
   if (rawCorrect >= 6) return 3.0;
   if (rawCorrect >= 4) return 2.5;
-  return Math.max(1.0, Math.round((rawCorrect / 4) * 2) / 2);
+  if (rawCorrect >= 2) return 2.0;
+  return 1.0;
 }
 
 function calculateIELTSReadingBand(rawCorrect: number): number {
+  // Official IELTS Academic Reading Band Score conversion table
   if (rawCorrect >= 39) return 9.0;
   if (rawCorrect >= 37) return 8.5;
   if (rawCorrect >= 35) return 8.0;
@@ -49,7 +52,8 @@ function calculateIELTSReadingBand(rawCorrect: number): number {
   if (rawCorrect >= 8) return 3.5;
   if (rawCorrect >= 6) return 3.0;
   if (rawCorrect >= 4) return 2.5;
-  return Math.max(1.0, Math.round((rawCorrect / 4) * 2) / 2);
+  if (rawCorrect >= 2) return 2.0;
+  return 1.0;
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -208,9 +212,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         targetSectionId = IELTS_SECTION_IDS.LISTENING;
         listeningTotal++;
         if (isAnswered) {
+          // Pass itemType so evaluator uses the correct evaluation path
           isCorrect = await mockRepo.evaluateObjectiveAnswer(
             q.questionVersionId || q.questionId,
-            userVal!
+            userVal!,
+            q.itemType
           );
           if (isCorrect) listeningCorrect++;
         } else {
@@ -220,9 +226,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         targetSectionId = IELTS_SECTION_IDS.READING;
         readingTotal++;
         if (isAnswered) {
+          // Pass itemType so evaluator uses the correct evaluation path
           isCorrect = await mockRepo.evaluateObjectiveAnswer(
             q.questionVersionId || q.questionId,
-            userVal!
+            userVal!,
+            q.itemType
           );
           if (isCorrect) readingCorrect++;
         } else {
