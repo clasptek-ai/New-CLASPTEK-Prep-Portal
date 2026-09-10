@@ -6,6 +6,11 @@ import { mockGeneratorService } from '../mock-engine/application/mock-generator.
 import { MockTemplate, MockSession, MockResult } from '../mock-engine/domain/mock-blueprint';
 import { IELTSExamEngine } from '../mock-engine/components/IELTSExamEngine';
 import { Award, Clock, Play } from 'lucide-react';
+import {
+  CANONICAL_CONTENT_VERSION,
+  checkAndInvalidateClientCaches,
+  isStaleListeningSession,
+} from '../../lib/content-version';
 
 export interface MockDashboardProps {
   availableTemplates?: { id: string; title: string; durationMinutes: number }[];
@@ -32,11 +37,12 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
 
   useEffect(() => {
     async function load() {
+      checkAndInvalidateClientCaches();
       setLoading(true);
       try {
         const [tmpls, stateRes] = await Promise.all([
           mockGeneratorService.getTemplates().catch(() => []),
-          fetch('/api/v1/student/assessment-state').catch(() => null),
+          fetch('/api/v1/student/assessment-state', { cache: 'no-store' }).catch(() => null),
         ]);
         setTemplates(tmpls);
         if (stateRes && stateRes.ok) {
@@ -52,29 +58,43 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
     load();
   }, []);
 
-  // Restore active session and answers on page load
+  // Restore active session and answers on page load with canonical validation
   useEffect(() => {
     try {
+      checkAndInvalidateClientCaches();
       const savedSession = localStorage.getItem('clasptek_active_mock_session');
       const savedAnswers = localStorage.getItem('clasptek_active_mock_answers');
       if (savedSession) {
         const parsed = JSON.parse(savedSession);
-        if (parsed?.id) {
+        const isExpired = parsed?.expiresAt && Date.now() > new Date(parsed.expiresAt).getTime();
+        if (parsed?.id && !isStaleListeningSession(parsed) && !isExpired) {
           setActiveSession(parsed);
           if (savedAnswers) setSelectedAnswerMap(JSON.parse(savedAnswers));
           setViewState('PLAYER');
+          return;
+        } else {
+          // Stale or expired session — discard cleanly
+          localStorage.removeItem('clasptek_active_mock_session');
+          localStorage.removeItem('clasptek_active_mock_answers');
+          setActiveSession(null);
+          setViewState('DASHBOARD');
         }
       }
     } catch {
-      /* ignore */
+      localStorage.removeItem('clasptek_active_mock_session');
+      localStorage.removeItem('clasptek_active_mock_answers');
     }
   }, []);
 
-  // Autosave active session and answers on changes
+  // Autosave active session and answers on changes with version stamp
   useEffect(() => {
     if (activeSession && viewState === 'PLAYER') {
       try {
-        localStorage.setItem('clasptek_active_mock_session', JSON.stringify(activeSession));
+        const sessionWithVersion = {
+          ...activeSession,
+          contentVersion: CANONICAL_CONTENT_VERSION,
+        };
+        localStorage.setItem('clasptek_active_mock_session', JSON.stringify(sessionWithVersion));
         localStorage.setItem('clasptek_active_mock_answers', JSON.stringify(selectedAnswerMap));
       } catch {
         /* ignore */
@@ -101,6 +121,7 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
         undefined,
         tmpl?.exam
       );
+      (session as any).contentVersion = CANONICAL_CONTENT_VERSION;
       setActiveSession(session);
       setCurrentSectionIndex(0);
       setCurrentQuestionIndex(0);

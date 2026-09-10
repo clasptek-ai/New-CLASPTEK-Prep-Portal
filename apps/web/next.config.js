@@ -39,9 +39,29 @@ module.exports = {
   },
   async headers() {
     return [
+      // 1. Dynamic API routes: Never cache
       {
-        source: '/((?!_next/static|_next/image|favicon.ico|logo.png|manifest.json).*)',
-        headers: Object.entries(getSecureHeaders()).map(([key, value]) => ({ key, value })),
+        source: '/api/:path*',
+        headers: [
+          ...Object.entries(getSecureHeaders()).map(([key, value]) => ({ key, value })),
+          { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate, proxy-revalidate' },
+          { key: 'Pragma', value: 'no-cache' },
+          { key: 'Expires', value: '0' },
+        ],
+      },
+      // 2. Audio assets: Cache with revalidation
+      {
+        source: '/audio/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, must-revalidate' }],
+      },
+      // 3. Application HTML Pages & Shell: Revalidate on every deployment
+      {
+        source: '/((?!_next/static|_next/image|audio|favicon.ico|logo.png|manifest.json).*)',
+        headers: [
+          ...Object.entries(getSecureHeaders()).map(([key, value]) => ({ key, value })),
+          { key: 'Cache-Control', value: 'no-cache, must-revalidate' },
+          { key: 'Pragma', value: 'no-cache' },
+        ],
       },
     ];
   },

@@ -6,7 +6,11 @@ import { apiRouter } from '@/lib/api-router-registry';
 async function handle(req: NextRequest, context: { params: Promise<{ slug?: string[] }> }) {
   const params = await context.params;
   const slug = params.slug || [];
-  return apiRouter.dispatch(req, slug);
+  const res = await apiRouter.dispatch(req, slug);
+  res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.headers.set('Pragma', 'no-cache');
+  res.headers.set('Expires', '0');
+  return res;
 }
 
 export const GET = handle;

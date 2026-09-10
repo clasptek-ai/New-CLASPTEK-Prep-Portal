@@ -14,7 +14,13 @@ export class SupabaseMockRepository implements IMockRepository {
 
   async getBlueprints(): Promise<MockBlueprint[]> {
     try {
-      const res = await fetch('/api/v1/mock/blueprints');
+      const res = await fetch('/api/v1/mock/blueprints', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache',
+        },
+      });
       const data = await res.json();
       if (data.success && Array.isArray(data.blueprints)) {
         return data.blueprints.map((bp: any) => ({
@@ -82,7 +88,13 @@ export class SupabaseMockRepository implements IMockRepository {
 
   async getSessions(studentId?: string): Promise<MockSession[]> {
     try {
-      const res = await fetch('/api/v1/mock/history');
+      const res = await fetch('/api/v1/mock/history', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache',
+        },
+      });
       const data = await res.json();
       if (data.success && Array.isArray(data.history)) {
         return data.history.map((row: any) => ({

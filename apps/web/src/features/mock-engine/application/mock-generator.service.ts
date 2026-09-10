@@ -149,7 +149,12 @@ export const mockGeneratorService = {
   ): Promise<MockSession> {
     const res = await fetch('/api/v1/mock/start', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+      },
       body: JSON.stringify({
         blueprintId: templateId,
         studentId,

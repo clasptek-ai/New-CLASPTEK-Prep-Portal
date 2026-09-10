@@ -47,6 +47,7 @@
     { "path": "./packages/domain/notification" },
     { "path": "./packages/domain/announcement" },
     { "path": "./packages/application/notification" },
-    { "path": "./packages/application/announcement" }
+    { "path": "./packages/application/announcement" },
+    { "path": "./tests" }
   ]
 }

@@ -63,6 +63,18 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-RateLimit-Limit', '1000');
   response.headers.set('X-RateLimit-Remaining', '999');
 
+  // Cache-Control Policies:
+  // - Dynamic API routes: Never cache
+  // - HTML App Shell / Pages: Must revalidate to ensure instantaneous deployment updates
+  if (pathname.startsWith('/api/')) {
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+  } else if (!pathname.startsWith('/_next/') && !pathname.startsWith('/audio/')) {
+    response.headers.set('Cache-Control', 'no-cache, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+  }
+
   return response;
 }
 
