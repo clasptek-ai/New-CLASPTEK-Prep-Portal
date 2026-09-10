@@ -47,10 +47,10 @@ describe('IELTS Listening Canonical 40-Question Comprehensive Verification', () 
     expect(res.rows.length).toBe(4);
 
     const expectedAudio = [
-      'audio/section-1.mpeg',
-      'audio/section-2.mpeg',
-      'audio/section-3.mpeg',
-      'audio/section-4.mpeg',
+      '/audio/section-1.mpeg',
+      '/audio/section-2.mpeg',
+      '/audio/section-3.mpeg',
+      '/audio/section-4.mpeg',
     ];
 
     const expectedTitles = [
@@ -64,9 +64,8 @@ describe('IELTS Listening Canonical 40-Question Comprehensive Verification', () 
       expect(r.section_number).toBe(idx + 1);
       expect(r.track_url).toBe(expectedAudio[idx]);
       expect(r.section_title).toBe(expectedTitles[idx]);
-      // Application resolves with leading slash:
-      const resolvedUrl = r.track_url.startsWith('/') ? r.track_url : `/${r.track_url}`;
-      expect(resolvedUrl).toBe(`/${expectedAudio[idx]}`);
+      // URL must already resolve with leading slash (canonical DB form)
+      expect(r.track_url.startsWith('/')).toBe(true);
     });
   });
 
@@ -74,7 +73,7 @@ describe('IELTS Listening Canonical 40-Question Comprehensive Verification', () 
     const res = await pool.query(`
       SELECT lt.id, lt.code, lt.title, lt.url, lt.transcript
       FROM public.listening_tracks lt
-      WHERE lt.url LIKE '%audio/section-%'
+      WHERE lt.url LIKE '%/audio/section-%'
     `);
 
     expect(res.rows.length).toBe(4);
