@@ -572,7 +572,7 @@ export function WritingSectionEngine({
 
       {/* ── 3. MAIN EXAMINATION WORKSPACE ───────────────────────── */}
       <div
-        className={`writing-workspace-grid ${isTask1 ? 'layout-task1' : 'layout-task2'}`}
+        className={`writing-workspace-grid ${isTask1 ? 'layout-task1' : 'layout-task2'} ${mobileTab === 'PROMPT' ? 'mobile-show-prompt' : 'mobile-show-editor'}`}
         style={{
           flex: 1,
           display: 'flex',
@@ -595,7 +595,7 @@ export function WritingSectionEngine({
         >
           <div
             style={{
-              padding: isTask1 ? '1.5rem 1.75rem' : '2rem 2.25rem',
+              padding: isTask1 ? '1.25rem 1.25rem' : '1.75rem 2rem',
               display: 'flex',
               flexDirection: 'column',
               gap: '1.25rem',
@@ -781,7 +781,7 @@ export function WritingSectionEngine({
                 {/* The Primary Image Display */}
                 <div
                   style={{
-                    padding: '0.75rem',
+                    padding: '0.5rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -803,7 +803,6 @@ export function WritingSectionEngine({
                       width: '100%',
                       maxWidth: '100%',
                       height: 'auto',
-                      maxHeight: 'calc(100vh - 340px)',
                       objectFit: 'contain',
                       display: 'block',
                     }}
@@ -855,6 +854,8 @@ export function WritingSectionEngine({
                   rows={4}
                   style={{
                     width: '100%',
+                    minHeight: '90px',
+                    maxHeight: '220px',
                     backgroundColor: '#0b0f19',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
                     borderRadius: '6px',
@@ -1119,16 +1120,22 @@ export function WritingSectionEngine({
           .writing-mobile-toggle {
             display: flex !important;
           }
-          .writing-panel-stimulus {
+          .writing-workspace-grid.mobile-show-prompt .writing-panel-stimulus {
             width: 100% !important;
             flex: 1 1 100% !important;
-            display: ${mobileTab === 'PROMPT' ? 'flex !important' : 'none !important'};
+            display: flex !important;
             border-right: none !important;
           }
-          .writing-panel-editor {
+          .writing-workspace-grid.mobile-show-prompt .writing-panel-editor {
+            display: none !important;
+          }
+          .writing-workspace-grid.mobile-show-editor .writing-panel-stimulus {
+            display: none !important;
+          }
+          .writing-workspace-grid.mobile-show-editor .writing-panel-editor {
             width: 100% !important;
             flex: 1 1 100% !important;
-            display: ${mobileTab === 'EDITOR' ? 'flex !important' : 'none !important'};
+            display: flex !important;
           }
         }
 
