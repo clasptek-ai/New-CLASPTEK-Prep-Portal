@@ -1,0 +1,353 @@
+{
+  "testId": "ielts-listening-update-01",
+  "title": "IELTS Listening Practice Test",
+  "module": "Listening",
+  "durationMinutes": 30,
+  "totalQuestions": 40,
+  "instructions": [
+    "Do not open this question paper until you are told to do so.",
+    "Write your name and candidate number in the spaces at the top of this page.",
+    "Listen to the instructions for each part of the paper carefully.",
+    "Answer all the questions.",
+    "While you are listening, write your answers on the question paper.",
+    "You will have 10 minutes at the end of the test to copy your answers onto the separate answer sheet.",
+    "Use a pencil.",
+    "At the end of the test, hand in this question paper."
+  ],
+  "informationForCandidates": [
+    "There are four parts to the test.",
+    "You will hear each part once only.",
+    "There are 40 questions.",
+    "Each question carries one mark.",
+    "For each part of the test, there will be time for you to look through the questions and time for you to check your answers."
+  ],
+  "sections": [
+    {
+      "section": 1,
+      "title": "City Bank Customer Service Log",
+      "audio": "audio/section-1.mpeg",
+      "questions": [
+        {
+          "number": 1,
+          "type": "short_answer",
+          "instruction": "Complete the table below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "prompt": "Customer name: David ______",
+          "acceptedAnswers": ["Marshall"]
+        },
+        {
+          "number": 2,
+          "type": "short_answer",
+          "prompt": "Term: ______",
+          "acceptedAnswers": ["180 days"]
+        },
+        {
+          "number": 3,
+          "type": "short_answer",
+          "prompt": "2 years: ______ % per annum",
+          "acceptedAnswers": ["3.85", "3.85%"]
+        },
+        {
+          "number": 4,
+          "type": "short_answer",
+          "prompt": "______ Term Deposits",
+          "acceptedAnswers": ["Monthly Interest", "monthly interest"]
+        },
+        {
+          "number": 5,
+          "type": "short_answer",
+          "instruction": "Complete the table below. Write NO MORE THAN TWO WORDS AND/OR A NUMBER for each answer.",
+          "prompt": "______ tax rate: 28%",
+          "acceptedAnswers": ["maximum"]
+        },
+        {
+          "number": 6,
+          "type": "short_answer",
+          "prompt": "Investment returns: Depend on ______",
+          "acceptedAnswers": ["income bracket"]
+        },
+        {
+          "number": 7,
+          "type": "short_answer",
+          "prompt": "Salary $70,001 – ______",
+          "acceptedAnswers": ["120000", "120,000"]
+        },
+        {
+          "number": 8,
+          "type": "short_answer",
+          "prompt": "Hidden charges/fees: ______",
+          "acceptedAnswers": ["no fees"]
+        },
+        {
+          "number": 9,
+          "type": "short_answer",
+          "prompt": "Interest payment options: monthly, ______, 6-monthly, annually",
+          "acceptedAnswers": ["quarterly"]
+        },
+        {
+          "number": 10,
+          "type": "short_answer",
+          "prompt": "Application options: online / ______ / in person",
+          "acceptedAnswers": ["phone", "by phone"]
+        }
+      ]
+    },
+    {
+      "section": 2,
+      "title": "September Celebration Day",
+      "audio": "audio/section-2.mpeg",
+      "questions": [
+        {
+          "number": 11,
+          "type": "multiple_choice",
+          "options": {
+            "A": "five times a year to honour the city",
+            "B": "on the park’s important birthday",
+            "C": "to remember the history of the park"
+          },
+          "correctAnswer": "C"
+        },
+        {
+          "number": 12,
+          "type": "multiple_choice",
+          "options": {
+            "A": "1955",
+            "B": "1979",
+            "C": "the 1990s"
+          },
+          "correctAnswer": "B"
+        },
+        {
+          "number": 13,
+          "type": "multiple_choice",
+          "options": {
+            "A": "a children’s play area",
+            "B": "a petting zoo",
+            "C": "two of the early rides"
+          },
+          "correctAnswer": "B"
+        },
+        {
+          "number": 14,
+          "type": "multiple_choice",
+          "options": {
+            "A": "tall and made of wood",
+            "B": "designed for smaller children",
+            "C": "very fast and exciting"
+          },
+          "correctAnswer": "A"
+        },
+        {
+          "number": 15,
+          "type": "multiple_choice",
+          "options": {
+            "A": "yellow",
+            "B": "blue",
+            "C": "black"
+          },
+          "correctAnswer": "C"
+        },
+        {
+          "number": 16,
+          "type": "short_answer",
+          "instruction": "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
+          "prompt": "Food options: hamburgers, sandwiches, etc. at ______",
+          "acceptedAnswers": ["food stands"]
+        },
+        {
+          "number": 17,
+          "type": "short_answer",
+          "prompt": "Parade: On the ______",
+          "acceptedAnswers": ["Main Street", "main street"]
+        },
+        {
+          "number": 18,
+          "type": "short_answer",
+          "prompt": "Concert: Theme: ______",
+          "acceptedAnswers": ["Hollywood"]
+        },
+        {
+          "number": 19,
+          "type": "short_answer",
+          "prompt": "Safety and Security: Ten ______ centres in the park",
+          "acceptedAnswers": ["first aid", "first-aid"]
+        },
+        {
+          "number": 20,
+          "type": "short_answer",
+          "prompt": "Ask security team at the ______",
+          "acceptedAnswers": ["guard stations"]
+        }
+      ]
+    },
+    {
+      "section": 3,
+      "title": "Grey-water Treatment System Project",
+      "audio": "audio/section-3.mpeg",
+      "questions": [
+        {
+          "number": 21,
+          "type": "short_answer",
+          "instruction": "Complete the flowchart below. Write NO MORE THAN TWO WORDS for each answer.",
+          "prompt": "Step 1: go over ______",
+          "acceptedAnswers": ["task instructions"]
+        },
+        {
+          "number": 22,
+          "type": "short_answer",
+          "prompt": "Step 2: think about research ______",
+          "acceptedAnswers": ["strategies"]
+        },
+        {
+          "number": 23,
+          "type": "short_answer",
+          "prompt": "Consider the kind of research, e.g. ______ from other projects",
+          "acceptedAnswers": ["case studies"]
+        },
+        {
+          "number": 24,
+          "type": "short_answer",
+          "prompt": "Step 3: develop a ______",
+          "acceptedAnswers": ["action plan"]
+        },
+        {
+          "number": 25,
+          "type": "short_answer",
+          "instruction": "Complete the summary below. Write NO MORE THAN ONE WORD for each answer.",
+          "prompt": "reduce the pressure on the water ______ in a Cameroon village",
+          "acceptedAnswers": ["supply"]
+        },
+        {
+          "number": 26,
+          "type": "short_answer",
+          "prompt": "Grey-water is wastewater from household ______",
+          "acceptedAnswers": ["drains"]
+        },
+        {
+          "number": 27,
+          "type": "short_answer",
+          "prompt": "doing ______",
+          "acceptedAnswers": ["laundry"]
+        },
+        {
+          "number": 28,
+          "type": "short_answer",
+          "instruction": "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
+          "prompt": "Avoid websites where ______ try to sell their products.",
+          "acceptedAnswers": ["manufacturers"]
+        },
+        {
+          "number": 29,
+          "type": "short_answer",
+          "prompt": "e.g. grey-water treatment systems / ______ use",
+          "acceptedAnswers": ["residential"]
+        },
+        {
+          "number": 30,
+          "type": "short_answer",
+          "prompt": "Check examples from the ______ last year.",
+          "acceptedAnswers": ["competition"]
+        }
+      ]
+    },
+    {
+      "section": 4,
+      "title": "Origins of the Caveman Diet",
+      "audio": "audio/section-4.mpeg",
+      "questions": [
+        {
+          "number": 31,
+          "type": "short_answer",
+          "instruction": "Complete the summary below. Write NO MORE THAN TWO WORDS for each answer.",
+          "prompt": "stick to the ______",
+          "acceptedAnswers": ["plan"]
+        },
+        {
+          "number": 32,
+          "type": "short_answer",
+          "prompt": "before we developed ______",
+          "acceptedAnswers": ["agriculture"]
+        },
+        {
+          "number": 33,
+          "type": "multi_blank",
+          "prompt": "weapons, e.g. ______ and ______",
+          "answers": [["bows"], ["arrows"]]
+        },
+        {
+          "number": 34,
+          "type": "short_answer",
+          "prompt": "They get only about a ______ of their energy from meat.",
+          "acceptedAnswers": ["third", "3rd"]
+        },
+        {
+          "number": 35,
+          "type": "multiple_choice",
+          "options": {
+            "A": "the tribesmen’s traditional diet is unhealthy",
+            "B": "our bodies can digest only certain foods",
+            "C": "we can adapt to a range of diets."
+          },
+          "correctAnswer": "C"
+        },
+        {
+          "number": 36,
+          "type": "multiple_choice",
+          "options": {
+            "A": "they have too much lactase in their bodies",
+            "B": "in the past they didn’t farm cows",
+            "C": "their saliva lacks certain enzymes."
+          },
+          "correctAnswer": "B"
+        },
+        {
+          "number": 37,
+          "type": "short_answer",
+          "instruction": "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
+          "prompt": "Inuit – most calories from ______ foods, e.g. seal meat",
+          "acceptedAnswers": ["high fat", "high-fat"]
+        },
+        {
+          "number": 38,
+          "type": "short_answer",
+          "prompt": "Diets come from complicated cultural ______",
+          "acceptedAnswers": ["dietary practices"]
+        },
+        {
+          "number": 39,
+          "type": "short_answer",
+          "prompt": "Costs a lot of money for lean meat and ______",
+          "acceptedAnswers": ["nut oils"]
+        },
+        {
+          "number": 40,
+          "type": "short_answer",
+          "prompt": "Reliance on meat is bad for the ______",
+          "acceptedAnswers": ["environment"]
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "maxScore": 40,
+    "oneMarkPerQuestion": true,
+    "question33CountsAsOneQuestion": true,
+    "normalization": {
+      "caseInsensitive": true,
+      "trimWhitespace": true,
+      "collapseMultipleSpaces": true,
+      "allowCommaInNumbers": true,
+      "allowPercentSymbolWhenPromptAlreadyContainsPercent": true,
+      "allowHyphenVariant": true
+    }
+  },
+  "integrationNotes": [
+    "Replace the current Listening question set with this 40-question set.",
+    "Keep the four sections and question numbering exactly 1–40.",
+    "Use the supplied audio files from the audio/ directory and map each file to its corresponding section.",
+    "Do not expose scripts/transcripts to candidates.",
+    "Questions must remain synchronized with the corresponding section audio.",
+    "For Question 33, display two blanks under one question number and award one mark only when both blanks are correct.",
+    "Do not alter the existing Reading or Writing modules.",
+    "Preserve existing Listening timer, navigation, autosave, answer persistence and submission behavior unless required for compatibility."
+  ]
+}

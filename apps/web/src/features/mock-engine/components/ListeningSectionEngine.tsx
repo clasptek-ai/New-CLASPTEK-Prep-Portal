@@ -124,24 +124,28 @@ export function ListeningSectionEngine({
     const currentAnswer = answers[q.id] || '';
 
     // Normalize options if present
-    const normalizedOptions: { code: string; text: string }[] = (q.options || []).map((opt: any, i: number) => {
-      if (typeof opt === 'object' && opt !== null) {
+    const normalizedOptions: { code: string; text: string }[] = (q.options || []).map(
+      (opt: any, i: number) => {
+        if (typeof opt === 'object' && opt !== null) {
+          return {
+            code: opt.code || q.optionCodes?.[i] || String.fromCharCode(65 + i),
+            text: opt.text || opt.label || '',
+          };
+        }
         return {
-          code: opt.code || q.optionCodes?.[i] || String.fromCharCode(65 + i),
-          text: opt.text || opt.label || '',
+          code: q.optionCodes?.[i] || String.fromCharCode(65 + i),
+          text: String(opt),
         };
       }
-      return {
-        code: q.optionCodes?.[i] || String.fromCharCode(65 + i),
-        text: String(opt),
-      };
-    });
+    );
 
     // ── 1. MAP LABELLING / PLAN / DIAGRAM ─────────────────────────────────
     if (rawType === 'MAP_LABELLING' || rawType === 'PLAN_MAP_DIAGRAM') {
       if (normalizedOptions.length > 0) {
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}
+          >
             <div style={{ fontSize: '0.78rem', color: '#c4b5fd', fontWeight: 600 }}>
               Select the correct location label from the map:
             </div>
@@ -205,7 +209,9 @@ export function ListeningSectionEngine({
     if (rawType === 'MATCHING') {
       if (normalizedOptions.length > 0) {
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}
+          >
             <div style={{ fontSize: '0.78rem', color: '#c4b5fd', fontWeight: 600 }}>
               Select the matching option:
             </div>
@@ -261,7 +267,9 @@ export function ListeningSectionEngine({
     if (rawType === 'MULTIPLE_CHOICE' || rawType === 'MCQ' || normalizedOptions.length > 0) {
       if (normalizedOptions.length > 0) {
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}
+          >
             {normalizedOptions.map((opt) => {
               const isSelected = currentAnswer.toUpperCase() === opt.code.toUpperCase();
               return (
@@ -310,7 +318,119 @@ export function ListeningSectionEngine({
       }
     }
 
-    // ── 4. COMPLETION / SHORT ANSWER / GAP FILL ──────────────────────────
+    // ── 4. MULTI BLANK (e.g. Question 33) ──────────────────────────────
+    if (rawType === 'MULTI_BLANK' || rawType === 'MULTI-BLANK') {
+      let b1 = '';
+      let b2 = '';
+      try {
+        const parsed = JSON.parse(currentAnswer);
+        if (Array.isArray(parsed)) {
+          b1 = parsed[0] || '';
+          b2 = parsed[1] || '';
+        } else if (typeof parsed === 'object' && parsed !== null) {
+          b1 = parsed.blank1 || parsed.b1 || '';
+          b2 = parsed.blank2 || parsed.b2 || '';
+        }
+      } catch {
+        if (currentAnswer.includes('|')) {
+          const parts = currentAnswer.split('|');
+          b1 = parts[0]?.trim() || '';
+          b2 = parts[1]?.trim() || '';
+        } else if (currentAnswer.includes(',')) {
+          const parts = currentAnswer.split(',');
+          b1 = parts[0]?.trim() || '';
+          b2 = parts[1]?.trim() || '';
+        } else {
+          b1 = currentAnswer;
+        }
+      }
+
+      const handleBlankChange = (newB1: string, newB2: string) => {
+        if (!newB1.trim() && !newB2.trim()) {
+          onAnswer(q.id, '');
+        } else {
+          onAnswer(q.id, JSON.stringify({ blank1: newB1, blank2: newB2 }));
+        }
+      };
+
+      const inputStyle: React.CSSProperties = {
+        width: '100%',
+        backgroundColor: '#1e293b',
+        border: '1px solid rgba(255, 255, 255, 0.15)',
+        borderRadius: '8px',
+        padding: '0.75rem 1rem',
+        color: '#f8fafc',
+        fontSize: '0.95rem',
+        fontFamily: 'inherit',
+        boxSizing: 'border-box',
+        outline: 'none',
+        transition: 'border-color 0.15s ease',
+      };
+
+      return (
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.75rem' }}
+        >
+          <div style={{ fontSize: '0.85rem', color: '#c4b5fd', fontWeight: 600 }}>
+            Enter both answers below (1 mark awarded when both blanks are correct):
+          </div>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '1rem',
+            }}
+          >
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.35rem',
+                  fontWeight: 600,
+                }}
+              >
+                Blank 1:
+              </label>
+              <input
+                type="text"
+                value={b1}
+                onChange={(e) => handleBlankChange(e.target.value, b2)}
+                placeholder="Type first answer..."
+                style={inputStyle}
+                onFocus={(e) => (e.target.style.borderColor = '#8b5cf6')}
+                onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)')}
+              />
+            </div>
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  marginBottom: '0.35rem',
+                  fontWeight: 600,
+                }}
+              >
+                Blank 2:
+              </label>
+              <input
+                type="text"
+                value={b2}
+                onChange={(e) => handleBlankChange(b1, e.target.value)}
+                placeholder="Type second answer..."
+                style={inputStyle}
+                onFocus={(e) => (e.target.style.borderColor = '#8b5cf6')}
+                onBlur={(e) => (e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)')}
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── 5. COMPLETION / SHORT ANSWER / GAP FILL ──────────────────────────
     return (
       <div style={{ marginTop: '0.5rem' }}>
         <input
@@ -437,7 +557,9 @@ export function ListeningSectionEngine({
             src={
               currentTrack.trackUrl.includes('cdn.clasptek.com/audio/')
                 ? `/audio/${currentTrack.trackUrl.split('/').pop()}`
-                : currentTrack.trackUrl
+                : currentTrack.trackUrl.startsWith('/') || currentTrack.trackUrl.startsWith('http')
+                  ? currentTrack.trackUrl
+                  : `/${currentTrack.trackUrl}`
             }
             preload="metadata"
           />

@@ -43,22 +43,26 @@ describe('IELTS Server-Authoritative Marking Engine Regressions', () => {
   }
 
   it('1. Correct MCQ: evaluates to true', async () => {
-    const q = await getQuestionInfo('IELTS-L1-006'); // Correct is B
-    const result = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'B', q.item_type);
+    const q = await getQuestionInfo('IELTS-L2-011'); // Correct is C
+    const result = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'C', q.item_type);
     expect(result).toBe(true);
   });
 
   it('2. Incorrect MCQ: evaluates to false', async () => {
-    const q = await getQuestionInfo('IELTS-L1-006');
+    const q = await getQuestionInfo('IELTS-L2-011');
     const result = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'A', q.item_type);
     expect(result).toBe(false);
   });
 
   it('3. Correct completion: evaluates to true with case/whitespace tolerance', async () => {
-    const q = await getQuestionInfo('IELTS-L1-001'); // Correct is Hughes
-    const result1 = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'Hughes', q.item_type);
+    const q = await getQuestionInfo('IELTS-L1-001'); // Correct is Marshall
+    const result1 = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'Marshall', q.item_type);
     expect(result1).toBe(true);
-    const result2 = await mockRepo.evaluateObjectiveAnswer(q.version_id, '  hughes  ', q.item_type);
+    const result2 = await mockRepo.evaluateObjectiveAnswer(
+      q.version_id,
+      '  marshall  ',
+      q.item_type
+    );
     expect(result2).toBe(true);
   });
 
@@ -68,17 +72,105 @@ describe('IELTS Server-Authoritative Marking Engine Regressions', () => {
     expect(result).toBe(false);
   });
 
-  it('5. Accepted completion variant: evaluates to true', async () => {
-    const q = await getQuestionInfo('IELTS-L1-005'); // 'garden gloves' or 'gloves'
-    const resExact = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'garden gloves', q.item_type);
-    expect(resExact).toBe(true);
-    const resVariant = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'gloves', q.item_type);
-    expect(resVariant).toBe(true);
-    const resWrong = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'shoes', q.item_type);
+  it('5. Accepted number with/without comma variant: evaluates to true', async () => {
+    const q = await getQuestionInfo('IELTS-L1-007'); // '120000' or '120,000'
+    const resNoComma = await mockRepo.evaluateObjectiveAnswer(q.version_id, '120000', q.item_type);
+    expect(resNoComma).toBe(true);
+    const resWithComma = await mockRepo.evaluateObjectiveAnswer(
+      q.version_id,
+      '120,000',
+      q.item_type
+    );
+    expect(resWithComma).toBe(true);
+    const resWrong = await mockRepo.evaluateObjectiveAnswer(q.version_id, '130000', q.item_type);
     expect(resWrong).toBe(false);
   });
 
-  it('6. Correct TFNG: evaluates to true', async () => {
+  it('6. Accepted percent symbol tolerance: evaluates to true', async () => {
+    const q = await getQuestionInfo('IELTS-L1-003'); // '3.85' or '3.85%'
+    const resNoPct = await mockRepo.evaluateObjectiveAnswer(q.version_id, '3.85', q.item_type);
+    expect(resNoPct).toBe(true);
+    const resWithPct = await mockRepo.evaluateObjectiveAnswer(q.version_id, '3.85%', q.item_type);
+    expect(resWithPct).toBe(true);
+    const resWrong = await mockRepo.evaluateObjectiveAnswer(q.version_id, '4.85%', q.item_type);
+    expect(resWrong).toBe(false);
+  });
+
+  it('7. Accepted hyphen variant tolerance: evaluates to true', async () => {
+    const q19 = await getQuestionInfo('IELTS-L2-019'); // 'first aid' or 'first-aid'
+    expect(await mockRepo.evaluateObjectiveAnswer(q19.version_id, 'first aid', q19.item_type)).toBe(
+      true
+    );
+    expect(await mockRepo.evaluateObjectiveAnswer(q19.version_id, 'first-aid', q19.item_type)).toBe(
+      true
+    );
+
+    const q37 = await getQuestionInfo('IELTS-L4-037'); // 'high fat' or 'high-fat'
+    expect(await mockRepo.evaluateObjectiveAnswer(q37.version_id, 'high fat', q37.item_type)).toBe(
+      true
+    );
+    expect(await mockRepo.evaluateObjectiveAnswer(q37.version_id, 'high-fat', q37.item_type)).toBe(
+      true
+    );
+  });
+
+  it('8. Question 33 multi-blank: 1 mark awarded only when both blanks are correct', async () => {
+    const q33 = await getQuestionInfo('IELTS-L4-033'); // prompt: "weapons, e.g. ______ and ______" -> bows and arrows
+
+    // Both correct JSON object
+    const resJson1 = await mockRepo.evaluateObjectiveAnswer(
+      q33.version_id,
+      JSON.stringify({ blank1: 'bows', blank2: 'arrows' }),
+      q33.item_type
+    );
+    expect(resJson1).toBe(true);
+
+    // Positional matching: Blank 1 = bows, Blank 2 = arrows
+    expect(
+      await mockRepo.evaluateObjectiveAnswer(
+        q33.version_id,
+        JSON.stringify({ blank1: 'arrows', blank2: 'bows' }),
+        q33.item_type
+      )
+    ).toBe(false);
+
+    // Delimited string formats
+    expect(
+      await mockRepo.evaluateObjectiveAnswer(q33.version_id, 'bows, arrows', q33.item_type)
+    ).toBe(true);
+    expect(
+      await mockRepo.evaluateObjectiveAnswer(q33.version_id, 'bows and arrows', q33.item_type)
+    ).toBe(true);
+    expect(
+      await mockRepo.evaluateObjectiveAnswer(q33.version_id, 'arrows, bows', q33.item_type)
+    ).toBe(false);
+
+    // Single blank correct -> 0 marks (false)
+    const resPartial = await mockRepo.evaluateObjectiveAnswer(
+      q33.version_id,
+      JSON.stringify({ blank1: 'bows', blank2: '' }),
+      q33.item_type
+    );
+    expect(resPartial).toBe(false);
+
+    // One blank wrong -> 0 marks (false)
+    const resOneWrong = await mockRepo.evaluateObjectiveAnswer(
+      q33.version_id,
+      JSON.stringify({ blank1: 'bows', blank2: 'spears' }),
+      q33.item_type
+    );
+    expect(resOneWrong).toBe(false);
+
+    // Completely wrong -> 0 marks (false)
+    const resAllWrong = await mockRepo.evaluateObjectiveAnswer(
+      q33.version_id,
+      JSON.stringify({ blank1: 'spears', blank2: 'shields' }),
+      q33.item_type
+    );
+    expect(resAllWrong).toBe(false);
+  });
+
+  it('9. Correct TFNG: evaluates to true', async () => {
     const q = await getQuestionInfo('IELTS-READ-005'); // Correct is TRUE
     const result = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'TRUE', q.item_type);
     expect(result).toBe(true);
@@ -86,48 +178,48 @@ describe('IELTS Server-Authoritative Marking Engine Regressions', () => {
     expect(resLower).toBe(true);
   });
 
-  it('7. Incorrect TFNG: evaluates to false', async () => {
+  it('10. Incorrect TFNG: evaluates to false', async () => {
     const q = await getQuestionInfo('IELTS-READ-005');
     const result = await mockRepo.evaluateObjectiveAnswer(q.version_id, 'FALSE', q.item_type);
     expect(result).toBe(false);
   });
 
-  it('8. Correct YNNG: evaluates to true and rejects wrong choices', async () => {
+  it('11. Correct YNNG: evaluates to true and rejects wrong choices', async () => {
     const qNo = await getQuestionInfo('IELTS-READ-014'); // Correct is NO
     expect(await mockRepo.evaluateObjectiveAnswer(qNo.version_id, 'NO', qNo.item_type)).toBe(true);
-    expect(await mockRepo.evaluateObjectiveAnswer(qNo.version_id, 'YES', qNo.item_type)).toBe(false);
+    expect(await mockRepo.evaluateObjectiveAnswer(qNo.version_id, 'YES', qNo.item_type)).toBe(
+      false
+    );
 
     const qYes = await getQuestionInfo('IELTS-READ-015'); // Correct is YES
-    expect(await mockRepo.evaluateObjectiveAnswer(qYes.version_id, 'YES', qYes.item_type)).toBe(true);
-    expect(await mockRepo.evaluateObjectiveAnswer(qYes.version_id, 'NO', qYes.item_type)).toBe(false);
+    expect(await mockRepo.evaluateObjectiveAnswer(qYes.version_id, 'YES', qYes.item_type)).toBe(
+      true
+    );
+    expect(await mockRepo.evaluateObjectiveAnswer(qYes.version_id, 'NO', qYes.item_type)).toBe(
+      false
+    );
   });
 
-  it('9. Correct matching (including Roman numerals & map): evaluates to true', async () => {
-    // Matching Headings (roman numerals)
+  it('12. Correct matching (including Roman numerals): evaluates to true', async () => {
     const qHead = await getQuestionInfo('IELTS-READ-001'); // Correct is iii
-    expect(await mockRepo.evaluateObjectiveAnswer(qHead.version_id, 'iii', qHead.item_type)).toBe(true);
-    expect(await mockRepo.evaluateObjectiveAnswer(qHead.version_id, 'III', qHead.item_type)).toBe(true);
-
-    // Map Labelling
-    const qMap = await getQuestionInfo('IELTS-L2-015'); // Correct is D
-    expect(await mockRepo.evaluateObjectiveAnswer(qMap.version_id, 'D', qMap.item_type)).toBe(true);
+    expect(await mockRepo.evaluateObjectiveAnswer(qHead.version_id, 'iii', qHead.item_type)).toBe(
+      true
+    );
+    expect(await mockRepo.evaluateObjectiveAnswer(qHead.version_id, 'III', qHead.item_type)).toBe(
+      true
+    );
+    expect(await mockRepo.evaluateObjectiveAnswer(qHead.version_id, 'iv', qHead.item_type)).toBe(
+      false
+    );
   });
 
-  it('10. Incorrect matching: evaluates to false', async () => {
-    const qHead = await getQuestionInfo('IELTS-READ-001');
-    expect(await mockRepo.evaluateObjectiveAnswer(qHead.version_id, 'iv', qHead.item_type)).toBe(false);
-
-    const qMap = await getQuestionInfo('IELTS-L2-015');
-    expect(await mockRepo.evaluateObjectiveAnswer(qMap.version_id, 'A', qMap.item_type)).toBe(false);
-  });
-
-  it('11. Unanswered question: evaluates to false', async () => {
+  it('13. Unanswered question: evaluates to false', async () => {
     const q = await getQuestionInfo('IELTS-L1-001');
     expect(await mockRepo.evaluateObjectiveAnswer(q.version_id, '', q.item_type)).toBe(false);
     expect(await mockRepo.evaluateObjectiveAnswer(q.version_id, '   ', q.item_type)).toBe(false);
   });
 
-  it('12. Unknown / non-existent question ID: safely returns false without crashing', async () => {
+  it('14. Unknown / non-existent question ID: safely returns false without crashing', async () => {
     const result = await mockRepo.evaluateObjectiveAnswer(
       '00000000-0000-0000-0000-000000000000',
       'ANY_ANSWER',
@@ -136,7 +228,7 @@ describe('IELTS Server-Authoritative Marking Engine Regressions', () => {
     expect(result).toBe(false);
   });
 
-  it('13. Zero-Answer verification: 40 unanswered questions yield raw = 0 (no A/B fallback)', async () => {
+  it('15. Zero-Answer verification: 40 unanswered questions yield raw = 0 (no A/B fallback)', async () => {
     const lQuestions = await pool.query(
       `SELECT qv.id, COALESCE(qv.payload->>'itemType', qv.payload->>'type') as item_type
        FROM questions q
@@ -153,9 +245,8 @@ describe('IELTS Server-Authoritative Marking Engine Regressions', () => {
     expect(rawScore).toBe(0);
   });
 
-  it('14. Security Tampering: Server evaluates ground truth and ignores client claims', async () => {
-    // Scenario: Client submits wrong answers but claims score: 40, isCorrect: true
-    const q = await getQuestionInfo('IELTS-L1-006');
+  it('16. Security Tampering: Server evaluates ground truth and ignores client claims', async () => {
+    const q = await getQuestionInfo('IELTS-L2-011');
     const clientPayload = {
       questionId: q.version_id,
       studentAnswer: 'WRONG_CHOICE',
@@ -166,7 +257,6 @@ describe('IELTS Server-Authoritative Marking Engine Regressions', () => {
       rawScore: 40,
     };
 
-    // Server evaluates purely based on studentAnswer:
     const serverJudgement = await mockRepo.evaluateObjectiveAnswer(
       clientPayload.questionId,
       clientPayload.studentAnswer,
@@ -174,6 +264,6 @@ describe('IELTS Server-Authoritative Marking Engine Regressions', () => {
     );
 
     expect(serverJudgement).toBe(false);
-    expect(clientPayload.score).toBe(40); // Client claim is untrusted
+    expect(clientPayload.score).toBe(40);
   });
 });

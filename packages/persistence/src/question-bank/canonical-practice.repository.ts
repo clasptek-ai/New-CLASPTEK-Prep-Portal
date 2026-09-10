@@ -290,8 +290,13 @@ export class PostgresCanonicalPracticeRepository {
     itemType?: string
   ): Promise<{ isCorrect: boolean; explanation?: string }> {
     const MCQ_STYLE_TYPES = new Set([
-      'MULTIPLE_CHOICE', 'MCQ', 'MATCHING', 'MAP_LABELLING',
-      'MATCHING_HEADINGS', 'MATCHING_INFORMATION', 'MATCHING_FEATURES',
+      'MULTIPLE_CHOICE',
+      'MCQ',
+      'MATCHING',
+      'MAP_LABELLING',
+      'MATCHING_HEADINGS',
+      'MATCHING_INFORMATION',
+      'MATCHING_FEATURES',
       'MATCHING_SENTENCE_ENDINGS',
     ]);
 
@@ -300,7 +305,25 @@ export class PostgresCanonicalPracticeRepository {
 
     const normalizeAnswer = (text: string): string =>
       text.trim().toLowerCase().replace(/\s+/g, ' ');
-    const normUser = normalizeAnswer(userOptionCode || '');
+
+    const canonicalNormalize = (text: string): string => {
+      return text
+        .trim()
+        .toLowerCase()
+        .replace(/,/g, '')
+        .replace(/%/g, '')
+        .replace(/[-–—]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    };
+
+    const isMatch = (candidate: string, target: string): boolean => {
+      if (!candidate || !target) return false;
+      const cNorm = normalizeAnswer(candidate);
+      const tNorm = normalizeAnswer(target);
+      if (cNorm === tNorm) return true;
+      return canonicalNormalize(candidate) === canonicalNormalize(target);
+    };
 
     // Get explanation
     const expRes = await this.pool.query(
@@ -329,7 +352,9 @@ export class PostgresCanonicalPracticeRepository {
     // Check payload.correctAnswer and acceptedAnswers (all types)
     const payloadRes = await this.pool.query(
       `SELECT payload->>'correctAnswer' AS correct_answer,
-              payload->'acceptedAnswers' AS accepted_answers
+              payload->'acceptedAnswers' AS accepted_answers,
+              payload->'answers' AS multi_answers,
+              payload->>'type' AS payload_type
        FROM public.question_versions WHERE id = $1 LIMIT 1`,
       [questionVersionId]
     );
@@ -338,13 +363,79 @@ export class PostgresCanonicalPracticeRepository {
       return { isCorrect: false, explanation };
     }
 
-    const { correct_answer, accepted_answers } = payloadRes.rows[0];
-    if (!correct_answer) {
-      // No answer key — fail safely, never auto-correct
+    const { correct_answer, accepted_answers, multi_answers, payload_type } = payloadRes.rows[0];
+    const effectiveType = (payload_type || upperType).toUpperCase();
+
+    // --- MULTI_BLANK handling ---
+    if (effectiveType === 'MULTI_BLANK' || multi_answers) {
+      let candidateParts: string[] = [];
+      try {
+        const parsed = JSON.parse(userOptionCode);
+        if (Array.isArray(parsed)) {
+          candidateParts = parsed.map((p) => String(p).trim());
+        } else if (typeof parsed === 'object' && parsed !== null) {
+          candidateParts = [
+            String(parsed.blank1 || parsed.b1 || '').trim(),
+            String(parsed.blank2 || parsed.b2 || '').trim(),
+          ];
+        }
+      } catch {
+        if (userOptionCode.includes('|')) {
+          candidateParts = userOptionCode.split('|').map((s) => s.trim());
+        } else if (userOptionCode.includes(',')) {
+          candidateParts = userOptionCode.split(',').map((s) => s.trim());
+        } else if (userOptionCode.includes(' and ')) {
+          candidateParts = userOptionCode.split(' and ').map((s) => s.trim());
+        } else {
+          candidateParts = [userOptionCode.trim()];
+        }
+      }
+
+      const expectedBlankArrays: string[][] = Array.isArray(multi_answers)
+        ? multi_answers
+        : typeof multi_answers === 'string'
+          ? JSON.parse(multi_answers)
+          : null;
+
+      if (expectedBlankArrays && expectedBlankArrays.length === 2) {
+        if (candidateParts.length < 2 || !candidateParts[0] || !candidateParts[1]) {
+          return { isCorrect: false, explanation };
+        }
+        const b1 = candidateParts[0];
+        const b2 = candidateParts[1];
+        const target0 = expectedBlankArrays[0];
+        const target1 = expectedBlankArrays[1];
+
+        // Positional marking: Blank 1 = bows, Blank 2 = arrows
+        const matchPositional =
+          target0.some((t) => isMatch(b1, t)) && target1.some((t) => isMatch(b2, t));
+
+        if (matchPositional) return { isCorrect: true, explanation };
+      }
+
+      if (accepted_answers) {
+        const acceptedArr: string[] = Array.isArray(accepted_answers)
+          ? accepted_answers
+          : JSON.parse(
+              typeof accepted_answers === 'string'
+                ? accepted_answers
+                : JSON.stringify(accepted_answers)
+            );
+        for (const aa of acceptedArr) {
+          if (typeof aa === 'string' && isMatch(userOptionCode, aa)) {
+            return { isCorrect: true, explanation };
+          }
+        }
+      }
+
       return { isCorrect: false, explanation };
     }
 
-    if (normalizeAnswer(correct_answer) === normUser) {
+    if (!correct_answer && !accepted_answers) {
+      return { isCorrect: false, explanation };
+    }
+
+    if (correct_answer && isMatch(userOptionCode, correct_answer)) {
       return { isCorrect: true, explanation };
     }
 
@@ -353,7 +444,7 @@ export class PostgresCanonicalPracticeRepository {
         ? accepted_answers
         : JSON.parse(typeof accepted_answers === 'string' ? accepted_answers : '[]');
       for (const aa of arr) {
-        if (typeof aa === 'string' && normalizeAnswer(aa) === normUser) {
+        if (typeof aa === 'string' && isMatch(userOptionCode, aa)) {
           return { isCorrect: true, explanation };
         }
       }

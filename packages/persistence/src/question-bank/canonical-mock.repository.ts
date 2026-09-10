@@ -1091,8 +1091,13 @@ export class PostgresCanonicalMockRepository {
     if (!userAnswer || userAnswer.trim() === '') return false;
 
     const MCQ_STYLE_TYPES = new Set([
-      'MULTIPLE_CHOICE', 'MCQ', 'MATCHING', 'MAP_LABELLING',
-      'MATCHING_HEADINGS', 'MATCHING_INFORMATION', 'MATCHING_FEATURES',
+      'MULTIPLE_CHOICE',
+      'MCQ',
+      'MATCHING',
+      'MAP_LABELLING',
+      'MATCHING_HEADINGS',
+      'MATCHING_INFORMATION',
+      'MATCHING_FEATURES',
       'MATCHING_SENTENCE_ENDINGS',
     ]);
 
@@ -1103,7 +1108,30 @@ export class PostgresCanonicalMockRepository {
     const normalizeAnswer = (text: string): string =>
       text.trim().toLowerCase().replace(/\s+/g, ' ');
 
-    const normUser = normalizeAnswer(userAnswer);
+    // Canonical form applying all normalization rules:
+    // 1. case-insensitive
+    // 2. trim whitespace & collapse multiple spaces
+    // 3. allow commas in numbers (120,000 == 120000)
+    // 4. allow percent symbol (3.85% == 3.85)
+    // 5. allow hyphen variant (first-aid == first aid, high-fat == high fat)
+    const canonicalNormalize = (text: string): string => {
+      return text
+        .trim()
+        .toLowerCase()
+        .replace(/,/g, '')
+        .replace(/%/g, '')
+        .replace(/[-–—]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    };
+
+    const isMatch = (candidate: string, target: string): boolean => {
+      if (!candidate || !target) return false;
+      const cNorm = normalizeAnswer(candidate);
+      const tNorm = normalizeAnswer(target);
+      if (cNorm === tNorm) return true;
+      return canonicalNormalize(candidate) === canonicalNormalize(target);
+    };
 
     // --- MCQ-style: try answer_options table first ---
     if (isMCQStyle || !upperType) {
@@ -1118,10 +1146,12 @@ export class PostgresCanonicalMockRepository {
       // answer_options not found — fall through to payload check
     }
 
-    // --- All types: check payload.correctAnswer and payload.acceptedAnswers ---
+    // --- All types: check payload.correctAnswer, payload.acceptedAnswers, and payload.answers ---
     const payloadRes = await this.pool.query(
       `SELECT payload->>'correctAnswer' AS correct_answer,
-              payload->'acceptedAnswers' AS accepted_answers
+              payload->'acceptedAnswers' AS accepted_answers,
+              payload->'answers' AS multi_answers,
+              payload->>'type' AS payload_type
        FROM public.question_versions
        WHERE id = $1 LIMIT 1`,
       [questionVersionId]
@@ -1135,27 +1165,97 @@ export class PostgresCanonicalMockRepository {
       return false;
     }
 
-    const { correct_answer, accepted_answers } = payloadRes.rows[0];
+    const { correct_answer, accepted_answers, multi_answers, payload_type } = payloadRes.rows[0];
+    const effectiveType = (payload_type || upperType).toUpperCase();
 
-    if (!correct_answer) {
+    // --- MULTI_BLANK handling (e.g. Question 33: weapons, e.g. bows and arrows) ---
+    if (effectiveType === 'MULTI_BLANK' || multi_answers) {
+      let candidateParts: string[] = [];
+      try {
+        const parsed = JSON.parse(userAnswer);
+        if (Array.isArray(parsed)) {
+          candidateParts = parsed.map((p) => String(p).trim());
+        } else if (typeof parsed === 'object' && parsed !== null) {
+          candidateParts = [
+            String(parsed.blank1 || parsed.b1 || '').trim(),
+            String(parsed.blank2 || parsed.b2 || '').trim(),
+          ];
+        }
+      } catch {
+        if (userAnswer.includes('|')) {
+          candidateParts = userAnswer.split('|').map((s) => s.trim());
+        } else if (userAnswer.includes(',')) {
+          candidateParts = userAnswer.split(',').map((s) => s.trim());
+        } else if (userAnswer.includes(' and ')) {
+          candidateParts = userAnswer.split(' and ').map((s) => s.trim());
+        } else {
+          candidateParts = [userAnswer.trim()];
+        }
+      }
+
+      // Expected blanks from payload (e.g. [["bows"], ["arrows"]])
+      const expectedBlankArrays: string[][] = Array.isArray(multi_answers)
+        ? multi_answers
+        : typeof multi_answers === 'string'
+          ? JSON.parse(multi_answers)
+          : null;
+
+      if (expectedBlankArrays && expectedBlankArrays.length === 2) {
+        if (candidateParts.length < 2 || !candidateParts[0] || !candidateParts[1]) {
+          return false;
+        }
+        const b1 = candidateParts[0];
+        const b2 = candidateParts[1];
+        const target0 = expectedBlankArrays[0];
+        const target1 = expectedBlankArrays[1];
+
+        // Positional marking: Blank 1 = bows, Blank 2 = arrows
+        const matchPositional =
+          target0.some((t) => isMatch(b1, t)) && target1.some((t) => isMatch(b2, t));
+
+        if (matchPositional) return true;
+      }
+
+      // Check accepted_answers strings for multi_blank
+      if (accepted_answers) {
+        const acceptedArr: string[] = Array.isArray(accepted_answers)
+          ? accepted_answers
+          : JSON.parse(
+              typeof accepted_answers === 'string'
+                ? accepted_answers
+                : JSON.stringify(accepted_answers)
+            );
+        for (const aa of acceptedArr) {
+          if (typeof aa === 'string' && isMatch(userAnswer, aa)) return true;
+        }
+      }
+
+      return false;
+    }
+
+    if (!correct_answer && !accepted_answers) {
       // No answer key stored — fail safely (NEVER return A/B fallback)
       console.warn(
-        `[EVAL_WARN] No correctAnswer in payload for qvId=${questionVersionId} type=${upperType}. Returning false.`
+        `[EVAL_WARN] No correctAnswer or acceptedAnswers in payload for qvId=${questionVersionId} type=${upperType}. Returning false.`
       );
       return false;
     }
 
-    // Check correctAnswer
-    if (normalizeAnswer(correct_answer) === normUser) return true;
+    // Check correctAnswer with normalization rules
+    if (correct_answer && isMatch(userAnswer, correct_answer)) return true;
 
-    // Check acceptedAnswers array
+    // Check acceptedAnswers array with normalization rules
     if (accepted_answers) {
       const acceptedArr: string[] = Array.isArray(accepted_answers)
         ? accepted_answers
-        : JSON.parse(typeof accepted_answers === 'string' ? accepted_answers : JSON.stringify(accepted_answers));
+        : JSON.parse(
+            typeof accepted_answers === 'string'
+              ? accepted_answers
+              : JSON.stringify(accepted_answers)
+          );
 
       for (const aa of acceptedArr) {
-        if (typeof aa === 'string' && normalizeAnswer(aa) === normUser) return true;
+        if (typeof aa === 'string' && isMatch(userAnswer, aa)) return true;
       }
     }
 
