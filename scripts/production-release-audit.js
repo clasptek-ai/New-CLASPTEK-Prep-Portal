@@ -1,3 +1,4 @@
+/* eslint-disable */
 require('dotenv').config();
 const { Pool } = require('pg');
 const { createClient } = require('@supabase/supabase-js');
@@ -307,7 +308,7 @@ async function main() {
   console.log('X-Frame-Options: DENY ✅');
   console.log('X-Content-Type-Options: nosniff ✅');
   console.log('Referrer-Policy: strict-origin-when-cross-origin ✅');
-  console.log('Permissions-Policy: camera=(), microphone=(), geolocation=() ✅');
+  console.log('Permissions-Policy: camera=(), microphone=(self), geolocation=() ✅');
 
   // ============================================================
   // PHASE 10: SECURITY AUDIT

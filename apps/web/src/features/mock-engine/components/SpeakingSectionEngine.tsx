@@ -43,6 +43,21 @@ interface Props {
 
 type RecordingState = 'IDLE' | 'PREP' | 'RECORDING' | 'REVIEW';
 
+function getSupportedMimeType(): string | undefined {
+  if (typeof MediaRecorder === 'undefined') return undefined;
+  const candidates = [
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/mp4',
+    'audio/aac',
+    'audio/ogg;codecs=opus',
+  ];
+  for (const mime of candidates) {
+    if (MediaRecorder.isTypeSupported(mime)) return mime;
+  }
+  return undefined;
+}
+
 export function SpeakingSectionEngine({
   sessionId,
   questions,
@@ -55,6 +70,15 @@ export function SpeakingSectionEngine({
   const [recordingState, setRecordingState] = useState<RecordingState>('IDLE');
   const [microphoneUnavailable, setMicrophoneUnavailable] = useState(false);
   const [micErrorMessage, setMicErrorMessage] = useState<string | null>(null);
+  const [micErrorType, setMicErrorType] = useState<
+    | 'PERMISSION_DENIED'
+    | 'DEVICE_NOT_FOUND'
+    | 'DEVICE_BUSY'
+    | 'SECURITY_ERROR'
+    | 'GENERIC_ERROR'
+    | null
+  >(null);
+  const [audioLevel, setAudioLevel] = useState(0);
   const [prepTimer, setPrepTimer] = useState(0);
   const [recordTimer, setRecordTimer] = useState(0);
   const [, setAudioBlob] = useState<Blob | null>(null);
@@ -65,6 +89,9 @@ export function SpeakingSectionEngine({
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const playbackRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const animFrameRef = useRef<number | null>(null);
 
   // Proactive check for mediaDevices / audio input support
   useEffect(() => {
@@ -73,6 +100,7 @@ export function SpeakingSectionEngine({
       (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function')
     ) {
       setMicrophoneUnavailable(true);
+      setMicErrorType('DEVICE_NOT_FOUND');
       setMicErrorMessage('Microphone access is not supported in this browser environment.');
     }
   }, []);
@@ -82,10 +110,15 @@ export function SpeakingSectionEngine({
   const prepTime = currentQ?.speaking?.prepTimeSeconds || (partNumber === 2 ? 60 : 0);
   const speakTime = currentQ?.speaking?.speakingTimeSeconds || (partNumber === 2 ? 120 : 60);
 
-  // Cleanup timer on unmount
+  // Cleanup timer and audio context on unmount
   useEffect(() => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {});
+        audioContextRef.current = null;
+      }
       if (audioUrl) URL.revokeObjectURL(audioUrl);
     };
   }, [audioUrl]);
@@ -112,7 +145,7 @@ export function SpeakingSectionEngine({
     }, 1000);
   }, [prepTime]);
 
-  // Start recording
+  // Start recording with robust device handling and audio analyser
   const startRecording = useCallback(async () => {
     if (
       typeof navigator === 'undefined' ||
@@ -120,6 +153,7 @@ export function SpeakingSectionEngine({
       typeof navigator.mediaDevices.getUserMedia !== 'function'
     ) {
       setMicrophoneUnavailable(true);
+      setMicErrorType('DEVICE_NOT_FOUND');
       setMicErrorMessage('Microphone access is not supported in this browser environment.');
       setRecordingState('IDLE');
       return;
@@ -129,7 +163,13 @@ export function SpeakingSectionEngine({
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setMicrophoneUnavailable(false);
       setMicErrorMessage(null);
-      const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
+      setMicErrorType(null);
+
+      const mimeType = getSupportedMimeType();
+      const recorder = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
+
       mediaRecorderRef.current = recorder;
       chunksRef.current = [];
 
@@ -137,8 +177,50 @@ export function SpeakingSectionEngine({
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
 
+      // Audio level analyser for visual feedback
+      try {
+        const AudioContextClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioContextClass) {
+          const audioCtx = new AudioContextClass();
+          audioContextRef.current = audioCtx;
+          const analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 64;
+          analyser.smoothingTimeConstant = 0.5;
+          analyserRef.current = analyser;
+          const source = audioCtx.createMediaStreamSource(stream);
+          source.connect(analyser);
+
+          const buffer = new Uint8Array(analyser.frequencyBinCount);
+          const checkVolume = () => {
+            if (!analyserRef.current) return;
+            analyserRef.current.getByteFrequencyData(buffer);
+            let sum = 0;
+            for (let i = 0; i < buffer.length; i++) {
+              sum += buffer[i];
+            }
+            const avg = sum / buffer.length;
+            setAudioLevel(Math.min(100, Math.round((avg / 128) * 100)));
+            animFrameRef.current = requestAnimationFrame(checkVolume);
+          };
+          checkVolume();
+        }
+      } catch {
+        // Fallback without visualizer
+      }
+
       recorder.onstop = async () => {
-        const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        // Stop audio analyser
+        if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+        if (audioContextRef.current) {
+          audioContextRef.current.close().catch(() => {});
+          audioContextRef.current = null;
+        }
+        analyserRef.current = null;
+        setAudioLevel(0);
+
+        const blob = new Blob(chunksRef.current, { type: mimeType || 'audio/webm' });
         setAudioBlob(blob);
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
@@ -150,12 +232,17 @@ export function SpeakingSectionEngine({
 
         // Upload to server-side persistence
         try {
+          const ext = mimeType?.includes('mp4')
+            ? 'mp4'
+            : mimeType?.includes('aac')
+              ? 'aac'
+              : 'webm';
           const formData = new FormData();
           formData.append('sessionId', sessionId || '00000000-0000-0000-0000-000000000001');
           formData.append('questionId', currentQ.id);
           formData.append('partNumber', String(partNumber));
           formData.append('durationSeconds', String(speakTime - (recordTimer || 0)));
-          formData.append('audio', blob, `speaking-${currentQ.id}.webm`);
+          formData.append('audio', blob, `speaking-${currentQ.id}.${ext}`);
 
           const uploadRes = await fetch('/api/v1/mock/speaking/upload', {
             method: 'POST',
@@ -187,18 +274,52 @@ export function SpeakingSectionEngine({
           return prev - 1;
         });
       }, 1000);
-    } catch (err: any) {
-      console.error('Microphone access denied:', err);
+    } catch (err: unknown) {
+      console.error('Microphone access error:', err);
       setMicrophoneUnavailable(true);
-      const isDenied =
-        err?.name === 'NotAllowedError' ||
-        err?.name === 'PermissionDeniedError' ||
-        err?.message?.includes('Permission denied');
-      setMicErrorMessage(
-        isDenied
-          ? 'Microphone permission was denied by the browser. You may continue through the prompts without an audio recording.'
-          : 'Microphone hardware is unavailable or not detected. You may continue through the prompts without an audio recording.'
-      );
+      const errorObj = err instanceof Error ? err : null;
+      const name = errorObj?.name || '';
+      const msg = errorObj?.message || String(err || '');
+
+      if (
+        name === 'NotAllowedError' ||
+        name === 'PermissionDeniedError' ||
+        msg.includes('Permission denied') ||
+        msg.includes('not allowed')
+      ) {
+        setMicErrorType('PERMISSION_DENIED');
+        setMicErrorMessage(
+          'Microphone permission was denied by the browser. Microphone access is required to record your IELTS Speaking responses.'
+        );
+      } else if (
+        name === 'NotFoundError' ||
+        name === 'DevicesNotFoundError' ||
+        msg.includes('not found')
+      ) {
+        setMicErrorType('DEVICE_NOT_FOUND');
+        setMicErrorMessage(
+          'No microphone hardware detected. Please connect an external microphone or headset and click "Allow Microphone".'
+        );
+      } else if (
+        name === 'NotReadableError' ||
+        name === 'TrackStartError' ||
+        msg.includes('could not start')
+      ) {
+        setMicErrorType('DEVICE_BUSY');
+        setMicErrorMessage(
+          'Microphone is currently in use by another application or operating system service. Close other apps and click "Retry Connection".'
+        );
+      } else if (name === 'SecurityError') {
+        setMicErrorType('SECURITY_ERROR');
+        setMicErrorMessage(
+          'Microphone access was blocked by browser security policy. Please ensure the portal is loaded over HTTPS.'
+        );
+      } else {
+        setMicErrorType('GENERIC_ERROR');
+        setMicErrorMessage(
+          `Unable to access microphone (${name || 'UnknownError'}): ${msg || 'Device unavailable'}. Please verify device permissions.`
+        );
+      }
       setRecordingState('IDLE');
     }
   }, [speakTime, currentQ?.id, onAnswer, sessionId, partNumber]);
@@ -246,6 +367,13 @@ export function SpeakingSectionEngine({
       onComplete();
     }
   }, [activePromptIndex, questions.length, onComplete, audioUrl]);
+
+  const requestMicrophonePermission = useCallback(async () => {
+    setMicrophoneUnavailable(false);
+    setMicErrorMessage(null);
+    setMicErrorType(null);
+    await startRecording();
+  }, [startRecording]);
 
   const formatTimer = (s: number) => {
     const m = Math.floor(s / 60);
@@ -503,6 +631,47 @@ export function SpeakingSectionEngine({
                 />
                 Recording...
               </div>
+
+              {/* Live Audio Activity Meter */}
+              <div
+                style={{
+                  marginTop: '0.75rem',
+                  width: '220px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: '100%',
+                    height: '8px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                    borderRadius: '4px',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${Math.max(6, audioLevel)}%`,
+                      height: '100%',
+                      backgroundColor: audioLevel > 15 ? '#10b981' : '#ef4444',
+                      borderRadius: '4px',
+                      transition: 'width 0.08s ease-out, background-color 0.15s ease',
+                    }}
+                  />
+                </div>
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    color: audioLevel > 12 ? '#34d399' : '#94a3b8',
+                    fontWeight: audioLevel > 12 ? 600 : 400,
+                  }}
+                >
+                  {audioLevel > 12 ? '● Voice detected' : 'Speak into your microphone...'}
+                </span>
+              </div>
             </div>
           )}
 
@@ -527,7 +696,7 @@ export function SpeakingSectionEngine({
                   borderRadius: '12px',
                 }}
               >
-                <Badge variant="success">Recorded ✓</Badge>
+                <Badge variant="success">RECORDED ATTEMPT ✓</Badge>
                 <button
                   onClick={togglePlayback}
                   style={{
@@ -578,7 +747,7 @@ export function SpeakingSectionEngine({
           )}
         </div>
 
-        {/* ── NEXT PROMPT ────────────────────────── */}
+        {/* ── NEXT PROMPT (Only accessible after recorded response) ── */}
         {recordingState === 'REVIEW' && (
           <button
             onClick={moveToNext}
@@ -597,6 +766,8 @@ export function SpeakingSectionEngine({
               fontSize: '0.9rem',
               cursor: 'pointer',
               fontWeight: 700,
+              boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+              transition: 'transform 0.15s',
             }}
           >
             {activePromptIndex < questions.length - 1 ? (
@@ -611,73 +782,93 @@ export function SpeakingSectionEngine({
           </button>
         )}
 
-        {/* ── FALLBACK CONTINUATION WHEN MICROPHONE UNAVAILABLE ── */}
+        {/* ── ERROR BANNER & PERMISSION RETRY (MANDATORY ACCESS CONTROL) ── */}
         {recordingState === 'IDLE' && microphoneUnavailable && (
           <div
             style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '0.85rem',
+              gap: '1rem',
               width: '100%',
-              maxWidth: '540px',
+              maxWidth: '560px',
               marginTop: '0.5rem',
             }}
           >
             <div
               style={{
-                padding: '0.75rem 1.1rem',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.25)',
-                borderRadius: '10px',
+                padding: '1rem 1.25rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                border: '1px solid rgba(239, 68, 68, 0.35)',
+                borderRadius: '12px',
                 color: '#fca5a5',
-                fontSize: '0.85rem',
+                fontSize: '0.88rem',
                 display: 'flex',
-                alignItems: 'center',
+                flexDirection: 'column',
                 gap: '0.65rem',
                 width: '100%',
                 boxSizing: 'border-box',
                 textAlign: 'left',
-                lineHeight: 1.5,
+                lineHeight: 1.6,
               }}
             >
-              <MicOff size={18} color="#ef4444" style={{ flexShrink: 0 }} />
-              <span>
-                {micErrorMessage ||
-                  'Microphone recording is unavailable. You may continue through the prompts without an audio recording.'}
-              </span>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontWeight: 700,
+                  color: '#ef4444',
+                  fontSize: '0.95rem',
+                }}
+              >
+                <MicOff size={20} />
+                <span>Microphone Access Required</span>
+              </div>
+              <div>{micErrorMessage}</div>
+              {micErrorType === 'PERMISSION_DENIED' && (
+                <div
+                  style={{
+                    padding: '0.75rem 0.9rem',
+                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                    borderRadius: '8px',
+                    fontSize: '0.82rem',
+                    color: '#e2e8f0',
+                  }}
+                >
+                  <strong>How to enable microphone in Chrome / Edge / Safari:</strong>
+                  <ol style={{ margin: '0.35rem 0 0 1.25rem', padding: 0, lineHeight: 1.6 }}>
+                    <li>Click the lock or site settings icon 🔒 next to the website URL.</li>
+                    <li>
+                      Toggle <strong>Microphone</strong> to <strong>Allow</strong>.
+                    </li>
+                    <li>
+                      Click the <strong>[Allow Microphone]</strong> button below.
+                    </li>
+                  </ol>
+                </div>
+              )}
             </div>
 
             <button
-              onClick={moveToNext}
+              onClick={requestMicrophonePermission}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                padding: '0.7rem 1.75rem',
+                padding: '0.75rem 2rem',
                 borderRadius: '10px',
                 border: 'none',
-                background:
-                  activePromptIndex < questions.length - 1
-                    ? 'linear-gradient(135deg, #10b981, #059669)'
-                    : 'linear-gradient(135deg, #3b82f6, #2563eb)',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
                 color: '#ffffff',
-                fontSize: '0.9rem',
+                fontSize: '0.95rem',
                 cursor: 'pointer',
                 fontWeight: 700,
-                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
+                boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
                 transition: 'transform 0.15s',
               }}
             >
-              {activePromptIndex < questions.length - 1 ? (
-                <>
-                  Continue to Next Prompt <ChevronRight size={16} />
-                </>
-              ) : (
-                <>
-                  Complete Speaking ({answeredCount}/{questions.length})
-                </>
-              )}
+              <Mic size={18} /> Allow Microphone / Retry Connection
             </button>
           </div>
         )}
