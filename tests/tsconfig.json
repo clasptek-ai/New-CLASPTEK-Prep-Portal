@@ -1,0 +1,82 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "types": ["vitest/globals", "node"],
+    "paths": {
+      "@clasptek/persistence": ["../packages/persistence/src/index.ts"],
+      "@clasptek/kernel": ["../packages/kernel/src/index.ts"],
+      "@clasptek/shared": ["../packages/shared/src/index.ts"],
+      "@clasptek/validation": ["../packages/validation/src/index.ts"],
+      "@clasptek/events": ["../packages/events/src/index.ts"],
+      "@clasptek/contracts": ["../packages/contracts/src/index.ts"],
+      "@clasptek/observability": ["../packages/observability/src/index.ts"],
+      "@clasptek/configuration": ["../packages/configuration/src/index.ts"],
+      "@clasptek/ui": ["../packages/ui/src/index.ts"],
+      "@clasptek/testing": ["../packages/testing/src/index.ts"],
+      "@clasptek/security": ["../packages/security/src/index.ts"],
+      "@clasptek/feature-flags": ["../packages/feature-flags/src/index.ts"],
+      "@clasptek/domain-auth": ["../packages/domain/auth/src/index.ts"],
+      "@clasptek/domain-authorization": ["../packages/domain/authorization/src/index.ts"],
+      "@clasptek/domain-security": ["../packages/domain/security/src/index.ts"],
+      "@clasptek/domain-identity": ["../packages/domain/identity/src/index.ts"],
+      "@clasptek/domain-exam-product": ["../packages/domain/exam-product/src/index.ts"],
+      "@clasptek/domain-curriculum": ["../packages/domain/curriculum/src/index.ts"],
+      "@clasptek/domain-learning-resources": ["../packages/domain/learning-resources/src/index.ts"],
+      "@clasptek/domain-student-learning": ["../packages/domain/student-learning/src/index.ts"],
+      "@clasptek/domain-adaptive-practice": ["../packages/domain/adaptive-practice/src/index.ts"],
+      "@clasptek/domain-assessment-runtime": ["../packages/domain/assessment-runtime/src/index.ts"],
+      "@clasptek/domain-diagnostic-placement": [
+        "../packages/domain/diagnostic-placement/src/index.ts"
+      ],
+      "@clasptek/domain-mock-examination": ["../packages/domain/mock-examination/src/index.ts"],
+      "@clasptek/domain-learning-assistant": ["../packages/domain/learning-assistant/src/index.ts"],
+      "@clasptek/domain-results": ["../packages/domain/results/src/index.ts"],
+      "@clasptek/domain-notification": ["../packages/domain/notification/src/index.ts"],
+      "@clasptek/domain-announcement": ["../packages/domain/announcement/src/index.ts"],
+      "@clasptek/application-auth": ["../packages/application/auth/src/index.ts"],
+      "@clasptek/application-authorization": ["../packages/application/authorization/src/index.ts"],
+      "@clasptek/application-identity": ["../packages/application/identity/src/index.ts"],
+      "@clasptek/application-identity-sync": ["../packages/application/identity-sync/src/index.ts"],
+      "@clasptek/application-curriculum": ["../packages/application/curriculum/src/index.ts"],
+      "@clasptek/application-learning-resources": [
+        "../packages/application/learning-resources/src/index.ts"
+      ],
+      "@clasptek/application-student-learning": [
+        "../packages/application/student-learning/src/index.ts"
+      ],
+      "@clasptek/application-adaptive-practice": [
+        "../packages/application/adaptive-practice/src/index.ts"
+      ],
+      "@clasptek/application-assessment-runtime": [
+        "../packages/application/assessment-runtime/src/index.ts"
+      ],
+      "@clasptek/application-diagnostic-placement": [
+        "../packages/application/diagnostic-placement/src/index.ts"
+      ],
+      "@clasptek/application-mock-examination": [
+        "../packages/application/mock-examination/src/index.ts"
+      ],
+      "@clasptek/application-learning-assistant": [
+        "../packages/application/learning-assistant/src/index.ts"
+      ],
+      "@clasptek/application-results": ["../packages/application/results/src/index.ts"],
+      "@clasptek/application-notification": ["../packages/application/notification/src/index.ts"],
+      "@clasptek/application-announcement": ["../packages/application/announcement/src/index.ts"],
+      "@clasptek/infrastructure-access-control": [
+        "../packages/infrastructure/access-control/src/index.ts"
+      ],
+      "@clasptek/infrastructure-ai-providers": [
+        "../packages/infrastructure/ai-providers/src/index.ts"
+      ],
+      "@clasptek/domain-ai-evaluation": ["../packages/domain/ai-evaluation/src/index.ts"],
+      "@clasptek/application-ai-evaluation": ["../packages/application/ai-evaluation/src/index.ts"],
+      "@clasptek/application-exam-product": ["../packages/application/exam-product/src/index.ts"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}
