@@ -264,7 +264,10 @@ export function ListeningSectionEngine({
     }
 
     // ── 3. MULTIPLE CHOICE / MCQ ────────────────────────────────────────
-    if (rawType === 'MULTIPLE_CHOICE' || rawType === 'MCQ' || normalizedOptions.length > 0) {
+    // NOTE: Only render as MCQ when the canonical type explicitly says so.
+    // Never fall back to MCQ simply because options happen to be present.
+    // Each question must render based on its own rawType, not the group type.
+    if (rawType === 'MULTIPLE_CHOICE' || rawType === 'MCQ') {
       if (normalizedOptions.length > 0) {
         return (
           <div

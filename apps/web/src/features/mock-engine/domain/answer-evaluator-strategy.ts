@@ -240,22 +240,77 @@ export class SpeakingAnswerEvaluatorStrategy implements IAnswerEvaluatorStrategy
 }
 
 /**
+ * Strategy 7: Yes / No / Not Given Evaluator Strategy
+ */
+export class YesNoNotGivenAnswerEvaluatorStrategy implements IAnswerEvaluatorStrategy {
+  readonly supportedType: QuestionType = 'YES_NO_NOT_GIVEN';
+
+  validate(studentAnswer: string, _question: AdminQuestion): boolean {
+    return ['yes', 'no', 'not given'].includes(studentAnswer.trim().toLowerCase());
+  }
+
+  score(studentAnswer: string, question: AdminQuestion): EvaluationResult {
+    const isCorrect =
+      studentAnswer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase();
+    return {
+      isCorrect,
+      scoreEarned: isCorrect ? 1 : 0,
+      maxScore: 1,
+      explanation: question.explanation || 'Yes/No/Not Given passage claim verification.',
+      feedbackText: isCorrect ? 'Accurate Claim Classification' : 'Incorrect Claim Classification',
+    };
+  }
+
+  review(studentAnswer: string, question: AdminQuestion) {
+    const isCorrect =
+      studentAnswer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase();
+    return {
+      studentAnswer: studentAnswer || 'Unanswered',
+      correctAnswer: question.correctAnswer,
+      isCorrect,
+      explanation: question.explanation || 'Passage stance evaluation.',
+    };
+  }
+}
+
+/**
  * Strategy Registry (No Switch Statements)
  */
 export class AnswerEvaluatorRegistry {
+  private static mcqStrategy = new MCQAnswerEvaluatorStrategy();
+  private static tfngStrategy = new TrueFalseNotGivenAnswerEvaluatorStrategy();
+  private static ynngStrategy = new YesNoNotGivenAnswerEvaluatorStrategy();
+  private static matchingStrategy = new MatchingAnswerEvaluatorStrategy();
+  private static fillInBlankStrategy = new FillInBlankAnswerEvaluatorStrategy();
+  private static essayStrategy = new EssayAnswerEvaluatorStrategy();
+  private static speakingStrategy = new SpeakingAnswerEvaluatorStrategy();
+
   private static strategies: Map<QuestionType, IAnswerEvaluatorStrategy> = new Map([
-    ['MCQ', new MCQAnswerEvaluatorStrategy()],
-    ['TRUE_FALSE_NOT_GIVEN', new TrueFalseNotGivenAnswerEvaluatorStrategy()],
-    ['MATCHING', new MatchingAnswerEvaluatorStrategy()],
-    ['FILL_IN_BLANK', new FillInBlankAnswerEvaluatorStrategy()],
-    ['ESSAY', new EssayAnswerEvaluatorStrategy()],
-    ['SPEAKING', new SpeakingAnswerEvaluatorStrategy()],
+    ['MCQ', AnswerEvaluatorRegistry.mcqStrategy],
+    ['MULTIPLE_CHOICE', AnswerEvaluatorRegistry.mcqStrategy],
+    ['TRUE_FALSE_NOT_GIVEN', AnswerEvaluatorRegistry.tfngStrategy],
+    ['YES_NO_NOT_GIVEN', AnswerEvaluatorRegistry.ynngStrategy],
+    ['MATCHING', AnswerEvaluatorRegistry.matchingStrategy],
+    ['MATCHING_HEADINGS', AnswerEvaluatorRegistry.matchingStrategy],
+    ['MATCHING_INFORMATION', AnswerEvaluatorRegistry.matchingStrategy],
+    ['MATCHING_FEATURES', AnswerEvaluatorRegistry.matchingStrategy],
+    ['FILL_IN_BLANK', AnswerEvaluatorRegistry.fillInBlankStrategy],
+    ['COMPLETION', AnswerEvaluatorRegistry.fillInBlankStrategy],
+    ['NOTE_COMPLETION', AnswerEvaluatorRegistry.fillInBlankStrategy],
+    ['SUMMARY_COMPLETION', AnswerEvaluatorRegistry.fillInBlankStrategy],
+    ['SENTENCE_COMPLETION', AnswerEvaluatorRegistry.fillInBlankStrategy],
+    ['SHORT_ANSWER', AnswerEvaluatorRegistry.fillInBlankStrategy],
+    ['ESSAY', AnswerEvaluatorRegistry.essayStrategy],
+    ['WRITING', AnswerEvaluatorRegistry.essayStrategy],
+    ['WRITING_TASK_1', AnswerEvaluatorRegistry.essayStrategy],
+    ['WRITING_TASK_2', AnswerEvaluatorRegistry.essayStrategy],
+    ['SPEAKING', AnswerEvaluatorRegistry.speakingStrategy],
   ]);
 
   public static getEvaluator(type: QuestionType): IAnswerEvaluatorStrategy {
     const strategy = this.strategies.get(type);
     if (!strategy) {
-      return this.strategies.get('MCQ')!;
+      return this.mcqStrategy;
     }
     return strategy;
   }

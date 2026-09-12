@@ -196,8 +196,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         difficulty: payload.difficulty || 'MEDIUM',
         sectionName: payload.sectionName || 'Listening',
         options: payload.options || [],
+        // For MCQ/MATCHING: look for the correct option code.
+        // For SHORT_ANSWER/COMPLETION/etc.: surface correctAnswer text directly.
+        // NEVER fall back to 'A' — that would mislead admin reviewers.
         correctOptionCode:
-          payload.options?.find((o: any) => o.isCorrect)?.code || payload.correctOptionCode || 'A',
+          payload.options?.find((o: any) => o.isCorrect)?.code || payload.correctOptionCode || null,
+        correctAnswer: payload.correctAnswer || payload.acceptedAnswers?.[0] || null,
         acceptedAnswers: payload.acceptedAnswers || [],
         audio: payload.audio || null,
         passage: payload.passage || null,

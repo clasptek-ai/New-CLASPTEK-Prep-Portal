@@ -334,6 +334,11 @@ export class PostgresCanonicalMockRepository {
       selected.push(...used.slice(0, sec.questionCount - selected.length));
     }
 
+    // Canonical ordering: Preserve passage cohesion (Passage 1 -> 2 -> 3)
+    selected.sort((a: any, b: any) =>
+      a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' })
+    );
+
     // Batch query answer_options for all selected questions
     const qvIds = selected.map((r: any) => r.question_version_id);
     const optionsByQvId = new Map<string, { option_code: string; option_text: string }[]>();
@@ -433,6 +438,11 @@ export class PostgresCanonicalMockRepository {
     if (selected.length < sec.questionCount) {
       selected.push(...used.slice(0, sec.questionCount - selected.length));
     }
+
+    // Canonical ordering: Ensure exact 1..40 listening sequence across all 4 audio sections
+    selected.sort((a: any, b: any) =>
+      a.code.localeCompare(b.code, undefined, { numeric: true, sensitivity: 'base' })
+    );
 
     // Batch query answer_options for all selected questions
     const qvIds = selected.map((r: any) => r.question_version_id);

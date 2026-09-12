@@ -334,7 +334,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           correctOptionCode:
             payload.options?.find((o: any) => o.isCorrect)?.code ||
             payload.correctOptionCode ||
-            'A',
+            null,
+          correctAnswer: payload.correctAnswer || payload.acceptedAnswers?.[0] || null,
           acceptedAnswers: payload.acceptedAnswers || [],
           audio: payload.audio || null,
           passage: payload.passage || null,

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { extractSelectedOptionCode } from '@/lib/scoring/extractSelectedOptionCode';
 
 export interface AttemptSummary {
@@ -95,6 +95,7 @@ export function AttemptInspectorModal({
   const [activeTab, setActiveTab] = useState<
     'OVERVIEW' | 'QUESTIONS' | 'READING' | 'WRITING' | 'SPEAKING' | 'RESULTS' | 'AUDIT'
   >('OVERVIEW');
+  const [selectedTrackIndex, setSelectedTrackIndex] = useState<number>(0);
 
   useEffect(() => {
     async function fetchDetail() {
@@ -127,6 +128,41 @@ export function AttemptInspectorModal({
     detailBundle?.paperSnapshot?.listeningQuestions ||
     detailBundle?.paperSnapshot?.grammarQuestions ||
     [];
+
+  const distinctAudioTracks = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        trackCode: string;
+        trackTitle: string;
+        trackUrl: string;
+        sectionNumber: number;
+        durationSeconds: number;
+        questionCount: number;
+      }
+    >();
+    listeningItems.forEach((q: any) => {
+      if (q.audio && typeof q.audio === 'object' && (q.audio.trackUrl || q.audio.url)) {
+        const rawUrl = q.audio.trackUrl || q.audio.url;
+        const url = rawUrl.startsWith('/') || rawUrl.startsWith('http') ? rawUrl : `/${rawUrl}`;
+        const secNum = q.audio.sectionNumber || 1;
+        const key = q.audio.trackCode || url;
+        if (!map.has(key)) {
+          map.set(key, {
+            trackCode: q.audio.trackCode || `SECTION_${secNum}`,
+            trackTitle: q.audio.trackTitle || `Section ${secNum} Audio Recording`,
+            trackUrl: url,
+            sectionNumber: secNum,
+            durationSeconds: q.audio.durationSeconds || 0,
+            questionCount: 1,
+          });
+        } else {
+          map.get(key)!.questionCount += 1;
+        }
+      }
+    });
+    return Array.from(map.values()).sort((a, b) => a.sectionNumber - b.sectionNumber);
+  }, [listeningItems]);
 
   const readingItems =
     detailBundle?.paperSnapshot?.readingPassage?.comprehensionQuestions ||
@@ -350,6 +386,71 @@ export function AttemptInspectorModal({
                     )}
                   </div>
 
+                  {/* Master Section Audio Player & Verification Panel */}
+                  {distinctAudioTracks.length > 0 && (
+                    <div className="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 space-y-3">
+                      <div className="flex flex-wrap justify-between items-center gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">
+                            🎧 Audio Verification Console
+                          </span>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                            {distinctAudioTracks.length} Sections Ready
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          {distinctAudioTracks.map((tr, tIdx) => (
+                            <button
+                              key={tr.trackCode}
+                              type="button"
+                              onClick={() => setSelectedTrackIndex(tIdx)}
+                              className={`px-2.5 py-1 rounded text-[11px] font-mono font-bold border transition-colors ${
+                                selectedTrackIndex === tIdx
+                                  ? 'bg-indigo-600 text-white border-indigo-500'
+                                  : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
+                              }`}
+                            >
+                              Sec {tr.sectionNumber} ({tr.questionCount} Qs)
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {distinctAudioTracks[selectedTrackIndex] && (
+                        <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                          <div className="space-y-0.5 min-w-0">
+                            <div className="font-semibold text-slate-200 text-xs truncate">
+                              Section {distinctAudioTracks[selectedTrackIndex].sectionNumber}:{' '}
+                              {distinctAudioTracks[selectedTrackIndex].trackTitle}
+                            </div>
+                            <div className="text-[10px] text-slate-400 font-mono flex flex-wrap gap-2">
+                              <span>
+                                Track: {distinctAudioTracks[selectedTrackIndex].trackCode}
+                              </span>
+                              {distinctAudioTracks[selectedTrackIndex].durationSeconds > 0 && (
+                                <span>
+                                  • Duration:{' '}
+                                  {Math.floor(
+                                    distinctAudioTracks[selectedTrackIndex].durationSeconds / 60
+                                  )}
+                                  m {distinctAudioTracks[selectedTrackIndex].durationSeconds % 60}s
+                                </span>
+                              )}
+                              <span>• MIME: audio/mpeg</span>
+                            </div>
+                          </div>
+                          <audio
+                            controls
+                            key={distinctAudioTracks[selectedTrackIndex].trackUrl}
+                            src={distinctAudioTracks[selectedTrackIndex].trackUrl}
+                            className="h-8 w-full sm:w-80 shrink-0"
+                            preload="metadata"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="space-y-3">
                     {listeningItems.map((q: any, idx: number) => {
                       const qId = q.id || q.questionId;
@@ -360,6 +461,16 @@ export function AttemptInspectorModal({
                         ansObj?.responsePayload?.textResponse ||
                         '-';
                       const isCorrect = ansObj?.isCorrect;
+
+                      const rawAudioUrl =
+                        typeof q.audio === 'string'
+                          ? q.audio
+                          : q.audio?.trackUrl || q.audio?.url || '';
+                      const resolvedAudioUrl = rawAudioUrl
+                        ? rawAudioUrl.startsWith('/') || rawAudioUrl.startsWith('http')
+                          ? rawAudioUrl
+                          : `/${rawAudioUrl}`
+                        : '';
 
                       return (
                         <div
@@ -388,15 +499,16 @@ export function AttemptInspectorModal({
                           </div>
 
                           {/* Audio player if audio exists */}
-                          {q.audio && (
+                          {resolvedAudioUrl && (
                             <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 flex items-center gap-3">
                               <span className="text-[10px] text-sky-400 font-bold font-mono">
                                 AUDIO:
                               </span>
                               <audio
                                 controls
-                                src={typeof q.audio === 'string' ? q.audio : q.audio.url}
+                                src={resolvedAudioUrl}
                                 className="h-7 w-full max-w-md"
+                                preload="metadata"
                               />
                             </div>
                           )}
@@ -438,9 +550,10 @@ export function AttemptInspectorModal({
                               <span className="text-slate-500">Answer Key / Correct: </span>
                               <span className="text-emerald-400 font-bold">
                                 {q.correctOptionCode ||
-                                  (Array.isArray(q.acceptedAnswers)
+                                  q.correctAnswer ||
+                                  (Array.isArray(q.acceptedAnswers) && q.acceptedAnswers.length > 0
                                     ? q.acceptedAnswers.join(' | ')
-                                    : 'A')}
+                                    : '-')}
                               </span>
                             </div>
                             <div>
@@ -568,8 +681,8 @@ export function AttemptInspectorModal({
                                   ? Array.isArray(cq.acceptedAnswers) &&
                                     cq.acceptedAnswers.length > 0
                                     ? cq.acceptedAnswers.join(' | ')
-                                    : cq.correctOptionCode || '-'
-                                  : cq.correctOptionCode || 'A'}
+                                    : cq.correctOptionCode || cq.correctAnswer || '-'
+                                  : cq.correctOptionCode || cq.correctAnswer || '-'}
                               </span>
                             </div>
                             <div>

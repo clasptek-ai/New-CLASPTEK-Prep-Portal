@@ -49,10 +49,16 @@ module.exports = {
           { key: 'Expires', value: '0' },
         ],
       },
-      // 2. Audio assets: Cache with revalidation
+      // 2. Audio assets: Cache with revalidation + explicit audio MIME type
+      // .mpeg files contain ID3/MP3 encoded audio. Force audio/mpeg so browsers
+      // do not misidentify them as video/mpeg, which would break the <audio> element.
       {
         source: '/audio/:path*',
-        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, must-revalidate' }],
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=3600, must-revalidate' },
+          { key: 'Content-Type', value: 'audio/mpeg' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+        ],
       },
       // 3. Application HTML Pages & Shell: Revalidate on every deployment
       {
