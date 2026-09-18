@@ -80,6 +80,8 @@ export interface MockSession {
   currentSectionIndex: number;
   currentQuestionIndex: number;
   timeRemainingSeconds: number;
+  startedAt?: string;
+  expiresAt?: string;
   answers: Record<string, MockSessionAnswer>;
   template?: MockTemplate;
   createdAt: string;

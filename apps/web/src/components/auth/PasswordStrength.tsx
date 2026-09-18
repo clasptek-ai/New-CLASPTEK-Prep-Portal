@@ -20,11 +20,11 @@ export function PasswordStrength({ validation, passwordLength }: PasswordStrengt
       case 3:
         return { label: 'Fair', color: 'text-amber-400', barBg: 'bg-amber-500' };
       case 4:
-        return { label: 'Good', color: 'text-sky-400', barBg: 'bg-sky-500' };
+        return { label: 'Good', color: 'text-(--brand-light)', barBg: 'bg-(--brand)' };
       case 5:
         return { label: 'Excellent', color: 'text-emerald-400', barBg: 'bg-emerald-500' };
       default:
-        return { label: 'Too Short', color: 'text-slate-400', barBg: 'bg-slate-700' };
+        return { label: 'Too Short', color: 'text-(--text-muted)', barBg: 'bg-(--surface-2)' };
     }
   };
 
@@ -42,7 +42,7 @@ export function PasswordStrength({ validation, passwordLength }: PasswordStrengt
     <div className="space-y-3 pt-1 text-xs">
       {/* Strength Bar & Label */}
       <div className="flex items-center justify-between">
-        <span className="font-semibold text-slate-400">Password Strength:</span>
+        <span className="font-semibold text-(--text-secondary)">Password Strength:</span>
         <span className={`font-bold ${strength.color}`}>{strength.label}</span>
       </div>
 
@@ -51,15 +51,15 @@ export function PasswordStrength({ validation, passwordLength }: PasswordStrengt
           <div
             key={level}
             className={`h-full rounded-full transition-all duration-300 ${
-              level <= validation.score ? strength.barBg : 'bg-slate-800'
+              level <= validation.score ? strength.barBg : 'bg-(--surface-2)'
             }`}
           />
         ))}
       </div>
 
       {/* Requirements Checklist */}
-      <div className="bg-slate-950/70 p-3 rounded-xl border border-slate-800/80 space-y-1.5">
-        <span className="block text-[11px] font-bold text-slate-400 mb-1">
+      <div className="bg-(--surface-1) p-3 rounded-lg border border-(--border) space-y-1.5">
+        <span className="block text-[11px] font-semibold text-(--text-secondary) mb-1">
           Requirements Checklist:
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
@@ -68,9 +68,9 @@ export function PasswordStrength({ validation, passwordLength }: PasswordStrengt
               {item.met ? (
                 <Check size={14} className="text-emerald-400 shrink-0" />
               ) : (
-                <X size={14} className="text-slate-600 shrink-0" />
+                <X size={14} className="text-(--text-muted) shrink-0" />
               )}
-              <span className={item.met ? 'text-emerald-300 font-medium' : 'text-slate-400'}>
+              <span className={item.met ? 'text-emerald-400 font-medium' : 'text-(--text-muted)'}>
                 {item.label}
               </span>
             </div>

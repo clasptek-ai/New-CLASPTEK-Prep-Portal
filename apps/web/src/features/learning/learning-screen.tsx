@@ -24,7 +24,7 @@ export function LearningScreen() {
 
   if (loading) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
+      <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
         <h3>Loading syllabus modules and active learning tracks...</h3>
       </div>
     );
@@ -33,12 +33,11 @@ export function LearningScreen() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
       <div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>
           My Enrolled Learning Programs
         </h1>
-        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
-          Inspect course curriculum blueprints, lesson tracking status logs, and estimated
-          completion times
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+          Inspect course curriculum blueprints, lesson tracking status logs, and estimated completion times
         </p>
       </div>
 
@@ -54,15 +53,16 @@ export function LearningScreen() {
             >
               <div
                 style={{
-                  padding: '0.75rem',
-                  backgroundColor: '#0b0f19',
-                  borderRadius: '6px',
+                  padding: '0.75rem 1rem',
+                  backgroundColor: 'var(--surface-1)',
+                  borderRadius: 'var(--radius-md)',
                   fontSize: '0.85rem',
-                  color: '#94a3b8',
+                  color: 'var(--text-secondary)',
+                  border: '1px solid var(--border)',
                 }}
               >
-                Estimated remaining: <strong>{prog.estimatedCompletionWeeks} weeks</strong> |
-                Current Focus: <strong>{prog.currentModule}</strong>
+                Estimated remaining: <strong style={{ color: 'var(--text-primary)' }}>{prog.estimatedCompletionWeeks} weeks</strong> |
+                Current Focus: <strong style={{ color: 'var(--brand-light)' }}>{prog.currentModule}</strong>
               </div>
 
               {prog.modules.map((mod) => (
@@ -72,11 +72,11 @@ export function LearningScreen() {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '0.75rem',
-                    borderTop: '1px solid #1e293b',
+                    borderTop: '1px solid var(--border)',
                     paddingTop: '1rem',
                   }}
                 >
-                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#f8fafc' }}>
+                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     Module: {mod.name}
                   </h3>
 
@@ -89,16 +89,16 @@ export function LearningScreen() {
                           justifyContent: 'space-between',
                           alignItems: 'center',
                           padding: '0.75rem 1rem',
-                          backgroundColor: '#111827',
-                          borderRadius: '8px',
-                          border: '1px solid #1e293b',
+                          backgroundColor: 'var(--surface-1)',
+                          borderRadius: 'var(--radius-md)',
+                          border: '1px solid var(--border)',
                         }}
                       >
                         <div>
-                          <span style={{ fontSize: '0.9rem', fontWeight: 500, color: '#cbd5e1' }}>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-primary)' }}>
                             {lesson.title}
                           </span>
-                          <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748b' }}>
+                          <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                             Duration: {lesson.durationMinutes} mins
                           </span>
                         </div>

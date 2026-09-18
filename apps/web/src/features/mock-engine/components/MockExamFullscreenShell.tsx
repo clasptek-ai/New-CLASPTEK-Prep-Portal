@@ -120,8 +120,9 @@ export function ExamHeader({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const isExpired = timeRemainingSeconds <= 0;
   const timerWarning = timeRemainingSeconds > 0 && timeRemainingSeconds <= 300;
-  const timerCritical = timeRemainingSeconds > 0 && timeRemainingSeconds <= 60;
+  const timerCritical = isExpired || (timeRemainingSeconds > 0 && timeRemainingSeconds <= 60);
 
   const timerColor = timerCritical ? '#ef4444' : timerWarning ? '#f59e0b' : '#f8fafc';
   const timerBg = timerCritical

@@ -324,10 +324,10 @@ export function AdaptivePracticeScreen() {
   const currentPassage = sessionPassages[activePassageIndex] || sessionPassages[0];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans pb-16">
+    <div className="min-h-screen bg-(--bg-app) text-(--text-primary) font-sans pb-16">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-sky-500 text-slate-950 px-4 py-2.5 rounded-xl font-bold text-xs shadow-2xl flex items-center gap-2 animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 bg-(--brand) text-white px-4 py-2.5 rounded-lg font-bold text-xs shadow-xl flex items-center gap-2 animate-bounce">
           <Check size={16} /> {toastMessage}
         </div>
       )}
@@ -338,15 +338,15 @@ export function AdaptivePracticeScreen() {
       {stage === 'SKILL_SELECT' && (
         <div className="max-w-4xl mx-auto p-6 space-y-6">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-6 rounded-2xl">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-(--surface-0) border border-(--border) p-6 rounded-xl">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-sky-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-(--brand-light)">
                 Student Practice Arena
               </span>
-              <h1 className="text-2xl font-black text-white mt-1">
+              <h1 className="text-2xl font-black text-(--text-primary) mt-1">
                 {programmeData.programmeTitle}
               </h1>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-(--text-secondary) mt-1">
                 Full-length IELTS Academic Reading practice with authentic passages, question
                 groups, and official band scoring.
               </p>
@@ -354,8 +354,8 @@ export function AdaptivePracticeScreen() {
 
             <div className="flex items-center gap-3">
               {programmeData.targetScore && (
-                <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3.5 py-2 rounded-xl text-xs">
-                  <span className="text-slate-400 font-medium">Target Score:</span>
+                <div className="flex items-center gap-2 bg-(--surface-1) border border-(--border) px-3.5 py-2 rounded-lg text-xs">
+                  <span className="text-(--text-secondary) font-medium">Target Score:</span>
                   <span className="font-bold text-amber-400">{programmeData.targetScore}</span>
                 </div>
               )}
@@ -363,17 +363,17 @@ export function AdaptivePracticeScreen() {
           </div>
 
           {/* SKILL NAVIGATION TABS */}
-          <div className="flex overflow-x-auto pb-2 border-b border-slate-800 gap-2 scrollbar-none">
+          <div className="flex overflow-x-auto pb-2 border-b border-(--border) gap-2 scrollbar-none">
             {programmeData.skills.map((skillName) => {
               const isActive = activeTab.toLowerCase() === skillName.toLowerCase();
               return (
                 <button
                   key={skillName}
                   onClick={() => setActiveTab(skillName)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
                     isActive
-                      ? 'bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20'
-                      : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800/80'
+                      ? 'bg-(--brand) text-white shadow-sm'
+                      : 'bg-(--surface-1) text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--surface-2) border border-(--border)'
                   }`}
                 >
                   {getSkillIcon(skillName)}
@@ -384,20 +384,20 @@ export function AdaptivePracticeScreen() {
           </div>
 
           {/* RECOMMENDED FULL IELTS READING PRACTICE CARD */}
-          <div className="bg-linear-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-indigo-500/30 p-6 rounded-2xl space-y-4 shadow-xl">
+          <div className="bg-(--surface-0) border border-(--brand)/30 p-6 rounded-xl space-y-4 shadow-lg">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-xs font-bold text-(--brand-light) uppercase tracking-wider flex items-center gap-1.5">
                 <Brain size={16} /> Featured Authentic IELTS Practice Test
               </span>
               <Badge variant="info">3 Passages · 40 Questions · 60 Mins</Badge>
             </div>
 
             <div>
-              <h3 className="text-xl font-black text-white">
+              <h3 className="text-xl font-bold text-(--text-primary)">
                 IELTS Academic Reading Practice Test 1
               </h3>
-              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                Includes: Passage 1 (The Public Library Movement), Passage 2 (Circadian Rhythms &
+              <p className="text-xs text-(--text-secondary) mt-1 leading-relaxed">
+                Includes: Passage 1 (The Public Library Movement), Passage 2 (Circadian Rhythms &amp;
                 Cognitive Performance), and Passage 3 (Solar Geoengineering). Features Matching
                 Headings, True/False/Not Given, Summary Completion, and Note Completion with zero
                 duplicate instructions.
@@ -408,7 +408,7 @@ export function AdaptivePracticeScreen() {
               <button
                 onClick={() => handleStartPractice('Reading', 'IELTS Reading Full Practice Test')}
                 disabled={loading}
-                className="px-6 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-lg shadow-sky-500/25 flex items-center gap-2 disabled:opacity-50"
+                className="px-6 py-3 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-xs rounded-lg transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 cursor-pointer"
               >
                 {loading ? 'Preparing Test Engine...' : 'Start Full 40-Question Practice Test →'}
               </button>
@@ -417,7 +417,7 @@ export function AdaptivePracticeScreen() {
 
           {/* PRACTICE BY SKILL GRID */}
           <div className="space-y-4">
-            <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <h2 className="text-xs font-bold text-(--text-secondary) uppercase tracking-wider">
               Available Exam Sections
             </h2>
 
@@ -425,16 +425,16 @@ export function AdaptivePracticeScreen() {
               {programmeData.skills.map((skillName) => (
                 <div
                   key={skillName}
-                  className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex flex-col justify-between space-y-4 hover:border-slate-700 transition-all"
+                  className="bg-(--surface-0) border border-(--border) p-5 rounded-xl flex flex-col justify-between space-y-4 hover:border-(--border-strong) transition-all"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-slate-800 text-sky-400 rounded-xl">
+                      <div className="p-2.5 bg-(--surface-1) text-(--brand-light) rounded-lg border border-(--border)">
                         {getSkillIcon(skillName)}
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-white">{skillName} Practice</h4>
-                        <p className="text-xs text-slate-400 mt-0.5">
+                        <h4 className="text-sm font-bold text-(--text-primary)">{skillName} Practice</h4>
+                        <p className="text-xs text-(--text-secondary) mt-0.5">
                           {skillName.toLowerCase().includes('reading')
                             ? 'Dual-pane split interface with 3 reading passages and 40 questions.'
                             : `Targeted ${skillName.toLowerCase()} practice modules.`}
@@ -447,7 +447,7 @@ export function AdaptivePracticeScreen() {
                     <button
                       onClick={() => handleStartPractice(skillName, `${skillName} Practice`)}
                       disabled={loading}
-                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-sky-300 font-bold text-xs rounded-xl transition-colors flex items-center gap-1.5"
+                      className="px-4 py-2 bg-(--surface-1) hover:bg-(--surface-2) text-(--text-primary) font-bold text-xs rounded-lg border border-(--border) transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
                       Launch Practice →
                     </button>
@@ -465,23 +465,23 @@ export function AdaptivePracticeScreen() {
       {stage === 'SESSION' && activeSession && currentQuestion && (
         <div className="max-w-[1600px] mx-auto p-4 lg:p-6 space-y-4">
           {/* Top Session Bar */}
-          <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap justify-between items-center gap-3">
+          <div className="bg-(--surface-0) border border-(--border) p-4 rounded-xl flex flex-wrap justify-between items-center gap-3">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-sky-500/10 text-sky-400 rounded-xl border border-sky-500/20">
+              <div className="p-2 bg-(--brand)/10 text-(--brand-light) rounded-lg border border-(--brand)/20">
                 <BookOpen size={18} />
               </div>
               <div>
-                <span className="font-extrabold text-white text-sm">
+                <span className="font-extrabold text-(--text-primary) text-sm">
                   {programmeData.programmeTitle} — {activeSession.section}
                 </span>
-                <div className="text-xs text-slate-400 flex items-center gap-2">
+                <div className="text-xs text-(--text-secondary) flex items-center gap-2">
                   <span>
                     Question {currentIndex + 1} of {activeSession.totalQuestions}
                   </span>
                   {currentQuestion.groupTitle && (
                     <>
                       <span>•</span>
-                      <span className="text-sky-400 font-medium">{currentQuestion.groupTitle}</span>
+                      <span className="text-(--brand-light) font-medium">{currentQuestion.groupTitle}</span>
                     </>
                   )}
                 </div>
@@ -490,17 +490,17 @@ export function AdaptivePracticeScreen() {
 
             {/* Timer & Controls */}
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 text-xs font-mono font-bold text-sky-400 bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-800">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-(--brand-light) bg-(--surface-1) px-3 py-1.5 rounded-lg border border-(--border)">
                 <Clock size={15} />
                 <span>{formatTimer(secondsRemaining)} remaining</span>
               </div>
 
               <button
                 onClick={() => handleToggleBookmark(currentQuestion.id)}
-                className={`p-2 rounded-xl border transition-all ${
+                className={`p-2 rounded-lg border transition-all ${
                   bookmarkedSet.has(currentQuestion.id)
                     ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm'
-                    : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                    : 'bg-(--surface-1) text-(--text-secondary) border-(--border) hover:text-(--text-primary)'
                 }`}
                 title="Bookmark for review"
               >
@@ -512,7 +512,7 @@ export function AdaptivePracticeScreen() {
 
               <button
                 onClick={handleFinishSession}
-                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-500/20 transition-all"
+                className="px-4 py-2 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-xs rounded-lg shadow-sm transition-all cursor-pointer"
               >
                 Submit Practice
               </button>
@@ -525,10 +525,10 @@ export function AdaptivePracticeScreen() {
           >
             {/* LEFT PANE: READING PASSAGE (50% on desktop) */}
             {isReadingSkill && (
-              <div className="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col h-[calc(100vh-210px)] overflow-hidden shadow-sm">
+              <div className="lg:col-span-6 bg-(--surface-0) border border-(--border) rounded-xl flex flex-col h-[calc(100vh-210px)] overflow-hidden shadow-sm">
                 {/* Passage Switcher Tabs */}
                 {sessionPassages.length > 1 && (
-                  <div className="flex border-b border-slate-800 bg-slate-950/80 px-3 pt-2.5 gap-2 overflow-x-auto">
+                  <div className="flex border-b border-(--border) bg-(--surface-1) px-3 pt-2.5 gap-2 overflow-x-auto">
                     {sessionPassages.map((pas, pIdx) => {
                       const isActive = pIdx === activePassageIndex;
                       return (
@@ -541,10 +541,10 @@ export function AdaptivePracticeScreen() {
                               setCurrentIndex(pas.questionIndices[0]);
                             }
                           }}
-                          className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                          className={`px-4 py-2 text-xs font-bold rounded-t-lg transition-all whitespace-nowrap flex items-center gap-1.5 ${
                             isActive
-                              ? 'bg-slate-900 text-sky-400 border-t-2 border-t-sky-400 border-x border-x-slate-800'
-                              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                              ? 'bg-(--surface-0) text-(--brand-light) border-t-2 border-t-(--brand) border-x border-x-(--border)'
+                              : 'text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--surface-0)/50'
                           }`}
                         >
                           <FileText size={14} />
@@ -560,12 +560,12 @@ export function AdaptivePracticeScreen() {
                 )}
 
                 {/* Passage Header */}
-                <div className="p-4 border-b border-slate-800 bg-slate-950/40 flex justify-between items-center">
+                <div className="p-4 border-b border-(--border) bg-(--surface-1)/40 flex justify-between items-center">
                   <div>
-                    <h3 className="text-base font-black text-white">
+                    <h3 className="text-base font-bold text-(--text-primary)">
                       {currentPassage?.title || 'Reading Passage'}
                     </h3>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-[11px] text-(--text-secondary)">
                       Reading Passage {activePassageIndex + 1} •{' '}
                       {currentPassage?.text ? currentPassage.text.trim().split(/\s+/).length : 0}{' '}
                       words
@@ -575,18 +575,18 @@ export function AdaptivePracticeScreen() {
                 </div>
 
                 {/* Passage Scrollable Content */}
-                <div className="p-6 overflow-y-auto space-y-4 leading-relaxed text-sm text-slate-200 font-serif selection:bg-sky-500/30">
+                <div className="p-6 overflow-y-auto space-y-4 leading-relaxed text-sm text-(--text-primary) font-serif selection:bg-(--brand)/30">
                   {currentPassage?.text ? (
                     currentPassage.text.split('\n\n').map((paragraph, paraIdx) => (
                       <p
                         key={paraIdx}
-                        className="leading-7 text-[15px] tracking-wide text-slate-200"
+                        className="leading-7 text-[15px] tracking-wide text-(--text-primary)"
                       >
                         {paragraph}
                       </p>
                     ))
                   ) : (
-                    <div className="text-slate-500 text-center py-10">
+                    <div className="text-(--text-muted) text-center py-10">
                       Passage content loading...
                     </div>
                   )}
@@ -596,15 +596,15 @@ export function AdaptivePracticeScreen() {
 
             {/* RIGHT PANE: QUESTION GROUP & INTERACTIVE TASK (50% on desktop) */}
             <div
-              className={`${isReadingSkill ? 'lg:col-span-6' : ''} bg-slate-900 border border-slate-800 rounded-2xl flex flex-col h-[calc(100vh-210px)] overflow-hidden shadow-sm`}
+              className={`${isReadingSkill ? 'lg:col-span-6' : ''} bg-(--surface-0) border border-(--border) rounded-xl flex flex-col h-[calc(100vh-210px)] overflow-hidden shadow-sm`}
             >
               {/* Question Workspace Scrollable Body */}
               <div className="p-6 overflow-y-auto space-y-6 flex-1">
                 {/* QUESTION GROUP INSTRUCTION BOX (Clean deduplicated header) */}
                 {currentQuestion.groupInstructions && (
-                  <div className="bg-slate-950 border border-sky-500/25 p-4 rounded-xl space-y-2">
+                  <div className="bg-(--surface-1) border border-(--brand)/25 p-4 rounded-xl space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-(--brand-light) uppercase tracking-wider flex items-center gap-1.5">
                         <HelpCircle size={14} /> {currentQuestion.groupTitle || 'Question Group'}
                       </span>
                       <Badge variant="info">{currentQuestion.type || 'TASK'}</Badge>
@@ -616,22 +616,22 @@ export function AdaptivePracticeScreen() {
                       </div>
                     )}
 
-                    <div className="text-xs text-slate-300 italic leading-relaxed">
+                    <div className="text-xs text-(--text-secondary) italic leading-relaxed">
                       {currentQuestion.groupInstructions}
                     </div>
 
                     {/* Shared Headings List for MATCHING_HEADINGS */}
                     {currentQuestion.sharedData?.headingsList && (
-                      <div className="mt-3 pt-3 border-t border-slate-800 space-y-1.5 bg-slate-900/60 p-3 rounded-lg">
-                        <div className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                      <div className="mt-3 pt-3 border-t border-(--border) space-y-1.5 bg-(--surface-0) p-3 rounded-lg">
+                        <div className="text-xs font-bold text-(--text-secondary) uppercase tracking-wider mb-2">
                           List of Headings
                         </div>
                         {currentQuestion.sharedData.headingsList.map((h: any) => (
                           <div
                             key={h.code}
-                            className="text-xs text-slate-300 flex items-start gap-2"
+                            className="text-xs text-(--text-secondary) flex items-start gap-2"
                           >
-                            <span className="font-bold text-sky-400 font-mono w-6">{h.code}</span>
+                            <span className="font-bold text-(--brand-light) font-mono w-6">{h.code}</span>
                             <span>{h.text}</span>
                           </div>
                         ))}
@@ -642,9 +642,9 @@ export function AdaptivePracticeScreen() {
 
                 {/* Audio player if listening */}
                 {currentQuestion.audioUrl && (
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                    <div className="font-bold text-slate-200 text-xs flex items-center gap-2">
-                      <Volume2 size={16} className="text-sky-400" /> Audio Prompt
+                  <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) space-y-2">
+                    <div className="font-bold text-(--text-primary) text-xs flex items-center gap-2">
+                      <Volume2 size={16} className="text-(--brand-light)" /> Audio Prompt
                     </div>
                     <audio controls className="w-full h-8">
                       <source src={currentQuestion.audioUrl} type="audio/mpeg" />
@@ -654,14 +654,14 @@ export function AdaptivePracticeScreen() {
 
                 {/* Visual Stimulus Diagram / Image (Writing Task 1 / Reading diagrams) */}
                 {currentQuestion.imageUrl && (
-                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                    <div className="font-bold text-slate-200 text-xs flex items-center justify-between">
+                  <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) space-y-3">
+                    <div className="font-bold text-(--text-primary) text-xs flex items-center justify-between">
                       <span className="flex items-center gap-2">
-                        <ImageIcon size={16} className="text-sky-400" /> Visual Stimulus Diagram
+                        <ImageIcon size={16} className="text-(--brand-light)" /> Visual Stimulus Diagram
                       </span>
                       <Badge variant="info">IELTS Academic Task 1</Badge>
                     </div>
-                    <div className="rounded-xl overflow-hidden border border-slate-800 bg-white p-4 flex items-center justify-center shadow-inner">
+                    <div className="rounded-lg overflow-hidden border border-(--border) bg-white p-4 flex items-center justify-center shadow-inner">
                       <img
                         src={currentQuestion.imageUrl}
                         alt="Question Visual Stimulus Diagram"
@@ -673,8 +673,8 @@ export function AdaptivePracticeScreen() {
 
                 {/* QUESTION PROMPT (Clean, without repeated group instruction headers) */}
                 <div className="space-y-2">
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-sky-500/20 text-sky-400 rounded-md font-mono">
+                  <div className="text-xs font-bold text-(--text-secondary) uppercase tracking-wider flex items-center gap-2">
+                    <span className="px-2 py-0.5 bg-(--brand)/20 text-(--brand-light) rounded-md font-mono">
                       {currentQuestion.code}
                     </span>
                     <span>
@@ -682,7 +682,7 @@ export function AdaptivePracticeScreen() {
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-white leading-relaxed pt-1">
+                  <h3 className="text-base font-bold text-(--text-primary) leading-relaxed pt-1">
                     {currentQuestion.text}
                   </h3>
                 </div>
@@ -695,7 +695,7 @@ export function AdaptivePracticeScreen() {
                 {(currentQuestion.type === 'TRUE_FALSE_NOT_GIVEN' ||
                   currentQuestion.type === 'YES_NO_NOT_GIVEN') && (
                   <div className="space-y-3 pt-2">
-                    <div className="text-xs text-slate-400 font-medium">
+                    <div className="text-xs text-(--text-secondary) font-medium">
                       Select your statement verification:
                     </div>
                     <div className="grid grid-cols-3 gap-3">
@@ -708,10 +708,10 @@ export function AdaptivePracticeScreen() {
                           <button
                             key={val}
                             onClick={() => handleSelectOption(val)}
-                            className={`p-3.5 rounded-xl font-bold text-xs text-center transition-all border ${
+                            className={`p-3 rounded-lg font-bold text-xs text-center transition-all border cursor-pointer ${
                               isSelected
-                                ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-lg shadow-sky-500/20 scale-[1.02]'
-                                : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
+                                ? 'bg-(--brand) text-white border-(--brand) shadow-sm'
+                                : 'bg-(--surface-1) text-(--text-secondary) border-(--border) hover:border-(--border-strong) hover:text-(--text-primary)'
                             }`}
                           >
                             {val}
@@ -725,7 +725,7 @@ export function AdaptivePracticeScreen() {
                 {/* 2. MATCHING_HEADINGS Selector */}
                 {currentQuestion.type === 'MATCHING_HEADINGS' && (
                   <div className="space-y-3 pt-2">
-                    <div className="text-xs text-slate-400 font-medium">
+                    <div className="text-xs text-(--text-secondary) font-medium">
                       Select the matching heading roman numeral:
                     </div>
                     <div className="grid grid-cols-4 gap-2">
@@ -735,10 +735,10 @@ export function AdaptivePracticeScreen() {
                           <button
                             key={num}
                             onClick={() => handleSelectOption(num)}
-                            className={`p-3 rounded-xl font-mono font-bold text-xs text-center transition-all border ${
+                            className={`p-2.5 rounded-lg font-mono font-bold text-xs text-center transition-all border cursor-pointer ${
                               isSelected
-                                ? 'bg-sky-500 text-slate-950 border-sky-400 shadow-md shadow-sky-500/20'
-                                : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-slate-700 hover:text-white'
+                                ? 'bg-(--brand) text-white border-(--brand) shadow-sm'
+                                : 'bg-(--surface-1) text-(--text-secondary) border-(--border) hover:border-(--border-strong) hover:text-(--text-primary)'
                             }`}
                           >
                             Heading {num}
@@ -754,7 +754,7 @@ export function AdaptivePracticeScreen() {
                   currentQuestion.options &&
                   currentQuestion.options.length > 0 && (
                     <div className="space-y-3 pt-2">
-                      <div className="text-xs text-slate-400 font-medium">Choose ONE option:</div>
+                      <div className="text-xs text-(--text-secondary) font-medium">Choose ONE option:</div>
                       {currentQuestion.options.map((opt, idx) => {
                         const optLetter = String.fromCharCode(65 + idx);
                         const isSelected =
@@ -766,17 +766,17 @@ export function AdaptivePracticeScreen() {
                           <button
                             key={idx}
                             onClick={() => handleSelectOption(optLetter)}
-                            className={`w-full text-left p-3.5 rounded-xl text-xs font-medium flex items-center gap-3.5 transition-all border ${
+                            className={`w-full text-left p-3.5 rounded-lg text-xs font-medium flex items-center gap-3.5 transition-all border cursor-pointer ${
                               isSelected
-                                ? 'bg-sky-500/15 border-sky-500 text-sky-300 shadow-sm'
-                                : 'bg-slate-950 border-slate-800/80 text-slate-300 hover:border-slate-700 hover:text-white'
+                                ? 'bg-(--brand)/15 border-(--brand) text-(--brand-light) shadow-sm'
+                                : 'bg-(--surface-1) border-(--border) text-(--text-secondary) hover:border-(--border-strong) hover:text-(--text-primary)'
                             }`}
                           >
                             <div
-                              className={`w-6 h-6 rounded-lg font-bold text-xs flex items-center justify-center border ${
+                              className={`w-6 h-6 rounded font-bold text-xs flex items-center justify-center border ${
                                 isSelected
-                                  ? 'bg-sky-500 text-slate-950 border-sky-500'
-                                  : 'bg-slate-900 border-slate-700 text-slate-400'
+                                  ? 'bg-(--brand) text-white border-(--brand)'
+                                  : 'bg-(--surface-2) border-(--border) text-(--text-secondary)'
                               }`}
                             >
                               {optLetter}
@@ -797,9 +797,9 @@ export function AdaptivePracticeScreen() {
                   currentQuestion.type === 'FILL_IN_BLANK' ||
                   currentQuestion.type === 'MATCHING_INFORMATION') && (
                   <div className="space-y-3 pt-2">
-                    <div className="flex items-center justify-between text-xs text-slate-400">
+                    <div className="flex items-center justify-between text-xs text-(--text-secondary)">
                       <span>Type your exact answer below:</span>
-                      <span className="text-sky-400 font-mono">
+                      <span className="text-(--brand-light) font-mono">
                         {currentQuestion.type === 'MATCHING_INFORMATION'
                           ? 'Paragraph letter (e.g. A, B, C...)'
                           : 'NO MORE THAN TWO WORDS'}
@@ -814,7 +814,7 @@ export function AdaptivePracticeScreen() {
                           ? 'e.g. F'
                           : 'e.g. termination shock'
                       }
-                      className="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-sm font-semibold text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 transition-all font-sans"
+                      className="w-full p-3.5 rounded-lg bg-(--surface-1) border border-(--border) text-sm font-semibold text-(--text-primary) placeholder:text-(--text-muted) focus:outline-none focus:border-(--brand) transition-all font-sans"
                     />
                   </div>
                 )}
@@ -822,9 +822,9 @@ export function AdaptivePracticeScreen() {
                 {/* Writing Task TextArea */}
                 {isWritingSkill && (
                   <div className="space-y-3 pt-2">
-                    <div className="flex items-center justify-between text-xs text-slate-400">
+                    <div className="flex items-center justify-between text-xs text-(--text-secondary)">
                       <span>Type your essay response:</span>
-                      <span className="font-mono text-sky-400">
+                      <span className="font-mono text-(--brand-light)">
                         {currentQuestion.type === 'WRITING_TASK_1'
                           ? 'Minimum 150 words'
                           : 'Minimum 250 words'}
@@ -839,13 +839,13 @@ export function AdaptivePracticeScreen() {
                           ? 'Summarise the diamond manufacturing process from mining to retailer (at least 150 words)...'
                           : 'Write your essay response stating reasons and examples (at least 250 words)...'
                       }
-                      className="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500 leading-relaxed font-sans"
+                      className="w-full p-4 rounded-lg bg-(--surface-1) border border-(--border) text-sm text-(--text-primary) placeholder:text-(--text-muted) focus:outline-none focus:border-(--brand) leading-relaxed font-sans"
                     />
                     <div className="flex justify-between items-center text-xs font-mono">
-                      <span className="text-slate-500">IELTS Academic Assessment Editor</span>
+                      <span className="text-(--text-muted)">IELTS Academic Assessment Editor</span>
                       {(() => {
                         const wordCount = textAnswer.trim()
-                          ? textAnswer.trim().split(/\s+/).length
+                            ? textAnswer.trim().split(/\s+/).length
                           : 0;
                         const minWords = currentQuestion.type === 'WRITING_TASK_1' ? 150 : 250;
                         const isSatisfied = wordCount >= minWords;
@@ -865,7 +865,7 @@ export function AdaptivePracticeScreen() {
               </div>
 
               {/* BOTTOM NAVIGATION TOOLBAR & 40-QUESTION MATRIX */}
-              <div className="p-4 border-t border-slate-800 bg-slate-950/90 space-y-3">
+              <div className="p-4 border-t border-(--border) bg-(--surface-0) space-y-3">
                 {/* 40-Question Navigation Grid */}
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                   {activeSession.questions.map((q, qIdx) => {
@@ -877,12 +877,12 @@ export function AdaptivePracticeScreen() {
                       <button
                         key={q.id}
                         onClick={() => setCurrentIndex(qIdx)}
-                        className={`min-w-7 h-7 rounded-lg text-[11px] font-mono font-bold transition-all flex items-center justify-center relative ${
+                        className={`min-w-7 h-7 rounded-md text-[11px] font-mono font-bold transition-all flex items-center justify-center relative cursor-pointer ${
                           isCurrent
-                            ? 'bg-sky-500 text-slate-950 ring-2 ring-sky-400 ring-offset-1 ring-offset-slate-950'
+                            ? 'bg-(--brand) text-white ring-2 ring-(--brand-light) ring-offset-1 ring-offset-(--surface-0)'
                             : isAnswered
                               ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                              : 'bg-slate-900 text-slate-400 border border-slate-800 hover:border-slate-700 hover:text-white'
+                              : 'bg-(--surface-1) text-(--text-secondary) border border-(--border) hover:border-(--border-strong) hover:text-(--text-primary)'
                         }`}
                       >
                         {qIdx + 1}
@@ -899,12 +899,12 @@ export function AdaptivePracticeScreen() {
                   <button
                     disabled={currentIndex === 0}
                     onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
-                    className="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 font-bold text-xs rounded-xl disabled:opacity-40 transition-colors flex items-center gap-1.5"
+                    className="px-4 py-2 bg-(--surface-1) border border-(--border) hover:bg-(--surface-2) text-(--text-primary) font-bold text-xs rounded-lg disabled:opacity-40 transition-colors flex items-center gap-1.5 cursor-pointer"
                   >
                     <ChevronLeft size={14} /> Previous
                   </button>
 
-                  <div className="text-[11px] text-slate-400 font-mono">
+                  <div className="text-[11px] text-(--text-secondary) font-mono">
                     {Object.keys(sessionAnswers).length} of {activeSession.totalQuestions} Answered
                   </div>
 
@@ -915,7 +915,7 @@ export function AdaptivePracticeScreen() {
                           Math.min(activeSession.totalQuestions - 1, prev + 1)
                         )
                       }
-                      className="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-1.5"
+                      className="px-5 py-2 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-xs rounded-lg transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
                     >
                       Next <ChevronRight size={14} />
                     </button>
@@ -923,7 +923,7 @@ export function AdaptivePracticeScreen() {
                     <button
                       onClick={handleFinishSession}
                       disabled={loading}
-                      className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                      className="px-5 py-2 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-xs rounded-lg transition-all shadow-sm disabled:opacity-50 cursor-pointer"
                     >
                       {loading ? 'Evaluating...' : 'Complete Test →'}
                     </button>
@@ -941,16 +941,16 @@ export function AdaptivePracticeScreen() {
       {stage === 'REVIEW' && activeSession && (
         <div className="max-w-4xl mx-auto p-6 space-y-6">
           {/* Official Band Score Card */}
-          <div className="bg-linear-to-br from-slate-900 via-slate-900 to-sky-950/40 border border-sky-500/30 p-8 rounded-3xl text-center space-y-4 shadow-2xl">
-            <span className="text-xs font-bold text-sky-400 uppercase tracking-widest">
+          <div className="bg-(--surface-0) border border-(--border) p-8 rounded-xl text-center space-y-4 shadow-lg">
+            <span className="text-xs font-bold text-(--brand-light) uppercase tracking-widest">
               Practice Assessment Complete
             </span>
 
             <div>
-              <div className="text-5xl font-black text-white tracking-tight">
+              <div className="text-5xl font-black text-(--text-primary) tracking-tight">
                 {activeSession.scoreResult?.bandOrScale || 'Band 7.5'}
               </div>
-              <p className="text-sm text-slate-300 font-semibold mt-1">
+              <p className="text-sm text-(--text-secondary) font-medium mt-1">
                 {activeSession.scoreResult?.label || 'Good User'} • Raw Score:{' '}
                 {activeSession.scoreResult?.rawScore || 0} / {activeSession.totalQuestions} (
                 {activeSession.scoreResult?.percentage || 0}%)
@@ -960,7 +960,7 @@ export function AdaptivePracticeScreen() {
             <div className="pt-2 flex justify-center gap-3">
               <button
                 onClick={() => setStage('SKILL_SELECT')}
-                className="px-6 py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg shadow-sky-500/20 transition-all flex items-center gap-2"
+                className="px-6 py-3 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-xs rounded-lg shadow-sm transition-all flex items-center gap-2 cursor-pointer"
               >
                 <RotateCcw size={15} /> Back to Practice Hub
               </button>
@@ -968,8 +968,8 @@ export function AdaptivePracticeScreen() {
           </div>
 
           {/* Question Breakdown List */}
-          <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+          <div className="bg-(--surface-0) border border-(--border) p-6 rounded-xl space-y-4">
+            <h3 className="text-sm font-bold text-(--text-primary) uppercase tracking-wider">
               Question-by-Question Diagnostic Review
             </h3>
 
@@ -979,20 +979,20 @@ export function AdaptivePracticeScreen() {
                 return (
                   <div
                     key={q.id}
-                    className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2"
+                    className="p-4 bg-(--surface-1) border border-(--border) rounded-lg space-y-2"
                   >
                     <div className="flex justify-between items-center text-xs">
-                      <span className="font-mono text-sky-400 font-bold">
+                      <span className="font-mono text-(--brand-light) font-bold">
                         Q{idx + 1} ({q.code}) • {q.type}
                       </span>
-                      <span className="text-slate-400">{q.difficulty}</span>
+                      <span className="text-(--text-muted)">{q.difficulty}</span>
                     </div>
 
-                    <div className="text-sm text-white font-medium">{q.text}</div>
+                    <div className="text-sm text-(--text-primary) font-medium">{q.text}</div>
 
                     <div className="text-xs flex items-center gap-2 pt-1">
-                      <span className="text-slate-400">Your Answer:</span>
-                      <span className="font-bold text-sky-300 font-mono">
+                      <span className="text-(--text-secondary)">Your Answer:</span>
+                      <span className="font-bold text-(--brand-light) font-mono">
                         {ans?.userAnswer || 'Unanswered'}
                       </span>
                     </div>

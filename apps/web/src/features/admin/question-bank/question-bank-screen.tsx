@@ -18,21 +18,20 @@ import {
 import { useBulkSelection, SmartSelectionType } from './hooks/useBulkSelection';
 import { BulkActionToolbar } from './components/BulkActionToolbar';
 import { BulkConfirmationModal } from './components/BulkConfirmationModal';
+import { QuestionBankHeader } from './components/QuestionBankHeader';
+import { QuestionBankFilters } from './components/QuestionBankFilters';
+import { QuestionRow } from './components/QuestionRow';
 import {
-  Plus,
-  Upload,
   CheckCircle2,
   Eye,
-  Trash2,
-  Search,
   BookOpen,
   ShieldCheck,
   Volume2,
   Image as ImageIcon,
   AlertCircle,
-  Clock,
   Layers,
   ChevronDown,
+  Plus,
 } from 'lucide-react';
 
 export function QuestionBankScreen() {
@@ -417,82 +416,31 @@ export function QuestionBankScreen() {
             position: 'fixed',
             top: '20px',
             right: '20px',
-            backgroundColor: '#10b981',
+            backgroundColor: 'var(--success)',
             color: '#ffffff',
-            padding: '0.85rem 1.35rem',
-            borderRadius: '10px',
+            padding: '0.85rem 1.25rem',
+            borderRadius: 'var(--radius-lg)',
             fontWeight: 700,
-            boxShadow: '0 10px 25px rgba(0,0,0,0.4)',
+            fontSize: '0.875rem',
+            boxShadow: 'var(--shadow-floating)',
             zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
             gap: '0.6rem',
           }}
         >
-          <CheckCircle2 size={18} />
+          <CheckCircle2 size={16} />
           {banner}
         </div>
       )}
 
       {/* Header Bar */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-        }}
-      >
-        <div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-              marginBottom: '0.35rem',
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                padding: '0.5rem',
-                borderRadius: '8px',
-                color: '#3b82f6',
-              }}
-            >
-              <ShieldCheck size={24} />
-            </div>
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-              Universal Question Bank
-            </h1>
-          </div>
-          <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: 0 }}>
-            Curate, review, and publish candidate exam items for IELTS, TOEFL, SAT, CELPIP & English
-            Proficiency.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <Button
-            variant="outline"
-            onClick={() => router.push('/admin/question-bank/import')}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-          >
-            <Upload size={16} />
-            Bulk Import (CSV/JSON)
-          </Button>
-
-          <Button
-            variant="primary"
-            onClick={() => setCreateModalOpen(true)}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-          >
-            <Plus size={16} />
-            Add New Question
-          </Button>
-        </div>
-      </div>
+      <QuestionBankHeader
+        totalCount={totalQuestionsCount}
+        loading={loading}
+        onImport={() => router.push('/admin/question-bank/import')}
+        onAddQuestion={() => setCreateModalOpen(true)}
+      />
 
       {/* Repository Mode Selector: Questions | Passages | Media Library */}
       <div
@@ -568,164 +516,27 @@ export function QuestionBankScreen() {
       {/* VIEW TAB 1: QUESTION REPOSITORY */}
       {activeTab === 'QUESTIONS' && (
         <>
-          {/* Approval Workflow Tabs */}
-          <div
-            style={{
-              display: 'flex',
-              gap: '0.5rem',
-              overflowX: 'auto',
-              paddingBottom: '0.25rem',
+          {/* Filters: Workflow Status Tabs + Search + Dropdowns */}
+          <QuestionBankFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedExam={selectedExam}
+            onExamChange={setSelectedExam}
+            selectedSection={selectedSection}
+            onSectionChange={setSelectedSection}
+            selectedDifficulty={selectedDifficulty}
+            onDifficultyChange={setSelectedDifficulty}
+            selectedStatus={selectedStatus}
+            onStatusChange={setSelectedStatus}
+            statusCounts={{
+              ALL: questions.length,
+              DRAFT: counts.DRAFT,
+              UNDER_REVIEW: counts.UNDER_REVIEW,
+              APPROVED: counts.APPROVED,
+              PUBLISHED: counts.PUBLISHED,
+              ARCHIVED: counts.ARCHIVED,
             }}
-          >
-            {(['ALL', 'DRAFT', 'UNDER_REVIEW', 'APPROVED', 'PUBLISHED', 'ARCHIVED'] as const).map(
-              (st) => (
-                <button
-                  key={st}
-                  onClick={() => setSelectedStatus(st)}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    borderRadius: '20px',
-                    border: '1px solid',
-                    borderColor: selectedStatus === st ? '#3b82f6' : 'rgba(255, 255, 255, 0.08)',
-                    backgroundColor: selectedStatus === st ? 'rgba(59, 130, 246, 0.15)' : '#111827',
-                    color: selectedStatus === st ? '#60a5fa' : '#94a3b8',
-                    fontSize: '0.8rem',
-                    fontWeight: selectedStatus === st ? 700 : 500,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  <span>{st.replace('_', ' ')}</span>
-                  <span
-                    style={{
-                      padding: '0.1rem 0.45rem',
-                      borderRadius: '10px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      fontSize: '0.7rem',
-                    }}
-                  >
-                    {counts[st]}
-                  </span>
-                </button>
-              )
-            )}
-          </div>
-
-          {/* Filter Toolbar */}
-          <Card
-            style={{
-              padding: '1rem 1.25rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '12px',
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '1rem',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            {/* Search Input */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.6rem',
-                flex: 1,
-                minWidth: '240px',
-              }}
-            >
-              <Search size={16} color="#94a3b8" />
-              <input
-                type="text"
-                placeholder="Search by text, code (e.g. IELTS-RD-001), skill, or tags..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  width: '100%',
-                  backgroundColor: '#1e293b',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
-                  padding: '0.5rem 0.75rem',
-                  color: '#ffffff',
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                }}
-              />
-            </div>
-
-            {/* Dropdown Filters */}
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-              {/* Exam Filter */}
-              <select
-                value={selectedExam}
-                onChange={(e) => setSelectedExam(e.target.value as ExamType | 'ALL')}
-                style={{
-                  backgroundColor: '#1e293b',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
-                  padding: '0.5rem 0.75rem',
-                  color: '#ffffff',
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                }}
-              >
-                <option value="ALL">All Exams</option>
-                <option value="IELTS Academic">IELTS Academic</option>
-                <option value="IELTS General Training">IELTS General Training</option>
-                <option value="TOEFL iBT">TOEFL iBT</option>
-                <option value="SAT">SAT</option>
-                <option value="CELPIP">CELPIP</option>
-                <option value="English Proficiency">English Proficiency</option>
-              </select>
-
-              {/* Section Filter */}
-              <select
-                value={selectedSection}
-                onChange={(e) => setSelectedSection(e.target.value as SectionType | 'ALL')}
-                style={{
-                  backgroundColor: '#1e293b',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
-                  padding: '0.5rem 0.75rem',
-                  color: '#ffffff',
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                }}
-              >
-                <option value="ALL">All Sections</option>
-                <option value="Reading">Reading</option>
-                <option value="Listening">Listening</option>
-                <option value="Writing">Writing</option>
-                <option value="Speaking">Speaking</option>
-                <option value="Math">Math</option>
-                <option value="Grammar">Grammar</option>
-              </select>
-
-              {/* Difficulty Filter */}
-              <select
-                value={selectedDifficulty}
-                onChange={(e) => setSelectedDifficulty(e.target.value as DifficultyLevel | 'ALL')}
-                style={{
-                  backgroundColor: '#1e293b',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '8px',
-                  padding: '0.5rem 0.75rem',
-                  color: '#ffffff',
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                }}
-              >
-                <option value="ALL">All Difficulties</option>
-                <option value="EASY">Easy</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HARD">Hard</option>
-              </select>
-            </div>
-          </Card>
+          />
 
           {/* Sticky Bulk Action Toolbar */}
           <BulkActionToolbar
@@ -884,204 +695,17 @@ export function QuestionBankScreen() {
             </Card>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {filteredQuestions.map((q) => {
-                const selected = bulkSelection.isSelected(q.id);
-                return (
-                  <Card
-                    key={q.id}
-                    style={{
-                      padding: '1.25rem',
-                      backgroundColor: selected ? 'rgba(59, 130, 246, 0.08)' : '#111827',
-                      border: selected
-                        ? '1px solid rgba(59, 130, 246, 0.4)'
-                        : '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '12px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '0.85rem',
-                      transition: 'all 150ms ease',
-                    }}
-                  >
-                    {/* Top Line Meta: Checkbox, Code, Exam, Section, Status */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                        gap: '0.5rem',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                        {/* Item Row Selection Checkbox */}
-                        <input
-                          type="checkbox"
-                          checked={selected}
-                          onChange={() => bulkSelection.toggleSelectOne(q.id)}
-                          style={{
-                            width: '16px',
-                            height: '16px',
-                            cursor: 'pointer',
-                            accentColor: '#2563eb',
-                          }}
-                        />
-                        <span
-                          style={{
-                            fontFamily: 'monospace',
-                            fontSize: '0.85rem',
-                            fontWeight: 700,
-                            backgroundColor: '#1e293b',
-                            padding: '0.2rem 0.5rem',
-                            borderRadius: '4px',
-                            color: '#38bdf8',
-                          }}
-                        >
-                          {q.code || q.id}
-                        </span>
-                        <Badge variant="info">{q.exam || q.programmeName || 'IELTS'}</Badge>
-                        <Badge variant="neutral">{q.section || 'General'}</Badge>
-                        <span
-                          style={{
-                            fontSize: '0.75rem',
-                            color: '#94a3b8',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.3rem',
-                          }}
-                        >
-                          <Clock size={12} /> {q.estimatedTime || '2 mins'}
-                        </span>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <Badge variant={getStatusBadgeVariant(q.status)}>{q.status}</Badge>
-                        <Badge
-                          variant={
-                            q.difficulty === 'HARD'
-                              ? 'danger'
-                              : q.difficulty === 'MEDIUM'
-                                ? 'warning'
-                                : 'success'
-                          }
-                        >
-                          {q.difficulty}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {/* Question Prompt */}
-                    <div
-                      style={{
-                        fontSize: '0.95rem',
-                        fontWeight: 600,
-                        color: '#f8fafc',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {q.text}
-                    </div>
-
-                    {/* Passage Title if attached */}
-                    {q.passageTitle && (
-                      <div
-                        style={{
-                          fontSize: '0.8rem',
-                          color: '#cbd5e1',
-                          backgroundColor: '#161e2e',
-                          padding: '0.4rem 0.75rem',
-                          borderRadius: '6px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.4rem',
-                        }}
-                      >
-                        <BookOpen size={14} color="#38bdf8" />
-                        Attached Passage: <strong>{q.passageTitle}</strong>
-                      </div>
-                    )}
-
-                    {/* Footer Actions & Metadata */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                        gap: '0.75rem',
-                        paddingTop: '0.5rem',
-                        borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-                      }}
-                    >
-                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                        Skill: <strong>{q.skill || q.topic}</strong> | Source:{' '}
-                        <strong>{q.officialSource || 'Clasptek Bank'}</strong>
-                      </div>
-
-                      {/* Workflow Transition Buttons */}
-                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setPreviewQuestion(q)}
-                          style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}
-                        >
-                          <Eye size={14} /> Preview
-                        </Button>
-
-                        {q.status === 'DRAFT' && (
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => handleStatusChange(q.id, 'UNDER_REVIEW')}
-                          >
-                            Submit for Review
-                          </Button>
-                        )}
-
-                        {q.status === 'UNDER_REVIEW' && (
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            onClick={() => handleStatusChange(q.id, 'APPROVED')}
-                          >
-                            Approve Item
-                          </Button>
-                        )}
-
-                        {q.status === 'APPROVED' && (
-                          <Button
-                            variant="success"
-                            size="sm"
-                            onClick={() => handleStatusChange(q.id, 'PUBLISHED')}
-                          >
-                            Publish to Mocks
-                          </Button>
-                        )}
-
-                        {q.status !== 'ARCHIVED' && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleStatusChange(q.id, 'ARCHIVED')}
-                            style={{ color: '#ef4444' }}
-                          >
-                            Archive
-                          </Button>
-                        )}
-
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setDeleteConfirmId(q.id)}
-                          style={{ color: '#64748b' }}
-                        >
-                          <Trash2 size={14} />
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                );
-              })}
+              {filteredQuestions.map((q) => (
+                <QuestionRow
+                  key={q.id}
+                  question={q}
+                  isSelected={bulkSelection.isSelected(q.id)}
+                  onToggleSelect={(id) => bulkSelection.toggleSelectOne(id)}
+                  onPreview={(item) => setPreviewQuestion(item)}
+                  onDelete={(id) => setDeleteConfirmId(id)}
+                  onStatusChange={(id, status) => handleStatusChange(id, status)}
+                />
+              ))}
             </div>
           )}
 

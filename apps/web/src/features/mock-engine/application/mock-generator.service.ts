@@ -204,6 +204,14 @@ export const mockGeneratorService = {
       })),
     }));
 
+    const expiresAtMs = s.expiresAt
+      ? new Date(s.expiresAt).getTime()
+      : Date.now() + s.totalDurationMinutes * 60 * 1000;
+    const timeRemainingSeconds = Math.max(
+      0,
+      Math.ceil((expiresAtMs - Date.now()) / 1000)
+    );
+
     return {
       id: s.id,
       templateId: s.blueprintId,
@@ -213,7 +221,9 @@ export const mockGeneratorService = {
       status: 'IN_PROGRESS',
       currentSectionIndex: 0,
       currentQuestionIndex: 0,
-      timeRemainingSeconds: s.totalDurationMinutes * 60,
+      timeRemainingSeconds,
+      startedAt: s.startedAt,
+      expiresAt: s.expiresAt,
       answers: {},
       template: {
         id: s.blueprintId,

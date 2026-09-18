@@ -25,6 +25,7 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  Bell,
 } from 'lucide-react';
 import { WorkspaceContext } from './WorkspaceContext';
 import { WorkspaceId, workspaceRegistry } from './workspace-registry';
@@ -79,6 +80,8 @@ function getNavIcon(iconName: string) {
       return <FileBarChart size={size} />;
     case 'Lock':
       return <Lock size={size} />;
+    case 'Bell':
+      return <Bell size={size} />;
     default:
       return <LayoutDashboard size={size} />;
   }

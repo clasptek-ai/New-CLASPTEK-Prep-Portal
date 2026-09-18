@@ -28,13 +28,13 @@ export const workspaceRegistry: Record<WorkspaceId, WorkspaceDefinition> = {
     permissions: [],
     navigation: [
       { name: 'Dashboard', href: '/dashboard', icon: 'LayoutDashboard' },
+      { name: 'My Assessments', href: '/student/assessments', icon: 'FileText' },
       { name: 'Practice', href: '/student/practice', icon: 'Zap' },
-      { name: 'Diagnostics', href: '/student/assessments', icon: 'FileText' },
-      { name: 'Mock Exams', href: '/student/mock', icon: 'BookOpen' },
-      { name: 'AI Coach', href: '/learning-assistant', icon: 'Sparkles' },
-      { name: 'Readiness', href: '/readiness', icon: 'TrendingUp' },
       { name: 'Results', href: '/student/results', icon: 'FileBarChart' },
-      { name: 'Settings', href: '/profile', icon: 'Settings' },
+      { name: 'Learning', href: '/learning', icon: 'GraduationCap' },
+      { name: 'AI Learning Assistant', href: '/learning-assistant', icon: 'Sparkles' },
+      { name: 'Notifications', href: '/notifications', icon: 'Bell' },
+      { name: 'Profile', href: '/profile', icon: 'User' },
     ],
   },
   ADMIN: {

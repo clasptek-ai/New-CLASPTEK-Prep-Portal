@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"outline-variant":"#c3c6d5","surface-tint":"#1d59c1","on-tertiary-fixed":"#151c23","background":"#faf8ff","on-error":"#ffffff","surface-variant":"#dae2fd","surface-bright":"#faf8ff","tertiary-fixed-dim":"#c0c7d0","on-background":"#131b2e","on-secondary-fixed-variant":"#3c475a","secondary":"#545f73","surface-dim":"#d2d9f4","secondary-fixed-dim":"#bcc7de","surface-container-lowest":"#ffffff","inverse-primary":"#b0c6ff","on-primary":"#ffffff","surface-container-highest":"#dae2fd","primary":"#003c90","primary-container":"#0f52ba","primary-fixed":"#d9e2ff","on-surface":"#131b2e","on-secondary-fixed":"#111c2d","inverse-surface":"#283044","on-tertiary":"#ffffff","surface":"#faf8ff","tertiary-container":"#525960","on-primary-fixed-variant":"#00419c","outline":"#737784","on-tertiary-fixed-variant":"#40484f","surface-container":"#eaedff","secondary-fixed":"#d8e3fb","error":"#ba1a1a","on-primary-fixed":"#001945","on-primary-container":"#bcceff","secondary-container":"#d5e0f8","surface-container-high":"#e2e7ff","on-secondary":"#ffffff","primary-fixed-dim":"#b0c6ff","on-surface-variant":"#434653","tertiary-fixed":"#dce3ec","tertiary":"#3a4249","on-error-container":"#93000a","on-secondary-container":"#586377","on-tertiary-container":"#c8cfd8","error-container":"#ffdad6","inverse-on-surface":"#eef0ff","surface-container-low":"#f2f3ff"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"space-md":"1rem",gutter:"1.5rem",margin:"2rem","space-xs":"0.25rem","space-xl":"2.5rem","space-sm":"0.5rem","space-lg":"1.5rem"},fontFamily:{"body-lg":["Inter"],"headline-lg":["Inter"],"headline-lg-mobile":["Inter"],"timer-display":["Inter"],"label-md":["Inter"],"headline-md":["Inter"],"headline-sm":["Inter"],"body-sm":["Inter"],"body-reading":["Inter"],"label-lg":["Inter"],"headline-xl":["Inter"],"body-md":["Inter"],"headline-xl-mobile":["Inter"],"label-sm":["Inter"]},fontSize:{"body-lg":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"400"}],"headline-lg":["28px",{lineHeight:"36px",letterSpacing:"-0.015em",fontWeight:"600"}],"headline-lg-mobile":["22px",{lineHeight:"30px",letterSpacing:"-0.01em",fontWeight:"600"}],"timer-display":["20px",{lineHeight:"24px",letterSpacing:"0.05em",fontWeight:"700"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"600"}],"headline-md":["22px",{lineHeight:"28px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-sm":["18px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"body-sm":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"400"}],"body-reading":["17px",{lineHeight:"28px",letterSpacing:"-0.005em",fontWeight:"400"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.01em",fontWeight:"600"}],"headline-xl":["36px",{lineHeight:"44px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-md":["14px",{lineHeight:"20px",letterSpacing:"0em",fontWeight:"400"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"700"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-28 max-w-7xl mx-auto px-margin flex flex-col justify-between pt-3 pb-0"><div class="flex items-center justify-between gap-space-lg"><div class="flex items-center gap-space-md"><img alt="Brand logo. - Primary color: #0f52ba - Font: inter - Mode: light - Roundness: rounded-sm" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WU4vXzvlYijh0CgpD9_GLv0EblVLmsIXkDbDOw8pVq-ECKtvODF2BB8bbny1FJWXO9n9TShzwZ2wYoMqiG9X56jyo-PYQjDF0GpFtQYj6lVlPWrqXN2FOqXNZ-Y3uSdVucqSUs6ikplZnAet5yoJprh6VGSk9OKSy5qR6Lqgqm1YRUjMhSHfhUq8MiCWMzA3pTOPNXeocpKHdAnOKcWlfR3ErDWLqRqPwJDmasyuF483SaGVlmOoCboQ"/><div class="flex flex-col"><div class="flex items-center gap-2"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">Clasptek Prep Portal</span><span class="bg-secondary-container text-on-secondary-container px-1.5 py-0.5 rounded text-label-sm font-label-sm tracking-wider uppercase">ADMIN CONSOLE</span></div><div class="flex items-center gap-1.5 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-surface-tint"></span><span class="text-label-sm font-label-sm text-on-surface-variant">System Engine v5.2 • Operational</span></div></div></div><div class="flex-1 max-w-md mx-space-md"><div class="relative flex items-center w-full"><span class="material-symbols-outlined absolute left-3 text-secondary text-base pointer-events-none">search</span><input class="w-full pl-9 pr-4 py-1.5 bg-surface-container-low text-on-surface placeholder:text-secondary rounded-lg font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest" placeholder="Search Student ID, Attempt Token, Question #, Exam..." type="text"/></div></div><div class="flex items-center gap-space-md"><div class="hidden xl:flex items-center gap-1.5 bg-surface-container-low px-2.5 py-1 rounded"><span class="material-symbols-outlined text-secondary text-sm">tune</span><span class="font-label-sm text-label-sm text-on-surface">IELTS Academic</span><span class="text-outline text-label-sm font-label-sm">|</span><span class="font-label-sm text-label-sm text-on-surface-variant">SAT</span><span class="text-outline text-label-sm font-label-sm">|</span><span class="font-label-sm text-label-sm text-on-surface-variant">TOEFL</span></div><div class="flex items-center gap-1.5 bg-surface-container px-2 py-1 rounded"><span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface">Live Telemetry</span></div><button class="relative p-1.5 text-secondary hover:text-on-surface rounded transition-colors"><span class="material-symbols-outlined text-xl">notifications</span><span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span></button><div class="flex items-center gap-2 pl-2"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1Wzn0zmxU8IbLws471d_yGmf--1CDM-64_OaiKzOHbhlyDRW1u70sEmmyANp27t0gKYePXTCdm8NUOH1BJBbKoyMq0PajbFItjAApa_Y0YhVq-p5FrcEY_5VjnjyI7LEGWJsiPBOPmIjLOWgENZKr5WEmrLPbIxrhGlgPFdSPljbXr920QUAoEiDMkvmPO9YZRVDi2NGt_wavc2lNoqBlbqRRN5D1VcfaaiBZt0XHKKd0LsRMedA2mI1A"/><div class="flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface leading-tight">Dr. Aris Thorne</span><span class="font-label-sm text-label-sm text-secondary leading-tight">Super Admin / Lead Proctor</span></div></div></div></div><nav class="flex items-center gap-space-lg overflow-x-auto pt-2" data-active-classes="text-primary-container font-bold border-b-2 border-primary-container"><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="overview-dashboard" href="#">Overview & Dashboard</a><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="students-attempts" href="#">Students & Attempts (Active)</a><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="pre-assessments" href="#">Pre-Assessments</a><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="mock-exams" href="#">Mock Exams</a><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="question-bank" href="#">Question Bank</a><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="listening-audio" href="#">Listening Audio</a><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="speaking-recordings" href="#">Speaking Recordings</a><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="examination-health" href="#">Examination Health (Alerts: 3)</a><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="reports-analytics" href="#">Reports & Analytics</a><a class="pb-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface whitespace-nowrap transition-colors" data-path="system-settings" href="#">System Settings</a></nav></div></header><main class="w-full pt-28 bg-surface"><div class="flex flex-col w-full">
+<!-- Authoritative Top Telemetry & Control Bar -->
+<div class="w-full bg-surface-container-low px-margin py-space-sm shadow-sm">
+<div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-space-sm">
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-primary-container animate-ping"></span>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wider">Cluster Telemetry Live</span>
+</div>
+<div class="hidden sm:block text-outline-variant font-label-sm">•</div>
+<div class="font-label-sm text-label-sm text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-primary">schedule</span>
+<span>Authoritative UTC Clock:</span>
+<span class="font-bold text-on-surface tracking-mono" id="utcClock">2024-10-24 14:38:09 UTC</span>
+</div>
+<div class="hidden sm:block text-outline-variant font-label-sm">•</div>
+<div class="font-label-sm text-label-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-surface-tint">speed</span>
+<span>Sync Latency: <strong class="text-on-surface">18ms</strong></span>
+</div>
+<div class="hidden sm:block text-outline-variant font-label-sm">•</div>
+<div class="font-label-sm text-label-sm text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">dns</span>
+<span>Node Cluster: <strong class="text-on-surface">EU-Central-1 (Sharded Pods #14-#28)</strong></span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-surface-container-highest text-on-surface font-label-sm text-label-sm px-2.5 py-1 rounded">
+          Heartbeat: 40/40 Exam Pods Active
+        </span>
+<button class="bg-surface-container-lowest text-secondary hover:text-on-surface px-2.5 py-1 rounded shadow-sm text-label-sm font-label-sm flex items-center gap-1 transition-all" id="refreshSweepBtn">
+<span class="material-symbols-outlined text-sm">sync</span>
+<span>Poll Now</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Main Administrative Content Canvas -->
+<div class="w-full max-w-7xl mx-auto px-margin py-space-md flex flex-col gap-space-lg">
+<!-- Executive Title & Master Actions Block -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md pt-2">
+<div class="flex flex-col max-w-2xl">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold">EXAMINATION OPERATIONS CONTROL</span>
+<span class="text-outline-variant">•</span>
+<span class="bg-error-container text-on-error-container text-label-sm font-label-sm px-2 py-0.5 rounded font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">notification_important</span>
+            3 Critical Flags Require Attention
+          </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Operational Overview & Examination Health</h1>
+<p class="font-body-md text-body-md text-secondary mt-1">
+          Live candidate throughput, integrity telemetry, marking queues, and synchronized test delivery status across all global centers.
+        </p>
+</div>
+<!-- Action Group -->
+<div class="flex flex-wrap items-center gap-2">
+<button class="bg-surface-container-lowest text-on-surface hover:bg-surface-container-low px-4 py-2 rounded font-label-md text-label-md shadow-sm flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-base text-secondary">file_download</span>
+<span>Export Audit Manifest</span>
+</button>
+<button class="bg-surface-container-lowest text-on-surface hover:bg-surface-container-low px-4 py-2 rounded font-label-md text-label-md shadow-sm flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-base text-secondary">rule_settings</span>
+<span>Batch Re-Evaluate</span>
+</button>
+<button class="bg-primary-container text-on-primary hover:opacity-90 px-4 py-2 rounded font-label-md text-label-md shadow-sm flex items-center gap-2 transition-opacity">
+<span class="material-symbols-outlined text-base text-on-primary">radar</span>
+<span>Trigger Integrity Sweep</span>
+</button>
+</div>
+</div>
+<!-- Top Operational KPI Row (4 Key Metric Cards) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Card 1: Active Candidates Online -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Concurrent Test Sessions</span>
+<span class="p-2 bg-surface-container-low text-primary-container rounded-lg">
+<span class="material-symbols-outlined text-xl">group</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold">1,428</span>
+<span class="font-label-sm text-label-sm text-primary font-bold bg-primary-fixed px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-xs">trending_up</span> +14% / hr
+            </span>
+</div>
+<div class="font-label-sm text-label-sm text-secondary mt-1">Active In-Exam Proctored Sessions</div>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low -mx-5 -mb-5 px-5 py-2.5 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span>842 IELTS</span>
+<span>310 SAT</span>
+<span>186 TOEFL</span>
+<span>90 CELPIP</span>
+</div>
+</div>
+<!-- Card 2: Completed Attempts (Today) -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Submissions (24h)</span>
+<span class="p-2 bg-surface-container-low text-secondary rounded-lg">
+<span class="material-symbols-outlined text-xl">verified_user</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold">3,890</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold bg-surface-container px-1.5 py-0.5 rounded">
+              99.4% On-Time
+            </span>
+</div>
+<div class="font-label-sm text-label-sm text-secondary mt-1">Attempts Concluded & Sealed</div>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low -mx-5 -mb-5 px-5 py-2.5 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span>Server Autosaved: 100%</span>
+<span class="font-semibold text-primary">0 State Losses</span>
+</div>
+</div>
+<!-- Card 3: Pending Grading & Verification Queue -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Rubric Backlog Queue</span>
+<span class="p-2 bg-surface-container-low text-surface-tint rounded-lg">
+<span class="material-symbols-outlined text-xl">rate_review</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold">42</span>
+<span class="font-label-sm text-label-sm text-error font-bold bg-error-container px-1.5 py-0.5 rounded">
+              Needs Faculty
+            </span>
+</div>
+<div class="font-label-sm text-label-sm text-secondary mt-1">Pending Human-in-Loop Verification</div>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low -mx-5 -mb-5 px-5 py-2.5 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span>28 IELTS Writing T2</span>
+<span>14 Speaking Discrepancies</span>
+</div>
+</div>
+<!-- Card 4: System Health Index -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Delivery Reliability</span>
+<span class="p-2 bg-surface-container-low text-primary-container rounded-lg">
+<span class="material-symbols-outlined text-xl">health_and_safety</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold">99.8%</span>
+<span class="font-label-sm text-label-sm text-on-tertiary font-bold bg-tertiary-container px-1.5 py-0.5 rounded">
+              Nominal
+            </span>
+</div>
+<div class="font-label-sm text-label-sm text-secondary mt-1">Engine & Ledger Integrity</div>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low -mx-5 -mb-5 px-5 py-2.5 flex items-center justify-between text-label-sm font-label-sm text-on-surface-variant">
+<span class="text-error font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">warning</span> 3 Item Anomalies
+          </span>
+<span class="text-secondary">Node Load 24%</span>
+</div>
+</div>
+</div>
+<!-- Live Telemetry & Proctoring Spotlight (Rich Visual Inline Module) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Throughput Visual Stream (8 cols) -->
+<div class="lg:col-span-8 bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-primary font-bold uppercase tracking-wider">REAL-TIME INGESTION PULSE</span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-pulse"></span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-0.5">Active Concurrency & Answer Sync Rates</h2>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-secondary">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>IELTS Academic</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-secondary">
+<span class="w-2 h-2 rounded-full bg-surface-tint"></span>
+<span>SAT Digital</span>
+</div>
+<div class="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-secondary">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>TOEFL / CELPIP</span>
+</div>
+</div>
+</div>
+<!-- Inline Data Visualizer (SVG Spark/Waveform Flow) -->
+<div class="w-full bg-surface-container-low rounded-lg p-4 relative overflow-hidden flex flex-col justify-end h-44">
+<div class="absolute top-3 left-4 flex items-center gap-4 text-label-sm font-label-sm text-secondary">
+<div>Peak Throughput: <strong class="text-on-surface font-semibold">1,620 req/sec</strong></div>
+<div class="hidden sm:block text-outline-variant">•</div>
+<div class="hidden sm:block">Autosave Cadence: <strong class="text-on-surface font-semibold">Every 15s</strong></div>
+<div class="hidden sm:block text-outline-variant">•</div>
+<div>Queue Delay: <strong class="text-on-surface font-semibold">0.02s</strong></div>
+</div>
+<svg class="w-full h-28 overflow-visible" fill="none" preserveaspectratio="none" viewbox="0 0 700 120">
+<!-- Gridlines -->
+<line class="text-outline-variant opacity-20" stroke="currentColor" stroke-dasharray="4 4" x1="0" x2="700" y1="20" y2="20"></line>
+<line class="text-outline-variant opacity-20" stroke="currentColor" stroke-dasharray="4 4" x1="0" x2="700" y1="60" y2="60"></line>
+<line class="text-outline-variant opacity-20" stroke="currentColor" stroke-dasharray="4 4" x1="0" x2="700" y1="100" y2="100"></line>
+<!-- Area Gradient Fill -->
+<defs>
+<lineargradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#0f52ba" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#0f52ba" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,80 Q50,45 100,55 T200,30 T300,70 T400,25 T500,40 T600,15 T700,35 L700,120 L0,120 Z" fill="url(#areaGradient)"></path>
+<!-- SAT Layer -->
+<path class="text-surface-tint" d="M0,95 Q70,75 140,85 T280,60 T420,70 T560,45 T700,50" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+<!-- IELTS Primary Layer -->
+<path class="text-primary-container" d="M0,80 Q50,45 100,55 T200,30 T300,70 T400,25 T500,40 T600,15 T700,35" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Highlight Markers -->
+<circle class="fill-primary-container text-surface-container-lowest stroke-current" cx="600" cy="15" r="4" stroke-width="2"></circle>
+<circle class="fill-surface-tint text-surface-container-lowest stroke-current" cx="400" cy="25" r="3.5" stroke-width="1.5"></circle>
+</svg>
+<div class="flex justify-between items-center text-label-sm font-label-sm text-secondary pt-1">
+<span>13:30 UTC</span>
+<span>13:45 UTC</span>
+<span>14:00 UTC</span>
+<span>14:15 UTC</span>
+<span>14:30 UTC (Now)</span>
+</div>
+</div>
+<div class="mt-4 grid grid-cols-3 gap-2 text-center text-label-sm font-label-sm">
+<div class="bg-surface-container-low p-2 rounded">
+<span class="text-secondary block">Packet Loss</span>
+<span class="font-bold text-on-surface text-body-md">0.00%</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded">
+<span class="text-secondary block">WebSocket Drops</span>
+<span class="font-bold text-on-surface text-body-md">0 reconnects</span>
+</div>
+<div class="bg-surface-container-low p-2 rounded">
+<span class="text-secondary block">Encryption Ledger</span>
+<span class="font-bold text-primary text-body-md">AES-256 Validated</span>
+</div>
+</div>
+</div>
+<!-- Proctoring Command & Verification Ring (4 cols) -->
+<div class="lg:col-span-4 bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Proctoring Distribution</span>
+<span class="material-symbols-outlined text-base text-secondary">security</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1">Live Candidate Compliance</h3>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Continuous biometric & tab status check across current cohort.</p>
+</div>
+<div class="py-4 flex items-center justify-center gap-6">
+<!-- Circular Progress SVG -->
+<div class="relative w-28 h-28 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-container" cx="50" cy="50" fill="transparent" r="42" stroke="currentColor" stroke-width="12"></circle>
+<!-- 98.6% = 260 deg filled -->
+<circle class="text-primary-container" cx="50" cy="50" fill="transparent" r="42" stroke="currentColor" stroke-dasharray="263.89" stroke-dashoffset="3.7" stroke-linecap="round" stroke-width="12"></circle>
+<!-- Discrepancy notch -->
+<circle class="text-error" cx="50" cy="50" fill="transparent" r="42" stroke="currentColor" stroke-dasharray="263.89" stroke-dashoffset="260.1" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="font-headline-md text-headline-md font-bold text-on-surface leading-none">99.2%</span>
+<span class="font-label-sm text-label-sm text-secondary uppercase text-[10px]">Verified</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 font-label-sm text-label-sm">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-sm bg-primary-container"></span>
+<span class="text-on-surface">1,417 Pristine State</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-sm bg-secondary"></span>
+<span class="text-on-surface">8 Minor Audio Alerts</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-sm bg-error"></span>
+<span class="text-on-surface font-semibold text-error">3 Focus Lost Flags</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-base">lock</span>
+<span class="font-label-sm text-label-sm text-on-surface">Kiosk Lockdown Enforcement:</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">100% Strict</span>
+</div>
+</div>
+</div>
+<!-- Four Critical Operational Health Panels (The Health Engine Module) -->
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Examination Health Diagnostic Matrices</h2>
+<p class="font-body-sm text-body-sm text-secondary">Real-time validation against questions, audio assets, synchronized attempts, and automated scoring nodes.</p>
+</div>
+<span class="text-label-sm font-label-sm text-secondary bg-surface-container-low px-2.5 py-1 rounded">
+          Last Complete Integrity Sweep: 3 mins ago
+        </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Panel 1: Question Integrity Panel -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">quiz</span>
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Question Integrity</span>
+</div>
+<span class="font-label-sm text-label-sm text-error bg-error-container px-2 py-0.5 rounded font-bold">Alert: 2</span>
+</div>
+<div class="space-y-2.5 text-body-sm text-body-sm mt-1">
+<div class="flex items-center justify-between pb-1.5 bg-surface-container-low px-2.5 py-1.5 rounded">
+<span class="text-secondary">Questions Loaded</span>
+<span class="font-bold text-on-surface">3,420 Items</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2">
+<span class="text-secondary">Invalid Answer Types</span>
+<span class="font-semibold text-on-surface">0 Detected</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2 text-error">
+<span class="flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-xs">error</span> Missing Option
+                </span>
+<span class="font-bold">2 items</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2 text-error">
+<span class="flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-xs">key_off</span> Missing Answer Key
+                </span>
+<span class="font-bold">1 item</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low -mx-5 -mb-5 p-3 rounded-b-xl flex flex-col gap-1.5">
+<div class="text-[11px] font-label-sm text-secondary flex items-center justify-between">
+<span>Status: <strong class="text-on-surface">99.91% Compliant</strong></span>
+<a class="text-primary hover:underline font-bold" href="#">Inspect CELPIP Q-104 →</a>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 99.91%"></div>
+</div>
+</div>
+</div>
+<!-- Panel 2: Media Integrity Panel -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-surface-tint text-xl">graphic_eq</span>
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Media Assets</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-2 py-0.5 rounded font-semibold">1 Warning</span>
+</div>
+<div class="space-y-2.5 text-body-sm text-body-sm mt-1">
+<div class="flex items-center justify-between pb-1.5 bg-surface-container-low px-2.5 py-1.5 rounded">
+<span class="text-secondary">Audio Master Files</span>
+<span class="font-bold text-on-surface">184 Tracks</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2">
+<span class="text-secondary">Missing Audio Files</span>
+<span class="font-semibold text-on-surface">0 Missing</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2">
+<span class="text-secondary">Candidate Voice Pkts</span>
+<span class="font-semibold text-on-surface">942 Verified</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2 text-secondary">
+<span class="flex items-center gap-1 font-semibold text-on-surface">
+<span class="material-symbols-outlined text-xs text-secondary">warning</span> Bitrate Alert
+                </span>
+<span class="font-bold text-on-surface">1 Corrupted</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low -mx-5 -mb-5 p-3 rounded-b-xl flex flex-col gap-1.5">
+<div class="text-[11px] font-label-sm text-secondary flex items-center justify-between">
+<span>Status: <strong class="text-on-surface">TOEFL Sec 3 Bitrate</strong></span>
+<a class="text-primary hover:underline font-bold" href="#">Resync Master →</a>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-surface-tint h-full rounded-full" style="width: 99.45%"></div>
+</div>
+</div>
+</div>
+<!-- Panel 3: Attempt Integrity Panel -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">history_edu</span>
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Attempt Persistence</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-tertiary bg-tertiary-container px-2 py-0.5 rounded font-bold">100% Sealed</span>
+</div>
+<div class="space-y-2.5 text-body-sm text-body-sm mt-1">
+<div class="flex items-center justify-between pb-1.5 bg-surface-container-low px-2.5 py-1.5 rounded">
+<span class="text-secondary">Active In-Progress</span>
+<span class="font-bold text-on-surface">1,428 Active</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2">
+<span class="text-secondary">Submitted On Time</span>
+<span class="font-semibold text-on-surface">3,848</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2">
+<span class="text-secondary">Auto-Locked Deadlines</span>
+<span class="font-semibold text-on-surface">42 Expired</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2 text-secondary">
+<span class="text-secondary">Network Drop >15m</span>
+<span class="font-bold text-on-surface">2 Disrupted</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low -mx-5 -mb-5 p-3 rounded-b-xl flex flex-col gap-1.5">
+<div class="text-[11px] font-label-sm text-secondary flex items-center justify-between">
+<span>Failed State Writes: <strong class="text-on-surface font-bold">0</strong></span>
+<span class="text-label-sm text-primary font-bold">15s Cadence</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+<!-- Panel 4: Marking & Evaluation Integrity Panel -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-xl">auto_awesome</span>
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Evaluation Engine</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary bg-surface-container px-2 py-0.5 rounded font-semibold">Sync 98.2%</span>
+</div>
+<div class="space-y-2.5 text-body-sm text-body-sm mt-1">
+<div class="flex items-center justify-between pb-1.5 bg-surface-container-low px-2.5 py-1.5 rounded">
+<span class="text-secondary">Automated AI Scored</span>
+<span class="font-bold text-on-surface">3,480 attempts</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2">
+<span class="text-secondary">Evaluation Failures</span>
+<span class="font-semibold text-on-surface">0 Submissions</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2">
+<span class="text-secondary">Faculty Queue Backlog</span>
+<span class="font-semibold text-on-surface">42 Submissions</span>
+</div>
+<div class="flex items-center justify-between pb-1.5 px-2 text-error">
+<span class="flex items-center gap-1 font-semibold">
+<span class="material-symbols-outlined text-xs">difference</span> Rubric Variance
+                </span>
+<span class="font-bold">3 Divergent</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 bg-surface-container-low -mx-5 -mb-5 p-3 rounded-b-xl flex flex-col gap-1.5">
+<div class="text-[11px] font-label-sm text-secondary flex items-center justify-between">
+<span>Confidence: <strong class="text-on-surface">98.2% AI-Score</strong></span>
+<a class="text-primary hover:underline font-bold" href="#">Review Rubric →</a>
+</div>
+<div class="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
+<div class="bg-surface-tint h-full rounded-full" style="width: 98.2%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Live Examination Stream & Integrity Alerts Table -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Table Filter and Header Control -->
+<div class="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-container-lowest">
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Real-Time Examination Session Monitor</h3>
+<span class="bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm px-2 py-0.5 rounded font-bold">Live Feed</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Continuous telemetry socket ingestion per active student attempt.</p>
+</div>
+<!-- Filter Chips & Search -->
+<div class="flex flex-wrap items-center gap-2">
+<div class="flex items-center bg-surface-container-low rounded-lg p-1">
+<button class="px-3 py-1 bg-surface-container-lowest text-on-surface rounded font-label-sm text-label-sm shadow-sm font-semibold">All Active (1,428)</button>
+<button class="px-3 py-1 text-secondary hover:text-on-surface font-label-sm text-label-sm transition-colors">Flagged Alerts (3)</button>
+<button class="px-3 py-1 text-secondary hover:text-on-surface font-label-sm text-label-sm transition-colors">Window Blur</button>
+<button class="px-3 py-1 text-secondary hover:text-on-surface font-label-sm text-label-sm transition-colors">Expired</button>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-2.5 text-secondary text-sm pointer-events-none">filter_list</span>
+<input class="pl-8 pr-3 py-1.5 bg-surface-container-low text-on-surface placeholder:text-secondary rounded-lg font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest" placeholder="Filter attempt ID or name..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Table Content -->
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left font-body-md text-body-md border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3 px-4 font-semibold">Attempt ID</th>
+<th class="py-3 px-4 font-semibold">Candidate Name</th>
+<th class="py-3 px-4 font-semibold">Exam & Section</th>
+<th class="py-3 px-4 font-semibold">Start (UTC)</th>
+<th class="py-3 px-4 font-semibold">Deadline</th>
+<th class="py-3 px-4 font-semibold">Remaining</th>
+<th class="py-3 px-4 font-semibold">Integrity Status</th>
+<th class="py-3 px-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-low">
+<!-- Row 1: Maya Lin (Nominal) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 font-mono text-label-md text-primary font-bold">
+                #CLK-ATT-99214
+              </td>
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-bold text-label-sm">ML</span>
+<span>Maya Lin</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface">
+<div class="font-semibold text-body-sm">IELTS Academic</div>
+<div class="text-secondary text-label-sm">Reading Section 2 (Passage 2)</div>
+</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">14:00 UTC</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">15:00 UTC</td>
+<td class="py-3.5 px-4 font-mono font-bold text-on-surface text-body-sm">
+                21m 45s
+              </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container text-on-surface font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+                  Nominal (Audio & Window OK)
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="bg-surface-container text-on-surface hover:bg-surface-container-high px-3 py-1 rounded text-label-sm font-label-sm font-semibold transition-colors">
+                  Live Monitor
+                </button>
+</td>
+</tr>
+<!-- Row 2: Marcus Vance (Nominal autosave) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 font-mono text-label-md text-primary font-bold">
+                #CLK-ATT-99218
+              </td>
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-bold text-label-sm">MV</span>
+<span>Marcus Vance</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface">
+<div class="font-semibold text-body-sm">IELTS Academic</div>
+<div class="text-secondary text-label-sm">Writing Task 2 (Essay)</div>
+</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">13:45 UTC</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">14:45 UTC</td>
+<td class="py-3.5 px-4 font-mono font-bold text-error text-body-sm">
+                06m 51s
+              </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-low text-on-surface font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-tint"></span>
+                  Nominal (382 Words Autosaved)
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="bg-surface-container text-on-surface hover:bg-surface-container-high px-3 py-1 rounded text-label-sm font-label-sm font-semibold transition-colors">
+                  Live Monitor
+                </button>
+</td>
+</tr>
+<!-- Row 3: Elena Rostova (CRITICAL ALERT - Window Blur) -->
+<tr class="bg-error-container/20 hover:bg-error-container/30 transition-colors">
+<td class="py-3.5 px-4 font-mono text-label-md text-error font-bold">
+                #CLK-ATT-99205
+              </td>
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-full bg-error-container text-error flex items-center justify-center font-bold text-label-sm">ER</span>
+<span class="font-bold">Elena Rostova</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface">
+<div class="font-semibold text-body-sm">SAT Digital (Official Mock)</div>
+<div class="text-secondary text-label-sm">Math Module 1 (Section 1)</div>
+</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">14:10 UTC</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">15:25 UTC</td>
+<td class="py-3.5 px-4 font-mono font-bold text-on-surface text-body-sm">
+                46m 12s
+              </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-label-sm text-label-sm bg-error-container text-on-error-container font-bold">
+<span class="material-symbols-outlined text-xs">report</span>
+                  Alert: 3x Window Blur Triggered
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="bg-error text-on-error hover:opacity-90 px-2.5 py-1 rounded text-label-sm font-label-sm font-bold shadow-sm transition-opacity">
+                    Inspect Flag
+                  </button>
+<button class="bg-surface-container-lowest text-error hover:bg-surface-container px-2 py-1 rounded text-label-sm font-label-sm font-semibold transition-colors">
+                    Freeze
+                  </button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Tariq Al-Mansoor (Speaking Live) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 font-mono text-label-md text-primary font-bold">
+                #CLK-ATT-99192
+              </td>
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-full bg-surface-container-high text-primary flex items-center justify-center font-bold text-label-sm">TA</span>
+<span>Tariq Al-Mansoor</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface">
+<div class="font-semibold text-body-sm">TOEFL iBT</div>
+<div class="text-secondary text-label-sm">Speaking Task 4 (Academic Lecture)</div>
+</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">14:20 UTC</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">14:40 UTC</td>
+<td class="py-3.5 px-4 font-mono font-bold text-error text-body-sm">
+                01m 30s
+              </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container-high text-primary font-semibold">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                  Audio Stream Active (Mic Calibrated)
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="bg-primary-container text-on-primary hover:opacity-90 px-3 py-1 rounded text-label-sm font-label-sm font-semibold flex items-center gap-1 ml-auto transition-opacity">
+<span class="material-symbols-outlined text-xs">headphones</span>
+<span>Listen Live</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Sofia Chen (Expired / Auto-Submitted) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-3.5 px-4 font-mono text-label-md text-secondary font-semibold">
+                #CLK-ATT-99180
+              </td>
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-full bg-surface-container-low text-secondary flex items-center justify-center font-bold text-label-sm">SC</span>
+<span class="text-secondary">Sofia Chen</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-on-surface">
+<div class="font-semibold text-body-sm text-secondary">CELPIP General</div>
+<div class="text-secondary text-label-sm">Listening Section 1</div>
+</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">13:15 UTC</td>
+<td class="py-3.5 px-4 text-secondary text-label-sm">14:15 UTC</td>
+<td class="py-3.5 px-4 font-mono font-bold text-secondary text-body-sm">
+                EXPIRED
+              </td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-label-sm text-label-sm bg-surface-container text-secondary font-medium">
+<span class="material-symbols-outlined text-xs">lock_clock</span>
+                  Auto-Submitted by Server Deadline
+                </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<button class="bg-surface-container-low text-secondary hover:text-on-surface px-3 py-1 rounded text-label-sm font-label-sm font-semibold transition-colors">
+                  Inspect Attempt
+                </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footnote & Pagination Info -->
+<div class="p-4 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-2 text-label-sm font-label-sm text-secondary">
+<div>
+          Showing <strong>5 of 1,428</strong> candidate sessions • Auto-updating socket subscription active
+        </div>
+<div class="flex items-center gap-2">
+<button class="px-2.5 py-1 bg-surface-container-lowest text-secondary rounded shadow-sm hover:text-on-surface">Previous</button>
+<span class="px-2 py-1 font-bold text-on-surface">Page 1 of 286</span>
+<button class="px-2.5 py-1 bg-surface-container-lowest text-secondary rounded shadow-sm hover:text-on-surface">Next</button>
+</div>
+</div>
+</div>
+<!-- Examination Audit Ledger & Node Status Bar -->
+<div class="bg-surface-container-low rounded-xl p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">verified</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">Standardized Proctored Delivery Compliance</span>
+<span class="font-body-sm text-body-sm text-secondary">
+            Certified delivery according to ISO/IEC 23988 protocols. All candidate inputs, blur triggers, and audio buffers are cryptographically locked.
+          </span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-label-sm font-label-sm text-secondary">
+<div class="flex flex-col text-right">
+<span class="font-mono text-[11px] text-on-surface font-semibold">Ledger Hash: e8f2a938c114d59...</span>
+<span class="text-[10px] text-secondary">Proctor Signature Node: #89F2-C02A</span>
+</div>
+<button class="bg-surface-container-lowest text-primary hover:bg-surface-container px-3 py-1.5 rounded font-label-sm text-label-sm font-bold shadow-sm transition-colors">
+          View Audit Log
+        </button>
+</div>
+</div>
+</div>
+<!-- Inline Dashboard Micro-Interactivity Script -->
+<script>
+    (function() {
+      // Dynamic live second update for Authoritative UTC Clock
+      function updateUTCClock() {
+        const now = new Date();
+        const year = now.getUTCFullYear();
+        const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(now.getUTCDate()).padStart(2, '0');
+        const hours = String(now.getUTCHours()).padStart(2, '0');
+        const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+        
+        const clockEl = document.getElementById('utcClock');
+        if (clockEl) {
+          clockEl.textContent = `${year}-${month}-${day} ${hours}:${minutes}:${seconds} UTC`;
+        }
+      }
+      setInterval(updateUTCClock, 1000);
+
+      // Manual Poll Button feedback
+      const sweepBtn = document.getElementById('refreshSweepBtn');
+      if (sweepBtn) {
+        sweepBtn.addEventListener('click', function() {
+          const originalHTML = sweepBtn.innerHTML;
+          sweepBtn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">refresh</span><span>Polling...</span>';
+          setTimeout(() => {
+            sweepBtn.innerHTML = originalHTML;
+          }, 600);
+        });
+      }
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-low py-space-lg"><div class="max-w-7xl mx-auto px-margin flex flex-col md:flex-row items-center justify-between gap-space-sm text-secondary"><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm">ISO/IEC 23988 Compliant (Delivery of Computer-based Assessment)</span><span class="text-outline-variant">•</span><span class="font-label-sm text-label-sm text-on-surface-variant">Audit Integrity Node: #89F2-C02A</span></div><div class="flex items-center gap-space-md"><span class="font-label-sm text-label-sm">Sync Clock: UTC 14:32:08</span><span class="text-outline-variant">•</span><span class="font-label-sm text-label-sm text-on-surface-variant">© 2025 Clasptek Coaching Limited. All Rights Reserved.</span></div></div></footer></body></html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "primary-container": "#0f52ba",
+          "surface-bright": "#faf8ff",
+          "error-container": "#ffdad6",
+          "inverse-primary": "#b0c6ff",
+          "surface": "#faf8ff",
+          "error": "#ba1a1a",
+          "secondary-container": "#d5e0f8",
+          "on-primary": "#ffffff",
+          "surface-tint": "#1d59c1",
+          "on-background": "#131b2e",
+          "primary": "#003c90",
+          "surface-variant": "#dae2fd",
+          "on-error-container": "#93000a",
+          "surface-container": "#eaedff",
+          "on-surface-variant": "#434653",
+          "primary-fixed": "#d9e2ff",
+          "on-primary-fixed": "#001945",
+          "outline": "#737784",
+          "inverse-surface": "#283044",
+          "on-secondary-fixed": "#111c2d",
+          "inverse-on-surface": "#eef0ff",
+          "tertiary": "#3a4249",
+          "surface-dim": "#d2d9f4",
+          "on-secondary-fixed-variant": "#3c475a",
+          "on-surface": "#131b2e",
+          "on-secondary": "#ffffff",
+          "surface-container-highest": "#dae2fd",
+          "secondary-fixed-dim": "#bcc7de",
+          "tertiary-container": "#525960",
+          "secondary-fixed": "#d8e3fb",
+          "background": "#faf8ff",
+          "on-tertiary-container": "#c8cfd8",
+          "primary-fixed-dim": "#b0c6ff",
+          "on-tertiary-fixed-variant": "#40484f",
+          "on-error": "#ffffff",
+          "on-primary-container": "#bcceff",
+          "on-primary-fixed-variant": "#00419c",
+          "secondary": "#545f73",
+          "surface-container-high": "#e2e7ff",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f2f3ff",
+          "outline-variant": "#c3c6d5",
+          "tertiary-fixed": "#dce3ec",
+          "on-tertiary": "#ffffff",
+          "on-secondary-container": "#586377",
+          "on-tertiary-fixed": "#151c23",
+          "tertiary-fixed-dim": "#c0c7d0"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {
+          "space-md": "1rem",
+          "margin": "2rem",
+          "space-lg": "1.5rem",
+          "space-sm": "0.5rem",
+          "space-xs": "0.25rem",
+          "gutter": "1.5rem",
+          "space-xl": "2.5rem"
+        },
+        "fontFamily": {
+          "headline-xl-mobile": [
+            "Inter"
+          ],
+          "headline-md": [
+            "Inter"
+          ],
+          "headline-lg-mobile": [
+            "Inter"
+          ],
+          "label-sm": [
+            "Inter"
+          ],
+          "headline-lg": [
+            "Inter"
+          ],
+          "timer-display": [
+            "Inter"
+          ],
+          "body-lg": [
+            "Inter"
+          ],
+          "headline-xl": [
+            "Inter"
+          ],
+          "body-md": [
+            "Inter"
+          ],
+          "headline-sm": [
+            "Inter"
+          ],
+          "body-reading": [
+            "Inter"
+          ],
+          "label-md": [
+            "Inter"
+          ],
+          "label-lg": [
+            "Inter"
+          ],
+          "body-sm": [
+            "Inter"
+          ]
+        },
+        "fontSize": {
+          "headline-xl-mobile": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "700"
+            }
+          ],
+          "headline-md": [
+            "22px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg-mobile": [
+            "22px",
+            {
+              "lineHeight": "30px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-sm": [
+            "11px",
+            {
+              "lineHeight": "14px",
+              "letterSpacing": "0.04em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "600"
+            }
+          ],
+          "timer-display": [
+            "20px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0.05em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-lg": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-xl": [
+            "36px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-md": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-sm": [
+            "18px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-reading": [
+            "17px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "label-md": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-lg": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-gutter flex items-center justify-between"><div class="flex items-center gap-space-md"><img alt="Brand logo. - Primary color: #0f52ba
+- Font: inter
+- Mode: light
+- Roundness: rounded-sm
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WU4vXzvlYijh0CgpD9_GLv0EblVLmsIXkDbDOw8pVq-ECKtvODF2BB8bbny1FJWXO9n9TShzwZ2wYoMqiG9X56jyo-PYQjDF0GpFtQYj6lVlPWrqXN2FOqXNZ-Y3uSdVucqSUs6ikplZnAet5yoJprh6VGSk9OKSy5qR6Lqgqm1YRUjMhSHfhUq8MiCWMzA3pTOPNXeocpKHdAnOKcWlfR3ErDWLqRqPwJDmasyuF483SaGVlmOoCboQ"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Clasptek Prep</span><span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-primary-container inline-block"></span>ISO/IEC 23988 Compliant Tele-Assessment</span></div></div><nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-primary font-bold"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="examinations" href="#">Examinations</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="pre-assessments" href="#">Pre-Assessments</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="platform-features" href="#">Platform Features</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="institutional-and-enterprise" href="#">Institutional &amp; Enterprise</a></nav><div class="flex items-center gap-space-md"><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="support" href="#">Need Help?</a><div class="h-4 w-[1px] bg-outline-variant"></div><a class="font-label-md text-label-md text-primary hover:text-primary-container font-semibold transition-colors" data-path="sign-in" href="#">Sign In</a><a class="px-space-md py-space-xs rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors shadow-sm" data-path="create-account" href="#">Create Account</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-80px)]"><div class="flex flex-col w-full">
+<div class="w-full max-w-[1440px] mx-auto px-gutter py-space-xl">
+<!-- Top Context & Standard Tracker Strip -->
+<div class="w-full flex flex-col md:flex-row items-start md:items-center justify-between pb-space-lg mb-space-xl border-b border-outline-variant/40 gap-space-md">
+<div>
+<div class="flex items-center gap-space-xs mb-1">
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest font-semibold">CANDIDATE TELE-PORTAL</span>
+<span class="text-outline-variant">•</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">SESSION ID: #CLP-8842-SEC</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight font-bold">STUDENT SIGN IN</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Sign in to access your pre-assessment diagnostics, proctored mock examinations, and verified score transcripts.</p>
+</div>
+<!-- Real-time Cluster Pill -->
+<div class="flex items-center gap-3 bg-surface-container-lowest px-space-md py-2.5 rounded-lg shadow-sm border border-outline-variant/30">
+<span class="relative flex h-2.5 w-2.5">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-container opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold tracking-tight">Tele-Audit Active</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Cluster: EU-Central-1</span>
+</div>
+</div>
+</div>
+<!-- Asymmetric 2-Column Desktop Architecture -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- Left Column: Student Activity Summary & Telemetry (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col gap-space-lg">
+<!-- Returning Candidate Narrative Box -->
+<div class="bg-surface-container-low p-space-lg rounded-xl border border-outline-variant/30 relative overflow-hidden">
+<div class="flex items-center justify-between mb-space-md">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-label-sm uppercase font-bold">Verified Access</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">NODE: v5.2.04</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold mb-space-xs">Returning Candidates &amp; Test Takers</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
+            Ensure your testing environment matches the designated audio-visual calibration parameters before entering real-time evaluation sessions.
+          </p>
+<!-- Telemetry Preview Ledger -->
+<div class="bg-surface-container-lowest rounded-lg p-space-md shadow-sm border border-outline-variant/20 flex flex-col gap-space-sm mb-space-md">
+<div class="text-on-surface font-label-md text-label-md font-semibold tracking-wide border-b border-outline-variant/30 pb-2 flex justify-between items-center">
+<span>SYSTEM LEDGER PREVIEW</span>
+<span class="text-primary text-[11px] font-mono">LATENCY: 14ms</span>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm pt-1">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">dns</span>
+                Tele-Assessment Engine:
+              </span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Node EU-Central-1 Operational</span>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">rule</span>
+                Calibrated Frameworks:
+              </span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">IELTS, SAT, TOEFL, CELPIP</span>
+</div>
+<div class="flex items-center justify-between font-body-sm text-body-sm">
+<span class="text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">deployed_code</span>
+                Engine Protocol:
+              </span>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Sectional v5.2 Online</span>
+</div>
+</div>
+<!-- Academic Mini Visual Card -->
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="bg-surface-container-lowest p-space-sm rounded-lg border border-outline-variant/20 flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">AVERAGE SCORE VARIANCE</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">±0.12 Band</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Under live mock proctoring</span>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded-lg border border-outline-variant/20 flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">SECURITY CLEARANCE</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Level III</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Hardware lock enabled</span>
+</div>
+</div>
+</div>
+<!-- Visual Media Snapshot: Testing Room Rigor -->
+<div class="relative w-full rounded-xl overflow-hidden shadow-sm border border-outline-variant/30 h-44 bg-surface-container">
+<img class="w-full h-full object-cover object-center" data-alt="Modern minimalist university examination computer laboratory in deep navy and clean light tones, students quietly focused on assessments, soft ambient overhead lighting, crisp academic rigor, photographic quality" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLo0RfMPig-pM7_e2YqlL4Y6QRzT3PnkLun912J8gDeXIkMPdVDVCWG46WD3QjrM_Q0rslxCSBlmKx2kyWmVN8QcTYjcnTGtNvFgxpqbZBX5r_7cyDfOceFPoc8uXhcBc_LiECMALjLKBuhzDcZ04PE9yzrAgpssSBA__Ej7tvbd2CvZREnBE-dapgkNtgkV3QnHMyaI_wxXwZol4Dlg05HCY8ukpEaBuY8eNM3EJ-R85zmI4lL-Q"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent flex items-end p-space-md">
+<p class="font-body-sm text-body-sm text-on-primary font-medium">
+              Standardized Computer-Delivered Examination Suites (Station Alpha to Delta)
+            </p>
+</div>
+</div>
+<!-- Institutional Standard Seal Quote -->
+<div class="p-space-md rounded-lg bg-surface-container-lowest border-l-4 border-primary shadow-sm flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px] flex-shrink-0 mt-0.5">verified_user</span>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface font-semibold">
+              “Precision measurement calibrated to international standards ISO/IEC 23988.”
+            </p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">
+              Global Evaluation Committee • Data Integrity Assurance Protocol
+            </p>
+</div>
+</div>
+</div>
+<!-- Right Column: Sign In Primary Workspace (7 Cols) -->
+<div class="lg:col-span-7">
+<div class="bg-surface-container-lowest rounded-xl p-space-xl shadow-md border border-outline-variant/40 relative">
+<!-- Card Header -->
+<div class="mb-space-lg pb-space-md border-b border-outline-variant/30">
+<div class="flex items-center justify-between mb-1">
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-bold tracking-tight">Candidate Sign In</h2>
+<span class="flex items-center gap-1 font-label-sm text-label-sm text-primary bg-surface-container-high px-2.5 py-1 rounded">
+<span class="material-symbols-outlined text-[14px]">lock</span> Secure Channel
+              </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Enter your credentials to access your assessment profile and active test sessions.
+            </p>
+</div>
+<!-- Sign-In Form -->
+<form class="space-y-space-md" id="portal-signin-form" onsubmit="event.preventDefault(); return false;">
+<!-- Email / ID Input -->
+<div class="space-y-1.5">
+<label class="block font-label-lg text-label-lg text-on-surface font-semibold" for="candidate-identity">
+                Email or Candidate ID <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">badge</span>
+<input class="w-full h-11 pl-11 pr-4 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-lg border border-outline-variant/60 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" id="candidate-identity" placeholder="e.g., maya.lin@clasptek.org or #CLP-8829" required="" type="text"/>
+</div>
+</div>
+<!-- Password Input with Forgot Password inline anchor -->
+<div class="space-y-1.5 pt-1">
+<div class="flex items-center justify-between">
+<label class="font-label-lg text-label-lg text-on-surface font-semibold" for="candidate-auth-key">
+                  Password <span class="text-error">*</span>
+</label>
+<a class="font-label-md text-label-md text-primary hover:text-primary-container font-semibold transition-colors focus:outline-none focus:underline" href="#">
+                  Forgot Password?
+                </a>
+</div>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant text-[20px] pointer-events-none">password</span>
+<input class="w-full h-11 pl-11 pr-11 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-lg border border-outline-variant/60 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors" id="candidate-auth-key" placeholder="Enter your password" required="" type="password"/>
+<button aria-label="Toggle password visibility" class="absolute right-3.5 text-on-surface-variant hover:text-on-surface p-1 transition-colors" id="toggle-pwd-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Workstation Checkbox -->
+<div class="pt-2">
+<label class="flex items-start gap-3 cursor-pointer select-none">
+<input class="mt-1 h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary transition-all cursor-pointer" id="persist-workstation" type="checkbox"/>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-medium leading-tight">
+                    Remember this workstation for 30 days
+                  </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                    (Do not check on shared exam center computers)
+                  </span>
+</div>
+</label>
+</div>
+<!-- Primary CTA -->
+<div class="pt-space-sm">
+<button class="w-full h-12 bg-primary-container hover:bg-primary text-on-primary font-label-lg text-label-lg font-semibold rounded-lg shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 tracking-wide focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="submit-cta" type="submit">
+<span>SIGN IN &amp; ACCESS PORTAL</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</form>
+<!-- Divider: Alternative SSO -->
+<div class="relative my-space-lg flex items-center justify-center">
+<div class="w-full border-t border-outline-variant/40"></div>
+<span class="absolute bg-surface-container-lowest px-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-semibold">
+              OR AUTHENTICATE VIA INSTITUTION
+            </span>
+</div>
+<!-- Federated SSO Buttons -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<!-- University Institutional SSO -->
+<button class="h-11 px-space-md bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md text-label-md font-semibold rounded-lg border border-outline-variant/60 hover:border-outline transition-colors flex items-center justify-center gap-2 shadow-sm text-left" type="button">
+<span class="material-symbols-outlined text-primary text-[20px]">account_balance</span>
+<span class="truncate">University / Institutional SSO</span>
+</button>
+<!-- Google Workspace SSO -->
+<button class="h-11 px-space-md bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md text-label-md font-semibold rounded-lg border border-outline-variant/60 hover:border-outline transition-colors flex items-center justify-center gap-2 shadow-sm text-left" type="button">
+<svg class="w-4 h-4 flex-shrink-0" viewbox="0 0 24 24">
+<path d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" fill="#4285F4"></path>
+<path d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" fill="#34A853"></path>
+<path d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" fill="#FBBC05"></path>
+<path d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" fill="#EA4335"></path>
+</svg>
+<span class="truncate">Google Workspace</span>
+</button>
+</div>
+<!-- New Student Registration Bottom Container -->
+<div class="mt-space-lg p-space-md rounded-lg bg-surface-container-low border border-outline-variant/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0 mt-0.5">school</span>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface">
+<span class="font-semibold text-on-surface">First time taking a diagnostic pre-assessment?</span>
+                  Your account is required to calibrate baseline metrics.
+                </p>
+</div>
+</div>
+<a class="font-label-sm text-label-sm text-primary hover:text-primary-container font-bold flex items-center gap-1 whitespace-nowrap transition-colors" href="#">
+<span>Create an Account (Free 35-min assessment included)</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Security & Legal Ledger Footnote -->
+<div class="mt-space-md flex flex-wrap items-center justify-between text-on-surface-variant font-label-sm text-label-sm px-1 gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px] text-primary">policy</span>
+<span>All keystroke dynamics &amp; session states are cryptographically timestamped.</span>
+</div>
+<div class="flex items-center gap-3">
+<a class="hover:text-on-surface transition-colors" href="#">Privacy Policy</a>
+<span>•</span>
+<a class="hover:text-on-surface transition-colors" href="#">Candidate Code of Conduct</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function initPortalLogin() {
+    const pwdInput = document.getElementById('candidate-auth-key');
+    const toggleBtn = document.getElementById('toggle-pwd-btn');
+    if (toggleBtn && pwdInput) {
+      toggleBtn.addEventListener('click', () => {
+        const isPassword = pwdInput.getAttribute('type') === 'password';
+        pwdInput.setAttribute('type', isPassword ? 'text' : 'password');
+        const icon = toggleBtn.querySelector('span');
+        if (icon) {
+          icon.textContent = isPassword ? 'visibility_off' : 'visibility';
+        }
+      });
+    }
+
+    const form = document.getElementById('portal-signin-form');
+    const submitBtn = document.getElementById('submit-cta');
+    if (form && submitBtn) {
+      form.addEventListener('submit', () => {
+        const originalContent = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>CALIBRATING WORKSTATION...</span>
+        `;
+        setTimeout(() => {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalContent;
+        }, 1800);
+      });
+    }
+  })();
+</script></main><footer class="w-full bg-surface-container-low py-space-lg shadow-[0_-1px_4px_rgba(0,0,0,0.02)]"><div class="w-full px-gutter flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md text-on-surface-variant"><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[16px] text-primary">verified</span><span>ISO/IEC 23988:2007 Certified</span></div><span class="text-outline-variant">•</span><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[16px] text-primary">lock</span><span>256-Bit Encrypted Tele-Proctoring Environment</span></div></div><div class="font-body-sm text-body-sm text-on-surface-variant">© 2025 Clasptek Assessment Technologies. All rights reserved. Academic Standard Architecture.</div></div></footer></body></html>

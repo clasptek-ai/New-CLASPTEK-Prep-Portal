@@ -26,10 +26,14 @@ export function AdminDashboardScreen() {
       const res = await adminDashboardService.getDashboardData();
       setData(res);
       setLastSynced(
-        new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        })
       );
     } catch (e) {
-      console.error('Failed to load admin dashboard live data', e);
+      console.error('Failed to load admin dashboard data', e);
     } finally {
       setLoading(false);
       if (isManual) setRefreshing(false);
@@ -38,36 +42,37 @@ export function AdminDashboardScreen() {
 
   useEffect(() => {
     loadData();
-
     // Auto-refresh live institutional telemetry every 30 seconds
-    const interval = setInterval(() => {
-      loadData();
-    }, 30000);
-
+    const interval = setInterval(() => loadData(), 30000);
     return () => clearInterval(interval);
   }, [loadData]);
 
   if (loading || !data || !adminProfile) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%' }}>
-        <Skeleton height="100px" width="100%" />
+        <Skeleton height="76px" width="100%" />
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
             gap: '1rem',
           }}
         >
-          <Skeleton height="90px" width="100%" />
-          <Skeleton height="90px" width="100%" />
-          <Skeleton height="90px" width="100%" />
-          <Skeleton height="90px" width="100%" />
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} height="110px" width="100%" />
+          ))}
         </div>
         <Skeleton height="200px" width="100%" />
         <Skeleton height="240px" width="100%" />
       </div>
     );
   }
+
+  const today = new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
 
   return (
     <div
@@ -76,138 +81,135 @@ export function AdminDashboardScreen() {
         flexDirection: 'column',
         gap: '1.75rem',
         width: '100%',
-        boxSizing: 'border-box',
       }}
     >
-      {/* Executive Command Center Header */}
+      {/* ── Page Header ── */}
       <div
         style={{
-          padding: '1.25rem 1.75rem',
-          borderRadius: '16px',
-          backgroundColor: '#151d30',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
           display: 'flex',
           flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '1rem',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
+          padding: '1.25rem 1.5rem',
+          borderRadius: 'var(--radius-lg)',
+          backgroundColor: 'var(--surface-0)',
+          border: '1px solid var(--border-strong)',
+          boxShadow: 'var(--shadow-surface)',
         }}
       >
+        {/* Left: Title */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.3rem' }}>
             <h1
               style={{
                 margin: 0,
-                fontSize: '1.5rem',
+                fontSize: 'clamp(1.125rem, 3vw, 1.375rem)',
                 fontWeight: 800,
-                color: '#ffffff',
-                letterSpacing: '-0.02em',
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.03em',
               }}
             >
-              Executive Command Center
+              Admin Dashboard
             </h1>
             <span
               style={{
-                fontSize: '0.7rem',
-                fontWeight: 800,
-                color: '#38bdf8',
-                backgroundColor: 'rgba(56, 189, 248, 0.15)',
-                padding: '0.2rem 0.5rem',
-                borderRadius: '4px',
+                fontSize: '0.65rem',
+                fontWeight: 700,
                 textTransform: 'uppercase',
-                letterSpacing: '0.04em',
+                letterSpacing: '0.05em',
+                padding: '0.2rem 0.55rem',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: 'var(--brand-subtle)',
+                color: 'var(--brand-light)',
+                border: '1px solid var(--brand-border)',
               }}
             >
-              PostgreSQL Live
+              Live
             </span>
           </div>
+
           <div
             style={{
-              fontSize: '0.85rem',
-              color: '#cbd5e1',
-              marginTop: '4px',
               display: 'flex',
+              flexWrap: 'wrap',
               alignItems: 'center',
               gap: '0.75rem',
+              fontSize: '0.8125rem',
+              color: 'var(--text-secondary)',
             }}
           >
             <span>
-              Welcome back, <strong>{adminProfile.name || 'Administrator'}</strong>
+              Welcome back,{' '}
+              <strong style={{ color: 'var(--text-primary)' }}>
+                {adminProfile.name || 'Administrator'}
+              </strong>
             </span>
-            <span>•</span>
+            <span aria-hidden="true" style={{ color: 'var(--border-strong)' }}>
+              ·
+            </span>
             <span
               style={{
-                color: '#34d399',
-                fontWeight: 600,
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
+                color: 'var(--success)',
+                fontWeight: 600,
               }}
             >
-              <Radio size={14} color="#34d399" /> System Status: Operational
+              <Radio size={12} aria-hidden="true" /> Operational
             </span>
             {lastSynced && (
               <>
-                <span>•</span>
-                <span style={{ color: '#94a3b8' }}>Last Database Sync: {lastSynced}</span>
+                <span aria-hidden="true" style={{ color: 'var(--border-strong)' }}>
+                  ·
+                </span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>
+                  {today} · Synced at {lastSynced}
+                </span>
               </>
             )}
           </div>
         </div>
 
-        {/* Sync Live Data Refresh Button */}
+        {/* Right: Refresh button */}
         <button
+          type="button"
           onClick={() => loadData(true)}
           disabled={refreshing}
-          style={{
-            padding: '0.6rem 1.1rem',
-            borderRadius: '10px',
-            backgroundColor: '#0f172a',
-            border: '1px solid rgba(255, 255, 255, 0.12)',
-            color: '#f8fafc',
-            fontSize: '0.825rem',
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = '#38bdf8';
-            e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
-            e.currentTarget.style.backgroundColor = '#0f172a';
-          }}
+          aria-label="Refresh dashboard data"
+          className="btn btn--secondary"
+          style={{ minWidth: '130px' }}
         >
           <RefreshCw
             size={14}
-            className={refreshing ? 'animate-spin' : ''}
-            style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }}
+            style={{
+              animation: refreshing ? 'spin 1s linear infinite' : 'none',
+            }}
+            aria-hidden="true"
           />
-          {refreshing ? 'Syncing...' : 'Sync Live Data'}
+          {refreshing ? 'Syncing…' : 'Refresh Data'}
         </button>
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
 
-      {/* Row 1 & Row 2 Live KPI Grid */}
+      {/* ── KPI Grid ── */}
       <KPISummaryGrid stats={data.stats} />
 
-      {/* Executive Command Actions */}
+      {/* ── Quick Actions ── */}
       <QuickActionsBar />
 
-      {/* Activity Area & Pending Operations (Two-Column Layout) */}
+      {/* ── Activity, Notifications, Pending Tasks ── */}
       <AdminSectionsGrid
         notifications={data.notifications}
         recentActivity={data.recentActivity}
         pendingTasks={data.pendingTasks}
       />
 
-      {/* Executive Analytics Charts & Cohort Distributions */}
+      {/* ── Executive Analytics Charts ── */}
       <ExecutiveAnalytics charts={data.charts} />
+
+      {/* Spin animation */}
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

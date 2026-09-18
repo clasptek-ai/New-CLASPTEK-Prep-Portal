@@ -91,13 +91,27 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     // Idempotency check: If already submitted, return current result
     if (sessionRecord.status === 'SUBMITTED' || sessionRecord.status === 'COMPLETED') {
+      console.info(`[MOCK_ALREADY_FINALIZED] sessionId=${sessionId} status=${sessionRecord.status}`);
       return NextResponse.json({
         success: true,
         message: 'Mock session already submitted',
         sessionId,
         status: sessionRecord.status,
         officialScoreLabel: sessionRecord.official_score_label || 'Estimated Mock Score',
+        officialScaledScore: sessionRecord.official_scaled_score ? parseFloat(sessionRecord.official_scaled_score) : 0,
+        scorePercentage: sessionRecord.score_percentage ? parseFloat(sessionRecord.score_percentage) : 0,
+        evaluationState: sessionRecord.evaluation_state || 'COMPLETED',
+        submittedAt: sessionRecord.submitted_at,
       });
+    }
+
+    // Authoritative Server Deadline Check
+    const expiresAtMs = sessionRecord.expires_at ? new Date(sessionRecord.expires_at).getTime() : null;
+    const isExpiredAtSubmission = expiresAtMs ? Date.now() >= expiresAtMs : false;
+    if (isExpiredAtSubmission) {
+      console.info(
+        `[MOCK_TIMER_EXPIRED_FINALIZATION] sessionId=${sessionId} expiresAt=${sessionRecord.expires_at} now=${new Date().toISOString()}`
+      );
     }
 
     // 1. Retrieve all question snapshots for this session to guarantee every presented question is tracked

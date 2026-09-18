@@ -3,7 +3,7 @@ import { EvaluationDashboard } from '@/features/evaluation-dashboard/evaluation-
 
 export default function StudentEvaluationPage() {
   return (
-    <div className="bg-slate-950 min-h-screen text-white p-8 space-y-6">
+    <div className="max-w-5xl mx-auto p-6 md:p-8 space-y-6">
       <EvaluationDashboard />
     </div>
   );

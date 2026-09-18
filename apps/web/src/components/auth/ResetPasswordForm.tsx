@@ -137,25 +137,20 @@ export function ResetPasswordForm() {
   };
 
   return (
-    <div className="w-full max-w-115 mx-auto bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 sm:p-8 space-y-6">
-      {/* Top Logo Badge */}
-      <div className="flex justify-center">
-        <LogoBadge size="md" />
-      </div>
-
-      {/* Link Expired State Card */}
+    <div className="w-full space-y-6">
+      {/* Link Expired State */}
       {isInvalidToken && !success && (
         <div className="text-center space-y-5 py-2">
           <div className="w-14 h-14 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full flex items-center justify-center mx-auto">
-            <AlertCircle size={30} />
+            <AlertCircle size={28} />
           </div>
 
-          <div className="space-y-2">
-            <h1 className="text-xl font-extrabold text-white tracking-tight">Link Expired</h1>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          <div className="space-y-1.5">
+            <h2 className="text-lg font-bold text-(--text-primary) tracking-tight">Link Expired</h2>
+            <p className="text-xs sm:text-sm text-(--text-secondary) leading-relaxed">
               This password reset link is no longer valid.
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-(--text-muted)">
               Request a new password reset email to continue.
             </p>
           </div>
@@ -163,7 +158,7 @@ export function ResetPasswordForm() {
           <div className="pt-2 space-y-3">
             <Link
               href="/forgot-password"
-              className="w-full py-3.5 px-5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-sm rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-sky-500/20 min-h-11"
+              className="w-full py-3 px-4 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-sm rounded-lg flex items-center justify-center space-x-2 transition-all min-h-11 shadow-sm"
             >
               <span>Request New Link</span>
               <ArrowRight size={16} />
@@ -172,7 +167,7 @@ export function ResetPasswordForm() {
             <div>
               <Link
                 href="/login"
-                className="text-xs text-slate-400 hover:text-sky-400 font-semibold inline-flex items-center space-x-1.5 transition-colors"
+                className="text-xs text-(--text-secondary) hover:text-(--brand-light) font-semibold inline-flex items-center space-x-1.5 transition-colors"
               >
                 <ArrowLeft size={14} />
                 <span>Back to Login</span>
@@ -182,16 +177,16 @@ export function ResetPasswordForm() {
         </div>
       )}
 
-      {/* Success State Card */}
+      {/* Success State */}
       {success && (
         <div className="text-center space-y-5 py-2">
           <div className="w-14 h-14 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center justify-center mx-auto">
-            <CheckCircle2 size={30} />
+            <CheckCircle2 size={28} />
           </div>
 
-          <div className="space-y-2">
-            <h1 className="text-xl font-extrabold text-white tracking-tight">Password Updated</h1>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+          <div className="space-y-1.5">
+            <h2 className="text-lg font-bold text-(--text-primary) tracking-tight">Password Updated</h2>
+            <p className="text-xs sm:text-sm text-(--text-secondary) leading-relaxed">
               Your password has been changed successfully.
             </p>
           </div>
@@ -199,7 +194,7 @@ export function ResetPasswordForm() {
           <div className="pt-2">
             <Link
               href="/login"
-              className="w-full py-3.5 px-5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-sm rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-sky-500/20 min-h-11"
+              className="w-full py-3 px-4 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-sm rounded-lg flex items-center justify-center space-x-2 transition-all min-h-11 shadow-sm"
             >
               <span>Continue to Sign In</span>
               <ArrowRight size={16} />
@@ -208,19 +203,12 @@ export function ResetPasswordForm() {
         </div>
       )}
 
-      {/* Active Reset Password Form Card */}
+      {/* Active Reset Password Form */}
       {!isInvalidToken && !success && (
         <div className="space-y-5">
-          <div className="text-center space-y-1">
-            <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-              Reset Your Password
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-400">Enter a new password below.</p>
-          </div>
-
           {error && (
-            <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs font-semibold flex items-center space-x-2">
-              <AlertCircle size={16} className="shrink-0 text-rose-400" />
+            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs font-semibold flex items-center space-x-2">
+              <AlertCircle size={16} className="shrink-0 text-red-400" />
               <span>{error}</span>
             </div>
           )}
@@ -228,8 +216,8 @@ export function ResetPasswordForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* New Password Field */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-300">
-                New Password <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold text-(--text-secondary)">
+                New Password <span className="text-red-400">*</span>
               </label>
               <div className="relative">
                 <input
@@ -238,12 +226,12 @@ export function ResetPasswordForm() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="Enter new password"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 pr-11 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 min-h-11"
+                  className="w-full bg-(--surface-1) border border-(--border) rounded-lg px-3.5 py-2.5 pr-11 text-sm text-(--text-primary) placeholder:text-(--text-muted) focus:outline-none focus:border-(--brand) focus:ring-1 focus:ring-(--brand) min-h-11 transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1 flex items-center justify-center min-h-8"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-muted) hover:text-(--text-secondary) p-1 flex items-center justify-center min-h-8"
                   aria-label={showPassword ? 'Hide Password' : 'Show Password'}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -253,8 +241,8 @@ export function ResetPasswordForm() {
 
             {/* Confirm Password Field */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-300">
-                Confirm Password <span className="text-rose-400">*</span>
+              <label className="block text-xs font-semibold text-(--text-secondary)">
+                Confirm Password <span className="text-red-400">*</span>
               </label>
               <div className="relative">
                 <input
@@ -263,12 +251,12 @@ export function ResetPasswordForm() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   placeholder="Confirm new password"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 pr-11 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 min-h-11"
+                  className="w-full bg-(--surface-1) border border-(--border) rounded-lg px-3.5 py-2.5 pr-11 text-sm text-(--text-primary) placeholder:text-(--text-muted) focus:outline-none focus:border-(--brand) focus:ring-1 focus:ring-(--brand) min-h-11 transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1 flex items-center justify-center min-h-8"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-muted) hover:text-(--text-secondary) p-1 flex items-center justify-center min-h-8"
                   aria-label={
                     showConfirmPassword ? 'Hide Confirm Password' : 'Show Confirm Password'
                   }
@@ -277,7 +265,7 @@ export function ResetPasswordForm() {
                 </button>
               </div>
               {confirmPassword.length > 0 && !passwordsMatch && (
-                <span className="text-[11px] text-rose-400 font-semibold block pt-0.5">
+                <span className="text-[11px] text-red-400 font-semibold block pt-0.5">
                   ⚠️ Passwords do not match
                 </span>
               )}
@@ -290,7 +278,7 @@ export function ResetPasswordForm() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-5 bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-slate-950 font-extrabold text-sm rounded-xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-sky-500/20 min-h-11"
+              className="w-full py-3 px-4 bg-(--brand) hover:bg-(--brand-hover) disabled:bg-(--surface-2) disabled:text-(--text-muted) disabled:cursor-not-allowed text-white font-bold text-sm rounded-lg flex items-center justify-center space-x-2 transition-all min-h-11 shadow-sm mt-2"
             >
               <span>{loading ? 'Updating Password...' : 'Reset Password'}</span>
               {!loading && <ArrowRight size={18} />}
@@ -298,18 +286,18 @@ export function ResetPasswordForm() {
           </form>
 
           {/* Navigation Links */}
-          <div className="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between text-xs gap-3">
+          <div className="pt-4 border-t border-(--border) flex flex-col sm:flex-row items-center justify-between text-xs gap-3">
             <Link
               href="/login"
-              className="text-slate-400 hover:text-sky-400 font-semibold flex items-center space-x-1.5 transition-colors"
+              className="text-(--text-secondary) hover:text-(--brand-light) font-semibold flex items-center space-x-1.5 transition-colors"
             >
               <ArrowLeft size={14} />
               <span>Back to Login</span>
             </Link>
-            <div className="text-slate-400 text-center sm:text-right">
-              <span className="text-slate-500">Need another email? </span>
-              <Link href="/forgot-password" className="text-sky-400 hover:underline font-semibold">
-                Request New Reset Link
+            <div className="text-(--text-secondary) text-center sm:text-right">
+              <span className="text-(--text-muted)">Need another email? </span>
+              <Link href="/forgot-password" className="text-(--brand-light) hover:underline font-semibold">
+                Request New Link
               </Link>
             </div>
           </div>

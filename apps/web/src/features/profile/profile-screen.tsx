@@ -54,7 +54,7 @@ export function ProfileScreen() {
 
   if (loading || !profile) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
+      <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
         <h3>Loading student profile data...</h3>
       </div>
     );
@@ -63,8 +63,8 @@ export function ProfileScreen() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Profile & Settings</h1>
-        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Profile & Settings</h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
           Configure your learning styles, credentials, and app theme
         </p>
       </div>
@@ -73,11 +73,12 @@ export function ProfileScreen() {
         <div
           style={{
             padding: '1rem',
-            backgroundColor: '#2563eb20',
-            border: '1px solid #2563eb40',
-            borderRadius: '8px',
-            color: '#60a5fa',
-            fontSize: '0.85rem',
+            backgroundColor: 'var(--brand-subtle)',
+            border: '1px solid var(--brand-border)',
+            borderRadius: 'var(--radius-md)',
+            color: 'var(--brand-light)',
+            fontSize: '0.875rem',
+            fontWeight: 600,
           }}
         >
           {banner}
@@ -100,30 +101,30 @@ export function ProfileScreen() {
                 gridTemplateColumns: '1fr 1fr',
                 gap: '1.5rem',
                 fontSize: '0.9rem',
-                color: '#cbd5e1',
+                color: 'var(--text-secondary)',
               }}
             >
               <div>
                 Name:{' '}
-                <strong style={{ display: 'block', color: '#f8fafc', marginTop: '0.25rem' }}>
+                <strong style={{ display: 'block', color: 'var(--text-primary)', marginTop: '0.25rem' }}>
                   {profile.name}
                 </strong>
               </div>
               <div>
                 Email:{' '}
-                <strong style={{ display: 'block', color: '#f8fafc', marginTop: '0.25rem' }}>
+                <strong style={{ display: 'block', color: 'var(--text-primary)', marginTop: '0.25rem' }}>
                   {profile.email}
                 </strong>
               </div>
               <div>
                 Phone:{' '}
-                <strong style={{ display: 'block', color: '#f8fafc', marginTop: '0.25rem' }}>
+                <strong style={{ display: 'block', color: 'var(--text-primary)', marginTop: '0.25rem' }}>
                   {profile.phone}
                 </strong>
               </div>
               <div>
                 Enrolled At:{' '}
-                <strong style={{ display: 'block', color: '#f8fafc', marginTop: '0.25rem' }}>
+                <strong style={{ display: 'block', color: 'var(--text-primary)', marginTop: '0.25rem' }}>
                   {new Date(profile.enrolledAt).toLocaleDateString()}
                 </strong>
               </div>
@@ -133,7 +134,7 @@ export function ProfileScreen() {
                 display: 'flex',
                 gap: '1rem',
                 marginTop: '1.5rem',
-                borderTop: '1px solid #1e293b',
+                borderTop: '1px solid var(--border)',
                 paddingTop: '1rem',
               }}
             >
@@ -155,7 +156,7 @@ export function ProfileScreen() {
                     display: 'block',
                     fontSize: '0.85rem',
                     fontWeight: 600,
-                    color: '#94a3b8',
+                    color: 'var(--text-muted)',
                     marginBottom: '0.5rem',
                   }}
                 >
@@ -167,10 +168,10 @@ export function ProfileScreen() {
                   style={{
                     width: '100%',
                     padding: '0.75rem',
-                    borderRadius: '8px',
-                    border: '1px solid #232e48',
-                    backgroundColor: '#0b0f19',
-                    color: '#f8fafc',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--border)',
+                    backgroundColor: 'var(--surface-1)',
+                    color: 'var(--text-primary)',
                   }}
                 >
                   <option value="Visual">Visual Lectures</option>
@@ -185,7 +186,7 @@ export function ProfileScreen() {
                     display: 'block',
                     fontSize: '0.85rem',
                     fontWeight: 600,
-                    color: '#94a3b8',
+                    color: 'var(--text-muted)',
                     marginBottom: '0.5rem',
                   }}
                 >
@@ -197,10 +198,10 @@ export function ProfileScreen() {
                   style={{
                     width: '100%',
                     padding: '0.75rem',
-                    borderRadius: '8px',
-                    border: '1px solid #232e48',
-                    backgroundColor: '#0b0f19',
-                    color: '#f8fafc',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--border)',
+                    backgroundColor: 'var(--surface-1)',
+                    color: 'var(--text-primary)',
                   }}
                 >
                   <option value="Direct">Direct & Directives</option>
@@ -221,11 +222,12 @@ export function ProfileScreen() {
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    padding: '0.5rem',
-                    backgroundColor: '#0b0f19',
-                    borderRadius: '6px',
+                    padding: '0.5rem 0.75rem',
+                    backgroundColor: 'var(--surface-1)',
+                    borderRadius: 'var(--radius-sm)',
                     fontSize: '0.75rem',
-                    color: '#94a3b8',
+                    color: 'var(--text-muted)',
+                    border: '1px solid var(--border)',
                   }}
                 >
                   <span>
@@ -246,7 +248,7 @@ export function ProfileScreen() {
                   display: 'block',
                   fontSize: '0.85rem',
                   fontWeight: 600,
-                  color: '#94a3b8',
+                  color: 'var(--text-muted)',
                   marginBottom: '0.5rem',
                 }}
               >
@@ -258,10 +260,10 @@ export function ProfileScreen() {
                 style={{
                   width: '100%',
                   padding: '0.75rem',
-                  borderRadius: '8px',
-                  border: '1px solid #232e48',
-                  backgroundColor: '#0b0f19',
-                  color: '#f8fafc',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface-1)',
+                  color: 'var(--text-primary)',
                 }}
               >
                 <option value="dark">Dark Theme</option>

@@ -197,10 +197,10 @@ function StudentResultsContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-8">
+      <div className="min-h-100 flex items-center justify-center p-8">
         <div className="text-center space-y-3">
-          <div className="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <div className="text-sm font-semibold text-slate-300">
+          <div className="w-10 h-10 border-3 border-(--brand) border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="text-sm font-semibold text-(--text-secondary)">
             Loading Assessment Performance...
           </div>
         </div>
@@ -211,10 +211,10 @@ function StudentResultsContent() {
   // State A: Unauthorized / Forbidden Attempt View (Security Epic 11 & 16)
   if (isForbidden) {
     return (
-      <div className="max-w-2xl mx-auto my-16 p-8 bg-slate-900 border border-slate-800 rounded-2xl text-white text-center space-y-5">
+      <div className="max-w-2xl mx-auto my-16 p-8 bg-(--surface-0) border border-(--border) rounded-xl text-center space-y-5">
         <div className="text-4xl">🔒</div>
-        <h2 className="text-xl font-bold">Result Not Available</h2>
-        <p className="text-xs text-slate-400 max-w-md mx-auto">
+        <h2 className="text-xl font-bold text-(--text-primary)">Result Not Available</h2>
+        <p className="text-xs text-(--text-secondary) max-w-md mx-auto">
           {errorMessage || 'You do not have permission to view this assessment attempt.'}
         </p>
         <button
@@ -222,7 +222,7 @@ function StudentResultsContent() {
             setActiveAttemptId(null);
             router.push('/student/results');
           }}
-          className="px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold rounded-xl transition-colors"
+          className="px-5 py-2.5 bg-(--brand) hover:bg-(--brand-hover) text-white text-xs font-bold rounded-lg transition-colors shadow-sm"
         >
           Return to My Results
         </button>
@@ -239,19 +239,19 @@ function StudentResultsContent() {
     const focusAreasList = Array.isArray(detailResult.focusAreas) ? detailResult.focusAreas : [];
 
     return (
-      <div className="max-w-4xl mx-auto my-8 p-6 md:p-8 bg-slate-900 border border-slate-800 rounded-2xl text-white space-y-8 font-sans">
+      <div className="max-w-4xl mx-auto my-8 p-6 md:p-8 bg-(--surface-0) border border-(--border) rounded-xl space-y-8 font-sans">
         {/* Top Back Navigation */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-(--border) pb-4">
           <button
             onClick={() => {
               setActiveAttemptId(null);
               router.push('/student/results');
             }}
-            className="text-xs font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1.5 transition-colors"
+            className="text-xs font-semibold text-(--brand-light) hover:underline flex items-center gap-1.5 transition-colors"
           >
             ← Back to My Results
           </button>
-          <span className="text-[11px] text-slate-400 font-mono">
+          <span className="text-[11px] text-(--text-muted) font-mono">
             Attempt ID: {detailResult.attemptId.slice(0, 8)}...
           </span>
         </div>
@@ -260,32 +260,32 @@ function StudentResultsContent() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-sky-400 uppercase tracking-wider">
+              <span className="text-xs font-bold text-(--brand-light) uppercase tracking-wider">
                 {detailResult.examType || 'English Proficiency'} Assessment Result
               </span>
               {detailResult.cefrLevel && (
-                <span className="px-2 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded text-[10px] font-bold">
+                <span className="px-2 py-0.5 bg-(--brand)/10 text-(--brand-light) border border-(--brand)/20 rounded text-[10px] font-bold">
                   CEFR {detailResult.cefrLevel}
                 </span>
               )}
               {detailResult.predictedBand && (
-                <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded text-[10px] font-bold">
+                <span className="px-2 py-0.5 bg-purple-500/10 text-purple-300 border border-purple-500/20 rounded text-[10px] font-bold">
                   Band {detailResult.predictedBand}
                 </span>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-white mt-1">
-              Diagnostic Outcome & Skill Breakdown
+            <h1 className="text-2xl font-bold text-(--text-primary) mt-1">
+              Diagnostic Outcome &amp; Skill Breakdown
             </h1>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-(--text-secondary) mt-1">
               Evaluated on {formatDate(detailResult.generatedAt)}
             </p>
           </div>
-          <div className="px-5 py-3 bg-sky-500/10 border border-sky-500/20 rounded-xl text-center">
-            <div className="text-[10px] text-sky-400 font-semibold uppercase tracking-wide">
+          <div className="px-5 py-3 bg-(--surface-1) border border-(--border) rounded-xl text-center">
+            <div className="text-[10px] text-(--brand-light) font-semibold uppercase tracking-wide">
               Placement Stage
             </div>
-            <div className="text-lg font-extrabold text-white mt-0.5">
+            <div className="text-lg font-extrabold text-(--text-primary) mt-0.5">
               {detailResult.placementStage || 'FOUNDATION'}
             </div>
           </div>
@@ -293,26 +293,26 @@ function StudentResultsContent() {
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-            <div className="text-[11px] text-slate-400 uppercase">Overall Score</div>
-            <div className="text-2xl font-black text-sky-400 mt-1">
+          <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) text-center">
+            <div className="text-[11px] text-(--text-secondary) uppercase font-semibold">Overall Score</div>
+            <div className="text-2xl font-black text-(--brand-light) mt-1">
               {detailResult.overallScore}%
             </div>
           </div>
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-            <div className="text-[11px] text-slate-400 uppercase">CEFR Level</div>
-            <div className="text-xl font-bold text-indigo-400 mt-1">
+          <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) text-center">
+            <div className="text-[11px] text-(--text-secondary) uppercase font-semibold">CEFR Level</div>
+            <div className="text-xl font-bold text-(--text-primary) mt-1">
               {detailResult.cefrLevel || 'B2'}
             </div>
           </div>
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-            <div className="text-[11px] text-slate-400 uppercase">Predicted Band</div>
-            <div className="text-xl font-bold text-purple-400 mt-1">
+          <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) text-center">
+            <div className="text-[11px] text-(--text-secondary) uppercase font-semibold">Predicted Band</div>
+            <div className="text-xl font-bold text-(--text-primary) mt-1">
               {detailResult.predictedBand || '6.5'}
             </div>
           </div>
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center">
-            <div className="text-[11px] text-slate-400 uppercase">Reliability</div>
+          <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) text-center">
+            <div className="text-[11px] text-(--text-secondary) uppercase font-semibold">Reliability</div>
             <div className="text-xl font-bold text-emerald-400 mt-1">
               {detailResult.reliabilityScore || 94}%
             </div>
@@ -321,31 +321,31 @@ function StudentResultsContent() {
 
         {/* AI Feedback */}
         {detailResult.aiFeedback?.summary && (
-          <div className="bg-sky-950/30 border border-sky-800/40 p-4 rounded-xl space-y-1.5">
-            <div className="text-xs font-bold text-sky-400 uppercase">
+          <div className="bg-(--brand)/5 border border-(--brand)/20 p-4 rounded-xl space-y-1.5">
+            <div className="text-xs font-bold text-(--brand-light) uppercase tracking-wider">
               ✨ AI Learning Coach Evaluation
             </div>
-            <p className="text-xs text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs text-(--text-secondary) leading-relaxed font-normal">
               {detailResult.aiFeedback.summary}
             </p>
           </div>
         )}
 
         {/* Skill Breakdown */}
-        <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
-          <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+        <div className="bg-(--surface-1) p-5 rounded-xl border border-(--border) space-y-4">
+          <h2 className="text-xs font-bold text-(--text-secondary) uppercase tracking-wider">
             Skill Performance Profile
           </h2>
           <div className="space-y-3">
             {sectionScoresList.map((sec) => (
               <div key={sec.sectionCode} className="space-y-1">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="font-semibold text-white">{sec.sectionName || sec.sectionCode}</span>
-                  <span className="font-mono text-sky-400 font-bold">{sec.scorePercentage}%</span>
+                  <span className="font-semibold text-(--text-primary)">{sec.sectionName || sec.sectionCode}</span>
+                  <span className="font-mono text-(--brand-light) font-bold">{sec.scorePercentage}%</span>
                 </div>
-                <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
+                <div className="w-full bg-(--surface-2) h-2 rounded-full overflow-hidden border border-(--border)">
                   <div
-                    className="bg-sky-500 h-full rounded-full transition-all duration-500"
+                    className="bg-(--brand) h-full rounded-full transition-all duration-500"
                     style={{ width: `${Math.min(100, Math.max(0, sec.scorePercentage))}%` }}
                   />
                 </div>
@@ -356,23 +356,23 @@ function StudentResultsContent() {
 
         {/* Strengths & Focus Areas */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2">
-            <h3 className="text-xs font-bold text-emerald-400 uppercase">🟢 Strongest Competencies</h3>
+          <div className="bg-(--surface-1) p-5 rounded-xl border border-(--border) space-y-2">
+            <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider">🟢 Strongest Competencies</h3>
             <ul className="space-y-1.5">
               {strengthsList.map((str, idx) => (
-                <li key={idx} className="text-xs text-slate-300 flex items-center space-x-2">
-                  <span className="text-emerald-400">✓</span>
+                <li key={idx} className="text-xs text-(--text-secondary) flex items-center space-x-2">
+                  <span className="text-emerald-400 font-bold">✓</span>
                   <span>{str}</span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2">
-            <h3 className="text-xs font-bold text-amber-400 uppercase">🎯 Recommended Focus Areas</h3>
+          <div className="bg-(--surface-1) p-5 rounded-xl border border-(--border) space-y-2">
+            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider">🎯 Recommended Focus Areas</h3>
             <ul className="space-y-1.5">
               {focusAreasList.map((fa, idx) => (
-                <li key={idx} className="text-xs text-slate-300 flex items-center space-x-2">
-                  <span className="text-amber-400">!</span>
+                <li key={idx} className="text-xs text-(--text-secondary) flex items-center space-x-2">
+                  <span className="text-amber-400 font-bold">!</span>
                   <span>{fa}</span>
                 </li>
               ))}
@@ -381,17 +381,17 @@ function StudentResultsContent() {
         </div>
 
         {/* Pathway CTA */}
-        <div className="bg-sky-500/10 border border-sky-500/20 p-5 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="bg-(--brand)/10 border border-(--brand)/20 p-5 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
           <div>
-            <div className="text-[11px] text-sky-400 font-bold uppercase">Recommended Pathway</div>
-            <div className="text-sm font-bold text-white mt-0.5">
+            <div className="text-[11px] text-(--brand-light) font-bold uppercase tracking-wider">Recommended Pathway</div>
+            <div className="text-sm font-bold text-(--text-primary) mt-0.5">
               {detailResult.recommendedNextStep} ({detailResult.recommendedDuration || '4 Weeks'})
             </div>
           </div>
           <button
             onClick={handleEnroll}
             disabled={enrolling}
-            className="px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl transition-colors shadow-md disabled:opacity-50"
+            className="px-5 py-2.5 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-xs rounded-lg transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
           >
             {enrolling ? 'Enrolling...' : `Enroll in ${detailResult.placementStage} Pathway →`}
           </button>
@@ -402,26 +402,26 @@ function StudentResultsContent() {
 
   // State C: Student Results Main Landing Page (No attemptId required, Epic 10, 12, 13, 14, 15)
   return (
-    <div className="max-w-4xl mx-auto my-8 p-6 md:p-8 bg-slate-900 border border-slate-800 rounded-2xl text-white space-y-8 font-sans">
+    <div className="max-w-4xl mx-auto my-8 p-6 md:p-8 bg-(--surface-0) border border-(--border) rounded-xl space-y-8 font-sans">
       {/* Page Header */}
-      <div className="border-b border-slate-800 pb-5">
-        <h1 className="text-2xl font-bold text-white">My Results</h1>
-        <p className="text-xs text-slate-400 mt-1">
+      <div className="border-b border-(--border) pb-5">
+        <h1 className="text-2xl font-bold text-(--text-primary)">My Results</h1>
+        <p className="text-xs text-(--text-secondary) mt-1">
           Track your assessment performance, target scores, and progress.
         </p>
       </div>
 
       {/* Empty State if no completed assessments (Epic 15) */}
       {!latestResult && recentResults.length === 0 ? (
-        <div className="py-12 px-6 bg-slate-950 border border-slate-800 rounded-xl text-center space-y-4">
+        <div className="py-12 px-6 bg-(--surface-1) border border-(--border) rounded-xl text-center space-y-4">
           <div className="text-4xl">📋</div>
-          <h2 className="text-lg font-bold text-slate-200">No results yet</h2>
-          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+          <h2 className="text-lg font-bold text-(--text-primary)">No results yet</h2>
+          <p className="text-xs text-(--text-secondary) max-w-sm mx-auto">
             Complete your first assessment to see your overall score, skill breakdown, and predicted band scores here.
           </p>
           <button
             onClick={() => router.push('/student/assessments')}
-            className="px-6 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl transition-colors shadow-lg shadow-sky-500/20"
+            className="px-5 py-2.5 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             Start Assessment →
           </button>
@@ -430,29 +430,29 @@ function StudentResultsContent() {
         <>
           {/* LATEST RESULT CARD (Epic 12) */}
           {latestResult && (
-            <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4">
+            <div className="bg-(--surface-1) p-6 rounded-xl border border-(--border) space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-sky-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-(--brand-light) uppercase tracking-wider">
                   Latest Assessment
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-(--text-secondary)">
                   {formatDate(latestResult.generatedAt)}
                 </span>
               </div>
 
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-lg font-bold text-(--text-primary)">
                     {latestResult.examType || 'English Proficiency'} Diagnostic Assessment
                   </h3>
                   <div className="flex items-center gap-2 mt-2">
                     {latestResult.cefrLevel && (
-                      <span className="px-2.5 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded text-xs font-bold">
+                      <span className="px-2.5 py-0.5 bg-(--brand)/10 text-(--brand-light) border border-(--brand)/20 rounded text-xs font-bold">
                         CEFR {latestResult.cefrLevel}
                       </span>
                     )}
                     {latestResult.predictedBand && (
-                      <span className="px-2.5 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded text-xs font-bold">
+                      <span className="px-2.5 py-0.5 bg-purple-500/10 text-purple-300 border border-purple-500/20 rounded text-xs font-bold">
                         Band {latestResult.predictedBand}
                       </span>
                     )}
@@ -461,16 +461,16 @@ function StudentResultsContent() {
 
                 <div className="flex items-center gap-6">
                   <div className="text-right">
-                    <div className="text-[10px] text-slate-400 uppercase font-semibold">
+                    <div className="text-[10px] text-(--text-secondary) uppercase font-semibold">
                       Score
                     </div>
-                    <div className="text-2xl font-black text-sky-400">
+                    <div className="text-2xl font-black text-(--brand-light)">
                       {latestResult.overallScore}%
                     </div>
                   </div>
                   <button
                     onClick={() => setActiveAttemptId(latestResult.attemptId)}
-                    className="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs rounded-xl transition-colors"
+                    className="px-4 py-2 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer"
                   >
                     View Full Result →
                   </button>
@@ -480,8 +480,8 @@ function StudentResultsContent() {
           )}
 
           {/* SKILL PERFORMANCE SECTION (Epic 13) */}
-          <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4">
-            <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+          <div className="bg-(--surface-1) p-6 rounded-xl border border-(--border) space-y-4">
+            <h2 className="text-xs font-bold text-(--text-secondary) uppercase tracking-wider">
               Skill Performance
             </h2>
             <div className="space-y-3.5">
@@ -496,14 +496,14 @@ function StudentResultsContent() {
               ).map((sp) => (
                 <div key={sp.skill} className="space-y-1">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-white">{sp.skill}</span>
-                    <span className="font-mono text-sky-400 font-bold">
+                    <span className="font-semibold text-(--text-primary)">{sp.skill}</span>
+                    <span className="font-mono text-(--brand-light) font-bold">
                       {sp.accuracy > 0 ? `${sp.accuracy}%` : 'Not assessed'}
                     </span>
                   </div>
-                  <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
+                  <div className="w-full bg-(--surface-2) h-2 rounded-full overflow-hidden border border-(--border)">
                     <div
-                      className="bg-sky-500 h-full rounded-full transition-all duration-500"
+                      className="bg-(--brand) h-full rounded-full transition-all duration-500"
                       style={{ width: `${Math.min(100, Math.max(0, sp.accuracy))}%` }}
                     />
                   </div>
@@ -514,14 +514,14 @@ function StudentResultsContent() {
 
           {/* RECENT RESULTS TABLE (Epic 14) */}
           {recentResults.length > 0 && (
-            <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4">
-              <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            <div className="bg-(--surface-1) p-6 rounded-xl border border-(--border) space-y-4">
+              <h2 className="text-xs font-bold text-(--text-secondary) uppercase tracking-wider">
                 Recent Results
               </h2>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="border-b border-slate-800 text-slate-400 uppercase font-semibold text-[10px]">
+                <table className="w-full text-left text-xs text-(--text-secondary)">
+                  <thead className="border-b border-(--border) text-(--text-muted) uppercase font-semibold text-[10px]">
                     <tr>
                       <th className="py-2.5 px-3">Assessment</th>
                       <th className="py-2.5 px-3">Score</th>
@@ -529,22 +529,22 @@ function StudentResultsContent() {
                       <th className="py-2.5 px-3 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60">
+                  <tbody className="divide-y divide-(--border)/60">
                     {recentResults.map((r) => (
-                      <tr key={r.resultId || r.attemptId} className="hover:bg-slate-900/50 transition-colors">
-                        <td className="py-3 px-3 font-semibold text-white">
+                      <tr key={r.resultId || r.attemptId} className="hover:bg-(--surface-2)/40 transition-colors">
+                        <td className="py-3 px-3 font-semibold text-(--text-primary)">
                           {r.examType || 'English Proficiency'} Diagnostic
                         </td>
-                        <td className="py-3 px-3 font-mono font-bold text-sky-400">
+                        <td className="py-3 px-3 font-mono font-bold text-(--brand-light)">
                           {r.overallScore}%
                         </td>
-                        <td className="py-3 px-3 text-slate-400">
+                        <td className="py-3 px-3 text-(--text-secondary)">
                           {formatDate(r.generatedAt)}
                         </td>
                         <td className="py-3 px-3 text-right">
                           <button
                             onClick={() => setActiveAttemptId(r.attemptId)}
-                            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-sky-300 font-semibold text-[11px] rounded-lg transition-colors"
+                            className="px-3 py-1.5 bg-(--surface-2) hover:bg-(--surface-1) text-(--text-primary) font-semibold text-[11px] rounded-lg border border-(--border) transition-colors cursor-pointer"
                           >
                             View Result
                           </button>
@@ -565,7 +565,7 @@ function StudentResultsContent() {
 export default function StudentResultsPage() {
   return (
     <Suspense
-      fallback={<div className="min-h-screen bg-slate-950 text-white p-8">Loading results...</div>}
+      fallback={<div className="min-h-100 flex items-center justify-center text-(--text-secondary) p-8">Loading results...</div>}
     >
       <StudentResultsContent />
     </Suspense>

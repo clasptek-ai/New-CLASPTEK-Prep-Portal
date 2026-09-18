@@ -99,6 +99,7 @@
         {
           "number": 11,
           "type": "multiple_choice",
+          "prompt": "The September Celebration day is held …",
           "options": {
             "A": "five times a year to honour the city",
             "B": "on the park’s important birthday",
@@ -109,6 +110,7 @@
         {
           "number": 12,
           "type": "multiple_choice",
+          "prompt": "The park was first built in …",
           "options": {
             "A": "1955",
             "B": "1979",
@@ -119,6 +121,7 @@
         {
           "number": 13,
           "type": "multiple_choice",
+          "prompt": "The park still uses …",
           "options": {
             "A": "a children’s play area",
             "B": "a petting zoo",
@@ -129,6 +132,7 @@
         {
           "number": 14,
           "type": "multiple_choice",
+          "prompt": "The Hurricane roller-coaster is …",
           "options": {
             "A": "tall and made of wood",
             "B": "designed for smaller children",
@@ -139,6 +143,7 @@
         {
           "number": 15,
           "type": "multiple_choice",
+          "prompt": "The rides with a height limit are coded …",
           "options": {
             "A": "yellow",
             "B": "blue",
@@ -282,6 +287,7 @@
         {
           "number": 35,
           "type": "multiple_choice",
+          "prompt": "Research evidence suggests that …",
           "options": {
             "A": "the tribesmen’s traditional diet is unhealthy",
             "B": "our bodies can digest only certain foods",
@@ -292,6 +298,7 @@
         {
           "number": 36,
           "type": "multiple_choice",
+          "prompt": "Thai people have difficulty digesting milk because ...",
           "options": {
             "A": "they have too much lactase in their bodies",
             "B": "in the past they didn’t farm cows",

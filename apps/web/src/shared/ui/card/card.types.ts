@@ -1,10 +1,12 @@
 import React from 'react';
 
-export type CardVariant = 'default' | 'elevated' | 'outlined' | 'interactive' | 'compact';
+export type CardVariant = 'default' | 'elevated' | 'outlined' | 'interactive' | 'compact' | 'glass' | 'flat';
+export type CardPadding = 'none' | 'compact' | 'default' | 'loose';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: CardVariant;
-  padding?: string;
+  /** Padding preset. Use CSS `style={{ padding: '...' }}` for custom overrides. */
+  padding?: CardPadding;
   children: React.ReactNode;
 }
 

@@ -45,28 +45,28 @@ export function PracticeSessionsScreen() {
   }, [filterExam]);
 
   return (
-    <div className="p-8 bg-slate-950 min-h-screen text-white space-y-6 font-sans">
+    <div className="p-8 bg-(--background) min-h-screen text-(--text-primary) space-y-6 font-sans">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-(--border) pb-6">
         <div>
           <div className="flex items-center space-x-3">
-            <span className="p-2 bg-sky-500/10 border border-sky-500/20 rounded-lg text-sky-400 font-bold text-lg">
+            <span className="p-2 bg-(--brand-subtle) border border-(--brand-border) rounded-lg text-(--brand-light) font-bold text-lg">
               📚
             </span>
-            <h1 className="text-2xl font-extrabold text-white">Admin Practice Sessions Monitor</h1>
+            <h1 className="text-2xl font-extrabold text-(--text-primary)">Admin Practice Sessions Monitor</h1>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-(--text-muted) mt-1">
             Real-time inspection of candidate practice sessions, accuracy rates, and question bank snapshots.
           </p>
         </div>
 
         {/* Exam Filter Selector */}
-        <div className="flex items-center space-x-2 bg-slate-900 p-1.5 rounded-xl border border-slate-800">
-          <span className="text-xs text-slate-400 font-semibold px-2">Filter Exam:</span>
+        <div className="flex items-center space-x-2 bg-(--surface-0) p-1.5 rounded-xl border border-(--border)">
+          <span className="text-xs text-(--text-muted) font-semibold px-2">Filter Exam:</span>
           <select
             value={filterExam}
             onChange={(e) => setFilterExam(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xs text-white focus:outline-none"
+            className="bg-(--surface-1) border border-(--border) rounded-lg px-3 py-1 text-xs text-(--text-primary) focus:outline-none"
           >
             <option value="ALL">All Programmes</option>
             <option value="English Proficiency">English Proficiency</option>
@@ -81,25 +81,25 @@ export function PracticeSessionsScreen() {
 
       {/* KPI Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
-          <div className="text-xs text-slate-400 uppercase tracking-wide">Total DB Sessions</div>
-          <div className="text-2xl font-black text-white mt-1">{sessions.length}</div>
+        <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) text-center">
+          <div className="text-xs text-(--text-muted) uppercase tracking-wide">Total DB Sessions</div>
+          <div className="text-2xl font-black text-(--text-primary) mt-1">{sessions.length}</div>
         </div>
-        <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
-          <div className="text-xs text-slate-400 uppercase tracking-wide">Active Sessions</div>
+        <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) text-center">
+          <div className="text-xs text-(--text-muted) uppercase tracking-wide">Active Sessions</div>
           <div className="text-2xl font-black text-amber-400 mt-1">
             {sessions.filter((s) => s.status === 'ACTIVE').length}
           </div>
         </div>
-        <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
-          <div className="text-xs text-slate-400 uppercase tracking-wide">Completed Sessions</div>
+        <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) text-center">
+          <div className="text-xs text-(--text-muted) uppercase tracking-wide">Completed Sessions</div>
           <div className="text-2xl font-black text-emerald-400 mt-1">
             {sessions.filter((s) => s.status === 'COMPLETED').length}
           </div>
         </div>
-        <div className="bg-slate-900 p-5 rounded-xl border border-slate-800 text-center">
-          <div className="text-xs text-slate-400 uppercase tracking-wide">Avg Accuracy</div>
-          <div className="text-2xl font-black text-sky-400 mt-1">
+        <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) text-center">
+          <div className="text-xs text-(--text-muted) uppercase tracking-wide">Avg Accuracy</div>
+          <div className="text-2xl font-black text-(--brand-light) mt-1">
             {sessions.length > 0
               ? `${Math.round(sessions.reduce((a, b) => a + b.accuracy, 0) / sessions.length)}%`
               : '0%'}
@@ -108,26 +108,26 @@ export function PracticeSessionsScreen() {
       </div>
 
       {/* Candidate Sessions Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-        <div className="p-4 border-b border-slate-800 flex justify-between items-center">
-          <h2 className="text-sm font-bold text-slate-200">Candidate Practice Sessions</h2>
-          <span className="text-xs font-mono text-slate-400">Live DB Stream</span>
+      <div className="bg-(--surface-0) border border-(--border) rounded-2xl overflow-hidden">
+        <div className="p-4 border-b border-(--border) flex justify-between items-center">
+          <h2 className="text-sm font-bold text-(--text-primary)">Candidate Practice Sessions</h2>
+          <span className="text-xs font-mono text-(--text-muted)">Live DB Stream</span>
         </div>
 
         {loading ? (
-          <div className="p-8 text-center text-xs text-slate-400">Loading DB Sessions...</div>
+          <div className="p-8 text-center text-xs text-(--text-muted)">Loading DB Sessions...</div>
         ) : sessions.length === 0 ? (
           <div className="p-12 text-center space-y-2">
             <div className="text-2xl">📭</div>
-            <div className="text-sm font-bold text-white">No Practice Sessions Found</div>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto">
+            <div className="text-sm font-bold text-(--text-primary)">No Practice Sessions Found</div>
+            <p className="text-xs text-(--text-muted) max-w-sm mx-auto">
               Candidate practice sessions will appear here as students complete targeted practice drills.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase font-mono">
+            <table className="w-full text-left text-xs text-(--text-secondary)">
+              <thead className="bg-(--surface-1) border-b border-(--border) text-(--text-muted) uppercase font-mono">
                 <tr>
                   <th className="p-3.5">Candidate Email</th>
                   <th className="p-3.5">Exam Product</th>
@@ -138,13 +138,13 @@ export function PracticeSessionsScreen() {
                   <th className="p-3.5">Started At</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/50">
+              <tbody className="divide-y divide-(--border)">
                 {sessions.map((s) => (
-                  <tr key={s.id} className="hover:bg-slate-800/30 transition-colors">
-                    <td className="p-3.5 font-semibold text-white">{s.studentEmail}</td>
+                  <tr key={s.id} className="hover:bg-(--surface-1) transition-colors">
+                    <td className="p-3.5 font-semibold text-(--text-primary)">{s.studentEmail}</td>
                     <td className="p-3.5">{s.exam}</td>
                     <td className="p-3.5">
-                      <span className="text-sky-400 font-medium">{s.section}</span> / {s.skill}
+                      <span className="text-(--brand-light) font-medium">{s.section}</span> / {s.skill}
                     </td>
                     <td className="p-3.5">
                       <span
@@ -157,9 +157,9 @@ export function PracticeSessionsScreen() {
                         {s.status}
                       </span>
                     </td>
-                    <td className="p-3.5 font-mono font-bold text-white">{s.accuracy}%</td>
+                    <td className="p-3.5 font-mono font-bold text-(--text-primary)">{s.accuracy}%</td>
                     <td className="p-3.5 font-mono">{s.durationSeconds}s</td>
-                    <td className="p-3.5 font-mono text-slate-400">
+                    <td className="p-3.5 font-mono text-(--text-muted)">
                       {new Date(s.createdAt).toLocaleString()}
                     </td>
                   </tr>

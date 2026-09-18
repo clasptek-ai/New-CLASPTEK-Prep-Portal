@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { AuthShell } from '../shell/AuthShell';
+import { Button } from '../../shared/ui/button/Button';
+import { Alert, AlertDescription, AlertTitle } from '../../shared/ui/alert/Alert';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -34,79 +37,57 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main
-      className="shell-main"
-      style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}
+    <AuthShell
+      title="Reset Password"
+      subtitle="Enter your account email address to receive a secure recovery link."
     >
-      <div className="card" style={{ maxWidth: '400px', width: '100%' }}>
-        <h2>Reset Password</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '2rem' }}>
-          Enter your email address to receive a recovery link.
-        </p>
+      {error && (
+        <Alert variant="error" className="mb-4">
+          <AlertTitle>Reset Request Failed</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
-        {error && (
-          <div
-            style={{
-              backgroundColor: '#7f1d1d',
-              color: '#f87171',
-              padding: '0.75rem',
-              borderRadius: '6px',
-              marginBottom: '1rem',
-              fontSize: '0.875rem',
-            }}
-          >
-            {error}
-          </div>
-        )}
+      {success && (
+        <Alert variant="success" className="mb-4">
+          <AlertTitle>Recovery Link Sent</AlertTitle>
+          <AlertDescription>
+            A password reset email has been sent. Please check your inbox and follow the link to reset your password.
+          </AlertDescription>
+        </Alert>
+      )}
 
-        {success && (
-          <div
-            style={{
-              backgroundColor: '#064e3b',
-              color: '#34d399',
-              padding: '0.75rem',
-              borderRadius: '6px',
-              marginBottom: '1rem',
-              fontSize: '0.875rem',
-            }}
-          >
-            A password reset email has been sent successfully.
-          </div>
-        )}
-
-        <form
-          onSubmit={handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-        >
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="you@domain.com"
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                borderRadius: '6px',
-                border: '1px solid var(--card-border)',
-                backgroundColor: 'var(--background)',
-                color: 'var(--text-main)',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
-          <button type="submit" className="btn" disabled={loading} style={{ marginTop: '1rem' }}>
-            {loading ? 'Sending...' : 'Send Recovery Link'}
-          </button>
-        </form>
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem' }}>
-          Remembered your password? <Link href="/login">Sign In</Link>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div>
+          <label className="block text-xs font-semibold text-(--text-secondary) mb-1.5">
+            Email Address
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="name@example.com"
+            className="w-full px-3.5 py-2.5 rounded-lg border border-(--border) bg-(--surface-1) text-(--text-primary) text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-(--text-muted)"
+          />
         </div>
+
+        <Button
+          type="submit"
+          variant="primary"
+          isLoading={loading}
+          className="w-full justify-center mt-2"
+        >
+          Send Recovery Link
+        </Button>
+      </form>
+
+      <div className="mt-5 text-center text-xs text-(--text-secondary)">
+        Remembered your credentials?{' '}
+        <Link href="/login" className="text-blue-500 font-bold hover:underline">
+          Sign In
+        </Link>
       </div>
-    </main>
+    </AuthShell>
   );
 }

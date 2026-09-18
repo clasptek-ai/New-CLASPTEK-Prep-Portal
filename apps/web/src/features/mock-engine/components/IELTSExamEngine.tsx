@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, Button } from '../../../components/ui/ui-components';
-import { Send } from 'lucide-react';
+import { Send, AlertTriangle } from 'lucide-react';
 import { ListeningSectionEngine } from './ListeningSectionEngine';
 import { ReadingSectionEngine } from './ReadingSectionEngine';
 import { WritingSectionEngine } from './WritingSectionEngine';
 import { SpeakingSectionEngine } from './SpeakingSectionEngine';
+import { MockExamFullscreenShell } from './MockExamFullscreenShell';
 
 interface SectionData {
   sectionName: string;
@@ -18,6 +19,8 @@ interface IELTSExamEngineProps {
   session: {
     id: string;
     exam: string;
+    startedAt?: string;
+    expiresAt?: string;
     template: {
       title: string;
       sections: SectionData[];
@@ -26,7 +29,7 @@ interface IELTSExamEngineProps {
   };
   selectedAnswerMap: Record<string, string>;
   onAnswerChange: (questionId: string, answer: string) => void;
-  onSubmit: () => void;
+  onSubmit: () => void | Promise<void>;
 }
 
 const SECTION_COLORS: Record<string, string> = {
@@ -36,8 +39,6 @@ const SECTION_COLORS: Record<string, string> = {
   Speaking: '#10b981',
 };
 
-import { MockExamFullscreenShell } from './MockExamFullscreenShell';
-
 export function IELTSExamEngine({
   session,
   selectedAnswerMap,
@@ -45,47 +46,94 @@ export function IELTSExamEngine({
   onSubmit,
 }: IELTSExamEngineProps) {
   const [activeSectionIndex, setActiveSectionIndex] = useState(0);
-  const [sectionTimers, setSectionTimers] = useState<number[]>([]);
   const [sectionCompleted, setSectionCompleted] = useState<boolean[]>([]);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isExpired, setIsExpired] = useState(false);
+  const [isAutoSubmitting, setIsAutoSubmitting] = useState(false);
 
   const sections = session.template.sections;
 
-  // Initialize section timers from blueprint
+  // Authoritative server-derived deadline
+  const expiresAtMs = useRef(
+    session?.expiresAt
+      ? new Date(session.expiresAt).getTime()
+      : Date.now() + (session.template.totalDurationMinutes || 165) * 60 * 1000
+  ).current;
+
+  // Initialize countdown derived from deadline
+  const [timeRemainingSeconds, setTimeRemainingSeconds] = useState(() =>
+    Math.max(0, Math.ceil((expiresAtMs - Date.now()) / 1000))
+  );
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const hasExpiredRef = useRef(false);
+
+  // Initialize section completion flags
   useEffect(() => {
-    const timers = sections.map((s) => s.timeLimitMinutes * 60);
-    setSectionTimers(timers);
     setSectionCompleted(sections.map(() => false));
   }, [sections]);
 
-  // Run countdown for active section only
-  useEffect(() => {
-    if (sectionTimers.length === 0) return;
+  // Idempotent auto-submission handler
+  const handleAutoSubmit = useCallback(async () => {
+    try {
+      await onSubmit();
+    } catch (err) {
+      console.error('[MOCK_AUTO_SUBMIT_ERROR]', err);
+    } finally {
+      setIsAutoSubmitting(false);
+    }
+  }, [onSubmit]);
 
-    timerRef.current = setInterval(() => {
-      setSectionTimers((prev) => {
-        const next = [...prev];
-        if (next[activeSectionIndex] > 0) {
-          next[activeSectionIndex] -= 1;
-        }
-        return next;
-      });
-    }, 1000);
+  // Deadline-driven countdown with visibility/sleep catch-up
+  useEffect(() => {
+    const checkDeadline = () => {
+      const now = Date.now();
+      const remainingMs = Math.max(0, expiresAtMs - now);
+      const remainingSecs = Math.ceil(remainingMs / 1000);
+
+      // Clamp display at 00:00, never negative
+      setTimeRemainingSeconds(remainingSecs);
+
+      // Single termination path at 00:00
+      if (remainingMs <= 0 && !hasExpiredRef.current) {
+        hasExpiredRef.current = true;
+        setIsExpired(true);
+        setIsAutoSubmitting(true);
+        setConfirmSubmit(false);
+        if (timerRef.current) clearInterval(timerRef.current);
+        void handleAutoSubmit();
+      }
+    };
+
+    // Immediate initial check
+    checkDeadline();
+
+    // High frequency interval (500ms) to ensure precision without drift
+    timerRef.current = setInterval(checkDeadline, 500);
+
+    // Tab visibility & Window focus listeners for background tab/sleep recovery
+    const handleActivity = () => {
+      checkDeadline();
+    };
+
+    window.addEventListener('visibilitychange', handleActivity);
+    window.addEventListener('focus', handleActivity);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      window.removeEventListener('visibilitychange', handleActivity);
+      window.removeEventListener('focus', handleActivity);
     };
-  }, [activeSectionIndex, sectionTimers.length]);
+  }, [expiresAtMs, handleAutoSubmit]);
 
   const activeSection = sections[activeSectionIndex];
-  const activeTimer = sectionTimers[activeSectionIndex] ?? 0;
 
   const answeredInSection =
     activeSection?.questions.filter((q: any) => selectedAnswerMap[q.id])?.length ?? 0;
   const totalInSection = activeSection?.questions.length ?? 0;
 
   const handleCompleteSection = useCallback(() => {
+    if (isExpired) return;
     setSectionCompleted((prev) => {
       const next = [...prev];
       next[activeSectionIndex] = true;
@@ -98,7 +146,7 @@ export function IELTSExamEngine({
     } else {
       setConfirmSubmit(true);
     }
-  }, [activeSectionIndex, sections.length]);
+  }, [activeSectionIndex, sections.length, isExpired]);
 
   const sectionColor = SECTION_COLORS[activeSection?.sectionName] || '#3b82f6';
 
@@ -109,7 +157,7 @@ export function IELTSExamEngine({
         sectionName: activeSection?.sectionName || 'Exam Section',
         sectionIndex: activeSectionIndex,
         totalSections: sections.length,
-        timeRemainingSeconds: activeTimer,
+        timeRemainingSeconds: timeRemainingSeconds,
         answeredCount: answeredInSection,
         totalQuestionsCount: totalInSection,
         sectionColor: sectionColor,
@@ -119,14 +167,15 @@ export function IELTSExamEngine({
           isCurrent: idx === activeSectionIndex,
         })),
         onSelectSection: (idx) => {
+          if (isExpired) return;
           if (sectionCompleted[idx] || idx <= activeSectionIndex) {
             setActiveSectionIndex(idx);
           }
         },
       }}
-      isExamActive={true}
+      isExamActive={!isExpired}
     >
-      {/* ── SECTION RENDERER ────────────────────────────────── */}
+      {/* ── SECTION RENDERER WITH INPUT LOCKDOWN ────────────── */}
       <div
         style={{
           flex: 1,
@@ -135,33 +184,42 @@ export function IELTSExamEngine({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          pointerEvents: isExpired ? 'none' : 'auto',
+          userSelect: isExpired ? 'none' : 'auto',
+          opacity: isExpired ? 0.6 : 1,
         }}
       >
         {activeSection?.sectionName === 'Listening' && (
           <ListeningSectionEngine
             questions={activeSection.questions}
             answers={selectedAnswerMap}
-            onAnswer={onAnswerChange}
+            onAnswer={(qId, ans) => {
+              if (!isExpired) onAnswerChange(qId, ans);
+            }}
             onComplete={handleCompleteSection}
-            timeRemaining={activeTimer}
+            timeRemaining={timeRemainingSeconds}
           />
         )}
         {activeSection?.sectionName === 'Reading' && (
           <ReadingSectionEngine
             questions={activeSection.questions}
             answers={selectedAnswerMap}
-            onAnswer={onAnswerChange}
+            onAnswer={(qId, ans) => {
+              if (!isExpired) onAnswerChange(qId, ans);
+            }}
             onComplete={handleCompleteSection}
-            timeRemaining={activeTimer}
+            timeRemaining={timeRemainingSeconds}
           />
         )}
         {activeSection?.sectionName === 'Writing' && (
           <WritingSectionEngine
             questions={activeSection.questions}
             answers={selectedAnswerMap}
-            onAnswer={onAnswerChange}
+            onAnswer={(qId, ans) => {
+              if (!isExpired) onAnswerChange(qId, ans);
+            }}
             onComplete={handleCompleteSection}
-            timeRemaining={activeTimer}
+            timeRemaining={timeRemainingSeconds}
           />
         )}
         {activeSection?.sectionName === 'Speaking' && (
@@ -169,15 +227,91 @@ export function IELTSExamEngine({
             sessionId={session.id}
             questions={activeSection.questions}
             answers={selectedAnswerMap}
-            onAnswer={onAnswerChange}
+            onAnswer={(qId, ans) => {
+              if (!isExpired) onAnswerChange(qId, ans);
+            }}
             onComplete={handleCompleteSection}
-            timeRemaining={activeTimer}
+            timeRemaining={timeRemainingSeconds}
           />
         )}
       </div>
 
-      {/* ── SUBMIT CONFIRMATION MODAL ─────────────────────── */}
-      {confirmSubmit && (
+      {/* ── EXPIRY AUTO-SUBMISSION MODAL ────────────────────── */}
+      {isExpired && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000,
+            backdropFilter: 'blur(8px)',
+          }}
+        >
+          <Card
+            style={{
+              padding: '2.5rem',
+              backgroundColor: '#111827',
+              border: '1.5px solid #ef4444',
+              borderRadius: '20px',
+              maxWidth: '520px',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '1.25rem',
+              boxShadow: '0 25px 50px -12px rgba(239, 68, 68, 0.25)',
+            }}
+          >
+            <AlertTriangle size={48} color="#ef4444" className="pulse-warning-icon" />
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
+              Time Expired
+            </h2>
+            <p style={{ fontSize: '1.05rem', color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
+              Your examination time has expired. Your examination is being submitted automatically.
+            </p>
+            {isAutoSubmitting ? (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  color: '#3b82f6',
+                  marginTop: '0.5rem',
+                }}
+              >
+                <span
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    border: '2.5px solid #3b82f6',
+                    borderTopColor: 'transparent',
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    animation: 'spin 1s linear infinite',
+                  }}
+                />
+                <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>
+                  Finalizing and scoring attempt...
+                </span>
+              </div>
+            ) : (
+              <Button
+                variant="primary"
+                onClick={() => void handleAutoSubmit()}
+                style={{ marginTop: '0.5rem' }}
+              >
+                Complete Submission
+              </Button>
+            )}
+          </Card>
+        </div>
+      )}
+
+      {/* ── MANUAL SUBMIT CONFIRMATION MODAL ────────────────── */}
+      {confirmSubmit && !isExpired && (
         <div
           style={{
             position: 'fixed',
@@ -252,7 +386,7 @@ export function IELTSExamEngine({
               <Button variant="outline" onClick={() => setConfirmSubmit(false)}>
                 Continue Exam
               </Button>
-              <Button variant="primary" onClick={onSubmit}>
+              <Button variant="primary" onClick={() => void onSubmit()}>
                 Submit Exam
               </Button>
             </div>
@@ -260,11 +394,15 @@ export function IELTSExamEngine({
         </div>
       )}
 
-      {/* Pulse animation */}
+      {/* Pulse and spin animations */}
       <style>{`
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.4; }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
       `}</style>
     </MockExamFullscreenShell>

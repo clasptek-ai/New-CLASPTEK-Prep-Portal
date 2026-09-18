@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "primary-container": "#0f52ba",
+          "surface-bright": "#faf8ff",
+          "error-container": "#ffdad6",
+          "inverse-primary": "#b0c6ff",
+          "surface": "#faf8ff",
+          "error": "#ba1a1a",
+          "secondary-container": "#d5e0f8",
+          "on-primary": "#ffffff",
+          "surface-tint": "#1d59c1",
+          "on-background": "#131b2e",
+          "primary": "#003c90",
+          "surface-variant": "#dae2fd",
+          "on-error-container": "#93000a",
+          "surface-container": "#eaedff",
+          "on-surface-variant": "#434653",
+          "primary-fixed": "#d9e2ff",
+          "on-primary-fixed": "#001945",
+          "outline": "#737784",
+          "inverse-surface": "#283044",
+          "on-secondary-fixed": "#111c2d",
+          "inverse-on-surface": "#eef0ff",
+          "tertiary": "#3a4249",
+          "surface-dim": "#d2d9f4",
+          "on-secondary-fixed-variant": "#3c475a",
+          "on-surface": "#131b2e",
+          "on-secondary": "#ffffff",
+          "surface-container-highest": "#dae2fd",
+          "secondary-fixed-dim": "#bcc7de",
+          "tertiary-container": "#525960",
+          "secondary-fixed": "#d8e3fb",
+          "background": "#faf8ff",
+          "on-tertiary-container": "#c8cfd8",
+          "primary-fixed-dim": "#b0c6ff",
+          "on-tertiary-fixed-variant": "#40484f",
+          "on-error": "#ffffff",
+          "on-primary-container": "#bcceff",
+          "on-primary-fixed-variant": "#00419c",
+          "secondary": "#545f73",
+          "surface-container-high": "#e2e7ff",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f2f3ff",
+          "outline-variant": "#c3c6d5",
+          "tertiary-fixed": "#dce3ec",
+          "on-tertiary": "#ffffff",
+          "on-secondary-container": "#586377",
+          "on-tertiary-fixed": "#151c23",
+          "tertiary-fixed-dim": "#c0c7d0"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {
+          "space-md": "1rem",
+          "margin": "2rem",
+          "space-lg": "1.5rem",
+          "space-sm": "0.5rem",
+          "space-xs": "0.25rem",
+          "gutter": "1.5rem",
+          "space-xl": "2.5rem"
+        },
+        "fontFamily": {
+          "headline-xl-mobile": [
+            "Inter"
+          ],
+          "headline-md": [
+            "Inter"
+          ],
+          "headline-lg-mobile": [
+            "Inter"
+          ],
+          "label-sm": [
+            "Inter"
+          ],
+          "headline-lg": [
+            "Inter"
+          ],
+          "timer-display": [
+            "Inter"
+          ],
+          "body-lg": [
+            "Inter"
+          ],
+          "headline-xl": [
+            "Inter"
+          ],
+          "body-md": [
+            "Inter"
+          ],
+          "headline-sm": [
+            "Inter"
+          ],
+          "body-reading": [
+            "Inter"
+          ],
+          "label-md": [
+            "Inter"
+          ],
+          "label-lg": [
+            "Inter"
+          ],
+          "body-sm": [
+            "Inter"
+          ]
+        },
+        "fontSize": {
+          "headline-xl-mobile": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "700"
+            }
+          ],
+          "headline-md": [
+            "22px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg-mobile": [
+            "22px",
+            {
+              "lineHeight": "30px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-sm": [
+            "11px",
+            {
+              "lineHeight": "14px",
+              "letterSpacing": "0.04em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "600"
+            }
+          ],
+          "timer-display": [
+            "20px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0.05em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-lg": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-xl": [
+            "36px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-md": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-sm": [
+            "18px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-reading": [
+            "17px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "label-md": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-lg": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-gutter flex items-center justify-between"><div class="flex items-center gap-space-md"><img alt="Brand logo. - Primary color: #0f52ba
+- Font: inter
+- Mode: light
+- Roundness: rounded-sm
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WU4vXzvlYijh0CgpD9_GLv0EblVLmsIXkDbDOw8pVq-ECKtvODF2BB8bbny1FJWXO9n9TShzwZ2wYoMqiG9X56jyo-PYQjDF0GpFtQYj6lVlPWrqXN2FOqXNZ-Y3uSdVucqSUs6ikplZnAet5yoJprh6VGSk9OKSy5qR6Lqgqm1YRUjMhSHfhUq8MiCWMzA3pTOPNXeocpKHdAnOKcWlfR3ErDWLqRqPwJDmasyuF483SaGVlmOoCboQ"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Clasptek Prep</span><span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-primary-container inline-block"></span>ISO/IEC 23988 Compliant Tele-Assessment</span></div></div><nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-primary font-bold"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="examinations" href="#">Examinations</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="pre-assessments" href="#">Pre-Assessments</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="platform-features" href="#">Platform Features</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="institutional-and-enterprise" href="#">Institutional &amp; Enterprise</a></nav><div class="flex items-center gap-space-md"><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="support" href="#">Need Help?</a><div class="h-4 w-[1px] bg-outline-variant"></div><a class="font-label-md text-label-md text-primary hover:text-primary-container font-semibold transition-colors" data-path="sign-in" href="#">Sign In</a><a class="px-space-md py-space-xs rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors shadow-sm" data-path="create-account" href="#">Create Account</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-80px)]"><div class="flex flex-col w-full">
+<!-- Subtle Ambient Top Anchor Gradients (Contained) -->
+<div class="relative w-full overflow-hidden">
+<div class="absolute -top-32 left-1/4 w-96 h-96 bg-primary-container/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute top-12 right-10 w-80 h-80 bg-surface-variant/40 rounded-full blur-2xl pointer-events-none"></div>
+<div class="max-w-[1440px] mx-auto px-gutter py-space-xl">
+<!-- Top Meta Breadcrumb / Status Indicator -->
+<div class="flex items-center justify-between mb-space-lg">
+<div class="flex items-center gap-space-sm">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold bg-secondary-container/60 px-space-sm py-1 rounded">Portal Provisioning</span>
+<span class="text-outline-variant font-body-sm">•</span>
+<span class="font-label-md text-label-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">security</span> Session Protocol v4.82
+          </span>
+</div>
+<div class="hidden sm:flex items-center gap-space-xs text-on-surface-variant font-label-md text-label-md">
+<span>Target Intake:</span>
+<span class="text-on-surface font-semibold">2025/2026 International Cohort</span>
+</div>
+</div>
+<!-- Main Asymmetric Workspace Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-start">
+<!-- Left Column: Academic Credentials & Institutional Blueprint -->
+<div class="lg:col-span-5 flex flex-col gap-space-lg">
+<div>
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-surface-container text-primary font-label-sm text-label-sm mb-space-sm uppercase tracking-wider font-semibold">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+              Secure Candidate Gateway
+            </div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight font-bold leading-tight">
+              CREATE YOUR PREP PORTAL ACCOUNT
+            </h1>
+<p class="font-body-reading text-body-reading text-on-surface-variant mt-space-sm">
+              Create your account to access Clasptek assessments, mock examinations, results and progress tracking. Your diagnostic baseline will be permanently anchored to your verified student profile.
+            </p>
+</div>
+<!-- Academic Benefits Matrix -->
+<div class="bg-surface-container-low rounded-xl p-space-lg shadow-sm flex flex-col gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-9 h-9 rounded bg-surface-container-lowest flex items-center justify-center flex-shrink-0 text-primary shadow-sm">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+</div>
+<div class="min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Permanent Diagnostic Baseline</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                  Item Response Theory (IRT) score calibration saved permanently across IELTS, SAT, TOEFL, and CELPIP benchmarks.
+                </p>
+</div>
+</div>
+<div class="h-[1px] w-full bg-outline-variant/30"></div>
+<div class="flex items-start gap-space-md">
+<div class="w-9 h-9 rounded bg-surface-container-lowest flex items-center justify-center flex-shrink-0 text-primary shadow-sm">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</div>
+<div class="min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Acoustic Voice &amp; Essay Archiving</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                  Secure storage of acoustic speaking recording buffers, waveform harmonics, and deep writing rubric histories.
+                </p>
+</div>
+</div>
+<div class="h-[1px] w-full bg-outline-variant/30"></div>
+<div class="flex items-start gap-space-md">
+<div class="w-9 h-9 rounded bg-surface-container-lowest flex items-center justify-center flex-shrink-0 text-primary shadow-sm">
+<span class="material-symbols-outlined text-[20px]">timer</span>
+</div>
+<div class="min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Zero-Risk Pre-Assessment</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                  A calibrated 35-minute low-stakes diagnostic sprint is unlocked immediately upon identity initialization.
+                </p>
+</div>
+</div>
+<div class="h-[1px] w-full bg-outline-variant/30"></div>
+<div class="flex items-start gap-space-md">
+<div class="w-9 h-9 rounded bg-surface-container-lowest flex items-center justify-center flex-shrink-0 text-primary shadow-sm">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<div class="min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold">ISO/IEC 23988:2007 Compliant</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                  Cryptographically signed record of assessment custody for recognized university and visa credentials.
+                </p>
+</div>
+</div>
+</div>
+<!-- Dynamic Assessment Passcard Preview -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded bg-primary-fixed flex items-center justify-center text-primary font-bold font-headline-sm text-headline-sm">
+                  IE
+                </div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase tracking-wider">Target Track Initialized</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold" id="card-track-title">IELTS Academic Assessment</span>
+</div>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary font-semibold bg-primary-fixed/40 px-2 py-1 rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span> 35-min Ready
+                </span>
+</div>
+</div>
+<!-- Vector Calibration Sparkline Component -->
+<div class="mt-space-md pt-space-sm bg-surface-container-low/60 rounded p-space-sm">
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm mb-1">
+<span>Adaptive Test Matrix Calibration</span>
+<span class="font-semibold text-primary">Pre-Allocated Block</span>
+</div>
+<svg class="w-full h-8 text-primary/40" fill="none" preserveaspectratio="none" viewbox="0 0 380 32">
+<path d="M0 24 L45 22 L90 14 L135 18 L180 8 L225 12 L270 5 L315 15 L360 4 L380 6" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+<circle cx="270" cy="5" fill="#003c90" r="3"></circle>
+<circle cx="360" cy="4" fill="#003c90" r="3"></circle>
+</svg>
+</div>
+</div>
+<!-- Institutional Quote / Compliance Micro-card -->
+<div class="flex items-center gap-space-md px-space-md py-space-sm rounded-lg bg-surface-container-high/40">
+<img class="w-11 h-11 rounded-full object-cover shadow-sm flex-shrink-0" data-alt="Official micro portrait of an academic examination registrar wearing professional navy attire in a modern testing laboratory with clean neutral lighting and high fidelity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAttNUCTcERHzkqQCmPCJfNCyJYqbFW3mmwUvtBrApXH1gvEFamWJStEb7ZqVmv2Mk3CMyM8ctUFqgXEodFSC6b8bfncxx87xRzYU7hMkKSdZdV1q6UFhNAyVOYGkeEqls55uu27Q44XhrT1yN7JXvB1OH2vHxxkWAurJiROXs2ztI8r1jGp8BYmo9psvrFUABkQMlISYYTNxSWWhwbKfLHhMUYu9iNF9ycA-EaYkMqLEfzZjmJu84"/>
+<div class="font-body-sm text-body-sm text-on-surface-variant">
+<span class="font-semibold text-on-surface">Verified Academic Proctoring:</span> Profiles registered under university email domains automatically activate institutional score syndication protocols.
+            </div>
+</div>
+</div>
+<!-- Right Column: Registration Card Surface -->
+<div class="lg:col-span-7">
+<div class="bg-surface-container-lowest rounded-xl p-space-lg sm:p-space-xl shadow-md relative">
+<!-- Header of form container -->
+<div class="flex items-center justify-between pb-space-md mb-space-lg">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Candidate Onboarding</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight mt-0.5">Profile Registration</h2>
+</div>
+<div class="flex items-center gap-1.5 px-space-sm py-1 rounded bg-surface-container-low text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[16px] text-primary">lock</span>
+<span>TLS 1.3 Active</span>
+</div>
+</div>
+<!-- Actual Registration Form -->
+<form class="flex flex-col gap-space-md" id="registration-form" onsubmit="event.preventDefault(); triggerSubmitFeedback();">
+<!-- 1. First & Last Name Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between" for="first-name">
+                    First Name
+                    <span class="text-primary font-normal text-[11px]">As in Passport</span>
+</label>
+<div class="relative">
+<input class="w-full h-10 px-space-md rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" id="first-name" placeholder="e.g., Alexander" required="" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between" for="last-name">
+                    Last Name
+                    <span class="text-primary font-normal text-[11px]">Family Name</span>
+</label>
+<div class="relative">
+<input class="w-full h-10 px-space-md rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" id="last-name" placeholder="e.g., Wright" required="" type="text"/>
+</div>
+</div>
+</div>
+<!-- 2. Email Address -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="email">
+                  Official Email Address
+                </label>
+<div class="relative">
+<input class="w-full h-10 pl-space-md pr-10 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" id="email" placeholder="alexander.wright@university.edu" required="" type="email"/>
+<span class="material-symbols-outlined text-outline absolute right-3 top-2.5 text-[18px]">mail</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Institutional or personal email for secure score delivery and certification credentials.</span>
+</div>
+<!-- 3. Phone Number with Dial Code -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="phone">
+                  Phone Number (SMS Verification)
+                </label>
+<div class="grid grid-cols-12 gap-space-xs">
+<div class="col-span-4 sm:col-span-4 relative">
+<select class="w-full h-10 px-space-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/40 appearance-none transition-all cursor-pointer">
+<option value="+1">+1 (US / CA)</option>
+<option value="+44">+44 (UK)</option>
+<option value="+61">+61 (AU)</option>
+<option value="+91">+91 (IN)</option>
+<option value="+86">+86 (CN)</option>
+<option value="+49">+49 (DE)</option>
+</select>
+<span class="material-symbols-outlined text-outline absolute right-2 top-2.5 text-[18px] pointer-events-none">arrow_drop_down</span>
+</div>
+<div class="col-span-8 sm:col-span-8 relative">
+<input class="w-full h-10 px-space-md rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" id="phone" placeholder="555-019-2834" required="" type="tel"/>
+<span class="material-symbols-outlined text-outline absolute right-3 top-2.5 text-[18px]">phone_iphone</span>
+</div>
+</div>
+</div>
+<!-- 4. Examination Focus Dropdown -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between" for="exam-track">
+                  Primary Examination Focus
+                  <span class="font-label-sm text-label-sm text-secondary">Switchable in Portal</span>
+</label>
+<div class="relative">
+<select class="w-full h-10 pl-space-md pr-10 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/40 appearance-none transition-all cursor-pointer font-medium" id="exam-track" onchange="updateTargetTrack(this.value)">
+<option selected="" value="IELTS Academic">IELTS Academic (International English Testing System)</option>
+<option value="SAT Digital">SAT Digital (College Board Suite)</option>
+<option value="TOEFL iBT">TOEFL iBT (Educational Testing Service)</option>
+<option value="CELPIP General">CELPIP General (Paragon Testing Enterprises)</option>
+</select>
+<span class="material-symbols-outlined text-primary absolute right-3 top-2.5 text-[20px] pointer-events-none">school</span>
+</div>
+</div>
+<!-- 5. Password Grid (Password + Confirm Password) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="password">
+                    Create Password
+                  </label>
+<div class="relative">
+<input class="w-full h-10 pl-space-md pr-10 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" id="password" oninput="checkPasswordStrength(this.value)" placeholder="••••••••••••" required="" type="password"/>
+<button class="absolute right-3 top-2.5 text-outline hover:text-on-surface focus:outline-none" onclick="togglePassVisibility('password', this)" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="confirm-password">
+                    Confirm Password
+                  </label>
+<div class="relative">
+<input class="w-full h-10 pl-space-md pr-10 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md placeholder:text-outline-variant focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all" id="confirm-password" placeholder="••••••••••••" required="" type="password"/>
+<button class="absolute right-3 top-2.5 text-outline hover:text-on-surface focus:outline-none" onclick="togglePassVisibility('confirm-password', this)" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Password Requirements Checklist -->
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-wrap items-center gap-x-4 gap-y-1 font-body-sm text-body-sm text-on-surface-variant">
+<span class="font-label-sm text-label-sm font-semibold uppercase text-secondary">Standards:</span>
+<span class="flex items-center gap-1 transition-colors" id="req-len">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Min 8 characters
+                </span>
+<span class="flex items-center gap-1 transition-colors" id="req-num">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> At least 1 number
+                </span>
+<span class="flex items-center gap-1 transition-colors" id="req-sym">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> 1 special symbol
+                </span>
+</div>
+<!-- 6. Terms & Policies Checkbox -->
+<div class="pt-space-xs">
+<label class="flex items-start gap-space-sm cursor-pointer select-none">
+<input class="mt-1 w-4 h-4 rounded text-primary-container focus:ring-primary-container cursor-pointer accent-primary" required="" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface-variant leading-normal">
+                    I agree to the <a class="text-primary hover:underline font-semibold" href="#">Clasptek Assessment Code of Conduct</a>, <a class="text-primary hover:underline font-semibold" href="#">Academic Honor Code</a>, and Privacy Protocol under ISO/IEC 23988 tele-assessment standards.
+                  </span>
+</label>
+</div>
+<!-- 7. Primary CTA Button -->
+<div class="pt-space-sm">
+<button class="w-full h-12 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-headline-sm text-headline-sm flex items-center justify-center gap-space-sm shadow-md transition-all active:scale-[0.99] group" id="submit-btn" type="submit">
+<span>CREATE ACCOUNT &amp; BEGIN PRE-ASSESSMENT</span>
+<span class="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+</div>
+<!-- 8. Secondary Action / Alternative Authentication -->
+<div class="pt-space-sm text-center flex flex-col items-center gap-space-sm">
+<div class="font-body-md text-body-md text-on-surface-variant">
+                  Already have a verified account? 
+                  <a class="text-primary hover:text-primary-container font-semibold hover:underline ml-1" data-path="sign-in" href="#">Sign In</a>
+</div>
+<!-- Academic SSO / Federated Direct Sign-in -->
+<div class="w-full flex items-center justify-center gap-3 mt-space-xs text-on-surface-variant font-label-sm text-label-sm">
+<span class="h-[1px] w-16 bg-outline-variant/50"></span>
+<span>OR VERIFY WITH INSTITUTION</span>
+<span class="h-[1px] w-16 bg-outline-variant/50"></span>
+</div>
+<div class="grid grid-cols-2 gap-space-sm w-full mt-1">
+<button class="h-10 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container flex items-center justify-center gap-2 font-label-md text-label-md text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary">account_balance</span>
+<span>EduID / Shibboleth</span>
+</button>
+<button class="h-10 px-3 rounded-lg bg-surface-container-low hover:bg-surface-container flex items-center justify-center gap-2 font-label-md text-label-md text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">badge</span>
+<span>OpenID Academic</span>
+</button>
+</div>
+</div>
+</form>
+<!-- Inline Success Toast State (Hidden by Default) -->
+<div class="hidden absolute inset-0 bg-surface-container-lowest/95 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center text-center p-space-xl z-20" id="form-toast">
+<div class="w-16 h-16 rounded-full bg-secondary-container text-primary flex items-center justify-center mb-space-md">
+<span class="material-symbols-outlined text-[36px]">hourglass_top</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-bold">Initializing Testing Node</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm mt-1">
+                Allocating secure IRT parameter matrix and configuring 35-minute diagnostic sprint sandbox...
+              </p>
+<div class="w-48 h-1.5 bg-surface-container rounded-full mt-space-lg overflow-hidden">
+<div class="h-full bg-primary animate-pulse w-3/4 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Compliance Footnote Grid -->
+<div class="mt-space-xl pt-space-lg border-t-0 grid grid-cols-1 md:grid-cols-3 gap-space-lg text-on-surface-variant">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px]">database</span>
+<div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">FERPA &amp; GDPR Compliant</div>
+<div class="font-body-sm text-body-sm">Student data and acoustic files isolated in sovereign geo-fenced clusters.</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px]">history_edu</span>
+<div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">Official Diagnostic Standard</div>
+<div class="font-body-sm text-body-sm">Item banks refreshed bi-weekly adhering strictly to test-maker rubrics.</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[22px]">help_center</span>
+<div>
+<div class="font-label-md text-label-md text-on-surface font-semibold">Institutional Admissions Desk</div>
+<div class="font-body-sm text-body-sm">Technical support live chat available 24/7 across 140+ countries.</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Client-side Interactive Script -->
+<script>
+    function updateTargetTrack(track) {
+      const cardTitle = document.getElementById('card-track-title');
+      if (cardTitle) {
+        cardTitle.textContent = track + ' Assessment';
+      }
+    }
+
+    function togglePassVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
+
+    function checkPasswordStrength(val) {
+      const reqLen = document.getElementById('req-len');
+      const reqNum = document.getElementById('req-num');
+      const reqSym = document.getElementById('req-sym');
+
+      // Length check
+      if (val.length >= 8) {
+        reqLen.classList.add('text-primary');
+        reqLen.classList.remove('text-on-surface-variant');
+      } else {
+        reqLen.classList.remove('text-primary');
+        reqLen.classList.add('text-on-surface-variant');
+      }
+
+      // Number check
+      if (/\d/.test(val)) {
+        reqNum.classList.add('text-primary');
+        reqNum.classList.remove('text-on-surface-variant');
+      } else {
+        reqNum.classList.remove('text-primary');
+        reqNum.classList.add('text-on-surface-variant');
+      }
+
+      // Symbol check
+      if (/[!@#$%^&*(),.?":{}|<>]/.test(val)) {
+        reqSym.classList.add('text-primary');
+        reqSym.classList.remove('text-on-surface-variant');
+      } else {
+        reqSym.classList.remove('text-primary');
+        reqSym.classList.add('text-on-surface-variant');
+      }
+    }
+
+    function triggerSubmitFeedback() {
+      const toast = document.getElementById('form-toast');
+      if (toast) {
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+          toast.innerHTML = `
+            <div class="w-16 h-16 rounded-full bg-primary-container text-on-primary flex items-center justify-center mb-space-md">
+              <span class="material-symbols-outlined text-[36px]">task_alt</span>
+            </div>
+            <h3 class="font-headline-md text-headline-md text-on-surface font-bold">Profile Initialized</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-sm mt-1">
+              Account ready. Redirecting candidate to timed acoustic and reading calibration suite...
+            </p>
+          `;
+        }, 1400);
+      }
+    }
+  </script>
+</div></main><footer class="w-full bg-surface-container-low py-space-lg shadow-[0_-1px_4px_rgba(0,0,0,0.02)]"><div class="w-full px-gutter flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md text-on-surface-variant"><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[16px] text-primary">verified</span><span>ISO/IEC 23988:2007 Certified</span></div><span class="text-outline-variant">•</span><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[16px] text-primary">lock</span><span>256-Bit Encrypted Tele-Proctoring Environment</span></div></div><div class="font-body-sm text-body-sm text-on-surface-variant">© 2025 Clasptek Assessment Technologies. All rights reserved. Academic Standard Architecture.</div></div></footer></body></html>

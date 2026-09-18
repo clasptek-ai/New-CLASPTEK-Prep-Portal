@@ -35,15 +35,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Resolve tenant & enforce strict candidate session ownership
+    // Resolve tenant & enforce strict candidate session ownership and deadline validity
     let tenantId = session?.tenantId || req.headers.get('x-tenant-id');
     const sessionCheck = await pool.query(
-      `SELECT student_id, tenant_id FROM public.mock_sessions WHERE id = $1`,
+      `SELECT student_id, tenant_id, status, expires_at FROM public.mock_sessions WHERE id = $1`,
       [sessionId]
     );
 
     if (sessionCheck.rows.length > 0) {
-      if (sessionCheck.rows[0].student_id !== studentId) {
+      const { student_id: sessStudentId, tenant_id: sessTenantId, status: sessStatus, expires_at: sessExpiresAt } = sessionCheck.rows[0];
+
+      if (sessStudentId !== studentId) {
         return NextResponse.json(
           {
             error: 'FORBIDDEN_SESSION_MISMATCH',
@@ -52,7 +54,29 @@ export async function POST(req: NextRequest) {
           { status: 403 }
         );
       }
-      tenantId = sessionCheck.rows[0].tenant_id;
+
+      const expired = sessExpiresAt && Date.now() >= new Date(sessExpiresAt).getTime();
+      const finalized = sessStatus === 'SUBMITTED' || sessStatus === 'COMPLETED';
+
+      if (expired || finalized) {
+        console.warn(
+          `[MOCK_LATE_SPEAKING_REJECTED] sessionId=${sessionId} questionId=${questionId} expired=${expired} finalized=${finalized}`
+        );
+        return NextResponse.json(
+          {
+            error: 'MOCK_EXPIRED',
+            message: 'The examination time has expired.',
+          },
+          { status: 403 }
+        );
+      }
+
+      tenantId = sessTenantId;
+    } else {
+      return NextResponse.json(
+        { error: 'MOCK_SESSION_NOT_FOUND', message: 'Mock session not found.' },
+        { status: 404 }
+      );
     }
 
     if (!tenantId || tenantId === '00000000-0000-0000-0000-000000000000') {

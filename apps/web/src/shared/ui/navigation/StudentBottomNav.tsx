@@ -3,46 +3,80 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, Award, User, Bell } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Dumbbell, BarChart2, User } from 'lucide-react';
+
+const BOTTOM_NAV_ITEMS = [
+  { label: 'Dashboard', href: '/dashboard',           icon: LayoutDashboard },
+  { label: 'Assessments', href: '/student/assessments', icon: BookOpen },
+  { label: 'Practice',   href: '/student/practice',    icon: Dumbbell },
+  { label: 'Results',    href: '/student/results',      icon: BarChart2 },
+  { label: 'Profile',    href: '/profile',              icon: User },
+];
 
 export function StudentBottomNav() {
   const pathname = usePathname();
 
-  // Distraction-Free Responsive Exam Mode: Hide bottom nav during active exam player sessions
-  if (pathname?.includes('/player')) {
+  // Hide during active exam/player sessions to avoid distraction
+  if (pathname?.includes('/player') || pathname?.includes('/exam/')) {
     return null;
   }
 
-  const navItems = [
-    { label: 'Home', href: '/student', icon: Home },
-    { label: 'Practice', href: '/student/assessments', icon: BookOpen },
-    { label: 'Results', href: '/student/results', icon: Award },
-    { label: 'Profile', href: '/profile', icon: User },
-    { label: 'Alerts', href: '/notifications', icon: Bell },
-  ];
+  const isActive = (href: string) => {
+    if (href === '/dashboard') return pathname === '/dashboard' || pathname === '/student';
+    return pathname?.startsWith(href) ?? false;
+  };
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-2 py-1.5 flex justify-around items-center shadow-lg"
-      aria-label="Student Mobile Bottom Navigation"
+      className="md:hidden"
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 'var(--z-sticky)' as React.CSSProperties['zIndex'],
+        height: 'var(--bottom-nav-height)',
+        backgroundColor: 'var(--surface-0)',
+        borderTop: '1px solid var(--border)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        padding: '0 0.25rem',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+      }}
+      aria-label="Student Mobile Navigation"
     >
-      {navItems.map((item) => {
+      {BOTTOM_NAV_ITEMS.map((item) => {
         const Icon = item.icon;
-        const isActive =
-          pathname === item.href || (item.href !== '/student' && pathname?.startsWith(item.href));
+        const active = isActive(item.href);
 
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`flex flex-col items-center justify-center min-w-14 min-h-11 px-2 py-1 rounded-xl transition-all ${
-              isActive
-                ? 'text-sky-400 font-bold bg-sky-500/10'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '3px',
+              minWidth: '52px',
+              minHeight: '44px',
+              padding: '6px 8px',
+              borderRadius: 'var(--radius-md)',
+              textDecoration: 'none',
+              color: active ? 'var(--brand-light)' : 'var(--text-muted)',
+              backgroundColor: active ? 'var(--brand-subtle)' : 'transparent',
+              transition: 'all var(--transition-fast)',
+              fontWeight: active ? 600 : 400,
+            }}
+            aria-current={active ? 'page' : undefined}
           >
-            <Icon size={20} className={isActive ? 'text-sky-400' : 'text-slate-400'} />
-            <span className="text-[10px] mt-0.5 font-medium">{item.label}</span>
+            <Icon size={19} />
+            <span style={{ fontSize: '0.625rem', letterSpacing: '0.01em', lineHeight: 1 }}>
+              {item.label}
+            </span>
           </Link>
         );
       })}

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { 'colors': { 'primary': '#003c90', 'surface-tint': '#1d59c1', 'surface-container-low': '#f2f3ff', 'error': '#ba1a1a', 'surface-container-high': '#e2e7ff', 'outline-variant': '#c3c6d5', 'primary-container': '#0f52ba', 'secondary': '#545f73', 'on-primary-fixed-variant': '#00419c', 'surface': '#faf8ff', 'tertiary': '#3a4249', 'surface-container-lowest': '#ffffff', 'on-primary-container': '#bcceff', 'primary-fixed-dim': '#b0c6ff', 'tertiary-fixed-dim': '#c0c7d0', 'surface-container': '#eaedff', 'on-tertiary': '#ffffff', 'on-primary-fixed': '#001945', 'on-error': '#ffffff', 'on-secondary': '#ffffff', 'surface-bright': '#faf8ff', 'outline': '#737784', 'on-secondary-fixed-variant': '#3c475a', 'on-secondary-container': '#586377', 'secondary-fixed': '#d8e3fb', 'on-tertiary-container': '#c8cfd8', 'on-primary': '#ffffff', 'on-tertiary-fixed-variant': '#40484f', 'on-background': '#131b2e', 'surface-container-highest': '#dae2fd', 'surface-variant': '#dae2fd', 'inverse-surface': '#283044', 'tertiary-fixed': '#dce3ec', 'secondary-container': '#d5e0f8', 'on-surface': '#131b2e', 'on-secondary-fixed': '#111c2d', 'inverse-on-surface': '#eef0ff', 'on-tertiary-fixed': '#151c23', 'on-error-container': '#93000a', 'on-surface-variant': '#434653', 'background': '#faf8ff', 'surface-dim': '#d2d9f4', 'secondary-fixed-dim': '#bcc7de', 'error-container': '#ffdad6', 'inverse-primary': '#b0c6ff', 'tertiary-container': '#525960', 'primary-fixed': '#d9e2ff' }, 'borderRadius': { 'DEFAULT': '0.125rem', 'lg': '0.25rem', 'xl': '0.5rem', 'full': '0.75rem' }, 'spacing': { 'space-xl': '2.5rem', 'space-sm': '0.5rem', 'space-lg': '1.5rem', 'margin': '2rem', 'gutter': '1.5rem', 'space-xs': '0.25rem', 'space-md': '1rem' }, 'fontFamily': { 'headline-md': ['Inter'], 'headline-xl-mobile': ['Inter'], 'label-md': ['Inter'], 'label-lg': ['Inter'], 'headline-lg-mobile': ['Inter'], 'headline-lg': ['Inter'], 'headline-xl': ['Inter'], 'body-lg': ['Inter'], 'body-md': ['Inter'], 'timer-display': ['Inter'], 'body-reading': ['Inter'], 'headline-sm': ['Inter'], 'body-sm': ['Inter'], 'label-sm': ['Inter'] }, 'fontSize': { 'headline-md': ['22px', { 'lineHeight': '28px', 'letterSpacing': '-0.01em', 'fontWeight': '600' }], 'headline-xl-mobile': ['28px', { 'lineHeight': '36px', 'letterSpacing': '-0.01em', 'fontWeight': '700' }], 'label-md': ['12px', { 'lineHeight': '16px', 'letterSpacing': '0.02em', 'fontWeight': '600' }], 'label-lg': ['14px', { 'lineHeight': '20px', 'letterSpacing': '0.01em', 'fontWeight': '600' }], 'headline-lg-mobile': ['22px', { 'lineHeight': '30px', 'letterSpacing': '-0.01em', 'fontWeight': '600' }], 'headline-lg': ['28px', { 'lineHeight': '36px', 'letterSpacing': '-0.015em', 'fontWeight': '600' }], 'headline-xl': ['36px', { 'lineHeight': '44px', 'letterSpacing': '-0.02em', 'fontWeight': '700' }], 'body-lg': ['16px', { 'lineHeight': '24px', 'letterSpacing': '0em', 'fontWeight': '400' }], 'body-md': ['14px', { 'lineHeight': '20px', 'letterSpacing': '0em', 'fontWeight': '400' }], 'timer-display': ['20px', { 'lineHeight': '24px', 'letterSpacing': '0.05em', 'fontWeight': '700' }], 'body-reading': ['17px', { 'lineHeight': '28px', 'letterSpacing': '-0.005em', 'fontWeight': '400' }], 'headline-sm': ['18px', { 'lineHeight': '24px', 'letterSpacing': '0em', 'fontWeight': '600' }], 'body-sm': ['12px', { 'lineHeight': '16px', 'letterSpacing': '0.01em', 'fontWeight': '400' }], 'label-sm': ['11px', { 'lineHeight': '14px', 'letterSpacing': '0.04em', 'fontWeight': '600' }] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface-container-lowest border-b border-outline-variant/40"><div class="h-16 w-full max-w-[1440px] mx-auto px-margin flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-sm" data-path="pre-assessments" href="#"><img alt="Brand logo. - Primary color: #0f52ba - Font: inter - Mode: light - Roundness: rounded-sm" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxWlpgMUEiWfN8zvyeLyA0OIuTaa9tsBl3pOwk2GldLQgpyv8dbsrUMwODWbvDsy7ycWYcJT312RzW-OqTbFWTISNXBWyuqVi3fP3LcqcGyPO6KC_PFfDSMEsZhAQj4Oq2OsfV46lyuPxJzFQx1PtufdwmmZCHzvh-h1pcPb_bkLzIpV4dz0iWFvue_YA2x7tkFebOnxBz8zC90EUzq1Fc6exN-keHi9ltEMZ96p6Hr7nvSTn9AXU"/><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">Clasptek Prep</span></a><nav class="hidden lg:flex items-center gap-space-lg h-16 pt-[2px]" data-active-classes="text-primary font-bold border-b-2 border-primary"><a aria-current="page" class="h-full inline-flex items-center transition-colors text-primary font-bold border-b-2 border-primary" data-path="examinations" href="#">Examinations</a><a class="h-full inline-flex items-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="pre-assessments" href="#">Pre-Assessments</a><a class="h-full inline-flex items-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="mock-exams" href="#">Mock Exams</a><a class="h-full inline-flex items-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="platform-features" href="#">Platform Features</a><a class="h-full inline-flex items-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="pricing-institutional" href="#">Pricing / Institutional</a></nav></div><div class="flex items-center gap-space-md"><a class="hidden sm:inline-flex items-center justify-center px-space-md py-space-xs rounded-lg border border-outline-variant text-on-surface font-label-lg text-label-lg hover:bg-surface-container hover:text-on-surface transition-colors" data-path="sign-in" href="#">Sign In</a><a class="inline-flex items-center justify-center px-space-md py-space-xs rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm hover:bg-primary transition-colors" data-path="candidate-registration" href="#">Take a Pre-Assessment</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-16rem)]"><div class="flex flex-col w-full">
+<!-- Breadcrumb Navigation Bar -->
+<div class="w-full bg-surface-container-low/70 py-space-sm">
+<div class="max-w-[1440px] mx-auto px-margin flex items-center gap-space-xs font-label-md text-label-md text-secondary">
+<a class="hover:text-primary transition-colors flex items-center gap-1" data-path="home" href="#">
+<span class="material-symbols-outlined text-[16px]">home</span>
+<span>Home</span>
+</a>
+<span class="text-outline/60">/</span>
+<a class="hover:text-primary transition-colors" data-path="examinations" href="#">Examinations</a>
+<span class="text-outline/60">/</span>
+<span class="text-on-surface font-semibold">IELTS Academic &amp; General Training</span>
+</div>
+</div>
+<!-- Hero Header Section -->
+<section class="w-full relative overflow-hidden bg-surface-container-lowest py-space-xl">
+<div class="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-surface-container-high/40 to-transparent pointer-events-none"></div>
+<div class="max-w-[1440px] mx-auto px-margin relative z-10">
+<div class="flex flex-wrap items-center gap-space-sm mb-space-md">
+<div class="inline-flex items-center gap-1.5 px-space-sm py-space-xs rounded bg-surface-container text-primary font-label-sm text-label-sm tracking-wide">
+<span class="material-symbols-outlined text-[15px]">verified_user</span>
+<span>British Council &amp; IDP Aligned</span>
+</div>
+<div class="inline-flex items-center gap-1.5 px-space-sm py-space-xs rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm tracking-wide">
+<span class="material-symbols-outlined text-[15px]">policy</span>
+<span>ISO/IEC 23988 Compliant Assessment</span>
+</div>
+<span class="text-outline text-label-sm hidden md:inline">|</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Standardized Spec: AC-2024.11</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<div class="lg:col-span-8 flex flex-col gap-space-md">
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight leading-tight">
+            IELTS Academic Preparation &amp; Diagnostic Assessment
+          </h1>
+<p class="font-body-reading text-body-reading text-on-surface-variant max-w-3xl">
+            Complete 4-domain evaluation calibrated for international university admissions, professional licensing, and global immigration pathways. Experience authentic acoustic listening, timed journal passages, academic writing arbiters, and voice-analyzed speaking simulations under verified testing conditions.
+          </p>
+<!-- Key Quantitative Metric Strips -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm pt-space-xs">
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1 shadow-sm">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Evaluation Scope</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">4 Sections</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">L / R / W / S</span>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1 shadow-sm">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Full Simulation</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">2h 45m</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">165m Continuous</span>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1 shadow-sm">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Diagnostic Sprint</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">35m</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Instant Band Metric</span>
+</div>
+<div class="bg-surface-container-low p-space-md rounded-lg flex flex-col gap-1 shadow-sm">
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Scale Target</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">0 – 9.0</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">CEFR A1 to C2</span>
+</div>
+</div>
+</div>
+<!-- Right Quick Action Callout -->
+<div class="lg:col-span-4 bg-surface-container p-space-lg rounded-xl flex flex-col gap-space-md shadow-md">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md font-semibold text-primary uppercase tracking-widest">Immediate Benchmark</span>
+<span class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface block mb-1">Begin Free Assessment</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Determine your current estimated Band Score with precision before scheduling your formal exam sitting.
+            </p>
+</div>
+<a class="w-full flex items-center justify-center gap-2 bg-primary-container text-on-primary font-label-lg text-label-lg py-space-sm px-space-md rounded hover:bg-primary transition-all shadow-sm" data-path="candidate-registration" href="#">
+<span>CREATE ACCOUNT &amp; START PRE-ASSESSMENT</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<div class="flex items-start gap-2 bg-surface-container-lowest p-space-xs rounded">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">verified</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Free 35-minute diagnostic. Results and custom study plan saved to your verified profile.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Visual Evidence & Context Banner -->
+<section class="w-full bg-surface-container-low py-space-lg">
+<div class="max-w-[1440px] mx-auto px-margin">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm flex items-center gap-space-md">
+<img class="w-20 h-20 rounded object-cover shrink-0" data-alt="Close-up professional sound mixing board and acoustic headphones in an official audio recording studio with deep navy lighting accents, highlighting high-fidelity acoustic testing standards." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGq1zoTERpf0R7yD5I-jawJKAqScgThOCVwsGpnrqE1vA_OyOO8NHLnrk1YrCuMsqN0fDle3_xqw8RD95IW-89kRa20KLRjKcgLEqzySyEwfbnycydKv_2MnKf8veoFN2OAT1Q0QQOsXx3zxcs5ra6h9lOzwXCAXAiPi8dNUT9mCUNYFB1nTXsuVDOyBz1KnUZ861Aaf9Tzojrx8PgZO5uw1TU_5pqY4JSJZCc1XlkvvUmN8CnfYY"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Acoustic Precision</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Clean high-fidelity sound recorded in London, Melbourne, and Edinburgh studios.</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm flex items-center gap-space-md">
+<img class="w-20 h-20 rounded object-cover shrink-0" data-alt="Candidate hands taking rigorous standardized test on calibrated workstation terminal in an orderly, distraction-free modern computer testing room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAC0V-p8YhSbqocZ-vnLQ4QkZDiNK0F7FitWUl9JgQfgSIHDgAvU2hWO6tD2k8J340qFl-zE0ct56wDL4aNLm920NdXoWH_GB0TWKsjSh3dAmxHAQvH8Mad9dCVrM0HsLyL7jwlupAtuA34RjvBZxBK11CMq-yEmxVNVIAwsePdOZJCcZU3w55bnlL3wBH5_XYOdio96FIAbGq3WO3G_rPhjURF1RcldTm0863tFRjzGHDn3Yu9QCU"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Standard Workstation</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Strict computer-delivered interface mimicking IDP &amp; British Council CDT screens.</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm flex items-center gap-space-md">
+<img class="w-20 h-20 rounded object-cover shrink-0" data-alt="Academic examiner reviewing complex scored essay rubrics and lexical density heatmaps on modern dual display monitors with clean blue data plots." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8LXodtnAzq3n7wWX-ECxWoMgFAFWzo9mIx1DrfzsakkETa2RLaEIT4EXfuW6PYCj-_u-Z3AG-Tv3IhGJfeK-7pdHvZWYkeer6O3kLCw6KFA9mSRnxlOEmTxi0J_ntSaFTg5Zb2ge1lCCNeN29BSosp8yENICmlKPxPBNJlMw9jk5qd_p8h8HlShVvEJ3qahZjWkk0rkX6gnd-S_87rhfwpDkNsOreNLtXkKXQHJKRUT88OO94-WI"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface">Double Arbitration</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Analytical NLP lexical parser verified against certified Senior Examiner benchmarks.</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Detailed 4-Module Breakdown -->
+<section class="w-full bg-surface py-space-xl">
+<div class="max-w-[1440px] mx-auto px-margin flex flex-col gap-space-lg">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-sm pb-space-sm border-b-2 border-surface-container-high">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Evaluation Architecture</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Four Standardized Sub-Tests</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+          Every section follows official test timing, authentic prompt structures, and certified grading matrices.
+        </p>
+</div>
+<!-- Bento-style Module Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+<!-- Module 1: Listening -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">headphones</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Module 01</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Listening Evaluation</h3>
+</div>
+</div>
+<span class="px-space-xs py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">30 Minutes</span>
+</div>
+<!-- Audio Spec Visual Pill -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">graphic_eq</span>
+<span class="font-label-md text-label-md text-on-surface">Lossless FLAC Mastered Audio</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">RP, Aus &amp; NA Accents</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              4 progressive sections containing 40 individual prompt items. Progresses seamlessly from social everyday dialogues (accommodation booking, course registration) through instructional tutorials, to complex university lecture monologues with ambient classroom noise factors.
+            </p>
+<div class="grid grid-cols-2 gap-space-xs font-body-sm text-body-sm text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Multiple Choice Single/Multi</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Form &amp; Table Completion</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Map, Plan &amp; Diagram Labeling</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Flow-chart &amp; Summary Completion</span>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md border-t border-outline-variant/30 flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<span>40 Items total</span>
+<span>Includes 10-min answer transfer check</span>
+</div>
+</div>
+<!-- Module 2: Reading -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">menu_book</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Module 02</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Reading Examination</h3>
+</div>
+</div>
+<span class="px-space-xs py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">60 Minutes</span>
+</div>
+<!-- Reading Meta Pill -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">source_notes</span>
+<span class="font-label-md text-label-md text-on-surface">Authoritative Source Passages</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">2,150 – 2,750 Words Total</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              3 extended academic texts sourced from vetted journals, books, and scientific reviews. Features strict split-view synchronization for simultaneous text reading, highlighting, and complex item navigation.
+            </p>
+<div class="grid grid-cols-2 gap-space-xs font-body-sm text-body-sm text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>True / False / Not Given (TFNG)</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Matching Headings &amp; Features</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Sentence &amp; Summary Completion</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[16px]">check_circle</span>
+<span>Writer's Claims (Yes/No/Not Given)</span>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md border-t border-outline-variant/30 flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<span>40 Objective Items</span>
+<span>Strict Split-Screen Ergonomics</span>
+</div>
+</div>
+<!-- Module 3: Writing -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">edit_note</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Module 03</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Academic Writing</h3>
+</div>
+</div>
+<span class="px-space-xs py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">60 Minutes</span>
+</div>
+<!-- Rubric Strip -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">balance</span>
+<span class="font-label-md text-label-md text-on-surface">Official 4-Pillar Evaluation</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">TR/TA • CC • LR • GRA</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Two distinct tasks requiring academic synthesis. Task 1 demands accurate summary and comparison of visual data (150 words min). Task 2 presents an analytical point-of-view discursive essay prompt (250 words min).
+            </p>
+<div class="flex flex-col gap-space-xs font-body-sm text-body-sm">
+<div class="p-space-xs bg-surface-container rounded flex items-center justify-between">
+<span class="font-semibold text-on-surface">Task 1: Chart, Graph, Process or Map</span>
+<span class="text-secondary font-label-sm">20 min • 150 words</span>
+</div>
+<div class="p-space-xs bg-surface-container rounded flex items-center justify-between">
+<span class="font-semibold text-on-surface">Task 2: Formal Discursive Academic Essay</span>
+<span class="text-secondary font-label-sm">40 min • 250 words</span>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md border-t border-outline-variant/30 flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<span>2 Written Tasks</span>
+<span>Live Word-Counter &amp; Structural Linting</span>
+</div>
+</div>
+<!-- Module 4: Speaking -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-space-md">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">mic</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Module 04</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Speaking Simulation</h3>
+</div>
+</div>
+<span class="px-space-xs py-1 rounded bg-surface-container text-on-surface font-label-sm text-label-sm">11–14 Minutes</span>
+</div>
+<!-- Speech Analyzer Pill -->
+<div class="bg-surface-container-low p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">record_voice_over</span>
+<span class="font-label-md text-label-md text-on-surface">Acoustic Fluency Engine</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">Pitch, Pausing &amp; Lexicon</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Three-part interactive simulation mirroring the face-to-face or video call interview with an examiner. Automated recording captures acoustic fluency, phonological variation, lexical range, and syntactic accuracy.
+            </p>
+<div class="flex flex-col gap-space-xs font-body-sm text-body-sm">
+<div class="p-space-xs bg-surface-container rounded flex items-center justify-between">
+<span class="font-semibold text-on-surface">Part 1: Introduction &amp; Familiar Topics</span>
+<span class="text-secondary font-label-sm">4–5 min</span>
+</div>
+<div class="p-space-xs bg-surface-container rounded flex items-center justify-between">
+<span class="font-semibold text-on-surface">Part 2: Individual Long Turn (Cue Card)</span>
+<span class="text-secondary font-label-sm">3–4 min (1m prep)</span>
+</div>
+<div class="p-space-xs bg-surface-container rounded flex items-center justify-between">
+<span class="font-semibold text-on-surface">Part 3: Two-Way Academic Discussion</span>
+<span class="text-secondary font-label-sm">4–5 min</span>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md border-t border-outline-variant/30 flex items-center justify-between text-secondary font-label-sm text-label-sm">
+<span>3 Sequential Stages</span>
+<span>Phonetic Audio Playback Review</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Pre-Assessment vs Full Mock Comparison Table -->
+<section class="w-full bg-surface-container-low py-space-xl">
+<div class="max-w-[1440px] mx-auto px-margin flex flex-col gap-space-lg">
+<div class="flex flex-col gap-1 max-w-2xl">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Evaluation Modalities</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Compare Assessment Pathways</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+          Select between an immediate diagnostic snapshot to pinpoint weaknesses or a rigorous, full-length simulation under authentic timed conditions.
+        </p>
+</div>
+<!-- Comparative Table Matrix -->
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-md overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container border-b border-outline-variant/30">
+<th class="py-space-md px-space-lg font-label-lg text-label-lg text-on-surface w-1/3">Criteria &amp; Features</th>
+<th class="py-space-md px-space-lg font-label-lg text-label-lg text-primary w-1/3 bg-surface-container-high/60">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">speed</span>
+<span>Diagnostic Pre-Assessment</span>
+</div>
+</th>
+<th class="py-space-md px-space-lg font-label-lg text-label-lg text-on-surface w-1/3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">timer</span>
+<span>Proctored Mock Exam</span>
+</div>
+</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20 font-body-md text-body-md text-on-surface">
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-lg font-semibold text-on-surface">Total Testing Duration</td>
+<td class="py-space-md px-space-lg font-bold text-primary bg-surface-container-high/20">35 Minutes</td>
+<td class="py-space-md px-space-lg font-bold text-on-surface">165 Minutes (2h 45m)</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-lg font-semibold text-on-surface">Assessment Architecture</td>
+<td class="py-space-md px-space-lg bg-surface-container-high/20">
+                  20 Calibrated Cross-Domain Items (Adaptive Engine)
+                </td>
+<td class="py-space-md px-space-lg">
+                  Full 40 Listening + 40 Reading + 2 Essays + 3 Speaking Parts
+                </td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-lg font-semibold text-on-surface">Adaptive Engine</td>
+<td class="py-space-md px-space-lg bg-surface-container-high/20">
+<span class="inline-flex items-center gap-1.5 text-primary font-semibold">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+                    Item Response Theory (IRT)
+                  </span>
+</td>
+<td class="py-space-md px-space-lg text-secondary">
+                  Linear Static Standard (Authentic Test Form)
+                </td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-lg font-semibold text-on-surface">Scoring Metric &amp; Output</td>
+<td class="py-space-md px-space-lg bg-surface-container-high/20">
+                  Instant Estimated Overall Band Score (e.g. 7.5 ± 0.5)
+                </td>
+<td class="py-space-md px-space-lg">
+                  Certified Examiner Arbitrated Band Scores (Overall &amp; 4 Sub-Scores)
+                </td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-lg font-semibold text-on-surface">Analytical Feedback</td>
+<td class="py-space-md px-space-lg bg-surface-container-high/20">
+                  Detailed Error Breakdown &amp; Prioritized Weakness Heatmap
+                </td>
+<td class="py-space-md px-space-lg">
+                  Complete Line-by-Line Rubric Analysis &amp; Audio Transcription
+                </td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-lg font-semibold text-on-surface">Proctoring &amp; Lock Mode</td>
+<td class="py-space-md px-space-lg text-secondary bg-surface-container-high/20">
+                  Light Browser Focus Monitoring
+                </td>
+<td class="py-space-md px-space-lg">
+<span class="inline-flex items-center gap-1.5 text-on-surface font-medium">
+<span class="material-symbols-outlined text-primary text-[18px]">lock</span>
+                    Strict Lockdown Environment (ISO/IEC 23988)
+                  </span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-space-md px-space-lg font-semibold text-on-surface">Access &amp; Pricing</td>
+<td class="py-space-md px-space-lg bg-surface-container-high/20">
+<span class="px-2 py-0.5 rounded bg-primary text-on-primary font-label-sm text-label-sm uppercase font-bold">100% Free Initial</span>
+</td>
+<td class="py-space-md px-space-lg text-on-surface font-medium">
+                  Candidate Simulation Token / Institutional License
+                </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<!-- IELTS Band Score Interpretation & CEFR Scale Chart -->
+<section class="w-full bg-surface py-space-xl">
+<div class="max-w-[1440px] mx-auto px-margin flex flex-col gap-space-lg">
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold tracking-wider">Scoring Calibration</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Understanding the IELTS 9.0 Band Scale</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+          Scores are standardized against the Common European Framework of Reference (CEFR) for higher education admission across Oxford, Cambridge, Harvard, and top immigration tribunals.
+        </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-headline-md text-primary font-bold">Band 8.5 – 9.0</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm">CEFR C2</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Expert User</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Fully operational command: fluent, accurate, and completely appropriate with sophisticated academic synthesis.
+          </p>
+<div class="mt-auto pt-space-xs text-secondary font-label-sm">Doctoral &amp; Medical Fellowships</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-headline-md text-primary font-bold">Band 7.0 – 8.0</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm">CEFR C1</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Very Good User</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Operational command with occasional unsystematic inaccuracies. Handles complex detailed argumentation smoothly.
+          </p>
+<div class="mt-auto pt-space-xs text-secondary font-label-sm">Ivy League / Russell Group Standard</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-headline-md text-primary font-bold">Band 6.0 – 6.5</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm">CEFR B2</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Competent User</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Generally effective command despite some misunderstandings. Can use and understand reasonably complex language.
+          </p>
+<div class="mt-auto pt-space-xs text-secondary font-label-sm">Standard Undergraduate Admissions</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-md text-headline-md text-secondary font-bold">Band 5.0 – 5.5</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm">CEFR B1</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Modest User</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Partial command with frequent mistakes. Copes with overall meaning in familiar contexts; needs targeted foundation.
+          </p>
+<div class="mt-auto pt-space-xs text-secondary font-label-sm">Intensive Pre-Sessional Language Required</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Direct Registration Prompt Card Section -->
+<section class="w-full bg-surface-container py-space-xl">
+<div class="max-w-[1440px] mx-auto px-margin">
+<div class="bg-surface-container-lowest p-space-xl rounded-2xl shadow-xl flex flex-col lg:flex-row items-center justify-between gap-space-xl">
+<div class="flex flex-col gap-space-sm max-w-2xl">
+<div class="inline-flex items-center gap-2 text-primary font-label-md text-label-md uppercase font-bold tracking-widest">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Authorized Diagnostic Pathway</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface tracking-tight leading-tight">
+            Ready to find your IELTS baseline?
+          </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            Join thousands of candidates who started with a free diagnostic pre-assessment. Create your account in 30 seconds to begin.
+          </p>
+<div class="flex flex-wrap items-center gap-space-md pt-space-xs font-label-sm text-label-sm text-secondary">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">bolt</span>
+<span>Instant Score Calculation</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">no_sim</span>
+<span>No Credit Card Required</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">cloud_done</span>
+<span>Progress Automatically Synced</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-stretch sm:items-center lg:items-end gap-space-md w-full lg:w-auto shrink-0">
+<a class="inline-flex items-center justify-center gap-space-sm px-space-lg py-space-md bg-primary-container text-on-primary font-label-lg text-label-lg rounded-lg shadow-md hover:bg-primary transition-all text-center tracking-wide font-bold" data-path="candidate-registration" href="#">
+<span>CREATE ACCOUNT &amp; BEGIN IELTS PRE-ASSESSMENT</span>
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</a>
+<div class="flex items-center justify-center gap-1 font-body-md text-body-md text-on-surface-variant">
+<span>Already registered?</span>
+<a class="font-label-lg text-label-lg text-primary font-semibold hover:underline" data-path="sign-in" href="#">
+              Sign In to Resume
+            </a>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-lowest border-t border-outline-variant/40 mt-auto"><div class="w-full max-w-[1440px] mx-auto px-margin py-space-xl"><div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-space-lg pb-space-lg border-b border-outline-variant/30"><div class="lg:col-span-2 flex flex-col gap-space-sm"><div class="flex items-center gap-space-sm"><img alt="Brand logo. - Primary color: #0f52ba - Font: inter - Mode: light - Roundness: rounded-sm" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD6XABe_z55itbgbrhXGRPIbRVSiPRFjXmm4Bx12K7ruhgQk0grKDyA2A_QdJUHDVOVDCARxoSq5Mbl3y7Mc2W8YuGj4NoetxbfCDd7jWMZXg2-ngs1juz0Wh1SByF-wpBsmGYQmaembJFfn6_L_5E6AjwapEcqw8jTZIORBufajbyPaqXa1KoAp0oaVX1GVa6boko-WBz2w-hSyh6-kSXwFkWH_K2XuSzYZA13XwiDlksc6jVZmk"/><span class="font-headline-sm text-headline-sm text-on-surface">Clasptek Global Evaluation</span></div><p class="font-body-md text-body-md text-on-surface-variant max-w-sm">International Standardized Testing System compliant with ISO/IEC 23988:2007 requirements for delivered computer-based assessments across IELTS, SAT, TOEFL, and CELPIP environments.</p><div class="flex items-center gap-space-xs mt-space-xs"><span class="material-symbols-outlined text-outline text-[18px]">verified</span><span class="font-label-sm text-label-sm text-on-surface-variant font-medium">ISO/IEC 23988 Certified Testing Facility</span></div></div><div class="flex flex-col gap-space-xs"><span class="font-label-lg text-label-lg text-on-surface font-semibold uppercase tracking-wider mb-space-xs">Testing Protocols</span><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="examinations" href="#">IELTS Academic &amp; General</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="examinations" href="#">SAT Digital Adaptive Suite</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="examinations" href="#">TOEFL iBT Simulated Benchmarks</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="examinations" href="#">CELPIP General Evaluation</a></div><div class="flex flex-col gap-space-xs"><span class="font-label-lg text-label-lg text-on-surface font-semibold uppercase tracking-wider mb-space-xs">Candidate Portal</span><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="pre-assessments" href="#">Diagnostic Pre-Assessments</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="mock-exams" href="#">Timed Simulation Hall</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="candidate-results" href="#">Verified Score Verification</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="system-requirements" href="#">Workstation Diagnostics</a></div><div class="flex flex-col gap-space-xs"><span class="font-label-lg text-label-lg text-on-surface font-semibold uppercase tracking-wider mb-space-xs">Institutional Trust</span><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="pricing-institutional" href="#">Higher Ed Partnerships</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="security-compliance" href="#">Proctoring &amp; Audit Trail</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="privacy-standards" href="#">Candidate Privacy Standard</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors" data-path="server-telemetry" href="#">Cluster Status (UTC)</a></div></div><div class="pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-sm font-label-sm text-label-sm text-on-surface-variant"><div class="flex items-center gap-space-md"><span class="inline-flex items-center gap-1.5 text-on-surface"><span class="h-2 w-2 rounded-full bg-primary inline-block"></span>Server Cluster Operational (00:00 UTC)</span><span>Ref: SEC-23988-REV4</span></div><p class="text-center md:text-right">© 2024 Clasptek Systems Inc. All testing materials, diagnostic rubrics, and assessment software strictly protected.</p></div></div></footer></body></html>

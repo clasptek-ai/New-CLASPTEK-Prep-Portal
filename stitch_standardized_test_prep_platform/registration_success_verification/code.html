@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "primary-container": "#0f52ba",
+          "surface-bright": "#faf8ff",
+          "error-container": "#ffdad6",
+          "inverse-primary": "#b0c6ff",
+          "surface": "#faf8ff",
+          "error": "#ba1a1a",
+          "secondary-container": "#d5e0f8",
+          "on-primary": "#ffffff",
+          "surface-tint": "#1d59c1",
+          "on-background": "#131b2e",
+          "primary": "#003c90",
+          "surface-variant": "#dae2fd",
+          "on-error-container": "#93000a",
+          "surface-container": "#eaedff",
+          "on-surface-variant": "#434653",
+          "primary-fixed": "#d9e2ff",
+          "on-primary-fixed": "#001945",
+          "outline": "#737784",
+          "inverse-surface": "#283044",
+          "on-secondary-fixed": "#111c2d",
+          "inverse-on-surface": "#eef0ff",
+          "tertiary": "#3a4249",
+          "surface-dim": "#d2d9f4",
+          "on-secondary-fixed-variant": "#3c475a",
+          "on-surface": "#131b2e",
+          "on-secondary": "#ffffff",
+          "surface-container-highest": "#dae2fd",
+          "secondary-fixed-dim": "#bcc7de",
+          "tertiary-container": "#525960",
+          "secondary-fixed": "#d8e3fb",
+          "background": "#faf8ff",
+          "on-tertiary-container": "#c8cfd8",
+          "primary-fixed-dim": "#b0c6ff",
+          "on-tertiary-fixed-variant": "#40484f",
+          "on-error": "#ffffff",
+          "on-primary-container": "#bcceff",
+          "on-primary-fixed-variant": "#00419c",
+          "secondary": "#545f73",
+          "surface-container-high": "#e2e7ff",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f2f3ff",
+          "outline-variant": "#c3c6d5",
+          "tertiary-fixed": "#dce3ec",
+          "on-tertiary": "#ffffff",
+          "on-secondary-container": "#586377",
+          "on-tertiary-fixed": "#151c23",
+          "tertiary-fixed-dim": "#c0c7d0"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {
+          "space-md": "1rem",
+          "margin": "2rem",
+          "space-lg": "1.5rem",
+          "space-sm": "0.5rem",
+          "space-xs": "0.25rem",
+          "gutter": "1.5rem",
+          "space-xl": "2.5rem"
+        },
+        "fontFamily": {
+          "headline-xl-mobile": [
+            "Inter"
+          ],
+          "headline-md": [
+            "Inter"
+          ],
+          "headline-lg-mobile": [
+            "Inter"
+          ],
+          "label-sm": [
+            "Inter"
+          ],
+          "headline-lg": [
+            "Inter"
+          ],
+          "timer-display": [
+            "Inter"
+          ],
+          "body-lg": [
+            "Inter"
+          ],
+          "headline-xl": [
+            "Inter"
+          ],
+          "body-md": [
+            "Inter"
+          ],
+          "headline-sm": [
+            "Inter"
+          ],
+          "body-reading": [
+            "Inter"
+          ],
+          "label-md": [
+            "Inter"
+          ],
+          "label-lg": [
+            "Inter"
+          ],
+          "body-sm": [
+            "Inter"
+          ]
+        },
+        "fontSize": {
+          "headline-xl-mobile": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "700"
+            }
+          ],
+          "headline-md": [
+            "22px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg-mobile": [
+            "22px",
+            {
+              "lineHeight": "30px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-sm": [
+            "11px",
+            {
+              "lineHeight": "14px",
+              "letterSpacing": "0.04em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "600"
+            }
+          ],
+          "timer-display": [
+            "20px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0.05em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-lg": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-xl": [
+            "36px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-md": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-sm": [
+            "18px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-reading": [
+            "17px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "label-md": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-lg": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-gutter flex items-center justify-between"><div class="flex items-center gap-space-md"><img alt="Brand logo. - Primary color: #0f52ba
+- Font: inter
+- Mode: light
+- Roundness: rounded-sm
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WU4vXzvlYijh0CgpD9_GLv0EblVLmsIXkDbDOw8pVq-ECKtvODF2BB8bbny1FJWXO9n9TShzwZ2wYoMqiG9X56jyo-PYQjDF0GpFtQYj6lVlPWrqXN2FOqXNZ-Y3uSdVucqSUs6ikplZnAet5yoJprh6VGSk9OKSy5qR6Lqgqm1YRUjMhSHfhUq8MiCWMzA3pTOPNXeocpKHdAnOKcWlfR3ErDWLqRqPwJDmasyuF483SaGVlmOoCboQ"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Clasptek Prep</span><span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-primary-container inline-block"></span>ISO/IEC 23988 Compliant Tele-Assessment</span></div></div><nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-primary font-bold"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="examinations" href="#">Examinations</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="pre-assessments" href="#">Pre-Assessments</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="platform-features" href="#">Platform Features</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="institutional-and-enterprise" href="#">Institutional &amp; Enterprise</a></nav><div class="flex items-center gap-space-md"><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="support" href="#">Need Help?</a><div class="h-4 w-[1px] bg-outline-variant"></div><a class="font-label-md text-label-md text-primary hover:text-primary-container font-semibold transition-colors" data-path="sign-in" href="#">Sign In</a><a class="px-space-md py-space-xs rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors shadow-sm" data-path="create-account" href="#">Create Account</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-80px)]"><div class="flex flex-col w-full">
+<div class="relative w-full overflow-hidden py-space-xl px-gutter flex flex-col items-center justify-center">
+<div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-primary-fixed/30 blur-3xl pointer-events-none"></div>
+<div class="absolute top-1/2 -right-48 w-[500px] h-[500px] rounded-full bg-surface-variant/40 blur-3xl pointer-events-none"></div>
+<div class="w-full max-w-[1280px] flex flex-col items-center">
+<div class="flex flex-col items-center text-center mb-space-xl max-w-2xl">
+<div class="relative flex items-center justify-center mb-space-md">
+<div class="absolute w-20 h-20 rounded-full bg-primary-fixed-dim/40 animate-ping opacity-75"></div>
+<div class="relative w-16 h-16 rounded-full bg-surface-container-lowest shadow-md flex items-center justify-center">
+<div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+</div>
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm mb-space-sm uppercase tracking-wider">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+          Credential Verification Active
+        </div>
+<h1 class="font-headline-xl text-headline-xl text-primary font-bold tracking-tight mb-space-xs">
+          ACCOUNT CREATED
+        </h1>
+<p class="font-body-reading text-body-reading text-on-surface-variant max-w-xl">
+          Welcome to Clasptek Global Evaluation, <span class="font-semibold text-on-surface">Alexander Wright</span>. Your verified student profile (<span class="font-mono text-primary font-semibold">#CLP-94812</span>) has been authenticated for secure examination protocols.
+        </p>
+</div>
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<div class="lg:col-span-7 flex flex-col gap-space-lg">
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col gap-space-lg relative overflow-hidden">
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-surface-tint to-primary-container"></div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-sm">
+<div class="flex items-center gap-space-xs text-primary font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">badge</span>
+<span>Candidate Dossier &amp; Credentials</span>
+</div>
+<span class="px-space-sm py-0.5 rounded bg-surface-container-high text-primary font-mono text-label-sm">
+                SHA-256 LEDGER SIGNED
+              </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-space-xs">Full Candidate Name</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Alexander Wright</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Passport Identity Confirmed</span>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-space-xs">Assigned ID &amp; Cohort</span>
+<span class="font-headline-sm text-headline-sm text-primary font-mono font-bold">#CLP-94812-UKVI</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Direct Tele-Proctor Allocation</span>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-space-xs">Assessment Track</span>
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">IELTS Academic Track</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">CEFR C1 Target Competency</span>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container-low flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-space-xs">Delivery Mailbox</span>
+<span class="font-body-md text-body-md text-on-surface truncate font-semibold">alexander.wright@oxford-prep.edu</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Cryptographic Dispatch Channel</span>
+</div>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container flex items-start gap-space-md">
+<div class="p-space-xs rounded bg-surface-container-lowest text-primary">
+<span class="material-symbols-outlined text-[20px]">key</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface uppercase tracking-wide">Session Cryptographic Nonce</span>
+<span class="font-mono text-label-sm text-on-surface-variant truncate">0x9F4C2A1E8D77B56C3004812F981C0AA9B1E482613D8E218</span>
+</div>
+</div>
+</div>
+<div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col md:flex-row items-center gap-space-lg shadow-sm">
+<div class="w-full md:w-48 h-32 rounded-lg overflow-hidden flex-shrink-0 relative">
+<img class="w-full h-full object-cover" data-alt="Focused student testing at a modern high-end computer desk with dual monitors, minimal academic stationery, and soft directional warm lighting matching an architectural institutional standard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCykc3bt0iNJVUjVHilNI3lOEjSGd5KRXquqidIZhJGm7H6jgjaTSPhQ2TZ9TpkKXIn57ZtY9uVIMou4VnzB2Js4GoX9TQ6cCnfO94gfC9pFLYAlCnyMkszov8o5kxPn6MXrllYLpuhTK_ssFPcVr5emVbEQxPQJZ8PPPpQt4NKvkemETBqWFCo0zDW98UQNs1_iOa5XYV5ZIvWqIeyLmor5Z303KRQGvLqY8xmQqTKBLBQibF-bxw"/>
+<div class="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
+<div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-primary text-on-primary font-mono text-[10px]">DIAGNOSTIC</div>
+</div>
+<div class="flex flex-col flex-grow">
+<div class="flex items-center gap-space-xs text-primary mb-1">
+<span class="material-symbols-outlined text-[18px]">timer</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-bold">Standardized Diagnostic Ready</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-1">
+                IELTS Academic Sprint (35-Minute Adaptive)
+              </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Calibrates reading speed, syntax comprehension, and dynamic lexical range prior to full-length exam proctoring.
+              </p>
+</div>
+</div>
+</div>
+<div class="lg:col-span-5 flex flex-col gap-space-lg">
+<div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-md flex flex-col">
+<div class="flex items-center gap-space-sm mb-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">mark_email_read</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface">Activation Token</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Two-Factor Academic Linkage</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
+              A 6-digit confirmation key has been dispatched to <span class="text-on-surface font-semibold">alexander.wright@oxford-prep.edu</span>. Enter the sequence below to seal your diagnostic profile.
+            </p>
+<div class="flex flex-col items-center mb-space-lg">
+<div class="flex items-center justify-between w-full max-w-sm gap-2 sm:gap-space-xs">
+<div class="w-12 h-14 rounded-lg bg-surface-container-low flex items-center justify-center font-timer-display text-timer-display font-bold text-on-surface shadow-inner">
+                  4
+                </div>
+<div class="w-12 h-14 rounded-lg bg-surface-container-low flex items-center justify-center font-timer-display text-timer-display font-bold text-on-surface shadow-inner">
+                  8
+                </div>
+<div class="w-12 h-14 rounded-lg bg-surface-container-low flex items-center justify-center font-timer-display text-timer-display font-bold text-on-surface shadow-inner">
+                  2
+                </div>
+<div class="w-12 h-14 rounded-lg bg-surface-container-lowest flex items-center justify-center font-timer-display text-timer-display font-bold text-primary shadow-sm relative">
+<span class="animate-pulse">_</span>
+<div class="absolute inset-x-2 bottom-1.5 h-0.5 bg-primary"></div>
+</div>
+<div class="w-12 h-14 rounded-lg bg-surface-container-low flex items-center justify-center font-timer-display text-timer-display text-outline-variant">
+                  •
+                </div>
+<div class="w-12 h-14 rounded-lg bg-surface-container-low flex items-center justify-center font-timer-display text-timer-display text-outline-variant">
+                  •
+                </div>
+</div>
+<div class="flex items-center justify-between w-full max-w-sm mt-space-md text-label-sm font-label-sm text-on-surface-variant">
+<span class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                  Resend token in: <strong class="font-mono text-on-surface" id="countdown-timer">00:42</strong>
+</span>
+<button class="text-primary hover:text-primary-container font-semibold transition-colors underline decoration-dotted" type="button">
+                  Update email
+                </button>
+</div>
+</div>
+<div class="flex flex-col gap-space-sm pt-space-xs">
+<button class="w-full h-11 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-space-sm shadow hover:bg-primary-container active:scale-[0.99] transition-all" type="button">
+<span>VERIFY &amp; COMMENCE PRE-ASSESSMENT</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<button class="w-full h-10 rounded-lg bg-surface-container-low text-on-surface-variant font-label-md text-label-md flex items-center justify-center hover:bg-surface-container transition-colors" type="button">
+                Go to Student Dashboard (Skip for Now)
+              </button>
+</div>
+<div class="mt-space-lg p-space-md rounded-lg bg-surface-container-low flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0">shield_lock</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Under <strong class="text-on-surface font-semibold">ISO/IEC 23988:2007</strong> international tele-assessment regulations, all initial baseline metrics are encrypted at rest and benchmarked against verified CEFR linguistic thresholds.
+              </p>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">headset_mic</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Proctor Technical Desk</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Live hardware validation available</span>
+</div>
+</div>
+<button class="px-space-md py-space-xs rounded-md bg-surface-container-lowest text-primary font-label-sm text-label-sm hover:bg-surface-bright transition-colors shadow-sm" type="button">
+              System Test
+            </button>
+</div>
+</div>
+</div>
+<div class="w-full mt-space-xl pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant">
+<div class="flex items-center gap-space-lg">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm">Secure Proctor Link: OK</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm">Bandwidth Latency: 18ms</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm">Microphone &amp; Cam: Ready</span>
+</div>
+</div>
+<span class="font-mono text-label-sm text-outline">
+          HOST_NODE: uk-lon-04.clasptek.internal
+        </span>
+</div>
+</div>
+</div>
+<script>
+    (function() {
+      let seconds = 42;
+      const display = document.getElementById('countdown-timer');
+      if (display) {
+        const interval = setInterval(function() {
+          seconds--;
+          if (seconds <= 0) {
+            clearInterval(interval);
+            display.textContent = '00:00';
+            const parent = display.parentElement;
+            if (parent) {
+              parent.innerHTML = '<span class="text-primary font-semibold cursor-pointer">Resend Token Now</span>';
+            }
+          } else {
+            const formatted = seconds < 10 ? '0' + seconds : seconds;
+            display.textContent = '00:' + formatted;
+          }
+        }, 1000);
+      }
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-low py-space-lg shadow-[0_-1px_4px_rgba(0,0,0,0.02)]"><div class="w-full px-gutter flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md text-on-surface-variant"><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[16px] text-primary">verified</span><span>ISO/IEC 23988:2007 Certified</span></div><span class="text-outline-variant">•</span><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[16px] text-primary">lock</span><span>256-Bit Encrypted Tele-Proctoring Environment</span></div></div><div class="font-body-sm text-body-sm text-on-surface-variant">© 2025 Clasptek Assessment Technologies. All rights reserved. Academic Standard Architecture.</div></div></footer></body></html>

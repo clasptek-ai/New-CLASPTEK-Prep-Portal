@@ -1,9 +1,10 @@
 import React from 'react';
-import { Flame, Target, Sparkles, Play, Shield, RotateCcw } from 'lucide-react';
+import { Play, ArrowRight, Flame } from 'lucide-react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 import { WidgetState } from '../../../shared/ui/academic/dashboard-widget';
 import { Button } from '../../../shared/ui/button/Button';
 import { Avatar } from '../../../shared/ui/avatar/Avatar';
+import { Skeleton } from '../../../shared/ui/skeleton/Skeleton';
 
 export interface HeroWidgetProps {
   studentName: string;
@@ -20,280 +21,287 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
   studentName,
   config,
   studyStreakDays,
-  studentId,
-  learningLevel = 'Intermediate',
-  state: _state = 'SUCCESS',
-  onRetry: _onRetry,
+  state = 'SUCCESS',
   onResumeLearning,
 }) => {
+  const isLoading = state === 'LOADING';
+
   return (
     <div
       style={{
-        padding: '2.25rem',
-        borderRadius: '20px',
-        background: `linear-gradient(135deg, rgba(21, 29, 48, 0.95), rgba(11, 15, 25, 0.98)), ${config.colorPalette.gradient}`,
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.35)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.5rem',
+        borderRadius: 'var(--radius-xl)',
+        backgroundColor: 'var(--surface-0)',
+        border: '1px solid var(--border-strong)',
+        padding: '1.75rem 2rem',
         position: 'relative',
         overflow: 'hidden',
+        boxShadow: 'var(--shadow-elevated)',
       }}
     >
-      {/* Glow Backdrop Accent */}
+      {/* Subtle brand accent glow — top right */}
       <div
+        aria-hidden="true"
         style={{
           position: 'absolute',
-          top: '-60px',
-          right: '-60px',
-          width: '280px',
-          height: '280px',
+          top: '-80px',
+          right: '-80px',
+          width: '260px',
+          height: '260px',
           borderRadius: '50%',
-          backgroundColor: config.colorPalette.primary,
-          filter: 'blur(100px)',
-          opacity: 0.18,
+          backgroundColor: 'var(--brand)',
+          filter: 'blur(90px)',
+          opacity: 0.08,
           pointerEvents: 'none',
         }}
       />
 
-      {/* Main Header & Profile Row */}
+      {/* ── Top row: Greeting + Actions ── */}
       <div
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'space-between',
           gap: '1.25rem',
+          position: 'relative',
           zIndex: 1,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+        {/* Left: Avatar + Name */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <Avatar name={studentName} size="lg" status="online" />
           <div>
-            <div
+            {/* Programme badge */}
+            <span
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.6rem',
-                marginBottom: '0.35rem',
+                fontSize: '0.65rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                padding: '0.2rem 0.65rem',
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: 'var(--brand-subtle)',
+                color: 'var(--brand-light)',
+                border: '1px solid var(--brand-border)',
+                marginBottom: '0.4rem',
               }}
             >
-              <span
+              {config.badge || config.title}
+            </span>
+
+            {/* Greeting headline */}
+            {isLoading ? (
+              <Skeleton width="220px" height="2rem" />
+            ) : (
+              <h1
                 style={{
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  padding: '0.25rem 0.65rem',
-                  borderRadius: '6px',
-                  backgroundColor: config.colorPalette.badgeBg,
-                  color: config.colorPalette.badgeText,
-                  border: `1px solid ${config.colorPalette.primary}40`,
+                  margin: 0,
+                  fontSize: 'clamp(1.25rem, 3vw, 1.75rem)',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                  letterSpacing: '-0.03em',
+                  lineHeight: 1.2,
                 }}
               >
-                {config.badge}
-              </span>
-              <span
-                style={{
-                  fontSize: '0.8rem',
-                  color: '#38bdf8',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.3rem',
-                }}
-              >
-                <Shield size={13} /> {studentId}
-              </span>
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>• Level: {learningLevel}</span>
-            </div>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: '1.95rem',
-                fontWeight: 800,
-                color: '#f8fafc',
-                letterSpacing: '-0.02em',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              Welcome back,{}
-              {studentName === 'Loading...' ? (
-                <span
-                  style={{
-                    display: 'inline-block',
-                    width: '180px',
-                    height: '1.95rem',
-                    borderRadius: '6px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    animation: 'pulse 1.5s infinite ease-in-out',
-                  }}
-                />
-              ) : (
-                <span>{studentName}</span>
-              )}
-            </h1>
+                Welcome back, {studentName}
+              </h1>
+            )}
+
+            {/* Subtitle */}
             <p
               style={{
                 margin: '0.35rem 0 0',
-                fontSize: '0.9rem',
-                color: '#cbd5e1',
-                maxWidth: '580px',
+                fontSize: '0.875rem',
+                color: 'var(--text-secondary)',
+                lineHeight: 1.5,
               }}
             >
-              Your predictive model indicates a{' '}
-              <strong style={{ color: config.colorPalette.badgeText }}>
-                {config.targetMetric.current} {config.targetMetric.unit}
-              </strong>{' '}
-              readiness. Finish today’s recommended diagnostic drills to push towards your target.
+              {config.title} · Target:{' '}
+              <strong style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
+                {config.targetMetric.target} {config.targetMetric.unit}
+              </strong>
             </p>
           </div>
         </div>
 
-        {/* Study Streak & Quick Resume CTA */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div
-            style={{
-              padding: '0.75rem 1.25rem',
-              borderRadius: '14px',
-              backgroundColor: 'rgba(245, 158, 11, 0.12)',
-              border: '1px solid rgba(245, 158, 11, 0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-            }}
-          >
-            <Flame size={24} color="#f59e0b" fill="#f59e0b" />
-            <div>
-              <div
-                style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fbbf24', lineHeight: 1 }}
-              >
-                {studyStreakDays} Days
-              </div>
-              <div
-                style={{
-                  fontSize: '0.7rem',
-                  color: '#d97706',
-                  fontWeight: 700,
-                  marginTop: '2px',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Active Streak
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => (window.location.href = '/student/welcome')}
+        {/* Right: Streak + CTA */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem', flexWrap: 'wrap' }}>
+          {/* Study streak badge */}
+          {studyStreakDays > 0 && (
+            <div
               style={{
-                borderColor: 'rgba(255, 255, 255, 0.2)',
-                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
                 gap: '0.5rem',
+                padding: '0.5rem 0.875rem',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid rgba(245, 158, 11, 0.2)',
               }}
             >
-              <RotateCcw size={16} /> Retake Diagnostic
-            </Button>
+              <Flame size={16} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
+              <div>
+                <div
+                  style={{
+                    fontSize: '0.9375rem',
+                    fontWeight: 800,
+                    color: '#fbbf24',
+                    lineHeight: 1,
+                  }}
+                >
+                  {studyStreakDays}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.6rem',
+                    fontWeight: 700,
+                    color: '#d97706',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  day streak
+                </div>
+              </div>
+            </div>
+          )}
 
-            {onResumeLearning && (
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={onResumeLearning}
-                style={{
-                  backgroundColor: config.colorPalette.primary,
-                  color: '#ffffff',
-                  boxShadow: `0 4px 14px ${config.colorPalette.primary}50`,
-                  gap: '0.5rem',
-                }}
-              >
-                <Play size={16} fill="#ffffff" /> Practice Drills
-              </Button>
-            )}
-          </div>
+          {onResumeLearning && (
+            <Button
+              variant="primary"
+              size="md"
+              onClick={onResumeLearning}
+              leftIcon={<Play size={15} fill="white" />}
+            >
+              Continue Learning
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* Hero Metric Summary Bar */}
+      {/* ── Bottom row: Key metrics strip ── */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1rem',
-          marginTop: '0.5rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+          gap: '0.875rem',
+          marginTop: '1.5rem',
+          position: 'relative',
           zIndex: 1,
         }}
       >
-        <div
-          style={{
-            padding: '1.1rem 1.25rem',
-            borderRadius: '14px',
-            backgroundColor: 'rgba(15, 23, 42, 0.65)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-          }}
-        >
+        {[
+          {
+            label: 'Current Score',
+            value: `${config.targetMetric.current} ${config.targetMetric.unit}`,
+            sub: 'Diagnostic baseline',
+            color: 'var(--brand-light)',
+          },
+          {
+            label: 'Target Score',
+            value: `${config.targetMetric.target} ${config.targetMetric.unit}`,
+            sub: config.targetMetric.description,
+            color: 'var(--success)',
+          },
+          {
+            label: 'Readiness',
+            value: '72%',
+            sub: 'AI prediction',
+            color: 'var(--warning)',
+          },
+        ].map((metric) => (
           <div
+            key={metric.label}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: '#94a3b8',
-              fontSize: '0.8rem',
-              fontWeight: 600,
+              padding: '0.875rem 1rem',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'var(--surface-1)',
+              border: '1px solid var(--border)',
             }}
           >
-            <Target size={15} color={config.colorPalette.primary} />
-            <span>Target Score Goal</span>
+            <div
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: 'var(--text-muted)',
+                marginBottom: '0.35rem',
+              }}
+            >
+              {metric.label}
+            </div>
+            <div
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 800,
+                color: metric.color,
+                lineHeight: 1,
+                marginBottom: '0.2rem',
+              }}
+            >
+              {isLoading ? '—' : metric.value}
+            </div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{metric.sub}</div>
           </div>
-          <div
-            style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', marginTop: '0.35rem' }}
-          >
-            {config.targetMetric.target} {config.targetMetric.unit}
-          </div>
-          <div
-            style={{ fontSize: '0.75rem', color: '#34d399', marginTop: '0.2rem', fontWeight: 600 }}
-          >
-            {config.targetMetric.description}
-          </div>
-        </div>
+        ))}
 
+        {/* Quick links */}
         <div
           style={{
-            padding: '1.1rem 1.25rem',
-            borderRadius: '14px',
-            backgroundColor: 'rgba(15, 23, 42, 0.65)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            padding: '0.875rem 1rem',
+            borderRadius: 'var(--radius-md)',
+            backgroundColor: 'var(--surface-1)',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            gap: '0.5rem',
           }}
         >
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: '#94a3b8',
-              fontSize: '0.8rem',
+              fontSize: '0.7rem',
               fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              color: 'var(--text-muted)',
             }}
           >
-            <Sparkles size={15} color="#a78bfa" />
-            <span>AI Readiness Precision</span>
+            Quick Access
           </div>
-          <div
-            style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f8fafc', marginTop: '0.35rem' }}
+          <a
+            href="/student/assessments"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              color: 'var(--brand-light)',
+              textDecoration: 'none',
+            }}
           >
-            94.8%
-          </div>
-          <div
-            style={{ fontSize: '0.75rem', color: '#a78bfa', marginTop: '0.2rem', fontWeight: 600 }}
+            <span>My Assessments</span>
+            <ArrowRight size={14} />
+          </a>
+          <a
+            href="/student/results"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              color: 'var(--brand-light)',
+              textDecoration: 'none',
+            }}
           >
-            Based on 14 recent drills
-          </div>
+            <span>My Results</span>
+            <ArrowRight size={14} />
+          </a>
         </div>
       </div>
     </div>

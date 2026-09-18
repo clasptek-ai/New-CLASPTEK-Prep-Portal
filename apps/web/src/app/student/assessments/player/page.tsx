@@ -155,10 +155,10 @@ function AssessmentPlayerContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-8">
+      <div className="min-h-screen bg-(--background) text-(--text-primary) flex items-center justify-center p-8">
         <div className="text-center space-y-3">
-          <div className="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <div className="text-sm font-semibold text-slate-300">
+          <div className="w-10 h-10 border-4 border-(--brand) border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="text-sm font-semibold text-(--text-secondary)">
             Loading Assessment Paper from Server...
           </div>
         </div>
@@ -168,13 +168,13 @@ function AssessmentPlayerContent() {
 
   if (errorMessage || !attemptId) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-8">
-        <div className="text-center space-y-4 max-w-md bg-slate-900 p-6 rounded-xl border border-red-500/30 text-red-400">
+      <div className="min-h-screen bg-(--background) text-(--text-primary) flex items-center justify-center p-8">
+        <div className="text-center space-y-4 max-w-md bg-(--surface-0) p-6 rounded-xl border border-(--error-border) text-(--error)">
           <div className="text-lg font-bold">Assessment Error</div>
-          <p className="text-sm text-slate-300">{errorMessage || 'Invalid Attempt Session'}</p>
+          <p className="text-sm text-(--text-secondary)">{errorMessage || 'Invalid Attempt Session'}</p>
           <button
             onClick={() => router.push('/student/welcome')}
-            className="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-lg text-sm transition-colors"
+            className="px-4 py-2 bg-(--brand) hover:bg-(--brand-hover) text-white font-medium rounded-lg text-sm transition-colors min-h-11"
           >
             Return to Gateway
           </button>
@@ -184,7 +184,7 @@ function AssessmentPlayerContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4">
+    <div className="min-h-screen bg-(--background) p-4">
       <AssessmentPlayerScreen
         assessmentId={`attempt-${attemptId}`}
         title={title}

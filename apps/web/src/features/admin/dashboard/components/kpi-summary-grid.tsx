@@ -14,48 +14,57 @@ export interface KPISummaryGridProps {
   };
 }
 
+interface KPIItem {
+  title: string;
+  value: string;
+  description: string;
+  icon: React.ReactNode;
+  iconBg: string;
+}
+
 export const KPISummaryGrid: React.FC<KPISummaryGridProps> = ({ stats }) => {
-  const kpis = [
-    // First Row
+  const kpis: KPIItem[] = [
     {
-      title: 'TOTAL STUDENTS',
+      title: 'Total Students',
       value: (stats.totalStudents || 0).toLocaleString(),
-      description:
-        stats.totalStudents > 0 ? 'Active candidate directory' : 'No registered candidates',
-      icon: <Users size={18} color="#38bdf8" />,
+      description: stats.totalStudents > 0 ? 'Active candidates' : 'No registered candidates',
+      icon: <Users size={16} />,
+      iconBg: 'var(--brand-subtle)',
     },
     {
-      title: 'ACTIVE PROGRAMMES',
+      title: 'Active Programmes',
       value: (stats.activeProgrammes || 0).toLocaleString(),
       description: stats.activeProgrammes > 0 ? 'Exam preparation tracks' : 'No active programmes',
-      icon: <BookOpen size={18} color="#38bdf8" />,
+      icon: <BookOpen size={16} />,
+      iconBg: 'var(--brand-subtle)',
     },
     {
-      title: 'PUBLISHED QUESTIONS',
+      title: 'Published Questions',
       value: (stats.publishedQuestions || 0).toLocaleString(),
-      description: stats.publishedQuestions > 0 ? 'Approved & active items' : 'No published items',
-      icon: <CheckCircle2 size={18} color="#34d399" />,
+      description: stats.publishedQuestions > 0 ? 'Approved question bank items' : 'No published items',
+      icon: <CheckCircle2 size={16} />,
+      iconBg: 'var(--success-subtle)',
     },
-    // Second Row
     {
-      title: 'PRACTICE SESSIONS TODAY',
+      title: 'Practice Sessions Today',
       value: (stats.practiceSessionsToday || 0).toLocaleString(),
-      description:
-        stats.practiceSessionsToday > 0 ? 'Daily adaptive runs' : 'No practice runs today',
-      icon: <Clock size={18} color="#38bdf8" />,
+      description: stats.practiceSessionsToday > 0 ? 'Daily adaptive runs' : 'No practice today',
+      icon: <Clock size={16} />,
+      iconBg: 'var(--brand-subtle)',
     },
     {
-      title: 'DIAGNOSTICS COMPLETED TODAY',
+      title: 'Diagnostics Today',
       value: (stats.diagnosticsCompletedToday || 0).toLocaleString(),
-      description:
-        stats.diagnosticsCompletedToday > 0 ? 'Baseline evaluations today' : 'No diagnostics today',
-      icon: <Award size={18} color="#38bdf8" />,
+      description: stats.diagnosticsCompletedToday > 0 ? 'Baseline evaluations' : 'No diagnostics today',
+      icon: <Award size={16} />,
+      iconBg: 'var(--brand-subtle)',
     },
     {
-      title: 'AVERAGE READINESS',
-      value: stats.totalStudents > 0 ? `${stats.averageReadiness || 0}%` : '0%',
+      title: 'Avg. Readiness',
+      value: stats.totalStudents > 0 ? `${stats.averageReadiness || 0}%` : '—',
       description: stats.totalStudents > 0 ? 'Cohort exam readiness' : 'Awaiting evaluations',
-      icon: <TrendingUp size={18} color="#34d399" />,
+      icon: <TrendingUp size={16} />,
+      iconBg: 'var(--success-subtle)',
     },
   ];
 
@@ -63,97 +72,74 @@ export const KPISummaryGrid: React.FC<KPISummaryGridProps> = ({ stats }) => {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
         gap: '1rem',
         width: '100%',
       }}
-      className="kpi-grid"
     >
       {kpis.map((kpi, idx) => (
         <div
           key={idx}
-          style={{
-            padding: '1.25rem 1.35rem',
-            borderRadius: '14px',
-            backgroundColor: '#151d30',
-            border: '1px solid rgba(255, 255, 255, 0.07)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            height: '112px',
-            boxSizing: 'border-box',
-            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2)',
-            transition: 'border-color 0.2s ease, transform 0.2s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.3)';
-            e.currentTarget.style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.07)';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
+          className="card"
+          style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
         >
+          {/* Row: label + icon */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span
               style={{
-                fontSize: '0.725rem',
+                fontSize: '0.7rem',
                 fontWeight: 700,
-                color: '#94a3b8',
-                letterSpacing: '0.04em',
                 textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: 'var(--text-muted)',
               }}
             >
               {kpi.title}
             </span>
-            <div
+            <span
               style={{
-                padding: '0.35rem',
-                borderRadius: '6px',
-                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                width: '28px',
+                height: '28px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: kpi.iconBg,
+                color: 'var(--brand-light)',
+                flexShrink: 0,
               }}
             >
               {kpi.icon}
-            </div>
+            </span>
           </div>
 
-          <div>
-            <div
-              style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', lineHeight: 1.1 }}
-            >
-              {kpi.value}
-            </div>
-            <div
-              style={{
-                fontSize: '0.75rem',
-                color: '#64748b',
-                marginTop: '0.25rem',
-                fontWeight: 500,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
-              {kpi.description}
-            </div>
+          {/* Value */}
+          <div
+            style={{
+              fontSize: '1.875rem',
+              fontWeight: 800,
+              color: 'var(--text-primary)',
+              lineHeight: 1,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            {kpi.value}
+          </div>
+
+          {/* Description */}
+          <div
+            style={{
+              fontSize: '0.75rem',
+              color: 'var(--text-muted)',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {kpi.description}
           </div>
         </div>
       ))}
-      <style>{`
-        @media (max-width: 1024px) {
-          .kpi-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-          }
-        }
-        @media (max-width: 640px) {
-          .kpi-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };

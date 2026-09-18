@@ -136,14 +136,12 @@ function StudentAssessmentDashboardContent() {
       {/* Diagnostics Header Banner */}
       <div
         style={{
-          padding: '2.25rem',
-          borderRadius: '20px',
+          padding: '2rem 2.25rem',
+          borderRadius: 'var(--radius-xl)',
           background: isCompleted
-            ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(15, 23, 42, 0.98))'
-            : 'linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(15, 23, 42, 0.98))',
-          border: isCompleted
-            ? '1px solid rgba(16, 185, 129, 0.3)'
-            : '1px solid rgba(59, 130, 246, 0.25)',
+            ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), var(--surface-0))'
+            : 'linear-gradient(135deg, rgba(37, 99, 235, 0.14), var(--surface-0))',
+          border: `1px solid ${isCompleted ? 'var(--success-border, rgba(16, 185, 129, 0.3))' : 'var(--brand-border)'}`,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -154,13 +152,13 @@ function StudentAssessmentDashboardContent() {
         <div style={{ maxWidth: '720px' }}>
           <span
             style={{
-              fontSize: '0.75rem',
+              fontSize: '0.6875rem',
               fontWeight: 800,
               letterSpacing: '0.08em',
-              padding: '0.25rem 0.65rem',
-              borderRadius: '6px',
-              backgroundColor: isCompleted ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.2)',
-              color: isCompleted ? '#34d399' : '#60a5fa',
+              padding: '0.2rem 0.6rem',
+              borderRadius: 'var(--radius-xs)',
+              backgroundColor: isCompleted ? 'rgba(16, 185, 129, 0.18)' : 'rgba(37, 99, 235, 0.18)',
+              color: isCompleted ? 'var(--success)' : 'var(--brand-light)',
               textTransform: 'uppercase',
             }}
           >
@@ -169,16 +167,17 @@ function StudentAssessmentDashboardContent() {
           <h1
             style={{
               margin: '0.6rem 0 0.35rem',
-              fontSize: '1.95rem',
+              fontSize: '1.75rem',
               fontWeight: 800,
-              color: '#ffffff',
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.02em',
             }}
           >
             {isCompleted
               ? 'Your Academic Pre-Assessment Results'
               : 'Welcome to your Clasptek Assessment'}
           </h1>
-          <p style={{ margin: 0, fontSize: '0.95rem', color: '#cbd5e1', lineHeight: '1.5' }}>
+          <p style={{ margin: 0, fontSize: '0.925rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
             {isCompleted
               ? 'Your diagnostic baseline has been established. You now have full access to targeted practice and mock examinations.'
               : 'Before you begin your classes and mock examinations, complete your Pre-Assessment. This helps us establish your current level and personalize your learning journey.'}
@@ -199,15 +198,15 @@ function StudentAssessmentDashboardContent() {
         <Card
           style={{
             padding: '3rem',
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '16px',
+            backgroundColor: 'var(--surface-0)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-lg)',
             textAlign: 'center',
-            color: '#94a3b8',
+            color: 'var(--text-muted)',
           }}
         >
-          <div style={{ display: 'inline-block', width: '28px', height: '28px', border: '3px solid #38bdf8', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-          <div style={{ marginTop: '0.75rem', fontSize: '0.95rem', fontWeight: 600 }}>
+          <div style={{ display: 'inline-block', width: '28px', height: '28px', border: '3px solid var(--brand)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+          <div style={{ marginTop: '0.75rem', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
             Verifying your academic assessment status...
           </div>
         </Card>
@@ -216,10 +215,10 @@ function StudentAssessmentDashboardContent() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <Card
             style={{
-              padding: '2.25rem',
-              backgroundColor: '#111827',
+              padding: '2rem 2.25rem',
+              backgroundColor: 'var(--surface-0)',
               border: '1px solid rgba(16, 185, 129, 0.3)',
-              borderRadius: '16px',
+              borderRadius: 'var(--radius-lg)',
               display: 'flex',
               flexDirection: 'column',
               gap: '1.5rem',
@@ -239,41 +238,41 @@ function StudentAssessmentDashboardContent() {
                   style={{
                     width: '48px',
                     height: '48px',
-                    borderRadius: '12px',
-                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderRadius: 'var(--radius-md)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#34d399',
+                    color: 'var(--success)',
                   }}
                 >
-                  <CheckCircle2 size={28} />
+                  <CheckCircle2 size={26} />
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.3rem', fontWeight: 800, color: '#ffffff' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                     Pre-Assessment Completed
                   </h3>
-                  <p style={{ margin: '0.2rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
-                    Placement Score: <strong style={{ color: '#34d399' }}>{assessmentState?.latestScore ? `${assessmentState.latestScore}%` : 'Graded'}</strong>
+                  <p style={{ margin: '0.2rem 0 0', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                    Placement Score: <strong style={{ color: 'var(--success)' }}>{assessmentState?.latestScore ? `${assessmentState.latestScore}%` : 'Graded'}</strong>
                   </p>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                 <Link
                   href="/student/results"
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    padding: '0.75rem 1.5rem',
-                    backgroundColor: '#1e293b',
-                    color: '#f8fafc',
-                    borderRadius: '10px',
+                    padding: '0.65rem 1.25rem',
+                    backgroundColor: 'var(--surface-1)',
+                    color: 'var(--text-primary)',
+                    borderRadius: 'var(--radius-md)',
                     fontWeight: 700,
-                    fontSize: '0.9rem',
+                    fontSize: '0.875rem',
                     textDecoration: 'none',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    border: '1px solid var(--border)',
                   }}
                 >
                   <FileText size={16} />
@@ -286,14 +285,14 @@ function StudentAssessmentDashboardContent() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    padding: '0.75rem 1.5rem',
-                    backgroundColor: '#3b82f6',
+                    padding: '0.65rem 1.25rem',
+                    backgroundColor: 'var(--brand)',
                     color: '#ffffff',
-                    borderRadius: '10px',
+                    borderRadius: 'var(--radius-md)',
                     fontWeight: 700,
-                    fontSize: '0.9rem',
+                    fontSize: '0.875rem',
                     textDecoration: 'none',
-                    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
                   }}
                 >
                   <span>Go to Mock Examinations</span>
@@ -309,12 +308,12 @@ function StudentAssessmentDashboardContent() {
           {error && (
             <div
               style={{
-                padding: '1rem 1.5rem',
-                backgroundColor: 'rgba(239, 68, 68, 0.15)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
-                borderRadius: '12px',
-                color: '#f87171',
-                fontSize: '0.9rem',
+                padding: '0.875rem 1.25rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                border: '1px solid var(--error-border)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--error)',
+                fontSize: '0.875rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
@@ -327,15 +326,13 @@ function StudentAssessmentDashboardContent() {
 
           <Card
             style={{
-              padding: '2.25rem',
-              backgroundColor: '#111827',
-              border: isInProgress
-                ? '1px solid rgba(234, 179, 8, 0.4)'
-                : '1px solid rgba(59, 130, 246, 0.3)',
-              borderRadius: '16px',
+              padding: '2rem 2.25rem',
+              backgroundColor: 'var(--surface-0)',
+              border: `1px solid ${isInProgress ? 'rgba(245, 158, 11, 0.35)' : 'var(--border)'}`,
+              borderRadius: 'var(--radius-lg)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '1.75rem',
+              gap: '1.5rem',
             }}
           >
             <div
@@ -354,31 +351,31 @@ function StudentAssessmentDashboardContent() {
                 <h3
                   style={{
                     margin: '0.75rem 0 0.35rem',
-                    fontSize: '1.45rem',
+                    fontSize: '1.35rem',
                     fontWeight: 800,
-                    color: '#ffffff',
+                    color: 'var(--text-primary)',
                   }}
                 >
                   {assessment?.title || 'Pre-Assessment Diagnostic Placement'}
                 </h3>
                 <div
                   style={{
-                    fontSize: '0.9rem',
-                    color: '#94a3b8',
+                    fontSize: '0.875rem',
+                    color: 'var(--text-secondary)',
                     display: 'flex',
-                    gap: '1.5rem',
+                    gap: '1.25rem',
                     marginTop: '0.35rem',
                     flexWrap: 'wrap',
                   }}
                 >
                   <span>
-                    Programme: <strong style={{ color: '#60a5fa' }}>{programme?.name || 'English Proficiency'}</strong>
+                    Programme: <strong style={{ color: 'var(--brand-light)' }}>{programme?.name || 'English Proficiency'}</strong>
                   </span>
                   <span>
-                    Duration: <strong>{assessment?.durationMinutes || 45} Minutes</strong>
+                    Duration: <strong style={{ color: 'var(--text-primary)' }}>{assessment?.durationMinutes || 45} Minutes</strong>
                   </span>
                   <span>
-                    Components: <strong>Grammar, Reading, Writing</strong>
+                    Components: <strong style={{ color: 'var(--text-primary)' }}>Grammar, Reading, Writing</strong>
                   </span>
                 </div>
               </div>
@@ -388,13 +385,12 @@ function StudentAssessmentDashboardContent() {
                 disabled={starting}
                 onClick={handleStartDiagnostic}
                 style={{
-                  padding: '0.9rem 2rem',
-                  fontSize: '0.95rem',
+                  padding: '0.75rem 1.75rem',
+                  fontSize: '0.9rem',
                   fontWeight: 700,
-                  boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
                 }}
               >
-                <Play size={18} />
+                <Play size={16} />
                 <span>
                   {starting
                     ? 'Launching...'
@@ -412,41 +408,41 @@ function StudentAssessmentDashboardContent() {
                 gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                 gap: '1rem',
                 paddingTop: '1.25rem',
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                borderTop: '1px solid var(--border)',
               }}
             >
-              <div style={{ backgroundColor: '#1e293b', padding: '1.1rem', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>
+              <div style={{ backgroundColor: 'var(--surface-1)', padding: '1rem 1.15rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
                   Grammar Component
                 </div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#38bdf8', marginTop: '0.25rem' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--brand-light)', marginTop: '0.25rem' }}>
                   30 Items
                 </div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
                   Syntax & Structure Drill
                 </div>
               </div>
 
-              <div style={{ backgroundColor: '#1e293b', padding: '1.1rem', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>
+              <div style={{ backgroundColor: 'var(--surface-1)', padding: '1rem 1.15rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
                   Reading Component
                 </div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#34d399', marginTop: '0.25rem' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--success)', marginTop: '0.25rem' }}>
                   Passage & Items
                 </div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
                   Comprehension & Inferences
                 </div>
               </div>
 
-              <div style={{ backgroundColor: '#1e293b', padding: '1.1rem', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>
+              <div style={{ backgroundColor: 'var(--surface-1)', padding: '1rem 1.15rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
                   Writing Component
                 </div>
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#a78bfa', marginTop: '0.25rem' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#a78bfa', marginTop: '0.25rem' }}>
                   2 Tasks
                 </div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.2rem' }}>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
                   AI Gemini Certified Grading
                 </div>
               </div>

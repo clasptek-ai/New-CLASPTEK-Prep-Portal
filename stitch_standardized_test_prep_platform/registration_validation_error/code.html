@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "primary-container": "#0f52ba",
+          "surface-bright": "#faf8ff",
+          "error-container": "#ffdad6",
+          "inverse-primary": "#b0c6ff",
+          "surface": "#faf8ff",
+          "error": "#ba1a1a",
+          "secondary-container": "#d5e0f8",
+          "on-primary": "#ffffff",
+          "surface-tint": "#1d59c1",
+          "on-background": "#131b2e",
+          "primary": "#003c90",
+          "surface-variant": "#dae2fd",
+          "on-error-container": "#93000a",
+          "surface-container": "#eaedff",
+          "on-surface-variant": "#434653",
+          "primary-fixed": "#d9e2ff",
+          "on-primary-fixed": "#001945",
+          "outline": "#737784",
+          "inverse-surface": "#283044",
+          "on-secondary-fixed": "#111c2d",
+          "inverse-on-surface": "#eef0ff",
+          "tertiary": "#3a4249",
+          "surface-dim": "#d2d9f4",
+          "on-secondary-fixed-variant": "#3c475a",
+          "on-surface": "#131b2e",
+          "on-secondary": "#ffffff",
+          "surface-container-highest": "#dae2fd",
+          "secondary-fixed-dim": "#bcc7de",
+          "tertiary-container": "#525960",
+          "secondary-fixed": "#d8e3fb",
+          "background": "#faf8ff",
+          "on-tertiary-container": "#c8cfd8",
+          "primary-fixed-dim": "#b0c6ff",
+          "on-tertiary-fixed-variant": "#40484f",
+          "on-error": "#ffffff",
+          "on-primary-container": "#bcceff",
+          "on-primary-fixed-variant": "#00419c",
+          "secondary": "#545f73",
+          "surface-container-high": "#e2e7ff",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-low": "#f2f3ff",
+          "outline-variant": "#c3c6d5",
+          "tertiary-fixed": "#dce3ec",
+          "on-tertiary": "#ffffff",
+          "on-secondary-container": "#586377",
+          "on-tertiary-fixed": "#151c23",
+          "tertiary-fixed-dim": "#c0c7d0"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {
+          "space-md": "1rem",
+          "margin": "2rem",
+          "space-lg": "1.5rem",
+          "space-sm": "0.5rem",
+          "space-xs": "0.25rem",
+          "gutter": "1.5rem",
+          "space-xl": "2.5rem"
+        },
+        "fontFamily": {
+          "headline-xl-mobile": [
+            "Inter"
+          ],
+          "headline-md": [
+            "Inter"
+          ],
+          "headline-lg-mobile": [
+            "Inter"
+          ],
+          "label-sm": [
+            "Inter"
+          ],
+          "headline-lg": [
+            "Inter"
+          ],
+          "timer-display": [
+            "Inter"
+          ],
+          "body-lg": [
+            "Inter"
+          ],
+          "headline-xl": [
+            "Inter"
+          ],
+          "body-md": [
+            "Inter"
+          ],
+          "headline-sm": [
+            "Inter"
+          ],
+          "body-reading": [
+            "Inter"
+          ],
+          "label-md": [
+            "Inter"
+          ],
+          "label-lg": [
+            "Inter"
+          ],
+          "body-sm": [
+            "Inter"
+          ]
+        },
+        "fontSize": {
+          "headline-xl-mobile": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "700"
+            }
+          ],
+          "headline-md": [
+            "22px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg-mobile": [
+            "22px",
+            {
+              "lineHeight": "30px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-sm": [
+            "11px",
+            {
+              "lineHeight": "14px",
+              "letterSpacing": "0.04em",
+              "fontWeight": "600"
+            }
+          ],
+          "headline-lg": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "600"
+            }
+          ],
+          "timer-display": [
+            "20px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0.05em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-lg": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-xl": [
+            "36px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "700"
+            }
+          ],
+          "body-md": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-sm": [
+            "18px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-reading": [
+            "17px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "-0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "label-md": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.02em",
+              "fontWeight": "600"
+            }
+          ],
+          "label-lg": [
+            "14px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 w-full px-gutter flex items-center justify-between"><div class="flex items-center gap-space-md"><img alt="Brand logo. - Primary color: #0f52ba
+- Font: inter
+- Mode: light
+- Roundness: rounded-sm
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WU4vXzvlYijh0CgpD9_GLv0EblVLmsIXkDbDOw8pVq-ECKtvODF2BB8bbny1FJWXO9n9TShzwZ2wYoMqiG9X56jyo-PYQjDF0GpFtQYj6lVlPWrqXN2FOqXNZ-Y3uSdVucqSUs6ikplZnAet5yoJprh6VGSk9OKSy5qR6Lqgqm1YRUjMhSHfhUq8MiCWMzA3pTOPNXeocpKHdAnOKcWlfR3ErDWLqRqPwJDmasyuF483SaGVlmOoCboQ"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Clasptek Prep</span><span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-space-xs"><span class="w-1.5 h-1.5 rounded-full bg-primary-container inline-block"></span>ISO/IEC 23988 Compliant Tele-Assessment</span></div></div><nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-primary font-bold"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="examinations" href="#">Examinations</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="pre-assessments" href="#">Pre-Assessments</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="platform-features" href="#">Platform Features</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" data-path="institutional-and-enterprise" href="#">Institutional &amp; Enterprise</a></nav><div class="flex items-center gap-space-md"><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="support" href="#">Need Help?</a><div class="h-4 w-[1px] bg-outline-variant"></div><a class="font-label-md text-label-md text-primary hover:text-primary-container font-semibold transition-colors" data-path="sign-in" href="#">Sign In</a><a class="px-space-md py-space-xs rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition-colors shadow-sm" data-path="create-account" href="#">Create Account</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-80px)]"><div class="flex flex-col w-full">
+<!-- Dynamic Ambience Background Canvas Layer -->
+<div class="w-full relative overflow-hidden pb-margin">
+<!-- Subtle architectural glow backdrop -->
+<div class="absolute -top-32 right-1/4 w-[600px] h-[400px] bg-error-container/30 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-48 left-10 w-[500px] h-[500px] bg-surface-container-high/60 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<!-- Main 1440px Container Blueprint -->
+<div class="max-w-[1440px] mx-auto px-margin w-full pt-space-lg">
+<!-- Top Navigation & Audit Breadcrumb Bar -->
+<div class="flex items-center justify-between py-space-sm mb-space-md">
+<div class="flex items-center gap-space-sm text-secondary">
+<span class="material-symbols-outlined text-[18px] text-primary">security</span>
+<span class="font-label-md text-label-md uppercase tracking-wider text-primary font-semibold">ISO/IEC 23988:2007 Verified Session</span>
+<span class="text-outline-variant font-body-sm">•</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Candidate Registration Interface</span>
+<span class="text-outline-variant font-body-sm">•</span>
+<span class="font-label-md text-label-md font-semibold text-error bg-error-container/40 px-2 py-0.5 rounded-sm">Validation Notice: 3 Issues</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary inline-block animate-pulse"></span>
+            Proctor Handshake: Ready
+          </span>
+<div class="h-3 w-[1px] bg-outline-variant"></div>
+<a class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-0.5" href="#">
+            System Requirements <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+</div>
+</div>
+<!-- Asymmetric Dual Column Architecture -->
+<div class="grid grid-cols-12 gap-gutter items-start">
+<!-- Left Side: Context & Institutional Trust Panel (Col 1-5) -->
+<aside class="col-span-12 lg:col-span-5 flex flex-col gap-space-lg">
+<!-- Editorial Hero Text Container -->
+<div class="bg-surface-container-lowest p-space-xl rounded-lg shadow-sm">
+<div class="inline-flex items-center gap-space-xs px-2.5 py-1 rounded-sm bg-surface-container text-primary font-label-sm text-label-sm mb-space-md">
+<span class="material-symbols-outlined text-[16px] text-primary">domain_verification</span>
+              STANDARDIZED TELE-ASSESSMENT ENVIRONMENT
+            </div>
+<h1 class="font-headline-xl text-headline-xl text-primary font-bold tracking-tight mb-space-sm">
+              CREATE YOUR PREP PORTAL ACCOUNT
+            </h1>
+<p class="font-body-reading text-body-reading text-secondary mb-space-lg">
+              Create your account to access Clasptek assessments, mock examinations, results and progress tracking.
+            </p>
+<div class="h-[1px] w-full bg-surface-container-high my-space-lg"></div>
+<!-- Pre-Assessment Protocol Highlights -->
+<div class="space-y-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-8 h-8 rounded-sm bg-surface-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-primary text-[20px]">speed</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Immediate Baseline Diagnostic</h2>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">
+                    Upon activation, complete an adaptive 45-minute benchmark test calibrated to actual testing band metrics.
+                  </p>
+</div>
+</div>
+<div class="flex items-start gap-space-md">
+<div class="w-8 h-8 rounded-sm bg-surface-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-primary text-[20px]">psychology</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">AI Scoring &amp; Feedback</h2>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">
+                    Sub-score breakdowns for Speaking, Writing, Reading, and Listening with real-time error taxonomy.
+                  </p>
+</div>
+</div>
+<div class="flex items-start gap-space-md">
+<div class="w-8 h-8 rounded-sm bg-surface-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-primary text-[20px]">verified_user</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold">Secure Candidate ID Verification</h2>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">
+                    Proctored tokenization protects your institutional records and diagnostic history.
+                  </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Academic Affiliation & Metric Bento Card -->
+<div class="bg-surface-container-low p-space-lg rounded-lg space-y-space-md">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant font-semibold">EXAMINATION ACCREDITATION METRICS</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">2024-2025</span>
+</div>
+<!-- Dynamic Micro SVG Diagnostic Bar Display -->
+<div class="bg-surface-container-lowest p-space-md rounded-sm space-y-space-sm shadow-sm">
+<div class="flex justify-between items-center text-on-surface font-label-md text-label-md">
+<span>System Proctor Calibration Rate</span>
+<span class="font-bold text-primary">99.82%</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[99.82%]"></div>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm text-secondary pt-1">
+<span>Tolerance threshold: 98.5%</span>
+<span class="text-primary font-semibold">Optimal</span>
+</div>
+</div>
+<!-- Institutional Trust Badges List -->
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs">
+<div class="bg-surface-container-lowest p-space-sm rounded-sm flex items-center gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">badge</span>
+<div class="min-w-0">
+<div class="font-label-md text-label-md font-semibold text-on-surface truncate">AES-256 Auth</div>
+<div class="font-label-sm text-label-sm text-secondary truncate">Telemetry encrypted</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-sm rounded-sm flex items-center gap-space-sm shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">gavel</span>
+<div class="min-w-0">
+<div class="font-label-md text-label-md font-semibold text-on-surface truncate">CEFR Aligned</div>
+<div class="font-label-sm text-label-sm text-secondary truncate">Levels C2 through A1</div>
+</div>
+</div>
+</div>
+<!-- Official Identity Image Placeholder -->
+<div class="relative h-28 w-full rounded-sm overflow-hidden mt-space-md shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Close up architectural detail of an elite university testing laboratory with clean minimal glass partitions and warm wood study cubicles under soft directional morning lighting in deep navy and cool white tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNQ3oJP1MMltTuSdbVRwekfXC88XJrlaovCTKALmFzTFca71pRTuOmaQaeWeR8rdTBR8OPySNbRuhvj9shNuiX7wb5dGCGuP3t3vMFe1YSLI2oNX1QKwn5d3r0jifhJhrD4gs84ZuRMqtI-2vPtGrZzPNk5ykIjLDiHWl7k1P3fNUrhbEX6KAo5pGppjZCbYelbjN_5k5npCKqKqRMivTne4yZl1kdGzB-Fl8pzrIzdC0XDt0AXhg"/>
+<div class="absolute inset-0 bg-primary/80 mix-blend-multiply"></div>
+<div class="absolute inset-0 p-space-md flex flex-col justify-end text-on-primary">
+<p class="font-label-sm text-label-sm tracking-wider uppercase text-on-primary-container font-semibold">Institutional Infrastructure</p>
+<p class="font-headline-sm text-headline-sm font-bold text-on-primary">Over 420,000 Certified Sessions Conducted</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right Side: Registration Form with Rigorous Error Architecture (Col 6-12) -->
+<main class="col-span-12 lg:col-span-7">
+<div class="bg-surface-container-lowest p-space-xl rounded-lg shadow-md flex flex-col gap-space-lg">
+<!-- SECTION 1: Top Warning / Alert Banner -->
+<section aria-label="Registration Errors Summary" class="bg-error-container/40 p-space-lg rounded-md shadow-sm">
+<div class="flex items-start gap-space-md">
+<div class="w-8 h-8 rounded-full bg-error flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-on-error text-[20px]">warning</span>
+</div>
+<div class="flex-1">
+<h2 class="font-headline-sm text-headline-sm text-on-error-container font-bold tracking-tight">
+                    Action Required: Please resolve 3 highlighted errors before proceeding with account creation and baseline assessment dispatch.
+                  </h2>
+<p class="font-body-sm text-body-sm text-on-error-container mt-1 mb-space-sm opacity-90">
+                    Your institutional record cannot be initialized until the following discrepancies are corrected:
+                  </p>
+<ul class="space-y-space-xs font-body-md text-body-md text-on-error-container">
+<li class="flex items-start gap-space-xs">
+<span class="text-error font-bold text-lg leading-none mt-0.5">•</span>
+<span>An account registered with <strong class="font-semibold underline decoration-error/40 underline-offset-2">alexander.wright@university.edu</strong> already exists. Please sign in or use a different email address.</span>
+</li>
+<li class="flex items-start gap-space-xs">
+<span class="text-error font-bold text-lg leading-none mt-0.5">•</span>
+<span>Password does not meet institutional entropy standards (missing a special symbol: <code class="bg-error-container px-1 py-0.5 rounded text-error font-bold">!@#$%^&amp;*</code>).</span>
+</li>
+<li class="flex items-start gap-space-xs">
+<span class="text-error font-bold text-lg leading-none mt-0.5">•</span>
+<span>Passwords do not match. The confirmation entry differs from the original entry.</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- SECTION 2: Interactive Form Canvas -->
+<form class="space-y-space-lg" onsubmit="event.preventDefault();">
+<!-- Form Field Row 1: Name Pair (Both Valid) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- 1. First Name (Valid State) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-lg text-label-lg font-semibold text-on-surface" for="first-name">First Name</label>
+<span class="font-label-sm text-label-sm text-secondary">Verified</span>
+</div>
+<div class="relative flex items-center">
+<input class="w-full h-10 px-space-md bg-surface rounded-sm text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest transition-all pr-10 shadow-inner" id="first-name" type="text" value="Alexander"/>
+<div class="absolute right-3 flex items-center pointer-events-none text-primary-container" title="Valid input">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+</div>
+</div>
+<!-- 2. Last Name (Valid State) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-lg text-label-lg font-semibold text-on-surface" for="last-name">Last Name</label>
+<span class="font-label-sm text-label-sm text-secondary">Verified</span>
+</div>
+<div class="relative flex items-center">
+<input class="w-full h-10 px-space-md bg-surface rounded-sm text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest transition-all pr-10 shadow-inner" id="last-name" type="text" value="Wright"/>
+<div class="absolute right-3 flex items-center pointer-events-none text-primary-container" title="Valid input">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Form Field 3: Email Address (ERROR STATE: DUPLICATE RECORD) -->
+<div class="flex flex-col gap-space-xs" id="email-field-group">
+<div class="flex justify-between items-center">
+<label class="font-label-lg text-label-lg font-semibold text-on-surface flex items-center gap-1" for="email-address">
+                    Institutional Email Address
+                    <span class="text-error font-bold">*</span>
+</label>
+<span class="font-label-sm text-label-sm font-semibold text-error">Conflict Detected</span>
+</div>
+<!-- Input with Error Background & High Contrast Alert Ring -->
+<div class="relative flex items-center">
+<input aria-describedby="email-error-desc" aria-invalid="true" class="w-full h-10 px-space-md bg-error-container/20 rounded-sm text-on-surface font-body-md text-body-md focus:bg-error-container/30 transition-all pr-10 shadow-inner outline outline-2 outline-error" id="email-address" type="email" value="alexander.wright@university.edu"/>
+<div class="absolute right-3 flex items-center pointer-events-none text-error">
+<span class="material-symbols-outlined text-[20px]">error</span>
+</div>
+</div>
+<!-- Descriptive Error Container with Direct Recovery Action -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-space-sm bg-error-container/20 rounded-sm mt-1" id="email-error-desc">
+<div class="flex items-center gap-space-xs text-error">
+<span class="material-symbols-outlined text-[16px] shrink-0">info</span>
+<span class="font-body-sm text-body-sm font-medium">This email address is already linked to an existing Clasptek account. Did you mean to Sign In?</span>
+</div>
+<a class="font-label-md text-label-md font-bold text-primary hover:text-primary-container hover:underline whitespace-nowrap pl-5 sm:pl-0" href="#">
+                    Sign In with this email →
+                  </a>
+</div>
+</div>
+<!-- Form Field Row 2: Phone & Target Exam -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- 4. Phone Number (Valid State) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-lg text-label-lg font-semibold text-on-surface" for="phone-number">Primary Phone Number</label>
+<span class="font-label-sm text-label-sm text-secondary">E.164 Standard</span>
+</div>
+<div class="relative flex items-center">
+<input class="w-full h-10 px-space-md bg-surface rounded-sm text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest transition-all pr-10 shadow-inner" id="phone-number" type="tel" value="+1 555-019-2834"/>
+<div class="absolute right-3 flex items-center pointer-events-none text-primary-container">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+</div>
+</div>
+<!-- 5. Primary Examination Focus (Valid State) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-lg text-label-lg font-semibold text-on-surface" for="exam-focus">Primary Examination Focus</label>
+<span class="font-label-sm text-label-sm text-primary font-semibold">Active Syllabus</span>
+</div>
+<div class="relative flex items-center">
+<select class="w-full h-10 px-space-md bg-surface rounded-sm text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest transition-all pr-10 shadow-inner appearance-none cursor-pointer" id="exam-focus">
+<option selected="" value="ielts_academic">IELTS Academic</option>
+<option value="ielts_general">IELTS General Training</option>
+<option value="toefl_ibt">TOEFL iBT Examination</option>
+<option value="sat_digital">Digital SAT Suite</option>
+<option value="celpip_general">CELPIP General</option>
+</select>
+<div class="absolute right-3 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-[20px]">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Form Field Row 3: Passwords (ERROR STATES) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md items-start">
+<!-- 6. Password (ERROR STATE: ENTROPY SPECIFICATION FAILED) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-lg text-label-lg font-semibold text-on-surface flex items-center gap-1" for="password">
+                      Account Password
+                      <span class="text-error font-bold">*</span>
+</label>
+<span class="font-label-sm text-label-sm font-semibold text-error">Complexity Deficit</span>
+</div>
+<div class="relative flex items-center">
+<input aria-describedby="password-rules-tray" aria-invalid="true" class="w-full h-10 px-space-md bg-error-container/20 rounded-sm text-on-surface font-body-md text-body-md focus:bg-error-container/30 transition-all pr-10 shadow-inner outline outline-2 outline-error" id="password" type="password" value="Password123"/>
+<button class="absolute right-3 flex items-center text-secondary hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+<!-- Real-time Password Requirement Indicators Tray -->
+<div class="bg-surface-container-low p-space-sm rounded-sm mt-1 space-y-1.5 shadow-sm" id="password-rules-tray">
+<div class="font-label-sm text-label-sm font-bold text-secondary uppercase tracking-wider mb-1">Institutional Entropy Matrix</div>
+<!-- Criterion 1: Length -->
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-primary font-medium">
+<span class="material-symbols-outlined text-[16px] text-primary-container">check_circle</span>
+<span>At least 8 characters (11 characters entered)</span>
+</div>
+<!-- Criterion 2: Number -->
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-primary font-medium">
+<span class="material-symbols-outlined text-[16px] text-primary-container">check_circle</span>
+<span>At least 1 numeric digit (1, 2, 3 detected)</span>
+</div>
+<!-- Criterion 3: Uppercase -->
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-primary font-medium">
+<span class="material-symbols-outlined text-[16px] text-primary-container">check_circle</span>
+<span>At least 1 uppercase letter ('P' detected)</span>
+</div>
+<!-- Criterion 4: Special Character (FAILED - HIGHLIGHTED ERROR) -->
+<div class="flex items-center gap-1.5 font-label-md text-label-md text-error font-semibold bg-error-container/40 px-1.5 py-0.5 rounded-sm">
+<span class="material-symbols-outlined text-[16px] text-error">cancel</span>
+<span>Missing special symbol (!@#$%^&amp;*)</span>
+</div>
+</div>
+</div>
+<!-- 7. Confirm Password (ERROR STATE: MISMATCH) -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex justify-between items-center">
+<label class="font-label-lg text-label-lg font-semibold text-on-surface flex items-center gap-1" for="confirm-password">
+                      Confirm Password
+                      <span class="text-error font-bold">*</span>
+</label>
+<span class="font-label-sm text-label-sm font-semibold text-error">Mismatch</span>
+</div>
+<div class="relative flex items-center">
+<input aria-describedby="confirm-error-msg" aria-invalid="true" class="w-full h-10 px-space-md bg-error-container/20 rounded-sm text-on-surface font-body-md text-body-md focus:bg-error-container/30 transition-all pr-10 shadow-inner outline outline-2 outline-error" id="confirm-password" type="password" value="Password1234"/>
+<button class="absolute right-3 flex items-center text-secondary hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+<!-- Error Subtext -->
+<div class="flex items-center gap-1 text-error p-space-sm bg-error-container/20 rounded-sm mt-1" id="confirm-error-msg">
+<span class="material-symbols-outlined text-[16px] shrink-0">error</span>
+<span class="font-body-sm text-body-sm font-semibold">Passwords do not match. The string contains an extraneous '4'.</span>
+</div>
+<div class="p-space-sm bg-surface-container rounded-sm mt-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="font-semibold text-on-surface">Security Policy:</span> Retype your matching credential exactly. Copy-paste actions are throttled to ensure user intent.
+                  </div>
+</div>
+</div>
+<!-- 8. Terms Checkbox (Valid State) -->
+<div class="p-space-md bg-surface-container-low rounded-md">
+<label class="flex items-start gap-space-md cursor-pointer select-none">
+<div class="relative flex items-center mt-0.5">
+<input checked="" class="w-5 h-5 accent-primary-container rounded cursor-pointer" type="checkbox"/>
+</div>
+<div class="flex-1">
+<span class="font-body-md text-body-md text-on-surface font-medium">
+                      I accept the <a class="text-primary hover:underline font-semibold" href="#">Clasptek Examination Terms of Service</a> and acknowledge the <a class="text-primary hover:underline font-semibold" href="#">Tele-Proctoring Candidate Agreement</a>.
+                    </span>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">
+                      Includes automated biometric identity verification checks and desktop environment monitoring in compliance with ISO/IEC standards.
+                    </p>
+</div>
+</label>
+</div>
+<!-- Form Action Footprint -->
+<div class="pt-space-sm flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<!-- 9. Primary Call to Action Button (Active state, ready to retry) -->
+<button class="w-full sm:w-auto px-space-xl h-11 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg font-semibold hover:bg-primary-container transition-all flex items-center justify-center gap-space-sm shadow-md active:scale-[0.99]" type="submit">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+<span>CREATE ACCOUNT &amp; BEGIN PRE-ASSESSMENT</span>
+</button>
+<!-- 10. Secondary Action -->
+<div class="flex items-center gap-1 font-body-md text-body-md text-secondary">
+<span>Already have an account?</span>
+<a class="font-label-lg text-label-lg font-bold text-primary hover:text-primary-container hover:underline transition-colors" href="#">
+                    Sign In
+                  </a>
+</div>
+</div>
+<!-- Bottom Assurance Telemetry Strip -->
+<div class="flex items-center justify-between pt-space-md border-t border-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[16px] text-primary">encrypted</span>
+<span>Secure 256-Bit SSL Handshake Active</span>
+</div>
+<div class="flex items-center gap-space-md">
+<span>Candidate IP: 198.51.100.42</span>
+<span>Server Node: US-EAST-ACAD-04</span>
+</div>
+</div>
+</form>
+</div>
+</main>
+</div>
+<!-- Institutional Footer Accreditation Row -->
+<section class="mt-space-xl mb-space-lg p-space-lg bg-surface-container-lowest rounded-lg shadow-sm">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-space-lg items-center">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[28px] text-primary">verified</span>
+<div>
+<div class="font-headline-sm text-headline-sm font-semibold text-on-surface">ISO/IEC 23988</div>
+<div class="font-label-sm text-label-sm text-secondary">Conformity in E-Assessment</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[28px] text-primary">school</span>
+<div>
+<div class="font-headline-sm text-headline-sm font-semibold text-on-surface">Universal CEFR</div>
+<div class="font-label-sm text-label-sm text-secondary">Official Benchmarking Framework</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[28px] text-primary">sync_lock</span>
+<div>
+<div class="font-headline-sm text-headline-sm font-semibold text-on-surface">Zero Data Retention</div>
+<div class="font-label-sm text-label-sm text-secondary">Strict GDPR &amp; FERPA Protocols</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[28px] text-primary">contact_support</span>
+<div>
+<div class="font-headline-sm text-headline-sm font-semibold text-on-surface">24/7 Proctor Desk</div>
+<div class="font-label-sm text-label-sm text-secondary">Instant Validation Assistance</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div></main><footer class="w-full bg-surface-container-low py-space-lg shadow-[0_-1px_4px_rgba(0,0,0,0.02)]"><div class="w-full px-gutter flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-md text-on-surface-variant"><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[16px] text-primary">verified</span><span>ISO/IEC 23988:2007 Certified</span></div><span class="text-outline-variant">•</span><div class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[16px] text-primary">lock</span><span>256-Bit Encrypted Tele-Proctoring Environment</span></div></div><div class="font-body-sm text-body-sm text-on-surface-variant">© 2025 Clasptek Assessment Technologies. All rights reserved. Academic Standard Architecture.</div></div></footer></body></html>

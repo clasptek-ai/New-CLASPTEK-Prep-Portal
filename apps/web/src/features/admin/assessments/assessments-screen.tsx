@@ -257,13 +257,14 @@ export function AssessmentsScreen() {
               style={{
                 fontSize: '0.75rem',
                 fontWeight: 800,
-                padding: '0.15rem 0.55rem',
-                borderRadius: '4px',
+                padding: '0.2rem 0.6rem',
+                borderRadius: 'var(--radius-xs)',
                 backgroundColor: isMockView
-                  ? 'rgba(167, 139, 250, 0.2)'
-                  : 'rgba(56, 189, 248, 0.2)',
-                color: isMockView ? '#a78bfa' : '#38bdf8',
+                  ? 'rgba(139, 92, 246, 0.15)'
+                  : 'rgba(37, 99, 235, 0.15)',
+                color: isMockView ? '#a78bfa' : 'var(--brand-light)',
                 textTransform: 'uppercase',
+                letterSpacing: '0.04em',
               }}
             >
               {isMockView ? 'FULL-LENGTH SIMULATION' : 'OFFICIAL PLACEMENT ASSESSMENTS'}
@@ -272,15 +273,15 @@ export function AssessmentsScreen() {
           <h1
             style={{
               margin: 0,
-              fontSize: '1.75rem',
+              fontSize: '1.65rem',
               fontWeight: 800,
-              color: '#f8fafc',
+              color: 'var(--text-primary)',
               letterSpacing: '-0.02em',
             }}
           >
             {isMockView ? 'Official Mock Examinations Center' : 'Diagnostic Assessments'}
           </h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
             {isMockView
               ? 'Configure full-length examination simulations, proctoring security rules, timed availability windows, and official score scaling.'
               : 'Configure placement diagnostics, section blueprints, duration rules, and programme assignments.'}
@@ -292,23 +293,24 @@ export function AssessmentsScreen() {
           <div
             style={{
               display: 'flex',
-              backgroundColor: '#0f172a',
+              backgroundColor: 'var(--surface-1)',
               padding: '0.25rem',
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border)',
             }}
           >
             <button
               onClick={() => router.push('/admin/assessments')}
               style={{
                 padding: '0.45rem 0.85rem',
-                borderRadius: '6px',
+                borderRadius: 'var(--radius-sm)',
                 border: 'none',
-                backgroundColor: !isMockView ? '#2563eb' : 'transparent',
-                color: !isMockView ? '#ffffff' : '#94a3b8',
+                backgroundColor: !isMockView ? 'var(--brand)' : 'transparent',
+                color: !isMockView ? '#ffffff' : 'var(--text-secondary)',
                 fontSize: '0.8rem',
                 fontWeight: 700,
                 cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
               }}
             >
               Diagnostic Assessments
@@ -317,13 +319,14 @@ export function AssessmentsScreen() {
               onClick={() => router.push('/admin/assessments?mode=mock')}
               style={{
                 padding: '0.45rem 0.85rem',
-                borderRadius: '6px',
+                borderRadius: 'var(--radius-sm)',
                 border: 'none',
                 backgroundColor: isMockView ? '#7c3aed' : 'transparent',
-                color: isMockView ? '#ffffff' : '#94a3b8',
+                color: isMockView ? '#ffffff' : 'var(--text-secondary)',
                 fontSize: '0.8rem',
                 fontWeight: 700,
                 cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
               }}
             >
               Mock Exams
@@ -334,7 +337,7 @@ export function AssessmentsScreen() {
             variant="primary"
             onClick={() => setCreateOpen(true)}
             style={{
-              backgroundColor: isMockView ? '#7c3aed' : '#2563eb',
+              backgroundColor: isMockView ? '#7c3aed' : 'var(--brand)',
               color: '#ffffff',
               gap: '0.4rem',
               display: 'flex',
@@ -351,10 +354,10 @@ export function AssessmentsScreen() {
         <div
           style={{
             padding: '0.85rem 1.25rem',
-            backgroundColor: 'rgba(16, 185, 129, 0.15)',
-            border: '1px solid rgba(16, 185, 129, 0.35)',
-            borderRadius: '10px',
-            color: '#34d399',
+            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+            border: '1px solid var(--success-border)',
+            borderRadius: 'var(--radius-md)',
+            color: 'var(--success)',
             fontSize: '0.875rem',
             fontWeight: 600,
             display: 'flex',
@@ -370,10 +373,10 @@ export function AssessmentsScreen() {
       {/* Differentiation Highlights Card */}
       <Card
         style={{
-          padding: '1.5rem',
-          borderRadius: '16px',
-          backgroundColor: '#151d30',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: '1.25rem 1.5rem',
+          borderRadius: 'var(--radius-lg)',
+          backgroundColor: 'var(--surface-0)',
+          border: '1px solid var(--border)',
         }}
       >
         <div
@@ -388,14 +391,15 @@ export function AssessmentsScreen() {
               style={{
                 fontSize: '0.75rem',
                 fontWeight: 800,
-                color: '#38bdf8',
+                color: 'var(--brand-light)',
                 textTransform: 'uppercase',
+                letterSpacing: '0.04em',
               }}
             >
               Scope & Format
             </div>
             <div
-              style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '2px' }}
+              style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}
             >
               {isMockView
                 ? 'Full-length 3-hour official simulation'
@@ -407,14 +411,15 @@ export function AssessmentsScreen() {
               style={{
                 fontSize: '0.75rem',
                 fontWeight: 800,
-                color: '#34d399',
+                color: 'var(--success)',
                 textTransform: 'uppercase',
+                letterSpacing: '0.04em',
               }}
             >
               Timer & Proctoring
             </div>
             <div
-              style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '2px' }}
+              style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}
             >
               {isMockView
                 ? 'Strict auto-submit timer & focus detection'
@@ -428,12 +433,13 @@ export function AssessmentsScreen() {
                 fontWeight: 800,
                 color: '#a78bfa',
                 textTransform: 'uppercase',
+                letterSpacing: '0.04em',
               }}
             >
               Score Output
             </div>
             <div
-              style={{ fontSize: '0.95rem', fontWeight: 700, color: '#ffffff', marginTop: '2px' }}
+              style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}
             >
               {isMockView
                 ? 'Scaled Official Band Score (e.g. Band 8.0)'

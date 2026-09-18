@@ -4,16 +4,18 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Menu,
+  LayoutDashboard,
+  BookOpen,
+  Dumbbell,
+  BarChart2,
+  GraduationCap,
+  Bot,
+  Bell,
+  User,
+  LogOut,
   ChevronLeft,
   ChevronRight,
-  BookOpen,
-  Award,
-  User,
-  Bell,
-  LayoutDashboard,
-  GraduationCap,
-  LogOut,
+  Menu,
 } from 'lucide-react';
 import { StudentBottomNav } from '@/shared/ui/navigation/StudentBottomNav';
 import { MobileNavDrawer } from '@/shared/ui/navigation/MobileNavDrawer';
@@ -25,6 +27,17 @@ interface StudentLayoutProps {
   children: React.ReactNode;
 }
 
+const NAV_LINKS = [
+  { label: 'Dashboard',             href: '/dashboard',           icon: LayoutDashboard },
+  { label: 'My Assessments',        href: '/student/assessments', icon: BookOpen },
+  { label: 'Practice',              href: '/student/practice',    icon: Dumbbell },
+  { label: 'Results',               href: '/student/results',     icon: BarChart2 },
+  { label: 'Learning',              href: '/learning',            icon: GraduationCap },
+  { label: 'AI Learning Assistant', href: '/learning-assistant',  icon: Bot },
+  { label: 'Notifications',         href: '/notifications',       icon: Bell },
+  { label: 'Profile',               href: '/profile',             icon: User },
+];
+
 export function StudentLayout({ children }: StudentLayoutProps) {
   const pathname = usePathname();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -33,125 +46,256 @@ export function StudentLayout({ children }: StudentLayoutProps) {
   const { handleLogout, isConfirmOpen, cancelLogout, confirmLogout, isLoggingOut } =
     useGlobalLogout();
 
-  const navLinks = [
-    { label: 'Workspace Dashboard', href: '/student', icon: LayoutDashboard },
-    { label: 'Diagnostic Welcome', href: '/student/welcome', icon: GraduationCap },
-    { label: 'Practice & Mocks', href: '/student/assessments', icon: BookOpen },
-    { label: 'Assessment Results', href: '/student/results', icon: Award },
-    { label: 'Learning Profile', href: '/profile', icon: User },
-    { label: 'Notifications', href: '/notifications', icon: Bell },
-  ];
+  const isActive = (href: string) => {
+    if (href === '/dashboard') return pathname === '/dashboard' || pathname === '/student';
+    return pathname?.startsWith(href) ?? false;
+  };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Top Header Bar for Mobile & Tablet */}
-      <header className="md:hidden sticky top-0 z-30 bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between shadow-sm">
-        <div className="flex items-center space-x-3">
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: 'var(--bg-app)',
+        color: 'var(--text-primary)',
+        fontFamily: 'var(--font-sans)',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      {/* ── Mobile Top Bar ── */}
+      <header
+        className="md:hidden"
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 'var(--z-header)' as React.CSSProperties['zIndex'],
+          height: 'var(--header-height)',
+          backgroundColor: 'var(--surface-0)',
+          borderBottom: '1px solid var(--border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 1rem',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <button
             onClick={() => setMobileDrawerOpen(true)}
-            className="w-11 h-11 flex items-center justify-center rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
-            aria-label="Open mobile navigation menu"
+            style={{
+              width: 'var(--touch-target-min)',
+              height: 'var(--touch-target-min)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'var(--surface-1)',
+              border: '1px solid var(--border)',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+              transition: 'all var(--transition-fast)',
+              flexShrink: 0,
+            }}
+            aria-label="Open navigation"
           >
-            <Menu size={20} />
+            <Menu size={18} />
           </button>
-          <LogoBadge size="sm" href="/student/welcome" ariaLabel="Navigate to Student Welcome" />
+          <LogoBadge size="sm" href="/dashboard" ariaLabel="Go to Student Dashboard" />
         </div>
-        <div className="text-xs font-bold text-sky-400 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20">
-          STUDENT
-        </div>
+        <span
+          style={{
+            fontSize: '0.65rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.07em',
+            color: 'var(--brand-light)',
+            backgroundColor: 'var(--brand-subtle)',
+            border: '1px solid var(--brand-border)',
+            borderRadius: 'var(--radius-full)',
+            padding: '0.2rem 0.65rem',
+          }}
+        >
+          Student
+        </span>
       </header>
 
-      {/* Main Workspace Body Wrapper */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Desktop & Tablet Sidebar */}
+      {/* ── Main Content + Sidebar ── */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+
+        {/* ── Desktop Sidebar ── */}
         <aside
-          className={`hidden md:flex flex-col bg-slate-900 border-r border-slate-800 transition-all duration-300 ${
-            sidebarCollapsed ? 'w-20' : 'w-64'
-          }`}
+          className="hidden md:flex"
+          style={{
+            flexDirection: 'column',
+            width: sidebarCollapsed ? 'var(--sidebar-width-collapsed)' : 'var(--sidebar-width)',
+            flexShrink: 0,
+            height: '100vh',
+            position: 'sticky',
+            top: 0,
+            backgroundColor: 'var(--surface-0)',
+            borderRight: '1px solid var(--border)',
+            transition: 'width var(--duration-normal) var(--ease-in-out)',
+            zIndex: 'var(--z-sidebar)' as React.CSSProperties['zIndex'],
+            overflow: 'hidden',
+          }}
         >
-          {/* Sidebar Top Header */}
-          <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+          {/* Sidebar Header */}
+          <div
+            style={{
+              height: 'var(--header-height)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: sidebarCollapsed ? 'center' : 'space-between',
+              padding: sidebarCollapsed ? '0' : '0 0.875rem 0 1rem',
+              borderBottom: '1px solid var(--border)',
+              flexShrink: 0,
+            }}
+          >
             {!sidebarCollapsed && (
-              <LogoBadge
-                size="sm"
-                href="/student/welcome"
-                ariaLabel="Navigate to Student Welcome"
-              />
+              <LogoBadge size="sm" href="/dashboard" ariaLabel="Go to Student Dashboard" />
             )}
             <button
-              onClick={() => setSidebarCollapsed((prev) => !prev)}
-              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none"
+              onClick={() => setSidebarCollapsed((p) => !p)}
+              style={{
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: 'transparent',
+                border: '1px solid var(--border)',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)',
+                flexShrink: 0,
+              }}
               aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
-              {sidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+              {sidebarCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
             </button>
           </div>
 
-          {/* Navigation Links */}
+          {/* Nav Items */}
           <nav
-            className="flex-1 p-3 space-y-1 overflow-y-auto"
-            aria-label="Student Desktop Navigation"
+            style={{
+              flex: 1,
+              padding: '0.75rem 0.5rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '2px',
+              overflowY: 'auto',
+              overflowX: 'hidden',
+            }}
+            aria-label="Student Navigation"
           >
-            {navLinks.map((link) => {
+            {NAV_LINKS.map((link) => {
               const Icon = link.icon;
-              const isActive =
-                pathname === link.href ||
-                (link.href !== '/student' && pathname?.startsWith(link.href));
+              const active = isActive(link.href);
 
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   title={sidebarCollapsed ? link.label : undefined}
-                  className={`flex items-center space-x-3 px-3 py-2.5 min-h-11 rounded-xl text-xs font-semibold transition-all focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:outline-none ${
-                    isActive
-                      ? 'bg-sky-500 text-slate-950 font-bold shadow-md shadow-sky-500/20'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  } ${sidebarCollapsed ? 'justify-center px-0' : ''}`}
+                  className="nav-link"
+                  style={{
+                    color: active ? 'var(--brand-light)' : undefined,
+                    backgroundColor: active ? 'var(--brand-subtle)' : undefined,
+                    fontWeight: active ? 600 : undefined,
+                    justifyContent: sidebarCollapsed ? 'center' : undefined,
+                    paddingLeft: sidebarCollapsed ? '0' : undefined,
+                    paddingRight: sidebarCollapsed ? '0' : undefined,
+                  }}
                 >
-                  <Icon size={18} className={isActive ? 'text-slate-950' : 'text-slate-400'} />
-                  {!sidebarCollapsed && <span>{link.label}</span>}
+                  {/* Active indicator bar */}
+                  {active && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: '20%',
+                        bottom: '20%',
+                        width: '3px',
+                        borderRadius: '0 4px 4px 0',
+                        backgroundColor: 'var(--brand-light)',
+                      }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <Icon
+                    size={18}
+                    style={{
+                      color: active ? 'var(--brand-light)' : 'var(--text-muted)',
+                      flexShrink: 0,
+                    }}
+                  />
+                  {!sidebarCollapsed && (
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {link.label}
+                    </span>
+                  )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Sidebar Footer Logout Button */}
-          <div className="p-3 border-t border-slate-800">
+          {/* Sidebar Footer */}
+          <div
+            style={{
+              padding: '0.5rem',
+              borderTop: '1px solid var(--border)',
+              flexShrink: 0,
+            }}
+          >
             <button
               type="button"
               onClick={handleLogout}
               title={sidebarCollapsed ? 'Sign Out' : undefined}
-              className={`w-full flex items-center space-x-3 px-3 py-2.5 min-h-11 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:outline-none ${
-                sidebarCollapsed ? 'justify-center px-0' : ''
-              }`}
+              className="nav-link"
+              style={{
+                color: 'var(--error)',
+                width: '100%',
+                justifyContent: sidebarCollapsed ? 'center' : undefined,
+              }}
               aria-label="Sign Out of Student Portal"
             >
-              <LogOut size={18} />
+              <LogOut size={18} style={{ flexShrink: 0, color: 'var(--error)' }} />
               {!sidebarCollapsed && <span>Sign Out</span>}
             </button>
           </div>
         </aside>
 
-        {/* Main Content Workspace Region */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto pb-20 md:pb-8">
-          <div className="max-w-7xl mx-auto w-full">{children}</div>
+        {/* ── Main Content Area ── */}
+        <main
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            padding: 'var(--spacing-page)',
+            paddingBottom: 'calc(var(--bottom-nav-height) + var(--spacing-page))',
+          }}
+        >
+          <div style={{ maxWidth: '1280px', margin: '0 auto', width: '100%' }}>
+            {children}
+          </div>
         </main>
       </div>
 
-      {/* Mobile Navigation Components */}
+      {/* ── Mobile Drawer ── */}
       <MobileNavDrawer
         isOpen={mobileDrawerOpen}
         onClose={() => setMobileDrawerOpen(false)}
         onLogout={handleLogout}
         title="Student Portal"
-        links={navLinks}
-        userRole="Student Portal"
-        logoHref="/student/welcome"
+        links={NAV_LINKS}
+        userRole="Student"
+        logoHref="/dashboard"
       />
+
+      {/* ── Mobile Bottom Nav ── */}
       <StudentBottomNav />
 
-      {/* Assessment Logout Confirmation Dialog */}
+      {/* ── Logout Confirm Modal ── */}
       <LogoutConfirmModal
         isOpen={isConfirmOpen}
         onCancel={cancelLogout}

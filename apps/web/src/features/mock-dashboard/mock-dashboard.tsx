@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, Button, Badge } from '../../components/ui/ui-components';
 import { mockGeneratorService } from '../mock-engine/application/mock-generator.service';
 import { MockTemplate, MockSession, MockResult } from '../mock-engine/domain/mock-blueprint';
@@ -58,32 +58,96 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
     load();
   }, []);
 
-  // Restore active session and answers on page load with canonical validation
-  useEffect(() => {
+  const answersRef = useRef<Record<string, string>>({});
+
+  const handleAnswerChange = useCallback((questionId: string, answer: string) => {
+    answersRef.current[questionId] = answer;
+    setSelectedAnswerMap((prev) => ({ ...prev, [questionId]: answer }));
     try {
-      checkAndInvalidateClientCaches();
-      const savedSession = localStorage.getItem('clasptek_active_mock_session');
-      const savedAnswers = localStorage.getItem('clasptek_active_mock_answers');
-      if (savedSession) {
-        const parsed = JSON.parse(savedSession);
-        const isExpired = parsed?.expiresAt && Date.now() > new Date(parsed.expiresAt).getTime();
-        if (parsed?.id && !isStaleListeningSession(parsed) && !isExpired) {
+      localStorage.setItem('clasptek_active_mock_answers', JSON.stringify(answersRef.current));
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  // Restore active session and answers on page load with canonical server-backed validation
+  useEffect(() => {
+    async function restoreSession() {
+      try {
+        checkAndInvalidateClientCaches();
+        const savedSession = localStorage.getItem('clasptek_active_mock_session');
+        const savedAnswers = localStorage.getItem('clasptek_active_mock_answers');
+        if (savedSession) {
+          const parsed = JSON.parse(savedSession);
+          const isLocallyExpired =
+            parsed?.expiresAt && Date.now() >= new Date(parsed.expiresAt).getTime();
+          const isCompletedLocally =
+            parsed?.status === 'SUBMITTED' || parsed?.status === 'COMPLETED';
+
+          if (
+            !parsed?.id ||
+            isStaleListeningSession(parsed) ||
+            isLocallyExpired ||
+            isCompletedLocally
+          ) {
+            localStorage.removeItem('clasptek_active_mock_session');
+            localStorage.removeItem('clasptek_active_mock_answers');
+            setActiveSession(null);
+            setViewState('DASHBOARD');
+            return;
+          }
+
+          // Authoritative server check against /api/v1/mock/session/[id]
+          try {
+            const serverCheckRes = await fetch(`/api/v1/mock/session/${parsed.id}`, {
+              cache: 'no-store',
+            });
+            if (serverCheckRes.ok) {
+              const serverSession = await serverCheckRes.json();
+              if (
+                serverSession.isExpired ||
+                serverSession.status === 'SUBMITTED' ||
+                serverSession.status === 'COMPLETED' ||
+                serverSession.timeRemainingSeconds <= 0
+              ) {
+                // Completed or expired on server — do not allow reopening
+                localStorage.removeItem('clasptek_active_mock_session');
+                localStorage.removeItem('clasptek_active_mock_answers');
+                setActiveSession(null);
+                setViewState('DASHBOARD');
+                return;
+              }
+
+              // Update session with authoritative server timing
+              parsed.startedAt = serverSession.startedAt || parsed.startedAt;
+              parsed.expiresAt = serverSession.expiresAt || parsed.expiresAt;
+              parsed.timeRemainingSeconds = serverSession.timeRemainingSeconds;
+              parsed.status = serverSession.status;
+            }
+          } catch {
+            /* If network fails during check, local authoritative deadline is preserved */
+          }
+
+          let loadedAnswers: Record<string, string> = {};
+          if (savedAnswers) {
+            try {
+              loadedAnswers = JSON.parse(savedAnswers);
+            } catch {
+              /* ignore */
+            }
+          }
+          answersRef.current = loadedAnswers;
+          setSelectedAnswerMap(loadedAnswers);
           setActiveSession(parsed);
-          if (savedAnswers) setSelectedAnswerMap(JSON.parse(savedAnswers));
           setViewState('PLAYER');
           return;
-        } else {
-          // Stale or expired session — discard cleanly
-          localStorage.removeItem('clasptek_active_mock_session');
-          localStorage.removeItem('clasptek_active_mock_answers');
-          setActiveSession(null);
-          setViewState('DASHBOARD');
         }
+      } catch {
+        localStorage.removeItem('clasptek_active_mock_session');
+        localStorage.removeItem('clasptek_active_mock_answers');
       }
-    } catch {
-      localStorage.removeItem('clasptek_active_mock_session');
-      localStorage.removeItem('clasptek_active_mock_answers');
     }
+    void restoreSession();
   }, []);
 
   // Autosave active session and answers on changes with version stamp
@@ -95,7 +159,7 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
           contentVersion: CANONICAL_CONTENT_VERSION,
         };
         localStorage.setItem('clasptek_active_mock_session', JSON.stringify(sessionWithVersion));
-        localStorage.setItem('clasptek_active_mock_answers', JSON.stringify(selectedAnswerMap));
+        localStorage.setItem('clasptek_active_mock_answers', JSON.stringify(answersRef.current));
       } catch {
         /* ignore */
       }
@@ -122,10 +186,11 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
         tmpl?.exam
       );
       (session as any).contentVersion = CANONICAL_CONTENT_VERSION;
+      answersRef.current = {};
+      setSelectedAnswerMap({});
       setActiveSession(session);
       setCurrentSectionIndex(0);
       setCurrentQuestionIndex(0);
-      setSelectedAnswerMap({});
       setViewState('PLAYER');
     } catch (err: any) {
       console.error('Failed to launch mock:', err);
@@ -139,18 +204,37 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
     if (!activeSession) return;
     setLoading(true);
 
+    // Merge immediate answersRef with component state and localStorage to prevent any race condition
+    let combinedAnswers = { ...answersRef.current, ...selectedAnswerMap };
+    try {
+      const stored = localStorage.getItem('clasptek_active_mock_answers');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        combinedAnswers = { ...parsed, ...combinedAnswers };
+      }
+    } catch {
+      /* ignore */
+    }
+
     const formattedAnswers: Record<
       string,
       { questionId: string; studentAnswer: string; timeSpentSeconds: number }
     > = {};
-    Object.entries(selectedAnswerMap).forEach(([qId, ans]) => {
-      formattedAnswers[qId] = { questionId: qId, studentAnswer: ans, timeSpentSeconds: 45 };
+    Object.entries(combinedAnswers).forEach(([qId, ans]) => {
+      if (ans && ans.trim().length > 0) {
+        formattedAnswers[qId] = { questionId: qId, studentAnswer: ans, timeSpentSeconds: 45 };
+      }
     });
 
-    const res = await mockGeneratorService.submitSession(activeSession.id, formattedAnswers);
-    setActiveResult(res);
-    setViewState('RESULT');
-    setLoading(false);
+    try {
+      const res = await mockGeneratorService.submitSession(activeSession.id, formattedAnswers);
+      setActiveResult(res);
+      setViewState('RESULT');
+    } catch (err: any) {
+      console.error('Failed to submit mock session:', err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -191,37 +275,39 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
               >
                 <div
                   style={{
-                    backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                    padding: '0.5rem',
-                    borderRadius: '8px',
-                    color: '#3b82f6',
+                    backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                    padding: '0.625rem',
+                    borderRadius: 'var(--radius-md)',
+                    color: 'var(--brand-light)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
-                  <Award size={24} />
+                  <Award size={22} />
                 </div>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-                  Official Mock Examinations Engine
+                <h1 style={{ fontSize: '1.625rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                  Official Mock Examinations
                 </h1>
               </div>
-              <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: 0 }}>
-                Full-length timed exam simulations for IELTS, TOEFL, SAT, CELPIP & English
-                Proficiency.
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
+                Full-length timed exam simulations for IELTS, TOEFL, SAT, CELPIP & English Proficiency.
               </p>
             </div>
 
-            <Badge variant="success">Proctoring & Integrity System Active</Badge>
+            <Badge variant="success">Proctoring & Integrity Active</Badge>
           </div>
 
           {/* Launch Error Notice */}
           {launchError && (
             <div
               style={{
-                padding: '1rem 1.25rem',
-                backgroundColor: 'rgba(239, 68, 68, 0.15)',
-                border: '1px solid rgba(239, 68, 68, 0.35)',
-                borderRadius: '12px',
-                color: '#fca5a5',
-                fontSize: '0.9rem',
+                padding: '0.875rem 1.25rem',
+                backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                border: '1px solid var(--error-border)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--error)',
+                fontSize: '0.875rem',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
@@ -238,9 +324,9 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
               <div
                 style={{
                   padding: '1.25rem 1.5rem',
-                  backgroundColor: 'rgba(245, 158, 11, 0.12)',
-                  border: '1.5px solid rgba(245, 158, 11, 0.4)',
-                  borderRadius: '14px',
+                  backgroundColor: 'rgba(245, 158, 11, 0.08)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  borderRadius: 'var(--radius-lg)',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
@@ -251,13 +337,13 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                 <div>
                   <span
                     style={{
-                      fontSize: '0.7rem',
+                      fontSize: '0.6875rem',
                       fontWeight: 800,
-                      letterSpacing: '0.05em',
+                      letterSpacing: '0.06em',
                       padding: '0.2rem 0.5rem',
-                      borderRadius: '4px',
-                      backgroundColor: 'rgba(245, 158, 11, 0.25)',
-                      color: '#fbbf24',
+                      borderRadius: 'var(--radius-xs)',
+                      backgroundColor: 'rgba(245, 158, 11, 0.18)',
+                      color: 'var(--warning)',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -265,30 +351,28 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                   </span>
                   <h3
                     style={{
-                      margin: '0.4rem 0 0.2rem',
-                      fontSize: '1.1rem',
-                      fontWeight: 800,
-                      color: '#ffffff',
+                      margin: '0.5rem 0 0.25rem',
+                      fontSize: '1.05rem',
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
                     }}
                   >
                     Pre-Assessment Recommended for Baseline Profile
                   </h3>
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
-                    Completing your diagnostic Pre-Assessment establishes your starting academic
-                    profile. You can also proceed directly to official full-length mock simulations
-                    below.
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                    Completing your diagnostic Pre-Assessment establishes your starting academic profile. You can also proceed directly to official full-length mock simulations below.
                   </p>
                 </div>
 
                 <a
                   href="/student/assessments"
                   style={{
-                    padding: '0.65rem 1.25rem',
-                    backgroundColor: '#f59e0b',
+                    padding: '0.625rem 1.25rem',
+                    backgroundColor: 'var(--warning)',
                     color: '#0f172a',
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: '0.85rem',
-                    borderRadius: '8px',
+                    borderRadius: 'var(--radius-md)',
                     textDecoration: 'none',
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -304,9 +388,9 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
           <Card
             style={{
               padding: '1.5rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '16px',
+              backgroundColor: 'var(--surface-0)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-lg)',
             }}
           >
             <div
@@ -321,26 +405,27 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
               <div>
                 <div
                   style={{
-                    fontSize: '0.8rem',
+                    fontSize: '0.75rem',
                     fontWeight: 700,
-                    color: '#94a3b8',
+                    color: 'var(--text-muted)',
                     textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
+                    letterSpacing: '0.06em',
                   }}
                 >
                   Official Score Readiness Prediction
                 </div>
                 <div
                   style={{
-                    fontSize: '2rem',
-                    fontWeight: 900,
-                    color: '#38bdf8',
+                    fontSize: '1.875rem',
+                    fontWeight: 800,
+                    color: 'var(--brand-light)',
                     marginTop: '0.25rem',
+                    letterSpacing: '-0.02em',
                   }}
                 >
                   IELTS Band 7.5 / TOEFL 105 / SAT 1420
                 </div>
-                <p style={{ fontSize: '0.85rem', color: '#cbd5e1', margin: '0.35rem 0 0' }}>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0' }}>
                   Based on your performance across official blueprint sections.
                 </p>
               </div>
@@ -356,12 +441,12 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
 
           {/* Available Mock Examination Templates Grid */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
               Available Official Exam Mocks ({templates.length})
             </h2>
 
             {loading ? (
-              <div style={{ color: '#94a3b8', padding: '2rem' }}>
+              <div style={{ color: 'var(--text-muted)', padding: '2rem', textAlign: 'center' }}>
                 Loading Exam Blueprints & Mocks...
               </div>
             ) : (
@@ -377,9 +462,9 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                     key={t.id}
                     style={{
                       padding: '1.5rem',
-                      backgroundColor: '#111827',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '16px',
+                      backgroundColor: 'var(--surface-0)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius-lg)',
                       display: 'flex',
                       flexDirection: 'column',
                       justifyContent: 'space-between',
@@ -399,31 +484,30 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                         <span
                           style={{
                             fontSize: '0.75rem',
-                            color: '#94a3b8',
+                            color: 'var(--text-muted)',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '0.3rem',
                           }}
                         >
-                          <Clock size={14} /> {t.totalDurationMinutes} mins
+                          <Clock size={13} /> {t.totalDurationMinutes} mins
                         </span>
                       </div>
 
                       <h3
                         style={{
-                          fontSize: '1.15rem',
+                          fontSize: '1.1rem',
                           fontWeight: 700,
-                          color: '#ffffff',
+                          color: 'var(--text-primary)',
                           margin: '0 0 0.5rem',
-                          lineHeight: 1.3,
+                          lineHeight: 1.35,
                         }}
                       >
                         {t.title}
                       </h3>
 
-                      <p style={{ fontSize: '0.85rem', color: '#94a3b8', margin: 0 }}>
-                        {t.totalQuestions} Questions | {t.sections.length} Blueprint Sections |
-                        Official Scoring Conversion
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
+                        {t.totalQuestions} Questions · {t.sections.length} Blueprint Sections · Official Scoring Conversion
                       </p>
                     </div>
 
@@ -432,7 +516,7 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                       onClick={() => handleLaunchMock(t.id)}
                       style={{ width: '100%', justifyContent: 'center', gap: '0.5rem' }}
                     >
-                      <Play size={16} /> Start Full Mock Examination
+                      <Play size={15} /> Start Full Mock Examination
                     </Button>
                   </Card>
                 ))}
@@ -447,9 +531,7 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
         <IELTSExamEngine
           session={activeSession as any}
           selectedAnswerMap={selectedAnswerMap}
-          onAnswerChange={(questionId, answer) =>
-            setSelectedAnswerMap((prev) => ({ ...prev, [questionId]: answer }))
-          }
+          onAnswerChange={handleAnswerChange}
           onSubmit={handleSubmitMock}
         />
       )}
@@ -460,9 +542,9 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
           <Card
             style={{
               padding: '2.5rem',
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              borderRadius: '20px',
+              backgroundColor: 'var(--surface-0)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-xl)',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
@@ -470,15 +552,28 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
               gap: '1.25rem',
             }}
           >
-            <Award size={56} color="#3b82f6" />
-            <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>
+            <div
+              style={{
+                width: '72px',
+                height: '72px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--brand)',
+              }}
+            >
+              <Award size={40} />
+            </div>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
               Official Mock Examination Score Report
             </h2>
-            <div style={{ fontSize: '3rem', fontWeight: 900, color: '#34d399' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--success)' }}>
               {activeResult.scoreResult.bandOrScale}
             </div>
-            <div style={{ fontSize: '1.1rem', color: '#94a3b8' }}>
-              Official Classification: <strong>{activeResult.scoreResult.label}</strong> (
+            <div style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>
+              Official Classification: <strong style={{ color: 'var(--text-primary)' }}>{activeResult.scoreResult.label}</strong> (
               {activeResult.scoreResult.percentage}% Raw Accuracy)
             </div>
 

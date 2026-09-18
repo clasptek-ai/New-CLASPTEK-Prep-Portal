@@ -24,7 +24,7 @@ export function ResponsiveTable<T>({
 }: ResponsiveTableProps<T>) {
   if (!data || data.length === 0) {
     return (
-      <div className="p-8 text-center bg-slate-900 border border-slate-800 rounded-xl text-slate-400 text-sm">
+      <div className="p-8 text-center bg-(--surface-0) border border-(--border) rounded-xl text-(--text-muted) text-sm">
         {emptyMessage}
       </div>
     );
@@ -33,10 +33,10 @@ export function ResponsiveTable<T>({
   return (
     <>
       {/* Desktop & Tablet Table View */}
-      <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-800 bg-slate-900">
+      <div className="hidden md:block overflow-x-auto rounded-xl border border-(--border) bg-(--surface-0)">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-slate-800 bg-slate-950/60 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <tr className="border-b border-(--border) bg-(--surface-1) text-xs font-semibold text-(--text-muted) uppercase tracking-wider">
               {columns.map((col) => (
                 <th
                   key={col.key}
@@ -47,9 +47,9 @@ export function ResponsiveTable<T>({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60 text-sm text-slate-200">
+          <tbody className="divide-y divide-(--border) text-sm text-(--text-primary)">
             {data.map((item) => (
-              <tr key={keyExtractor(item)} className="hover:bg-slate-800/40 transition-colors">
+              <tr key={keyExtractor(item)} className="hover:bg-(--surface-1) transition-colors">
                 {columns.map((col) => (
                   <td
                     key={col.key}
@@ -69,17 +69,17 @@ export function ResponsiveTable<T>({
         {data.map((item) => (
           <div
             key={keyExtractor(item)}
-            className="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2.5 shadow-sm"
+            className="p-4 bg-(--surface-0) border border-(--border) rounded-xl space-y-2.5 shadow-sm"
           >
             {columns.map((col) => (
               <div
                 key={col.key}
-                className="flex justify-between items-start text-xs border-b border-slate-800/40 pb-2 last:border-b-0 last:pb-0"
+                className="flex justify-between items-start text-xs border-b border-(--border) pb-2 last:border-b-0 last:pb-0"
               >
-                <span className="font-semibold text-slate-400 uppercase tracking-wider">
+                <span className="font-semibold text-(--text-muted) uppercase tracking-wider">
                   {col.header}:
                 </span>
-                <span className="text-slate-200 text-right font-medium">
+                <span className="text-(--text-primary) text-right font-medium">
                   {col.render ? col.render(item) : (item as any)[col.key]}
                 </span>
               </div>

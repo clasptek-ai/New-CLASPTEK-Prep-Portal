@@ -2,19 +2,23 @@
 
 import React, { Suspense } from 'react';
 import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
+import { AuthShell } from '../shell/AuthShell';
 
 export default function ResetPasswordPage() {
   return (
-    <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 md:p-8 font-sans">
+    <AuthShell
+      title="Reset Your Password"
+      subtitle="Enter a new secure password for your Clasptek account."
+    >
       <Suspense
         fallback={
-          <div className="min-h-100 flex items-center justify-center text-slate-400 font-semibold text-sm">
-            Loading Password Reset Experience...
+          <div className="py-12 flex items-center justify-center text-(--text-muted) font-semibold text-sm">
+            Loading Password Reset...
           </div>
         }
       >
         <ResetPasswordForm />
       </Suspense>
-    </main>
+    </AuthShell>
   );
 }

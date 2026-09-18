@@ -190,28 +190,28 @@ export function RegisterForm() {
   };
 
   return (
-    <Card className="w-full bg-[#111827]/95 border border-white/10 rounded-[20px] p-5 sm:p-6 md:p-8 shadow-2xl shadow-blue-950/40 backdrop-blur-xl transition-all duration-300 animate-in fade-in zoom-in-95">
+    <div className="w-full">
       <div className="flex flex-col gap-6">
         {/* Card Header & Step Progress Indicator */}
-        <div className="flex flex-col gap-3 border-b border-slate-800/80 pb-5">
+        <div className="flex flex-col gap-3 border-b border-(--border) pb-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg sm:text-xl font-bold text-slate-100 tracking-tight m-0 flex items-center gap-2">
-              {step === 1 ? 'Candidate Registration' : 'Choose Examination Programme'}
+            <h2 className="text-base sm:text-lg font-bold text-(--text-primary) tracking-tight m-0 flex items-center gap-2">
+              {step === 1 ? 'Candidate Information' : 'Choose Examination Programme'}
             </h2>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-3 py-1 rounded-full tracking-wide">
+              <span className="text-xs font-bold text-(--brand-light) bg-(--brand)/10 border border-(--brand)/20 px-2.5 py-0.5 rounded-full tracking-wide">
                 Step {step} of 2
               </span>
-              <span className="text-xs font-extrabold text-slate-400">
+              <span className="text-xs font-semibold text-(--text-secondary)">
                 {step === 1 ? '50%' : '100%'}
               </span>
             </div>
           </div>
 
-          {/* Progress Bar Component (50% / 100%) */}
-          <div className="w-full h-2 bg-slate-800/80 rounded-full overflow-hidden">
+          {/* Progress Bar */}
+          <div className="w-full h-1.5 bg-(--surface-2) rounded-full overflow-hidden">
             <div
-              className={`h-full bg-linear-to-r from-blue-600 via-blue-500 to-indigo-500 transition-all duration-500 ${
+              className={`h-full bg-(--brand) transition-all duration-500 ${
                 step === 1 ? 'w-1/2' : 'w-full'
               }`}
             />
@@ -248,23 +248,23 @@ export function RegisterForm() {
             {/* First Name & Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-(--text-secondary) mb-1.5">
                   First Name
                 </label>
                 <div className="relative">
                   <User
-                    size={18}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none"
                   />
                   <input
                     type="text"
                     autoComplete="given-name"
                     placeholder="First name"
                     {...register('firstName')}
-                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-11 rounded-lg bg-(--surface-1) border text-(--text-primary) placeholder:text-(--text-muted) text-sm outline-none transition-all ${
                       errors.firstName
-                        ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
-                        : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                        ? 'border-red-500 focus:ring-1 focus:ring-red-500'
+                        : 'border-(--border) focus:border-(--brand) focus:ring-1 focus:ring-(--brand)'
                     }`}
                   />
                 </div>
@@ -276,23 +276,23 @@ export function RegisterForm() {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-(--text-secondary) mb-1.5">
                   Last Name
                 </label>
                 <div className="relative">
                   <User
-                    size={18}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none"
                   />
                   <input
                     type="text"
                     autoComplete="family-name"
                     placeholder="Last name"
                     {...register('lastName')}
-                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-11 rounded-lg bg-(--surface-1) border text-(--text-primary) placeholder:text-(--text-muted) text-sm outline-none transition-all ${
                       errors.lastName
-                        ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
-                        : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                        ? 'border-red-500 focus:ring-1 focus:ring-red-500'
+                        : 'border-(--border) focus:border-(--brand) focus:ring-1 focus:ring-(--brand)'
                     }`}
                   />
                 </div>
@@ -306,23 +306,23 @@ export function RegisterForm() {
 
             {/* Email Address */}
             <div>
-              <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-semibold text-(--text-secondary) mb-1.5">
                 Email Address
               </label>
               <div className="relative">
                 <Mail
-                  size={18}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+                  size={16}
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none"
                 />
                 <input
                   type="email"
                   autoComplete="email"
-                  placeholder="name@domain.com"
+                  placeholder="name@example.com"
                   {...register('email')}
-                  className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                  className={`w-full pl-10 pr-4 h-11 rounded-lg bg-(--surface-1) border text-(--text-primary) placeholder:text-(--text-muted) text-sm outline-none transition-all ${
                     errors.email
-                      ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
-                      : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                      ? 'border-red-500 focus:ring-1 focus:ring-red-500'
+                      : 'border-(--border) focus:border-(--brand) focus:ring-1 focus:ring-(--brand)'
                   }`}
                 />
               </div>
@@ -333,26 +333,26 @@ export function RegisterForm() {
               )}
             </div>
 
-            {/* Phone Number & Country */}
+            {/* Phone & Country */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-(--text-secondary) mb-1.5">
                   Phone Number
                 </label>
                 <div className="relative">
                   <Phone
-                    size={18}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none"
                   />
                   <input
                     type="tel"
                     autoComplete="tel"
                     placeholder="+44 7000 000000"
                     {...register('phone')}
-                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-11 rounded-lg bg-(--surface-1) border text-(--text-primary) placeholder:text-(--text-muted) text-sm outline-none transition-all ${
                       errors.phone
-                        ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
-                        : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                        ? 'border-red-500 focus:ring-1 focus:ring-red-500'
+                        : 'border-(--border) focus:border-(--brand) focus:ring-1 focus:ring-(--brand)'
                     }`}
                   />
                 </div>
@@ -366,22 +366,22 @@ export function RegisterForm() {
               <div>
                 <label
                   htmlFor="country-select"
-                  className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5"
+                  className="block text-xs font-semibold text-(--text-secondary) mb-1.5"
                 >
                   Country
                 </label>
                 <div className="relative">
                   <Globe
-                    size={18}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none z-10"
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none z-10"
                   />
                   <select
                     id="country-select"
                     {...register('country')}
-                    className={`w-full pl-10 pr-8 h-13 rounded-xl bg-slate-900/80 border text-slate-100 text-sm outline-none transition-all appearance-none ${
+                    className={`w-full pl-10 pr-8 h-11 rounded-lg bg-(--surface-1) border text-(--text-primary) text-sm outline-none transition-all appearance-none ${
                       errors.country
-                        ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
-                        : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                        ? 'border-red-500 focus:ring-1 focus:ring-red-500'
+                        : 'border-(--border) focus:border-(--brand) focus:ring-1 focus:ring-(--brand)'
                     }`}
                   >
                     <option value="">Select your country</option>
@@ -394,7 +394,7 @@ export function RegisterForm() {
                     <option value="United Arab Emirates">United Arab Emirates</option>
                     <option value="Other">Other Country</option>
                   </select>
-                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-(--text-muted) text-xs">
                     ▼
                   </div>
                 </div>
@@ -409,23 +409,23 @@ export function RegisterForm() {
             {/* Password & Confirm Password */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-(--text-secondary) mb-1.5">
                   Password
                 </label>
                 <div className="relative">
                   <Lock
-                    size={18}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none"
                   />
                   <input
                     type="password"
                     autoComplete="new-password"
                     placeholder="At least 8 chars"
                     {...register('password')}
-                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-11 rounded-lg bg-(--surface-1) border text-(--text-primary) placeholder:text-(--text-muted) text-sm outline-none transition-all ${
                       errors.password
-                        ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
-                        : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                        ? 'border-red-500 focus:ring-1 focus:ring-red-500'
+                        : 'border-(--border) focus:border-(--brand) focus:ring-1 focus:ring-(--brand)'
                     }`}
                   />
                 </div>
@@ -437,23 +437,23 @@ export function RegisterForm() {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-(--text-secondary) mb-1.5">
                   Confirm Password
                 </label>
                 <div className="relative">
                   <Lock
-                    size={18}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none"
                   />
                   <input
                     type="password"
                     autoComplete="new-password"
                     placeholder="Re-enter password"
                     {...register('confirmPassword')}
-                    className={`w-full pl-10 pr-4 h-13 rounded-xl bg-slate-900/80 border text-slate-100 placeholder-slate-500 text-sm outline-none transition-all ${
+                    className={`w-full pl-10 pr-4 h-11 rounded-lg bg-(--surface-1) border text-(--text-primary) placeholder:text-(--text-muted) text-sm outline-none transition-all ${
                       errors.confirmPassword
-                        ? 'border-red-500 focus:ring-2 focus:ring-red-500/20'
-                        : 'border-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
+                        ? 'border-red-500 focus:ring-1 focus:ring-red-500'
+                        : 'border-(--border) focus:border-(--brand) focus:ring-1 focus:ring-(--brand)'
                     }`}
                   />
                 </div>
@@ -466,19 +466,19 @@ export function RegisterForm() {
             </div>
 
             {/* CTA Button Component & Preview */}
-            <div className="mt-3 flex flex-col gap-2.5">
+            <div className="mt-2 flex flex-col gap-2.5">
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="w-full h-14 bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="w-full h-11 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-sm rounded-lg transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-(--brand) cursor-pointer shadow-sm"
               >
                 <span>Continue</span>
-                <ArrowRight size={20} />
+                <ArrowRight size={16} />
               </button>
 
-              <div className="text-center text-xs font-semibold text-slate-400 flex items-center justify-center gap-1.5">
-                <span className="text-slate-500">Next:</span>
-                <span className="text-slate-300">Choose Your Examination Programme</span>
+              <div className="text-center text-xs text-(--text-secondary) flex items-center justify-center gap-1.5">
+                <span className="text-(--text-muted)">Next:</span>
+                <span>Choose Your Examination Programme</span>
               </div>
             </div>
           </div>
@@ -486,24 +486,24 @@ export function RegisterForm() {
           /* STEP 2: CHOOSE YOUR PROGRAMME */
           <div className="flex flex-col gap-5">
             <div>
-              <p className="text-xs sm:text-sm text-slate-400 m-0 leading-relaxed">
+              <p className="text-xs sm:text-sm text-(--text-secondary) m-0 leading-relaxed">
                 Select your primary target examination. Diagnostic assessment and learning metrics
                 will be tailored to this programme.
               </p>
             </div>
 
             {/* Programme Options Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-h-95 overflow-y-auto pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-95 overflow-y-auto pr-1">
               {PROGRAMME_OPTIONS.map((prog) => {
                 const isSelected = selectedProgramme === prog.id;
                 return (
                   <div
                     key={prog.id}
                     onClick={() => setSelectedProgramme(prog.id)}
-                    className={`p-4 rounded-xl cursor-pointer transition-all border ${
+                    className={`p-3.5 rounded-lg cursor-pointer transition-all border ${
                       isSelected
-                        ? 'bg-blue-600/15 border-blue-500 shadow-lg shadow-blue-500/20 ring-1 ring-blue-500'
-                        : 'bg-slate-900/60 border-slate-800 hover:border-slate-700 hover:bg-slate-900'
+                        ? 'bg-(--brand)/10 border-(--brand) shadow-sm ring-1 ring-(--brand)'
+                        : 'bg-(--surface-1) border-(--border) hover:border-(--border-strong) hover:bg-(--surface-2)'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-2">
@@ -511,39 +511,39 @@ export function RegisterForm() {
                         <div
                           className={`p-1.5 rounded-lg ${
                             isSelected
-                              ? 'bg-blue-500/20 text-blue-400'
-                              : 'bg-slate-800 text-slate-400'
+                              ? 'bg-(--brand)/20 text-(--brand-light)'
+                              : 'bg-(--surface-2) text-(--text-secondary)'
                           }`}
                         >
                           {renderIcon(prog.icon)}
                         </div>
                         <span
-                          className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                             isSelected
-                              ? 'text-blue-400 bg-blue-500/20'
-                              : 'text-slate-400 bg-slate-800'
+                              ? 'text-(--brand-light) bg-(--brand)/20'
+                              : 'text-(--text-muted) bg-(--surface-2)'
                           }`}
                         >
                           {prog.badge}
                         </span>
                       </div>
-                      {isSelected && <CheckCircle2 size={18} className="text-blue-400 shrink-0" />}
+                      {isSelected && <CheckCircle2 size={16} className="text-(--brand-light) shrink-0" />}
                     </div>
 
-                    <h4 className="m-0 text-sm font-bold text-white tracking-tight">{prog.name}</h4>
-                    <p className="m-0 text-xs text-slate-400 mt-1">{prog.category}</p>
+                    <h4 className="m-0 text-sm font-bold text-(--text-primary) tracking-tight">{prog.name}</h4>
+                    <p className="m-0 text-xs text-(--text-secondary) mt-0.5">{prog.category}</p>
                   </div>
                 );
               })}
             </div>
 
-            <div className="flex gap-3 mt-3">
+            <div className="flex gap-3 mt-2">
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="flex-1 h-14 bg-slate-800/90 hover:bg-slate-800 text-slate-200 font-bold text-sm rounded-[14px] border border-slate-700/80 transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="flex-1 h-11 bg-(--surface-2) hover:bg-(--surface-1) text-(--text-primary) font-bold text-sm rounded-lg border border-(--border) transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-(--brand) cursor-pointer"
               >
-                <ArrowLeft size={18} />
+                <ArrowLeft size={16} />
                 <span>Back</span>
               </button>
 
@@ -551,16 +551,16 @@ export function RegisterForm() {
                 type="button"
                 disabled={isLoading || isSuccess}
                 onClick={handleCompleteRegistration}
-                className="flex-2 h-14 bg-linear-to-r from-blue-600 via-blue-500 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold text-sm sm:text-base rounded-[14px] transition-all shadow-lg shadow-blue-600/30 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                className="flex-2 h-11 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-sm rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-(--brand) cursor-pointer shadow-sm"
               >
                 <span>{isLoading ? 'Creating Account...' : 'Complete & Start Assessment'}</span>
-                <CheckCircle2 size={20} />
+                <CheckCircle2 size={18} />
               </button>
             </div>
           </div>
         )}
       </div>
-    </Card>
+    </div>
   );
 }
 

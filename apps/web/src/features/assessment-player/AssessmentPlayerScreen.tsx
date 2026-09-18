@@ -280,7 +280,7 @@ export function AssessmentPlayerScreen({
         const isFlagged = flagged.has(q.id);
 
         let bgClass = 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700';
-        if (isCurrent) bgClass = 'bg-sky-500 border-sky-400 text-slate-950 font-bold';
+        if (isCurrent) bgClass = 'bg-(--brand) border-(--brand-light) text-white font-bold shadow-sm';
         else if (isAnswered) bgClass = 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400';
         if (isFlagged && !isCurrent) bgClass = 'bg-amber-500/20 border-amber-500/40 text-amber-400';
 
@@ -305,29 +305,29 @@ export function AssessmentPlayerScreen({
 
   if (!sectionStarted) {
     return (
-      <div className="max-w-4xl mx-auto p-6 md:p-8 bg-slate-900 border border-slate-800 rounded-2xl text-white space-y-6">
-        <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+      <div className="max-w-4xl mx-auto p-6 md:p-8 bg-(--surface-0) border border-(--border) rounded-2xl text-white space-y-6">
+        <div className="flex justify-between items-center border-b border-(--border) pb-4">
           <div>
-            <span className="text-xs uppercase font-bold text-sky-400 tracking-wider">
+            <span className="text-xs uppercase font-bold text-(--brand-light) tracking-wider">
               {examType} Diagnostic • Section {currentSectionIdx + 1} of {sections.length}
             </span>
             <h1 className="text-xl md:text-2xl font-bold text-white mt-1">{currentSection.name}</h1>
           </div>
-          <div className="px-3 py-1 bg-slate-800 rounded-full text-xs font-semibold text-slate-300">
+          <div className="px-3 py-1 bg-(--surface-1) rounded-full text-xs font-semibold text-slate-300">
             ⏱ {currentSection.timeLimitMinutes} mins
           </div>
         </div>
 
-        <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 space-y-4">
-          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+        <div className="bg-(--surface-1) p-6 rounded-xl border border-(--border) space-y-4">
+          <h2 className="text-xs font-semibold text-(--text-muted) uppercase tracking-wide">
             Section Instructions
           </h2>
-          <p className="text-sm text-slate-300 leading-relaxed">{currentSection.instructions}</p>
+          <p className="text-sm text-(--text-secondary) leading-relaxed">{currentSection.instructions}</p>
         </div>
 
         <button
           onClick={() => setSectionStarted(true)}
-          className="w-full min-h-12 py-4 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl text-base transition-colors shadow-lg shadow-sky-500/20"
+          className="w-full min-h-12 py-4 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold rounded-xl text-base transition-colors shadow-lg shadow-blue-900/20"
         >
           Begin {currentSection.name} Section →
         </button>
@@ -343,7 +343,7 @@ export function AssessmentPlayerScreen({
           <h1 className="text-xs md:text-sm font-bold text-white truncate max-w-35 sm:max-w-none">
             {title}
           </h1>
-          <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
+          <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-(--brand-subtle) text-(--brand-light) border border-(--brand-border)">
             {currentSection.name}
           </span>
         </div>
@@ -352,7 +352,7 @@ export function AssessmentPlayerScreen({
           <div className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-400">
             {saveState === 'saving' && (
               <>
-                <RefreshCw size={12} className="animate-spin text-sky-400" />
+                <RefreshCw size={12} className="animate-spin text-(--brand-light)" />
                 <span>Saving...</span>
               </>
             )}
@@ -422,7 +422,7 @@ export function AssessmentPlayerScreen({
             {/* Passage Content (if present) */}
             {currentQuestion?.passageContent && (
               <div className="mb-5 bg-slate-950 p-4 rounded-xl border border-slate-800 max-h-56 overflow-y-auto">
-                <h4 className="text-xs font-bold text-sky-400 uppercase tracking-wide mb-2">
+                <h4 className="text-xs font-bold text-(--brand-light) uppercase tracking-wide mb-2">
                   📖 {currentQuestion.passageTitle || 'Reading Passage'}
                 </h4>
                 <p className="text-xs md:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
@@ -504,7 +504,7 @@ export function AssessmentPlayerScreen({
 
                 return (
                   <div className="space-y-3">
-                    <div className="text-xs font-semibold text-sky-400">
+                    <div className="text-xs font-semibold text-(--brand-light)">
                       ✏️ Type your answer below:
                     </div>
                     <div className="relative">
@@ -520,7 +520,7 @@ export function AssessmentPlayerScreen({
                         }
                         placeholder="Type your completion answer here..."
                         aria-label={`Answer for ${currentQuestion.code || 'question'}`}
-                        className="w-full bg-slate-950 border-2 border-slate-700 hover:border-slate-600 focus:border-sky-500 rounded-xl p-4 text-sm md:text-base text-white placeholder-slate-500 focus:outline-none transition-colors shadow-inner font-mono"
+                        className="w-full bg-slate-950 border-2 border-slate-700 hover:border-slate-600 focus:border-(--brand) rounded-xl p-4 text-sm md:text-base text-white placeholder-slate-500 focus:outline-none transition-colors shadow-inner font-mono"
                         autoComplete="off"
                         autoCapitalize="off"
                         spellCheck="false"
@@ -572,7 +572,7 @@ export function AssessmentPlayerScreen({
                           onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
                           className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
                             isSelected
-                              ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                              ? 'bg-(--brand-subtle) border-(--brand) text-white font-medium shadow-sm'
                               : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
                           }`}
                         >
@@ -582,7 +582,7 @@ export function AssessmentPlayerScreen({
                             </span>
                             <span>{opt.text}</span>
                           </span>
-                          {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                          {isSelected && <CheckCircle2 size={18} className="text-(--brand-light)" />}
                         </button>
                       );
                     })}
@@ -622,7 +622,7 @@ export function AssessmentPlayerScreen({
                           onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
                           className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
                             isSelected
-                              ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                              ? 'bg-(--brand-subtle) border-(--brand) text-white font-medium shadow-sm'
                               : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
                           }`}
                         >
@@ -632,7 +632,7 @@ export function AssessmentPlayerScreen({
                             </span>
                             <span>{opt.text}</span>
                           </span>
-                          {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                          {isSelected && <CheckCircle2 size={18} className="text-(--brand-light)" />}
                         </button>
                       );
                     })}
@@ -646,7 +646,7 @@ export function AssessmentPlayerScreen({
                 if (matchingOptions.length >= 2) {
                   return (
                     <div className="space-y-3">
-                      <div className="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-2">
+                      <div className="text-xs font-semibold text-(--brand-light) uppercase tracking-wider mb-2">
                         Select corresponding match:
                       </div>
                       {matchingOptions.map((opt) => {
@@ -658,7 +658,7 @@ export function AssessmentPlayerScreen({
                             onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
                             className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
                               isSelected
-                                ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                                ? 'bg-(--brand-subtle) border-(--brand) text-white font-medium shadow-sm'
                                 : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
                             }`}
                           >
@@ -668,7 +668,7 @@ export function AssessmentPlayerScreen({
                               </span>
                               <span>{opt.text}</span>
                             </span>
-                            {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                            {isSelected && <CheckCircle2 size={18} className="text-(--brand-light)" />}
                           </button>
                         );
                       })}
@@ -690,7 +690,7 @@ export function AssessmentPlayerScreen({
                           onClick={() => handleSelectOption(currentQuestion.id, opt.code)}
                           className={`w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between min-h-12 touch-target ${
                             isSelected
-                              ? 'bg-sky-500/10 border-sky-500 text-white font-medium shadow-sm'
+                              ? 'bg-(--brand-subtle) border-(--brand) text-white font-medium shadow-sm'
                               : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
                           }`}
                         >
@@ -700,7 +700,7 @@ export function AssessmentPlayerScreen({
                             </span>
                             <span>{opt.text}</span>
                           </span>
-                          {isSelected && <CheckCircle2 size={18} className="text-sky-400" />}
+                          {isSelected && <CheckCircle2 size={18} className="text-(--brand-light)" />}
                         </button>
                       );
                     })}
@@ -727,7 +727,7 @@ export function AssessmentPlayerScreen({
                       placeholder="Type your response here..."
                       inputMode="text"
                       enterKeyHint="enter"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-(--brand)"
                     />
                     <div className="text-right text-[11px] text-slate-400 font-mono">
                       Word Count:{' '}
@@ -773,7 +773,7 @@ export function AssessmentPlayerScreen({
                       })
                     }
                     placeholder="Type your answer here..."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-sky-500 font-mono"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs md:text-sm text-slate-200 focus:outline-none focus:border-(--brand) font-mono"
                   />
                 </div>
               );
@@ -794,7 +794,7 @@ export function AssessmentPlayerScreen({
             {currentQuestionIdx < currentQuestions.length - 1 ? (
               <button
                 onClick={() => setCurrentQuestionIdx((prev) => prev + 1)}
-                className="px-5 py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold rounded-xl transition-colors min-h-11 flex items-center space-x-2 shadow-md shadow-sky-500/20"
+                className="px-5 py-2.5 bg-(--brand) hover:bg-(--brand-hover) text-white text-xs font-bold rounded-xl transition-colors min-h-11 flex items-center space-x-2 shadow-md shadow-blue-900/20"
               >
                 <span>Next Question</span>
                 <ArrowRight size={16} />
@@ -824,7 +824,7 @@ export function AssessmentPlayerScreen({
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide">
               Overall Progress
             </h4>
-            <div className="font-mono text-sm font-bold text-sky-400 tracking-wider">
+            <div className="font-mono text-sm font-bold text-(--brand-light) tracking-wider">
               {renderVisualBlocks()}{' '}
               <span className="text-xs text-white">({progressPercent}%)</span>
             </div>
@@ -849,7 +849,7 @@ export function AssessmentPlayerScreen({
 
         <button
           onClick={() => setPaletteOpenMobile(true)}
-          className="px-3 py-2 bg-slate-950 border border-slate-800 text-sky-400 text-xs font-mono font-bold rounded-xl min-h-11 flex items-center space-x-1"
+          className="px-3 py-2 bg-(--surface-1) border border-(--border) text-(--brand-light) text-xs font-mono font-bold rounded-xl min-h-11 flex items-center space-x-1"
         >
           <span>
             Q{currentQuestionIdx + 1}/{currentQuestions.length}
@@ -860,7 +860,7 @@ export function AssessmentPlayerScreen({
         {currentQuestionIdx < currentQuestions.length - 1 ? (
           <button
             onClick={() => setCurrentQuestionIdx((prev) => prev + 1)}
-            className="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs font-bold rounded-xl min-h-11 flex items-center space-x-1 shadow-md shadow-sky-500/20"
+            className="px-5 py-2 bg-(--brand) hover:bg-(--brand-hover) text-white text-xs font-bold rounded-xl min-h-11 flex items-center space-x-1 shadow-md shadow-blue-900/20"
           >
             <span>Next</span>
             <ArrowRight size={16} />
@@ -886,7 +886,7 @@ export function AssessmentPlayerScreen({
           {renderQuestionMatrix()}
 
           <div className="pt-3 border-t border-slate-800 space-y-2">
-            <div className="text-xs font-mono text-sky-400 font-bold">
+            <div className="text-xs font-mono text-(--brand-light) font-bold">
               Progress: {renderVisualBlocks()} ({progressPercent}%)
             </div>
             <div className="flex justify-between text-xs text-slate-400 font-mono">

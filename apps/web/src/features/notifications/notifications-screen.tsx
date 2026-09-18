@@ -57,7 +57,7 @@ export function NotificationsScreen() {
 
   if (loading || !prefs) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
+      <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
         <h3>Loading student alert notifications...</h3>
       </div>
     );
@@ -78,8 +78,8 @@ export function NotificationsScreen() {
           }}
         >
           <div>
-            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Notification Inbox</h1>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>Notification Inbox</h1>
+            <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
               Audit assignment publications, mock result logs, and system announcements
             </p>
           </div>
@@ -103,11 +103,12 @@ export function NotificationsScreen() {
           <div
             style={{
               padding: '1rem',
-              backgroundColor: '#2563eb20',
-              border: '1px solid #2563eb40',
-              borderRadius: '8px',
-              color: '#60a5fa',
-              fontSize: '0.85rem',
+              backgroundColor: 'var(--brand-subtle)',
+              border: '1px solid var(--brand-border)',
+              borderRadius: 'var(--radius-md)',
+              color: 'var(--brand-light)',
+              fontSize: '0.875rem',
+              fontWeight: 600,
             }}
           >
             {banner}
@@ -128,7 +129,7 @@ export function NotificationsScreen() {
               <div
                 style={{
                   fontSize: '0.85rem',
-                  color: '#cbd5e1',
+                  color: 'var(--text-secondary)',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '0.5rem',
@@ -144,7 +145,7 @@ export function NotificationsScreen() {
                     marginTop: '0.5rem',
                   }}
                 >
-                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                     Logged: {new Date(notif.createdAt).toLocaleString()}
                   </span>
                   {!notif.read && (
@@ -166,13 +167,13 @@ export function NotificationsScreen() {
                   style={{
                     fontSize: '0.85rem',
                     fontWeight: 600,
-                    color: '#f8fafc',
+                    color: 'var(--text-primary)',
                     display: 'block',
                   }}
                 >
                   Email Summaries
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                   Receive alerts via email logs
                 </span>
               </div>
@@ -188,7 +189,7 @@ export function NotificationsScreen() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                borderTop: '1px solid #1e293b',
+                borderTop: '1px solid var(--border)',
                 paddingTop: '1rem',
               }}
             >
@@ -197,13 +198,13 @@ export function NotificationsScreen() {
                   style={{
                     fontSize: '0.85rem',
                     fontWeight: 600,
-                    color: '#f8fafc',
+                    color: 'var(--text-primary)',
                     display: 'block',
                   }}
                 >
                   Browser Push Alerts
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                   Receive instant notifications
                 </span>
               </div>
@@ -219,7 +220,7 @@ export function NotificationsScreen() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                borderTop: '1px solid #1e293b',
+                borderTop: '1px solid var(--border)',
                 paddingTop: '1rem',
               }}
             >
@@ -228,13 +229,13 @@ export function NotificationsScreen() {
                   style={{
                     fontSize: '0.85rem',
                     fontWeight: 600,
-                    color: '#f8fafc',
+                    color: 'var(--text-primary)',
                     display: 'block',
                   }}
                 >
                   Weekly Synthesis digest
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                   Receive readiness aggregates
                 </span>
               </div>

@@ -3,7 +3,7 @@
 import React from 'react';
 import { ProgrammeId } from '../models/programme-config';
 import { ProgrammeRegistry } from '../models/programme-registry';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 export interface DashboardLayoutProps {
   activeProgrammeId: ProgrammeId;
@@ -18,20 +18,27 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   onSelectProgramme,
   children,
 }) => {
+  const activeProg = ProgrammeRegistry.get(activeProgrammeId);
+  const today = new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.75rem',
+        gap: '1.5rem',
         width: '100%',
         maxWidth: '1280px',
         margin: '0 auto',
-        paddingBottom: '4rem',
+        paddingBottom: '2rem',
         boxSizing: 'border-box',
       }}
     >
-      {/* Top Academic Header Bar & Course Switcher */}
+      {/* ── Page Header ── */}
       <div
         style={{
           display: 'flex',
@@ -39,46 +46,43 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '1rem',
-          padding: '1rem 1.5rem',
-          borderRadius: '16px',
-          backgroundColor: 'rgba(17, 24, 39, 0.7)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          backdropFilter: 'blur(12px)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div
+        {/* Left: Page title */}
+        <div>
+          <h1
             style={{
-              padding: '0.5rem',
-              borderRadius: '10px',
-              backgroundColor: 'rgba(59, 130, 246, 0.15)',
-              color: '#60a5fa',
+              margin: 0,
+              fontSize: 'clamp(1.25rem, 3vw, 1.5rem)',
+              fontWeight: 800,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.03em',
             }}
           >
-            <Sparkles size={20} />
-          </div>
-          <div>
-            <div
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 700,
-                color: '#94a3b8',
-                textTransform: 'uppercase',
-              }}
-            >
-              Academic Workspace
-            </div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
-              Student Portal
-            </div>
-          </div>
+            My Dashboard
+          </h1>
+          <p
+            style={{
+              margin: '0.2rem 0 0',
+              fontSize: '0.8125rem',
+              color: 'var(--text-muted)',
+            }}
+          >
+            {today}
+          </p>
         </div>
 
-        {/* Programme Switcher Selector — Hidden if enrolled in 1 programme; enabled only for multiple enrolments */}
+        {/* Right: Programme switcher (only shown when enrolled in multiple) */}
         {programmeIds && programmeIds.length > 1 ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ fontSize: '0.85rem', color: '#cbd5e1', fontWeight: 600 }}>
-              Active Programme:
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span
+              style={{
+                fontSize: '0.8rem',
+                color: 'var(--text-muted)',
+                fontWeight: 500,
+              }}
+            >
+              Programme:
             </span>
             <div style={{ position: 'relative' }}>
               <select
@@ -86,64 +90,63 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 onChange={(e) => onSelectProgramme(e.target.value as ProgrammeId)}
                 style={{
                   appearance: 'none',
-                  backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                  color: '#f8fafc',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  borderRadius: '10px',
-                  padding: '0.5rem 2.25rem 0.5rem 1rem',
-                  fontSize: '0.875rem',
-                  fontWeight: 700,
+                  backgroundColor: 'var(--surface-1)',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border-strong)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '0.45rem 2.25rem 0.45rem 0.875rem',
+                  fontSize: '0.8125rem',
+                  fontWeight: 600,
                   cursor: 'pointer',
                   outline: 'none',
+                  fontFamily: 'var(--font-sans)',
+                  transition: 'border-color var(--transition-fast)',
                 }}
               >
                 {programmeIds.map((id) => {
                   const prog = ProgrammeRegistry.get(id);
                   return (
-                    <option
-                      key={id}
-                      value={id}
-                      style={{ backgroundColor: '#0f172a', color: '#f8fafc' }}
-                    >
+                    <option key={id} value={id} style={{ backgroundColor: 'var(--surface-1)' }}>
                       {prog.title}
                     </option>
                   );
                 })}
               </select>
               <ChevronDown
-                size={16}
-                color="#94a3b8"
+                size={14}
                 style={{
                   position: 'absolute',
                   right: '0.75rem',
                   top: '50%',
                   transform: 'translateY(-50%)',
                   pointerEvents: 'none',
+                  color: 'var(--text-muted)',
                 }}
               />
             </div>
           </div>
         ) : (
-          <div
+          /* Single programme: just show programme name badge */
+          <span
             style={{
-              fontSize: '0.85rem',
+              fontSize: '0.8rem',
               fontWeight: 600,
-              color: '#cbd5e1',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              padding: '0.4rem 0.85rem',
-              borderRadius: '8px',
+              color: 'var(--text-secondary)',
+              backgroundColor: 'var(--surface-1)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
+              padding: '0.35rem 0.75rem',
             }}
           >
-            Programme:{' '}
-            <strong style={{ color: '#3b82f6' }}>
-              {ProgrammeRegistry.get(activeProgrammeId)?.title || 'IELTS Academic Preparation'}
-            </strong>
-          </div>
+            {activeProg?.title ?? 'Programme'}
+          </span>
         )}
       </div>
 
-      {/* Main Composite Widgets Grid */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>{children}</div>
+      {/* ── Widget Grid ── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        {children}
+      </div>
     </div>
   );
 };
