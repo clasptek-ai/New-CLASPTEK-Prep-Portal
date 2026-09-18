@@ -41,31 +41,31 @@ export function ExamCard({
     >
       <div>
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] bg-[#EAF4FC] px-2.5 py-0.5 rounded-full border border-[#B9DDF8]">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] bg-bg-light-blue px-2.5 py-0.5 rounded-full border border-[#B9DDF8]">
             {category}
           </span>
-          <span className="text-[11px] font-semibold text-[#475569] bg-[#F8FAFC] border border-slate-200 px-2 py-0.5 rounded">
+          <span className="text-[11px] font-semibold text-[#475569] bg-bg-neutral border border-slate-200 px-2 py-0.5 rounded">
             {formatBadge}
           </span>
         </div>
 
-        <h3 className="text-lg font-bold text-[#050310] tracking-tight mb-2">{name}</h3>
+        <h3 className="text-lg font-bold text-deep-navy tracking-tight mb-2">{name}</h3>
 
         <p className="text-xs text-[#475569] leading-relaxed mb-4">{description}</p>
 
-        <div className="grid grid-cols-2 gap-2 bg-[#F8FAFC] p-3 rounded-lg border border-slate-200 mb-5">
+        <div className="grid grid-cols-2 gap-2 bg-bg-neutral p-3 rounded-lg border border-slate-200 mb-5">
           <div className="flex items-center gap-2">
             <FileText size={15} className="text-[#045EAD] shrink-0" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase text-[#475569] font-bold">Structure</span>
-              <span className="text-xs font-bold text-[#050310]">{sectionsLabel}</span>
+              <span className="text-xs font-bold text-deep-navy">{sectionsLabel}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Clock size={15} className="text-[#045EAD] shrink-0" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase text-[#475569] font-bold">Duration</span>
-              <span className="text-xs font-bold text-[#050310]">{durationMinutes} Mins</span>
+              <span className="text-xs font-bold text-deep-navy">{durationMinutes} Mins</span>
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@ export function ExamCard({
         <span className="text-[11px] text-[#475569] font-medium">Diagnostic Available</span>
         <Link
           href={ctaHref}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#045EAD] hover:text-[#034A8A] transition-colors no-underline group"
+          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#045EAD] hover:text-brand-hover transition-colors no-underline group"
         >
           <span>{ctaText}</span>
           <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />

@@ -94,22 +94,22 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-white text-[#050310] font-sans overflow-x-hidden">
+    <div className="w-full min-h-screen bg-white text-deep-navy font-sans overflow-x-hidden">
       {/* ── 1. Public Header ── */}
       <PublicHeader activePath="/" />
 
       <main>
         {/* ── 2. HERO SECTION ── */}
         <section className="w-full bg-white py-12 md:py-20 px-4 sm:px-8 border-b border-slate-200 relative overflow-hidden">
-          <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="max-w-360 mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Column: Copy & CTAs */}
             <div className="lg:col-span-7 flex flex-col items-start gap-5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] text-xs font-bold tracking-wide">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] text-xs font-bold tracking-wide">
                 <Shield size={14} className="text-[#045EAD]" />
                 ISO/IEC 23988 Diagnostic Protocol Active
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#050310] tracking-tight leading-[1.15]">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-deep-navy tracking-tight leading-[1.15]">
                 PREPARE WITH PURPOSE.
                 <br />
                 <span className="text-[#045EAD]">TEST WITH CONFIDENCE.</span>
@@ -122,15 +122,15 @@ export default function HomePage() {
 
               {/* Value prop pill strip */}
               <div className="flex flex-wrap gap-2 pt-1">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F8FAFC] border border-slate-200 text-[#050310] text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-bg-neutral border border-slate-200 text-deep-navy text-xs font-semibold">
                   <CheckCircle2 size={13} className="text-[#045EAD]" />
                   Official Rubric Scoring
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F8FAFC] border border-slate-200 text-[#050310] text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-bg-neutral border border-slate-200 text-deep-navy text-xs font-semibold">
                   <TrendingUp size={13} className="text-[#045EAD]" />
                   Instant Diagnostic Skill Gap
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F8FAFC] border border-slate-200 text-[#050310] text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-bg-neutral border border-slate-200 text-deep-navy text-xs font-semibold">
                   <Clock size={13} className="text-[#045EAD]" />
                   Proctored Timed Mocks
                 </span>
@@ -141,7 +141,7 @@ export default function HomePage() {
                 <div className="flex flex-col gap-1.5 w-full sm:w-auto">
                   <Link
                     href="/register"
-                    className="h-11 px-6 rounded-lg bg-[#045EAD] hover:bg-[#034A8A] text-white text-sm font-bold inline-flex items-center justify-center gap-2 shadow-sm transition-all no-underline"
+                    className="h-11 px-6 rounded-lg bg-[#045EAD] hover:bg-brand-hover text-white text-sm font-bold inline-flex items-center justify-center gap-2 shadow-sm transition-all no-underline"
                   >
                     <span>TAKE A PRE-ASSESSMENT</span>
                     <ArrowRight size={16} />
@@ -153,7 +153,7 @@ export default function HomePage() {
 
                 <Link
                   href="/examinations"
-                  className="h-11 px-6 rounded-lg border border-slate-300 hover:bg-[#F8FAFC] text-[#050310] text-sm font-bold inline-flex items-center justify-center gap-2 transition-colors no-underline w-full sm:w-auto"
+                  className="h-11 px-6 rounded-lg border border-slate-300 hover:bg-bg-neutral text-deep-navy text-sm font-bold inline-flex items-center justify-center gap-2 transition-colors no-underline w-full sm:w-auto"
                 >
                   <BookOpen size={16} />
                   <span>EXPLORE MOCK EXAMS</span>
@@ -167,11 +167,11 @@ export default function HomePage() {
                 <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#045EAD]" />
 
                 {/* Card Top Bar */}
-                <div className="flex items-center justify-between bg-[#F8FAFC] p-3 rounded-lg border border-slate-200">
+                <div className="flex items-center justify-between bg-bg-neutral p-3 rounded-lg border border-slate-200">
                   <div className="flex items-center gap-2">
                     <Shield size={18} className="text-[#045EAD]" />
                     <div>
-                      <div className="text-[11px] uppercase tracking-wider font-bold text-[#050310]">
+                      <div className="text-[11px] uppercase tracking-wider font-bold text-deep-navy">
                         Diagnostic Baseline
                       </div>
                       <div className="text-[10px] text-[#475569] font-mono font-medium">
@@ -179,13 +179,13 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-                  <span className="text-[11px] font-bold text-[#045EAD] bg-[#EAF4FC] border border-[#B9DDF8] px-2.5 py-0.5 rounded">
+                  <span className="text-[11px] font-bold text-[#045EAD] bg-bg-light-blue border border-[#B9DDF8] px-2.5 py-0.5 rounded">
                     IELTS Academic
                   </span>
                 </div>
 
                 {/* Score Showcase */}
-                <div className="grid grid-cols-3 gap-3 items-center bg-[#EAF4FC] border border-[#B9DDF8] p-4 rounded-xl">
+                <div className="grid grid-cols-3 gap-3 items-center bg-bg-light-blue border border-[#B9DDF8] p-4 rounded-xl">
                   <div className="col-span-1 flex flex-col">
                     <span className="text-[11px] text-[#475569] uppercase font-bold">
                       Overall Band
@@ -195,7 +195,7 @@ export default function HomePage() {
                   </div>
 
                   <div className="col-span-2 flex flex-col gap-1.5">
-                    <div className="flex justify-between text-xs font-bold text-[#050310]">
+                    <div className="flex justify-between text-xs font-bold text-deep-navy">
                       <span>Readiness Index</span>
                       <span className="text-[#045EAD]">83% Calibrated</span>
                     </div>
@@ -209,8 +209,8 @@ export default function HomePage() {
                 </div>
 
                 {/* Sub-Score Differential Map */}
-                <div className="bg-[#F8FAFC] p-3 rounded-lg border border-slate-200 flex flex-col gap-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-[#050310]">
+                <div className="bg-bg-neutral p-3 rounded-lg border border-slate-200 flex flex-col gap-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-deep-navy">
                     <span>Skill Calibration Matrix</span>
                     <span className="text-[11px] font-semibold text-[#475569]">4 Skills Measured</span>
                   </div>
@@ -218,19 +218,19 @@ export default function HomePage() {
                   <div className="grid grid-cols-4 gap-2 pt-1 text-center">
                     <div className="bg-white p-2 rounded border border-slate-200">
                       <span className="text-[10px] text-[#475569] font-bold block uppercase">Listening</span>
-                      <span className="text-sm font-bold text-[#050310]">7.5</span>
+                      <span className="text-sm font-bold text-deep-navy">7.5</span>
                     </div>
                     <div className="bg-white p-2 rounded border border-slate-200">
                       <span className="text-[10px] text-[#475569] font-bold block uppercase">Reading</span>
-                      <span className="text-sm font-bold text-[#050310]">7.0</span>
+                      <span className="text-sm font-bold text-deep-navy">7.0</span>
                     </div>
                     <div className="bg-white p-2 rounded border border-slate-200">
                       <span className="text-[10px] text-[#475569] font-bold block uppercase">Writing</span>
-                      <span className="text-sm font-bold text-[#050310]">6.5</span>
+                      <span className="text-sm font-bold text-deep-navy">6.5</span>
                     </div>
                     <div className="bg-white p-2 rounded border border-slate-200">
                       <span className="text-[10px] text-[#475569] font-bold block uppercase">Speaking</span>
-                      <span className="text-sm font-bold text-[#050310]">7.0</span>
+                      <span className="text-sm font-bold text-deep-navy">7.0</span>
                     </div>
                   </div>
                 </div>
@@ -244,14 +244,14 @@ export default function HomePage() {
         </section>
 
         {/* ── 3. CHOOSE YOUR EXAM SECTION ── */}
-        <section id="examinations" className="w-full bg-[#F8FAFC] py-16 px-4 sm:px-8 border-b border-slate-200">
-          <div className="max-w-[1440px] mx-auto flex flex-col gap-10">
+        <section id="examinations" className="w-full bg-bg-neutral py-16 px-4 sm:px-8 border-b border-slate-200">
+          <div className="max-w-360 mx-auto flex flex-col gap-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="flex flex-col gap-2">
                 <span className="text-xs uppercase font-bold tracking-wider text-[#045EAD]">
                   Standardized Testing Tracks
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-bold text-[#050310] tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-bold text-deep-navy tracking-tight">
                   CHOOSE YOUR EXAM
                 </h2>
                 <p className="text-sm text-[#475569] max-w-2xl">
@@ -279,14 +279,14 @@ export default function HomePage() {
 
         {/* ── 4. PRE-ASSESSMENT SECTION ── */}
         <section id="pre-assessment" className="w-full bg-white py-16 px-4 sm:px-8 border-b border-slate-200">
-          <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="max-w-360 mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 flex flex-col gap-5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] text-xs font-bold">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] text-xs font-bold">
                 <Compass size={14} />
                 Baseline Diagnostic Engine
               </div>
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#050310] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-deep-navy tracking-tight">
                 KNOW WHERE YOU STAND BEFORE YOU START.
               </h2>
 
@@ -301,7 +301,7 @@ export default function HomePage() {
                     1
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-[#050310]">Take the Assessment</h3>
+                    <h3 className="text-sm font-bold text-deep-navy">Take the Assessment</h3>
                     <p className="text-xs text-[#475569] mt-0.5">
                       A focused, server-timed diagnostic testing core grammar, comprehension, synthesis, and fluency.
                     </p>
@@ -313,7 +313,7 @@ export default function HomePage() {
                     2
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-[#050310]">Understand Your Result</h3>
+                    <h3 className="text-sm font-bold text-deep-navy">Understand Your Result</h3>
                     <p className="text-xs text-[#475569] mt-0.5">
                       Receive an instant CEFR-benchmarked sub-score breakdown with identified focus areas.
                     </p>
@@ -325,7 +325,7 @@ export default function HomePage() {
                     3
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-[#050310]">Prepare Strategically</h3>
+                    <h3 className="text-sm font-bold text-deep-navy">Prepare Strategically</h3>
                     <p className="text-xs text-[#475569] mt-0.5">
                       Target weak sub-skills rather than re-practising mastered topics. Maximize score acceleration.
                     </p>
@@ -336,7 +336,7 @@ export default function HomePage() {
               <div className="pt-2">
                 <Link
                   href="/register"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#045EAD] hover:bg-[#034A8A] text-white text-xs font-bold shadow-sm transition-all no-underline"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold shadow-sm transition-all no-underline"
                 >
                   <span>START PRE-ASSESSMENT</span>
                   <ArrowRight size={15} />
@@ -347,46 +347,46 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="lg:col-span-6 bg-[#F8FAFC] border border-slate-200 rounded-2xl p-6 sm:p-8">
-              <h3 className="text-base font-bold text-[#050310] mb-4">
+            <div className="lg:col-span-6 bg-bg-neutral border border-slate-200 rounded-2xl p-6 sm:p-8">
+              <h3 className="text-base font-bold text-deep-navy mb-4">
                 What the Diagnostic Measures
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-white p-4 rounded-xl border border-slate-200">
-                  <div className="w-8 h-8 rounded-lg bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] flex items-center justify-center mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] flex items-center justify-center mb-2">
                     <Headphones size={18} />
                   </div>
-                  <h4 className="text-xs font-bold text-[#050310]">Listening &amp; Retention</h4>
+                  <h4 className="text-xs font-bold text-deep-navy">Listening &amp; Retention</h4>
                   <p className="text-[11px] text-[#475569] mt-1 leading-relaxed">
                     Multi-speaker discourse comprehension, signpost navigation, and numerical detail capture.
                   </p>
                 </div>
 
                 <div className="bg-white p-4 rounded-xl border border-slate-200">
-                  <div className="w-8 h-8 rounded-lg bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] flex items-center justify-center mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] flex items-center justify-center mb-2">
                     <FileText size={18} />
                   </div>
-                  <h4 className="text-xs font-bold text-[#050310]">Reading Synthesis</h4>
+                  <h4 className="text-xs font-bold text-deep-navy">Reading Synthesis</h4>
                   <p className="text-[11px] text-[#475569] mt-1 leading-relaxed">
                     Skimming for gist, scanning for specific information, inference, and argument identification.
                   </p>
                 </div>
 
                 <div className="bg-white p-4 rounded-xl border border-slate-200">
-                  <div className="w-8 h-8 rounded-lg bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] flex items-center justify-center mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] flex items-center justify-center mb-2">
                     <PenTool size={18} />
                   </div>
-                  <h4 className="text-xs font-bold text-[#050310]">Written Cohesion</h4>
+                  <h4 className="text-xs font-bold text-deep-navy">Written Cohesion</h4>
                   <p className="text-[11px] text-[#475569] mt-1 leading-relaxed">
                     Task response, grammatical range, lexical resource, and cohesive paragraph structure.
                   </p>
                 </div>
 
                 <div className="bg-white p-4 rounded-xl border border-slate-200">
-                  <div className="w-8 h-8 rounded-lg bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] flex items-center justify-center mb-2">
+                  <div className="w-8 h-8 rounded-lg bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] flex items-center justify-center mb-2">
                     <Mic size={18} />
                   </div>
-                  <h4 className="text-xs font-bold text-[#050310]">Spoken Fluency</h4>
+                  <h4 className="text-xs font-bold text-deep-navy">Spoken Fluency</h4>
                   <p className="text-[11px] text-[#475569] mt-1 leading-relaxed">
                     Pronunciation, discourse markers, hesitation recovery, and topic elaboration.
                   </p>
@@ -397,13 +397,13 @@ export default function HomePage() {
         </section>
 
         {/* ── 5. MOCK EXAMINATION SECTION ── */}
-        <section id="mock-exams" className="w-full bg-[#F8FAFC] py-16 px-4 sm:px-8 border-b border-slate-200">
-          <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+        <section id="mock-exams" className="w-full bg-bg-neutral py-16 px-4 sm:px-8 border-b border-slate-200">
+          <div className="max-w-360 mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="max-w-2xl flex flex-col gap-3">
               <span className="text-xs uppercase font-bold tracking-wider text-[#045EAD]">
                 Authentic Test Simulation
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#050310] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-deep-navy tracking-tight">
                 EXPERIENCE THE TEST BEFORE THE TEST.
               </h2>
               <p className="text-sm text-[#475569] leading-relaxed">
@@ -415,7 +415,7 @@ export default function HomePage() {
 
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#050310] hover:bg-[#151D2E] text-white text-xs font-bold shadow transition-all no-underline shrink-0"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-deep-navy hover:bg-[#151D2E] text-white text-xs font-bold shadow transition-all no-underline shrink-0"
             >
               <span>VIEW MOCK EXAMS</span>
               <ArrowRight size={15} />
@@ -425,21 +425,21 @@ export default function HomePage() {
 
         {/* ── 6. HOW IT WORKS ── */}
         <section className="w-full bg-white py-16 px-4 sm:px-8 border-b border-slate-200">
-          <div className="max-w-[1440px] mx-auto flex flex-col gap-10">
+          <div className="max-w-360 mx-auto flex flex-col gap-10">
             <div className="text-center max-w-xl mx-auto flex flex-col gap-2">
               <span className="text-xs uppercase font-bold tracking-wider text-[#045EAD]">
                 Methodology
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#050310]">HOW IT WORKS</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-deep-navy">HOW IT WORKS</h2>
               <p className="text-sm text-[#475569]">
                 A disciplined four-phase progression engineered for score acceleration.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="p-6 rounded-xl border border-slate-200 bg-[#F8FAFC] flex flex-col gap-3">
+              <div className="p-6 rounded-xl border border-slate-200 bg-bg-neutral flex flex-col gap-3">
                 <span className="text-2xl font-black text-[#045EAD]">01</span>
-                <h3 className="text-sm font-bold text-[#050310] uppercase tracking-wide">
+                <h3 className="text-sm font-bold text-deep-navy uppercase tracking-wide">
                   SELECT YOUR EXAM
                 </h3>
                 <p className="text-xs text-[#475569] leading-relaxed">
@@ -447,9 +447,9 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl border border-slate-200 bg-[#F8FAFC] flex flex-col gap-3">
+              <div className="p-6 rounded-xl border border-slate-200 bg-bg-neutral flex flex-col gap-3">
                 <span className="text-2xl font-black text-[#045EAD]">02</span>
-                <h3 className="text-sm font-bold text-[#050310] uppercase tracking-wide">
+                <h3 className="text-sm font-bold text-deep-navy uppercase tracking-wide">
                   ASSESS YOUR LEVEL
                 </h3>
                 <p className="text-xs text-[#475569] leading-relaxed">
@@ -457,9 +457,9 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl border border-slate-200 bg-[#F8FAFC] flex flex-col gap-3">
+              <div className="p-6 rounded-xl border border-slate-200 bg-bg-neutral flex flex-col gap-3">
                 <span className="text-2xl font-black text-[#045EAD]">03</span>
-                <h3 className="text-sm font-bold text-[#050310] uppercase tracking-wide">
+                <h3 className="text-sm font-bold text-deep-navy uppercase tracking-wide">
                   PRACTISE &amp; TEST
                 </h3>
                 <p className="text-xs text-[#475569] leading-relaxed">
@@ -467,9 +467,9 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="p-6 rounded-xl border border-slate-200 bg-[#F8FAFC] flex flex-col gap-3">
+              <div className="p-6 rounded-xl border border-slate-200 bg-bg-neutral flex flex-col gap-3">
                 <span className="text-2xl font-black text-[#045EAD]">04</span>
-                <h3 className="text-sm font-bold text-[#050310] uppercase tracking-wide">
+                <h3 className="text-sm font-bold text-deep-navy uppercase tracking-wide">
                   TRACK YOUR PROGRESS
                 </h3>
                 <p className="text-xs text-[#475569] leading-relaxed">
@@ -481,13 +481,13 @@ export default function HomePage() {
         </section>
 
         {/* ── 7. ILLUSTRATIVE RESULTS VISUALIZATION ── */}
-        <section id="results-demo" className="w-full bg-[#F8FAFC] py-16 px-4 sm:px-8 border-b border-slate-200">
-          <div className="max-w-[1440px] mx-auto flex flex-col gap-8">
+        <section id="results-demo" className="w-full bg-bg-neutral py-16 px-4 sm:px-8 border-b border-slate-200">
+          <div className="max-w-360 mx-auto flex flex-col gap-8">
             <div className="text-center max-w-2xl mx-auto flex flex-col gap-2">
               <span className="text-xs uppercase font-bold tracking-wider text-[#045EAD]">
                 Authoritative Analytics
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#050310]">
+              <h2 className="text-2xl sm:text-3xl font-bold text-deep-navy">
                 COMPREHENSIVE PERFORMANCE DESCRIPTORS
               </h2>
               <p className="text-sm text-[#475569]">
@@ -502,18 +502,18 @@ export default function HomePage() {
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#475569] block">
                     Illustrative Result UI Showcase
                   </span>
-                  <h3 className="text-lg font-bold text-[#050310]">
+                  <h3 className="text-lg font-bold text-deep-navy">
                     Candidate Evaluation Snapshot
                   </h3>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] text-xs font-bold">
+                <span className="px-3 py-1 rounded-full bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] text-xs font-bold">
                   IELTS Academic (Example Only)
                 </span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
                 {/* Radial gauge & overall */}
-                <div className="md:col-span-5 flex flex-col items-center text-center p-6 bg-[#F8FAFC] rounded-xl border border-slate-200">
+                <div className="md:col-span-5 flex flex-col items-center text-center p-6 bg-bg-neutral rounded-xl border border-slate-200">
                   <div className="relative w-32 h-32 flex items-center justify-center mb-3">
                     <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                       <circle
@@ -537,13 +537,13 @@ export default function HomePage() {
                       />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-3xl font-extrabold text-[#050310] leading-none">7.5</span>
+                      <span className="text-3xl font-extrabold text-deep-navy leading-none">7.5</span>
                       <span className="text-[10px] text-[#475569] font-bold uppercase mt-0.5">
                         Band
                       </span>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-[#050310]">Overall Band Score</span>
+                  <span className="text-xs font-bold text-deep-navy">Overall Band Score</span>
                   <span className="text-[11px] text-[#045EAD] font-bold mt-0.5">
                     CEFR C1 Proficiency Equivalent
                   </span>
@@ -552,7 +552,7 @@ export default function HomePage() {
                 {/* Granular 4-Skill Bars */}
                 <div className="md:col-span-7 flex flex-col gap-4">
                   <div>
-                    <div className="flex justify-between text-xs font-bold text-[#050310] mb-1">
+                    <div className="flex justify-between text-xs font-bold text-deep-navy mb-1">
                       <span>Listening</span>
                       <span>7.5 Band (Raw 34/40)</span>
                     </div>
@@ -562,7 +562,7 @@ export default function HomePage() {
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-xs font-bold text-[#050310] mb-1">
+                    <div className="flex justify-between text-xs font-bold text-deep-navy mb-1">
                       <span>Reading</span>
                       <span>7.0 Band (Raw 31/40)</span>
                     </div>
@@ -572,7 +572,7 @@ export default function HomePage() {
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-xs font-bold text-[#050310] mb-1">
+                    <div className="flex justify-between text-xs font-bold text-deep-navy mb-1">
                       <span>Writing</span>
                       <span>6.5 Band (Cohesion Focus)</span>
                     </div>
@@ -582,7 +582,7 @@ export default function HomePage() {
                   </div>
 
                   <div>
-                    <div className="flex justify-between text-xs font-bold text-[#050310] mb-1">
+                    <div className="flex justify-between text-xs font-bold text-deep-navy mb-1">
                       <span>Speaking</span>
                       <span>7.0 Band (Fluency Verified)</span>
                     </div>
@@ -603,11 +603,11 @@ export default function HomePage() {
 
         {/* ── 8. FINAL CTA BANNER ── */}
         <section className="w-full bg-white py-16 px-4 sm:px-8">
-          <div className="max-w-[1000px] mx-auto bg-[#EAF4FC] border border-[#B9DDF8] rounded-2xl p-8 sm:p-12 text-center flex flex-col items-center gap-4 shadow-sm">
+          <div className="max-w-250 mx-auto bg-bg-light-blue border border-[#B9DDF8] rounded-2xl p-8 sm:p-12 text-center flex flex-col items-center gap-4 shadow-sm">
             <span className="text-xs uppercase font-bold tracking-wider text-[#045EAD]">
               Start Your Preparation Today
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#050310] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-deep-navy tracking-tight">
               READY TO KNOW WHERE YOU STAND?
             </h2>
             <p className="text-sm text-[#475569] max-w-lg leading-relaxed">
@@ -618,14 +618,14 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row items-center gap-3 mt-4">
               <Link
                 href="/register"
-                className="h-11 px-8 rounded-lg bg-[#045EAD] hover:bg-[#034A8A] text-white text-xs font-bold inline-flex items-center justify-center gap-2 shadow-sm transition-all no-underline"
+                className="h-11 px-8 rounded-lg bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold inline-flex items-center justify-center gap-2 shadow-sm transition-all no-underline"
               >
                 <span>TAKE PRE-ASSESSMENT</span>
                 <ArrowRight size={15} />
               </Link>
               <Link
                 href="/login"
-                className="h-11 px-8 rounded-lg border border-slate-300 hover:bg-white text-[#050310] text-xs font-bold inline-flex items-center justify-center transition-colors no-underline"
+                className="h-11 px-8 rounded-lg border border-slate-300 hover:bg-white text-deep-navy text-xs font-bold inline-flex items-center justify-center transition-colors no-underline"
               >
                 SIGN IN
               </Link>

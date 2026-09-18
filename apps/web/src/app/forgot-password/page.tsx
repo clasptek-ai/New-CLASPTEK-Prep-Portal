@@ -59,7 +59,7 @@ export default function ForgotPasswordPage() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="recovery-email" className="block text-xs font-bold text-[#050310] mb-1.5">
+          <label htmlFor="recovery-email" className="block text-xs font-bold text-deep-navy mb-1.5">
             Email Address
           </label>
           <div className="relative">
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
               required
               autoComplete="email"
               placeholder="name@example.com"
-              className="w-full pl-10 pr-4 h-11 rounded-lg border border-slate-300 bg-white text-[#050310] text-sm focus:outline-none focus:ring-2 focus:ring-[#045EAD] focus:border-[#045EAD] transition-all placeholder:text-[#64748B]"
+              className="w-full pl-10 pr-4 h-11 rounded-lg border border-slate-300 bg-white text-deep-navy text-sm focus:outline-none focus:ring-2 focus:ring-[#045EAD] focus:border-[#045EAD] transition-all placeholder:text-[#64748B]"
             />
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
         <button
           type="submit"
           disabled={loading || success}
-          className="w-full h-11 bg-[#045EAD] hover:bg-[#034A8A] text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#045EAD] cursor-pointer shadow-sm mt-2"
+          className="w-full h-11 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#045EAD] cursor-pointer shadow-sm mt-2"
         >
           <span>{loading ? 'SENDING RECOVERY LINK...' : 'SEND RECOVERY LINK'}</span>
           <ArrowRight size={14} />
@@ -94,7 +94,7 @@ export default function ForgotPasswordPage() {
         Remembered your credentials?{' '}
         <Link
           href="/login"
-          className="text-[#045EAD] hover:text-[#034A8A] font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
+          className="text-[#045EAD] hover:text-brand-hover font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
         >
           <span>SIGN IN</span>
           <span>→</span>

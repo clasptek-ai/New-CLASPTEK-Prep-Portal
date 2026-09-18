@@ -42,7 +42,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
           <div className="flex flex-col">
             {/* Programme badge */}
             <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD]">
+              <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD]">
                 {config.badge || config.title}
               </span>
               <span className="text-[11px] text-[#475569] font-medium">• Official Candidate Session</span>
@@ -52,7 +52,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
             {isLoading ? (
               <Skeleton width="240px" height="2rem" />
             ) : (
-              <h1 className="text-xl sm:text-2xl font-extrabold text-[#050310] tracking-tight m-0">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-deep-navy tracking-tight m-0">
                 WELCOME BACK, {firstName.toUpperCase()}
               </h1>
             )}
@@ -84,7 +84,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
               size="md"
               onClick={onResumeLearning}
               leftIcon={<Play size={14} fill="white" />}
-              className="bg-[#045EAD] hover:bg-[#034A8A] text-white text-xs font-bold shadow-sm"
+              className="bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold shadow-sm"
             >
               Continue Learning
             </Button>
@@ -94,12 +94,12 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
 
       {/* ── Bottom row: Key metrics strip ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-6 relative z-10">
-        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+        <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
           <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
             Current Baseline
           </span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-xl font-extrabold text-[#050310] tabular-nums">
+            <span className="text-xl font-extrabold text-deep-navy tabular-nums">
               {config.targetMetric.current}
             </span>
             <span className="text-xs text-[#475569] font-bold">{config.targetMetric.unit}</span>
@@ -107,7 +107,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
           <span className="text-[11px] text-[#64748B] font-medium mt-0.5">Calibrated Diagnostic</span>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+        <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
           <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
             Target Goal
           </span>
@@ -120,7 +120,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
           <span className="text-[11px] text-[#64748B] font-medium mt-0.5">{config.targetMetric.description}</span>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+        <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
           <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
             Diagnostic Status
           </span>

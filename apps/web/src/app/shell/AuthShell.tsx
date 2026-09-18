@@ -37,9 +37,9 @@ const BRAND_FEATURES = [
 
 export function AuthShell({ title, subtitle, maxWidth, children }: AuthShellProps) {
   return (
-    <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#F8FAFC] text-[#050310] font-sans">
+    <div className="min-h-screen w-full flex flex-col md:flex-row bg-bg-neutral text-deep-navy font-sans">
       {/* ── LEFT BRAND PANEL (Desktop only) ── */}
-      <div className="hidden md:flex flex-col justify-between p-8 lg:p-12 w-[440px] shrink-0 bg-[#050310] text-white min-h-screen border-r border-slate-800">
+      <div className="hidden md:flex flex-col justify-between p-8 lg:p-12 w-110 shrink-0 bg-deep-navy text-white min-h-screen border-r border-slate-800">
         {/* Logo */}
         <div>
           <LogoBadge size="md" href="/" ariaLabel="Go to Clasptek homepage" />
@@ -48,13 +48,13 @@ export function AuthShell({ title, subtitle, maxWidth, children }: AuthShellProp
         {/* Centre brand statement */}
         <div className="flex flex-col gap-8 my-auto py-8">
           <div className="flex flex-col gap-3">
-            <span className="text-xs uppercase font-bold tracking-widest text-[#EAF4FC]">
+            <span className="text-xs uppercase font-bold tracking-widest text-bg-light-blue">
               Clasptek Prep Portal
             </span>
             <h2 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-snug">
               Prepare with purpose.
               <br />
-              <span className="text-[#EAF4FC]">Test with confidence.</span>
+              <span className="text-bg-light-blue">Test with confidence.</span>
             </h2>
             <p className="text-xs lg:text-sm text-slate-200 leading-relaxed max-w-xs">
               Calibrated diagnostic assessments, authentic adaptive simulations, and dual-rubric scoring
@@ -68,7 +68,7 @@ export function AuthShell({ title, subtitle, maxWidth, children }: AuthShellProp
               const Icon = feature.icon;
               return (
                 <div key={feature.title} className="flex items-start gap-3">
-                  <div className="w-8 h-8 shrink-0 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-[#EAF4FC] mt-0.5">
+                  <div className="w-8 h-8 shrink-0 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-bg-light-blue mt-0.5">
                     <Icon size={16} />
                   </div>
                   <div className="flex flex-col">
@@ -104,7 +104,7 @@ export function AuthShell({ title, subtitle, maxWidth, children }: AuthShellProp
         >
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-xl sm:text-2xl font-extrabold text-[#050310] tracking-tight m-0">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-deep-navy tracking-tight m-0">
               {title}
             </h1>
             {subtitle && (

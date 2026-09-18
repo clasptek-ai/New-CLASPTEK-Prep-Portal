@@ -34,12 +34,12 @@ export function StudentHeader({
   return (
     <header className="sticky top-0 w-full z-40 bg-white border-b border-slate-200 shadow-sm">
       {/* ── Top Row: Brand, Exam Indicator, Status, User Menu ── */}
-      <div className="h-16 max-w-[1440px] mx-auto px-4 sm:px-8 flex items-center justify-between gap-4">
+      <div className="h-16 max-w-360 mx-auto px-4 sm:px-8 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Link href="/dashboard" className="flex items-center gap-2.5 no-underline">
             <LogoBadge size="sm" />
             <div className="flex flex-col">
-              <span className="text-base font-bold text-[#050310] tracking-tight leading-none">
+              <span className="text-base font-bold text-deep-navy tracking-tight leading-none">
                 Clasptek Portal
               </span>
               <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569] mt-0.5">
@@ -50,7 +50,7 @@ export function StudentHeader({
 
           <div className="h-5 w-px bg-slate-200 mx-1 hidden md:block" />
 
-          <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] text-xs font-bold">
+          <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] text-xs font-bold">
             <span className="w-2 h-2 rounded-full bg-[#045EAD] animate-pulse" />
             <span>{activeProgrammeName} Active</span>
           </div>
@@ -59,11 +59,11 @@ export function StudentHeader({
         <div className="flex items-center gap-3">
           {/* User badge */}
           <div className="flex items-center gap-2.5 pl-2">
-            <div className="w-8 h-8 rounded-full bg-[#EAF4FC] border border-[#B9DDF8] flex items-center justify-center text-[#045EAD] font-bold text-xs uppercase">
+            <div className="w-8 h-8 rounded-full bg-bg-light-blue border border-[#B9DDF8] flex items-center justify-center text-[#045EAD] font-bold text-xs uppercase">
               {studentName.slice(0, 2)}
             </div>
             <div className="hidden sm:flex flex-col text-left">
-              <span className="text-xs font-bold text-[#050310] capitalize">{studentName}</span>
+              <span className="text-xs font-bold text-deep-navy capitalize">{studentName}</span>
               <span className="text-[10px] text-[#475569] font-mono font-medium">Candidate ID: Verified</span>
             </div>
           </div>
@@ -83,7 +83,7 @@ export function StudentHeader({
       </div>
 
       {/* ── Bottom Row: Clean Horizontal Navigation Tabs ── */}
-      <div className="h-11 max-w-[1440px] mx-auto px-4 sm:px-8 flex items-center gap-6 overflow-x-auto no-scrollbar border-t border-slate-100">
+      <div className="h-11 max-w-360 mx-auto px-4 sm:px-8 flex items-center gap-6 overflow-x-auto no-scrollbar border-t border-slate-100">
         {navTabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -93,7 +93,7 @@ export function StudentHeader({
               className={`h-full inline-flex items-center text-xs font-bold tracking-wide whitespace-nowrap transition-colors no-underline border-b-2 ${
                 isActive
                   ? 'text-[#045EAD] border-[#045EAD]'
-                  : 'text-[#475569] hover:text-[#050310] border-transparent'
+                  : 'text-[#475569] hover:text-deep-navy border-transparent'
               }`}
             >
               {tab.label}

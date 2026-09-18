@@ -194,7 +194,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl sm:text-2xl font-bold text-[#050310] tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-deep-navy tracking-tight">
               {isNoProgramme
                 ? 'No Active Programme Found'
                 : isNoDiagnostic
@@ -209,14 +209,14 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
           <div className="pt-2 flex flex-col sm:flex-row justify-center gap-3">
             <button
               onClick={loadCurrentAssessment}
-              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#050310] text-xs font-bold rounded-lg flex items-center justify-center gap-2 border border-slate-300 transition-colors"
+              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-deep-navy text-xs font-bold rounded-lg flex items-center justify-center gap-2 border border-slate-300 transition-colors"
             >
               <RefreshCw size={15} />
               <span>Retry Resolution</span>
             </button>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-5 py-2.5 bg-[#045EAD] hover:bg-[#034A8A] text-white text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm"
+              className="px-5 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm"
             >
               <span>Go to Dashboard</span>
               <ArrowRight size={15} />
@@ -228,19 +228,19 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 p-4 sm:p-6 font-sans text-[#050310]">
+    <div className="max-w-4xl mx-auto space-y-6 p-4 sm:p-6 font-sans text-deep-navy">
       {/* ── 1. Page Header & Session Context ── */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200">
         <div className="space-y-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] text-[11px] font-bold uppercase tracking-wider">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] text-[11px] font-bold uppercase tracking-wider">
               <span className="w-1.5 h-1.5 rounded-full bg-[#045EAD] animate-pulse" />
               Standardized Diagnostic Tier
             </span>
             <span className="text-xs text-slate-400">•</span>
             <span className="text-xs text-[#475569] font-mono font-medium">Code: {assessment.code}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#050310] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-deep-navy tracking-tight">
             {assessment.title}
           </h1>
           <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
@@ -248,11 +248,11 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
           </p>
         </div>
 
-        <div className="bg-[#F8FAFC] border border-slate-200 rounded-xl px-3.5 py-2 flex items-center gap-3 shrink-0">
+        <div className="bg-bg-neutral border border-slate-200 rounded-xl px-3.5 py-2 flex items-center gap-3 shrink-0">
           <ShieldCheck size={24} className="text-[#045EAD]" />
           <div className="flex flex-col text-right">
             <span className="text-[10px] text-[#475569] uppercase font-bold">Evaluation Protocol</span>
-            <span className="text-xs font-bold text-[#050310]">CEFR C1/C2 Metric</span>
+            <span className="text-xs font-bold text-deep-navy">CEFR C1/C2 Metric</span>
           </div>
         </div>
       </div>
@@ -273,7 +273,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
             <span className="text-[11px] uppercase tracking-wider text-[#475569] font-bold block">
               Diagnostic Architecture
             </span>
-            <h2 className="text-base sm:text-lg font-bold text-[#050310]">
+            <h2 className="text-base sm:text-lg font-bold text-deep-navy">
               Assessment Specifications
             </h2>
           </div>
@@ -281,7 +281,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
             className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${
               hasActiveAttempt
                 ? 'bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]'
-                : 'bg-[#EAF4FC] text-[#045EAD] border border-[#B9DDF8]'
+                : 'bg-bg-light-blue text-[#045EAD] border border-[#B9DDF8]'
             }`}
           >
             <Sparkles size={13} />
@@ -290,27 +290,27 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+          <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
             <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">Track</span>
-            <span className="text-sm font-bold text-[#050310] mt-1">{programme?.name || 'Standard'}</span>
+            <span className="text-sm font-bold text-deep-navy mt-1">{programme?.name || 'Standard'}</span>
             <span className="text-[10px] text-[#64748B] font-medium mt-0.5">Verified syllabus</span>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+          <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
             <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">Duration</span>
             <span className="text-sm font-bold text-[#045EAD] mt-1">{assessment.durationMinutes} Mins</span>
             <span className="text-[10px] text-[#64748B] font-medium mt-0.5">Server timed</span>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+          <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
             <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">Questions</span>
-            <span className="text-sm font-bold text-[#050310] mt-1">{assessment.totalQuestions} Items</span>
+            <span className="text-sm font-bold text-deep-navy mt-1">{assessment.totalQuestions} Items</span>
             <span className="text-[10px] text-[#64748B] font-medium mt-0.5">Adaptive difficulty</span>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+          <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
             <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">Modules</span>
-            <span className="text-sm font-bold text-[#050310] mt-1">
+            <span className="text-sm font-bold text-deep-navy mt-1">
               {assessment.sections?.length || 4} Integrated
             </span>
             <span className="text-[10px] text-[#64748B] font-medium mt-0.5">Full skill spectrum</span>
@@ -327,11 +327,11 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
               {assessment.sections.map((sec, idx) => (
                 <div
                   key={sec.code || idx}
-                  className="p-3 bg-[#F8FAFC] border border-slate-200 rounded-lg flex items-center justify-between text-xs"
+                  className="p-3 bg-bg-neutral border border-slate-200 rounded-lg flex items-center justify-between text-xs"
                 >
                   <div className="flex items-center gap-2">
                     <CheckCircle2 size={14} className="text-[#045EAD]" />
-                    <span className="font-bold text-[#050310]">{sec.name}</span>
+                    <span className="font-bold text-deep-navy">{sec.name}</span>
                   </div>
                   {sec.questionCount ? (
                     <span className="text-[#475569] font-medium">
@@ -351,33 +351,33 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
           <div className="flex items-center gap-2">
             <Monitor size={18} className="text-[#045EAD]" />
-            <h3 className="text-sm font-bold text-[#050310]">System Verification</h3>
+            <h3 className="text-sm font-bold text-deep-navy">System Verification</h3>
           </div>
           <div className="space-y-2.5 text-xs text-[#475569]">
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#F8FAFC] border border-slate-200">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-bg-neutral border border-slate-200">
               <div className="flex items-center gap-2">
                 <Volume2 size={15} className="text-[#045EAD]" />
-                <span className="font-medium text-[#050310]">Audio Playback</span>
+                <span className="font-medium text-deep-navy">Audio Playback</span>
               </div>
               <span className="text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] border border-[#86EFAC] px-2 py-0.5 rounded">
                 Verified
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#F8FAFC] border border-slate-200">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-bg-neutral border border-slate-200">
               <div className="flex items-center gap-2">
                 <Wifi size={15} className="text-[#045EAD]" />
-                <span className="font-medium text-[#050310]">Server Connectivity</span>
+                <span className="font-medium text-deep-navy">Server Connectivity</span>
               </div>
               <span className="text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] border border-[#86EFAC] px-2 py-0.5 rounded">
                 14ms Active
               </span>
             </div>
 
-            <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#F8FAFC] border border-slate-200">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-bg-neutral border border-slate-200">
               <div className="flex items-center gap-2">
                 <ShieldCheck size={15} className="text-[#045EAD]" />
-                <span className="font-medium text-[#050310]">Anti-Tamper Protocol</span>
+                <span className="font-medium text-deep-navy">Anti-Tamper Protocol</span>
               </div>
               <span className="text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] border border-[#86EFAC] px-2 py-0.5 rounded">
                 Enforced
@@ -388,7 +388,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
 
         {/* Candidate Rules */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
-          <h3 className="text-sm font-bold text-[#050310]">Examination Protocol</h3>
+          <h3 className="text-sm font-bold text-deep-navy">Examination Protocol</h3>
           <ul className="space-y-2 text-xs text-[#475569]">
             <li className="flex items-start gap-2">
               <CheckCircle2 size={14} className="text-[#045EAD] shrink-0 mt-0.5" />
@@ -416,7 +416,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
       <button
         onClick={handleStartDiagnostic}
         disabled={isStarting}
-        className="w-full py-4 px-6 bg-[#045EAD] hover:bg-[#034A8A] text-white font-extrabold rounded-xl text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-900/15 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-4 px-6 bg-[#045EAD] hover:bg-brand-hover text-white font-extrabold rounded-xl text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-900/15 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span>
           {isStarting

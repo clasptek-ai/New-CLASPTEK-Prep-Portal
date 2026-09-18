@@ -49,7 +49,7 @@ export function LoginForm() {
           </FormLabel>
           <Link
             href="/forgot-password"
-            className="text-xs text-[#045EAD] hover:text-[#034A8A] hover:underline font-bold no-underline"
+            className="text-xs text-[#045EAD] hover:text-brand-hover hover:underline font-bold no-underline"
           >
             Forgot password?
           </Link>
@@ -81,7 +81,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full h-11 bg-[#045EAD] hover:bg-[#034A8A] text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#045EAD] cursor-pointer shadow-sm mt-2"
+        className="w-full h-11 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#045EAD] cursor-pointer shadow-sm mt-2"
       >
         <span>{isSubmitting ? 'SIGNING IN...' : 'SIGN IN'}</span>
       </button>

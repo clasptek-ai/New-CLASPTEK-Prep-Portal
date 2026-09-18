@@ -34,7 +34,7 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
 
           <div>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] bg-[#EAF4FC] border border-[#B9DDF8] px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] bg-bg-light-blue border border-[#B9DDF8] px-2.5 py-0.5 rounded-full flex items-center gap-1">
                 <ShieldCheck size={12} />
                 INITIAL PROFICIENCY
               </span>
@@ -44,7 +44,7 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
               </span>
             </div>
 
-            <h3 className="text-lg font-bold text-[#050310] tracking-tight mb-1">
+            <h3 className="text-lg font-bold text-deep-navy tracking-tight mb-1">
               Diagnostic Pre-Assessment
             </h3>
             <p className="text-xs text-[#475569] leading-relaxed">
@@ -56,7 +56,7 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
           <button
             type="button"
             onClick={onLaunchDiagnostic}
-            className="w-full h-10 rounded-lg bg-[#045EAD] hover:bg-[#034A8A] text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+            className="w-full h-10 rounded-lg bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
           >
             <Play size={14} fill="currentColor" />
             <span>START PRE-ASSESSMENT</span>
@@ -65,11 +65,11 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
 
         {/* Module 2: Full Mock Test Simulation Card */}
         <div className="p-6 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between gap-5 relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#050310]" />
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-deep-navy" />
 
           <div>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#050310] bg-[#F8FAFC] border border-slate-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-deep-navy bg-bg-neutral border border-slate-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
                 <Award size={12} />
                 PROCTORED MOCK SIMULATION
               </span>
@@ -79,7 +79,7 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
               </span>
             </div>
 
-            <h3 className="text-lg font-bold text-[#050310] tracking-tight mb-1">
+            <h3 className="text-lg font-bold text-deep-navy tracking-tight mb-1">
               Full Mock Examination
             </h3>
             <p className="text-xs text-[#475569] leading-relaxed">
@@ -91,7 +91,7 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
           <button
             type="button"
             onClick={onLaunchMock}
-            className="w-full h-10 rounded-lg border border-slate-300 hover:bg-[#F8FAFC] text-[#050310] text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full h-10 rounded-lg border border-slate-300 hover:bg-bg-neutral text-deep-navy text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <Play size={14} />
             <span>LAUNCH FULL MOCK TEST</span>

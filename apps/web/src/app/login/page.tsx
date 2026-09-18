@@ -58,7 +58,7 @@ function LoginPageContent() {
         Don&apos;t have an account?{' '}
         <Link
           href="/register"
-          className="text-[#045EAD] hover:text-[#034A8A] font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
+          className="text-[#045EAD] hover:text-brand-hover font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
         >
           <span>CREATE ACCOUNT</span>
           <span>→</span>

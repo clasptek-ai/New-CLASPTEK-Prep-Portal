@@ -228,7 +228,7 @@ function StudentResultsContent() {
         <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
           <AlertCircle size={24} />
         </div>
-        <h2 className="text-xl font-bold text-[#050310]">Result Not Available</h2>
+        <h2 className="text-xl font-bold text-deep-navy">Result Not Available</h2>
         <p className="text-xs text-[#475569] max-w-md mx-auto">
           {errorMessage || 'You do not have permission to view this assessment attempt.'}
         </p>
@@ -237,7 +237,7 @@ function StudentResultsContent() {
             setActiveAttemptId(null);
             router.push('/student/results');
           }}
-          className="px-5 py-2.5 bg-[#045EAD] hover:bg-[#034A8A] text-white text-xs font-bold rounded-lg transition-colors shadow-sm cursor-pointer"
+          className="px-5 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold rounded-lg transition-colors shadow-sm cursor-pointer"
         >
           Return to My Results
         </button>
@@ -280,7 +280,7 @@ function StudentResultsContent() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-bold text-[#045EAD] uppercase tracking-wider bg-[#EAF4FC] px-2.5 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold text-[#045EAD] uppercase tracking-wider bg-bg-light-blue px-2.5 py-0.5 rounded-full">
                 {detailResult.examType || 'English Proficiency'} Diagnostic Audit
               </span>
               {detailResult.cefrLevel && (
@@ -289,7 +289,7 @@ function StudentResultsContent() {
                 </span>
               )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#050310] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-deep-navy tracking-tight">
               Assessment Outcome &amp; Performance Breakdown
             </h1>
             <p className="text-xs text-[#475569] mt-1">
@@ -297,11 +297,11 @@ function StudentResultsContent() {
             </p>
           </div>
 
-          <div className="px-5 py-3 bg-[#F8FAFC] border border-slate-200 rounded-xl text-center self-start md:self-auto">
+          <div className="px-5 py-3 bg-bg-neutral border border-slate-200 rounded-xl text-center self-start md:self-auto">
             <div className="text-[10px] text-[#475569] font-bold uppercase tracking-wider">
               Placement Stage
             </div>
-            <div className="text-base font-extrabold text-[#050310] mt-0.5">
+            <div className="text-base font-extrabold text-deep-navy mt-0.5">
               {detailResult.placementStage || 'FOUNDATION'}
             </div>
           </div>
@@ -310,7 +310,7 @@ function StudentResultsContent() {
         {/* Bento Score Showcase */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           {/* Left: Overall Band / Score Card with SVG Radial Gauge */}
-          <div className="lg:col-span-5 bg-[#F8FAFC] border border-slate-200 rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+          <div className="lg:col-span-5 bg-bg-neutral border border-slate-200 rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#045EAD]" />
 
             <div>
@@ -319,7 +319,7 @@ function StudentResultsContent() {
               </span>
               <div className="my-4 flex items-center justify-between gap-4">
                 <div>
-                  <div className="text-4xl font-extrabold text-[#050310] leading-none tabular-nums">
+                  <div className="text-4xl font-extrabold text-deep-navy leading-none tabular-nums">
                     {detailResult.predictedBand || (detailResult.overallScore / 10).toFixed(1)}
                   </div>
                   <span className="text-xs text-[#475569] font-medium block mt-1">
@@ -350,7 +350,7 @@ function StudentResultsContent() {
                       strokeLinecap="round"
                     />
                   </svg>
-                  <span className="absolute text-xs font-bold text-[#050310]">
+                  <span className="absolute text-xs font-bold text-deep-navy">
                     {detailResult.overallScore}%
                   </span>
                 </div>
@@ -373,7 +373,7 @@ function StudentResultsContent() {
                 {sectionScoresList.map((sec) => (
                   <div key={sec.sectionCode} className="space-y-1">
                     <div className="flex justify-between items-center text-xs">
-                      <span className="font-bold text-[#050310]">
+                      <span className="font-bold text-deep-navy">
                         {sec.sectionName || sec.sectionCode}
                       </span>
                       <span className="font-mono text-[#045EAD] font-bold">
@@ -395,11 +395,11 @@ function StudentResultsContent() {
 
         {/* AI Feedback */}
         {detailResult.aiFeedback?.summary && (
-          <div className="bg-[#EAF4FC] border border-[#B9DDF8] p-5 rounded-xl space-y-1.5">
+          <div className="bg-bg-light-blue border border-[#B9DDF8] p-5 rounded-xl space-y-1.5">
             <div className="text-xs font-bold text-[#045EAD] uppercase tracking-wider flex items-center gap-1.5">
               <span>Diagnostic Learning Evaluation</span>
             </div>
-            <p className="text-xs text-[#050310] leading-relaxed">
+            <p className="text-xs text-deep-navy leading-relaxed">
               {detailResult.aiFeedback.summary}
             </p>
           </div>
@@ -407,7 +407,7 @@ function StudentResultsContent() {
 
         {/* Strengths & Focus Areas */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-[#F8FAFC] p-5 rounded-xl border border-slate-200 space-y-2">
+          <div className="bg-bg-neutral p-5 rounded-xl border border-slate-200 space-y-2">
             <h3 className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
               Strongest Competencies
             </h3>
@@ -421,7 +421,7 @@ function StudentResultsContent() {
             </ul>
           </div>
 
-          <div className="bg-[#F8FAFC] p-5 rounded-xl border border-slate-200 space-y-2">
+          <div className="bg-bg-neutral p-5 rounded-xl border border-slate-200 space-y-2">
             <h3 className="text-xs font-bold text-amber-800 uppercase tracking-wider">
               Recommended Focus Areas
             </h3>
@@ -437,19 +437,19 @@ function StudentResultsContent() {
         </div>
 
         {/* Recommended Pathway Banner */}
-        <div className="bg-[#F8FAFC] border border-slate-200 p-6 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="bg-bg-neutral border border-slate-200 p-6 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
           <div>
             <div className="text-[11px] text-[#045EAD] font-bold uppercase tracking-wider">
               Recommended Preparation Pathway
             </div>
-            <div className="text-sm font-bold text-[#050310] mt-0.5">
+            <div className="text-sm font-bold text-deep-navy mt-0.5">
               {detailResult.recommendedNextStep} ({detailResult.recommendedDuration || '4 Weeks'})
             </div>
           </div>
           <button
             onClick={handleEnroll}
             disabled={enrolling}
-            className="px-6 py-2.5 bg-[#045EAD] hover:bg-[#034A8A] text-white font-bold text-xs rounded-lg transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
+            className="px-6 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
           >
             {enrolling ? 'Enrolling...' : `Enroll in ${detailResult.placementStage} Track →`}
           </button>
@@ -464,11 +464,11 @@ function StudentResultsContent() {
       {/* Page Header */}
       <div className="border-b border-slate-200 pb-5">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] bg-[#EAF4FC] px-2.5 py-0.5 rounded-full">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] bg-bg-light-blue px-2.5 py-0.5 rounded-full">
             Performance Ledger
           </span>
         </div>
-        <h1 className="text-2xl font-extrabold text-[#050310] tracking-tight">My Assessment Results</h1>
+        <h1 className="text-2xl font-extrabold text-deep-navy tracking-tight">My Assessment Results</h1>
         <p className="text-xs text-[#475569] mt-1">
           Authoritative assessment records, calibrated target scores, and skill progression history.
         </p>
@@ -476,18 +476,18 @@ function StudentResultsContent() {
 
       {/* Empty State if no completed assessments */}
       {!latestResult && recentResults.length === 0 ? (
-        <div className="py-16 px-6 bg-[#F8FAFC] border border-slate-200 rounded-xl text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-[#EAF4FC] text-[#045EAD] flex items-center justify-center mx-auto">
+        <div className="py-16 px-6 bg-bg-neutral border border-slate-200 rounded-xl text-center space-y-4">
+          <div className="w-12 h-12 rounded-full bg-bg-light-blue text-[#045EAD] flex items-center justify-center mx-auto">
             <Award size={24} />
           </div>
-          <h2 className="text-lg font-bold text-[#050310]">No results yet</h2>
+          <h2 className="text-lg font-bold text-deep-navy">No results yet</h2>
           <p className="text-xs text-[#475569] max-w-sm mx-auto leading-relaxed">
             Complete your first diagnostic assessment to calibrate your baseline score and generate
             skill profiles here.
           </p>
           <button
             onClick={() => router.push('/student/assessments')}
-            className="px-6 py-2.5 bg-[#045EAD] hover:bg-[#034A8A] text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer inline-flex items-center gap-1.5"
+            className="px-6 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer inline-flex items-center gap-1.5"
           >
             <span>Start Pre-Assessment</span>
             <ArrowRight size={14} />
@@ -497,7 +497,7 @@ function StudentResultsContent() {
         <>
           {/* LATEST RESULT CARD */}
           {latestResult && (
-            <div className="bg-[#F8FAFC] p-6 rounded-2xl border border-slate-200 space-y-4 relative overflow-hidden">
+            <div className="bg-bg-neutral p-6 rounded-2xl border border-slate-200 space-y-4 relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-1 bg-[#045EAD]" />
 
               <div className="flex items-center justify-between">
@@ -509,12 +509,12 @@ function StudentResultsContent() {
 
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                  <h3 className="text-lg font-bold text-[#050310]">
+                  <h3 className="text-lg font-bold text-deep-navy">
                     {latestResult.examType || 'English Proficiency'} Diagnostic Assessment
                   </h3>
                   <div className="flex items-center gap-2 mt-2">
                     {latestResult.cefrLevel && (
-                      <span className="px-2.5 py-0.5 bg-[#EAF4FC] text-[#045EAD] rounded text-xs font-bold">
+                      <span className="px-2.5 py-0.5 bg-bg-light-blue text-[#045EAD] rounded text-xs font-bold">
                         CEFR {latestResult.cefrLevel}
                       </span>
                     )}
@@ -529,11 +529,11 @@ function StudentResultsContent() {
                 <div className="flex items-center gap-6">
                   <div className="text-right">
                     <div className="text-[10px] text-[#475569] uppercase font-semibold">Score</div>
-                    <div className="text-2xl font-black text-[#050310]">{latestResult.overallScore}%</div>
+                    <div className="text-2xl font-black text-deep-navy">{latestResult.overallScore}%</div>
                   </div>
                   <button
                     onClick={() => setActiveAttemptId(latestResult.attemptId)}
-                    className="px-5 py-2.5 bg-[#045EAD] hover:bg-[#034A8A] text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer flex items-center gap-1.5"
+                    className="px-5 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer flex items-center gap-1.5"
                   >
                     <span>View Full Result</span>
                     <ArrowRight size={13} />
@@ -546,7 +546,7 @@ function StudentResultsContent() {
           {/* RECENT RESULTS TABLE */}
           {recentResults.length > 0 && (
             <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
-              <h2 className="text-xs font-bold text-[#050310] uppercase tracking-wider">
+              <h2 className="text-xs font-bold text-deep-navy uppercase tracking-wider">
                 Assessment History
               </h2>
 
@@ -563,7 +563,7 @@ function StudentResultsContent() {
                   <tbody className="divide-y divide-slate-100">
                     {recentResults.map((r) => (
                       <tr key={r.resultId || r.attemptId} className="hover:bg-slate-50 transition-colors">
-                        <td className="py-3 px-3 font-semibold text-[#050310]">
+                        <td className="py-3 px-3 font-semibold text-deep-navy">
                           {r.examType || 'English Proficiency'} Diagnostic
                         </td>
                         <td className="py-3 px-3 font-mono font-bold text-[#045EAD]">
@@ -573,7 +573,7 @@ function StudentResultsContent() {
                         <td className="py-3 px-3 text-right">
                           <button
                             onClick={() => setActiveAttemptId(r.attemptId)}
-                            className="px-3 py-1.5 bg-[#F8FAFC] hover:bg-slate-200 text-[#050310] font-semibold text-[11px] rounded-lg border border-slate-200 transition-colors cursor-pointer"
+                            className="px-3 py-1.5 bg-bg-neutral hover:bg-slate-200 text-deep-navy font-semibold text-[11px] rounded-lg border border-slate-200 transition-colors cursor-pointer"
                           >
                             View Result
                           </button>
