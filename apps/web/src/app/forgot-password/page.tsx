@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { AuthShell } from '../shell/AuthShell';
-import { Button } from '../../shared/ui/button/Button';
 import { Alert, AlertDescription, AlertTitle } from '../../shared/ui/alert/Alert';
+import { Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -20,17 +20,17 @@ export default function ForgotPasswordPage() {
       const res = await fetch('/api/v1/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: email.trim() }),
       });
 
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Failed to trigger recovery flow');
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Unable to process password recovery request. Please verify your email.');
       }
 
       setSuccess(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(err instanceof Error ? err.message : 'Network error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -38,8 +38,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthShell
-      title="Reset Password"
-      subtitle="Enter your account email address to receive a secure recovery link."
+      title="RESET YOUR PASSWORD"
+      subtitle="Enter your account email address to receive a secure recovery link to reset your password."
     >
       {error && (
         <Alert variant="error" className="mb-4">
@@ -52,40 +52,52 @@ export default function ForgotPasswordPage() {
         <Alert variant="success" className="mb-4">
           <AlertTitle>Recovery Link Sent</AlertTitle>
           <AlertDescription>
-            A password reset email has been sent. Please check your inbox and follow the link to reset your password.
+            A secure recovery link has been dispatched to your email address. Please check your inbox and spam folder.
           </AlertDescription>
         </Alert>
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="block text-xs font-semibold text-(--text-secondary) mb-1.5">
+          <label htmlFor="recovery-email" className="block text-xs font-semibold text-[#131b2e] mb-1.5">
             Email Address
           </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="name@example.com"
-            className="w-full px-3.5 py-2.5 rounded-lg border border-(--border) bg-(--surface-1) text-(--text-primary) text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-(--text-muted)"
-          />
+          <div className="relative">
+            <Mail
+              size={16}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+            />
+            <input
+              id="recovery-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              placeholder="name@example.com"
+              className="w-full pl-10 pr-4 h-11 rounded-lg border border-slate-300 bg-white text-[#131b2e] text-sm focus:outline-none focus:ring-2 focus:ring-[#003c90] focus:border-[#003c90] transition-all placeholder:text-slate-400"
+            />
+          </div>
         </div>
 
-        <Button
+        <button
           type="submit"
-          variant="primary"
-          isLoading={loading}
-          className="w-full justify-center mt-2"
+          disabled={loading || success}
+          className="w-full h-11 bg-[#003c90] hover:bg-[#002c6b] text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#003c90] cursor-pointer shadow-sm mt-2"
         >
-          Send Recovery Link
-        </Button>
+          <span>{loading ? 'SENDING RECOVERY LINK...' : 'SEND RECOVERY LINK'}</span>
+          <ArrowRight size={14} />
+        </button>
       </form>
 
-      <div className="mt-5 text-center text-xs text-(--text-secondary)">
+      <div className="mt-6 text-center text-xs text-[#545f73]">
         Remembered your credentials?{' '}
-        <Link href="/login" className="text-blue-500 font-bold hover:underline">
-          Sign In
+        <Link
+          href="/login"
+          className="text-[#003c90] hover:text-[#002c6b] font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
+        >
+          <span>SIGN IN</span>
+          <span>→</span>
         </Link>
       </div>
     </AuthShell>

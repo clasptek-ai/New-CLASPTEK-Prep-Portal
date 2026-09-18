@@ -8,19 +8,19 @@ import { AuthShell } from '../shell/AuthShell';
 export default function RegisterPage() {
   return (
     <AuthShell
-      title="Create Student Account"
-      subtitle="Prepare for IELTS, TOEFL, SAT and CELPIP with personalized AI-powered learning."
-      maxWidth="620px"
+      title="CREATE YOUR PREP PORTAL ACCOUNT"
+      subtitle="Create your account to access Clasptek assessments, mock examinations, results and progress tracking."
+      maxWidth="640px"
     >
       <RegisterForm />
 
-      <div className="mt-6 text-center text-xs text-(--text-secondary)">
+      <div className="mt-6 text-center text-xs text-[#545f73]">
         Already have an account?{' '}
         <Link
           href="/login"
-          className="text-(--brand-light) hover:underline font-bold transition-colors inline-flex items-center gap-1"
+          className="text-[#003c90] hover:text-[#002c6b] hover:underline font-bold transition-colors inline-flex items-center gap-1 no-underline"
         >
-          <span>Sign In</span>
+          <span>SIGN IN</span>
           <span>→</span>
         </Link>
       </div>

@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { LogoBadge } from '../../shared/ui/logo/LogoBadge';
-import { BookOpen, Award, Brain, Shield } from 'lucide-react';
+import { BookOpen, Award, Brain, Shield, ArrowLeft } from 'lucide-react';
 
 export interface AuthShellProps {
   title: string;
@@ -15,124 +15,65 @@ export interface AuthShellProps {
 const BRAND_FEATURES = [
   {
     icon: BookOpen,
-    title: 'Structured Learning Programmes',
-    description: 'IELTS, TOEFL, SAT, CELPIP — expertly designed preparation pathways.',
+    title: 'Standardized Learning Pathways',
+    description: 'IELTS, TOEFL, SAT, CELPIP — expertly calibrated test preparation.',
   },
   {
     icon: Award,
-    title: 'Diagnostic Assessment Engine',
-    description: 'Pinpoint your proficiency baseline and receive a personalised study plan.',
+    title: 'Diagnostic Baseline Engine',
+    description: 'Pinpoint your proficiency baseline and uncover granular skill gaps.',
   },
   {
     icon: Brain,
-    title: 'AI-Powered Learning Assistant',
-    description: 'Adaptive practice and intelligent feedback to accelerate your progress.',
+    title: 'Dual-Rubric Scoring Model',
+    description: 'Acoustic phonetic analysis and structural cohesion evaluation.',
   },
   {
     icon: Shield,
     title: 'Authentic Mock Examinations',
-    description: 'Full-length, timed simulations that mirror official exam conditions.',
+    description: 'Full-length, proctored simulations with strict server-authoritative timing.',
   },
 ];
 
 export function AuthShell({ title, subtitle, maxWidth, children }: AuthShellProps) {
   return (
-    <div
-      className="min-h-screen w-full flex flex-col md:flex-row"
-      style={{ backgroundColor: 'var(--bg-app)', fontFamily: 'var(--font-sans)' }}
-    >
+    <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#f8fafc] text-[#131b2e] font-sans">
       {/* ── LEFT BRAND PANEL (Desktop only) ── */}
-      <div
-        className="hidden md:flex flex-col justify-between p-8 lg:p-12"
-        style={{
-          width: '440px',
-          flexShrink: 0,
-          backgroundColor: 'var(--surface-0)',
-          borderRight: '1px solid var(--border)',
-          minHeight: '100vh',
-        }}
-      >
+      <div className="hidden md:flex flex-col justify-between p-8 lg:p-12 w-[440px] shrink-0 bg-[#131b2e] text-white min-h-screen">
         {/* Logo */}
         <div>
           <LogoBadge size="md" href="/" ariaLabel="Go to Clasptek homepage" />
         </div>
 
         {/* Centre brand statement */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <h2
-              style={{
-                margin: 0,
-                fontSize: '1.625rem',
-                fontWeight: 800,
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.03em',
-                lineHeight: 1.25,
-              }}
-            >
-              Prepare smarter.
+        <div className="flex flex-col gap-8 my-auto py-8">
+          <div className="flex flex-col gap-3">
+            <span className="text-xs uppercase font-bold tracking-widest text-[#b0c6ff]">
+              Clasptek Prep Portal
+            </span>
+            <h2 className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight leading-snug">
+              Prepare with purpose.
               <br />
-              <span style={{ color: 'var(--brand-light)' }}>Achieve more.</span>
+              <span className="text-[#b0c6ff]">Test with confidence.</span>
             </h2>
-            <p
-              style={{
-                margin: 0,
-                fontSize: '0.9rem',
-                color: 'var(--text-secondary)',
-                lineHeight: 1.65,
-                maxWidth: '320px',
-              }}
-            >
-              Clasptek Global is a professional technology-training and assessment platform
-              built for serious candidates.
+            <p className="text-xs lg:text-sm text-slate-300 leading-relaxed max-w-xs">
+              Calibrated diagnostic assessments, authentic adaptive simulations, and dual-rubric scoring
+              to guarantee benchmark achievement.
             </p>
           </div>
 
           {/* Feature list */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div className="flex flex-col gap-4">
             {BRAND_FEATURES.map((feature) => {
               const Icon = feature.icon;
               return (
-                <div
-                  key={feature.title}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '0.875rem',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '36px',
-                      height: '36px',
-                      flexShrink: 0,
-                      borderRadius: 'var(--radius-md)',
-                      backgroundColor: 'var(--brand-subtle)',
-                      border: '1px solid var(--brand-border)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Icon size={16} style={{ color: 'var(--brand-light)' }} />
+                <div key={feature.title} className="flex items-start gap-3">
+                  <div className="w-8 h-8 shrink-0 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center text-[#b0c6ff] mt-0.5">
+                    <Icon size={16} />
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
-                    <span
-                      style={{
-                        fontSize: '0.8125rem',
-                        fontWeight: 600,
-                        color: 'var(--text-primary)',
-                      }}
-                    >
-                      {feature.title}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '0.75rem',
-                        color: 'var(--text-secondary)',
-                        lineHeight: 1.5,
-                      }}
-                    >
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold text-white leading-tight">{feature.title}</span>
+                    <span className="text-[11px] text-slate-300 leading-relaxed mt-0.5">
                       {feature.description}
                     </span>
                   </div>
@@ -143,96 +84,46 @@ export function AuthShell({ title, subtitle, maxWidth, children }: AuthShellProp
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            fontSize: '0.7rem',
-            color: 'var(--text-muted)',
-          }}
-        >
-          © {new Date().getFullYear()} Clasptek Global. All rights reserved.
+        <div className="text-[11px] text-slate-400">
+          © {new Date().getFullYear()} Clasptek Global. ISO/IEC 23988 Compliant.
         </div>
       </div>
 
       {/* ── RIGHT FORM PANEL ── */}
-      <div
-        className="flex-1 flex flex-col items-center justify-center p-5 sm:p-8"
-        style={{ minHeight: '100vh' }}
-      >
-        {/* Mobile: logo at top */}
-        <div className="md:hidden mb-8 flex flex-col items-center gap-3">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 min-h-screen">
+        {/* Mobile header */}
+        <div className="md:hidden mb-6 flex flex-col items-center gap-2 text-center">
           <LogoBadge size="md" href="/" ariaLabel="Go to Clasptek homepage" />
-          <p
-            style={{
-              fontSize: '0.8rem',
-              color: 'var(--text-muted)',
-              textAlign: 'center',
-            }}
-          >
-            Professional Training &amp; Assessment Platform
-          </p>
+          <p className="text-xs text-[#545f73]">Standardized Test Preparation Platform</p>
         </div>
 
-        {/* Form card */}
+        {/* Form Card */}
         <div
-          style={{
-            width: '100%',
-            maxWidth: maxWidth || '420px',
-            backgroundColor: 'var(--surface-0)',
-            border: '1px solid var(--border-strong)',
-            borderRadius: 'var(--radius-xl)',
-            padding: '2rem',
-            boxShadow: 'var(--shadow-elevated)',
-          }}
+          className="w-full bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm transition-all"
+          style={{ maxWidth: maxWidth || '440px' }}
         >
-          {/* Heading */}
-          <div style={{ marginBottom: '1.75rem' }}>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: '1.375rem',
-                fontWeight: 800,
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.02em',
-              }}
-            >
+          {/* Header */}
+          <div className="mb-6">
+            <h1 className="text-xl sm:text-2xl font-extrabold text-[#131b2e] tracking-tight m-0">
               {title}
             </h1>
             {subtitle && (
-              <p
-                style={{
-                  margin: '0.5rem 0 0',
-                  fontSize: '0.875rem',
-                  color: 'var(--text-secondary)',
-                  lineHeight: 1.55,
-                }}
-              >
-                {subtitle}
-              </p>
+              <p className="text-xs sm:text-sm text-[#545f73] mt-1 leading-relaxed">{subtitle}</p>
             )}
           </div>
 
-          {/* Form content */}
+          {/* Form Content */}
           {children}
         </div>
 
-        {/* Back to home link */}
-        <div style={{ marginTop: '1.5rem' }}>
+        {/* Back Link */}
+        <div className="mt-6 text-center">
           <Link
             href="/"
-            style={{
-              fontSize: '0.8rem',
-              color: 'var(--text-muted)',
-              textDecoration: 'none',
-              transition: 'color var(--transition-fast)',
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.color = 'var(--text-secondary)';
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.color = 'var(--text-muted)';
-            }}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#545f73] hover:text-[#003c90] transition-colors no-underline"
           >
-            ← Back to Clasptek.com
+            <ArrowLeft size={13} />
+            <span>Back to Clasptek Prep Home</span>
           </Link>
         </div>
       </div>

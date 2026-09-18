@@ -1,6 +1,5 @@
 import React, { forwardRef } from 'react';
 import { TopNavigationProps } from './navigation.types';
-import { Avatar } from '../avatar/Avatar';
 import { Input } from '../input/Input';
 import { LogoBadge } from '../logo/LogoBadge';
 
@@ -13,13 +12,13 @@ export const TopNavigation = forwardRef<HTMLElement, TopNavigationProps>(functio
       ref={ref}
       style={{
         height: '64px',
-        backgroundColor: 'var(--bg-surface-0, #111827)',
-        borderBottom: '1px solid var(--border-default, #1e293b)',
+        backgroundColor: 'var(--bg-surface-0, #ffffff)',
+        borderBottom: '1px solid var(--border-default, #e2e8f0)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 1.5rem',
-        color: 'var(--text-primary, #f8fafc)',
+        color: 'var(--text-primary, #131b2e)',
         userSelect: 'none',
         flexShrink: 0,
         ...style,
@@ -41,37 +40,7 @@ export const TopNavigation = forwardRef<HTMLElement, TopNavigationProps>(functio
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.0rem' }}>
-        {onToggleTheme && (
-          <button
-            onClick={onToggleTheme}
-            aria-label="Toggle Theme"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-secondary, #cbd5e1)',
-              cursor: 'pointer',
-              fontSize: '1.1rem',
-            }}
-          >
-            🌙
-          </button>
-        )}
-
         {actions}
-
-        {user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <Avatar src={user.avatarUrl} name={user.name} size="sm" />
-            <div style={{ display: 'flex', flexDirection: 'column', fontSize: '0.75rem' }}>
-              <span style={{ fontWeight: 700, color: 'var(--text-primary, #f8fafc)' }}>
-                {user.name}
-              </span>
-              <span style={{ color: 'var(--text-muted, #94a3b8)' }}>{user.role || user.email}</span>
-            </div>
-          </div>
-        )}
-
-        {children}
       </div>
     </header>
   );

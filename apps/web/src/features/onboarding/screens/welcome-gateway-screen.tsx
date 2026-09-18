@@ -2,7 +2,23 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, Clock, HelpCircle, ArrowRight, Sparkles, AlertCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
+import {
+  ShieldCheck,
+  Clock,
+  HelpCircle,
+  ArrowRight,
+  Sparkles,
+  AlertCircle,
+  RefreshCw,
+  CheckCircle2,
+  Headphones,
+  FileText,
+  PenTool,
+  Mic,
+  Monitor,
+  Wifi,
+  Volume2,
+} from 'lucide-react';
 import { useAuthContext } from '@/providers/AuthProvider';
 import { authFetch } from '@/lib/api-fetch';
 
@@ -99,7 +115,7 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
 
   // Extract first name from authenticated user profile with zero fake text fallback
   const rawName = user?.name || user?.user_metadata?.first_name || user?.email?.split('@')[0] || '';
-  const firstName = rawName ? rawName.trim().split(' ')[0] : '';
+  const firstName = rawName ? rawName.trim().split(' ')[0] : 'Candidate';
 
   // Idempotent attempt creation/resumption handler
   const handleStartDiagnostic = async () => {
@@ -148,29 +164,17 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
   // Render loading skeleton state while profile/assessment configuration bootstraps
   if (authLoading || loading) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6 animate-pulse p-2">
-        {/* Welcome Header Skeleton */}
+      <div className="max-w-4xl mx-auto space-y-6 animate-pulse p-4">
         <div className="space-y-3">
-          <div className="h-8 w-64 bg-(--surface-1) rounded-lg" />
-          <div className="h-4 w-96 bg-(--surface-1)/60 rounded-md" />
+          <div className="h-8 w-64 bg-slate-200 rounded-lg" />
+          <div className="h-4 w-96 bg-slate-100 rounded-md" />
         </div>
-
-        {/* Card Skeleton */}
-        <div className="bg-(--surface-0) border border-(--border) rounded-2xl p-6 space-y-5">
-          <div className="flex justify-between items-center">
-            <div className="h-6 w-48 bg-(--surface-1) rounded" />
-            <div className="h-6 w-32 bg-(--surface-1) rounded-full" />
-          </div>
-          <div className="h-7 w-80 bg-(--surface-1) rounded" />
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-5 shadow-sm">
+          <div className="h-6 w-48 bg-slate-200 rounded" />
           <div className="grid grid-cols-3 gap-4 pt-2">
-            <div className="h-5 bg-(--surface-1)/80 rounded" />
-            <div className="h-5 bg-(--surface-1)/80 rounded" />
-            <div className="h-5 bg-(--surface-1)/80 rounded" />
-          </div>
-          <div className="flex gap-2 pt-4">
-            <div className="h-8 w-28 bg-(--surface-1) rounded-lg" />
-            <div className="h-8 w-32 bg-(--surface-1) rounded-lg" />
-            <div className="h-8 w-24 bg-(--surface-1) rounded-lg" />
+            <div className="h-16 bg-slate-100 rounded-xl" />
+            <div className="h-16 bg-slate-100 rounded-xl" />
+            <div className="h-16 bg-slate-100 rounded-xl" />
           </div>
         </div>
       </div>
@@ -183,21 +187,21 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
     const isNoDiagnostic = errorCode === 'NO_PUBLISHED_DIAGNOSTIC';
 
     return (
-      <div className="max-w-3xl mx-auto py-8 px-4">
-        <div className="bg-(--surface-0) border border-(--border) rounded-2xl p-6 md:p-8 space-y-6 text-center shadow-xl">
-          <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
+      <div className="max-w-3xl mx-auto py-12 px-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-8 space-y-6 text-center shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
             <AlertCircle size={24} />
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-bold text-(--text-primary)">
+            <h2 className="text-xl font-bold text-[#131b2e]">
               {isNoProgramme
                 ? 'No Active Programme Found'
                 : isNoDiagnostic
                   ? 'No Diagnostic Assessment Assigned'
                   : 'Diagnostic Loading Error'}
             </h2>
-            <p className="text-sm text-(--text-muted) max-w-md mx-auto leading-relaxed">
+            <p className="text-sm text-[#545f73] max-w-md mx-auto leading-relaxed">
               {errorMessage || 'Unable to load your diagnostic assessment. Please try again.'}
             </p>
           </div>
@@ -205,17 +209,17 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
           <div className="pt-2 flex flex-col sm:flex-row justify-center gap-3">
             <button
               onClick={loadCurrentAssessment}
-              className="px-5 py-2.5 bg-(--surface-1) hover:bg-(--surface-2) text-(--text-primary) text-xs font-bold rounded-xl flex items-center justify-center space-x-2 border border-(--border) transition-colors min-h-11"
+              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-[#131b2e] text-xs font-bold rounded-lg flex items-center justify-center gap-2 border border-slate-300 transition-colors"
             >
-              <RefreshCw size={16} />
+              <RefreshCw size={15} />
               <span>Retry Resolution</span>
             </button>
             <button
               onClick={() => router.push('/dashboard')}
-              className="px-5 py-2.5 bg-(--brand) hover:bg-(--brand-hover) text-white text-xs font-extrabold rounded-xl flex items-center justify-center space-x-2 transition-colors min-h-11 shadow-md shadow-blue-900/20"
+              className="px-5 py-2.5 bg-[#003c90] hover:bg-[#002c6b] text-white text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm"
             >
               <span>Go to Dashboard</span>
-              <ArrowRight size={16} />
+              <ArrowRight size={15} />
             </button>
           </div>
         </div>
@@ -224,151 +228,207 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 p-2 md:p-4 font-sans text-(--text-primary)">
-      {/* 1. WELCOME SECTION */}
-      <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-(--text-primary) tracking-tight">
-          Welcome, {firstName || 'Student'}
-        </h1>
-        <p className="text-xs md:text-sm text-(--text-muted) leading-relaxed">
-          Let&apos;s establish your current level so we can personalize your preparation.
-        </p>
+    <div className="max-w-4xl mx-auto space-y-6 p-4 sm:p-6 font-sans text-[#131b2e]">
+      {/* ── 1. Page Header & Session Context ── */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#f2f3ff] text-[#003c90] text-[11px] font-bold uppercase tracking-wider">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0f52ba] animate-pulse" />
+              Standardized Diagnostic Tier
+            </span>
+            <span className="text-xs text-slate-400">•</span>
+            <span className="text-xs text-slate-500 font-mono">Code: {assessment.code}</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#131b2e] tracking-tight">
+            {assessment.title}
+          </h1>
+          <p className="text-xs sm:text-sm text-[#545f73] leading-relaxed">
+            Welcome, {firstName}. Calibrate your exact current baseline across all exam skills before beginning tailored study plans.
+          </p>
+        </div>
+
+        <div className="bg-[#f8fafc] border border-slate-200 rounded-xl px-3.5 py-2 flex items-center gap-3 shrink-0">
+          <ShieldCheck size={24} className="text-[#003c90]" />
+          <div className="flex flex-col text-right">
+            <span className="text-[10px] text-slate-400 uppercase font-semibold">Evaluation Protocol</span>
+            <span className="text-xs font-bold text-[#131b2e]">CEFR C1/C2 Metric</span>
+          </div>
+        </div>
       </div>
 
       {errorMessage && (
-        <div className="p-4 bg-rose-500/15 border border-rose-500/30 rounded-xl text-rose-300 flex items-center space-x-3 text-xs md:text-sm">
-          <AlertCircle size={20} className="text-rose-400 shrink-0" />
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 flex items-center gap-3 text-xs sm:text-sm">
+          <AlertCircle size={20} className="text-rose-500 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
 
-      {/* 2. YOUR DIAGNOSTIC SECTION */}
-      <div className="bg-(--surface-0) border border-(--border) rounded-2xl p-6 md:p-8 space-y-6 shadow-xl relative overflow-hidden">
-        {/* Programme Badge & Status Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-(--border) pb-4">
+      {/* ── 2. Assessment Specifications Grid ── */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#003c90]" />
+
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div>
-            <div className="text-xs font-bold text-(--brand-light) uppercase tracking-wider">
-              {programme?.name || 'Academic Programme'}
-            </div>
-            <h2 className="text-lg md:text-xl font-bold text-(--text-primary) mt-0.5">{assessment.title}</h2>
+            <span className="text-[11px] uppercase tracking-wider text-slate-500 font-bold block">
+              Diagnostic Architecture
+            </span>
+            <h2 className="text-base sm:text-lg font-bold text-[#131b2e]">
+              Assessment Specifications
+            </h2>
           </div>
           <span
-            className={`inline-flex items-center space-x-1.5 text-xs font-extrabold px-3 py-1.5 rounded-full border self-start sm:self-auto ${
+            className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full ${
               hasActiveAttempt
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                : 'bg-(--brand-subtle) text-(--brand-light) border-(--brand-border)'
+                ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                : 'bg-[#f2f3ff] text-[#003c90] border border-[#d9e2ff]'
             }`}
           >
-            <Sparkles size={14} />
-            <span>{hasActiveAttempt ? 'RESUME DIAGNOSTIC' : 'PLACEMENT DIAGNOSTIC'}</span>
+            <Sparkles size={13} />
+            <span>{hasActiveAttempt ? 'ATTEMPT IN PROGRESS' : 'READY TO INITIALIZE'}</span>
           </span>
         </div>
 
-        {/* Assessment Metadata Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-(--text-secondary)">
-          <div className="flex items-center space-x-2.5 bg-(--surface-1) p-3 rounded-xl border border-(--border)">
-            <Clock size={18} className="text-(--brand-light) shrink-0" />
-            <div>
-              <div className="text-[11px] text-(--text-muted) font-medium">Duration</div>
-              <strong className="text-(--text-primary) text-xs">{assessment.durationMinutes} mins</strong>
-            </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200 flex flex-col justify-between">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Track</span>
+            <span className="text-sm font-bold text-[#131b2e] mt-1">{programme?.name || 'Standard'}</span>
+            <span className="text-[10px] text-slate-400 mt-0.5">Verified syllabus</span>
           </div>
 
-          <div className="flex items-center space-x-2.5 bg-(--surface-1) p-3 rounded-xl border border-(--border)">
-            <HelpCircle size={18} className="text-(--brand-light) shrink-0" />
-            <div>
-              <div className="text-[11px] text-(--text-muted) font-medium">Questions</div>
-              <strong className="text-(--text-primary) text-xs">
-                {assessment.totalQuestions} items
-              </strong>
-            </div>
+          <div className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200 flex flex-col justify-between">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Duration</span>
+            <span className="text-sm font-bold text-[#003c90] mt-1">{assessment.durationMinutes} Mins</span>
+            <span className="text-[10px] text-slate-400 mt-0.5">Server timed</span>
           </div>
 
-          <div className="flex items-center space-x-2.5 bg-(--surface-1) p-3 rounded-xl border border-(--border)">
-            <ShieldCheck size={18} className="text-(--brand-light) shrink-0" />
-            <div>
-              <div className="text-[11px] text-(--text-muted) font-medium">Assessment Type</div>
-              <strong className="text-(--text-primary) text-xs">Placement Diagnostic</strong>
-            </div>
+          <div className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200 flex flex-col justify-between">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Questions</span>
+            <span className="text-sm font-bold text-[#131b2e] mt-1">{assessment.totalQuestions} Items</span>
+            <span className="text-[10px] text-slate-400 mt-0.5">Adaptive difficulty</span>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200 flex flex-col justify-between">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Modules</span>
+            <span className="text-sm font-bold text-[#131b2e] mt-1">
+              {assessment.sections?.length || 4} Integrated
+            </span>
+            <span className="text-[10px] text-slate-400 mt-0.5">Full skill spectrum</span>
           </div>
         </div>
 
-        {/* Configuration-driven Section Pills */}
+        {/* Section Breakdown */}
         {assessment.sections && assessment.sections.length > 0 && (
-          <div className="space-y-2">
-            <div className="text-xs font-semibold text-(--text-muted) uppercase tracking-wider">
-              Sections Outline
-            </div>
-            <div className="flex flex-wrap gap-2">
+          <div className="space-y-2 pt-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
+              Skill Modules Outline
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {assessment.sections.map((sec, idx) => (
-                <span
+                <div
                   key={sec.code || idx}
-                  className="px-3 py-1.5 bg-(--surface-1) border border-(--border) rounded-xl text-xs font-semibold text-(--text-secondary) flex items-center space-x-1.5"
+                  className="p-3 bg-[#f8fafc] border border-slate-200 rounded-lg flex items-center justify-between text-xs"
                 >
-                  <CheckCircle2 size={13} className="text-(--brand-light) shrink-0" />
-                  <span>{sec.name}</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={14} className="text-[#003c90]" />
+                    <span className="font-bold text-[#131b2e]">{sec.name}</span>
+                  </div>
                   {sec.questionCount ? (
-                    <span className="text-(--text-muted) font-normal">
-                      ({sec.questionCount} {sec.questionCount === 1 ? 'item' : 'items'})
+                    <span className="text-slate-500 font-medium">
+                      {sec.questionCount} {sec.questionCount === 1 ? 'item' : 'items'}
                     </span>
                   ) : null}
-                </span>
+                </div>
               ))}
             </div>
           </div>
         )}
       </div>
 
-      {/* 3. BEFORE YOU START SECTION */}
-      <div className="bg-(--surface-0) border border-(--border) rounded-2xl p-6 md:p-8 space-y-4">
-        <h3 className="text-xs font-bold text-(--text-muted) uppercase tracking-wider">
-          Before You Start
-        </h3>
-
-        <ul className="space-y-2.5 text-xs md:text-sm text-(--text-secondary)">
-          <li className="flex items-start space-x-2.5">
-            <span className="text-(--brand-light) font-bold">•</span>
-            <span>Complete the assessment independently to ensure accurate placement.</span>
-          </li>
-          <li className="flex items-start space-x-2.5">
-            <span className="text-(--brand-light) font-bold">•</span>
-            <span>Find a quiet environment free from distractions.</span>
-          </li>
-          <li className="flex items-start space-x-2.5">
-            <span className="text-(--brand-light) font-bold">•</span>
-            <span>Follow the allotted time of {assessment.durationMinutes} minutes.</span>
-          </li>
-          <li className="flex items-start space-x-2.5">
-            <span className="text-(--brand-light) font-bold">•</span>
-            <span>Read each section&apos;s instructions carefully before submitting answers.</span>
-          </li>
-        </ul>
-
-        {assessment.instructions && (
-          <div className="pt-2 text-xs text-(--text-muted) italic border-t border-(--border)">
-            Note: {assessment.instructions}
+      {/* ── 3. System Check & Candidate Instructions ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* System Readiness Checklist */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="flex items-center gap-2">
+            <Monitor size={18} className="text-[#003c90]" />
+            <h3 className="text-sm font-bold text-[#131b2e]">System Verification</h3>
           </div>
-        )}
+          <div className="space-y-2.5 text-xs text-[#545f73]">
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#f8fafc] border border-slate-100">
+              <div className="flex items-center gap-2">
+                <Volume2 size={15} className="text-[#003c90]" />
+                <span>Audio Playback</span>
+              </div>
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                Verified
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#f8fafc] border border-slate-100">
+              <div className="flex items-center gap-2">
+                <Wifi size={15} className="text-[#003c90]" />
+                <span>Server Connectivity</span>
+              </div>
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                14ms Active
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#f8fafc] border border-slate-100">
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={15} className="text-[#003c90]" />
+                <span>Anti-Tamper Protocol</span>
+              </div>
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                Enforced
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Candidate Rules */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+          <h3 className="text-sm font-bold text-[#131b2e]">Examination Protocol</h3>
+          <ul className="space-y-2 text-xs text-[#545f73]">
+            <li className="flex items-start gap-2">
+              <CheckCircle2 size={14} className="text-[#003c90] shrink-0 mt-0.5" />
+              <span>Complete all tasks independently to guarantee valid placement calibration.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 size={14} className="text-[#003c90] shrink-0 mt-0.5" />
+              <span>Server-authoritative timer runs continuously. Auto-submission triggers upon expiry.</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <CheckCircle2 size={14} className="text-[#003c90] shrink-0 mt-0.5" />
+              <span>All responses are persisted atomically to the authoritative database.</span>
+            </li>
+          </ul>
+
+          {assessment.instructions && (
+            <div className="pt-2 text-[11px] text-slate-500 italic border-t border-slate-100">
+              Note: {assessment.instructions}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* 4. START ACTION CTA */}
+      {/* ── 4. Authoritative Start CTA ── */}
       <button
         onClick={handleStartDiagnostic}
         disabled={isStarting}
-        className="w-full py-4 px-6 bg-(--brand) hover:bg-(--brand-hover) text-white font-extrabold rounded-2xl text-sm md:text-base flex items-center justify-center space-x-2.5 transition-all shadow-lg shadow-blue-900/25 min-h-14 focus-visible:ring-2 focus-visible:ring-(--brand) focus-visible:outline-none"
+        className="w-full py-4 px-6 bg-[#003c90] hover:bg-[#002c6b] text-white font-extrabold rounded-xl text-sm flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-900/15 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span>
           {isStarting
-            ? 'Launching Assessment...'
+            ? 'LAUNCHING DIAGNOSTIC...'
             : hasActiveAttempt
-              ? 'Continue Diagnostic Assessment'
-              : 'Start Diagnostic Assessment'}
+              ? 'CONTINUE DIAGNOSTIC ASSESSMENT'
+              : 'START DIAGNOSTIC ASSESSMENT'}
         </span>
-        <ArrowRight size={20} />
+        <ArrowRight size={18} />
       </button>
     </div>
   );
 };
 
 export default WelcomeGatewayScreen;
-

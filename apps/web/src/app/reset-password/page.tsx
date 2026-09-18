@@ -7,12 +7,12 @@ import { AuthShell } from '../shell/AuthShell';
 export default function ResetPasswordPage() {
   return (
     <AuthShell
-      title="Reset Your Password"
+      title="RESET YOUR PASSWORD"
       subtitle="Enter a new secure password for your Clasptek account."
     >
       <Suspense
         fallback={
-          <div className="py-12 flex items-center justify-center text-(--text-muted) font-semibold text-sm">
+          <div className="py-12 flex items-center justify-center text-slate-500 font-semibold text-sm">
             Loading Password Reset...
           </div>
         }

@@ -16,7 +16,7 @@ function LoginPageContent() {
   const confirmationFailed = searchParams.get('error') === 'confirmation_failed';
 
   return (
-    <AuthShell title="Welcome Back" subtitle="Sign in to continue your Clasptek learning portal.">
+    <AuthShell title="WELCOME BACK" subtitle="Sign in to continue your preparation.">
       {emailConfirmed && (
         <Alert variant="success" className="mb-4">
           <AlertTitle>Email Confirmed</AlertTitle>
@@ -54,16 +54,15 @@ function LoginPageContent() {
 
       <LoginForm />
 
-      <div className="flex justify-between items-center text-xs mt-4">
-        <Link href="/forgot-password" className="text-blue-500 hover:underline font-medium">
-          Forgot Password?
+      <div className="mt-6 text-center text-xs text-[#545f73]">
+        Don&apos;t have an account?{' '}
+        <Link
+          href="/register"
+          className="text-[#003c90] hover:text-[#002c6b] font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
+        >
+          <span>CREATE ACCOUNT</span>
+          <span>→</span>
         </Link>
-        <span className="text-slate-400">
-          New to Clasptek?{' '}
-          <Link href="/register" className="text-blue-500 font-bold hover:underline">
-            Create Account
-          </Link>
-        </span>
       </div>
     </AuthShell>
   );
@@ -73,8 +72,8 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center text-slate-400">
-          Loading Portal...
+        <div className="flex min-h-screen items-center justify-center text-slate-500 font-medium text-sm">
+          Loading Clasptek Portal...
         </div>
       }
     >

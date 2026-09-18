@@ -1,8 +1,9 @@
+'use client';
+
 import React from 'react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 import { DashboardWidget, WidgetState } from '../../../shared/ui/academic/dashboard-widget';
-import { Button } from '../../../shared/ui/button/Button';
-import { FileText, Award, Play } from 'lucide-react';
+import { FileText, Award, Play, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
 
 export interface UpcomingAssessmentsWidgetProps {
   config: ProgrammeConfiguration;
@@ -26,151 +27,75 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
       state={state}
       onRetry={onRetry}
     >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '1.25rem',
-        }}
-      >
-        {/* Module 1: Diagnostic Assessment Launcher Card */}
-        <div
-          style={{
-            padding: '1.25rem',
-            borderRadius: '14px',
-            backgroundColor: 'rgba(15, 23, 42, 0.65)',
-            border: '1px solid rgba(56, 189, 248, 0.3)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            gap: '1rem',
-          }}
-        >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Module 1: Diagnostic Pre-Assessment Card */}
+        <div className="p-6 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between gap-5 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-[#003c90]" />
+
           <div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '0.5rem',
-              }}
-            >
-              <span
-                style={{
-                  fontSize: '0.7rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  padding: '0.2rem 0.5rem',
-                  borderRadius: '4px',
-                  backgroundColor: 'rgba(56, 189, 248, 0.15)',
-                  color: '#38bdf8',
-                }}
-              >
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#003c90] bg-[#f2f3ff] px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                <ShieldCheck size={12} />
                 INITIAL PROFICIENCY
               </span>
-              <FileText size={16} color="#38bdf8" />
+              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
+                <Clock size={12} />
+                ~35 Mins
+              </span>
             </div>
 
-            <h4
-              style={{
-                margin: '0 0 0.35rem',
-                fontSize: '1.05rem',
-                fontWeight: 800,
-                color: '#f8fafc',
-              }}
-            >
-              Diagnostic Assessment
-            </h4>
-            <p style={{ margin: 0, fontSize: '0.825rem', color: '#cbd5e1', lineHeight: 1.4 }}>
-              Determines initial proficiency baseline and generates your personalized study plan
-              before learning starts.
+            <h3 className="text-lg font-bold text-[#131b2e] tracking-tight mb-1">
+              Diagnostic Pre-Assessment
+            </h3>
+            <p className="text-xs text-[#545f73] leading-relaxed">
+              Calibrate your exact current baseline across all exam skills before beginning tailored study plans.
+              Automated marking across standard rubric dimensions.
             </p>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            type="button"
             onClick={onLaunchDiagnostic}
-            style={{
-              width: '100%',
-              justifyContent: 'center',
-              borderColor: 'rgba(56, 189, 248, 0.4)',
-              color: '#38bdf8',
-              gap: '0.4rem',
-            }}
+            className="w-full h-10 rounded-lg bg-[#003c90] hover:bg-[#002c6b] text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
           >
-            <Play size={14} /> Start Diagnostic Assessment
-          </Button>
+            <Play size={14} fill="currentColor" />
+            <span>START PRE-ASSESSMENT</span>
+          </button>
         </div>
 
         {/* Module 2: Full Mock Test Simulation Card */}
-        <div
-          style={{
-            padding: '1.25rem',
-            borderRadius: '14px',
-            backgroundColor: 'rgba(15, 23, 42, 0.65)',
-            border: '1px solid rgba(167, 139, 250, 0.3)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            gap: '1rem',
-          }}
-        >
+        <div className="p-6 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between gap-5 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1 bg-[#131b2e]" />
+
           <div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginBottom: '0.5rem',
-              }}
-            >
-              <span
-                style={{
-                  fontSize: '0.7rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  padding: '0.2rem 0.5rem',
-                  borderRadius: '4px',
-                  backgroundColor: 'rgba(167, 139, 250, 0.15)',
-                  color: '#a78bfa',
-                }}
-              >
-                EXAM SIMULATION
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#131b2e] bg-slate-100 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                <Award size={12} />
+                PROCTORED MOCK SIMULATION
               </span>
-              <Award size={16} color="#a78bfa" />
+              <span className="text-xs text-slate-500 font-semibold flex items-center gap-1">
+                <Clock size={12} />
+                Full Length
+              </span>
             </div>
 
-            <h4
-              style={{
-                margin: '0 0 0.35rem',
-                fontSize: '1.05rem',
-                fontWeight: 800,
-                color: '#f8fafc',
-              }}
-            >
+            <h3 className="text-lg font-bold text-[#131b2e] tracking-tight mb-1">
               Full Mock Examination
-            </h4>
-            <p style={{ margin: 0, fontSize: '0.825rem', color: '#cbd5e1', lineHeight: 1.4 }}>
-              Simulates the full timed examination environment under strict conditions to evaluate
-              score readiness.
+            </h3>
+            <p className="text-xs text-[#545f73] leading-relaxed">
+              Simulate the official examination environment under strict timed conditions with auto-submit
+              enforcement and comprehensive score analysis.
             </p>
           </div>
 
-          <Button
-            variant="primary"
-            size="sm"
+          <button
+            type="button"
             onClick={onLaunchMock}
-            style={{
-              width: '100%',
-              justifyContent: 'center',
-              backgroundColor: config.colorPalette.primary,
-              color: '#ffffff',
-              gap: '0.4rem',
-            }}
+            className="w-full h-10 rounded-lg border border-slate-300 hover:bg-[#f8fafc] text-[#131b2e] text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Play size={14} /> Launch Full Mock Test
-          </Button>
+            <Play size={14} />
+            <span>LAUNCH FULL MOCK TEST</span>
+          </button>
         </div>
       </div>
     </DashboardWidget>

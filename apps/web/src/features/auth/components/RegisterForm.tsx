@@ -551,9 +551,9 @@ export function RegisterForm() {
                 type="button"
                 disabled={isLoading || isSuccess}
                 onClick={handleCompleteRegistration}
-                className="flex-2 h-11 bg-(--brand) hover:bg-(--brand-hover) text-white font-bold text-sm rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-(--brand) cursor-pointer shadow-sm"
+                className="flex-2 h-11 bg-[#003c90] hover:bg-[#002c6b] text-white font-bold text-sm rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#003c90] cursor-pointer shadow-sm"
               >
-                <span>{isLoading ? 'Creating Account...' : 'Complete & Start Assessment'}</span>
+                <span>{isLoading ? 'Creating Account...' : 'CREATE ACCOUNT'}</span>
                 <CheckCircle2 size={18} />
               </button>
             </div>

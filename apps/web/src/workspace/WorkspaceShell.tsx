@@ -314,18 +314,18 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
     pathname?.includes('/assessments/player') ||
     pathname?.includes('/mock/player') ||
     pathname?.includes('/practice/session');
-
   if (isExamPlayerPage) {
     return (
       <RouteGuard
         allowedRoles={workspaceRole === 'STUDENT' ? ['STUDENT'] : ['ADMINISTRATOR', 'SYSTEM_ADMIN']}
       >
         <div
+          data-theme="dark"
           style={{
             minHeight: '100vh',
             width: '100vw',
-            backgroundColor: 'var(--bg-app, #0b0f19)',
-            color: 'var(--text-primary, #f8fafc)',
+            backgroundColor: '#090d16',
+            color: '#f8fafc',
             overflowX: 'hidden',
           }}
         >
@@ -346,8 +346,8 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
           height: '100vh',
           width: '100vw',
           overflow: 'hidden',
-          backgroundColor: 'var(--bg-app, #0b0f19)',
-          color: 'var(--text-primary, #f8fafc)',
+          backgroundColor: 'var(--bg-app, #ffffff)',
+          color: 'var(--text-primary, #131b2e)',
         }}
       >
         {/* Mobile Header — only visible on small screens */}
@@ -358,15 +358,14 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '0.75rem 1rem',
-              backgroundColor: 'var(--bg-surface-0, #111827)',
-              borderBottom: '1px solid var(--border-default, #1e293b)',
-              flexShrink: 0,
-              zIndex: 30,
+              backgroundColor: 'var(--bg-surface-0, #ffffff)',
+              borderBottom: '1px solid var(--border-default, #e2e8f0)',
+              color: 'var(--text-primary, #131b2e)',
             }}
           >
             <button
               onClick={() => setMobileDrawerOpen(true)}
-              aria-label="Open navigation menu"
+              aria-label="Open Navigation Drawer"
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -375,8 +374,8 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                 height: '40px',
                 borderRadius: '10px',
                 border: 'none',
-                backgroundColor: 'var(--bg-surface-1, #161e2e)',
-                color: 'var(--text-secondary, #cbd5e1)',
+                backgroundColor: 'var(--bg-surface-1, #f8fafc)',
+                color: 'var(--text-secondary, #545f73)',
                 cursor: 'pointer',
               }}
             >
@@ -386,7 +385,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               style={{
                 fontSize: '0.875rem',
                 fontWeight: 800,
-                color: currentWorkspace.themeAccent || 'var(--primary-500, #2563eb)',
+                color: currentWorkspace.themeAccent || 'var(--primary-500, #003c90)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
               }}
@@ -419,8 +418,8 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
             <aside
               style={{
                 width: collapsed ? '72px' : '260px',
-                backgroundColor: 'var(--bg-surface-0, #111827)',
-                borderRight: '1px solid var(--border-default, #1e293b)',
+                backgroundColor: 'var(--bg-surface-0, #ffffff)',
+                borderRight: '1px solid var(--border-default, #e2e8f0)',
                 display: 'flex',
                 flexDirection: 'column',
                 boxSizing: 'border-box',
