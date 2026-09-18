@@ -14,11 +14,11 @@ export default function RegisterPage() {
     >
       <RegisterForm />
 
-      <div className="mt-6 text-center text-xs text-[#545f73]">
+      <div className="mt-6 text-center text-xs text-[#475569]">
         Already have an account?{' '}
         <Link
           href="/login"
-          className="text-[#003c90] hover:text-[#002c6b] hover:underline font-bold transition-colors inline-flex items-center gap-1 no-underline"
+          className="text-[#045EAD] hover:text-[#034A8A] hover:underline font-bold transition-colors inline-flex items-center gap-1 no-underline"
         >
           <span>SIGN IN</span>
           <span>→</span>

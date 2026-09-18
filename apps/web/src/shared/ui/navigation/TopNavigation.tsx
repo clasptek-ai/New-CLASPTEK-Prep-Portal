@@ -18,7 +18,7 @@ export const TopNavigation = forwardRef<HTMLElement, TopNavigationProps>(functio
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 1.5rem',
-        color: 'var(--text-primary, #131b2e)',
+        color: 'var(--text-primary, #050310)',
         userSelect: 'none',
         flexShrink: 0,
         ...style,

@@ -140,48 +140,48 @@ export default function ExaminationsPage() {
   });
 
   return (
-    <div className="w-full min-h-screen bg-white text-[#131b2e] font-sans">
+    <div className="w-full min-h-screen bg-white text-[#050310] font-sans">
       <PublicHeader activePath="/examinations" />
 
       <main className="max-w-[1440px] mx-auto px-4 sm:px-8 py-10 md:py-14">
         {/* ── Breadcrumb ── */}
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-slate-500 mb-6">
-          <Link href="/" className="hover:text-[#003c90] transition-colors no-underline">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-[#475569] mb-6">
+          <Link href="/" className="hover:text-[#045EAD] transition-colors no-underline">
             Home
           </Link>
           <span>/</span>
-          <span className="text-[#131b2e] font-semibold">Examinations</span>
+          <span className="text-[#050310] font-bold">Examinations</span>
         </nav>
 
         {/* ── Page Header ── */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 border-b border-slate-200">
           <div className="max-w-3xl flex flex-col gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#f2f3ff] text-[#003c90] text-xs font-bold w-fit">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD] text-xs font-bold w-fit">
               <Shield size={14} />
               Accredited International Examination Pathways
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#131b2e] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#050310] tracking-tight">
               Standardized Examination Tracks &amp; Curriculum Specifications
             </h1>
-            <p className="text-sm sm:text-base text-[#545f73] leading-relaxed">
+            <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
               Choose an official international standard track. Select between a fast diagnostic Pre-Assessment
               or full-length proctored mock examination.
             </p>
           </div>
 
-          <div className="bg-[#f8fafc] border border-slate-200 rounded-xl p-4 flex items-center gap-6 shrink-0">
+          <div className="bg-[#F8FAFC] border border-slate-200 rounded-xl p-4 flex items-center gap-6 shrink-0">
             <div className="flex flex-col">
-              <span className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
+              <span className="text-[11px] uppercase tracking-wider text-[#475569] font-bold">
                 Curriculum Standard
               </span>
-              <span className="text-sm font-bold text-[#131b2e]">ISO/IEC 23988 Compliant</span>
+              <span className="text-sm font-bold text-[#050310]">ISO/IEC 23988 Compliant</span>
             </div>
             <div className="w-px h-8 bg-slate-200" />
             <div className="flex flex-col">
-              <span className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">
+              <span className="text-[11px] uppercase tracking-wider text-[#475569] font-bold">
                 Evaluation Metric
               </span>
-              <span className="text-sm font-bold text-[#003c90]">Official Band Descriptors</span>
+              <span className="text-sm font-bold text-[#045EAD]">Official Band Descriptors</span>
             </div>
           </div>
         </div>
@@ -191,10 +191,10 @@ export default function ExaminationsPage() {
           <button
             type="button"
             onClick={() => setActiveCategory('all')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeCategory === 'all'
-                ? 'bg-[#003c90] text-white shadow-sm'
-                : 'bg-[#f8fafc] text-[#545f73] border border-slate-200 hover:bg-slate-100'
+                ? 'bg-[#045EAD] text-white shadow-sm'
+                : 'bg-[#F8FAFC] text-[#475569] border border-slate-200 hover:bg-slate-100'
             }`}
           >
             All Tracks ({TRACKS.length})
@@ -202,10 +202,10 @@ export default function ExaminationsPage() {
           <button
             type="button"
             onClick={() => setActiveCategory('english')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeCategory === 'english'
-                ? 'bg-[#003c90] text-white shadow-sm'
-                : 'bg-[#f8fafc] text-[#545f73] border border-slate-200 hover:bg-slate-100'
+                ? 'bg-[#045EAD] text-white shadow-sm'
+                : 'bg-[#F8FAFC] text-[#475569] border border-slate-200 hover:bg-slate-100'
             }`}
           >
             English Proficiency (IELTS, TOEFL, CELPIP)
@@ -213,10 +213,10 @@ export default function ExaminationsPage() {
           <button
             type="button"
             onClick={() => setActiveCategory('admissions')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeCategory === 'admissions'
-                ? 'bg-[#003c90] text-white shadow-sm'
-                : 'bg-[#f8fafc] text-[#545f73] border border-slate-200 hover:bg-slate-100'
+                ? 'bg-[#045EAD] text-white shadow-sm'
+                : 'bg-[#F8FAFC] text-[#475569] border border-slate-200 hover:bg-slate-100'
             }`}
           >
             University Admissions (SAT Digital)
@@ -230,27 +230,27 @@ export default function ExaminationsPage() {
               key={track.id}
               className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow transition-shadow flex flex-col lg:flex-row justify-between gap-8 relative overflow-hidden"
             >
-              <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-[#003c90]" />
+              <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-[#045EAD]" />
 
               {/* Left Column: Track Info */}
               <div className="flex-1 flex flex-col gap-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#003c90] bg-[#f2f3ff] px-2.5 py-0.5 rounded-full">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] bg-[#EAF4FC] border border-[#B9DDF8] px-2.5 py-0.5 rounded-full">
                     {track.categoryLabel}
                   </span>
-                  <span className="text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                  <span className="text-[11px] font-semibold text-[#475569] bg-[#F8FAFC] border border-slate-200 px-2 py-0.5 rounded">
                     {track.badge}
                   </span>
-                  <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                  <span className="text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] border border-[#86EFAC] px-2 py-0.5 rounded">
                     {track.accreditation}
                   </span>
                 </div>
 
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-bold text-[#131b2e] tracking-tight">
+                  <h2 className="text-xl sm:text-2xl font-bold text-[#050310] tracking-tight">
                     {track.name}
                   </h2>
-                  <p className="text-xs sm:text-sm text-[#545f73] leading-relaxed mt-1 max-w-2xl">
+                  <p className="text-xs sm:text-sm text-[#475569] leading-relaxed mt-1 max-w-2xl">
                     {track.description}
                   </p>
                 </div>
@@ -260,9 +260,9 @@ export default function ExaminationsPage() {
                   {track.sections.map((sec) => (
                     <span
                       key={sec}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#f8fafc] border border-slate-200 text-xs text-[#131b2e] font-medium"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#F8FAFC] border border-slate-200 text-xs text-[#050310] font-semibold"
                     >
-                      <FileText size={13} className="text-[#003c90]" />
+                      <FileText size={13} className="text-[#045EAD]" />
                       {sec}
                     </span>
                   ))}
@@ -271,8 +271,8 @@ export default function ExaminationsPage() {
                 {/* Features checklist */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
                   {track.features.map((feat) => (
-                    <div key={feat} className="flex items-center gap-2 text-xs text-[#545f73]">
-                      <CheckCircle2 size={14} className="text-[#003c90] shrink-0" />
+                    <div key={feat} className="flex items-center gap-2 text-xs text-[#475569] font-medium">
+                      <CheckCircle2 size={14} className="text-[#045EAD] shrink-0" />
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -280,28 +280,28 @@ export default function ExaminationsPage() {
               </div>
 
               {/* Right Column: Key Specifications & Action Box */}
-              <div className="lg:w-80 shrink-0 flex flex-col justify-between p-5 rounded-xl bg-[#f8fafc] border border-slate-200 gap-4">
+              <div className="lg:w-80 shrink-0 flex flex-col justify-between p-5 rounded-xl bg-[#F8FAFC] border border-slate-200 gap-4">
                 <div className="space-y-3">
                   <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-200">
-                    <span className="text-slate-500 uppercase font-semibold">Total Duration</span>
-                    <span className="font-bold text-[#131b2e]">{track.durationMinutes} Minutes</span>
+                    <span className="text-[#475569] uppercase font-bold">Total Duration</span>
+                    <span className="font-bold text-[#050310]">{track.durationMinutes} Minutes</span>
                   </div>
 
                   <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-200">
-                    <span className="text-slate-500 uppercase font-semibold">Questions</span>
-                    <span className="font-bold text-[#131b2e]">{track.totalQuestions}</span>
+                    <span className="text-[#475569] uppercase font-bold">Questions</span>
+                    <span className="font-bold text-[#050310]">{track.totalQuestions}</span>
                   </div>
 
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-slate-500 uppercase font-semibold">Target Benchmark</span>
-                    <span className="font-bold text-[#003c90]">{track.recommendedTarget}</span>
+                    <span className="text-[#475569] uppercase font-bold">Target Benchmark</span>
+                    <span className="font-bold text-[#045EAD]">{track.recommendedTarget}</span>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-2 pt-2">
                   <Link
                     href="/register"
-                    className="w-full h-10 px-4 rounded-lg bg-[#003c90] hover:bg-[#002c6b] text-white text-xs font-bold inline-flex items-center justify-center gap-2 shadow-sm transition-all no-underline"
+                    className="w-full h-10 px-4 rounded-lg bg-[#045EAD] hover:bg-[#034A8A] text-white text-xs font-bold inline-flex items-center justify-center gap-2 shadow-sm transition-all no-underline"
                   >
                     <span>Take Pre-Assessment</span>
                     <ArrowRight size={14} />
@@ -309,7 +309,7 @@ export default function ExaminationsPage() {
 
                   <Link
                     href="/login"
-                    className="w-full h-10 px-4 rounded-lg border border-slate-300 hover:bg-white text-[#131b2e] text-xs font-bold inline-flex items-center justify-center transition-colors no-underline"
+                    className="w-full h-10 px-4 rounded-lg border border-slate-300 hover:bg-white text-[#050310] text-xs font-bold inline-flex items-center justify-center transition-colors no-underline"
                   >
                     View Mock Exams
                   </Link>

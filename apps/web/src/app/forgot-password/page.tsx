@@ -59,13 +59,13 @@ export default function ForgotPasswordPage() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label htmlFor="recovery-email" className="block text-xs font-semibold text-[#131b2e] mb-1.5">
+          <label htmlFor="recovery-email" className="block text-xs font-bold text-[#050310] mb-1.5">
             Email Address
           </label>
           <div className="relative">
             <Mail
               size={16}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#475569] pointer-events-none"
             />
             <input
               id="recovery-email"
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
               required
               autoComplete="email"
               placeholder="name@example.com"
-              className="w-full pl-10 pr-4 h-11 rounded-lg border border-slate-300 bg-white text-[#131b2e] text-sm focus:outline-none focus:ring-2 focus:ring-[#003c90] focus:border-[#003c90] transition-all placeholder:text-slate-400"
+              className="w-full pl-10 pr-4 h-11 rounded-lg border border-slate-300 bg-white text-[#050310] text-sm focus:outline-none focus:ring-2 focus:ring-[#045EAD] focus:border-[#045EAD] transition-all placeholder:text-[#64748B]"
             />
           </div>
         </div>
@@ -83,18 +83,18 @@ export default function ForgotPasswordPage() {
         <button
           type="submit"
           disabled={loading || success}
-          className="w-full h-11 bg-[#003c90] hover:bg-[#002c6b] text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#003c90] cursor-pointer shadow-sm mt-2"
+          className="w-full h-11 bg-[#045EAD] hover:bg-[#034A8A] text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#045EAD] cursor-pointer shadow-sm mt-2"
         >
           <span>{loading ? 'SENDING RECOVERY LINK...' : 'SEND RECOVERY LINK'}</span>
           <ArrowRight size={14} />
         </button>
       </form>
 
-      <div className="mt-6 text-center text-xs text-[#545f73]">
+      <div className="mt-6 text-center text-xs text-[#475569]">
         Remembered your credentials?{' '}
         <Link
           href="/login"
-          className="text-[#003c90] hover:text-[#002c6b] font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
+          className="text-[#045EAD] hover:text-[#034A8A] font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
         >
           <span>SIGN IN</span>
           <span>→</span>

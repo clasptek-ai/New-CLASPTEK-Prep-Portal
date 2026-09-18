@@ -275,10 +275,10 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
               >
                 <div
                   style={{
-                    backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                    backgroundColor: '#EAF4FC',
                     padding: '0.625rem',
                     borderRadius: 'var(--radius-md)',
-                    color: 'var(--brand-light)',
+                    color: '#045EAD',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -324,8 +324,8 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
               <div
                 style={{
                   padding: '1.25rem 1.5rem',
-                  backgroundColor: 'rgba(245, 158, 11, 0.08)',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  backgroundColor: '#EAF4FC',
+                  border: '1px solid #B9DDF8',
                   borderRadius: 'var(--radius-lg)',
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -342,8 +342,8 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                       letterSpacing: '0.06em',
                       padding: '0.2rem 0.5rem',
                       borderRadius: 'var(--radius-xs)',
-                      backgroundColor: 'rgba(245, 158, 11, 0.18)',
-                      color: 'var(--warning)',
+                      backgroundColor: '#FFFFFF',
+                      color: '#045EAD',
                       textTransform: 'uppercase',
                     }}
                   >
@@ -354,12 +354,12 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                       margin: '0.5rem 0 0.25rem',
                       fontSize: '1.05rem',
                       fontWeight: 700,
-                      color: 'var(--text-primary)',
+                      color: '#050310',
                     }}
                   >
                     Pre-Assessment Recommended for Baseline Profile
                   </h3>
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569' }}>
                     Completing your diagnostic Pre-Assessment establishes your starting academic profile. You can also proceed directly to official full-length mock simulations below.
                   </p>
                 </div>
@@ -368,8 +368,8 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                   href="/student/assessments"
                   style={{
                     padding: '0.625rem 1.25rem',
-                    backgroundColor: 'var(--warning)',
-                    color: '#0f172a',
+                    backgroundColor: '#045EAD',
+                    color: '#FFFFFF',
                     fontWeight: 700,
                     fontSize: '0.85rem',
                     borderRadius: 'var(--radius-md)',
@@ -418,7 +418,7 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                   style={{
                     fontSize: '1.875rem',
                     fontWeight: 800,
-                    color: 'var(--brand-light)',
+                    color: '#045EAD',
                     marginTop: '0.25rem',
                     letterSpacing: '-0.02em',
                   }}
@@ -557,11 +557,11 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                 width: '72px',
                 height: '72px',
                 borderRadius: '50%',
-                backgroundColor: 'rgba(37, 99, 235, 0.12)',
+                backgroundColor: '#EAF4FC',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'var(--brand)',
+                color: '#045EAD',
               }}
             >
               <Award size={40} />

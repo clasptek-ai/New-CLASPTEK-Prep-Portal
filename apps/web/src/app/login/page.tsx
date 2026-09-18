@@ -54,11 +54,11 @@ function LoginPageContent() {
 
       <LoginForm />
 
-      <div className="mt-6 text-center text-xs text-[#545f73]">
+      <div className="mt-6 text-center text-xs text-[#475569]">
         Don&apos;t have an account?{' '}
         <Link
           href="/register"
-          className="text-[#003c90] hover:text-[#002c6b] font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
+          className="text-[#045EAD] hover:text-[#034A8A] font-bold hover:underline transition-colors no-underline inline-flex items-center gap-1"
         >
           <span>CREATE ACCOUNT</span>
           <span>→</span>
@@ -72,7 +72,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center text-slate-500 font-medium text-sm">
+        <div className="flex min-h-screen items-center justify-center text-[#475569] font-medium text-sm">
           Loading Clasptek Portal...
         </div>
       }

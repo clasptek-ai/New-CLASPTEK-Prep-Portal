@@ -16,15 +16,25 @@
   --color-surface-1:     var(--surface-1);
   --color-surface-2:     var(--surface-2);
 
-  /* Text */
-  --color-text-primary:  var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted:    var(--text-muted);
+  /* Approved Backgrounds */
+  --color-bg-light-blue: #EAF4FC;
+  --color-bg-very-light: #F5FAFE;
+  --color-bg-neutral:    #F8FAFC;
+  --color-bg-white:      #FFFFFF;
 
-  /* Brand */
-  --color-brand:         var(--brand);
-  --color-brand-hover:   var(--brand-hover);
-  --color-brand-light:   var(--brand-light);
+  /* Approved Text Tokens */
+  --color-text-primary:   var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted:     var(--text-muted);
+  --color-text-on-blue:   #FFFFFF;
+  --color-text-on-navy:   #FFFFFF;
+
+  /* Brand Palette */
+  --color-brand:         #045EAD;
+  --color-brand-hover:   #034A8A;
+  --color-brand-light:   #045EAD;
+  --color-clasptek-blue: #045EAD;
+  --color-deep-navy:     #050310;
 
   /* Semantic status */
   --color-success:       var(--success);
@@ -46,50 +56,62 @@
   --radius-xl: 18px;
 
   /* Shadows */
-  --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.3);
-  --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.45);
-  --shadow-xl:  0 20px 60px rgba(0, 0, 0, 0.6);
+  --shadow-sm:  0 1px 2px rgba(5, 3, 16, 0.05);
+  --shadow-md:  0 4px 12px rgba(5, 3, 16, 0.08);
+  --shadow-lg:  0 8px 32px rgba(5, 3, 16, 0.12);
+  --shadow-xl:  0 20px 60px rgba(5, 3, 16, 0.16);
 }
 
 /* ============================================================
-   CANONICAL DESIGN TOKENS
+   CANONICAL DESIGN TOKENS — MANDATORY CLASPTEK COLOUR SYSTEM
    ============================================================ */
 :root {
-  /* ── Backgrounds ── */
-  --bg-app:       #090d16;    /* Global app background */
-  --surface-0:    #0f1623;    /* Primary panels, sidebars, cards */
-  --surface-1:    #151d2e;    /* Secondary panels, table rows */
-  --surface-2:    #1a2540;    /* Elevated: modals, popovers, dropdowns */
-  --surface-input: #111827;   /* Form inputs */
+  /* ── Approved Primary Palette ── */
+  --clasptek-blue: #045EAD;
+  --deep-navy:     #050310;
+  --pure-white:    #FFFFFF;
 
-  /* ── Borders ── */
-  --border:        rgba(255, 255, 255, 0.07);   /* Default subtle border */
-  --border-strong: rgba(255, 255, 255, 0.12);   /* Stronger borders, separators */
-  --border-focus:  var(--brand-light);           /* Focus rings */
+  /* ── Approved Light Backgrounds ── */
+  --bg-light-blue: #EAF4FC;
+  --bg-very-light: #F5FAFE;
+  --bg-neutral:    #F8FAFC;
 
-  /* ── Text ── */
-  --text-primary:   #f1f5f9;   /* Headings, primary content */
-  --text-secondary: #94a3b8;   /* Labels, secondary content */
-  --text-muted:     #475569;   /* Placeholders, captions, timestamps */
-  --text-disabled:  #334155;   /* Disabled state text */
+  /* ── Approved Surfaces (Clean White & Subtle Distinction) ── */
+  --bg-app:        #F8FAFC;    /* Neutral Background for page canvas */
+  --surface-0:     #FFFFFF;    /* White Cards (Rule 6: Cards remain white) */
+  --surface-1:     #F5FAFE;    /* Very Light Blue: secondary panels, subtle hover/row tint */
+  --surface-2:     #EAF4FC;    /* Light Blue: emphasis bands, active tabs, subtle accents */
+  --surface-input: #FFFFFF;    /* Crisp white input background */
+
+  /* ── Borders (Separation without excessive background colour changes) ── */
+  --border:        #E2E8F0;    /* Crisp subtle border */
+  --border-strong: #CBD5E1;    /* Strong card & modal borders */
+  --border-focus:  #045EAD;    /* Focus ring brand border */
+
+  /* ── Approved Text System (High Contrast Readability) ── */
+  --text-primary:   #050310;   /* Primary Text (Deep Navy, 19.8:1 contrast on white) */
+  --text-secondary: #475569;   /* Secondary Text (Slate 600, 7.57:1 contrast on white) */
+  --text-muted:     #64748B;   /* Muted Text (Slate 500, compliant tertiary) */
+  --text-disabled:  #94A3B8;   /* Disabled state text */
+  --text-on-blue:   #FFFFFF;   /* Text on Primary Blue */
+  --text-on-navy:   #FFFFFF;   /* Text on Dark Navy */
 
   /* ── Brand Palette ── */
-  --brand:          #2563eb;   /* Primary CTA, active state */
-  --brand-hover:    #1d4ed8;   /* Hover on primary brand */
-  --brand-light:    #3b82f6;   /* Lighter blue for links, icons */
-  --brand-subtle:   rgba(37, 99, 235, 0.12);  /* Tinted backgrounds */
-  --brand-border:   rgba(37, 99, 235, 0.3);   /* Brand-tinted borders */
+  --brand:          #045EAD;   /* Clasptek Blue */
+  --brand-hover:    #034A8A;   /* Clasptek Blue Hover */
+  --brand-light:    #045EAD;   /* Clasptek Blue */
+  --brand-subtle:   #EAF4FC;   /* Light Blue background */
+  --brand-border:   #B9DDF8;   /* Light blue border */
 
-  /* ── Semantic Status Colours ── */
-  --success:        #10b981;
-  --success-subtle: rgba(16, 185, 129, 0.12);
-  --warning:        #f59e0b;
-  --warning-subtle: rgba(245, 158, 11, 0.12);
-  --error:          #ef4444;
-  --error-subtle:   rgba(239, 68, 68, 0.12);
-  --info:           #3b82f6;
-  --info-subtle:    rgba(59, 130, 246, 0.12);
+  /* ── Semantic Status Colours (WCAG AA Compliant) ── */
+  --success:        #15803D;   /* Darker Green for readable text & borders */
+  --success-subtle: #DCFCE7;
+  --warning:        #B45309;   /* Darker Amber for readable text & borders */
+  --warning-subtle: #FEF3C7;
+  --error:          #B91C1C;   /* Red for readable error text & borders */
+  --error-subtle:   #FEE2E2;
+  --info:           #045EAD;   /* Clasptek Blue */
+  --info-subtle:    #EAF4FC;   /* Light Blue */
 
   /* ── Typography ── */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -203,6 +225,54 @@
   --bg-surface-2: var(--surface-2);
   --border-default: var(--border);
   --border-subtle:  var(--border);
+}
+
+/* Explicit Light Theme (Mirroring :root defaults) */
+[data-theme='light'] {
+  --clasptek-blue: #045EAD;
+  --deep-navy:     #050310;
+  --pure-white:    #FFFFFF;
+  --bg-light-blue: #EAF4FC;
+  --bg-very-light: #F5FAFE;
+  --bg-neutral:    #F8FAFC;
+  --bg-app:        #F8FAFC;
+  --surface-0:     #FFFFFF;
+  --surface-1:     #F5FAFE;
+  --surface-2:     #EAF4FC;
+  --surface-input: #FFFFFF;
+  --border:        #E2E8F0;
+  --border-strong: #CBD5E1;
+  --border-focus:  #045EAD;
+  --text-primary:   #050310;
+  --text-secondary: #475569;
+  --text-muted:     #64748B;
+  --text-disabled:  #94A3B8;
+  --brand:          #045EAD;
+  --brand-hover:    #034A8A;
+  --brand-light:    #045EAD;
+  --brand-subtle:   #EAF4FC;
+  --brand-border:   #B9DDF8;
+}
+
+/* Isolated Dark Theme (for specialized full-screen examination environments) */
+[data-theme='dark'] {
+  --bg-app:        #050310;
+  --surface-0:     #0c101a;
+  --surface-1:     #121824;
+  --surface-2:     #182030;
+  --surface-input: #0c101a;
+  --border:        rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --border-focus:  #38bdf8;
+  --text-primary:   #FFFFFF;
+  --text-secondary: #cbd5e1;
+  --text-muted:     #94a3b8;
+  --text-disabled:  #64748b;
+  --brand:          #045EAD;
+  --brand-hover:    #0284c7;
+  --brand-light:    #38bdf8;
+  --brand-subtle:   rgba(4, 94, 173, 0.2);
+  --brand-border:   rgba(4, 94, 173, 0.4);
 }
 
 /* ============================================================

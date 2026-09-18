@@ -324,8 +324,8 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
           style={{
             minHeight: '100vh',
             width: '100vw',
-            backgroundColor: '#090d16',
-            color: '#f8fafc',
+            backgroundColor: '#050310',
+            color: '#ffffff',
             overflowX: 'hidden',
           }}
         >
@@ -347,7 +347,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
           width: '100vw',
           overflow: 'hidden',
           backgroundColor: 'var(--bg-app, #ffffff)',
-          color: 'var(--text-primary, #131b2e)',
+          color: 'var(--text-primary, #050310)',
         }}
       >
         {/* Mobile Header — only visible on small screens */}
@@ -360,7 +360,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               padding: '0.75rem 1rem',
               backgroundColor: 'var(--bg-surface-0, #ffffff)',
               borderBottom: '1px solid var(--border-default, #e2e8f0)',
-              color: 'var(--text-primary, #131b2e)',
+              color: 'var(--text-primary, #050310)',
             }}
           >
             <button
@@ -375,7 +375,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                 borderRadius: '10px',
                 border: 'none',
                 backgroundColor: 'var(--bg-surface-1, #f8fafc)',
-                color: 'var(--text-secondary, #545f73)',
+                color: 'var(--text-secondary, #475569)',
                 cursor: 'pointer',
               }}
             >
@@ -385,7 +385,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               style={{
                 fontSize: '0.875rem',
                 fontWeight: 800,
-                color: currentWorkspace.themeAccent || 'var(--primary-500, #003c90)',
+                color: currentWorkspace.themeAccent || 'var(--primary-500, #045EAD)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
               }}
@@ -442,7 +442,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                     style={{
                       fontSize: '0.875rem',
                       fontWeight: 800,
-                      color: currentWorkspace.themeAccent || 'var(--primary-500, #2563eb)',
+                      color: currentWorkspace.themeAccent || 'var(--primary-500, #045EAD)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                     }}
@@ -456,7 +456,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: 'var(--text-secondary, #cbd5e1)',
+                    color: 'var(--text-secondary, #475569)',
                     cursor: 'pointer',
                     padding: '0.35rem',
                     fontSize: '0.875rem',

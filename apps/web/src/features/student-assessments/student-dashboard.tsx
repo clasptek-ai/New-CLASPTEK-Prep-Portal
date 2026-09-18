@@ -138,10 +138,8 @@ function StudentAssessmentDashboardContent() {
         style={{
           padding: '2rem 2.25rem',
           borderRadius: 'var(--radius-xl)',
-          background: isCompleted
-            ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.12), var(--surface-0))'
-            : 'linear-gradient(135deg, rgba(37, 99, 235, 0.14), var(--surface-0))',
-          border: `1px solid ${isCompleted ? 'var(--success-border, rgba(16, 185, 129, 0.3))' : 'var(--brand-border)'}`,
+          background: '#EAF4FC',
+          border: '1px solid #B9DDF8',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -157,8 +155,8 @@ function StudentAssessmentDashboardContent() {
               letterSpacing: '0.08em',
               padding: '0.2rem 0.6rem',
               borderRadius: 'var(--radius-xs)',
-              backgroundColor: isCompleted ? 'rgba(16, 185, 129, 0.18)' : 'rgba(37, 99, 235, 0.18)',
-              color: isCompleted ? 'var(--success)' : 'var(--brand-light)',
+              backgroundColor: isCompleted ? '#DCFCE7' : '#FFFFFF',
+              color: isCompleted ? '#15803D' : '#045EAD',
               textTransform: 'uppercase',
             }}
           >
@@ -169,7 +167,7 @@ function StudentAssessmentDashboardContent() {
               margin: '0.6rem 0 0.35rem',
               fontSize: '1.75rem',
               fontWeight: 800,
-              color: 'var(--text-primary)',
+              color: '#050310',
               letterSpacing: '-0.02em',
             }}
           >
@@ -286,13 +284,13 @@ function StudentAssessmentDashboardContent() {
                     alignItems: 'center',
                     gap: '0.5rem',
                     padding: '0.65rem 1.25rem',
-                    backgroundColor: 'var(--brand)',
-                    color: '#ffffff',
+                    backgroundColor: '#045EAD',
+                    color: '#FFFFFF',
                     borderRadius: 'var(--radius-md)',
                     fontWeight: 700,
                     fontSize: '0.875rem',
                     textDecoration: 'none',
-                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
+                    boxShadow: '0 4px 14px rgba(4, 94, 173, 0.25)',
                   }}
                 >
                   <span>Go to Mock Examinations</span>
@@ -369,7 +367,7 @@ function StudentAssessmentDashboardContent() {
                   }}
                 >
                   <span>
-                    Programme: <strong style={{ color: 'var(--brand-light)' }}>{programme?.name || 'English Proficiency'}</strong>
+                    Programme: <strong style={{ color: '#045EAD' }}>{programme?.name || 'English Proficiency'}</strong>
                   </span>
                   <span>
                     Duration: <strong style={{ color: 'var(--text-primary)' }}>{assessment?.durationMinutes || 45} Minutes</strong>
@@ -415,7 +413,7 @@ function StudentAssessmentDashboardContent() {
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
                   Grammar Component
                 </div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--brand-light)', marginTop: '0.25rem' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#045EAD', marginTop: '0.25rem' }}>
                   30 Items
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
@@ -439,7 +437,7 @@ function StudentAssessmentDashboardContent() {
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
                   Writing Component
                 </div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#a78bfa', marginTop: '0.25rem' }}>
+                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#045EAD', marginTop: '0.25rem' }}>
                   2 Tasks
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
@@ -457,7 +455,7 @@ function StudentAssessmentDashboardContent() {
 export function StudentAssessmentDashboard() {
   return (
     <Suspense
-      fallback={<div style={{ padding: '2rem', color: '#94a3b8' }}>Loading Diagnostics...</div>}
+      fallback={<div style={{ padding: '2rem', color: '#475569' }}>Loading Diagnostics...</div>}
     >
       <StudentAssessmentDashboardContent />
     </Suspense>

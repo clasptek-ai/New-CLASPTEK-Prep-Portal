@@ -32,7 +32,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
   return (
     <div className="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 shadow-sm relative overflow-hidden">
       {/* Brand Top Accent */}
-      <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#003c90]" />
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#045EAD]" />
 
       {/* ── Top row: Greeting + Actions ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
@@ -42,23 +42,23 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
           <div className="flex flex-col">
             {/* Programme badge */}
             <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#f2f3ff] text-[#003c90]">
+              <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#EAF4FC] border border-[#B9DDF8] text-[#045EAD]">
                 {config.badge || config.title}
               </span>
-              <span className="text-[11px] text-slate-400">• Official Candidate Session</span>
+              <span className="text-[11px] text-[#475569] font-medium">• Official Candidate Session</span>
             </div>
 
             {/* Greeting headline */}
             {isLoading ? (
               <Skeleton width="240px" height="2rem" />
             ) : (
-              <h1 className="text-xl sm:text-2xl font-extrabold text-[#131b2e] tracking-tight m-0">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-[#050310] tracking-tight m-0">
                 WELCOME BACK, {firstName.toUpperCase()}
               </h1>
             )}
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-sm text-[#545f73] mt-1 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#475569] mt-1 leading-relaxed">
               Continue your preparation and keep building towards your target score.
             </p>
           </div>
@@ -67,11 +67,11 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
         {/* Right: Streak + Action */}
         <div className="flex items-center gap-3 self-start sm:self-auto">
           {studyStreakDays > 0 && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800">
-              <Flame size={16} className="text-amber-500 fill-amber-500" />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-[#B45309]">
+              <Flame size={16} className="text-[#B45309] fill-[#B45309]" />
               <div className="flex flex-col">
                 <span className="text-xs font-bold leading-none">{studyStreakDays} Days</span>
-                <span className="text-[9px] uppercase font-semibold text-amber-600 tracking-wider">
+                <span className="text-[9px] uppercase font-bold text-[#B45309] tracking-wider">
                   Streak
                 </span>
               </div>
@@ -84,7 +84,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
               size="md"
               onClick={onResumeLearning}
               leftIcon={<Play size={14} fill="white" />}
-              className="bg-[#003c90] hover:bg-[#002c6b] text-white text-xs font-bold"
+              className="bg-[#045EAD] hover:bg-[#034A8A] text-white text-xs font-bold shadow-sm"
             >
               Continue Learning
             </Button>
@@ -94,40 +94,40 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
 
       {/* ── Bottom row: Key metrics strip ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-6 relative z-10">
-        <div className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200 flex flex-col justify-between">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
+        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
             Current Baseline
           </span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-xl font-extrabold text-[#131b2e] tabular-nums">
+            <span className="text-xl font-extrabold text-[#050310] tabular-nums">
               {config.targetMetric.current}
             </span>
-            <span className="text-xs text-slate-500 font-semibold">{config.targetMetric.unit}</span>
+            <span className="text-xs text-[#475569] font-bold">{config.targetMetric.unit}</span>
           </div>
-          <span className="text-[11px] text-slate-400 mt-0.5">Calibrated Diagnostic</span>
+          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">Calibrated Diagnostic</span>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200 flex flex-col justify-between">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
+        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
             Target Goal
           </span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-xl font-extrabold text-[#003c90] tabular-nums">
+            <span className="text-xl font-extrabold text-[#045EAD] tabular-nums">
               {config.targetMetric.target}
             </span>
-            <span className="text-xs text-[#003c90] font-semibold">{config.targetMetric.unit}</span>
+            <span className="text-xs text-[#045EAD] font-bold">{config.targetMetric.unit}</span>
           </div>
-          <span className="text-[11px] text-slate-400 mt-0.5">{config.targetMetric.description}</span>
+          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">{config.targetMetric.description}</span>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-[#f8fafc] border border-slate-200 flex flex-col justify-between">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">
+        <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-slate-200 flex flex-col justify-between">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
             Diagnostic Status
           </span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-base font-bold text-emerald-700">Available</span>
+            <span className="text-base font-bold text-[#15803D]">Available</span>
           </div>
-          <span className="text-[11px] text-slate-400 mt-0.5">Automated Rubric Evaluation</span>
+          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">Automated Rubric Evaluation</span>
         </div>
       </div>
     </div>

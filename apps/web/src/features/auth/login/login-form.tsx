@@ -49,7 +49,7 @@ export function LoginForm() {
           </FormLabel>
           <Link
             href="/forgot-password"
-            className="text-xs text-[#003c90] hover:text-[#002c6b] hover:underline font-medium no-underline"
+            className="text-xs text-[#045EAD] hover:text-[#034A8A] hover:underline font-bold no-underline"
           >
             Forgot password?
           </Link>
@@ -71,9 +71,9 @@ export function LoginForm() {
           id="remember-me"
           checked={rememberMe}
           onChange={(e) => setRememberMe(e.target.checked)}
-          className="w-4 h-4 rounded border-slate-300 text-[#003c90] focus:ring-[#003c90] cursor-pointer"
+          className="w-4 h-4 rounded border-slate-300 text-[#045EAD] focus:ring-[#045EAD] cursor-pointer"
         />
-        <label htmlFor="remember-me" className="text-xs text-[#545f73] cursor-pointer select-none">
+        <label htmlFor="remember-me" className="text-xs text-[#475569] font-medium cursor-pointer select-none">
           Remember me on this device
         </label>
       </div>
@@ -81,7 +81,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full h-11 bg-[#003c90] hover:bg-[#002c6b] text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#003c90] cursor-pointer shadow-sm mt-2"
+        className="w-full h-11 bg-[#045EAD] hover:bg-[#034A8A] text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#045EAD] cursor-pointer shadow-sm mt-2"
       >
         <span>{isSubmitting ? 'SIGNING IN...' : 'SIGN IN'}</span>
       </button>

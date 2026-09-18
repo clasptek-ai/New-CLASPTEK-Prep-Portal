@@ -15,11 +15,11 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const STORAGE_KEY = 'clasptek-theme';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>('dark');
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setThemeState] = useState<ThemeMode>('light');
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   const applyTheme = (mode: ThemeMode) => {
-    let active: 'light' | 'dark' = 'dark';
+    let active: 'light' | 'dark' = 'light';
     if (mode === 'system') {
       active = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     } else {
@@ -41,11 +41,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const saved = (localStorage.getItem(STORAGE_KEY) as ThemeMode) || 'dark';
+      const saved = (localStorage.getItem(STORAGE_KEY) as ThemeMode) || 'light';
       setThemeState(saved);
       applyTheme(saved);
     } catch {
-      applyTheme('dark');
+      applyTheme('light');
     }
 
     // Multi-tab storage synchronization listener
