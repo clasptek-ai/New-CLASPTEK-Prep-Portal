@@ -4,17 +4,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ShieldCheck,
-  Clock,
-  HelpCircle,
   ArrowRight,
   Sparkles,
   AlertCircle,
   RefreshCw,
   CheckCircle2,
-  Headphones,
-  FileText,
-  PenTool,
-  Mic,
   Monitor,
   Wifi,
   Volume2,
@@ -46,7 +40,7 @@ export interface CanonicalProgrammeMetadata {
 }
 
 export interface WelcomeGatewayScreenProps {
-  onboardingData?: Record<string, any>;
+  onboardingData?: Record<string, unknown>;
 }
 
 export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
@@ -238,20 +232,25 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
               Standardized Diagnostic Tier
             </span>
             <span className="text-xs text-slate-400">•</span>
-            <span className="text-xs text-[#475569] font-mono font-medium">Code: {assessment.code}</span>
+            <span className="text-xs text-[#475569] font-mono font-medium">
+              Code: {assessment.code}
+            </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-deep-navy tracking-tight">
             {assessment.title}
           </h1>
           <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
-            Welcome, {firstName}. Calibrate your exact current baseline across all exam skills before beginning tailored study plans.
+            Welcome, {firstName}. Calibrate your exact current baseline across all exam skills
+            before beginning tailored study plans.
           </p>
         </div>
 
         <div className="bg-bg-neutral border border-slate-200 rounded-xl px-3.5 py-2 flex items-center gap-3 shrink-0">
           <ShieldCheck size={24} className="text-[#045EAD]" />
           <div className="flex flex-col text-right">
-            <span className="text-[10px] text-[#475569] uppercase font-bold">Evaluation Protocol</span>
+            <span className="text-[10px] text-[#475569] uppercase font-bold">
+              Evaluation Protocol
+            </span>
             <span className="text-xs font-bold text-deep-navy">CEFR C1/C2 Metric</span>
           </div>
         </div>
@@ -291,29 +290,47 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">Track</span>
-            <span className="text-sm font-bold text-deep-navy mt-1">{programme?.name || 'Standard'}</span>
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
+              Track
+            </span>
+            <span className="text-sm font-bold text-deep-navy mt-1">
+              {programme?.name || 'Standard'}
+            </span>
             <span className="text-[10px] text-[#64748B] font-medium mt-0.5">Verified syllabus</span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">Duration</span>
-            <span className="text-sm font-bold text-[#045EAD] mt-1">{assessment.durationMinutes} Mins</span>
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
+              Duration
+            </span>
+            <span className="text-sm font-bold text-[#045EAD] mt-1">
+              {assessment.durationMinutes} Mins
+            </span>
             <span className="text-[10px] text-[#64748B] font-medium mt-0.5">Server timed</span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">Questions</span>
-            <span className="text-sm font-bold text-deep-navy mt-1">{assessment.totalQuestions} Items</span>
-            <span className="text-[10px] text-[#64748B] font-medium mt-0.5">Adaptive difficulty</span>
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
+              Questions
+            </span>
+            <span className="text-sm font-bold text-deep-navy mt-1">
+              {assessment.totalQuestions} Items
+            </span>
+            <span className="text-[10px] text-[#64748B] font-medium mt-0.5">
+              Adaptive difficulty
+            </span>
           </div>
 
           <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">Modules</span>
+            <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
+              Modules
+            </span>
             <span className="text-sm font-bold text-deep-navy mt-1">
               {assessment.sections?.length || 4} Integrated
             </span>
-            <span className="text-[10px] text-[#64748B] font-medium mt-0.5">Full skill spectrum</span>
+            <span className="text-[10px] text-[#64748B] font-medium mt-0.5">
+              Full skill spectrum
+            </span>
           </div>
         </div>
 
@@ -386,21 +403,37 @@ export const WelcomeGatewayScreen: React.FC<WelcomeGatewayScreenProps> = () => {
           </div>
         </div>
 
-        {/* Candidate Rules */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
-          <h3 className="text-sm font-bold text-deep-navy">Examination Protocol</h3>
-          <ul className="space-y-2 text-xs text-[#475569]">
-            <li className="flex items-start gap-2">
-              <CheckCircle2 size={14} className="text-[#045EAD] shrink-0 mt-0.5" />
-              <span>Complete all tasks independently to guarantee valid placement calibration.</span>
+        {/* Candidate Rules & Key Benefits */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3.5">
+          <h3 className="text-sm font-bold text-deep-navy">Candidate Instructions</h3>
+          <ul className="space-y-3 text-xs text-[#475569]">
+            <li className="flex items-start gap-2.5">
+              <CheckCircle2 size={16} className="text-[#045EAD] shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-deep-navy block mb-0.5">Paced &amp; Timed</strong>
+                <span>
+                  A continuous timer tracks your session. Work steadily through each skill module.
+                </span>
+              </div>
             </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 size={14} className="text-[#045EAD] shrink-0 mt-0.5" />
-              <span>Server-authoritative timer runs continuously. Auto-submission triggers upon expiry.</span>
+            <li className="flex items-start gap-2.5">
+              <CheckCircle2 size={16} className="text-[#045EAD] shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-deep-navy block mb-0.5">Auto-Saved Progress</strong>
+                <span>Your answers save automatically as you complete each question.</span>
+              </div>
             </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 size={14} className="text-[#045EAD] shrink-0 mt-0.5" />
-              <span>All responses are persisted atomically to the authoritative database.</span>
+            <li className="flex items-start gap-2.5">
+              <CheckCircle2 size={16} className="text-[#045EAD] shrink-0 mt-0.5" />
+              <div>
+                <strong className="text-deep-navy block mb-0.5">
+                  Instant Baseline Calibration
+                </strong>
+                <span>
+                  Receive an immediate CEFR-benchmarked score report and tailored skill plan upon
+                  completion.
+                </span>
+              </div>
             </li>
           </ul>
 

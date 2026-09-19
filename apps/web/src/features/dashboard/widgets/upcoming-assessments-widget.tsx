@@ -3,7 +3,7 @@
 import React from 'react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 import { DashboardWidget, WidgetState } from '../../../shared/ui/academic/dashboard-widget';
-import { FileText, Award, Play, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
+import { Award, Play, ShieldCheck, Clock } from 'lucide-react';
 
 export interface UpcomingAssessmentsWidgetProps {
   config: ProgrammeConfiguration;
@@ -14,7 +14,7 @@ export interface UpcomingAssessmentsWidgetProps {
 }
 
 export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps> = ({
-  config,
+  config: _config,
   state = 'SUCCESS',
   onRetry,
   onLaunchDiagnostic,
@@ -48,8 +48,8 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
               Diagnostic Pre-Assessment
             </h3>
             <p className="text-xs text-[#475569] leading-relaxed">
-              Calibrate your exact current baseline across all exam skills before beginning tailored study plans.
-              Automated marking across standard rubric dimensions.
+              Calibrate your exact current baseline across all exam skills before beginning tailored
+              study plans. Automated marking across standard rubric dimensions.
             </p>
           </div>
 
@@ -75,7 +75,7 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
               </span>
               <span className="text-xs text-[#475569] font-bold flex items-center gap-1">
                 <Clock size={12} />
-                Full Length
+                Full-Length Timed
               </span>
             </div>
 
@@ -83,8 +83,8 @@ export const UpcomingAssessmentsWidget: React.FC<UpcomingAssessmentsWidgetProps>
               Full Mock Examination
             </h3>
             <p className="text-xs text-[#475569] leading-relaxed">
-              Simulate the official examination environment under strict timed conditions with auto-submit
-              enforcement and comprehensive score analysis.
+              Simulate the official examination environment under authentic timed test conditions
+              with comprehensive rubric evaluation and detailed performance breakdown.
             </p>
           </div>
 

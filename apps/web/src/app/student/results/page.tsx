@@ -3,19 +3,7 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { authFetch } from '@/lib/api-fetch';
-import {
-  Shield,
-  ArrowRight,
-  Download,
-  Calendar,
-  RotateCcw,
-  CheckCircle2,
-  AlertCircle,
-  TrendingUp,
-  FileText,
-  Clock,
-  Award,
-} from 'lucide-react';
+import { ArrowRight, CheckCircle2, AlertCircle, Award } from 'lucide-react';
 
 interface SectionScore {
   sectionCode: string;
@@ -65,7 +53,7 @@ function StudentResultsContent() {
   const [loading, setLoading] = useState(true);
   const [latestResult, setLatestResult] = useState<ResultData | null>(null);
   const [recentResults, setRecentResults] = useState<ResultData[]>([]);
-  const [skillPerformance, setSkillPerformance] = useState<SkillPerformanceItem[]>([]);
+  const [_skillPerformance, setSkillPerformance] = useState<SkillPerformanceItem[]>([]);
   const [detailResult, setDetailResult] = useState<ResultData | null>(null);
   const [enrolling, setEnrolling] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -293,7 +281,8 @@ function StudentResultsContent() {
               Assessment Outcome &amp; Performance Breakdown
             </h1>
             <p className="text-xs text-[#475569] mt-1">
-              Evaluated by Authoritative Examination Engine on {formatDate(detailResult.generatedAt)}
+              Evaluated by Authoritative Examination Engine on{' '}
+              {formatDate(detailResult.generatedAt)}
             </p>
           </div>
 
@@ -359,7 +348,9 @@ function StudentResultsContent() {
 
             <div className="pt-3 border-t border-slate-200 text-xs text-[#475569] flex items-center justify-between">
               <span>Reliability Index</span>
-              <span className="font-bold text-emerald-700">{detailResult.reliabilityScore || 94}%</span>
+              <span className="font-bold text-emerald-700">
+                {detailResult.reliabilityScore || 94}%
+              </span>
             </div>
           </div>
 
@@ -454,6 +445,27 @@ function StudentResultsContent() {
             {enrolling ? 'Enrolling...' : `Enroll in ${detailResult.placementStage} Track →`}
           </button>
         </div>
+
+        {/* Next Step Continuity */}
+        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <span className="text-xs font-bold text-[#475569]">Ready to build your score?</span>
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => router.push('/practice')}
+              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] hover:bg-[#d8ecf8] text-xs font-bold transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>Practice Weak Areas →</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push('/student/mock')}
+              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-bg-neutral border border-slate-200 text-deep-navy hover:bg-slate-200 text-xs font-bold transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>Take Full Mock Exam →</span>
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -468,7 +480,9 @@ function StudentResultsContent() {
             Performance Ledger
           </span>
         </div>
-        <h1 className="text-2xl font-extrabold text-deep-navy tracking-tight">My Assessment Results</h1>
+        <h1 className="text-2xl font-extrabold text-deep-navy tracking-tight">
+          My Assessment Results
+        </h1>
         <p className="text-xs text-[#475569] mt-1">
           Authoritative assessment records, calibrated target scores, and skill progression history.
         </p>
@@ -504,7 +518,9 @@ function StudentResultsContent() {
                 <span className="text-xs font-bold text-[#045EAD] uppercase tracking-wider">
                   Latest Completed Assessment
                 </span>
-                <span className="text-xs text-[#475569]">{formatDate(latestResult.generatedAt)}</span>
+                <span className="text-xs text-[#475569]">
+                  {formatDate(latestResult.generatedAt)}
+                </span>
               </div>
 
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -512,28 +528,47 @@ function StudentResultsContent() {
                   <h3 className="text-lg font-bold text-deep-navy">
                     {latestResult.examType || 'English Proficiency'} Diagnostic Assessment
                   </h3>
-                  <div className="flex items-center gap-2 mt-2">
-                    {latestResult.cefrLevel && (
-                      <span className="px-2.5 py-0.5 bg-bg-light-blue text-[#045EAD] rounded text-xs font-bold">
-                        CEFR {latestResult.cefrLevel}
-                      </span>
-                    )}
-                    {latestResult.predictedBand && (
-                      <span className="px-2.5 py-0.5 bg-purple-50 text-purple-700 rounded text-xs font-bold">
-                        Band {latestResult.predictedBand}
-                      </span>
-                    )}
-                  </div>
+                  <p className="text-xs text-[#475569] mt-0.5">
+                    Official baseline calibration report
+                  </p>
                 </div>
 
-                <div className="flex items-center gap-6">
-                  <div className="text-right">
-                    <div className="text-[10px] text-[#475569] uppercase font-semibold">Score</div>
-                    <div className="text-2xl font-black text-deep-navy">{latestResult.overallScore}%</div>
+                <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+                  {/* Above-the-fold score hierarchy: Predicted Band, Raw Score, CEFR */}
+                  <div className="flex items-center gap-2 sm:gap-3 bg-white px-3.5 py-2 rounded-xl border border-slate-200">
+                    {latestResult.predictedBand && (
+                      <div className="text-center px-2 border-r border-slate-100">
+                        <span className="text-[10px] text-[#475569] uppercase font-bold block">
+                          Predicted
+                        </span>
+                        <span className="text-sm font-extrabold text-[#045EAD]">
+                          Band {latestResult.predictedBand}
+                        </span>
+                      </div>
+                    )}
+                    <div className="text-center px-2">
+                      <span className="text-[10px] text-[#475569] uppercase font-bold block">
+                        Raw Score
+                      </span>
+                      <span className="text-sm font-extrabold text-deep-navy">
+                        {latestResult.overallScore}%
+                      </span>
+                    </div>
+                    {latestResult.cefrLevel && (
+                      <div className="text-center px-2 border-l border-slate-100">
+                        <span className="text-[10px] text-[#475569] uppercase font-bold block">
+                          CEFR
+                        </span>
+                        <span className="text-sm font-extrabold text-emerald-700">
+                          {latestResult.cefrLevel}
+                        </span>
+                      </div>
+                    )}
                   </div>
+
                   <button
                     onClick={() => setActiveAttemptId(latestResult.attemptId)}
-                    className="px-5 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer flex items-center gap-1.5"
+                    className="px-5 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                   >
                     <span>View Full Result</span>
                     <ArrowRight size={13} />
@@ -562,14 +597,19 @@ function StudentResultsContent() {
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {recentResults.map((r) => (
-                      <tr key={r.resultId || r.attemptId} className="hover:bg-slate-50 transition-colors">
+                      <tr
+                        key={r.resultId || r.attemptId}
+                        className="hover:bg-slate-50 transition-colors"
+                      >
                         <td className="py-3 px-3 font-semibold text-deep-navy">
                           {r.examType || 'English Proficiency'} Diagnostic
                         </td>
                         <td className="py-3 px-3 font-mono font-bold text-[#045EAD]">
                           {r.overallScore}%
                         </td>
-                        <td className="py-3 px-3 text-slate-600 font-medium">{formatDate(r.generatedAt)}</td>
+                        <td className="py-3 px-3 text-slate-600 font-medium">
+                          {formatDate(r.generatedAt)}
+                        </td>
                         <td className="py-3 px-3 text-right">
                           <button
                             onClick={() => setActiveAttemptId(r.attemptId)}
@@ -585,6 +625,73 @@ function StudentResultsContent() {
               </div>
             </div>
           )}
+
+          {/* NEXT STEP IN YOUR PREPARATION */}
+          <div className="bg-bg-neutral p-6 rounded-2xl border border-slate-200 space-y-4">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] block">
+                Task-Flow Continuity
+              </span>
+              <h2 className="text-base font-bold text-deep-navy">Next Step in Your Preparation</h2>
+              <p className="text-xs text-[#475569] mt-0.5">
+                Target your identified skill gaps or simulate complete examination conditions.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              <button
+                type="button"
+                onClick={() => router.push('/practice')}
+                className="p-5 rounded-xl bg-white border border-[#B9DDF8] hover:border-[#045EAD] hover:shadow-sm text-left flex flex-col justify-between gap-3 transition-all cursor-pointer group"
+              >
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#045EAD] bg-bg-light-blue px-2.5 py-0.5 rounded-full border border-[#B9DDF8]">
+                    Primary Action
+                  </span>
+                  <h3 className="text-sm font-bold text-deep-navy mt-2 group-hover:text-[#045EAD] transition-colors">
+                    Practice Weak Areas →
+                  </h3>
+                  <p className="text-xs text-[#475569] mt-1 leading-relaxed">
+                    Target your specific skill gaps with adaptive practice drills in Reading,
+                    Listening, Writing, and Speaking.
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-[#045EAD] inline-flex items-center gap-1.5 pt-2 border-t border-slate-100">
+                  <span>Start Practice Drills</span>
+                  <ArrowRight
+                    size={14}
+                    className="group-hover:translate-x-0.5 transition-transform"
+                  />
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => router.push('/student/mock')}
+                className="p-5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm text-left flex flex-col justify-between gap-3 transition-all cursor-pointer group"
+              >
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#475569] bg-bg-neutral px-2.5 py-0.5 rounded-full border border-slate-200">
+                    Simulation Action
+                  </span>
+                  <h3 className="text-sm font-bold text-deep-navy mt-2 group-hover:text-deep-navy transition-colors">
+                    Take Full Mock Exam →
+                  </h3>
+                  <p className="text-xs text-[#475569] mt-1 leading-relaxed">
+                    Simulate the complete proctored examination under authentic timed test
+                    conditions with full scoring.
+                  </p>
+                </div>
+                <span className="text-xs font-bold text-deep-navy inline-flex items-center gap-1.5 pt-2 border-t border-slate-100">
+                  <span>Launch Mock Examination</span>
+                  <ArrowRight
+                    size={14}
+                    className="group-hover:translate-x-0.5 transition-transform"
+                  />
+                </span>
+              </button>
+            </div>
+          </div>
         </>
       )}
     </div>

@@ -46,8 +46,15 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ viewModel }) => {
         config={config}
         studyStreakDays={studyStreakDays}
         state={widgetState}
+        isDiagnosticCompleted={
+          viewModel.overview?.assessmentSummary.diagnostic.status === 'COMPLETED'
+        }
+        onPrimaryAction={() => {
+          const isCompleted =
+            viewModel.overview?.assessmentSummary.diagnostic.status === 'COMPLETED';
+          router.push(isCompleted ? '/practice' : '/student/assessments');
+        }}
         onRetry={refetch}
-        onResumeLearning={() => router.push('/learning')}
       />
 
       {/* ── Zone 2: Progress (2-column grid on wider viewports) ── */}

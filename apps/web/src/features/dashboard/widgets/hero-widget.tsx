@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Play, Flame, Shield, TrendingUp } from 'lucide-react';
+import { Play, Flame } from 'lucide-react';
 import { ProgrammeConfiguration } from '../models/programme-config';
 import { WidgetState } from '../../../shared/ui/academic/dashboard-widget';
 import { Button } from '../../../shared/ui/button/Button';
@@ -15,6 +15,8 @@ export interface HeroWidgetProps {
   studentId?: string;
   learningLevel?: string;
   state?: WidgetState;
+  isDiagnosticCompleted?: boolean;
+  onPrimaryAction?: () => void;
   onRetry?: () => void;
   onResumeLearning?: () => void;
 }
@@ -24,10 +26,16 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
   config,
   studyStreakDays,
   state = 'SUCCESS',
+  isDiagnosticCompleted = false,
+  onPrimaryAction,
   onResumeLearning,
 }) => {
   const isLoading = state === 'LOADING';
   const firstName = studentName ? studentName.split(' ')[0] : 'STUDENT';
+
+  // Determine dominant next action handler and label
+  const handleAction = onPrimaryAction || onResumeLearning;
+  const actionLabel = isDiagnosticCompleted ? 'Continue Practice' : 'Take Pre-Assessment';
 
   return (
     <div className="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 shadow-sm relative overflow-hidden">
@@ -45,7 +53,9 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
               <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD]">
                 {config.badge || config.title}
               </span>
-              <span className="text-[11px] text-[#475569] font-medium">• Official Candidate Session</span>
+              <span className="text-[11px] text-[#475569] font-medium">
+                • Official Candidate Session
+              </span>
             </div>
 
             {/* Greeting headline */}
@@ -59,15 +69,20 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
 
             {/* Subtitle */}
             <p className="text-xs sm:text-sm text-[#475569] mt-1 leading-relaxed">
-              Continue your preparation and keep building towards your target score.
+              {isDiagnosticCompleted
+                ? 'Your baseline is calibrated. Continue focused practice drills to target skill gaps.'
+                : 'Complete your initial diagnostic pre-assessment to calibrate your personal preparation plan.'}
             </p>
           </div>
         </div>
 
-        {/* Right: Streak + Action */}
+        {/* Right: Streak (informational) + Dominant Action */}
         <div className="flex items-center gap-3 self-start sm:self-auto">
           {studyStreakDays > 0 && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-[#B45309]">
+            <div
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-[#B45309]"
+              title={`${studyStreakDays} consecutive days active`}
+            >
               <Flame size={16} className="text-[#B45309] fill-[#B45309]" />
               <div className="flex flex-col">
                 <span className="text-xs font-bold leading-none">{studyStreakDays} Days</span>
@@ -78,15 +93,15 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
             </div>
           )}
 
-          {onResumeLearning && (
+          {handleAction && (
             <Button
               variant="primary"
               size="md"
-              onClick={onResumeLearning}
+              onClick={handleAction}
               leftIcon={<Play size={14} fill="white" />}
-              className="bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold shadow-sm"
+              className="bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold shadow-sm whitespace-nowrap"
             >
-              Continue Learning
+              {actionLabel}
             </Button>
           )}
         </div>
@@ -104,7 +119,9 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
             </span>
             <span className="text-xs text-[#475569] font-bold">{config.targetMetric.unit}</span>
           </div>
-          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">Calibrated Diagnostic</span>
+          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">
+            Calibrated Diagnostic
+          </span>
         </div>
 
         <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
@@ -117,7 +134,9 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
             </span>
             <span className="text-xs text-[#045EAD] font-bold">{config.targetMetric.unit}</span>
           </div>
-          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">{config.targetMetric.description}</span>
+          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">
+            {config.targetMetric.description}
+          </span>
         </div>
 
         <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
@@ -127,7 +146,9 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
           <div className="flex items-baseline gap-1 mt-1">
             <span className="text-base font-bold text-[#15803D]">Available</span>
           </div>
-          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">Automated Rubric Evaluation</span>
+          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">
+            Automated Rubric Evaluation
+          </span>
         </div>
       </div>
     </div>
