@@ -45,16 +45,16 @@ export function PublicFooter() {
             <span className="font-bold text-xs uppercase tracking-wider text-deep-navy">
               Examination Tracks
             </span>
-            <Link href="/examinations" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/examinations" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               IELTS Academic &amp; General
             </Link>
-            <Link href="/examinations" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/examinations" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               SAT Digital (Adaptive)
             </Link>
-            <Link href="/examinations" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/examinations" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               TOEFL iBT Standard
             </Link>
-            <Link href="/examinations" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/examinations" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               CELPIP General Training
             </Link>
           </div>
@@ -64,16 +64,16 @@ export function PublicFooter() {
             <span className="font-bold text-xs uppercase tracking-wider text-deep-navy">
               Preparation
             </span>
-            <Link href="/register" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/register" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               Diagnostic Pre-Assessment
             </Link>
-            <Link href="/login" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/login" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               Timed Mock Examinations
             </Link>
-            <Link href="/login" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/login" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               Official Band Descriptors
             </Link>
-            <Link href="/login" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/login" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               Score Calibration &amp; Analytics
             </Link>
           </div>
@@ -83,29 +83,29 @@ export function PublicFooter() {
             <span className="font-bold text-xs uppercase tracking-wider text-deep-navy">
               Account &amp; Security
             </span>
-            <Link href="/login" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/login" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               Student Sign In
             </Link>
-            <Link href="/register" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/register" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               Register Candidate Account
             </Link>
-            <Link href="/forgot-password" className="text-[#475569] hover:text-[#045EAD] font-medium no-underline">
+            <Link href="/forgot-password" className="text-slate-600 hover:text-deep-navy font-medium no-underline transition-colors">
               Password Recovery
             </Link>
-            <span className="text-[#475569] font-medium">Strict RLS Data Isolation</span>
+            <span className="text-slate-600 font-medium">Strict RLS Data Isolation</span>
           </div>
         </div>
 
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[#475569] text-[11px]">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 text-[11px]">
           <div>
             © {new Date().getFullYear()} Clasptek Prep Portal. All rights reserved. Registered under ISO/IEC 23988.
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/examinations" className="hover:text-[#045EAD] no-underline">
+            <Link href="/examinations" className="hover:text-deep-navy no-underline transition-colors">
               Curriculum Matrix
             </Link>
             <span>•</span>
-            <Link href="/login" className="hover:text-[#045EAD] no-underline">
+            <Link href="/login" className="hover:text-deep-navy no-underline transition-colors">
               Security Protocol
             </Link>
           </div>

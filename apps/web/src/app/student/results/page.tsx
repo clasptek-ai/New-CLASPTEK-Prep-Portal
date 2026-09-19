@@ -551,8 +551,8 @@ function StudentResultsContent() {
               </h2>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-[#475569]">
-                  <thead className="border-b border-slate-200 text-[#475569] uppercase font-semibold text-[10px]">
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="border-b border-slate-200 text-slate-700 uppercase font-bold text-[10px]">
                     <tr>
                       <th className="py-2.5 px-3">Assessment</th>
                       <th className="py-2.5 px-3">Score</th>
@@ -569,7 +569,7 @@ function StudentResultsContent() {
                         <td className="py-3 px-3 font-mono font-bold text-[#045EAD]">
                           {r.overallScore}%
                         </td>
-                        <td className="py-3 px-3 text-[#475569]">{formatDate(r.generatedAt)}</td>
+                        <td className="py-3 px-3 text-slate-600 font-medium">{formatDate(r.generatedAt)}</td>
                         <td className="py-3 px-3 text-right">
                           <button
                             onClick={() => setActiveAttemptId(r.attemptId)}

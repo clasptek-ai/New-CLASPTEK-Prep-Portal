@@ -72,7 +72,7 @@ export function PublicHeader({ activePath }: PublicHeaderProps) {
                   className={`h-full inline-flex items-center text-sm font-semibold transition-colors no-underline border-b-2 ${
                     isActive
                       ? 'text-[#045EAD] font-bold border-[#045EAD]'
-                      : 'text-[#475569] hover:text-deep-navy border-transparent'
+                      : 'text-slate-700 hover:text-deep-navy border-transparent'
                   }`}
                 >
                   {link.label}

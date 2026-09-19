@@ -93,7 +93,7 @@ export function StudentHeader({
               className={`h-full inline-flex items-center text-xs font-bold tracking-wide whitespace-nowrap transition-colors no-underline border-b-2 ${
                 isActive
                   ? 'text-[#045EAD] border-[#045EAD]'
-                  : 'text-[#475569] hover:text-deep-navy border-transparent'
+                  : 'text-slate-700 hover:text-deep-navy border-transparent'
               }`}
             >
               {tab.label}

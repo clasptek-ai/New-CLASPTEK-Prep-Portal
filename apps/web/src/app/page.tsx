@@ -244,7 +244,7 @@ export default function HomePage() {
         </section>
 
         {/* ── 3. CHOOSE YOUR EXAM SECTION ── */}
-        <section id="examinations" className="w-full bg-bg-neutral py-16 px-4 sm:px-8 border-b border-slate-200">
+        <section id="examinations" className="w-full bg-white py-16 px-4 sm:px-8 border-b border-slate-200">
           <div className="max-w-360 mx-auto flex flex-col gap-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
               <div className="flex flex-col gap-2">
@@ -397,8 +397,8 @@ export default function HomePage() {
         </section>
 
         {/* ── 5. MOCK EXAMINATION SECTION ── */}
-        <section id="mock-exams" className="w-full bg-bg-neutral py-16 px-4 sm:px-8 border-b border-slate-200">
-          <div className="max-w-360 mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+        <section id="mock-exams" className="w-full bg-white py-16 px-4 sm:px-8 border-b border-slate-200">
+          <div className="max-w-360 mx-auto p-8 sm:p-10 rounded-2xl bg-bg-neutral border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="max-w-2xl flex flex-col gap-3">
               <span className="text-xs uppercase font-bold tracking-wider text-[#045EAD]">
                 Authentic Test Simulation
@@ -481,7 +481,7 @@ export default function HomePage() {
         </section>
 
         {/* ── 7. ILLUSTRATIVE RESULTS VISUALIZATION ── */}
-        <section id="results-demo" className="w-full bg-bg-neutral py-16 px-4 sm:px-8 border-b border-slate-200">
+        <section id="results-demo" className="w-full bg-white py-16 px-4 sm:px-8 border-b border-slate-200">
           <div className="max-w-360 mx-auto flex flex-col gap-8">
             <div className="text-center max-w-2xl mx-auto flex flex-col gap-2">
               <span className="text-xs uppercase font-bold tracking-wider text-[#045EAD]">
@@ -499,7 +499,7 @@ export default function HomePage() {
             <div className="max-w-4xl mx-auto w-full bg-white rounded-2xl border border-slate-200 shadow-md p-6 sm:p-8 relative">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
                 <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#475569] block">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">
                     Illustrative Result UI Showcase
                   </span>
                   <h3 className="text-lg font-bold text-deep-navy">
