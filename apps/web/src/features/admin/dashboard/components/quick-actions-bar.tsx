@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Upload, Layers, Award, Play, Users, BarChart2 } from 'lucide-react';
+import { Upload, Layers, Award, Play, Users, Download } from 'lucide-react';
 
 export const QuickActionsBar: React.FC = () => {
   const router = useRouter();
@@ -33,16 +33,21 @@ export const QuickActionsBar: React.FC = () => {
       onClick: () => router.push('/admin/assessments?mode=mock'),
     },
     {
-      label: 'Manage Students',
-      sub: 'User directory management',
+      label: 'Manage Users',
+      sub: 'People & candidate directory',
       icon: <Users size={16} color="var(--brand)" />,
       onClick: () => router.push('/admin/users'),
     },
     {
-      label: 'View Reports',
-      sub: 'Institutional analytics DTO',
-      icon: <BarChart2 size={16} color="var(--brand)" />,
-      onClick: () => router.push('/admin/reports'),
+      label: 'Export Reports',
+      sub: 'Live institutional datasets',
+      icon: <Download size={16} color="var(--brand)" />,
+      onClick: () => {
+        const el = document.getElementById('export-reports-section');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      },
     },
   ];
 

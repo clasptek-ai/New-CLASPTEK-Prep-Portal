@@ -43,15 +43,26 @@ export const workspaceRegistry: Record<WorkspaceId, WorkspaceDefinition> = {
     searchScope: 'ADMIN',
     permissions: ['*'],
     navigation: [
+      // OVERVIEW
       { name: 'Dashboard', href: '/admin/dashboard', icon: 'LayoutDashboard' },
-      { name: 'Exams & Programmes', href: '/admin/programmes', icon: 'BookOpen' },
-      { name: 'Question Bank', href: '/admin/question-bank', icon: 'Shield' },
-      { name: 'Bulk Import', href: '/admin/question-bank/import', icon: 'Upload' },
-      { name: 'Assessments', href: '/admin/assessments', icon: 'FileText' },
-      { name: 'Mock Exams', href: '/admin/assessments?mode=mock', icon: 'BookOpen' },
-      { name: 'Student Directory', href: '/admin/students', icon: 'Users' },
-      { name: 'Results & Analytics', href: '/admin/results', icon: 'LineChart' },
-      { name: 'Platform Settings', href: '/admin/settings', icon: 'Settings' },
+      // LEARNING
+      { name: 'Assessments', href: '/admin/assessments', icon: 'ClipboardList' },
+      { name: 'Question Bank', href: '/admin/question-bank', icon: 'Database' },
+      { name: 'Programmes', href: '/admin/programmes', icon: 'BookOpen' },
+      { name: 'Curriculum', href: '/admin/curriculum', icon: 'Library' },
+      { name: 'Practice Sessions', href: '/admin/practice-sessions', icon: 'Dumbbell' },
+      { name: 'Builders', href: '/admin/builders', icon: 'Hammer' },
+      // PEOPLE
+      { name: 'Users', href: '/admin/users', icon: 'Users' },
+      // OPERATIONS
+      { name: 'Attempt Review', href: '/admin/attempt-review', icon: 'FileSearch' },
+      { name: 'Assessment Reviews', href: '/admin/assessment-reviews', icon: 'CheckSquare' },
+      { name: 'Notifications', href: '/admin/notifications', icon: 'Bell' },
+      // SYSTEM
+      { name: 'Integrations', href: '/admin/integrations', icon: 'Plug' },
+      { name: 'Observability', href: '/admin/observability', icon: 'Activity' },
+      { name: 'Audit', href: '/admin/audit', icon: 'ShieldCheck' },
+      { name: 'Settings', href: '/admin/settings', icon: 'Settings' },
     ],
   },
 };

@@ -106,7 +106,7 @@ export default function AdminResultsOverview() {
           >
             {/* Total Students Card */}
             <div
-              onClick={() => router.push('/admin/students')}
+              onClick={() => router.push('/admin/users')}
               style={{
                 backgroundColor: 'var(--surface-1)',
                 border: '1px solid var(--border)',
@@ -541,7 +541,7 @@ export default function AdminResultsOverview() {
                       </td>
                       <td style={{ padding: '1rem', textAlign: 'right' }}>
                         <Link
-                          href={`/admin/students/${student.studentId}`}
+                          href={`/admin/users/${student.studentId}`}
                           style={{
                             padding: '0.4rem 0.8rem',
                             borderRadius: '6px',

@@ -1,14 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
+import { UsersScreen } from '@/features/admin/users/users-screen';
 
 export default function Page() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace('/admin/students');
-  }, [router]);
-
-  return null;
+  return <UsersScreen />;
 }

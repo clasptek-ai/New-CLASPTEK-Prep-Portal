@@ -26,7 +26,7 @@ vi.mock('../providers/theme-provider', () => {
 
 import { adminNavigation } from '../navigation/admin.navigation';
 import { AdminDashboardScreen } from '../features/admin/dashboard/dashboard-screen';
-import { OrganizationsScreen } from '../features/admin/organizations/organizations-screen';
+import { AssessmentsScreen } from '../features/admin/assessments/assessments-screen';
 import { UsersScreen } from '../features/admin/users/users-screen';
 import { PermissionsScreen } from '../features/admin/permissions/permissions-screen';
 import { SystemScreen } from '../features/admin/system/system-screen';
@@ -36,9 +36,9 @@ import { MaintenanceScreen } from '../features/admin/maintenance/maintenance-scr
 
 describe('Platform Administration Console Integration tests', () => {
   test('Verify all admin feature modules and layout definitions compile', () => {
-    expect(adminNavigation.length).toBeGreaterThan(5);
+    expect(adminNavigation.length).toBe(15);
     expect(AdminDashboardScreen).toBeDefined();
-    expect(OrganizationsScreen).toBeDefined();
+    expect(AssessmentsScreen).toBeDefined();
     expect(UsersScreen).toBeDefined();
     expect(PermissionsScreen).toBeDefined();
     expect(SystemScreen).toBeDefined();

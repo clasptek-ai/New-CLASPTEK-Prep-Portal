@@ -1,8 +1,14 @@
 'use client';
 
-import React from 'react';
-import { AnalyticsScreen } from '@/features/admin/analytics/analytics-screen';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function Page() {
-  return <AnalyticsScreen />;
+export default function AnalyticsRedirectPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/admin/dashboard');
+  }, [router]);
+
+  return null;
 }

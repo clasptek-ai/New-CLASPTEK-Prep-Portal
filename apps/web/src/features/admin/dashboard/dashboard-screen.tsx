@@ -10,6 +10,7 @@ import { KPISummaryGrid } from './components/kpi-summary-grid';
 import { QuickActionsBar } from './components/quick-actions-bar';
 import { ExecutiveAnalytics } from './components/executive-analytics';
 import { AdminSectionsGrid } from './components/admin-sections-grid';
+import { InstitutionalReportsPanel } from './components/institutional-reports-panel';
 import { Skeleton } from '../../../shared/ui/skeleton/Skeleton';
 import { RefreshCw, Radio } from 'lucide-react';
 
@@ -100,7 +101,9 @@ export function AdminDashboardScreen() {
       >
         {/* Left: Title */}
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.3rem' }}>
+          <div
+            style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.3rem' }}
+          >
             <h1
               style={{
                 margin: 0,
@@ -207,6 +210,9 @@ export function AdminDashboardScreen() {
 
       {/* ── Executive Analytics Charts ── */}
       <ExecutiveAnalytics charts={data.charts} />
+
+      {/* ── Institutional Reports & Export Centre ── */}
+      <InstitutionalReportsPanel stats={data.stats} />
 
       {/* Spin animation */}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

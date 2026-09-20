@@ -38,13 +38,13 @@ import { adminSettingsService } from '../services/admin/settings.service';
 import { adminAuditService } from '../services/admin/audit.service';
 
 describe('Platform Administration Workspace Integration & Verification', () => {
-  test('Admin navigation registry matches the 11 standard links', () => {
+  test('Admin navigation registry matches the 15 canonical links across 5 sections', () => {
     const ws = getWorkspace('ADMIN');
-    expect(ws.navigation.length).toBe(11);
+    expect(ws.navigation.length).toBe(15);
     expect(ws.navigation[0].name).toBe('Dashboard');
-    expect(ws.navigation[1].name).toBe('Users');
-    expect(ws.navigation[5].name).toBe('Assessment Reviews');
-    expect(ws.navigation[10].name).toBe('Settings');
+    expect(ws.navigation[1].name).toBe('Assessments');
+    expect(ws.navigation[7].name).toBe('Users');
+    expect(ws.navigation[14].name).toBe('Settings');
   });
 
   test('Dashboard aggregated service queries and health check returns expected values', async () => {

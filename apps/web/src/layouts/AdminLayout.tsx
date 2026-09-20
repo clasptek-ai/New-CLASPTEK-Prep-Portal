@@ -11,10 +11,8 @@ import {
   Database,
   FileText,
   Users,
-  BarChart3,
   Settings,
   ShieldCheck,
-  Award,
 } from 'lucide-react';
 import { MobileNavDrawer } from '@/shared/ui/navigation/MobileNavDrawer';
 import { LogoBadge } from '@/shared/ui/logo/LogoBadge';
@@ -32,8 +30,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { label: 'Admin Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { label: 'Assessment Management', href: '/admin/assessments', icon: FileText },
     { label: 'Question Bank', href: '/admin/question-bank', icon: Database },
-    { label: 'Students Directory', href: '/admin/students', icon: Users },
-    { label: 'Analytics Reports', href: '/admin/reports', icon: BarChart3 },
+    { label: 'Users Directory', href: '/admin/users', icon: Users },
     { label: 'System Settings', href: '/admin/settings', icon: Settings },
     { label: 'Audit Telemetry', href: '/admin/audit', icon: ShieldCheck },
   ];
