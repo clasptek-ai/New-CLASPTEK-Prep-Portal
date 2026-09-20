@@ -49,8 +49,28 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('clasptek-theme');
+                  var active = 'light';
+                  if (saved === 'dark' || saved === 'light') {
+                    active = saved;
+                  } else if (saved === 'system' || !saved) {
+                    active = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                  }
+                  document.documentElement.setAttribute('data-theme', active);
+                  document.documentElement.classList.remove('light', 'dark');
+                  document.documentElement.classList.add(active);
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
         <SkeletonStyles />
       </head>
       <body className={inter.className}>

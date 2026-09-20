@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, Button, Badge } from '../../../components/ui/ui-components';
+import { PageContainer, PageContent } from '../../../shared/ui/layout/PageContainer';
 import {
   adminAssessmentsService,
   AdminAssessmentConfig,
@@ -26,12 +27,12 @@ export function AssessmentsScreen() {
   // Modal State
   const [createOpen, setCreateOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
-  const [selectedExamType, setSelectedExamType] = useState('English Proficiency');
+  const [selectedExamType, _setSelectedExamType] = useState('English Proficiency');
   const [newDuration, setNewDuration] = useState(isDiagnosticView ? 45 : 180);
   const [newQuestions, setNewQuestions] = useState(33);
 
   // Inventory Validation Modal State
-  const [inventoryCheckModal, setInventoryCheckModal] = useState<any | null>(null);
+  const [_inventoryCheckModal, setInventoryCheckModal] = useState<any | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -225,466 +226,488 @@ export function AssessmentsScreen() {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2rem',
-        width: '100%',
-        boxSizing: 'border-box',
-      }}
-    >
-      {/* View Switcher Tabs & Header */}
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '1rem',
-        }}
-      >
-        <div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              marginBottom: '0.25rem',
-            }}
-          >
-            <span
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 800,
-                padding: '0.2rem 0.6rem',
-                borderRadius: 'var(--radius-xs)',
-                backgroundColor: isMockView
-                  ? 'rgba(139, 92, 246, 0.15)'
-                  : 'rgba(37, 99, 235, 0.15)',
-                color: isMockView ? '#a78bfa' : 'var(--brand-light)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-              }}
-            >
-              {isMockView ? 'FULL-LENGTH SIMULATION' : 'OFFICIAL PLACEMENT ASSESSMENTS'}
-            </span>
-          </div>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: '1.65rem',
-              fontWeight: 800,
-              color: 'var(--text-primary)',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            {isMockView ? 'Official Mock Examinations Center' : 'Diagnostic Assessments'}
-          </h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-            {isMockView
-              ? 'Configure full-length examination simulations, proctoring security rules, timed availability windows, and official score scaling.'
-              : 'Configure placement diagnostics, section blueprints, duration rules, and programme assignments.'}
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {/* Mode Switcher Buttons */}
-          <div
-            style={{
-              display: 'flex',
-              backgroundColor: 'var(--surface-1)',
-              padding: '0.25rem',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--border)',
-            }}
-          >
-            <button
-              onClick={() => router.push('/admin/assessments')}
-              style={{
-                padding: '0.45rem 0.85rem',
-                borderRadius: 'var(--radius-sm)',
-                border: 'none',
-                backgroundColor: !isMockView ? 'var(--brand)' : 'transparent',
-                color: !isMockView ? '#ffffff' : 'var(--text-secondary)',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-              }}
-            >
-              Diagnostic Assessments
-            </button>
-            <button
-              onClick={() => router.push('/admin/assessments?mode=mock')}
-              style={{
-                padding: '0.45rem 0.85rem',
-                borderRadius: 'var(--radius-sm)',
-                border: 'none',
-                backgroundColor: isMockView ? '#7c3aed' : 'transparent',
-                color: isMockView ? '#ffffff' : 'var(--text-secondary)',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)',
-              }}
-            >
-              Mock Exams
-            </button>
-          </div>
-
-          <Button
-            variant="primary"
-            onClick={() => setCreateOpen(true)}
-            style={{
-              backgroundColor: isMockView ? '#7c3aed' : 'var(--brand)',
-              color: '#ffffff',
-              gap: '0.4rem',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <Plus size={16} />
-            <span>{isMockView ? 'Create Mock Exam' : 'Create Diagnostic'}</span>
-          </Button>
-        </div>
-      </div>
-
-      {banner && (
+    <PageContainer>
+      <PageContent>
         <div
           style={{
-            padding: '0.85rem 1.25rem',
-            backgroundColor: 'rgba(16, 185, 129, 0.12)',
-            border: '1px solid var(--success-border)',
-            borderRadius: 'var(--radius-md)',
-            color: 'var(--success)',
-            fontSize: '0.875rem',
-            fontWeight: 600,
             display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
+            flexDirection: 'column',
+            gap: '2rem',
+            width: '100%',
+            boxSizing: 'border-box',
           }}
         >
-          <CheckCircle2 size={18} />
-          <span>{banner}</span>
-        </div>
-      )}
-
-      {/* Differentiation Highlights Card */}
-      <Card
-        style={{
-          padding: '1.25rem 1.5rem',
-          borderRadius: 'var(--radius-lg)',
-          backgroundColor: 'var(--surface-0)',
-          border: '1px solid var(--border)',
-        }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '1.25rem',
-          }}
-        >
-          <div>
-            <div
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 800,
-                color: 'var(--brand-light)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-              }}
-            >
-              Scope & Format
-            </div>
-            <div
-              style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}
-            >
-              {isMockView
-                ? 'Full-length 3-hour official simulation'
-                : 'Official Placement Assessments'}
-            </div>
-          </div>
-          <div>
-            <div
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 800,
-                color: 'var(--success)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-              }}
-            >
-              Timer & Proctoring
-            </div>
-            <div
-              style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}
-            >
-              {isMockView
-                ? 'Strict auto-submit timer & focus detection'
-                : 'Server Timed Assessments'}
-            </div>
-          </div>
-          <div>
-            <div
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 800,
-                color: '#a78bfa',
-                textTransform: 'uppercase',
-                letterSpacing: '0.04em',
-              }}
-            >
-              Score Output
-            </div>
-            <div
-              style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}
-            >
-              {isMockView
-                ? 'Scaled Official Band Score (e.g. Band 8.0)'
-                : 'Placement Recommendation'}
-            </div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Assessment Table List */}
-      <ResponsiveTable<AdminAssessmentConfig>
-        data={filteredList}
-        keyExtractor={(item) => item.id}
-        emptyMessage={`No ${isMockView ? 'Mock Examinations' : 'Skill Assessments'} configured yet. Click Create to add one.`}
-        columns={[
-          {
-            key: 'title',
-            header: isMockView ? 'Mock Exam Title' : 'Assessment Title',
-            render: (item) => <span className="font-bold text-white">{item.title}</span>,
-          },
-          {
-            key: 'type',
-            header: 'Type',
-            render: (item) => (
-              <Badge variant={item.type === 'MOCK' ? 'info' : 'neutral'}>{item.type}</Badge>
-            ),
-          },
-          {
-            key: 'durationMinutes',
-            header: 'Duration',
-            render: (item) => <span>{item.durationMinutes} mins</span>,
-          },
-          {
-            key: 'questionCount',
-            header: 'Questions',
-            render: (item) => <span>{item.questionCount} Qs</span>,
-          },
-          {
-            key: 'availableFrom',
-            header: 'Available Window',
-            hideOnTablet: true,
-            render: (item) => (
-              <span className="text-xs text-slate-400">
-                {item.availableFrom
-                  ? `${new Date(item.availableFrom).toLocaleDateString()} - ${new Date(item.availableUntil!).toLocaleDateString()}`
-                  : 'Unscheduled'}
-              </span>
-            ),
-          },
-          {
-            key: 'status',
-            header: 'Status',
-            render: (item) => (
-              <Badge variant={item.status === 'PUBLISHED' ? 'success' : 'warning'}>
-                {item.status}
-              </Badge>
-            ),
-          },
-          {
-            key: 'actions',
-            header: 'Actions',
-            render: (item) => (
-              <div className="flex items-center space-x-2">
-                {item.status === 'DRAFT' && (
-                  <Button
-                    variant="primary"
-                    onClick={() => handlePublish(item.id)}
-                    style={{ backgroundColor: '#10b981', color: '#ffffff' }}
-                  >
-                    Publish
-                  </Button>
-                )}
-                <Button variant="secondary" onClick={() => handleSchedule(item.id)}>
-                  Schedule
-                </Button>
-              </div>
-            ),
-          },
-        ]}
-      />
-
-      {/* CREATE MODAL */}
-      {createOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(2, 6, 23, 0.8)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 100,
-            padding: '1.5rem',
-          }}
-          onClick={() => setCreateOpen(false)}
-        >
+          {/* View Switcher Tabs & Header */}
           <div
             style={{
-              backgroundColor: '#111827',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '16px',
-              maxWidth: '520px',
-              width: '100%',
-              padding: '2rem',
-              boxSizing: 'border-box',
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '1rem',
             }}
-            onClick={(e) => e.stopPropagation()}
           >
-            <h2
-              style={{
-                margin: '0 0 1.25rem',
-                fontSize: '1.35rem',
-                fontWeight: 800,
-                color: '#ffffff',
-              }}
-            >
-              Create New {isMockView ? 'Mock Examination' : 'Skill Assessment'}
-            </h2>
-
-            <form
-              onSubmit={handleCreate}
-              style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
-            >
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    color: '#cbd5e1',
-                    marginBottom: '0.35rem',
-                  }}
-                >
-                  {isMockView ? 'Mock Exam Title *' : 'Assessment Title *'}
-                </label>
-                <input
-                  required
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder={
-                    isMockView
-                      ? 'e.g. IELTS Academic Full Practice Mock C'
-                      : 'e.g. IELTS Relative Clauses Diagnostic'
-                  }
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 0.85rem',
-                    borderRadius: '8px',
-                    backgroundColor: '#161e2e',
-                    border: '1px solid #1e293b',
-                    color: '#ffffff',
-                    fontSize: '0.875rem',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Duration (Minutes)
-                  </label>
-                  <input
-                    type="number"
-                    value={newDuration}
-                    onChange={(e) => setNewDuration(Number(e.target.value))}
-                    style={{
-                      width: '100%',
-                      padding: '0.6rem 0.75rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#161e2e',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                      fontSize: '0.825rem',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      color: '#cbd5e1',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    Question Count
-                  </label>
-                  <input
-                    type="number"
-                    value={newQuestions}
-                    onChange={(e) => setNewQuestions(Number(e.target.value))}
-                    style={{
-                      width: '100%',
-                      padding: '0.6rem 0.75rem',
-                      borderRadius: '8px',
-                      backgroundColor: '#161e2e',
-                      border: '1px solid #1e293b',
-                      color: '#ffffff',
-                      fontSize: '0.825rem',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                </div>
-              </div>
-
+            <div>
               <div
                 style={{
                   display: 'flex',
-                  justifyContent: 'flex-end',
-                  gap: '0.75rem',
-                  marginTop: '0.5rem',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  marginBottom: '0.25rem',
                 }}
               >
-                <Button variant="secondary" type="button" onClick={() => setCreateOpen(false)}>
-                  Cancel
-                </Button>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  style={{ backgroundColor: isMockView ? '#7c3aed' : '#2563eb', color: '#ffffff' }}
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: 'var(--radius-xs)',
+                    backgroundColor: isMockView
+                      ? 'rgba(139, 92, 246, 0.15)'
+                      : 'rgba(37, 99, 235, 0.15)',
+                    color: isMockView ? '#a78bfa' : 'var(--brand-light)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
                 >
-                  Save & Publish
-                </Button>
+                  {isMockView ? 'FULL-LENGTH SIMULATION' : 'OFFICIAL PLACEMENT ASSESSMENTS'}
+                </span>
               </div>
-            </form>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: '1.65rem',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {isMockView ? 'Official Mock Examinations Center' : 'Diagnostic Assessments'}
+              </h1>
+              <p
+                style={{
+                  margin: '0.25rem 0 0',
+                  fontSize: '0.875rem',
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                {isMockView
+                  ? 'Configure full-length examination simulations, proctoring security rules, timed availability windows, and official score scaling.'
+                  : 'Configure placement diagnostics, section blueprints, duration rules, and programme assignments.'}
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              {/* Mode Switcher Buttons */}
+              <div
+                style={{
+                  display: 'flex',
+                  backgroundColor: 'var(--surface-1)',
+                  padding: '0.25rem',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <button
+                  onClick={() => router.push('/admin/assessments')}
+                  style={{
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: 'var(--radius-sm)',
+                    border: 'none',
+                    backgroundColor: !isMockView ? 'var(--brand)' : 'transparent',
+                    color: !isMockView ? '#ffffff' : 'var(--text-secondary)',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all var(--transition-fast)',
+                  }}
+                >
+                  Diagnostic Assessments
+                </button>
+                <button
+                  onClick={() => router.push('/admin/assessments?mode=mock')}
+                  style={{
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: 'var(--radius-sm)',
+                    border: 'none',
+                    backgroundColor: isMockView ? '#7c3aed' : 'transparent',
+                    color: isMockView ? '#ffffff' : 'var(--text-secondary)',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all var(--transition-fast)',
+                  }}
+                >
+                  Mock Exams
+                </button>
+              </div>
+
+              <Button
+                variant="primary"
+                onClick={() => setCreateOpen(true)}
+                style={{
+                  backgroundColor: isMockView ? '#7c3aed' : 'var(--brand)',
+                  color: '#ffffff',
+                  gap: '0.4rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <Plus size={16} />
+                <span>{isMockView ? 'Create Mock Exam' : 'Create Diagnostic'}</span>
+              </Button>
+            </div>
           </div>
+
+          {banner && (
+            <div
+              style={{
+                padding: '0.85rem 1.25rem',
+                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                border: '1px solid var(--success-border)',
+                borderRadius: 'var(--radius-md)',
+                color: 'var(--success)',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
+              <CheckCircle2 size={18} />
+              <span>{banner}</span>
+            </div>
+          )}
+
+          {/* Differentiation Highlights Card */}
+          <Card
+            style={{
+              padding: '1.25rem 1.5rem',
+              borderRadius: 'var(--radius-lg)',
+              backgroundColor: 'var(--surface-0)',
+              border: '1px solid var(--border)',
+            }}
+          >
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: '1.25rem',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    color: 'var(--brand-light)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  Scope & Format
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    marginTop: '4px',
+                  }}
+                >
+                  {isMockView
+                    ? 'Full-length 3-hour official simulation'
+                    : 'Official Placement Assessments'}
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    color: 'var(--success)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  Timer & Proctoring
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    marginTop: '4px',
+                  }}
+                >
+                  {isMockView
+                    ? 'Strict auto-submit timer & focus detection'
+                    : 'Server Timed Assessments'}
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 800,
+                    color: '#a78bfa',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  Score Output
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    marginTop: '4px',
+                  }}
+                >
+                  {isMockView
+                    ? 'Scaled Official Band Score (e.g. Band 8.0)'
+                    : 'Placement Recommendation'}
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          {/* Assessment Table List */}
+          <ResponsiveTable<AdminAssessmentConfig>
+            data={filteredList}
+            keyExtractor={(item) => item.id}
+            emptyMessage={`No ${isMockView ? 'Mock Examinations' : 'Skill Assessments'} configured yet. Click Create to add one.`}
+            columns={[
+              {
+                key: 'title',
+                header: isMockView ? 'Mock Exam Title' : 'Assessment Title',
+                render: (item) => <span className="font-bold text-white">{item.title}</span>,
+              },
+              {
+                key: 'type',
+                header: 'Type',
+                render: (item) => (
+                  <Badge variant={item.type === 'MOCK' ? 'info' : 'neutral'}>{item.type}</Badge>
+                ),
+              },
+              {
+                key: 'durationMinutes',
+                header: 'Duration',
+                render: (item) => <span>{item.durationMinutes} mins</span>,
+              },
+              {
+                key: 'questionCount',
+                header: 'Questions',
+                render: (item) => <span>{item.questionCount} Qs</span>,
+              },
+              {
+                key: 'availableFrom',
+                header: 'Available Window',
+                hideOnTablet: true,
+                render: (item) => (
+                  <span className="text-xs text-slate-400">
+                    {item.availableFrom
+                      ? `${new Date(item.availableFrom).toLocaleDateString()} - ${new Date(item.availableUntil!).toLocaleDateString()}`
+                      : 'Unscheduled'}
+                  </span>
+                ),
+              },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (item) => (
+                  <Badge variant={item.status === 'PUBLISHED' ? 'success' : 'warning'}>
+                    {item.status}
+                  </Badge>
+                ),
+              },
+              {
+                key: 'actions',
+                header: 'Actions',
+                render: (item) => (
+                  <div className="flex items-center space-x-2">
+                    {item.status === 'DRAFT' && (
+                      <Button
+                        variant="primary"
+                        onClick={() => handlePublish(item.id)}
+                        style={{ backgroundColor: '#10b981', color: '#ffffff' }}
+                      >
+                        Publish
+                      </Button>
+                    )}
+                    <Button variant="secondary" onClick={() => handleSchedule(item.id)}>
+                      Schedule
+                    </Button>
+                  </div>
+                ),
+              },
+            ]}
+          />
+
+          {/* CREATE MODAL */}
+          {createOpen && (
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                backdropFilter: 'blur(4px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 100,
+                padding: '1.5rem',
+              }}
+              onClick={() => setCreateOpen(false)}
+            >
+              <div
+                style={{
+                  backgroundColor: 'var(--surface-0)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '16px',
+                  maxWidth: '520px',
+                  width: '100%',
+                  padding: '2rem',
+                  boxSizing: 'border-box',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <h2
+                  style={{
+                    margin: '0 0 1.25rem',
+                    fontSize: '1.35rem',
+                    fontWeight: 800,
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  Create New {isMockView ? 'Mock Examination' : 'Skill Assessment'}
+                </h2>
+
+                <form
+                  onSubmit={handleCreate}
+                  style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        color: 'var(--text-secondary)',
+                        marginBottom: '0.35rem',
+                      }}
+                    >
+                      {isMockView ? 'Mock Exam Title *' : 'Assessment Title *'}
+                    </label>
+                    <input
+                      required
+                      value={newTitle}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                      placeholder={
+                        isMockView
+                          ? 'e.g. IELTS Academic Full Practice Mock C'
+                          : 'e.g. IELTS Relative Clauses Diagnostic'
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '0.65rem 0.85rem',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--surface-1)',
+                        border: '1px solid var(--border)',
+                        color: 'var(--text-primary)',
+                        fontSize: '0.875rem',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          color: 'var(--text-secondary)',
+                          marginBottom: '0.35rem',
+                        }}
+                      >
+                        Duration (Minutes)
+                      </label>
+                      <input
+                        type="number"
+                        value={newDuration}
+                        onChange={(e) => setNewDuration(Number(e.target.value))}
+                        style={{
+                          width: '100%',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          backgroundColor: 'var(--surface-1)',
+                          border: '1px solid var(--border)',
+                          color: 'var(--text-primary)',
+                          fontSize: '0.825rem',
+                          boxSizing: 'border-box',
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        style={{
+                          display: 'block',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          color: 'var(--text-secondary)',
+                          marginBottom: '0.35rem',
+                        }}
+                      >
+                        Question Count
+                      </label>
+                      <input
+                        type="number"
+                        value={newQuestions}
+                        onChange={(e) => setNewQuestions(Number(e.target.value))}
+                        style={{
+                          width: '100%',
+                          padding: '0.6rem 0.75rem',
+                          borderRadius: '8px',
+                          backgroundColor: 'var(--surface-1)',
+                          border: '1px solid var(--border)',
+                          color: 'var(--text-primary)',
+                          fontSize: '0.825rem',
+                          boxSizing: 'border-box',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      gap: '0.75rem',
+                      marginTop: '0.5rem',
+                    }}
+                  >
+                    <Button variant="secondary" type="button" onClick={() => setCreateOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" type="submit">
+                      Save & Publish
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </PageContent>
+    </PageContainer>
   );
 }
 

@@ -32,7 +32,8 @@ export const BulkConfirmationModal: React.FC<BulkConfirmationModalProps> = ({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(2, 6, 23, 0.85)',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        backdropFilter: 'blur(4px)',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -43,8 +44,8 @@ export const BulkConfirmationModal: React.FC<BulkConfirmationModalProps> = ({
     >
       <div
         style={{
-          backgroundColor: '#111827',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backgroundColor: 'var(--surface-0)',
+          border: '1px solid var(--border)',
           borderRadius: '16px',
           maxWidth: '480px',
           width: '100%',
@@ -53,7 +54,7 @@ export const BulkConfirmationModal: React.FC<BulkConfirmationModalProps> = ({
           display: 'flex',
           flexDirection: 'column',
           gap: '1.25rem',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
+          boxShadow: 'var(--shadow-xl)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -68,24 +69,38 @@ export const BulkConfirmationModal: React.FC<BulkConfirmationModalProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: isDelete ? '#f87171' : '#fbbf24',
+                color: isDelete ? 'var(--danger)' : 'var(--warning)',
               }}
             >
               {isDelete ? <Trash2 size={24} /> : <Archive size={24} />}
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#f8fafc' }}>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '1.2rem',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 {title}
               </h3>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                {isAllFiltered ? 'Applies to all matching filtered results' : 'Selected items batch'}
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                {isAllFiltered
+                  ? 'Applies to all matching filtered results'
+                  : 'Selected items batch'}
               </span>
             </div>
           </div>
 
           <button
             onClick={onCancel}
-            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-muted)',
+              cursor: 'pointer',
+            }}
           >
             <X size={20} />
           </button>
@@ -94,10 +109,10 @@ export const BulkConfirmationModal: React.FC<BulkConfirmationModalProps> = ({
         <div
           style={{
             padding: '1rem',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.25)',
+            backgroundColor: isDelete ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+            border: `1px solid ${isDelete ? 'rgba(239, 68, 68, 0.25)' : 'rgba(245, 158, 11, 0.25)'}`,
             borderRadius: '10px',
-            color: '#f87171',
+            color: isDelete ? 'var(--danger)' : 'var(--warning)',
             fontSize: '0.85rem',
             display: 'flex',
             alignItems: 'flex-start',
@@ -113,7 +128,14 @@ export const BulkConfirmationModal: React.FC<BulkConfirmationModalProps> = ({
           </span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '0.75rem',
+            marginTop: '0.5rem',
+          }}
+        >
           <Button variant="secondary" onClick={onCancel}>
             Cancel
           </Button>
@@ -121,7 +143,7 @@ export const BulkConfirmationModal: React.FC<BulkConfirmationModalProps> = ({
             variant="danger"
             onClick={onConfirm}
             style={{
-              backgroundColor: isDelete ? '#dc2626' : '#d97706',
+              backgroundColor: isDelete ? 'var(--danger)' : 'var(--warning)',
               color: '#ffffff',
               gap: '0.4rem',
               fontWeight: 700,

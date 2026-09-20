@@ -281,7 +281,7 @@ export default function AdminIdentityPage() {
                 </thead>
                 <tbody>
                   {users.map((u) => (
-                    <tr key={u.id} style={{ borderBottom: '1px solid #1e293b' }}>
+                    <tr key={u.id} style={{ borderBottom: '1px solid var(--card-border)' }}>
                       <td style={{ padding: '1rem 0' }}>
                         <div style={{ fontWeight: 'bold' }}>{u.id.substring(0, 8)}...</div>
                         <span

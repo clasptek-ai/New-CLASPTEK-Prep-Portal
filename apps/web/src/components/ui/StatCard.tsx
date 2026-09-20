@@ -20,24 +20,24 @@ export function StatCard({
   icon,
 }: StatCardProps) {
   const badgeStyles = {
-    primary: 'bg-bg-light-blue text-[#045EAD] border border-[#B9DDF8]',
-    success: 'bg-[#DCFCE7] text-[#15803D] border border-[#86EFAC]',
-    warning: 'bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A]',
-    error: 'bg-[#FEE2E2] text-[#B91C1C] border border-[#FECACA]',
-    neutral: 'bg-bg-neutral text-[#475569] border border-slate-200',
+    primary: 'bg-[var(--brand-subtle)] text-[var(--brand)] border border-[var(--brand)]/20',
+    success: 'bg-[var(--success-subtle)] text-[var(--success)] border border-[var(--success)]/20',
+    warning: 'bg-[var(--warning-subtle)] text-[var(--warning)] border border-[var(--warning)]/20',
+    error: 'bg-[var(--error-subtle)] text-[var(--error)] border border-[var(--error)]/20',
+    neutral: 'bg-[var(--surface-1)] text-[var(--text-secondary)] border border-[var(--border)]',
   }[badgeVariant];
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+    <div className="bg-[var(--surface-0)] border border-[var(--border)] rounded-xl p-4 shadow-[var(--shadow-card)] flex flex-col justify-between transition-colors">
       <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-[11px] uppercase tracking-wider font-bold text-[#475569]">
+        <span className="text-[11px] uppercase tracking-wider font-bold text-[var(--text-secondary)]">
           {label}
         </span>
-        {icon && <div className="text-[#045EAD]">{icon}</div>}
+        {icon && <div className="text-[var(--brand)]">{icon}</div>}
       </div>
 
       <div className="flex items-baseline justify-between gap-2 my-1">
-        <span className="text-2xl font-bold text-deep-navy tracking-tight tabular-nums">
+        <span className="text-2xl font-bold text-[var(--text-primary)] tracking-tight tabular-nums">
           {value}
         </span>
         {badge && (
@@ -47,7 +47,9 @@ export function StatCard({
         )}
       </div>
 
-      {subtext && <p className="text-xs text-[#475569] mt-1 leading-snug">{subtext}</p>}
+      {subtext && (
+        <p className="text-xs text-[var(--text-secondary)] mt-1 leading-snug">{subtext}</p>
+      )}
     </div>
   );
 }

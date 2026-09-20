@@ -332,8 +332,9 @@
   --chart-5: #059669;
 }
 
-/* Isolated Dark Theme (for specialized full-screen examination environments) */
-[data-theme='dark'] {
+/* Canonical Dark Theme (System-wide or User Preference) */
+[data-theme='dark'],
+.dark {
   --bg-app: #050310;
   --surface-0: #0c101a;
   --surface-1: #121824;
@@ -351,6 +352,36 @@
   --brand-light: #38bdf8;
   --brand-subtle: rgba(4, 94, 173, 0.2);
   --brand-border: rgba(4, 94, 173, 0.4);
+
+  /* Status Colors in Dark Mode */
+  --success: #22c55e;
+  --success-subtle: rgba(34, 197, 94, 0.15);
+  --warning: #f59e0b;
+  --warning-subtle: rgba(245, 158, 11, 0.15);
+  --error: #ef4444;
+  --error-subtle: rgba(239, 68, 68, 0.15);
+  --info: #38bdf8;
+  --info-subtle: rgba(56, 189, 248, 0.15);
+
+  /* Chart Data Visualization Palette for Dark Mode */
+  --chart-1: #38bdf8;
+  --chart-2: #2dd4bf;
+  --chart-3: #a78bfa;
+  --chart-4: #fbbf24;
+  --chart-5: #34d399;
+
+  /* Legacy Backward-Compatibility Mappings */
+  --background: var(--bg-app);
+  --card-bg: var(--surface-0);
+  --card-border: var(--border);
+  --nav-bg: var(--surface-0);
+  --tertiary: var(--surface-1);
+  --text-main: var(--text-primary);
+  --bg-surface-0: var(--surface-0);
+  --bg-surface-1: var(--surface-1);
+  --bg-surface-2: var(--surface-2);
+  --border-default: var(--border);
+  --border-subtle: var(--border);
 }
 
 /* ============================================================

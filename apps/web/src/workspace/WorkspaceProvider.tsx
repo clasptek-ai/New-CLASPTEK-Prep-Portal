@@ -9,15 +9,17 @@ import {
   PreferenceSyncProvider,
 } from './WorkspaceContext';
 import { WorkspaceId, getWorkspace } from './workspace-registry';
+import { useTheme } from '../providers/ThemeProvider';
 
-const DEFAULT_PREFERENCES: WorkspacePreferences = {
-  theme: 'dark',
+const DEFAULT_NON_THEME_PREFERENCES = {
   sidebarCollapsed: false,
   tableDense: false,
-  commandHistory: [],
+  commandHistory: [] as string[],
 };
 
 export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
+  const { theme, setTheme } = useTheme();
+
   const [activeId, setActiveId] = useState<WorkspaceId>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -30,17 +32,31 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     return 'STUDENT';
   });
 
-  const [preferences, setPreferences] = useState<WorkspacePreferences>(() => {
+  const [storedPrefs, setStoredPrefs] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
         const item = localStorage.getItem('workspace-preferences');
-        if (item) return { ...DEFAULT_PREFERENCES, ...JSON.parse(item) };
+        if (item) {
+          const parsed = JSON.parse(item);
+          // Delete legacy theme key if present to enforce ThemeProvider as sole authority
+          delete parsed.theme;
+          return { ...DEFAULT_NON_THEME_PREFERENCES, ...parsed };
+        }
       } catch {
         // Storage unavailable
       }
     }
-    return DEFAULT_PREFERENCES;
+    return DEFAULT_NON_THEME_PREFERENCES;
   });
+
+  // Consolidated preferences view, with theme strictly owned by ThemeProvider
+  const preferences: WorkspacePreferences = useMemo(
+    () => ({
+      ...storedPrefs,
+      theme,
+    }),
+    [storedPrefs, theme]
+  );
 
   // Event bus listener mappings
   const listenersRef = useRef<Record<string, Set<(p?: any) => void>>>({});
@@ -71,7 +87,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     () => ({
       async savePreferences(prefs: WorkspacePreferences) {
         try {
-          localStorage.setItem('workspace-preferences', JSON.stringify(prefs));
+          const { theme: _t, ...toSave } = prefs;
+          localStorage.setItem('workspace-preferences', JSON.stringify(toSave));
         } catch {
           /* ignore storage error */
         }
@@ -79,13 +96,15 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       async loadPreferences() {
         try {
           const item = localStorage.getItem('workspace-preferences');
-          return item ? JSON.parse(item) : null;
+          if (!item) return null;
+          const parsed = JSON.parse(item);
+          return { ...parsed, theme };
         } catch {
           return null;
         }
       },
     }),
-    []
+    [theme]
   );
 
   const setWorkspaceId = (id: WorkspaceId) => {
@@ -99,11 +118,25 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   };
 
   const updatePreferences = (next: Partial<WorkspacePreferences>) => {
-    setPreferences((prev) => {
-      const updated = { ...prev, ...next };
-      syncProvider.savePreferences(updated);
-      return updated;
-    });
+    // 1. Delegate theme changes to the authoritative ThemeProvider
+    if (next.theme) {
+      setTheme(next.theme);
+    }
+
+    // 2. Persist only non-theme workspace preferences
+    const { theme: _ignored, ...nonThemePrefs } = next;
+    if (Object.keys(nonThemePrefs).length > 0) {
+      setStoredPrefs((prev: typeof DEFAULT_NON_THEME_PREFERENCES) => {
+        const updated = { ...prev, ...nonThemePrefs };
+        try {
+          localStorage.setItem('workspace-preferences', JSON.stringify(updated));
+        } catch {
+          /* ignore */
+        }
+        return updated;
+      });
+    }
+
     eventBus.emit('PreferenceUpdated', next);
   };
 

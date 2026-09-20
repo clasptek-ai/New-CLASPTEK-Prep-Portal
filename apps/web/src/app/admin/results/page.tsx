@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Users, TrendingUp, AlertTriangle, FileCheck, Search, Filter } from 'lucide-react';
+import { PageContainer, PageContent } from '@/shared/ui/layout/PageContainer';
 
 interface StudentOverviewItem {
   studentId: string;
@@ -65,438 +66,505 @@ export default function AdminResultsOverview() {
   });
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.75rem',
-        width: '100%',
-        boxSizing: 'border-box',
-      }}
-    >
-      {/* Top Header */}
-      <div>
-        <h1
-          style={{
-            margin: 0,
-            fontSize: '1.75rem',
-            fontWeight: 800,
-            color: '#f8fafc',
-            letterSpacing: '-0.02em',
-          }}
-        >
-          Reports & Academic Performance Analytics
-        </h1>
-        <p style={{ color: '#94a3b8', margin: '0.35rem 0 0', fontSize: '0.875rem' }}>
-          Monitor institutional performance metrics, readiness distributions, and student evaluation
-          reports.
-        </p>
-      </div>
-
-      {/* Interactive KPI Overview Cards */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-          gap: '1.25rem',
-        }}
-      >
-        {/* Total Students Card */}
-        <div
-          onClick={() => router.push('/admin/students')}
-          style={{
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            borderRadius: '14px',
-            padding: '1.25rem',
-            cursor: 'pointer',
-            transition: 'all 200ms ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1E293B')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#111827')}
-        >
-          <div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>
-              Total Students
-            </div>
-            <div
-              style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc', marginTop: '4px' }}
-            >
-              {loading ? '...' : metrics.totalStudents}
-            </div>
-            <div
-              style={{ fontSize: '0.725rem', color: '#38bdf8', marginTop: '4px', fontWeight: 600 }}
-            >
-              Click to view Directory →
-            </div>
-          </div>
-          <div
-            style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(59, 130, 246, 0.12)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#3b82f6',
-            }}
-          >
-            <Users size={22} />
-          </div>
-        </div>
-
-        {/* Average Readiness Card */}
-        <div
-          onClick={() => setStatusFilter('ALL')}
-          style={{
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            borderRadius: '14px',
-            padding: '1.25rem',
-            cursor: 'pointer',
-            transition: 'all 200ms ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1E293B')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#111827')}
-        >
-          <div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>
-              Average Readiness
-            </div>
-            <div
-              style={{ fontSize: '1.75rem', fontWeight: 800, color: '#34d399', marginTop: '4px' }}
-            >
-              {loading ? '...' : `${metrics.avgReadiness}%`}
-            </div>
-            <div
-              style={{ fontSize: '0.725rem', color: '#34d399', marginTop: '4px', fontWeight: 600 }}
-            >
-              +4.2% from last term
-            </div>
-          </div>
-          <div
-            style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(52, 211, 153, 0.12)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#34d399',
-            }}
-          >
-            <TrendingUp size={22} />
-          </div>
-        </div>
-
-        {/* At Risk Card */}
-        <div
-          onClick={() => setStatusFilter('AT_RISK')}
-          style={{
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            borderRadius: '14px',
-            padding: '1.25rem',
-            cursor: 'pointer',
-            transition: 'all 200ms ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1E293B')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#111827')}
-        >
-          <div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>At Risk</div>
-            <div
-              style={{ fontSize: '1.75rem', fontWeight: 800, color: '#f87171', marginTop: '4px' }}
-            >
-              {loading ? '...' : metrics.atRiskCount}
-            </div>
-            <div
-              style={{ fontSize: '0.725rem', color: '#f87171', marginTop: '4px', fontWeight: 600 }}
-            >
-              Click to filter At Risk candidates
-            </div>
-          </div>
-          <div
-            style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(239, 68, 68, 0.12)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#f87171',
-            }}
-          >
-            <AlertTriangle size={22} />
-          </div>
-        </div>
-
-        {/* Assessments This Week Card */}
-        <div
-          style={{
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            borderRadius: '14px',
-            padding: '1.25rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div>
-            <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#94a3b8' }}>
-              Assessments This Week
-            </div>
-            <div
-              style={{ fontSize: '1.75rem', fontWeight: 800, color: '#a78bfa', marginTop: '4px' }}
-            >
-              {loading ? '...' : metrics.totalAssessments}
-            </div>
-            <div
-              style={{ fontSize: '0.725rem', color: '#a78bfa', marginTop: '4px', fontWeight: 600 }}
-            >
-              Active test submissions
-            </div>
-          </div>
-          <div
-            style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(167, 139, 250, 0.12)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#a78bfa',
-            }}
-          >
-            <FileCheck size={22} />
-          </div>
-        </div>
-      </div>
-
-      {/* Filter Control Bar */}
-      <div
-        style={{
-          backgroundColor: '#111827',
-          padding: '1.25rem',
-          borderRadius: '14px',
-          border: '1px solid rgba(255, 255, 255, 0.06)',
-          display: 'flex',
-          gap: '1rem',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-        }}
-      >
+    <PageContainer>
+      <PageContent>
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: '0.6rem',
-            backgroundColor: '#1e293b',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '8px',
-            padding: '0.5rem 0.85rem',
-            flex: 1,
-            minWidth: '240px',
-          }}
-        >
-          <Search size={16} color="#94a3b8" />
-          <input
-            type="text"
-            placeholder="Search by student name or ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#f8fafc',
-              outline: 'none',
-              width: '100%',
-              fontSize: '0.875rem',
-            }}
-          />
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-          <Filter size={14} color="#94a3b8" />
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            style={{
-              padding: '0.5rem 0.85rem',
-              borderRadius: '8px',
-              backgroundColor: '#1e293b',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              fontSize: '0.85rem',
-              color: '#f8fafc',
-              fontWeight: 600,
-              outline: 'none',
-            }}
-          >
-            <option value="ALL">All Academic Statuses</option>
-            <option value="EXCELLING">Excelling</option>
-            <option value="ON_TRACK">On Track</option>
-            <option value="NEEDS_ATTENTION">Needs Attention</option>
-            <option value="AT_RISK">At Risk</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Student Results Table (Visual Dark Enterprise Theme) */}
-      <div
-        style={{
-          backgroundColor: '#111827',
-          borderRadius: '14px',
-          border: '1px solid rgba(255, 255, 255, 0.06)',
-          overflow: 'hidden',
-        }}
-      >
-        <table
-          style={{
+            flexDirection: 'column',
+            gap: '1.75rem',
             width: '100%',
-            borderCollapse: 'collapse',
-            textAlign: 'left',
-            fontSize: '0.875rem',
+            boxSizing: 'border-box',
           }}
         >
-          <thead>
-            <tr
+          {/* Top Header */}
+          <div>
+            <h1
               style={{
-                backgroundColor: '#1F2937',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-                color: '#94a3b8',
-                fontSize: '0.8rem',
-                fontWeight: 700,
+                margin: 0,
+                fontSize: '1.75rem',
+                fontWeight: 800,
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.02em',
               }}
             >
-              <th style={{ padding: '0.85rem 1rem' }}>STUDENT</th>
-              <th style={{ padding: '0.85rem 1rem' }}>OVERALL SCORE</th>
-              <th style={{ padding: '0.85rem 1rem' }}>ACADEMIC STATUS</th>
-              <th style={{ padding: '0.85rem 1rem' }}>TREND</th>
-              <th style={{ padding: '0.85rem 1rem' }}>ASSESSMENTS</th>
-              <th style={{ padding: '0.85rem 1rem' }}>AI EVALUATIONS</th>
-              <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredStudents.length === 0 ? (
-              <tr>
-                <td colSpan={7} style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>
-                  No student transcripts match your filter.
-                </td>
-              </tr>
-            ) : (
-              filteredStudents.map((student) => (
-                <tr
-                  key={student.studentId}
+              Reports & Academic Performance Analytics
+            </h1>
+            <p style={{ color: 'var(--text-muted)', margin: '0.35rem 0 0', fontSize: '0.875rem' }}>
+              Monitor institutional performance metrics, readiness distributions, and student
+              evaluation reports.
+            </p>
+          </div>
+
+          {/* Interactive KPI Overview Cards */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: '1.25rem',
+            }}
+          >
+            {/* Total Students Card */}
+            <div
+              onClick={() => router.push('/admin/students')}
+              style={{
+                backgroundColor: 'var(--surface-1)',
+                border: '1px solid var(--border)',
+                borderRadius: '14px',
+                padding: '1.25rem',
+                cursor: 'pointer',
+                transition: 'all 200ms ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface-2)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface-1)')}
+            >
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                  Total Students
+                </div>
+                <div
                   style={{
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                    backgroundColor: '#111827',
-                    transition: 'background-color 150ms ease',
+                    fontSize: '1.75rem',
+                    fontWeight: 800,
+                    color: 'var(--text-primary)',
+                    marginTop: '4px',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#1E293B')}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#111827')}
                 >
-                  <td style={{ padding: '1rem' }}>
-                    <div style={{ fontWeight: 700, color: '#f8fafc' }}>{student.studentName}</div>
-                    <div
-                      style={{
-                        fontSize: '0.75rem',
-                        color: '#38bdf8',
-                        marginTop: '2px',
-                        fontWeight: 600,
-                      }}
-                    >
-                      ID: {student.studentId}
-                    </div>
-                  </td>
-                  <td
-                    style={{
-                      padding: '1rem',
-                      fontWeight: 800,
-                      fontSize: '1.05rem',
-                      color: '#f8fafc',
-                    }}
-                  >
-                    {student.overallScore}%
-                  </td>
-                  <td style={{ padding: '1rem' }}>
-                    <span
-                      style={{
-                        padding: '0.25rem 0.6rem',
-                        borderRadius: '6px',
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        backgroundColor:
-                          student.academicStatus === 'EXCELLING'
-                            ? 'rgba(52, 211, 153, 0.15)'
-                            : student.academicStatus === 'ON_TRACK'
-                              ? 'rgba(59, 130, 246, 0.15)'
-                              : 'rgba(239, 68, 68, 0.15)',
-                        color:
-                          student.academicStatus === 'EXCELLING'
-                            ? '#34d399'
-                            : student.academicStatus === 'ON_TRACK'
-                              ? '#60a5fa'
-                              : '#f87171',
-                      }}
-                    >
-                      {student.academicStatus.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td
-                    style={{
-                      padding: '1rem',
-                      fontSize: '0.85rem',
-                      color: '#cbd5e1',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {student.performanceTrend}
-                  </td>
-                  <td style={{ padding: '1rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
-                    {student.totalAssessments}
-                  </td>
-                  <td style={{ padding: '1rem', fontSize: '0.85rem', color: '#cbd5e1' }}>
-                    {student.totalEvaluations}
-                  </td>
-                  <td style={{ padding: '1rem', textAlign: 'right' }}>
-                    <Link
-                      href={`/admin/students/${student.studentId}`}
-                      style={{
-                        padding: '0.4rem 0.8rem',
-                        borderRadius: '6px',
-                        border: '1px solid rgba(56, 189, 248, 0.3)',
-                        backgroundColor: '#1e293b',
-                        color: '#38bdf8',
-                        fontWeight: 600,
-                        fontSize: '0.8rem',
-                        textDecoration: 'none',
-                        display: 'inline-block',
-                      }}
-                    >
-                      View Transcript
-                    </Link>
-                  </td>
+                  {loading ? '...' : metrics.totalStudents}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.725rem',
+                    color: 'var(--brand-primary)',
+                    marginTop: '4px',
+                    fontWeight: 600,
+                  }}
+                >
+                  Click to view Directory →
+                </div>
+              </div>
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '12px',
+                  backgroundColor: 'var(--brand-subtle)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--brand-primary)',
+                }}
+              >
+                <Users size={22} />
+              </div>
+            </div>
+
+            {/* Average Readiness Card */}
+            <div
+              onClick={() => setStatusFilter('ALL')}
+              style={{
+                backgroundColor: 'var(--surface-1)',
+                border: '1px solid var(--border)',
+                borderRadius: '14px',
+                padding: '1.25rem',
+                cursor: 'pointer',
+                transition: 'all 200ms ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface-2)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface-1)')}
+            >
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                  Average Readiness
+                </div>
+                <div
+                  style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 800,
+                    color: 'var(--status-success)',
+                    marginTop: '4px',
+                  }}
+                >
+                  {loading ? '...' : `${metrics.avgReadiness}%`}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.725rem',
+                    color: 'var(--status-success)',
+                    marginTop: '4px',
+                    fontWeight: 600,
+                  }}
+                >
+                  +4.2% from last term
+                </div>
+              </div>
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(52, 211, 153, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--status-success)',
+                }}
+              >
+                <TrendingUp size={22} />
+              </div>
+            </div>
+
+            {/* At Risk Card */}
+            <div
+              onClick={() => setStatusFilter('AT_RISK')}
+              style={{
+                backgroundColor: 'var(--surface-1)',
+                border: '1px solid var(--border)',
+                borderRadius: '14px',
+                padding: '1.25rem',
+                cursor: 'pointer',
+                transition: 'all 200ms ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface-2)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface-1)')}
+            >
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                  At Risk
+                </div>
+                <div
+                  style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 800,
+                    color: 'var(--status-danger)',
+                    marginTop: '4px',
+                  }}
+                >
+                  {loading ? '...' : metrics.atRiskCount}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.725rem',
+                    color: 'var(--status-danger)',
+                    marginTop: '4px',
+                    fontWeight: 600,
+                  }}
+                >
+                  Click to filter At Risk candidates
+                </div>
+              </div>
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--status-danger)',
+                }}
+              >
+                <AlertTriangle size={22} />
+              </div>
+            </div>
+
+            {/* Assessments This Week Card */}
+            <div
+              style={{
+                backgroundColor: 'var(--surface-1)',
+                border: '1px solid var(--border)',
+                borderRadius: '14px',
+                padding: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>
+                  Assessments This Week
+                </div>
+                <div
+                  style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 800,
+                    color: 'var(--brand-secondary, #a78bfa)',
+                    marginTop: '4px',
+                  }}
+                >
+                  {loading ? '...' : metrics.totalAssessments}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.725rem',
+                    color: 'var(--brand-secondary, #a78bfa)',
+                    marginTop: '4px',
+                    fontWeight: 600,
+                  }}
+                >
+                  Active test submissions
+                </div>
+              </div>
+              <div
+                style={{
+                  width: '46px',
+                  height: '46px',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(167, 139, 250, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--brand-secondary, #a78bfa)',
+                }}
+              >
+                <FileCheck size={22} />
+              </div>
+            </div>
+          </div>
+
+          {/* Filter Control Bar */}
+          <div
+            style={{
+              backgroundColor: 'var(--surface-1)',
+              padding: '1.25rem',
+              borderRadius: '14px',
+              border: '1px solid var(--border)',
+              display: 'flex',
+              gap: '1rem',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                backgroundColor: 'var(--surface-0)',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                padding: '0.5rem 0.85rem',
+                flex: 1,
+                minWidth: '240px',
+              }}
+            >
+              <Search size={16} color="var(--text-muted)" />
+              <input
+                type="text"
+                placeholder="Search by student name or ID..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-primary)',
+                  outline: 'none',
+                  width: '100%',
+                  fontSize: '0.875rem',
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Filter size={14} color="var(--text-muted)" />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                style={{
+                  padding: '0.5rem 0.85rem',
+                  borderRadius: '8px',
+                  backgroundColor: 'var(--surface-0)',
+                  border: '1px solid var(--border)',
+                  fontSize: '0.85rem',
+                  color: 'var(--text-primary)',
+                  fontWeight: 600,
+                  outline: 'none',
+                }}
+              >
+                <option value="ALL">All Academic Statuses</option>
+                <option value="EXCELLING">Excelling</option>
+                <option value="ON_TRACK">On Track</option>
+                <option value="NEEDS_ATTENTION">Needs Attention</option>
+                <option value="AT_RISK">At Risk</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Student Results Table */}
+          <div
+            style={{
+              backgroundColor: 'var(--surface-1)',
+              borderRadius: '14px',
+              border: '1px solid var(--border)',
+              overflow: 'hidden',
+            }}
+          >
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                textAlign: 'left',
+                fontSize: '0.875rem',
+              }}
+            >
+              <thead>
+                <tr
+                  style={{
+                    backgroundColor: 'var(--surface-2)',
+                    borderBottom: '1px solid var(--border)',
+                    color: 'var(--text-muted)',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  <th style={{ padding: '0.85rem 1rem' }}>STUDENT</th>
+                  <th style={{ padding: '0.85rem 1rem' }}>OVERALL SCORE</th>
+                  <th style={{ padding: '0.85rem 1rem' }}>ACADEMIC STATUS</th>
+                  <th style={{ padding: '0.85rem 1rem' }}>TREND</th>
+                  <th style={{ padding: '0.85rem 1rem' }}>ASSESSMENTS</th>
+                  <th style={{ padding: '0.85rem 1rem' }}>AI EVALUATIONS</th>
+                  <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>ACTIONS</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+              </thead>
+              <tbody>
+                {filteredStudents.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}
+                    >
+                      No student transcripts match your filter.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredStudents.map((student) => (
+                    <tr
+                      key={student.studentId}
+                      style={{
+                        borderBottom: '1px solid var(--border)',
+                        backgroundColor: 'var(--surface-1)',
+                        transition: 'background-color 150ms ease',
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = 'var(--surface-2)')
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = 'var(--surface-1)')
+                      }
+                    >
+                      <td style={{ padding: '1rem' }}>
+                        <div style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                          {student.studentName}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '0.75rem',
+                            color: 'var(--brand-primary)',
+                            marginTop: '2px',
+                            fontWeight: 600,
+                          }}
+                        >
+                          ID: {student.studentId}
+                        </div>
+                      </td>
+                      <td
+                        style={{
+                          padding: '1rem',
+                          fontWeight: 800,
+                          fontSize: '1.05rem',
+                          color: 'var(--text-primary)',
+                        }}
+                      >
+                        {student.overallScore}%
+                      </td>
+                      <td style={{ padding: '1rem' }}>
+                        <span
+                          style={{
+                            padding: '0.25rem 0.6rem',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            backgroundColor:
+                              student.academicStatus === 'EXCELLING'
+                                ? 'rgba(52, 211, 153, 0.15)'
+                                : student.academicStatus === 'ON_TRACK'
+                                  ? 'rgba(59, 130, 246, 0.15)'
+                                  : 'rgba(239, 68, 68, 0.15)',
+                            color:
+                              student.academicStatus === 'EXCELLING'
+                                ? 'var(--status-success)'
+                                : student.academicStatus === 'ON_TRACK'
+                                  ? 'var(--brand-primary)'
+                                  : 'var(--status-danger)',
+                          }}
+                        >
+                          {student.academicStatus.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td
+                        style={{
+                          padding: '1rem',
+                          fontSize: '0.85rem',
+                          color: 'var(--text-secondary)',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {student.performanceTrend}
+                      </td>
+                      <td
+                        style={{
+                          padding: '1rem',
+                          fontSize: '0.85rem',
+                          color: 'var(--text-secondary)',
+                        }}
+                      >
+                        {student.totalAssessments}
+                      </td>
+                      <td
+                        style={{
+                          padding: '1rem',
+                          fontSize: '0.85rem',
+                          color: 'var(--text-secondary)',
+                        }}
+                      >
+                        {student.totalEvaluations}
+                      </td>
+                      <td style={{ padding: '1rem', textAlign: 'right' }}>
+                        <Link
+                          href={`/admin/students/${student.studentId}`}
+                          style={{
+                            padding: '0.4rem 0.8rem',
+                            borderRadius: '6px',
+                            border: '1px solid var(--border)',
+                            backgroundColor: 'var(--surface-0)',
+                            color: 'var(--brand-primary)',
+                            fontWeight: 600,
+                            fontSize: '0.8rem',
+                            textDecoration: 'none',
+                            display: 'inline-block',
+                          }}
+                        >
+                          View Transcript
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </PageContent>
+    </PageContainer>
   );
 }

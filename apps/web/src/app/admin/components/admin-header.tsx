@@ -3,8 +3,20 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, Bell, ShieldCheck, LogOut, ChevronDown, X, ArrowRight } from 'lucide-react';
+import {
+  Search,
+  Bell,
+  ShieldCheck,
+  LogOut,
+  ChevronDown,
+  X,
+  ArrowRight,
+  Sun,
+  Moon,
+  Monitor,
+} from 'lucide-react';
 import { useAdminWorkspace } from '../../../workspace/AdminWorkspaceContext';
+import { useTheme } from '../../../providers/ThemeProvider';
 import { Avatar } from '../../../shared/ui/avatar/Avatar';
 import { Badge } from '../../../shared/ui/badge/Badge';
 import { useGlobalLogout } from '../../../features/auth/hooks/useGlobalLogout';
@@ -23,36 +35,138 @@ interface SearchResult {
 
 const SEARCH_DESTINATIONS: SearchResult[] = [
   // Overview
-  { id: 'dashboard',   label: 'Dashboard',        description: 'Admin overview & key metrics',  href: '/admin/dashboard',    category: 'Overview' },
-  { id: 'analytics',   label: 'Analytics',        description: 'Cohort and performance analytics', href: '/admin/analytics', category: 'Overview' },
-  { id: 'reports',     label: 'Reports',           description: 'Operational and progress reports', href: '/admin/reports',   category: 'Overview' },
+  {
+    id: 'dashboard',
+    label: 'Dashboard',
+    description: 'Admin overview & key metrics',
+    href: '/admin/dashboard',
+    category: 'Overview',
+  },
+  {
+    id: 'analytics',
+    label: 'Analytics',
+    description: 'Cohort and performance analytics',
+    href: '/admin/analytics',
+    category: 'Overview',
+  },
+  {
+    id: 'reports',
+    label: 'Reports',
+    description: 'Operational and progress reports',
+    href: '/admin/reports',
+    category: 'Overview',
+  },
   // Learning
-  { id: 'programmes',  label: 'Programmes',        description: 'Manage exam programmes',        href: '/admin/programmes',   category: 'Learning' },
-  { id: 'curriculum',  label: 'Curriculum',        description: 'Course and module management',  href: '/admin/curriculum',   category: 'Learning' },
-  { id: 'qbank',       label: 'Question Bank',     description: 'Questions, types and marking',  href: '/admin/question-bank', category: 'Learning' },
-  { id: 'assessments', label: 'Assessments',       description: 'Diagnostics and mock exams',    href: '/admin/assessments',  category: 'Learning' },
-  { id: 'practice',    label: 'Practice Sessions', description: 'Student practice activity',     href: '/admin/practice-sessions', category: 'Learning' },
+  {
+    id: 'programmes',
+    label: 'Programmes',
+    description: 'Manage exam programmes',
+    href: '/admin/programmes',
+    category: 'Learning',
+  },
+  {
+    id: 'curriculum',
+    label: 'Curriculum',
+    description: 'Course and module management',
+    href: '/admin/curriculum',
+    category: 'Learning',
+  },
+  {
+    id: 'qbank',
+    label: 'Question Bank',
+    description: 'Questions, types and marking',
+    href: '/admin/question-bank',
+    category: 'Learning',
+  },
+  {
+    id: 'assessments',
+    label: 'Assessments',
+    description: 'Diagnostics and mock exams',
+    href: '/admin/assessments',
+    category: 'Learning',
+  },
+  {
+    id: 'practice',
+    label: 'Practice Sessions',
+    description: 'Student practice activity',
+    href: '/admin/practice-sessions',
+    category: 'Learning',
+  },
   // People
-  { id: 'students',    label: 'Students',          description: 'Student directory and profiles', href: '/admin/students',    category: 'People' },
-  { id: 'groups',      label: 'Groups',            description: 'Student cohort groups',         href: '/admin/groups',      category: 'People' },
-  { id: 'orgs',        label: 'Organizations',     description: 'Organization management',       href: '/admin/organizations', category: 'People' },
+  {
+    id: 'students',
+    label: 'Students',
+    description: 'Student directory and profiles',
+    href: '/admin/students',
+    category: 'People',
+  },
+  {
+    id: 'groups',
+    label: 'Groups',
+    description: 'Student cohort groups',
+    href: '/admin/groups',
+    category: 'People',
+  },
+  {
+    id: 'orgs',
+    label: 'Organizations',
+    description: 'Organization management',
+    href: '/admin/organizations',
+    category: 'People',
+  },
   // System
-  { id: 'notifs',      label: 'Notifications',     description: 'System notification settings',  href: '/admin/notifications', category: 'System' },
-  { id: 'audit',       label: 'Audit Logs',        description: 'Activity and security audit',   href: '/admin/audit',        category: 'System' },
-  { id: 'integrations',label: 'Integrations',      description: 'Third-party integrations',      href: '/admin/integrations', category: 'System' },
-  { id: 'users',       label: 'Users',             description: 'Admin user accounts',           href: '/admin/users',        category: 'System' },
-  { id: 'roles',       label: 'Roles & Permissions', description: 'Access control management',  href: '/admin/roles',        category: 'System' },
-  { id: 'settings',    label: 'Settings',          description: 'Platform configuration',        href: '/admin/settings',     category: 'System' },
+  {
+    id: 'notifs',
+    label: 'Notifications',
+    description: 'System notification settings',
+    href: '/admin/notifications',
+    category: 'System',
+  },
+  {
+    id: 'audit',
+    label: 'Audit Logs',
+    description: 'Activity and security audit',
+    href: '/admin/audit',
+    category: 'System',
+  },
+  {
+    id: 'integrations',
+    label: 'Integrations',
+    description: 'Third-party integrations',
+    href: '/admin/integrations',
+    category: 'System',
+  },
+  {
+    id: 'users',
+    label: 'Users',
+    description: 'Admin user accounts',
+    href: '/admin/users',
+    category: 'System',
+  },
+  {
+    id: 'roles',
+    label: 'Roles & Permissions',
+    description: 'Access control management',
+    href: '/admin/roles',
+    category: 'System',
+  },
+  {
+    id: 'settings',
+    label: 'Settings',
+    description: 'Platform configuration',
+    href: '/admin/settings',
+    category: 'System',
+  },
 ];
 
 function useSearch(query: string): SearchResult[] {
   if (!query.trim()) {
     return [
-      SEARCH_DESTINATIONS[0],  // Dashboard
-      SEARCH_DESTINATIONS[3],  // Programmes
-      SEARCH_DESTINATIONS[5],  // Question Bank
-      SEARCH_DESTINATIONS[6],  // Assessments
-      SEARCH_DESTINATIONS[8],  // Students
+      SEARCH_DESTINATIONS[0], // Dashboard
+      SEARCH_DESTINATIONS[3], // Programmes
+      SEARCH_DESTINATIONS[5], // Question Bank
+      SEARCH_DESTINATIONS[6], // Assessments
+      SEARCH_DESTINATIONS[8], // Students
       SEARCH_DESTINATIONS[14], // Settings
     ].filter(Boolean);
   }
@@ -224,10 +338,7 @@ function SearchModal({ onClose }: { onClose: () => void }) {
               No destinations matching &ldquo;{query}&rdquo;
             </div>
           ) : (
-            <ul
-              role="listbox"
-              style={{ listStyle: 'none', margin: 0, padding: '0.5rem' }}
-            >
+            <ul role="listbox" style={{ listStyle: 'none', margin: 0, padding: '0.5rem' }}>
               {results.map((result, idx) => (
                 <li key={result.id} role="option" aria-selected={idx === activeIdx}>
                   <Link
@@ -269,7 +380,14 @@ function SearchModal({ onClose }: { onClose: () => void }) {
                         {result.description}
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        flexShrink: 0,
+                      }}
+                    >
                       <span
                         style={{
                           fontSize: '0.6rem',
@@ -301,9 +419,48 @@ function SearchModal({ onClose }: { onClose: () => void }) {
             color: 'var(--text-muted)',
           }}
         >
-          <span><kbd style={{ fontSize: '0.65rem', padding: '0.1rem 0.35rem', border: '1px solid var(--border)', borderRadius: '4px', backgroundColor: 'var(--surface-1)' }}>↑↓</kbd> Navigate</span>
-          <span><kbd style={{ fontSize: '0.65rem', padding: '0.1rem 0.35rem', border: '1px solid var(--border)', borderRadius: '4px', backgroundColor: 'var(--surface-1)' }}>↵</kbd> Open</span>
-          <span><kbd style={{ fontSize: '0.65rem', padding: '0.1rem 0.35rem', border: '1px solid var(--border)', borderRadius: '4px', backgroundColor: 'var(--surface-1)' }}>Esc</kbd> Close</span>
+          <span>
+            <kbd
+              style={{
+                fontSize: '0.65rem',
+                padding: '0.1rem 0.35rem',
+                border: '1px solid var(--border)',
+                borderRadius: '4px',
+                backgroundColor: 'var(--surface-1)',
+              }}
+            >
+              ↑↓
+            </kbd>{' '}
+            Navigate
+          </span>
+          <span>
+            <kbd
+              style={{
+                fontSize: '0.65rem',
+                padding: '0.1rem 0.35rem',
+                border: '1px solid var(--border)',
+                borderRadius: '4px',
+                backgroundColor: 'var(--surface-1)',
+              }}
+            >
+              ↵
+            </kbd>{' '}
+            Open
+          </span>
+          <span>
+            <kbd
+              style={{
+                fontSize: '0.65rem',
+                padding: '0.1rem 0.35rem',
+                border: '1px solid var(--border)',
+                borderRadius: '4px',
+                backgroundColor: 'var(--surface-1)',
+              }}
+            >
+              Esc
+            </kbd>{' '}
+            Close
+          </span>
         </div>
       </div>
     </div>
@@ -316,6 +473,7 @@ function SearchModal({ onClose }: { onClose: () => void }) {
 export const AdminHeader: React.FC = () => {
   const { adminProfile, systemHealth, academicTerm, unreadNotificationsCount } =
     useAdminWorkspace();
+  const { theme, resolvedTheme, setTheme, toggleTheme } = useTheme();
   const [searchOpen, setSearchOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -381,14 +539,16 @@ export const AdminHeader: React.FC = () => {
             transition: 'border-color var(--transition-fast)',
             minHeight: '36px',
           }}
-          onMouseEnter={(e) => { (e.currentTarget).style.borderColor = 'var(--brand-border)'; }}
-          onMouseLeave={(e) => { (e.currentTarget).style.borderColor = 'var(--border-strong)'; }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'var(--brand-border)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'var(--border-strong)';
+          }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
             <Search size={14} style={{ color: 'var(--text-muted)' }} />
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.8125rem' }}>
-              Search admin…
-            </span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.8125rem' }}>Search admin…</span>
           </div>
           <kbd
             style={{
@@ -478,6 +638,31 @@ export const AdminHeader: React.FC = () => {
             )}
           </button>
 
+          {/* Theme Quick Toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={`Current theme: ${theme}. Click to toggle theme.`}
+            title={`Theme: ${theme.toUpperCase()} (Click to toggle)`}
+            style={{
+              position: 'relative',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0.25rem',
+              color: 'var(--text-secondary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 'var(--touch-target-min)',
+              height: 'var(--touch-target-min)',
+              borderRadius: 'var(--radius-md)',
+              transition: 'background-color var(--transition-fast)',
+            }}
+          >
+            {resolvedTheme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+
           {/* Profile dropdown */}
           {adminProfile && (
             <div ref={profileRef} style={{ position: 'relative' }}>
@@ -551,11 +736,124 @@ export const AdminHeader: React.FC = () => {
                       marginBottom: '0.25rem',
                     }}
                   >
-                    <div style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <div
+                      style={{
+                        fontSize: '0.8125rem',
+                        fontWeight: 700,
+                        color: 'var(--text-primary)',
+                      }}
+                    >
                       {adminProfile.name}
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '1px' }}>
+                    <div
+                      style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '1px' }}
+                    >
                       Signed in as Administrator
+                    </div>
+                  </div>
+
+                  {/* Theme Mode Selector */}
+                  <div
+                    style={{
+                      padding: '0.375rem 0.75rem 0.5rem',
+                      borderBottom: '1px solid var(--border)',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '0.6875rem',
+                        fontWeight: 600,
+                        color: 'var(--text-muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        marginBottom: '0.375rem',
+                      }}
+                    >
+                      Theme
+                    </div>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '0.25rem',
+                        backgroundColor: 'var(--surface-1)',
+                        padding: '2px',
+                        borderRadius: 'var(--radius-md)',
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setTheme('light')}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.25rem',
+                          padding: '0.35rem 0.25rem',
+                          borderRadius: 'var(--radius-sm)',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.75rem',
+                          fontWeight: 500,
+                          backgroundColor: theme === 'light' ? 'var(--surface-0)' : 'transparent',
+                          color: theme === 'light' ? 'var(--brand)' : 'var(--text-secondary)',
+                          boxShadow: theme === 'light' ? 'var(--shadow-card)' : 'none',
+                          transition: 'all var(--transition-fast)',
+                        }}
+                        title="Light Theme"
+                      >
+                        <Sun size={13} />
+                        <span>Light</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setTheme('dark')}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.25rem',
+                          padding: '0.35rem 0.25rem',
+                          borderRadius: 'var(--radius-sm)',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.75rem',
+                          fontWeight: 500,
+                          backgroundColor: theme === 'dark' ? 'var(--surface-0)' : 'transparent',
+                          color: theme === 'dark' ? 'var(--brand)' : 'var(--text-secondary)',
+                          boxShadow: theme === 'dark' ? 'var(--shadow-card)' : 'none',
+                          transition: 'all var(--transition-fast)',
+                        }}
+                        title="Dark Theme"
+                      >
+                        <Moon size={13} />
+                        <span>Dark</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setTheme('system')}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.25rem',
+                          padding: '0.35rem 0.25rem',
+                          borderRadius: 'var(--radius-sm)',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.75rem',
+                          fontWeight: 500,
+                          backgroundColor: theme === 'system' ? 'var(--surface-0)' : 'transparent',
+                          color: theme === 'system' ? 'var(--brand)' : 'var(--text-secondary)',
+                          boxShadow: theme === 'system' ? 'var(--shadow-card)' : 'none',
+                          transition: 'all var(--transition-fast)',
+                        }}
+                        title="System Theme"
+                      >
+                        <Monitor size={13} />
+                        <span>Auto</span>
+                      </button>
                     </div>
                   </div>
 
@@ -582,8 +880,12 @@ export const AdminHeader: React.FC = () => {
                       textAlign: 'left',
                       transition: 'background-color var(--transition-fast)',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--error-subtle)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = 'var(--error-subtle)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
                     aria-label="Sign Out of Admin Console"
                   >
                     <LogOut size={15} />

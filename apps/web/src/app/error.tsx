@@ -22,8 +22,8 @@ export default function RootError({
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#090d16',
-        color: '#f8fafc',
+        backgroundColor: 'var(--surface-0)',
+        color: 'var(--text-primary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -37,12 +37,12 @@ export default function RootError({
         style={{
           maxWidth: '520px',
           width: '100%',
-          backgroundColor: '#0f1729',
-          border: '1px solid #1e293b',
+          backgroundColor: 'var(--surface-1)',
+          border: '1px solid var(--border)',
           borderRadius: '16px',
           padding: '2.5rem 2rem',
           textAlign: 'center',
-          boxShadow: '0 25px 50px rgba(0,0,0,0.6)',
+          boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
         }}
       >
         {/* Icon */}
@@ -69,7 +69,7 @@ export default function RootError({
             margin: '0 0 0.75rem',
             fontSize: '1.4rem',
             fontWeight: 700,
-            color: '#f8fafc',
+            color: 'var(--text-primary)',
           }}
         >
           Something went wrong
@@ -77,7 +77,7 @@ export default function RootError({
 
         <p
           style={{
-            color: '#94a3b8',
+            color: 'var(--text-muted)',
             fontSize: '0.9rem',
             lineHeight: 1.6,
             margin: '0 0 1.75rem',
@@ -92,7 +92,7 @@ export default function RootError({
         {error?.digest && (
           <p
             style={{
-              color: '#475569',
+              color: 'var(--text-muted)',
               fontSize: '0.75rem',
               marginBottom: '1.75rem',
               fontFamily: 'monospace',
@@ -116,7 +116,7 @@ export default function RootError({
             onClick={() => reset()}
             aria-label="Try loading this page again"
             style={{
-              backgroundColor: '#2563eb',
+              backgroundColor: 'var(--brand-primary)',
               color: '#fff',
               border: 'none',
               borderRadius: '8px',
@@ -135,8 +135,8 @@ export default function RootError({
             aria-label="Return to the Clasptek home page"
             style={{
               backgroundColor: 'transparent',
-              color: '#cbd5e1',
-              border: '1px solid #334155',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               padding: '0.65rem 1.25rem',
               fontSize: '0.875rem',

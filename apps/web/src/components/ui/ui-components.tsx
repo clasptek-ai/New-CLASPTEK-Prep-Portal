@@ -20,19 +20,19 @@ export function Badge({
   const getColors = () => {
     switch (variant) {
       case 'success':
-        return { bg: 'var(--success-bg, #059669)', color: '#ffffff' };
+        return { bg: 'var(--success-subtle)', color: 'var(--success)' };
       case 'warning':
-        return { bg: 'var(--warning-bg, #d97706)', color: '#ffffff' };
+        return { bg: 'var(--warning-subtle)', color: 'var(--warning)' };
       case 'danger':
-        return { bg: 'var(--error, #dc2626)', color: '#ffffff' };
+        return { bg: 'var(--error-subtle)', color: 'var(--error)' };
       case 'neutral':
       case 'secondary':
       case 'ghost':
-        return { bg: 'var(--card-border, #475569)', color: 'var(--text-main, #f8fafc)' };
+        return { bg: 'var(--surface-2)', color: 'var(--text-secondary)' };
       case 'primary':
       case 'info':
       default:
-        return { bg: 'var(--primary, #2563eb)', color: '#ffffff' };
+        return { bg: 'var(--brand-subtle)', color: 'var(--brand)' };
     }
   };
   const colors = getColors();
@@ -171,11 +171,11 @@ export function Card({ title, children, actions, style, className }: CardProps) 
   const defaultStyles: React.CSSProperties = className
     ? {}
     : {
-        backgroundColor: 'var(--card-bg, #111827)',
-        border: '1px solid var(--card-border, #1e293b)',
+        backgroundColor: 'var(--surface-0)',
+        border: '1px solid var(--border)',
         borderRadius: 'var(--radius-lg, 16px)',
         padding: '1.5rem',
-        boxShadow: 'var(--shadow-lg, 0 4px 20px rgba(0,0,0,0.2))',
+        boxShadow: 'var(--shadow-card)',
         display: 'flex',
         flexDirection: 'column',
         gap: '1rem',
@@ -195,13 +195,18 @@ export function Card({ title, children, actions, style, className }: CardProps) 
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            borderBottom: '1px solid var(--card-border, #1e293b)',
+            borderBottom: '1px solid var(--border)',
             paddingBottom: '0.75rem',
           }}
         >
           {typeof title === 'string' ? (
             <h3
-              style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-main, #f8fafc)' }}
+              style={{
+                margin: 0,
+                fontSize: '1.1rem',
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+              }}
             >
               {title}
             </h3>
@@ -260,12 +265,12 @@ export function Dialog({ isOpen, onClose, title, children, footer }: DialogProps
     >
       <div
         style={{
-          backgroundColor: 'var(--card-bg)',
-          border: '1px solid var(--card-border)',
+          backgroundColor: 'var(--surface-0)',
+          border: '1px solid var(--border)',
           borderRadius: 'var(--radius-lg)',
           maxWidth: '500px',
           width: '100%',
-          boxShadow: 'var(--shadow-lg)',
+          boxShadow: 'var(--shadow-floating)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
@@ -278,10 +283,12 @@ export function Dialog({ isOpen, onClose, title, children, footer }: DialogProps
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '1.25rem',
-            borderBottom: '1px solid var(--card-border)',
+            borderBottom: '1px solid var(--border)',
           }}
         >
-          <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)' }}>
+          <h3
+            style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}
+          >
             {title}
           </h3>
           <button
@@ -304,7 +311,7 @@ export function Dialog({ isOpen, onClose, title, children, footer }: DialogProps
             flex: 1,
             overflowY: 'auto',
             maxHeight: '60vh',
-            color: 'var(--text-main)',
+            color: 'var(--text-primary)',
           }}
         >
           {children}
@@ -313,11 +320,11 @@ export function Dialog({ isOpen, onClose, title, children, footer }: DialogProps
           <div
             style={{
               padding: '1rem 1.25rem',
-              borderTop: '1px solid var(--card-border)',
+              borderTop: '1px solid var(--border)',
               display: 'flex',
               justifyContent: 'flex-end',
               gap: '0.75rem',
-              backgroundColor: 'var(--background)',
+              backgroundColor: 'var(--surface-1)',
             }}
           >
             {footer}
@@ -372,13 +379,13 @@ export function Input({
           border: error
             ? '1px solid var(--error)'
             : focused
-              ? '1px solid var(--accent)'
-              : '1px solid var(--card-border)',
-          backgroundColor: 'var(--background)',
-          color: 'var(--text-main)',
+              ? '1px solid var(--brand)'
+              : '1px solid var(--border)',
+          backgroundColor: 'var(--surface-1)',
+          color: 'var(--text-primary)',
           boxSizing: 'border-box',
           fontSize: '0.9rem',
-          outline: focused ? '2px solid var(--accent)' : 'none',
+          outline: focused ? '2px solid var(--brand)' : 'none',
           outlineOffset: '2px',
           transition: 'border-color 0.2s ease',
           ...style,
@@ -423,7 +430,7 @@ export function ProgressRing({ value, size = 120, strokeWidth = 10 }: ProgressRi
         cy={size / 2}
         r={radius}
         fill="transparent"
-        stroke="#232e48"
+        stroke="var(--border)"
         strokeWidth={strokeWidth}
       />
       <circle
@@ -440,8 +447,8 @@ export function ProgressRing({ value, size = 120, strokeWidth = 10 }: ProgressRi
       />
       <defs>
         <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#2563eb" />
-          <stop offset="100%" stopColor="#14b8a6" />
+          <stop offset="0%" stopColor="var(--brand)" />
+          <stop offset="100%" stopColor="var(--chart-teal, #14b8a6)" />
         </linearGradient>
       </defs>
       <text
@@ -451,7 +458,7 @@ export function ProgressRing({ value, size = 120, strokeWidth = 10 }: ProgressRi
         dominantBaseline="middle"
         style={{
           transform: 'rotate(90deg)',
-          fill: '#f8fafc',
+          fill: 'var(--text-primary)',
           fontSize: '1.25rem',
           fontWeight: 700,
           fontFamily: 'Outfit',
@@ -471,21 +478,34 @@ interface TableColumn<T> {
 
 export function Table<T>({ data, columns }: { data: T[]; columns: TableColumn<T>[] }) {
   return (
-    <div style={{ overflowX: 'auto', border: '1px solid #232e48', borderRadius: '8px' }}>
+    <div
+      style={{
+        overflowX: 'auto',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--radius-md)',
+      }}
+    >
       <table
         style={{
           width: '100%',
           borderCollapse: 'collapse',
-          backgroundColor: '#151d30',
+          backgroundColor: 'var(--surface-0)',
           textAlign: 'left',
         }}
       >
         <thead>
-          <tr style={{ borderBottom: '1px solid #232e48', backgroundColor: '#0b0f19' }}>
+          <tr
+            style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'var(--surface-1)' }}
+          >
             {columns.map((c, i) => (
               <th
                 key={i}
-                style={{ padding: '1rem', fontSize: '0.85rem', fontWeight: 600, color: '#94a3b8' }}
+                style={{
+                  padding: '1rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: 'var(--text-muted)',
+                }}
               >
                 {c.header}
               </th>
@@ -497,7 +517,7 @@ export function Table<T>({ data, columns }: { data: T[]; columns: TableColumn<T>
             <tr>
               <td
                 colSpan={columns.length}
-                style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}
+                style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}
               >
                 No records found.
               </td>
@@ -506,7 +526,11 @@ export function Table<T>({ data, columns }: { data: T[]; columns: TableColumn<T>
             data.map((row, rIndex) => (
               <tr
                 key={rIndex}
-                style={{ borderBottom: '1px solid #232e48', transition: 'background-color 0.2s' }}
+                style={{
+                  borderBottom: '1px solid var(--border)',
+                  color: 'var(--text-primary)',
+                  transition: 'background-color 0.2s',
+                }}
               >
                 {columns.map((col, cIndex) => (
                   <td key={cIndex} style={{ padding: '1rem', fontSize: '0.875rem' }}>
@@ -538,10 +562,10 @@ export function Accordion({
           <div
             key={index}
             style={{
-              border: '1px solid #232e48',
-              borderRadius: '8px',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
               overflow: 'hidden',
-              backgroundColor: '#151d30',
+              backgroundColor: 'var(--surface-0)',
             }}
           >
             <button
@@ -554,7 +578,7 @@ export function Accordion({
                 alignItems: 'center',
                 background: 'none',
                 border: 'none',
-                color: '#f8fafc',
+                color: 'var(--text-primary)',
                 cursor: 'pointer',
                 fontWeight: 600,
                 fontSize: '0.9rem',
@@ -568,9 +592,9 @@ export function Accordion({
               <div
                 style={{
                   padding: '1rem',
-                  borderTop: '1px solid #232e48',
-                  backgroundColor: '#0b0f19',
-                  color: '#cbd5e1',
+                  borderTop: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface-1)',
+                  color: 'var(--text-secondary)',
                   fontSize: '0.85rem',
                 }}
               >
@@ -667,9 +691,9 @@ export function SkeletonLoader({
         width,
         height,
         borderRadius,
-        backgroundColor: 'var(--card-border)',
+        backgroundColor: 'var(--border)',
         backgroundImage:
-          'linear-gradient(90deg, var(--card-border) 25%, var(--card-bg) 50%, var(--card-border) 75%)',
+          'linear-gradient(90deg, var(--border) 25%, var(--surface-1) 50%, var(--border) 75%)',
         backgroundSize: '200% 100%',
         animation: 'shimmer 1.5s infinite linear',
         ...style,
@@ -708,9 +732,9 @@ export function EmptyState({
         justifyContent: 'center',
         padding: '3rem 2rem',
         textAlign: 'center',
-        backgroundColor: 'var(--card-bg)',
-        border: '1px dashed var(--card-border)',
-        borderRadius: '12px',
+        backgroundColor: 'var(--surface-0)',
+        border: '1px dashed var(--border)',
+        borderRadius: 'var(--radius-lg)',
         gap: '1rem',
         maxWidth: '480px',
         margin: '0 auto',
@@ -725,7 +749,7 @@ export function EmptyState({
               ? '🔔'
               : '🔍'}
       </div>
-      <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)' }}>
+      <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>
         {title}
       </h3>
       <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
@@ -798,7 +822,7 @@ export function Breadcrumbs({ items }: { items: Array<{ label: string; href?: st
           <React.Fragment key={index}>
             {index > 0 && <span>/</span>}
             {isLast ? (
-              <span aria-current="page" style={{ color: 'var(--text-main)', fontWeight: 600 }}>
+              <span aria-current="page" style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
                 {item.label}
               </span>
             ) : (

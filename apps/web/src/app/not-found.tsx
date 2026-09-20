@@ -5,8 +5,8 @@ export default function NotFound() {
   return (
     <div
       style={{
-        backgroundColor: '#090d16',
-        color: '#f8fafc',
+        backgroundColor: 'var(--surface-0)',
+        color: 'var(--text-primary)',
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
@@ -18,21 +18,33 @@ export default function NotFound() {
       }}
     >
       <h1
-        style={{ fontSize: '4rem', fontWeight: 800, color: '#38bdf8', margin: '1.5rem 0 0.5rem' }}
+        style={{
+          fontSize: '4rem',
+          fontWeight: 800,
+          color: 'var(--brand-primary)',
+          margin: '1.5rem 0 0.5rem',
+        }}
       >
         404
       </h1>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#ffffff', margin: '0 0 1rem' }}>
+      <h2
+        style={{
+          fontSize: '1.5rem',
+          fontWeight: 700,
+          color: 'var(--text-primary)',
+          margin: '0 0 1rem',
+        }}
+      >
         Page Not Found
       </h2>
-      <p style={{ color: '#94a3b8', maxWidth: '480px', marginBottom: '2rem' }}>
+      <p style={{ color: 'var(--text-muted)', maxWidth: '480px', marginBottom: '2rem' }}>
         The requested resource or candidate page could not be located on the Clasptek Global Academy
         Portal.
       </p>
       <Link href="/">
         <button
           style={{
-            backgroundColor: '#2563eb',
+            backgroundColor: 'var(--brand-primary)',
             color: '#ffffff',
             border: 'none',
             borderRadius: '8px',

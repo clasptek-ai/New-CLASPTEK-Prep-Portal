@@ -4,8 +4,8 @@ import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, Button, Badge } from '../../components/ui/ui-components';
-import { useAuthContext } from '@/providers/AuthProvider';
-import { BookOpen, Clock, FileText, Play, CheckCircle2, AlertCircle, Sparkles, ArrowRight, Award } from 'lucide-react';
+import { FileText, Play, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react';
+import { PageContainer, PageContent } from '@/shared/ui/layout/PageContainer';
 
 interface DiagnosticData {
   assessment: {
@@ -38,7 +38,6 @@ interface AssessmentStateData {
 
 function StudentAssessmentDashboardContent() {
   const router = useRouter();
-  const { user } = useAuthContext();
 
   const [diagnosticData, setDiagnosticData] = useState<DiagnosticData | null>(null);
   const [assessmentState, setAssessmentState] = useState<AssessmentStateData | null>(null);
@@ -120,342 +119,491 @@ function StudentAssessmentDashboardContent() {
 
   const assessment = diagnosticData?.assessment;
   const programme = diagnosticData?.programme;
-  const isCompleted = assessmentState?.state === 'PRE_ASSESSMENT_COMPLETED' || assessmentState?.hasCompletedPreAssessment;
-  const isInProgress = assessmentState?.state === 'PRE_ASSESSMENT_IN_PROGRESS' || assessmentState?.hasActiveAttempt || diagnosticData?.hasActiveAttempt;
+  const isCompleted =
+    assessmentState?.state === 'PRE_ASSESSMENT_COMPLETED' ||
+    assessmentState?.hasCompletedPreAssessment;
+  const isInProgress =
+    assessmentState?.state === 'PRE_ASSESSMENT_IN_PROGRESS' ||
+    assessmentState?.hasActiveAttempt ||
+    diagnosticData?.hasActiveAttempt;
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2rem',
-        width: '100%',
-        boxSizing: 'border-box',
-      }}
-    >
-      {/* Diagnostics Header Banner */}
-      <div
-        style={{
-          padding: '2rem 2.25rem',
-          borderRadius: 'var(--radius-xl)',
-          background: '#EAF4FC',
-          border: '1px solid #B9DDF8',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1.5rem',
-        }}
-      >
-        <div style={{ maxWidth: '720px' }}>
-          <span
-            style={{
-              fontSize: '0.6875rem',
-              fontWeight: 800,
-              letterSpacing: '0.08em',
-              padding: '0.2rem 0.6rem',
-              borderRadius: 'var(--radius-xs)',
-              backgroundColor: isCompleted ? '#DCFCE7' : '#FFFFFF',
-              color: isCompleted ? '#15803D' : '#045EAD',
-              textTransform: 'uppercase',
-            }}
-          >
-            {isCompleted ? 'PRE-ASSESSMENT COMPLETED' : isInProgress ? 'PRE-ASSESSMENT IN PROGRESS' : 'PRE-ASSESSMENT FOUNDATION'}
-          </span>
-          <h1
-            style={{
-              margin: '0.6rem 0 0.35rem',
-              fontSize: '1.75rem',
-              fontWeight: 800,
-              color: '#050310',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            {isCompleted
-              ? 'Your Academic Pre-Assessment Results'
-              : 'Welcome to your Clasptek Assessment'}
-          </h1>
-          <p style={{ margin: 0, fontSize: '0.925rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
-            {isCompleted
-              ? 'Your diagnostic baseline has been established. You now have full access to targeted practice and mock examinations.'
-              : 'Before you begin your classes and mock examinations, complete your Pre-Assessment. This helps us establish your current level and personalize your learning journey.'}
-          </p>
-        </div>
-
-        <div>
-          {isCompleted ? (
-            <Badge variant="success">Diagnostic Baseline Verified</Badge>
-          ) : (
-            <Badge variant="info">Diagnostic Engine Ready</Badge>
-          )}
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      {loading ? (
-        <Card
+    <PageContainer>
+      <PageContent>
+        <div
           style={{
-            padding: '3rem',
-            backgroundColor: 'var(--surface-0)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-lg)',
-            textAlign: 'center',
-            color: 'var(--text-muted)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '2rem',
+            width: '100%',
+            boxSizing: 'border-box',
           }}
         >
-          <div style={{ display: 'inline-block', width: '28px', height: '28px', border: '3px solid var(--brand)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-          <div style={{ marginTop: '0.75rem', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
-            Verifying your academic assessment status...
-          </div>
-        </Card>
-      ) : isCompleted ? (
-        /* Completed State Overview Card */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <Card
+          {/* Diagnostics Header Banner */}
+          <div
             style={{
               padding: '2rem 2.25rem',
+              borderRadius: 'var(--radius-xl)',
               backgroundColor: 'var(--surface-0)',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-              borderRadius: 'var(--radius-lg)',
+              border: '1px solid var(--border)',
               display: 'flex',
-              flexDirection: 'column',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
               gap: '1.5rem',
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '1.25rem',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: 'var(--radius-md)',
-                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--success)',
-                  }}
-                >
-                  <CheckCircle2 size={26} />
-                </div>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                    Pre-Assessment Completed
-                  </h3>
-                  <p style={{ margin: '0.2rem 0 0', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                    Placement Score: <strong style={{ color: 'var(--success)' }}>{assessmentState?.latestScore ? `${assessmentState.latestScore}%` : 'Graded'}</strong>
-                  </p>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <Link
-                  href="/student/results"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.65rem 1.25rem',
-                    backgroundColor: 'var(--surface-1)',
-                    color: 'var(--text-primary)',
-                    borderRadius: 'var(--radius-md)',
-                    fontWeight: 700,
-                    fontSize: '0.875rem',
-                    textDecoration: 'none',
-                    border: '1px solid var(--border)',
-                  }}
-                >
-                  <FileText size={16} />
-                  <span>View Diagnostic Breakdown</span>
-                </Link>
-
-                <Link
-                  href="/student/mock"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.65rem 1.25rem',
-                    backgroundColor: '#045EAD',
-                    color: '#FFFFFF',
-                    borderRadius: 'var(--radius-md)',
-                    fontWeight: 700,
-                    fontSize: '0.875rem',
-                    textDecoration: 'none',
-                    boxShadow: '0 4px 14px rgba(4, 94, 173, 0.25)',
-                  }}
-                >
-                  <span>Go to Mock Examinations</span>
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
-            </div>
-          </Card>
-        </div>
-      ) : (
-        /* Not Started / In-Progress Foundation Card */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {error && (
-            <div
-              style={{
-                padding: '0.875rem 1.25rem',
-                backgroundColor: 'rgba(239, 68, 68, 0.12)',
-                border: '1px solid var(--error-border)',
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--error)',
-                fontSize: '0.875rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-              }}
-            >
-              <AlertCircle size={18} />
-              <span>{error}</span>
-            </div>
-          )}
-
-          <Card
-            style={{
-              padding: '2rem 2.25rem',
-              backgroundColor: 'var(--surface-0)',
-              border: `1px solid ${isInProgress ? 'rgba(245, 158, 11, 0.35)' : 'var(--border)'}`,
-              borderRadius: 'var(--radius-lg)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1.5rem',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                flexWrap: 'wrap',
-                gap: '1.25rem',
-              }}
-            >
-              <div>
-                <Badge variant={isInProgress ? 'warning' : 'primary'}>
-                  {isInProgress ? 'IN PROGRESS' : 'REQUIRED FIRST STEP'}
-                </Badge>
-                <h3
-                  style={{
-                    margin: '0.75rem 0 0.35rem',
-                    fontSize: '1.35rem',
-                    fontWeight: 800,
-                    color: 'var(--text-primary)',
-                  }}
-                >
-                  {assessment?.title || 'Pre-Assessment Diagnostic Placement'}
-                </h3>
-                <div
-                  style={{
-                    fontSize: '0.875rem',
-                    color: 'var(--text-secondary)',
-                    display: 'flex',
-                    gap: '1.25rem',
-                    marginTop: '0.35rem',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <span>
-                    Programme: <strong style={{ color: '#045EAD' }}>{programme?.name || 'English Proficiency'}</strong>
-                  </span>
-                  <span>
-                    Duration: <strong style={{ color: 'var(--text-primary)' }}>{assessment?.durationMinutes || 45} Minutes</strong>
-                  </span>
-                  <span>
-                    Components: <strong style={{ color: 'var(--text-primary)' }}>Grammar, Reading, Writing</strong>
-                  </span>
-                </div>
-              </div>
-
-              <Button
-                variant="primary"
-                disabled={starting}
-                onClick={handleStartDiagnostic}
+            <div style={{ maxWidth: '720px' }}>
+              <span
                 style={{
-                  padding: '0.75rem 1.75rem',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
+                  fontSize: '0.6875rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.08em',
+                  padding: '0.2rem 0.6rem',
+                  borderRadius: 'var(--radius-xs)',
+                  backgroundColor: isCompleted
+                    ? 'rgba(16, 185, 129, 0.12)'
+                    : 'rgba(4, 94, 173, 0.1)',
+                  color: isCompleted ? 'var(--success)' : 'var(--brand-primary)',
+                  textTransform: 'uppercase',
                 }}
               >
-                <Play size={16} />
-                <span>
-                  {starting
-                    ? 'Launching...'
-                    : isInProgress
-                    ? 'Continue Pre-Assessment'
-                    : 'Start Pre-Assessment'}
-                </span>
-              </Button>
+                {isCompleted
+                  ? 'PRE-ASSESSMENT COMPLETED'
+                  : isInProgress
+                    ? 'PRE-ASSESSMENT IN PROGRESS'
+                    : 'PRE-ASSESSMENT FOUNDATION'}
+              </span>
+              <h1
+                style={{
+                  margin: '0.6rem 0 0.35rem',
+                  fontSize: '1.75rem',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                {isCompleted
+                  ? 'Your Academic Pre-Assessment Results'
+                  : 'Welcome to your Clasptek Assessment'}
+              </h1>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: '0.925rem',
+                  color: 'var(--text-secondary)',
+                  lineHeight: '1.55',
+                }}
+              >
+                {isCompleted
+                  ? 'Your diagnostic baseline has been established. You now have full access to targeted practice and mock examinations.'
+                  : 'Before you begin your classes and mock examinations, complete your Pre-Assessment. This helps us establish your current level and personalize your learning journey.'}
+              </p>
             </div>
 
-            {/* Assessment Component Overview */}
-            <div
+            <div>
+              {isCompleted ? (
+                <Badge variant="success">Diagnostic Baseline Verified</Badge>
+              ) : (
+                <Badge variant="info">Diagnostic Engine Ready</Badge>
+              )}
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          {loading ? (
+            <Card
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '1rem',
-                paddingTop: '1.25rem',
-                borderTop: '1px solid var(--border)',
+                padding: '3rem',
+                backgroundColor: 'var(--surface-0)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-lg)',
+                textAlign: 'center',
+                color: 'var(--text-muted)',
               }}
             >
-              <div style={{ backgroundColor: 'var(--surface-1)', padding: '1rem 1.15rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
-                  Grammar Component
-                </div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#045EAD', marginTop: '0.25rem' }}>
-                  30 Items
-                </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
-                  Syntax & Structure Drill
-                </div>
+              <div
+                style={{
+                  display: 'inline-block',
+                  width: '28px',
+                  height: '28px',
+                  border: '3px solid var(--brand)',
+                  borderTopColor: 'transparent',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                }}
+              />
+              <div
+                style={{
+                  marginTop: '0.75rem',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                Verifying your academic assessment status...
               </div>
+            </Card>
+          ) : isCompleted ? (
+            /* Completed State Overview Card */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <Card
+                style={{
+                  padding: '2rem 2.25rem',
+                  backgroundColor: 'var(--surface-0)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  borderRadius: 'var(--radius-lg)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.5rem',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '1.25rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div
+                      style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: 'var(--radius-md)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--success)',
+                      }}
+                    >
+                      <CheckCircle2 size={26} />
+                    </div>
+                    <div>
+                      <h3
+                        style={{
+                          margin: 0,
+                          fontSize: '1.25rem',
+                          fontWeight: 800,
+                          color: 'var(--text-primary)',
+                        }}
+                      >
+                        Pre-Assessment Completed
+                      </h3>
+                      <p
+                        style={{
+                          margin: '0.2rem 0 0',
+                          fontSize: '0.875rem',
+                          color: 'var(--text-secondary)',
+                        }}
+                      >
+                        Placement Score:{' '}
+                        <strong style={{ color: 'var(--success)' }}>
+                          {assessmentState?.latestScore
+                            ? `${assessmentState.latestScore}%`
+                            : 'Graded'}
+                        </strong>
+                      </p>
+                    </div>
+                  </div>
 
-              <div style={{ backgroundColor: 'var(--surface-1)', padding: '1rem 1.15rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
-                  Reading Component
-                </div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--success)', marginTop: '0.25rem' }}>
-                  Passage & Items
-                </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
-                  Comprehension & Inferences
-                </div>
-              </div>
+                  <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    <Link
+                      href="/student/results"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.65rem 1.25rem',
+                        backgroundColor: 'var(--surface-1)',
+                        color: 'var(--text-primary)',
+                        borderRadius: 'var(--radius-md)',
+                        fontWeight: 700,
+                        fontSize: '0.875rem',
+                        textDecoration: 'none',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      <FileText size={16} />
+                      <span>View Diagnostic Breakdown</span>
+                    </Link>
 
-              <div style={{ backgroundColor: 'var(--surface-1)', padding: '1rem 1.15rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
-                  Writing Component
+                    <Link
+                      href="/student/mock"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.65rem 1.25rem',
+                        backgroundColor: '#045EAD',
+                        color: '#FFFFFF',
+                        borderRadius: 'var(--radius-md)',
+                        fontWeight: 700,
+                        fontSize: '0.875rem',
+                        textDecoration: 'none',
+                        boxShadow: '0 4px 14px rgba(4, 94, 173, 0.25)',
+                      }}
+                    >
+                      <span>Go to Mock Examinations</span>
+                      <ArrowRight size={16} />
+                    </Link>
+                  </div>
                 </div>
-                <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#045EAD', marginTop: '0.25rem' }}>
-                  2 Tasks
-                </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
-                  AI Gemini Certified Grading
-                </div>
-              </div>
+              </Card>
             </div>
-          </Card>
+          ) : (
+            /* Not Started / In-Progress Foundation Card */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {error && (
+                <div
+                  style={{
+                    padding: '0.875rem 1.25rem',
+                    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                    border: '1px solid var(--error-border)',
+                    borderRadius: 'var(--radius-md)',
+                    color: 'var(--error)',
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                  }}
+                >
+                  <AlertCircle size={18} />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <Card
+                style={{
+                  padding: '2rem 2.25rem',
+                  backgroundColor: 'var(--surface-0)',
+                  border: `1px solid ${isInProgress ? 'rgba(245, 158, 11, 0.35)' : 'var(--border)'}`,
+                  borderRadius: 'var(--radius-lg)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.5rem',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    flexWrap: 'wrap',
+                    gap: '1.25rem',
+                  }}
+                >
+                  <div>
+                    <Badge variant={isInProgress ? 'warning' : 'primary'}>
+                      {isInProgress ? 'IN PROGRESS' : 'REQUIRED FIRST STEP'}
+                    </Badge>
+                    <h3
+                      style={{
+                        margin: '0.75rem 0 0.35rem',
+                        fontSize: '1.35rem',
+                        fontWeight: 800,
+                        color: 'var(--text-primary)',
+                      }}
+                    >
+                      {assessment?.title || 'Pre-Assessment Diagnostic Placement'}
+                    </h3>
+                    <div
+                      style={{
+                        fontSize: '0.875rem',
+                        color: 'var(--text-secondary)',
+                        display: 'flex',
+                        gap: '1.25rem',
+                        marginTop: '0.35rem',
+                        flexWrap: 'wrap',
+                      }}
+                    >
+                      <span>
+                        Programme:{' '}
+                        <strong style={{ color: '#045EAD' }}>
+                          {programme?.name || 'English Proficiency'}
+                        </strong>
+                      </span>
+                      <span>
+                        Duration:{' '}
+                        <strong style={{ color: 'var(--text-primary)' }}>
+                          {assessment?.durationMinutes || 45} Minutes
+                        </strong>
+                      </span>
+                      <span>
+                        Components:{' '}
+                        <strong style={{ color: 'var(--text-primary)' }}>
+                          Grammar, Reading, Writing
+                        </strong>
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="primary"
+                    disabled={starting}
+                    onClick={handleStartDiagnostic}
+                    style={{
+                      padding: '0.75rem 1.75rem',
+                      fontSize: '0.9rem',
+                      fontWeight: 700,
+                    }}
+                  >
+                    <Play size={16} />
+                    <span>
+                      {starting
+                        ? 'Launching...'
+                        : isInProgress
+                          ? 'Continue Pre-Assessment'
+                          : 'Start Pre-Assessment'}
+                    </span>
+                  </Button>
+                </div>
+
+                {/* Assessment Component Overview */}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '1rem',
+                    paddingTop: '1.25rem',
+                    borderTop: '1px solid var(--border)',
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: 'var(--surface-1)',
+                      padding: '1rem 1.15rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '0.75rem',
+                        color: 'var(--text-muted)',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Grammar Component
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '1.2rem',
+                        fontWeight: 800,
+                        color: 'var(--brand-primary)',
+                        marginTop: '0.25rem',
+                      }}
+                    >
+                      30 Items
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'var(--text-secondary)',
+                        marginTop: '0.2rem',
+                      }}
+                    >
+                      Syntax & Structure Drill
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      backgroundColor: 'var(--surface-1)',
+                      padding: '1rem 1.15rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '0.75rem',
+                        color: 'var(--text-muted)',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Reading Component
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '1.2rem',
+                        fontWeight: 800,
+                        color: 'var(--success)',
+                        marginTop: '0.25rem',
+                      }}
+                    >
+                      Passage & Items
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'var(--text-secondary)',
+                        marginTop: '0.2rem',
+                      }}
+                    >
+                      Comprehension & Inferences
+                    </div>
+                  </div>
+
+                  <div
+                    style={{
+                      backgroundColor: 'var(--surface-1)',
+                      padding: '1rem 1.15rem',
+                      borderRadius: 'var(--radius-md)',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize: '0.75rem',
+                        color: 'var(--text-muted)',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      Writing Component
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '1.2rem',
+                        fontWeight: 800,
+                        color: 'var(--brand-primary)',
+                        marginTop: '0.25rem',
+                      }}
+                    >
+                      2 Tasks
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.8rem',
+                        color: 'var(--text-secondary)',
+                        marginTop: '0.2rem',
+                      }}
+                    >
+                      AI Gemini Certified Grading
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </PageContent>
+    </PageContainer>
   );
 }
 
 export function StudentAssessmentDashboard() {
   return (
     <Suspense
-      fallback={<div style={{ padding: '2rem', color: '#475569' }}>Loading Diagnostics...</div>}
+      fallback={
+        <div style={{ padding: '2rem', color: 'var(--text-muted)' }}>Loading Diagnostics...</div>
+      }
     >
       <StudentAssessmentDashboardContent />
     </Suspense>

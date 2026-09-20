@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Card, Button, Badge } from '@/components/ui/ui-components';
+import { PageContainer, PageContent } from '@/shared/ui/layout/PageContainer';
 import { adminUsersService, AdminUserRecord } from '@/services/admin/users.service';
 import { AttemptInspectorModal } from '@/features/admin/attempt-review/attempt-review-console';
 import {
@@ -161,23 +162,27 @@ export default function StudentProfilePage() {
 
   if (loading) {
     return (
-      <div style={{ padding: '4rem 2rem', textAlign: 'center', color: '#94a3b8' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>
-          Loading Candidate Master Profile Record...
-        </h3>
-      </div>
+      <PageContainer>
+        <div style={{ padding: '4rem 2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>
+            Loading Candidate Master Profile Record...
+          </h3>
+        </div>
+      </PageContainer>
     );
   }
 
   if (!student) {
     return (
-      <div style={{ padding: '3rem 1.5rem', textAlign: 'center', color: '#94a3b8' }}>
-        <h2>Candidate Record Not Found</h2>
-        <p style={{ margin: '0.5rem 0 1.5rem' }}>No student candidate matches ID: {studentId}</p>
-        <Link href="/admin/students">
-          <Button variant="secondary">Return to Student Directory</Button>
-        </Link>
-      </div>
+      <PageContainer>
+        <div style={{ padding: '3rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+          <h2>Candidate Record Not Found</h2>
+          <p style={{ margin: '0.5rem 0 1.5rem' }}>No student candidate matches ID: {studentId}</p>
+          <Link href="/admin/students">
+            <Button variant="secondary">Return to Student Directory</Button>
+          </Link>
+        </div>
+      </PageContainer>
     );
   }
 
@@ -192,664 +197,753 @@ export default function StudentProfilePage() {
   ];
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.75rem',
-        width: '100%',
-        boxSizing: 'border-box',
-      }}
-    >
-      {/* Top Navigation */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-        }}
-      >
-        <Link
-          href="/admin/students"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            color: '#94a3b8',
-            textDecoration: 'none',
-            fontSize: '0.875rem',
-            fontWeight: 600,
-          }}
-        >
-          <ArrowLeft size={16} />
-          Back to Student Directory
-        </Link>
-
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Button
-            variant="secondary"
-            onClick={handleResetPassword}
-            style={{ gap: '0.4rem', fontSize: '0.8rem' }}
-          >
-            <KeyRound size={14} color="#60a5fa" />
-            Reset Password
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={handleToggleStatus}
-            style={{
-              gap: '0.4rem',
-              fontSize: '0.8rem',
-              color: student.status === 'ACTIVE' ? '#f87171' : '#34d399',
-              borderColor:
-                student.status === 'ACTIVE' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(52, 211, 153, 0.3)',
-            }}
-          >
-            {student.status === 'ACTIVE' ? <UserX size={14} /> : <UserCheck size={14} />}
-            {student.status === 'ACTIVE' ? 'Suspend Account' : 'Activate Account'}
-          </Button>
-        </div>
-      </div>
-
-      {banner && (
-        <div
-          style={{
-            padding: '0.85rem 1.25rem',
-            backgroundColor: 'rgba(16, 185, 129, 0.15)',
-            border: '1px solid rgba(16, 185, 129, 0.35)',
-            borderRadius: '8px',
-            color: '#34d399',
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          <CheckCircle2 size={18} />
-          <span>{banner}</span>
-        </div>
-      )}
-
-      {/* Header Banner */}
-      <Card
-        style={{
-          padding: '1.75rem',
-          borderRadius: '16px',
-          backgroundColor: '#111827',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-        }}
-      >
+    <PageContainer>
+      <PageContent>
+        {/* Top Navigation */}
         <div
           style={{
             display: 'flex',
-            flexWrap: 'wrap',
             justifyContent: 'space-between',
             alignItems: 'center',
-            gap: '1.5rem',
+            flexWrap: 'wrap',
+            gap: '1rem',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            <div
-              style={{
-                width: '68px',
-                height: '68px',
-                borderRadius: '16px',
-                backgroundColor: '#1e293b',
-                border: '2px solid #3b82f6',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#38bdf8',
-                fontSize: '1.75rem',
-                fontWeight: 800,
-              }}
-            >
-              {student.name.charAt(0)}
-            </div>
-            <div>
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}
-              >
-                <h1 style={{ margin: 0, fontSize: '1.65rem', fontWeight: 800, color: '#f8fafc' }}>
-                  {student.name}
-                </h1>
-                <Badge variant={student.status === 'ACTIVE' ? 'success' : 'danger'}>
-                  {student.status}
-                </Badge>
-              </div>
+          <Link
+            href="/admin/students"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: 'var(--text-muted)',
+              textDecoration: 'none',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+            }}
+          >
+            <ArrowLeft size={16} />
+            Back to Student Directory
+          </Link>
 
-              <div
-                style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: '1.25rem',
-                  marginTop: '0.6rem',
-                  fontSize: '0.85rem',
-                  color: '#94a3b8',
-                }}
-              >
-                <span style={{ color: '#38bdf8', fontWeight: 700 }}>
-                  Reg ID: {student.registrationNumber}
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <Mail size={14} color="#64748b" /> {student.email}
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <Calendar size={14} color="#64748b" /> Enrolled:{' '}
-                  {new Date(student.registeredDate).toLocaleDateString()}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
             <Button
               variant="secondary"
-              onClick={handleTogglePractice}
-              style={{
-                padding: '0.5rem 0.85rem',
-                fontSize: '0.8rem',
-                backgroundColor: student.practiceUnlocked
-                  ? 'rgba(52, 211, 153, 0.12)'
-                  : 'rgba(255, 255, 255, 0.05)',
-                color: student.practiceUnlocked ? '#34d399' : '#94a3b8',
-                borderColor: student.practiceUnlocked
-                  ? 'rgba(52, 211, 153, 0.3)'
-                  : 'rgba(255, 255, 255, 0.1)',
-                gap: '0.4rem',
-              }}
+              onClick={handleResetPassword}
+              style={{ gap: '0.4rem', fontSize: '0.8rem' }}
             >
-              {student.practiceUnlocked ? <Unlock size={14} /> : <Lock size={14} />}
-              Practice Gate: {student.practiceUnlocked ? 'Unlocked' : 'Locked'}
+              <KeyRound size={14} color="var(--brand-primary)" />
+              Reset Password
             </Button>
-
             <Button
               variant="secondary"
-              onClick={handleToggleMock}
+              onClick={handleToggleStatus}
               style={{
-                padding: '0.5rem 0.85rem',
-                fontSize: '0.8rem',
-                backgroundColor: student.mockUnlocked
-                  ? 'rgba(167, 139, 250, 0.12)'
-                  : 'rgba(255, 255, 255, 0.05)',
-                color: student.mockUnlocked ? '#a78bfa' : '#94a3b8',
-                borderColor: student.mockUnlocked
-                  ? 'rgba(167, 139, 250, 0.3)'
-                  : 'rgba(255, 255, 255, 0.1)',
                 gap: '0.4rem',
+                fontSize: '0.8rem',
+                color: student.status === 'ACTIVE' ? 'var(--danger)' : 'var(--success)',
+                borderColor:
+                  student.status === 'ACTIVE'
+                    ? 'rgba(239, 68, 68, 0.3)'
+                    : 'rgba(52, 211, 153, 0.3)',
               }}
             >
-              {student.mockUnlocked ? <Unlock size={14} /> : <Lock size={14} />}
-              Mock Gate: {student.mockUnlocked ? 'Unlocked' : 'Locked'}
+              {student.status === 'ACTIVE' ? <UserX size={14} /> : <UserCheck size={14} />}
+              {student.status === 'ACTIVE' ? 'Suspend Account' : 'Activate Account'}
             </Button>
           </div>
         </div>
-      </Card>
 
-      {/* Sub-Tabs Navigation */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '0.5rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          paddingBottom: '0.25rem',
-          overflowX: 'auto',
-        }}
-      >
-        {tabs.map((t) => {
-          const isActive = activeTab === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.65rem 1rem',
-                borderRadius: '8px 8px 0 0',
-                border: 'none',
-                backgroundColor: isActive ? '#1F2937' : 'transparent',
-                color: isActive ? '#38bdf8' : '#94a3b8',
-                fontWeight: isActive ? 700 : 500,
-                fontSize: '0.875rem',
-                cursor: 'pointer',
-                borderBottom: isActive ? '2px solid #38bdf8' : '2px solid transparent',
-                transition: 'all 150ms ease',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {t.icon}
-              <span>{t.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Tab Panels */}
-      <div>
-        {/* DIAGNOSTICS & ASSESSMENT HISTORY TAB (PRIMARY AUDIT INTERFACE) */}
-        {activeTab === 'diagnostics' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {/* Filter Controls Bar */}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '1rem',
-                backgroundColor: '#111827',
-                padding: '1rem 1.25rem',
-                borderRadius: '12px',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-              }}
-            >
-              <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#f8fafc' }}>
-                Assessment History Audit ({filteredAttempts.length} Records)
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  style={{
-                    backgroundColor: '#161e2e',
-                    color: '#cbd5e1',
-                    border: '1px solid #1e293b',
-                    borderRadius: '8px',
-                    padding: '0.45rem 0.75rem',
-                    fontSize: '0.8rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="ALL">All Categories</option>
-                  <option value="DIAGNOSTIC">Diagnostic</option>
-                  <option value="PRACTICE">Practice</option>
-                  <option value="MOCK">Mock Exam</option>
-                </select>
-
-                <select
-                  value={examTypeFilter}
-                  onChange={(e) => setExamTypeFilter(e.target.value)}
-                  style={{
-                    backgroundColor: '#161e2e',
-                    color: '#cbd5e1',
-                    border: '1px solid #1e293b',
-                    borderRadius: '8px',
-                    padding: '0.45rem 0.75rem',
-                    fontSize: '0.8rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="ALL">All Exam Types</option>
-                  <option value="English Proficiency">English Proficiency</option>
-                  <option value="IELTS">IELTS</option>
-                  <option value="TOEFL">TOEFL</option>
-                  <option value="SAT">SAT</option>
-                  <option value="CELPIP">CELPIP</option>
-                </select>
-
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  style={{
-                    backgroundColor: '#161e2e',
-                    color: '#cbd5e1',
-                    border: '1px solid #1e293b',
-                    borderRadius: '8px',
-                    padding: '0.45rem 0.75rem',
-                    fontSize: '0.8rem',
-                    outline: 'none',
-                  }}
-                >
-                  <option value="ALL">All Statuses</option>
-                  <option value="SUBMITTED">SUBMITTED</option>
-                  <option value="IN_PROGRESS">IN_PROGRESS</option>
-                  <option value="EXPIRED">EXPIRED</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Assessment Cards List */}
-            {historyLoading ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-                Loading candidate assessment history...
-              </div>
-            ) : filteredAttempts.length === 0 ? (
-              <Card style={{ padding: '2.5rem', textAlign: 'center', color: '#94a3b8' }}>
-                No completed assessment attempts recorded matching filter criteria.
-              </Card>
-            ) : (
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                  gap: '1.25rem',
-                }}
-              >
-                {filteredAttempts.map((att) => (
-                  <Card
-                    key={att.attemptId}
-                    style={{
-                      padding: '1.5rem',
-                      backgroundColor: '#111827',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '14px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      gap: '1.25rem',
-                    }}
-                  >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: '0.7rem',
-                            fontWeight: 800,
-                            padding: '0.2rem 0.5rem',
-                            borderRadius: '4px',
-                            backgroundColor: 'rgba(59, 130, 246, 0.15)',
-                            color: '#60a5fa',
-                          }}
-                        >
-                          {att.category} • {att.examType}
-                        </span>
-                        <Badge variant={att.status === 'SUBMITTED' ? 'success' : 'info'}>
-                          {att.status}
-                        </Badge>
-                      </div>
-
-                      <h3
-                        style={{
-                          margin: 0,
-                          fontSize: '1.15rem',
-                          fontWeight: 800,
-                          color: '#ffffff',
-                        }}
-                      >
-                        {att.assessmentTitle}
-                      </h3>
-
-                      {/* Score Metrics Badges */}
-                      <div
-                        style={{
-                          display: 'grid',
-                          gridTemplateColumns: '1fr 1fr 1fr',
-                          gap: '0.5rem',
-                          backgroundColor: '#161e2e',
-                          padding: '0.75rem',
-                          borderRadius: '8px',
-                          textAlign: 'center',
-                        }}
-                      >
-                        <div>
-                          <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 700 }}>
-                            OVERALL SCORE
-                          </div>
-                          <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#38bdf8' }}>
-                            {att.score}%
-                          </div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 700 }}>
-                            CEFR LEVEL
-                          </div>
-                          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#a78bfa' }}>
-                            {att.cefr}
-                          </div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 700 }}>
-                            PREDICTED BAND
-                          </div>
-                          <div
-                            style={{
-                              fontSize: '0.9rem',
-                              fontWeight: 800,
-                              color: '#34d399',
-                              marginTop: '2px',
-                            }}
-                          >
-                            {att.predictedBand}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#94a3b8',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                        }}
-                      >
-                        <span>
-                          Submitted:{' '}
-                          <strong>{new Date(att.submittedAt).toLocaleDateString()}</strong>
-                        </span>
-                        <span>
-                          Duration: <strong>{att.duration} Mins</strong>
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => setSelectedAttemptId(att.attemptId)}
-                      style={{
-                        width: '100%',
-                        padding: '0.65rem',
-                        backgroundColor: '#2563eb',
-                        color: '#ffffff',
-                        border: 'none',
-                        borderRadius: '8px',
-                        fontWeight: 700,
-                        fontSize: '0.85rem',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.4rem',
-                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-                      }}
-                    >
-                      <Eye size={15} />
-                      <span>View Attempt →</span>
-                    </button>
-                  </Card>
-                ))}
-              </div>
-            )}
+        {banner && (
+          <div
+            style={{
+              padding: '0.85rem 1.25rem',
+              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+              border: '1px solid rgba(16, 185, 129, 0.35)',
+              borderRadius: '8px',
+              color: 'var(--success)',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <CheckCircle2 size={18} />
+            <span>{banner}</span>
           </div>
         )}
 
-        {/* OVERVIEW TAB */}
-        {activeTab === 'overview' && (
+        {/* Header Banner */}
+        <Card
+          style={{
+            padding: '1.75rem',
+            borderRadius: '16px',
+            backgroundColor: 'var(--surface-0)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-sm)',
+          }}
+        >
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               gap: '1.5rem',
             }}
           >
-            <Card title="Candidate Operational Summary">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+              <div
+                style={{
+                  width: '68px',
+                  height: '68px',
+                  borderRadius: '16px',
+                  backgroundColor: 'var(--surface-1)',
+                  border: '2px solid var(--brand-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--brand-primary)',
+                  fontSize: '1.75rem',
+                  fontWeight: 800,
+                }}
+              >
+                {student.name.charAt(0)}
+              </div>
+              <div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <h1
+                    style={{
+                      margin: 0,
+                      fontSize: '1.65rem',
+                      fontWeight: 800,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
+                    {student.name}
+                  </h1>
+                  <Badge variant={student.status === 'ACTIVE' ? 'success' : 'danger'}>
+                    {student.status}
+                  </Badge>
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '1.25rem',
+                    marginTop: '0.6rem',
+                    fontSize: '0.85rem',
+                    color: 'var(--text-muted)',
+                  }}
+                >
+                  <span style={{ color: 'var(--brand-primary)', fontWeight: 700 }}>
+                    Reg ID: {student.registrationNumber}
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <Mail size={14} color="var(--text-muted)" /> {student.email}
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                    <Calendar size={14} color="var(--text-muted)" /> Enrolled:{' '}
+                    {new Date(student.registeredDate).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <Button
+                variant="secondary"
+                onClick={handleTogglePractice}
+                style={{
+                  padding: '0.5rem 0.85rem',
+                  fontSize: '0.8rem',
+                  backgroundColor: student.practiceUnlocked
+                    ? 'rgba(52, 211, 153, 0.12)'
+                    : 'var(--surface-1)',
+                  color: student.practiceUnlocked ? 'var(--success)' : 'var(--text-muted)',
+                  borderColor: student.practiceUnlocked
+                    ? 'rgba(52, 211, 153, 0.3)'
+                    : 'var(--border)',
+                  gap: '0.4rem',
+                }}
+              >
+                {student.practiceUnlocked ? <Unlock size={14} /> : <Lock size={14} />}
+                Practice Gate: {student.practiceUnlocked ? 'Unlocked' : 'Locked'}
+              </Button>
+
+              <Button
+                variant="secondary"
+                onClick={handleToggleMock}
+                style={{
+                  padding: '0.5rem 0.85rem',
+                  fontSize: '0.8rem',
+                  backgroundColor: student.mockUnlocked
+                    ? 'rgba(167, 139, 250, 0.12)'
+                    : 'var(--surface-1)',
+                  color: student.mockUnlocked ? 'var(--accent-purple)' : 'var(--text-muted)',
+                  borderColor: student.mockUnlocked ? 'rgba(167, 139, 250, 0.3)' : 'var(--border)',
+                  gap: '0.4rem',
+                }}
+              >
+                {student.mockUnlocked ? <Unlock size={14} /> : <Lock size={14} />}
+                Mock Gate: {student.mockUnlocked ? 'Unlocked' : 'Locked'}
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Sub-Tabs Navigation */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '0.5rem',
+            borderBottom: '1px solid var(--border)',
+            paddingBottom: '0.25rem',
+            overflowX: 'auto',
+          }}
+        >
+          {tabs.map((t) => {
+            const isActive = activeTab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.65rem 1rem',
+                  borderRadius: '8px 8px 0 0',
+                  border: 'none',
+                  backgroundColor: isActive ? 'var(--surface-2)' : 'transparent',
+                  color: isActive ? 'var(--brand-primary)' : 'var(--text-muted)',
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: '0.875rem',
+                  cursor: 'pointer',
+                  borderBottom: isActive
+                    ? '2px solid var(--brand-primary)'
+                    : '2px solid transparent',
+                  transition: 'all 150ms ease',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {t.icon}
+                <span>{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tab Panels */}
+        <div>
+          {/* DIAGNOSTICS & ASSESSMENT HISTORY TAB (PRIMARY AUDIT INTERFACE) */}
+          {activeTab === 'diagnostics' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {/* Filter Controls Bar */}
               <div
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
                   gap: '1rem',
-                  marginTop: '0.5rem',
-                  fontSize: '0.875rem',
-                  color: '#cbd5e1',
+                  backgroundColor: 'var(--surface-0)',
+                  padding: '1rem 1.25rem',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border)',
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    borderBottom: '1px solid #1e293b',
-                    paddingBottom: '0.5rem',
-                  }}
-                >
-                  <span style={{ color: '#94a3b8' }}>Enrolled Programme:</span>
-                  <span style={{ fontWeight: 700, color: '#f8fafc' }}>{student.programme}</span>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Assessment History Audit ({filteredAttempts.length} Records)
                 </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    borderBottom: '1px solid #1e293b',
-                    paddingBottom: '0.5rem',
-                  }}
-                >
-                  <span style={{ color: '#94a3b8' }}>Active Cohort:</span>
-                  <span style={{ fontWeight: 700, color: '#38bdf8' }}>
-                    {student.cohort || 'UNASSIGNED'}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#94a3b8' }}>Overall Prep Progress:</span>
-                  <span style={{ fontWeight: 700, color: '#34d399' }}>
-                    {student.progressPercent ?? 0}%
-                  </span>
+
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    style={{
+                      backgroundColor: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '8px',
+                      padding: '0.45rem 0.75rem',
+                      fontSize: '0.8rem',
+                      outline: 'none',
+                    }}
+                  >
+                    <option value="ALL">All Categories</option>
+                    <option value="DIAGNOSTIC">Diagnostic</option>
+                    <option value="PRACTICE">Practice</option>
+                    <option value="MOCK">Mock Exam</option>
+                  </select>
+
+                  <select
+                    value={examTypeFilter}
+                    onChange={(e) => setExamTypeFilter(e.target.value)}
+                    style={{
+                      backgroundColor: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '8px',
+                      padding: '0.45rem 0.75rem',
+                      fontSize: '0.8rem',
+                      outline: 'none',
+                    }}
+                  >
+                    <option value="ALL">All Exam Types</option>
+                    <option value="English Proficiency">English Proficiency</option>
+                    <option value="IELTS">IELTS</option>
+                    <option value="TOEFL">TOEFL</option>
+                    <option value="SAT">SAT</option>
+                    <option value="CELPIP">CELPIP</option>
+                  </select>
+
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    style={{
+                      backgroundColor: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border)',
+                      borderRadius: '8px',
+                      padding: '0.45rem 0.75rem',
+                      fontSize: '0.8rem',
+                      outline: 'none',
+                    }}
+                  >
+                    <option value="ALL">All Statuses</option>
+                    <option value="SUBMITTED">SUBMITTED</option>
+                    <option value="IN_PROGRESS">IN_PROGRESS</option>
+                    <option value="EXPIRED">EXPIRED</option>
+                  </select>
                 </div>
               </div>
-            </Card>
 
-            <Card title="Account Audit History">
-              <div
-                style={{
-                  fontSize: '0.85rem',
-                  color: '#94a3b8',
-                  padding: '1rem',
-                  textAlign: 'center',
-                }}
-              >
-                Initial operational account setup completed.
-              </div>
-            </Card>
-          </div>
-        )}
+              {/* Assessment Cards List */}
+              {historyLoading ? (
+                <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  Loading candidate assessment history...
+                </div>
+              ) : filteredAttempts.length === 0 ? (
+                <Card
+                  style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-muted)' }}
+                >
+                  No completed assessment attempts recorded matching filter criteria.
+                </Card>
+              ) : (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                    gap: '1.25rem',
+                  }}
+                >
+                  {filteredAttempts.map((att) => (
+                    <Card
+                      key={att.attemptId}
+                      style={{
+                        padding: '1.5rem',
+                        backgroundColor: 'var(--surface-0)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '14px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        gap: '1.25rem',
+                        boxShadow: 'var(--shadow-sm)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              fontWeight: 800,
+                              padding: '0.2rem 0.5rem',
+                              borderRadius: '4px',
+                              backgroundColor: 'var(--brand-subtle)',
+                              color: 'var(--brand-primary)',
+                            }}
+                          >
+                            {att.category} • {att.examType}
+                          </span>
+                          <Badge variant={att.status === 'SUBMITTED' ? 'success' : 'info'}>
+                            {att.status}
+                          </Badge>
+                        </div>
 
-        {/* PROGRAMME TAB */}
-        {activeTab === 'programme' && (
-          <Card title="Enrolled Prep Programme & Curriculum Progress">
-            <div style={{ padding: '1rem', backgroundColor: '#1e293b', borderRadius: '10px' }}>
-              <h4 style={{ margin: 0, color: '#38bdf8', fontSize: '1rem', fontWeight: 700 }}>
-                {student.programme}
-              </h4>
-              <p style={{ margin: '0.35rem 0 0', fontSize: '0.85rem', color: '#cbd5e1' }}>
-                Comprehensive preparation curriculum including diagnostic baselines and timed mock
-                exams.
-              </p>
+                        <h3
+                          style={{
+                            margin: 0,
+                            fontSize: '1.15rem',
+                            fontWeight: 800,
+                            color: 'var(--text-primary)',
+                          }}
+                        >
+                          {att.assessmentTitle}
+                        </h3>
+
+                        {/* Score Metrics Badges */}
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr 1fr',
+                            gap: '0.5rem',
+                            backgroundColor: 'var(--surface-1)',
+                            padding: '0.75rem',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                          }}
+                        >
+                          <div>
+                            <div
+                              style={{
+                                fontSize: '0.65rem',
+                                color: 'var(--text-muted)',
+                                fontWeight: 700,
+                              }}
+                            >
+                              OVERALL SCORE
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '1.2rem',
+                                fontWeight: 800,
+                                color: 'var(--brand-primary)',
+                              }}
+                            >
+                              {att.score}%
+                            </div>
+                          </div>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: '0.65rem',
+                                color: 'var(--text-muted)',
+                                fontWeight: 700,
+                              }}
+                            >
+                              CEFR LEVEL
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '1.1rem',
+                                fontWeight: 800,
+                                color: 'var(--accent-purple)',
+                              }}
+                            >
+                              {att.cefr}
+                            </div>
+                          </div>
+                          <div>
+                            <div
+                              style={{
+                                fontSize: '0.65rem',
+                                color: 'var(--text-muted)',
+                                fontWeight: 700,
+                              }}
+                            >
+                              PREDICTED BAND
+                            </div>
+                            <div
+                              style={{
+                                fontSize: '0.9rem',
+                                fontWeight: 800,
+                                color: 'var(--success)',
+                                marginTop: '2px',
+                              }}
+                            >
+                              {att.predictedBand}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div
+                          style={{
+                            fontSize: '0.75rem',
+                            color: 'var(--text-muted)',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                          }}
+                        >
+                          <span>
+                            Submitted:{' '}
+                            <strong>{new Date(att.submittedAt).toLocaleDateString()}</strong>
+                          </span>
+                          <span>
+                            Duration: <strong>{att.duration} Mins</strong>
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => setSelectedAttemptId(att.attemptId)}
+                        style={{
+                          width: '100%',
+                          padding: '0.65rem',
+                          backgroundColor: 'var(--brand-primary)',
+                          color: '#ffffff',
+                          border: 'none',
+                          borderRadius: '8px',
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.4rem',
+                          boxShadow: 'var(--shadow-sm)',
+                        }}
+                      >
+                        <Eye size={15} />
+                        <span>View Attempt →</span>
+                      </button>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </div>
-          </Card>
-        )}
+          )}
 
-        {/* ASSESSMENTS TAB */}
-        {activeTab === 'assessments' && (
-          <Card title="Diagnostic & Mock Assessment Summary">
-            <p style={{ color: '#94a3b8', fontSize: '0.85rem' }}>
-              Select the <strong>Diagnostics & Assessment History</strong> tab above to inspect
-              frozen paper snapshots and candidate responses.
-            </p>
-          </Card>
-        )}
-
-        {/* PRACTICE TAB */}
-        {activeTab === 'practice' && (
-          <Card title="Practice Session History & Question Stats">
+          {/* OVERVIEW TAB */}
+          {activeTab === 'overview' && (
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                gap: '1.25rem',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                gap: '1.5rem',
               }}
             >
-              <div style={{ padding: '1.25rem', backgroundColor: '#1e293b', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Questions Attempted</div>
+              <Card title="Candidate Operational Summary">
                 <div
                   style={{
-                    fontSize: '1.75rem',
-                    fontWeight: 800,
-                    color: '#f8fafc',
-                    marginTop: '4px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1rem',
+                    marginTop: '0.5rem',
+                    fontSize: '0.875rem',
+                    color: 'var(--text-secondary)',
                   }}
                 >
-                  418
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      borderBottom: '1px solid var(--border)',
+                      paddingBottom: '0.5rem',
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-muted)' }}>Enrolled Programme:</span>
+                    <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                      {student.programme}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      borderBottom: '1px solid var(--border)',
+                      paddingBottom: '0.5rem',
+                    }}
+                  >
+                    <span style={{ color: 'var(--text-muted)' }}>Active Cohort:</span>
+                    <span style={{ fontWeight: 700, color: 'var(--brand-primary)' }}>
+                      {student.cohort || 'UNASSIGNED'}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Overall Prep Progress:</span>
+                    <span style={{ fontWeight: 700, color: 'var(--success)' }}>
+                      {student.progressPercent ?? 0}%
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div style={{ padding: '1.25rem', backgroundColor: '#1e293b', borderRadius: '10px' }}>
-                <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Accuracy Rate</div>
+              </Card>
+
+              <Card title="Account Audit History">
                 <div
                   style={{
-                    fontSize: '1.75rem',
-                    fontWeight: 800,
-                    color: '#34d399',
-                    marginTop: '4px',
+                    fontSize: '0.85rem',
+                    color: 'var(--text-muted)',
+                    padding: '1rem',
+                    textAlign: 'center',
                   }}
                 >
-                  84.2%
+                  Initial operational account setup completed.
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* PROGRAMME TAB */}
+          {activeTab === 'programme' && (
+            <Card title="Enrolled Prep Programme & Curriculum Progress">
+              <div
+                style={{
+                  padding: '1rem',
+                  backgroundColor: 'var(--surface-1)',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <h4
+                  style={{
+                    margin: 0,
+                    color: 'var(--brand-primary)',
+                    fontSize: '1rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  {student.programme}
+                </h4>
+                <p
+                  style={{
+                    margin: '0.35rem 0 0',
+                    fontSize: '0.85rem',
+                    color: 'var(--text-secondary)',
+                  }}
+                >
+                  Comprehensive preparation curriculum including diagnostic baselines and timed mock
+                  exams.
+                </p>
+              </div>
+            </Card>
+          )}
+
+          {/* ASSESSMENTS TAB */}
+          {activeTab === 'assessments' && (
+            <Card title="Diagnostic & Mock Assessment Summary">
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                Select the <strong>Diagnostics & Assessment History</strong> tab above to inspect
+                frozen paper snapshots and candidate responses.
+              </p>
+            </Card>
+          )}
+
+          {/* PRACTICE TAB */}
+          {activeTab === 'practice' && (
+            <Card title="Practice Session History & Question Stats">
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '1.25rem',
+                }}
+              >
+                <div
+                  style={{
+                    padding: '1.25rem',
+                    backgroundColor: 'var(--surface-1)',
+                    borderRadius: '10px',
+                    border: '1px solid var(--border)',
+                  }}
+                >
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Questions Attempted
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1.75rem',
+                      fontWeight: 800,
+                      color: 'var(--text-primary)',
+                      marginTop: '4px',
+                    }}
+                  >
+                    418
+                  </div>
+                </div>
+                <div
+                  style={{
+                    padding: '1.25rem',
+                    backgroundColor: 'var(--surface-1)',
+                    borderRadius: '10px',
+                    border: '1px solid var(--border)',
+                  }}
+                >
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Accuracy Rate
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '1.75rem',
+                      fontWeight: 800,
+                      color: 'var(--success)',
+                      marginTop: '4px',
+                    }}
+                  >
+                    84.2%
+                  </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        )}
+            </Card>
+          )}
 
-        {/* ACTIVITY TAB */}
-        {activeTab === 'activity' && (
-          <Card title="Candidate Activity Audit Log">
-            <div
-              style={{
-                padding: '1rem',
-                backgroundColor: '#1e293b',
-                borderRadius: '8px',
-                fontSize: '0.825rem',
-              }}
-            >
-              Account access and assessment audit logs active.
-            </div>
-          </Card>
-        )}
+          {/* ACTIVITY TAB */}
+          {activeTab === 'activity' && (
+            <Card title="Candidate Activity Audit Log">
+              <div
+                style={{
+                  padding: '1rem',
+                  backgroundColor: 'var(--surface-1)',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  fontSize: '0.825rem',
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                Account access and assessment audit logs active.
+              </div>
+            </Card>
+          )}
 
-        {/* CERTIFICATES TAB */}
-        {activeTab === 'certificates' && (
-          <Card title="Issued Completion Credentials & Badges">
-            <div
-              style={{
-                padding: '2rem',
-                textAlign: 'center',
-                backgroundColor: '#1e293b',
-                borderRadius: '12px',
-              }}
-            >
-              <ShieldCheck size={48} color="#34d399" style={{ margin: '0 auto 0.75rem' }} />
-              <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.1rem' }}>
-                Preparation Readiness Badge Issued
-              </h3>
-            </div>
-          </Card>
-        )}
-      </div>
+          {/* CERTIFICATES TAB */}
+          {activeTab === 'certificates' && (
+            <Card title="Issued Completion Credentials & Badges">
+              <div
+                style={{
+                  padding: '2rem',
+                  textAlign: 'center',
+                  backgroundColor: 'var(--surface-1)',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <ShieldCheck
+                  size={48}
+                  color="var(--success)"
+                  style={{ margin: '0 auto 0.75rem' }}
+                />
+                <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.1rem' }}>
+                  Preparation Readiness Badge Issued
+                </h3>
+              </div>
+            </Card>
+          )}
+        </div>
 
-      {/* Attempt Inspector Modal */}
-      {selectedAttemptId && (
-        <AttemptInspectorModal
-          attemptId={selectedAttemptId}
-          studentId={student?.id || studentId}
-          onClose={() => setSelectedAttemptId(null)}
-        />
-      )}
-    </div>
+        {/* Attempt Inspector Modal */}
+        {selectedAttemptId && (
+          <AttemptInspectorModal
+            attemptId={selectedAttemptId}
+            studentId={student?.id || studentId}
+            onClose={() => setSelectedAttemptId(null)}
+          />
+        )}
+      </PageContent>
+    </PageContainer>
   );
 }

@@ -9,12 +9,15 @@ import {
   Layers,
   Download,
   X,
+  XCircle,
   Sliders,
-  Sparkles,
   ChevronDown,
-  RotateCcw,
 } from 'lucide-react';
-import { QuestionUsage, DifficultyLevel, Passage } from '../../../../services/admin/questions.service';
+import {
+  QuestionUsage,
+  DifficultyLevel,
+  Passage,
+} from '../../../../services/admin/questions.service';
 
 interface BulkActionToolbarProps {
   selectedCount: number;
@@ -68,15 +71,14 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
         position: 'sticky',
         top: '1rem',
         zIndex: 900,
-        backgroundColor: '#111827',
-        border: '1px solid rgba(59, 130, 246, 0.4)',
-        boxShadow: '0 12px 30px rgba(0, 0, 0, 0.6)',
+        backgroundColor: 'var(--surface-0)',
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-xl)',
         borderRadius: '14px',
         padding: '0.85rem 1.25rem',
         display: 'flex',
         flexDirection: 'column',
         gap: '0.6rem',
-        transition: 'all 200ms ease',
       }}
     >
       {/* Top Banner Row: Selection Count & Gmail-style Extension Link */}
@@ -90,9 +92,16 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#60a5fa' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: 'var(--brand-primary)',
+            }}
+          >
             <CheckSquare size={18} />
-            <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#f8fafc' }}>
+            <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
               {selectedCount} {selectedCount === 1 ? 'Question' : 'Questions'} Selected
             </span>
           </div>
@@ -103,7 +112,7 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#38bdf8',
+                color: 'var(--brand-primary)',
                 fontSize: '0.8rem',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -116,7 +125,9 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
           )}
 
           {selectAllFiltered && (
-            <Badge variant="info">All {totalFilteredCount.toLocaleString()} Matching Selected</Badge>
+            <Badge variant="info">
+              All {totalFilteredCount.toLocaleString()} Matching Selected
+            </Badge>
           )}
         </div>
 
@@ -125,7 +136,7 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
           style={{
             background: 'none',
             border: 'none',
-            color: '#94a3b8',
+            color: 'var(--text-muted)',
             fontSize: '0.8rem',
             fontWeight: 600,
             cursor: 'pointer',
@@ -138,14 +149,23 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
         </button>
       </div>
 
-      {/* Action Buttons Toolbar */}
-      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-        {/* Workflow Actions */}
+      {/* Action Buttons Bar */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          flexWrap: 'wrap',
+          paddingTop: '0.4rem',
+          borderTop: '1px solid var(--border-subtle)',
+        }}
+      >
+        {/* Status Actions */}
         <Button
-          variant="success"
+          variant="primary"
           size="sm"
           onClick={onBulkPublish}
-          style={{ gap: '0.35rem', backgroundColor: '#10b981', color: '#ffffff' }}
+          style={{ gap: '0.35rem', backgroundColor: 'var(--success)', color: '#ffffff' }}
         >
           <CheckCircle2 size={14} /> Publish
         </Button>
@@ -154,16 +174,20 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
           variant="secondary"
           size="sm"
           onClick={onBulkUnpublish}
-          style={{ gap: '0.35rem', color: '#cbd5e1' }}
+          style={{ gap: '0.35rem', color: 'var(--text-secondary)' }}
         >
-          <RotateCcw size={14} /> Unpublish
+          <XCircle size={14} /> Unpublish (Draft)
         </Button>
 
         <Button
           variant="secondary"
           size="sm"
           onClick={onBulkArchive}
-          style={{ gap: '0.35rem', color: '#fbbf24', borderColor: 'rgba(245, 158, 11, 0.3)' }}
+          style={{
+            gap: '0.35rem',
+            color: 'var(--warning)',
+            borderColor: 'rgba(245, 158, 11, 0.3)',
+          }}
         >
           <Archive size={14} /> Archive
         </Button>
@@ -172,10 +196,19 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
           variant="danger"
           size="sm"
           onClick={onBulkDelete}
-          style={{ gap: '0.35rem', backgroundColor: '#dc2626', color: '#ffffff' }}
+          style={{ gap: '0.35rem', backgroundColor: 'var(--danger)', color: '#ffffff' }}
         >
           <Trash2 size={14} /> Delete
         </Button>
+
+        <div
+          style={{
+            width: '1px',
+            height: '24px',
+            backgroundColor: 'var(--border)',
+            margin: '0 0.25rem',
+          }}
+        />
 
         {/* Classification Actions: Assign Usages */}
         <div style={{ position: 'relative' }}>
@@ -183,7 +216,11 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
             variant="secondary"
             size="sm"
             onClick={() => setShowUsageMenu(!showUsageMenu)}
-            style={{ gap: '0.35rem', color: '#38bdf8', borderColor: 'rgba(56, 189, 248, 0.3)' }}
+            style={{
+              gap: '0.35rem',
+              color: 'var(--brand-primary)',
+              borderColor: 'rgba(56, 189, 248, 0.3)',
+            }}
           >
             <Layers size={14} /> Assign Usage <ChevronDown size={12} />
           </Button>
@@ -194,19 +231,19 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
                 position: 'absolute',
                 top: '110%',
                 left: 0,
-                backgroundColor: '#1e293b',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'var(--surface-1)',
+                border: '1px solid var(--border)',
                 borderRadius: '10px',
                 padding: '0.75rem',
                 zIndex: 1000,
                 width: '220px',
-                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+                boxShadow: 'var(--shadow-lg)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.5rem',
               }}
             >
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>
                 Select Blueprint Usages
               </div>
               {(['DIAGNOSTIC', 'PRACTICE', 'MOCK'] as const).map((u) => {
@@ -219,7 +256,7 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
                       alignItems: 'center',
                       gap: '0.5rem',
                       fontSize: '0.8rem',
-                      color: '#f8fafc',
+                      color: 'var(--text-primary)',
                       cursor: 'pointer',
                     }}
                   >
@@ -259,7 +296,7 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
             variant="secondary"
             size="sm"
             onClick={() => setShowDiffMenu(!showDiffMenu)}
-            style={{ gap: '0.35rem', color: '#cbd5e1' }}
+            style={{ gap: '0.35rem', color: 'var(--text-secondary)' }}
           >
             <Sliders size={14} /> Set Difficulty <ChevronDown size={12} />
           </Button>
@@ -270,13 +307,13 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
                 position: 'absolute',
                 top: '110%',
                 left: 0,
-                backgroundColor: '#1e293b',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'var(--surface-1)',
+                border: '1px solid var(--border)',
                 borderRadius: '10px',
                 padding: '0.5rem',
                 zIndex: 1000,
                 width: '150px',
-                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+                boxShadow: 'var(--shadow-lg)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.25rem',
@@ -295,12 +332,14 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
                     borderRadius: '6px',
                     border: 'none',
                     backgroundColor: 'transparent',
-                    color: '#f8fafc',
+                    color: 'var(--text-primary)',
                     fontSize: '0.8rem',
                     fontWeight: 600,
                     cursor: 'pointer',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#334155')}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = 'var(--surface-hover)')
+                  }
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   {d}
@@ -316,7 +355,11 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
             variant="secondary"
             size="sm"
             onClick={() => setShowPassageMenu(!showPassageMenu)}
-            style={{ gap: '0.35rem', color: '#a78bfa', borderColor: 'rgba(167, 139, 250, 0.3)' }}
+            style={{
+              gap: '0.35rem',
+              color: 'var(--accent-purple)',
+              borderColor: 'rgba(167, 139, 250, 0.3)',
+            }}
           >
             <BookOpen size={14} /> Move to Passage <ChevronDown size={12} />
           </Button>
@@ -327,15 +370,15 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
                 position: 'absolute',
                 top: '110%',
                 left: 0,
-                backgroundColor: '#1e293b',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'var(--surface-1)',
+                border: '1px solid var(--border)',
                 borderRadius: '10px',
                 padding: '0.5rem',
                 zIndex: 1000,
                 width: '240px',
                 maxHeight: '200px',
                 overflowY: 'auto',
-                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+                boxShadow: 'var(--shadow-lg)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.25rem',
@@ -354,7 +397,7 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
                     borderRadius: '6px',
                     border: 'none',
                     backgroundColor: 'transparent',
-                    color: '#f8fafc',
+                    color: 'var(--text-primary)',
                     fontSize: '0.785rem',
                     fontWeight: 500,
                     cursor: 'pointer',
@@ -362,7 +405,9 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#334155')}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = 'var(--surface-hover)')
+                  }
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   {pas.title}
@@ -378,7 +423,7 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
             variant="secondary"
             size="sm"
             onClick={() => setShowExportMenu(!showExportMenu)}
-            style={{ gap: '0.35rem', color: '#cbd5e1' }}
+            style={{ gap: '0.35rem', color: 'var(--text-secondary)' }}
           >
             <Download size={14} /> Export <ChevronDown size={12} />
           </Button>
@@ -389,13 +434,13 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
                 position: 'absolute',
                 top: '110%',
                 left: 0,
-                backgroundColor: '#1e293b',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'var(--surface-1)',
+                border: '1px solid var(--border)',
                 borderRadius: '10px',
                 padding: '0.5rem',
                 zIndex: 1000,
                 width: '140px',
-                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+                boxShadow: 'var(--shadow-lg)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.25rem',
@@ -414,12 +459,14 @@ export const BulkActionToolbar: React.FC<BulkActionToolbarProps> = ({
                     borderRadius: '6px',
                     border: 'none',
                     backgroundColor: 'transparent',
-                    color: '#f8fafc',
+                    color: 'var(--text-primary)',
                     fontSize: '0.8rem',
                     fontWeight: 600,
                     cursor: 'pointer',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#334155')}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = 'var(--surface-hover)')
+                  }
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   Export {fmt}

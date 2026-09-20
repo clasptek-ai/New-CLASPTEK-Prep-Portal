@@ -21,8 +21,8 @@ export default function StudentError({
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#090d16',
-        color: '#f8fafc',
+        backgroundColor: 'var(--surface-0)',
+        color: 'var(--text-primary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -36,12 +36,12 @@ export default function StudentError({
         style={{
           maxWidth: '520px',
           width: '100%',
-          backgroundColor: '#0f1729',
-          border: '1px solid #1e2d45',
+          backgroundColor: 'var(--surface-1)',
+          border: '1px solid var(--border)',
           borderRadius: '16px',
           padding: '2.5rem 2rem',
           textAlign: 'center',
-          boxShadow: '0 25px 50px rgba(0,0,0,0.6)',
+          boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
         }}
       >
         <div
@@ -67,7 +67,7 @@ export default function StudentError({
             margin: '0 0 0.75rem',
             fontSize: '1.4rem',
             fontWeight: 700,
-            color: '#f8fafc',
+            color: 'var(--text-primary)',
           }}
         >
           Portal Error
@@ -75,7 +75,7 @@ export default function StudentError({
 
         <p
           style={{
-            color: '#94a3b8',
+            color: 'var(--text-muted)',
             fontSize: '0.9rem',
             lineHeight: 1.6,
             margin: '0 0 0.5rem',
@@ -88,7 +88,7 @@ export default function StudentError({
 
         <p
           style={{
-            color: '#64748b',
+            color: 'var(--text-muted)',
             fontSize: '0.8rem',
             lineHeight: 1.5,
             margin: '0 0 1.75rem',
@@ -100,7 +100,7 @@ export default function StudentError({
         {error?.digest && (
           <p
             style={{
-              color: '#475569',
+              color: 'var(--text-muted)',
               fontSize: '0.75rem',
               marginBottom: '1.75rem',
               fontFamily: 'monospace',
@@ -118,7 +118,7 @@ export default function StudentError({
             onClick={() => reset()}
             aria-label="Try loading this page again"
             style={{
-              backgroundColor: '#2563eb',
+              backgroundColor: 'var(--brand-primary)',
               color: '#fff',
               border: 'none',
               borderRadius: '8px',
@@ -136,8 +136,8 @@ export default function StudentError({
             aria-label="Return to student dashboard"
             style={{
               backgroundColor: 'transparent',
-              color: '#cbd5e1',
-              border: '1px solid #334155',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               padding: '0.65rem 1.25rem',
               fontSize: '0.875rem',

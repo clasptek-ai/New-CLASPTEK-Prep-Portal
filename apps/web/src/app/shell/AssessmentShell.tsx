@@ -31,7 +31,7 @@ export function AssessmentShell({
         height: '100vh',
         width: '100vw',
         overflow: 'hidden',
-        backgroundColor: 'var(--bg-app, #0f172a)',
+        backgroundColor: 'var(--surface-0)',
       }}
     >
       <header
@@ -40,8 +40,8 @@ export function AssessmentShell({
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0.75rem 1.5rem',
-          backgroundColor: 'var(--bg-surface-0, #111827)',
-          borderBottom: '1px solid var(--border-default, #1e293b)',
+          backgroundColor: 'var(--surface-1)',
+          borderBottom: '1px solid var(--border)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.0rem' }}>
@@ -50,7 +50,7 @@ export function AssessmentShell({
               margin: 0,
               fontSize: '1.125rem',
               fontWeight: 800,
-              color: 'var(--text-primary, #f8fafc)',
+              color: 'var(--text-primary)',
             }}
           >
             {examTitle}

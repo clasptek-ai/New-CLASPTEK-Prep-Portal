@@ -48,22 +48,72 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
   const resolvedSubtitle = actionSubtitle || defaultSubtitle;
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 shadow-sm relative overflow-hidden">
+    <div
+      style={{
+        borderRadius: '1rem',
+        backgroundColor: 'var(--surface-0)',
+        border: '1px solid var(--border)',
+        padding: '1.5rem',
+        boxShadow: 'var(--shadow-sm)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
       {/* Brand Top Accent */}
-      <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#045EAD]" />
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '4px',
+          backgroundColor: 'var(--brand-primary)',
+        }}
+      />
 
       {/* ── Top row: Greeting + Actions ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          gap: '1.5rem',
+          position: 'relative',
+          zIndex: 1,
+        }}
+        className="sm:flex-row sm:items-center"
+      >
         {/* Left: Avatar + Name */}
-        <div className="flex items-center gap-4">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <Avatar name={studentName} size="lg" status="online" />
-          <div className="flex flex-col">
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             {/* Programme badge */}
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD]">
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                marginBottom: '0.25rem',
+              }}
+            >
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  padding: '0.125rem 0.625rem',
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(4, 94, 173, 0.08)',
+                  border: '1px solid rgba(4, 94, 173, 0.25)',
+                  color: 'var(--brand-primary)',
+                }}
+              >
                 {config.badge || config.title}
               </span>
-              <span className="text-[11px] text-[#475569] font-medium">
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
                 • Official Candidate Session
               </span>
             </div>
@@ -72,29 +122,65 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
             {isLoading ? (
               <Skeleton width="240px" height="2rem" />
             ) : (
-              <h1 className="text-xl sm:text-2xl font-extrabold text-deep-navy tracking-tight m-0">
+              <h1
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                  letterSpacing: '-0.02em',
+                  margin: 0,
+                }}
+              >
                 WELCOME BACK, {firstName.toUpperCase()}
               </h1>
             )}
 
             {/* Subtitle */}
-            <p className="text-xs sm:text-sm text-[#475569] mt-1 leading-relaxed">
+            <p
+              style={{
+                fontSize: '0.875rem',
+                color: 'var(--text-secondary)',
+                marginTop: '0.25rem',
+                lineHeight: 1.5,
+              }}
+            >
               {resolvedSubtitle}
             </p>
           </div>
         </div>
 
         {/* Right: Streak (informational) + Dominant Action */}
-        <div className="flex items-center gap-3 self-start sm:self-auto">
+        <div
+          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+          className="self-start sm:self-auto"
+        >
           {studyStreakDays > 0 && (
             <div
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#FEF3C7] border border-[#FDE68A] text-[#B45309]"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.375rem 0.75rem',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                color: 'var(--warning)',
+              }}
               title={`${studyStreakDays} consecutive days active`}
             >
-              <Flame size={16} className="text-[#B45309] fill-[#B45309]" />
-              <div className="flex flex-col">
-                <span className="text-xs font-bold leading-none">{studyStreakDays} Days</span>
-                <span className="text-[9px] uppercase font-bold text-[#B45309] tracking-wider">
+              <Flame size={16} />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, lineHeight: 1 }}>
+                  {studyStreakDays} Days
+                </span>
+                <span
+                  style={{
+                    fontSize: '9px',
+                    textTransform: 'uppercase',
+                    fontWeight: 700,
+                    letterSpacing: '0.05em',
+                  }}
+                >
                   Streak
                 </span>
               </div>
@@ -106,8 +192,8 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
               variant="primary"
               size="md"
               onClick={handleAction}
-              leftIcon={<Play size={14} fill="white" />}
-              className="bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold shadow-sm whitespace-nowrap"
+              leftIcon={<Play size={14} fill="currentColor" />}
+              style={{ whiteSpace: 'nowrap' }}
             >
               {resolvedActionLabel}
             </Button>
@@ -116,45 +202,170 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
       </div>
 
       {/* ── Bottom row: Key metrics strip ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-6 relative z-10">
-        <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '0.875rem',
+          marginTop: '1.5rem',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <div
+          style={{
+            padding: '0.875rem',
+            borderRadius: '12px',
+            backgroundColor: 'var(--surface-1)',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '10px',
+              textTransform: 'uppercase',
+              fontWeight: 700,
+              letterSpacing: '0.05em',
+              color: 'var(--text-muted)',
+            }}
+          >
             Current Baseline
           </span>
-          <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-xl font-extrabold text-deep-navy tabular-nums">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: '0.25rem',
+              marginTop: '0.25rem',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 800,
+                color: 'var(--text-primary)',
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
               {config.targetMetric.current}
             </span>
-            <span className="text-xs text-[#475569] font-bold">{config.targetMetric.unit}</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 700 }}>
+              {config.targetMetric.unit}
+            </span>
           </div>
-          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">
+          <span
+            style={{
+              fontSize: '11px',
+              color: 'var(--text-muted)',
+              fontWeight: 500,
+              marginTop: '2px',
+            }}
+          >
             Calibrated Diagnostic
           </span>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
+        <div
+          style={{
+            padding: '0.875rem',
+            borderRadius: '12px',
+            backgroundColor: 'var(--surface-1)',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '10px',
+              textTransform: 'uppercase',
+              fontWeight: 700,
+              letterSpacing: '0.05em',
+              color: 'var(--text-muted)',
+            }}
+          >
             Target Goal
           </span>
-          <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-xl font-extrabold text-[#045EAD] tabular-nums">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: '0.25rem',
+              marginTop: '0.25rem',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '1.25rem',
+                fontWeight: 800,
+                color: 'var(--brand-primary)',
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
               {config.targetMetric.target}
             </span>
-            <span className="text-xs text-[#045EAD] font-bold">{config.targetMetric.unit}</span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--brand-primary)', fontWeight: 700 }}>
+              {config.targetMetric.unit}
+            </span>
           </div>
-          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">
+          <span
+            style={{
+              fontSize: '11px',
+              color: 'var(--text-muted)',
+              fontWeight: 500,
+              marginTop: '2px',
+            }}
+          >
             {config.targetMetric.description}
           </span>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-bg-neutral border border-slate-200 flex flex-col justify-between">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-[#475569]">
+        <div
+          style={{
+            padding: '0.875rem',
+            borderRadius: '12px',
+            backgroundColor: 'var(--surface-1)',
+            border: '1px solid var(--border)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '10px',
+              textTransform: 'uppercase',
+              fontWeight: 700,
+              letterSpacing: '0.05em',
+              color: 'var(--text-muted)',
+            }}
+          >
             Diagnostic Status
           </span>
-          <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-base font-bold text-[#15803D]">Available</span>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: '0.25rem',
+              marginTop: '0.25rem',
+            }}
+          >
+            <span style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--success)' }}>
+              Available
+            </span>
           </div>
-          <span className="text-[11px] text-[#64748B] font-medium mt-0.5">
+          <span
+            style={{
+              fontSize: '11px',
+              color: 'var(--text-muted)',
+              fontWeight: 500,
+              marginTop: '2px',
+            }}
+          >
             Automated Rubric Evaluation
           </span>
         </div>

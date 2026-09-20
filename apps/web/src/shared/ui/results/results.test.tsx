@@ -12,7 +12,7 @@ describe('ScoreCard Component (Wave 002F)', () => {
         bandDescriptor="Very Good User"
       />
     );
-    expect(screen.getByText('IELTS ACADEMIC DIAGNOSTIC')).toBeDefined();
+    expect(screen.getByText(/IELTS Academic Diagnostic/i)).toBeDefined();
     expect(screen.getByText('8')).toBeDefined();
     expect(screen.getByText('Very Good User')).toBeDefined();
   });

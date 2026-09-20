@@ -23,8 +23,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       className="app-shell-root"
       style={{
         minHeight: '100vh',
-        backgroundColor: 'var(--bg-app, #0f172a)',
-        color: 'var(--text-primary, #f8fafc)',
+        backgroundColor: 'var(--surface-0)',
+        color: 'var(--text-primary)',
         fontFamily: 'var(--font-sans, system-ui, -apple-system, sans-serif)',
         display: 'flex',
         flexDirection: 'column',

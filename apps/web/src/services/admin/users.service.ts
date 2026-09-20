@@ -15,7 +15,12 @@ export interface AdminUserRecord {
   practiceUnlocked: boolean;
   mockUnlocked: boolean;
   registeredDate: string;
+  createdAt?: string;
   lastLogin?: string;
+  completedMocks?: number;
+  diagnosticSessions?: number;
+  practiceQuestionsAnswered?: number;
+  lastAttemptDate?: string;
   statusHistory: {
     status: 'ACTIVE' | 'SUSPENDED' | 'PENDING';
     changedBy: string;

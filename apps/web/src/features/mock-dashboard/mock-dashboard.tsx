@@ -6,6 +6,7 @@ import { mockGeneratorService } from '../mock-engine/application/mock-generator.
 import { MockTemplate, MockSession, MockResult } from '../mock-engine/domain/mock-blueprint';
 import { IELTSExamEngine } from '../mock-engine/components/IELTSExamEngine';
 import { Award, Clock, Play } from 'lucide-react';
+import { PageContainer, PageContent } from '@/shared/ui/layout/PageContainer';
 import {
   CANONICAL_CONTENT_VERSION,
   checkAndInvalidateClientCaches,
@@ -237,97 +238,35 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
     }
   }
 
+  if (viewState === 'PLAYER' && activeSession) {
+    return (
+      <IELTSExamEngine
+        session={activeSession as any}
+        selectedAnswerMap={selectedAnswerMap}
+        onAnswerChange={handleAnswerChange}
+        onSubmit={handleSubmitMock}
+      />
+    );
+  }
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.75rem',
-        color: '#f8fafc',
-        fontFamily: 'Inter, system-ui, sans-serif',
-        padding: '2rem',
-        backgroundColor: '#0b0f19',
-        minHeight: '100vh',
-        boxSizing: 'border-box',
-      }}
-    >
-      {/* VIEW 1: STUDENT MOCK DASHBOARD */}
-      {viewState === 'DASHBOARD' && (
-        <>
-          {/* Header */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '1rem',
-            }}
-          >
-            <div>
+    <PageContainer>
+      <PageContent>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.75rem',
+            color: 'var(--text-primary)',
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* VIEW 1: STUDENT MOCK DASHBOARD */}
+          {viewState === 'DASHBOARD' && (
+            <>
+              {/* Header */}
               <div
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  marginBottom: '0.35rem',
-                }}
-              >
-                <div
-                  style={{
-                    backgroundColor: '#EAF4FC',
-                    padding: '0.625rem',
-                    borderRadius: 'var(--radius-md)',
-                    color: '#045EAD',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Award size={22} />
-                </div>
-                <h1 style={{ fontSize: '1.625rem', fontWeight: 800, color: '#F8FAFC', margin: 0 }}>
-                  Official Mock Examinations
-                </h1>
-              </div>
-              <p style={{ color: '#94A3B8', fontSize: '0.9rem', margin: 0 }}>
-                Full-length timed exam simulations for IELTS, TOEFL, SAT, CELPIP & English
-                Proficiency.
-              </p>
-            </div>
-
-            <Badge variant="success">Proctoring & Integrity Active</Badge>
-          </div>
-
-          {/* Launch Error Notice */}
-          {launchError && (
-            <div
-              style={{
-                padding: '0.875rem 1.25rem',
-                backgroundColor: 'rgba(239, 68, 68, 0.12)',
-                border: '1px solid var(--error-border)',
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--error)',
-                fontSize: '0.875rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-              }}
-            >
-              <span>{launchError}</span>
-            </div>
-          )}
-
-          {/* Pre-Assessment Gating Guidance Banner */}
-          {assessmentState &&
-            assessmentState.state !== 'PRE_ASSESSMENT_COMPLETED' &&
-            !assessmentState.hasCompletedPreAssessment && (
-              <div
-                style={{
-                  padding: '1.25rem 1.5rem',
-                  backgroundColor: '#EAF4FC',
-                  border: '1px solid #B9DDF8',
-                  borderRadius: 'var(--radius-lg)',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
@@ -336,274 +275,367 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                 }}
               >
                 <div>
-                  <span
+                  <div
                     style={{
-                      fontSize: '0.6875rem',
-                      fontWeight: 800,
-                      letterSpacing: '0.06em',
-                      padding: '0.2rem 0.5rem',
-                      borderRadius: 'var(--radius-xs)',
-                      backgroundColor: '#FFFFFF',
-                      color: '#045EAD',
-                      textTransform: 'uppercase',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      marginBottom: '0.35rem',
                     }}
                   >
-                    RECOMMENDED FOUNDATION
-                  </span>
-                  <h3
-                    style={{
-                      margin: '0.5rem 0 0.25rem',
-                      fontSize: '1.05rem',
-                      fontWeight: 700,
-                      color: '#050310',
-                    }}
-                  >
-                    Pre-Assessment Recommended for Baseline Profile
-                  </h3>
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569' }}>
-                    Completing your diagnostic Pre-Assessment establishes your starting academic
-                    profile. You can also proceed directly to official full-length mock simulations
-                    below.
+                    <div
+                      style={{
+                        backgroundColor: 'rgba(4, 94, 173, 0.1)',
+                        padding: '0.625rem',
+                        borderRadius: 'var(--radius-md)',
+                        color: 'var(--brand-primary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Award size={22} />
+                    </div>
+                    <h1
+                      style={{
+                        fontSize: '1.625rem',
+                        fontWeight: 800,
+                        color: 'var(--text-primary)',
+                        margin: 0,
+                      }}
+                    >
+                      Official Mock Examinations
+                    </h1>
+                  </div>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
+                    Full-length timed exam simulations for IELTS, TOEFL, SAT, CELPIP & English
+                    Proficiency.
                   </p>
                 </div>
 
-                <a
-                  href="/student/assessments"
+                <Badge variant="success">Proctoring & Integrity Active</Badge>
+              </div>
+
+              {/* Launch Error Notice */}
+              {launchError && (
+                <div
                   style={{
-                    padding: '0.625rem 1.25rem',
-                    backgroundColor: '#045EAD',
-                    color: '#FFFFFF',
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
+                    padding: '0.875rem 1.25rem',
+                    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                    border: '1px solid var(--error-border)',
                     borderRadius: 'var(--radius-md)',
-                    textDecoration: 'none',
-                    display: 'inline-flex',
+                    color: 'var(--error)',
+                    fontSize: '0.875rem',
+                    display: 'flex',
                     alignItems: 'center',
-                    gap: '0.35rem',
+                    gap: '0.75rem',
                   }}
                 >
-                  <span>Start Pre-Assessment →</span>
-                </a>
-              </div>
-            )}
-
-          {/* Readiness Band Score Prediction Widget */}
-          <Card
-            style={{
-              padding: '1.5rem',
-              backgroundColor: 'var(--surface-0)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-lg)',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '1rem',
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    color: 'var(--text-muted)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.06em',
-                  }}
-                >
-                  Official Score Readiness Prediction
+                  <span>{launchError}</span>
                 </div>
-                <div
-                  style={{
-                    fontSize: '1.875rem',
-                    fontWeight: 800,
-                    color: '#045EAD',
-                    marginTop: '0.25rem',
-                    letterSpacing: '-0.02em',
-                  }}
-                >
-                  IELTS Band 7.5 / TOEFL 105 / SAT 1420
-                </div>
-                <p
-                  style={{
-                    fontSize: '0.85rem',
-                    color: 'var(--text-secondary)',
-                    margin: '0.35rem 0 0',
-                  }}
-                >
-                  Based on your performance across official blueprint sections.
-                </p>
-              </div>
+              )}
 
-              <Button
-                variant="primary"
-                onClick={() => handleLaunchMock(templates[0]?.id || 'tmpl-ielts-acad')}
-              >
-                Take Official Mock Test Now
-              </Button>
-            </div>
-          </Card>
-
-          {/* Available Mock Examination Templates Grid */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
-              Available Official Exam Mocks ({templates.length})
-            </h2>
-
-            {loading ? (
-              <div style={{ color: 'var(--text-muted)', padding: '2rem', textAlign: 'center' }}>
-                Loading Exam Blueprints & Mocks...
-              </div>
-            ) : (
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                  gap: '1.25rem',
-                }}
-              >
-                {templates.map((t) => (
-                  <Card
-                    key={t.id}
+              {/* Pre-Assessment Gating Guidance Banner */}
+              {assessmentState &&
+                assessmentState.state !== 'PRE_ASSESSMENT_COMPLETED' &&
+                !assessmentState.hasCompletedPreAssessment && (
+                  <div
                     style={{
-                      padding: '1.5rem',
+                      padding: '1.25rem 1.5rem',
                       backgroundColor: 'var(--surface-0)',
                       border: '1px solid var(--border)',
                       borderRadius: 'var(--radius-lg)',
                       display: 'flex',
-                      flexDirection: 'column',
                       justifyContent: 'space-between',
-                      gap: '1.25rem',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '1rem',
                     }}
                   >
                     <div>
-                      <div
+                      <span
                         style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          marginBottom: '0.75rem',
+                          fontSize: '0.6875rem',
+                          fontWeight: 800,
+                          letterSpacing: '0.06em',
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: 'var(--radius-xs)',
+                          backgroundColor: 'rgba(4, 94, 173, 0.1)',
+                          color: 'var(--brand-primary)',
+                          textTransform: 'uppercase',
                         }}
                       >
-                        <Badge variant="primary">{t.exam}</Badge>
-                        <span
-                          style={{
-                            fontSize: '0.75rem',
-                            color: 'var(--text-muted)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.3rem',
-                          }}
-                        >
-                          <Clock size={13} /> {t.totalDurationMinutes} mins
-                        </span>
-                      </div>
-
+                        RECOMMENDED FOUNDATION
+                      </span>
                       <h3
                         style={{
-                          fontSize: '1.1rem',
+                          margin: '0.5rem 0 0.25rem',
+                          fontSize: '1.05rem',
                           fontWeight: 700,
                           color: 'var(--text-primary)',
-                          margin: '0 0 0.5rem',
-                          lineHeight: 1.35,
                         }}
                       >
-                        {t.title}
+                        Pre-Assessment Recommended for Baseline Profile
                       </h3>
-
-                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
-                        {t.totalQuestions} Questions · {t.sections.length} Blueprint Sections ·
-                        Official Scoring Conversion
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                        Completing your diagnostic Pre-Assessment establishes your starting academic
+                        profile. You can also proceed directly to official full-length mock
+                        simulations below.
                       </p>
                     </div>
 
-                    <Button
-                      variant="primary"
-                      onClick={() => handleLaunchMock(t.id)}
-                      style={{ width: '100%', justifyContent: 'center', gap: '0.5rem' }}
+                    <a
+                      href="/student/assessments"
+                      style={{
+                        padding: '0.625rem 1.25rem',
+                        backgroundColor: 'var(--brand-primary)',
+                        color: '#FFFFFF',
+                        fontWeight: 700,
+                        fontSize: '0.85rem',
+                        borderRadius: 'var(--radius-md)',
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                      }}
                     >
-                      <Play size={15} /> Start Full Mock Examination
-                    </Button>
-                  </Card>
-                ))}
+                      <span>Start Pre-Assessment →</span>
+                    </a>
+                  </div>
+                )}
+
+              {/* Readiness Band Score Prediction Widget */}
+              <Card
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: 'var(--surface-0)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius-lg)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '1rem',
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: 'var(--text-muted)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                      }}
+                    >
+                      Official Score Readiness Prediction
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '1.875rem',
+                        fontWeight: 800,
+                        color: '#045EAD',
+                        marginTop: '0.25rem',
+                        letterSpacing: '-0.02em',
+                      }}
+                    >
+                      IELTS Band 7.5 / TOEFL 105 / SAT 1420
+                    </div>
+                    <p
+                      style={{
+                        fontSize: '0.85rem',
+                        color: 'var(--text-secondary)',
+                        margin: '0.35rem 0 0',
+                      }}
+                    >
+                      Based on your performance across official blueprint sections.
+                    </p>
+                  </div>
+
+                  <Button
+                    variant="primary"
+                    onClick={() => handleLaunchMock(templates[0]?.id || 'tmpl-ielts-acad')}
+                  >
+                    Take Official Mock Test Now
+                  </Button>
+                </div>
+              </Card>
+
+              {/* Available Mock Examination Templates Grid */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <h2
+                  style={{
+                    fontSize: '1.15rem',
+                    fontWeight: 700,
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                  }}
+                >
+                  Available Official Exam Mocks ({templates.length})
+                </h2>
+
+                {loading ? (
+                  <div style={{ color: 'var(--text-muted)', padding: '2rem', textAlign: 'center' }}>
+                    Loading Exam Blueprints & Mocks...
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                      gap: '1.25rem',
+                    }}
+                  >
+                    {templates.map((t) => (
+                      <Card
+                        key={t.id}
+                        style={{
+                          padding: '1.5rem',
+                          backgroundColor: 'var(--surface-0)',
+                          border: '1px solid var(--border)',
+                          borderRadius: 'var(--radius-lg)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'space-between',
+                          gap: '1.25rem',
+                        }}
+                      >
+                        <div>
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginBottom: '0.75rem',
+                            }}
+                          >
+                            <Badge variant="primary">{t.exam}</Badge>
+                            <span
+                              style={{
+                                fontSize: '0.75rem',
+                                color: 'var(--text-muted)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.3rem',
+                              }}
+                            >
+                              <Clock size={13} /> {t.totalDurationMinutes} mins
+                            </span>
+                          </div>
+
+                          <h3
+                            style={{
+                              fontSize: '1.1rem',
+                              fontWeight: 700,
+                              color: 'var(--text-primary)',
+                              margin: '0 0 0.5rem',
+                              lineHeight: 1.35,
+                            }}
+                          >
+                            {t.title}
+                          </h3>
+
+                          <p
+                            style={{
+                              fontSize: '0.85rem',
+                              color: 'var(--text-secondary)',
+                              margin: 0,
+                            }}
+                          >
+                            {t.totalQuestions} Questions · {t.sections.length} Blueprint Sections ·
+                            Official Scoring Conversion
+                          </p>
+                        </div>
+
+                        <Button
+                          variant="primary"
+                          onClick={() => handleLaunchMock(t.id)}
+                          style={{ width: '100%', justifyContent: 'center', gap: '0.5rem' }}
+                        >
+                          <Play size={15} /> Start Full Mock Examination
+                        </Button>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </>
-      )}
+            </>
+          )}
 
-      {/* VIEW 2: IELTS SECTION-AWARE EXAM ENGINE */}
-      {viewState === 'PLAYER' && activeSession && (
-        <IELTSExamEngine
-          session={activeSession as any}
-          selectedAnswerMap={selectedAnswerMap}
-          onAnswerChange={handleAnswerChange}
-          onSubmit={handleSubmitMock}
-        />
-      )}
+          {/* VIEW 2: IELTS SECTION-AWARE EXAM ENGINE */}
+          {viewState === 'PLAYER' && activeSession && (
+            <IELTSExamEngine
+              session={activeSession as any}
+              selectedAnswerMap={selectedAnswerMap}
+              onAnswerChange={handleAnswerChange}
+              onSubmit={handleSubmitMock}
+            />
+          )}
 
-      {/* VIEW 3: OFFICIAL MOCK RESULT & BAND CONVERSION */}
-      {viewState === 'RESULT' && activeResult && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-          <Card
-            style={{
-              padding: '2.5rem',
-              backgroundColor: 'var(--surface-0)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-xl)',
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '1.25rem',
-            }}
-          >
-            <div
-              style={{
-                width: '72px',
-                height: '72px',
-                borderRadius: '50%',
-                backgroundColor: '#EAF4FC',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#045EAD',
-              }}
-            >
-              <Award size={40} />
-            </div>
-            <h2
-              style={{
-                fontSize: '1.75rem',
-                fontWeight: 800,
-                color: 'var(--text-primary)',
-                margin: 0,
-              }}
-            >
-              Official Mock Examination Score Report
-            </h2>
-            <div style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--success)' }}>
-              {activeResult.scoreResult.bandOrScale}
-            </div>
-            <div style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>
-              Official Classification:{' '}
-              <strong style={{ color: 'var(--text-primary)' }}>
-                {activeResult.scoreResult.label}
-              </strong>{' '}
-              ({activeResult.scoreResult.percentage}% Raw Accuracy)
-            </div>
+          {/* VIEW 3: OFFICIAL MOCK RESULT & BAND CONVERSION */}
+          {viewState === 'RESULT' && activeResult && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+              <Card
+                style={{
+                  padding: '2.5rem',
+                  backgroundColor: 'var(--surface-0)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius-xl)',
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '1.25rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: '72px',
+                    height: '72px',
+                    borderRadius: '50%',
+                    backgroundColor: 'rgba(4, 94, 173, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--brand-primary)',
+                  }}
+                >
+                  <Award size={40} />
+                </div>
+                <h2
+                  style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 800,
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                  }}
+                >
+                  Official Mock Examination Score Report
+                </h2>
+                <div style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--success)' }}>
+                  {activeResult.scoreResult.bandOrScale}
+                </div>
+                <div style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>
+                  Official Classification:{' '}
+                  <strong style={{ color: 'var(--text-primary)' }}>
+                    {activeResult.scoreResult.label}
+                  </strong>{' '}
+                  ({activeResult.scoreResult.percentage}% Raw Accuracy)
+                </div>
 
-            <Button variant="primary" onClick={() => setViewState('DASHBOARD')}>
-              Return to Mock Dashboard
-            </Button>
-          </Card>
+                <Button variant="primary" onClick={() => setViewState('DASHBOARD')}>
+                  Return to Mock Dashboard
+                </Button>
+              </Card>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </PageContent>
+    </PageContainer>
   );
 }
 

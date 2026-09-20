@@ -24,8 +24,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             width: '100vw',
             maxHeight: '100vh',
             maxWidth: '100vw',
-            backgroundColor: 'var(--bg-app, #0b0f19)',
-            color: 'var(--text-primary, #f8fafc)',
+            backgroundColor: 'var(--surface-canvas)',
+            color: 'var(--text-primary)',
             overflow: 'hidden',
             boxSizing: 'border-box',
           }}

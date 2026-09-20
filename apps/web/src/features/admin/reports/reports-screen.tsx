@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Card, Button } from '../../../components/ui/ui-components';
+import { PageContainer, PageHeader, PageContent } from '../../../shared/ui/layout/PageContainer';
 import { ReportFilterOptions } from '../../../services/admin/reports.service';
 import { adminDashboardService } from '../../../services/admin/dashboard.service';
 import { useNotification } from '../../../providers/notification-provider';
@@ -83,168 +84,182 @@ export function ReportsScreen() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', width: '100%' }}>
-      <div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
-          Platform Operational Reports & Data Exports
-        </h1>
-        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
-          Query live PostgreSQL student records and question item statistics to export CSV reports.
-        </p>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Platform Operational Reports & Data Exports"
+        description="Query live PostgreSQL student records and question item statistics to export CSV reports."
+      />
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <Card title="Available Live Database Reports">
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1.25rem',
-                marginTop: '1rem',
-              }}
-            >
+      <PageContent>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '2rem',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <Card title="Available Live Database Reports">
               <div
                 style={{
-                  padding: '1rem',
-                  backgroundColor: '#0b0f19',
-                  borderRadius: '8px',
-                  border: '1px solid #1e293b',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.25rem',
+                  marginTop: '1rem',
                 }}
               >
-                <span
+                <div
                   style={{
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    color: '#f8fafc',
-                    display: 'block',
+                    padding: '1rem',
+                    backgroundColor: 'var(--surface-1)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--border)',
                   }}
                 >
-                  Question Analysis Report
-                </span>
-                <span
-                  style={{
-                    display: 'block',
-                    fontSize: '0.75rem',
-                    color: '#64748b',
-                    marginTop: '0.25rem',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  Audits question bank status counts, approval breakdown, and item counts directly
-                  from PostgreSQL.
-                </span>
-                <Button onClick={handleGenerateQuestionAnalysis} disabled={loading}>
-                  {loading ? 'Exporting...' : 'Export Question Analysis CSV'}
-                </Button>
-              </div>
+                  <span
+                    style={{
+                      fontSize: '0.9rem',
+                      fontWeight: 600,
+                      color: 'var(--text-primary)',
+                      display: 'block',
+                    }}
+                  >
+                    Question Analysis Report
+                  </span>
+                  <span
+                    style={{
+                      display: 'block',
+                      fontSize: '0.75rem',
+                      color: 'var(--text-muted)',
+                      marginTop: '0.25rem',
+                      marginBottom: '1rem',
+                    }}
+                  >
+                    Audits question bank status counts, approval breakdown, and item counts directly
+                    from PostgreSQL.
+                  </span>
+                  <Button
+                    onClick={handleGenerateQuestionAnalysis}
+                    disabled={loading}
+                    variant="primary"
+                  >
+                    {loading ? 'Exporting...' : 'Export Question Analysis CSV'}
+                  </Button>
+                </div>
 
+                <div
+                  style={{
+                    padding: '1rem',
+                    backgroundColor: 'var(--surface-1)',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px solid var(--border)',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.9rem',
+                      fontWeight: 600,
+                      color: 'var(--text-primary)',
+                      display: 'block',
+                    }}
+                  >
+                    Programme Readiness Report
+                  </span>
+                  <span
+                    style={{
+                      display: 'block',
+                      fontSize: '0.75rem',
+                      color: 'var(--text-muted)',
+                      marginTop: '0.25rem',
+                      marginBottom: '1rem',
+                    }}
+                  >
+                    Exports student candidate readiness scores, risk indicators, practice attempt
+                    counts, and registration dates.
+                  </span>
+                  <Button
+                    onClick={handleGenerateProgrammeReadiness}
+                    disabled={loading}
+                    variant="primary"
+                  >
+                    {loading ? 'Exporting...' : 'Export Programme Readiness CSV'}
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <div>
+            <Card title="Report Query Filters">
               <div
                 style={{
-                  padding: '1rem',
-                  backgroundColor: '#0b0f19',
-                  borderRadius: '8px',
-                  border: '1px solid #1e293b',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                  marginTop: '0.5rem',
                 }}
               >
-                <span
-                  style={{
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    color: '#f8fafc',
-                    display: 'block',
-                  }}
-                >
-                  Programme Readiness Report
-                </span>
-                <span
-                  style={{
-                    display: 'block',
-                    fontSize: '0.75rem',
-                    color: '#64748b',
-                    marginTop: '0.25rem',
-                    marginBottom: '1rem',
-                  }}
-                >
-                  Exports student candidate readiness scores, risk indicators, practice attempt counts,
-                  and registration dates.
-                </span>
-                <Button onClick={handleGenerateProgrammeReadiness} disabled={loading}>
-                  {loading ? 'Exporting...' : 'Export Programme Readiness CSV'}
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </div>
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      color: 'var(--text-secondary)',
+                      marginBottom: '0.25rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    value={filters.startDate}
+                    onChange={(e) => setFilters((prev) => ({ ...prev, startDate: e.target.value }))}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      borderRadius: 'var(--radius-md)',
+                      backgroundColor: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border)',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                </div>
 
-        <div>
-          <Card title="Report Query Filters">
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem',
-                marginTop: '0.5rem',
-              }}
-            >
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    color: '#94a3b8',
-                    marginBottom: '0.25rem',
-                  }}
-                >
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  value={filters.startDate}
-                  onChange={(e) => setFilters((prev) => ({ ...prev, startDate: e.target.value }))}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    backgroundColor: '#0b0f19',
-                    color: '#cbd5e1',
-                    border: '1px solid #232e48',
-                    boxSizing: 'border-box',
-                  }}
-                />
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontSize: '0.8rem',
+                      color: 'var(--text-secondary)',
+                      marginBottom: '0.25rem',
+                      fontWeight: 600,
+                    }}
+                  >
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={filters.endDate}
+                    onChange={(e) => setFilters((prev) => ({ ...prev, endDate: e.target.value }))}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      borderRadius: 'var(--radius-md)',
+                      backgroundColor: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border)',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                </div>
               </div>
-
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: '0.8rem',
-                    color: '#94a3b8',
-                    marginBottom: '0.25rem',
-                  }}
-                >
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  value={filters.endDate}
-                  onChange={(e) => setFilters((prev) => ({ ...prev, endDate: e.target.value }))}
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    borderRadius: '6px',
-                    backgroundColor: '#0b0f19',
-                    color: '#cbd5e1',
-                    border: '1px solid #232e48',
-                    boxSizing: 'border-box',
-                  }}
-                />
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </div>
-      </div>
-    </div>
+      </PageContent>
+    </PageContainer>
   );
 }
 

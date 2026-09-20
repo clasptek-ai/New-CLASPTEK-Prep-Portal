@@ -26,6 +26,8 @@ import {
   ChevronRight,
   LogOut,
   Bell,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { WorkspaceContext } from './WorkspaceContext';
 import { WorkspaceId, workspaceRegistry } from './workspace-registry';
@@ -34,6 +36,7 @@ import { TopNavigation } from '../shared/ui/navigation/TopNavigation';
 import { SidebarItem } from '../shared/ui/navigation/SidebarItem';
 import { Breadcrumb, BreadcrumbItem } from '../shared/ui/breadcrumb/Breadcrumb';
 import { useAuthContext } from '../providers/AuthProvider';
+import { useTheme } from '../providers/ThemeProvider';
 import { useGlobalLogout } from '../features/auth/hooks/useGlobalLogout';
 
 interface WorkspaceShellProps {
@@ -149,7 +152,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const activeTheme = preferences.theme;
+  const { resolvedTheme, toggleTheme } = useTheme();
   const collapsed = preferences.sidebarCollapsed;
 
   const handleSwitch = (id: WorkspaceId) => {
@@ -165,14 +168,59 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
     if (itemHref !== '/' && currentPath.startsWith(itemHref + '/')) return true;
 
     // Route alias & nested path mappings for student workspace:
-    if (itemHref === '/dashboard' && (currentPath === '/student' || currentPath === '/student/welcome')) return true;
-    if (itemHref === '/student/practice' && (currentPath === '/practice' || currentPath.startsWith('/practice/'))) return true;
-    if (itemHref === '/student/assessments' && (currentPath === '/student/diagnostics' || currentPath.startsWith('/student/diagnostics/') || currentPath.startsWith('/student/assessments/'))) return true;
-    if (itemHref === '/student/mock' && (currentPath === '/student/mock-exams' || currentPath.startsWith('/student/mock-exams/'))) return true;
-    if (itemHref === '/learning-assistant' && (currentPath === '/student/learning-assistant' || currentPath.startsWith('/student/learning-assistant/') || currentPath === '/learning')) return true;
-    if (itemHref === '/readiness' && (currentPath === '/student/readiness' || currentPath.startsWith('/student/readiness/'))) return true;
-    if (itemHref === '/student/results' && (currentPath === '/student/result' || currentPath.startsWith('/student/results/'))) return true;
-    if (itemHref === '/profile' && (currentPath === '/student/settings' || currentPath.startsWith('/profile/'))) return true;
+    if (
+      itemHref === '/dashboard' &&
+      (currentPath === '/student' || currentPath === '/student/welcome')
+    )
+      return true;
+    if (
+      itemHref === '/student/practice' &&
+      (currentPath === '/practice' ||
+        currentPath.startsWith('/practice/') ||
+        currentPath.startsWith('/student/practice'))
+    )
+      return true;
+    if (
+      itemHref === '/student/assessments' &&
+      (currentPath === '/student/diagnostics' ||
+        currentPath.startsWith('/student/diagnostics/') ||
+        currentPath.startsWith('/student/assessments/') ||
+        currentPath.startsWith('/assessments'))
+    )
+      return true;
+    if (
+      itemHref === '/student/mock' &&
+      (currentPath === '/student/mock-exams' ||
+        currentPath.startsWith('/student/mock-exams/') ||
+        currentPath.startsWith('/mock'))
+    )
+      return true;
+    if (
+      itemHref === '/learning-assistant' &&
+      (currentPath === '/student/learning-assistant' ||
+        currentPath.startsWith('/student/learning-assistant/') ||
+        currentPath === '/learning')
+    )
+      return true;
+    if (
+      itemHref === '/readiness' &&
+      (currentPath === '/student/readiness' || currentPath.startsWith('/student/readiness/'))
+    )
+      return true;
+    if (
+      itemHref === '/student/results' &&
+      (currentPath === '/student/result' ||
+        currentPath.startsWith('/student/results/') ||
+        currentPath.startsWith('/results'))
+    )
+      return true;
+    if (
+      itemHref === '/profile' &&
+      (currentPath === '/student/settings' ||
+        currentPath.startsWith('/profile/') ||
+        currentPath.startsWith('/student/profile'))
+    )
+      return true;
 
     return false;
   };
@@ -180,23 +228,18 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
   // Shared sidebar nav content used in both desktop sidebar and mobile drawer
   const SidebarNavContent = ({ onNavClick }: { onNavClick?: () => void }) => (
     <>
+      {/* Workspace Switcher in Sidebar (desktop or mobile) */}
       {!collapsed && (
-        <div
-          style={{
-            padding: '0.75rem 1.0rem',
-            borderBottom: '1px solid var(--border-subtle, rgba(255,255,255,0.07))',
-            position: 'relative',
-          }}
-        >
+        <div style={{ padding: '0.75rem 1.0rem', position: 'relative' }}>
           <button
-            onClick={() => setSwitcherOpen(!switcherOpen)}
+            onClick={() => setSwitcherOpen((p) => !p)}
             style={{
               width: '100%',
-              padding: '0.4rem 0.65rem',
-              borderRadius: 'var(--radius-md, 8px)',
-              border: '1px solid var(--border-default, #1e293b)',
-              backgroundColor: 'var(--bg-surface-1, #161e2e)',
-              color: 'var(--text-primary, #f8fafc)',
+              padding: '0.5rem 0.75rem',
+              backgroundColor: 'var(--surface-1)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
+              color: 'var(--text-primary)',
               fontSize: '0.8125rem',
               fontWeight: 600,
               textAlign: 'left',
@@ -217,10 +260,10 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                 top: '48px',
                 left: '16px',
                 right: '16px',
-                backgroundColor: 'var(--bg-surface-0, #111827)',
-                border: '1px solid var(--border-default, #1e293b)',
-                borderRadius: 'var(--radius-md, 8px)',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                backgroundColor: 'var(--surface-0)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)',
+                boxShadow: 'var(--shadow-floating)',
                 zIndex: 100,
                 padding: '0.4rem',
               }}
@@ -242,10 +285,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                       borderRadius: '4px',
                       border: 'none',
                       backgroundColor: 'transparent',
-                      color:
-                        currentWorkspace.id === id
-                          ? 'var(--primary-500, #2563eb)'
-                          : 'var(--text-secondary, #cbd5e1)',
+                      color: currentWorkspace.id === id ? 'var(--brand)' : 'var(--text-secondary)',
                       textAlign: 'left',
                       fontSize: '0.8125rem',
                       cursor: 'pointer',
@@ -346,8 +386,8 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
           height: '100vh',
           width: '100vw',
           overflow: 'hidden',
-          backgroundColor: 'var(--bg-app, #ffffff)',
-          color: 'var(--text-primary, #050310)',
+          backgroundColor: 'var(--surface-canvas)',
+          color: 'var(--text-primary)',
         }}
       >
         {/* Mobile Header — only visible on small screens */}
@@ -358,9 +398,9 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '0.75rem 1rem',
-              backgroundColor: 'var(--bg-surface-0, #ffffff)',
-              borderBottom: '1px solid var(--border-default, #e2e8f0)',
-              color: 'var(--text-primary, #050310)',
+              backgroundColor: 'var(--surface-0)',
+              borderBottom: '1px solid var(--border)',
+              color: 'var(--text-primary)',
             }}
           >
             <button
@@ -374,8 +414,8 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                 height: '40px',
                 borderRadius: '10px',
                 border: 'none',
-                backgroundColor: 'var(--bg-surface-1, #f8fafc)',
-                color: 'var(--text-secondary, #475569)',
+                backgroundColor: 'var(--surface-1)',
+                color: 'var(--text-secondary)',
                 cursor: 'pointer',
               }}
             >
@@ -385,14 +425,31 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               style={{
                 fontSize: '0.875rem',
                 fontWeight: 800,
-                color: currentWorkspace.themeAccent || 'var(--primary-500, #045EAD)',
+                color: currentWorkspace.themeAccent || 'var(--brand)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
               }}
             >
               {currentWorkspace.name}
             </span>
-            <div style={{ width: 40 }} />
+            <button
+              onClick={() => toggleTheme()}
+              aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                border: 'none',
+                backgroundColor: 'var(--surface-1)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+              }}
+            >
+              {resolvedTheme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
           </header>
         )}
 
@@ -406,9 +463,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               avatarUrl: authUser?.user_metadata?.avatar_url,
             }}
             onSearch={(_q: string) => setSearchOpen(true)}
-            onToggleTheme={() =>
-              updatePreferences({ theme: activeTheme === 'dark' ? 'light' : 'dark' })
-            }
+            onToggleTheme={toggleTheme}
           />
         )}
 
@@ -418,8 +473,8 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
             <aside
               style={{
                 width: collapsed ? '72px' : '260px',
-                backgroundColor: 'var(--bg-surface-0, #ffffff)',
-                borderRight: '1px solid var(--border-default, #e2e8f0)',
+                backgroundColor: 'var(--surface-0)',
+                borderRight: '1px solid var(--border)',
                 display: 'flex',
                 flexDirection: 'column',
                 boxSizing: 'border-box',
@@ -431,7 +486,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               <div
                 style={{
                   padding: '0.875rem 1.0rem',
-                  borderBottom: '1px solid var(--border-subtle, rgba(255,255,255,0.07))',
+                  borderBottom: '1px solid var(--border)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: collapsed ? 'center' : 'space-between',
@@ -442,7 +497,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                     style={{
                       fontSize: '0.875rem',
                       fontWeight: 800,
-                      color: currentWorkspace.themeAccent || 'var(--primary-500, #045EAD)',
+                      color: currentWorkspace.themeAccent || 'var(--brand)',
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                     }}
@@ -456,7 +511,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: 'var(--text-secondary, #475569)',
+                    color: 'var(--text-secondary)',
                     cursor: 'pointer',
                     padding: '0.35rem',
                     fontSize: '0.875rem',
@@ -527,13 +582,13 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                 left: 0,
                 bottom: 0,
                 width: '280px',
-                backgroundColor: 'var(--bg-surface-0, #111827)',
-                borderRight: '1px solid var(--border-default, #1e293b)',
+                backgroundColor: 'var(--surface-0)',
+                borderRight: '1px solid var(--border)',
                 display: 'flex',
                 flexDirection: 'column',
                 zIndex: 50,
                 overflowY: 'auto',
-                boxShadow: '4px 0 24px rgba(0,0,0,0.5)',
+                boxShadow: 'var(--shadow-floating)',
               }}
               role="dialog"
               aria-modal="true"
@@ -543,7 +598,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               <div
                 style={{
                   padding: '1rem',
-                  borderBottom: '1px solid var(--border-subtle, rgba(255,255,255,0.07))',
+                  borderBottom: '1px solid var(--border)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
@@ -553,7 +608,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                   style={{
                     fontSize: '0.875rem',
                     fontWeight: 800,
-                    color: currentWorkspace.themeAccent || 'var(--primary-500, #2563eb)',
+                    color: currentWorkspace.themeAccent || 'var(--brand)',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                   }}
@@ -571,8 +626,8 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                     height: '36px',
                     borderRadius: '8px',
                     border: 'none',
-                    backgroundColor: 'var(--bg-surface-1, #161e2e)',
-                    color: 'var(--text-secondary, #cbd5e1)',
+                    backgroundColor: 'var(--surface-1)',
+                    color: 'var(--text-secondary)',
                     cursor: 'pointer',
                   }}
                 >
@@ -595,6 +650,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               right: 0,
               bottom: 0,
               backgroundColor: 'rgba(2, 6, 23, 0.75)',
+              backdropFilter: 'blur(4px)',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'flex-start',
@@ -607,10 +663,11 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
               style={{
                 maxWidth: '600px',
                 width: '90%',
-                backgroundColor: 'var(--bg-surface-0, #111827)',
-                border: '1px solid var(--border-default, #1e293b)',
-                borderRadius: 'var(--radius-lg, 12px)',
+                backgroundColor: 'var(--surface-0)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-lg)',
                 padding: '1.25rem',
+                boxShadow: 'var(--shadow-floating)',
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -623,10 +680,10 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                 style={{
                   width: '100%',
                   padding: '0.75rem 1.0rem',
-                  borderRadius: 'var(--radius-md, 8px)',
-                  border: '1px solid var(--border-default, #1e293b)',
-                  backgroundColor: 'var(--bg-surface-1, #161e2e)',
-                  color: 'var(--text-primary, #f8fafc)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid var(--border)',
+                  backgroundColor: 'var(--surface-1)',
+                  color: 'var(--text-primary)',
                   fontSize: '0.9375rem',
                   outline: 'none',
                   boxSizing: 'border-box',
@@ -636,7 +693,7 @@ export function WorkspaceShell({ workspaceRole, children }: WorkspaceShellProps)
                 style={{
                   marginTop: '0.75rem',
                   fontSize: '0.8125rem',
-                  color: 'var(--text-muted, #94a3b8)',
+                  color: 'var(--text-muted)',
                   display: 'flex',
                   justifyContent: 'space-between',
                 }}

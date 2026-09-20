@@ -42,8 +42,8 @@ export function LineChart({ data, labels, height = 150 }: LineChartProps) {
               y1={y}
               x2={300 - padding}
               y2={y}
-              stroke="#232e48"
-              strokeWidth={0.5}
+              stroke="var(--border)"
+              strokeWidth={0.75}
               strokeDasharray="4 4"
             />
           );
@@ -53,7 +53,7 @@ export function LineChart({ data, labels, height = 150 }: LineChartProps) {
         <path
           d={pathD}
           fill="none"
-          stroke="#2563eb"
+          stroke="var(--brand)"
           strokeWidth={3}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -62,7 +62,14 @@ export function LineChart({ data, labels, height = 150 }: LineChartProps) {
         {/* Dots */}
         {points.map((p, idx) => (
           <g key={idx}>
-            <circle cx={p.x} cy={p.y} r={4} fill="#14b8a6" stroke="#151d30" strokeWidth={1.5} />
+            <circle
+              cx={p.x}
+              cy={p.y}
+              r={4}
+              fill="var(--chart-teal, #14b8a6)"
+              stroke="var(--surface-0)"
+              strokeWidth={1.5}
+            />
             <title>{`${labels[idx]}: ${p.val}`}</title>
           </g>
         ))}
@@ -73,7 +80,7 @@ export function LineChart({ data, labels, height = 150 }: LineChartProps) {
           justifyContent: 'space-between',
           padding: '0 10px',
           fontSize: '0.75rem',
-          color: '#94a3b8',
+          color: 'var(--text-muted)',
           marginTop: '0.5rem',
         }}
       >
@@ -136,7 +143,13 @@ export function RadarChart({ data }: RadarChartProps) {
       >
         {/* Grid rings */}
         {rings.map((ringPoints, i) => (
-          <polygon key={i} points={ringPoints} fill="none" stroke="#232e48" strokeWidth={0.5} />
+          <polygon
+            key={i}
+            points={ringPoints}
+            fill="none"
+            stroke="var(--border)"
+            strokeWidth={0.75}
+          />
         ))}
 
         {/* Axis lines */}
@@ -151,7 +164,7 @@ export function RadarChart({ data }: RadarChartProps) {
               y1={center}
               x2={x}
               y2={y}
-              stroke="#232e48"
+              stroke="var(--border)"
               strokeWidth={0.75}
             />
           );
@@ -160,8 +173,8 @@ export function RadarChart({ data }: RadarChartProps) {
         {/* Data polygon */}
         <polygon
           points={points.map((p) => `${p.x},${p.y}`).join(' ')}
-          fill="rgba(37, 99, 235, 0.25)"
-          stroke="#2563eb"
+          fill="var(--brand-subtle)"
+          stroke="var(--brand)"
           strokeWidth={2}
         />
 
@@ -180,7 +193,7 @@ export function RadarChart({ data }: RadarChartProps) {
               textAnchor="middle"
               dominantBaseline="middle"
               style={{
-                fill: '#94a3b8',
+                fill: 'var(--text-muted)',
                 fontSize: '0.55rem',
                 fontWeight: 600,
                 fontFamily: 'Outfit',
@@ -214,8 +227,8 @@ export function HeatMap({ valList }: { valList: Array<{ day: number; active: boo
             width: '100%',
             paddingBottom: '100%',
             borderRadius: '4px',
-            backgroundColor: item.active ? '#10b981' : '#151d30',
-            border: item.active ? '1px solid #34d399' : '1px solid #232e48',
+            backgroundColor: item.active ? 'var(--success)' : 'var(--surface-1)',
+            border: item.active ? '1px solid var(--success-border)' : '1px solid var(--border)',
             position: 'relative',
             cursor: 'pointer',
             transition: 'transform 0.15s ease',
@@ -230,7 +243,7 @@ export function HeatMap({ valList }: { valList: Array<{ day: number; active: boo
               transform: 'translate(-50%, -50%)',
               fontSize: '0.65rem',
               fontWeight: 600,
-              color: item.active ? '#064e3b' : '#64748b',
+              color: item.active ? '#ffffff' : 'var(--text-muted)',
             }}
           >
             {item.day}
@@ -259,7 +272,7 @@ export function BarChart({ data, labels }: BarChartProps) {
               style={{
                 width: '80px',
                 fontSize: '0.8rem',
-                color: '#94a3b8',
+                color: 'var(--text-muted)',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -271,24 +284,30 @@ export function BarChart({ data, labels }: BarChartProps) {
               style={{
                 flex: 1,
                 height: '12px',
-                backgroundColor: '#151d30',
+                backgroundColor: 'var(--surface-1)',
                 borderRadius: '6px',
                 overflow: 'hidden',
-                border: '1px solid #232e48',
+                border: '1px solid var(--border)',
               }}
             >
               <div
                 style={{
                   height: '100%',
                   width: `${percent}%`,
-                  background: 'linear-gradient(90deg, #2563eb, #14b8a6)',
+                  background: 'linear-gradient(90deg, var(--brand), var(--chart-teal, #14b8a6))',
                   borderRadius: '6px',
                   transition: 'width 0.5s ease-out',
                 }}
               />
             </div>
             <span
-              style={{ width: '40px', textAlign: 'right', fontSize: '0.8rem', fontWeight: 600 }}
+              style={{
+                width: '40px',
+                textAlign: 'right',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+              }}
             >
               {val}
             </span>

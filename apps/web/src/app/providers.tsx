@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { createQueryClient } from '../lib/query-client';
-import { ThemeProvider } from '../providers/theme-provider';
+import { ThemeProvider } from '../providers/ThemeProvider';
 import { AuthProvider } from '../providers/AuthProvider';
 import { NotificationProvider } from '../providers/notification-provider';
 import { ErrorBoundary } from '../components/error/error-boundary';

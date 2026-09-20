@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, Button, Badge } from '../../../components/ui/ui-components';
 import { SharedTable } from '../../../components/ui/shared-table';
+import { PageContainer, PageHeader, PageContent } from '../../../shared/ui/layout/PageContainer';
 
 export interface OrgItem {
   id: string;
@@ -50,7 +51,7 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
       header: 'Institution Name',
       cell: (info: any) => (
         <span
-          style={{ fontWeight: 600, color: '#60a5fa', cursor: 'pointer' }}
+          style={{ fontWeight: 600, color: 'var(--brand)', cursor: 'pointer' }}
           onClick={() => router.push(`/admin/organizations/${info.row.id}`)}
         >
           {info.row.name}
@@ -61,7 +62,9 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
     {
       id: 'domain',
       header: 'Domain Scope',
-      cell: (info: any) => <span>{info.row.domain}</span>,
+      cell: (info: any) => (
+        <span style={{ color: 'var(--text-secondary)' }}>{info.row.domain}</span>
+      ),
     },
     {
       id: 'status',
@@ -76,7 +79,7 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
       id: 'actions',
       header: 'Actions',
       cell: (info: any) => (
-        <Button onClick={() => router.push(`/admin/organizations/${info.row.id}`)}>
+        <Button onClick={() => router.push(`/admin/organizations/${info.row.id}`)} variant="ghost">
           Manage Tenant
         </Button>
       ),
@@ -85,98 +88,100 @@ export function OrganizationsScreen({ orgId }: { orgId?: string }) {
 
   if (selectedOrg) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>
-              Tenant Workspace: {selectedOrg.name}
-            </h1>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
-              Domain: {selectedOrg.domain}
-            </p>
+      <PageContainer>
+        <PageHeader
+          title={`Tenant Workspace: ${selectedOrg.name}`}
+          description={`Domain: ${selectedOrg.domain}`}
+          actions={
+            <Button variant="secondary" onClick={() => router.push('/admin/organizations')}>
+              Back to Directory
+            </Button>
+          }
+        />
+
+        <PageContent>
+          {/* Workspace tabs */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              borderBottom: '1px solid var(--border)',
+              paddingBottom: '0.5rem',
+              marginBottom: '1.5rem',
+            }}
+          >
+            {(['OVERVIEW', 'BRANDING', 'USERS', 'LICENSING'] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={{
+                  padding: '0.6rem 1.25rem',
+                  border: 'none',
+                  backgroundColor: activeTab === tab ? 'var(--surface-1)' : 'transparent',
+                  color: activeTab === tab ? 'var(--brand)' : 'var(--text-muted)',
+                  borderRadius: 'var(--radius-md)',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  borderBottom:
+                    activeTab === tab ? '2px solid var(--brand)' : '2px solid transparent',
+                  transition: 'all var(--transition-fast)',
+                }}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
-          <Button variant="secondary" onClick={() => router.push('/admin/organizations')}>
-            Back to Directory
-          </Button>
-        </div>
 
-        {/* Workspace tabs */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '0.5rem',
-            borderBottom: '1px solid #1e293b',
-            paddingBottom: '0.5rem',
-          }}
-        >
-          {(['OVERVIEW', 'BRANDING', 'USERS', 'LICENSING'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                padding: '0.6rem 1.25rem',
-                border: 'none',
-                backgroundColor: activeTab === tab ? '#3b82f6' : 'transparent',
-                color: activeTab === tab ? '#f8fafc' : '#94a3b8',
-                borderRadius: '6px',
-                fontWeight: 600,
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-              }}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+          {activeTab === 'OVERVIEW' && (
+            <Card title="Tenant Properties Summary">
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                Licensing Expiration: <strong>{selectedOrg.licenseExpiry}</strong>. Database
+                partition status: <strong style={{ color: 'var(--success)' }}>HEALTHY</strong>.
+              </p>
+            </Card>
+          )}
 
-        {activeTab === 'OVERVIEW' && (
-          <Card title="Tenant Properties Summary">
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
-              Licensing Expiration: **{selectedOrg.licenseExpiry}**. Database partition status:
-              **HEALTHY**.
-            </p>
-          </Card>
-        )}
+          {activeTab === 'BRANDING' && (
+            <Card title="Tenant Custom Branding Options">
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                Custom Primary color: <strong>CLASPTEK Canonical Blue</strong>. Header Logo mapping
+                configured to custom bucket storage logs.
+              </p>
+            </Card>
+          )}
 
-        {activeTab === 'BRANDING' && (
-          <Card title="Tenant Custom Branding Options">
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
-              Custom Primary color: **#3b82f6**. Header Logo mapping configured to custom bucket
-              storage logs.
-            </p>
-          </Card>
-        )}
+          {activeTab === 'USERS' && (
+            <Card title="Member Users Index">
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                Total associated members: <strong>124 active students & instructors</strong>.
+              </p>
+            </Card>
+          )}
 
-        {activeTab === 'USERS' && (
-          <Card title="Member Users Index">
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
-              Total associated members: **124 active students & instructors**.
-            </p>
-          </Card>
-        )}
-
-        {activeTab === 'LICENSING' && (
-          <Card title="Subscription & Contract licensing limits">
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#cbd5e1' }}>
-              Allocated Seats: **500 max**. Current Seats Usage: **25% active**.
-            </p>
-          </Card>
-        )}
-      </div>
+          {activeTab === 'LICENSING' && (
+            <Card title="Subscription & Contract licensing limits">
+              <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                Allocated Seats: <strong>500 max</strong>. Current Seats Usage:{' '}
+                <strong>25% active</strong>.
+              </p>
+            </Card>
+          )}
+        </PageContent>
+      </PageContainer>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      <div>
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800 }}>Tenant Organizations</h1>
-        <p style={{ margin: 0, fontSize: '0.85rem', color: '#94a3b8' }}>
-          Audit multi-tenant institutions billing states and domain parameters
-        </p>
-      </div>
-
-      <SharedTable data={list} columns={columns} />
-    </div>
+    <PageContainer>
+      <PageHeader
+        title="Tenant Organizations"
+        description="Audit multi-tenant institutions billing states and domain parameters"
+      />
+      <PageContent>
+        <SharedTable data={list} columns={columns} />
+      </PageContent>
+    </PageContainer>
   );
 }
 export default OrganizationsScreen;

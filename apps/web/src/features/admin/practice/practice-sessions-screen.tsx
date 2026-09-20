@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, Button, Badge } from '../../../components/ui/ui-components';
 
 interface DbPracticeSession {
   id: string;
@@ -27,9 +26,10 @@ export function PracticeSessionsScreen() {
     async function loadAdminSessions() {
       setLoading(true);
       try {
-        const url = filterExam !== 'ALL'
-          ? `/api/v1/admin/practice/sessions?exam=${encodeURIComponent(filterExam)}`
-          : '/api/v1/admin/practice/sessions';
+        const url =
+          filterExam !== 'ALL'
+            ? `/api/v1/admin/practice/sessions?exam=${encodeURIComponent(filterExam)}`
+            : '/api/v1/admin/practice/sessions';
         const res = await fetch(url);
         const data = await res.json();
         if (data.success && Array.isArray(data.sessions)) {
@@ -45,7 +45,7 @@ export function PracticeSessionsScreen() {
   }, [filterExam]);
 
   return (
-    <div className="p-8 bg-(--background) min-h-screen text-(--text-primary) space-y-6 font-sans">
+    <div className="space-y-6 text-[var(--text-primary)] font-sans w-full">
       {/* Top Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-(--border) pb-6">
         <div>
@@ -53,10 +53,13 @@ export function PracticeSessionsScreen() {
             <span className="p-2 bg-(--brand-subtle) border border-(--brand-border) rounded-lg text-(--brand-light) font-bold text-lg">
               📚
             </span>
-            <h1 className="text-2xl font-extrabold text-(--text-primary)">Admin Practice Sessions Monitor</h1>
+            <h1 className="text-2xl font-extrabold text-(--text-primary)">
+              Admin Practice Sessions Monitor
+            </h1>
           </div>
           <p className="text-xs text-(--text-muted) mt-1">
-            Real-time inspection of candidate practice sessions, accuracy rates, and question bank snapshots.
+            Real-time inspection of candidate practice sessions, accuracy rates, and question bank
+            snapshots.
           </p>
         </div>
 
@@ -82,7 +85,9 @@ export function PracticeSessionsScreen() {
       {/* KPI Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) text-center">
-          <div className="text-xs text-(--text-muted) uppercase tracking-wide">Total DB Sessions</div>
+          <div className="text-xs text-(--text-muted) uppercase tracking-wide">
+            Total DB Sessions
+          </div>
           <div className="text-2xl font-black text-(--text-primary) mt-1">{sessions.length}</div>
         </div>
         <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) text-center">
@@ -92,7 +97,9 @@ export function PracticeSessionsScreen() {
           </div>
         </div>
         <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) text-center">
-          <div className="text-xs text-(--text-muted) uppercase tracking-wide">Completed Sessions</div>
+          <div className="text-xs text-(--text-muted) uppercase tracking-wide">
+            Completed Sessions
+          </div>
           <div className="text-2xl font-black text-emerald-400 mt-1">
             {sessions.filter((s) => s.status === 'COMPLETED').length}
           </div>
@@ -119,9 +126,12 @@ export function PracticeSessionsScreen() {
         ) : sessions.length === 0 ? (
           <div className="p-12 text-center space-y-2">
             <div className="text-2xl">📭</div>
-            <div className="text-sm font-bold text-(--text-primary)">No Practice Sessions Found</div>
+            <div className="text-sm font-bold text-(--text-primary)">
+              No Practice Sessions Found
+            </div>
             <p className="text-xs text-(--text-muted) max-w-sm mx-auto">
-              Candidate practice sessions will appear here as students complete targeted practice drills.
+              Candidate practice sessions will appear here as students complete targeted practice
+              drills.
             </p>
           </div>
         ) : (
@@ -144,7 +154,8 @@ export function PracticeSessionsScreen() {
                     <td className="p-3.5 font-semibold text-(--text-primary)">{s.studentEmail}</td>
                     <td className="p-3.5">{s.exam}</td>
                     <td className="p-3.5">
-                      <span className="text-(--brand-light) font-medium">{s.section}</span> / {s.skill}
+                      <span className="text-(--brand-light) font-medium">{s.section}</span> /{' '}
+                      {s.skill}
                     </td>
                     <td className="p-3.5">
                       <span
@@ -157,7 +168,9 @@ export function PracticeSessionsScreen() {
                         {s.status}
                       </span>
                     </td>
-                    <td className="p-3.5 font-mono font-bold text-(--text-primary)">{s.accuracy}%</td>
+                    <td className="p-3.5 font-mono font-bold text-(--text-primary)">
+                      {s.accuracy}%
+                    </td>
                     <td className="p-3.5 font-mono">{s.durationSeconds}s</td>
                     <td className="p-3.5 font-mono text-(--text-muted)">
                       {new Date(s.createdAt).toLocaleString()}

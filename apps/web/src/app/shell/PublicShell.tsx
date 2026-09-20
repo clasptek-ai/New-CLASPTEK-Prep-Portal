@@ -12,7 +12,7 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: 'var(--bg-app, #0f172a)',
+        backgroundColor: 'var(--surface-0)',
       }}
     >
       <header
@@ -21,8 +21,8 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '1.0rem 2.0rem',
-          backgroundColor: 'var(--bg-surface-0, #111827)',
-          borderBottom: '1px solid var(--border-default, #1e293b)',
+          backgroundColor: 'var(--surface-1)',
+          borderBottom: '1px solid var(--border)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -44,8 +44,8 @@ export function PublicShell({ children }: { children: React.ReactNode }) {
         style={{
           padding: '2.0rem',
           textAlign: 'center',
-          borderTop: '1px solid var(--border-default, #1e293b)',
-          color: 'var(--text-muted, #94a3b8)',
+          borderTop: '1px solid var(--border)',
+          color: 'var(--text-muted)',
           fontSize: '0.875rem',
         }}
       >

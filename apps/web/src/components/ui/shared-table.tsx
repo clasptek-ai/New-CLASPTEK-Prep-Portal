@@ -115,10 +115,10 @@ export function SharedTable<T extends { id: string }>({
           }}
           style={{
             padding: '0.5rem 1rem',
-            borderRadius: '6px',
-            border: '1px solid #232e48',
-            backgroundColor: '#0b0f19',
-            color: '#f8fafc',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border)',
+            backgroundColor: 'var(--surface-1)',
+            color: 'var(--text-primary)',
             fontSize: '0.85rem',
             width: '240px',
           }}
@@ -138,17 +138,28 @@ export function SharedTable<T extends { id: string }>({
       </div>
 
       {/* Grid container */}
-      <div style={{ overflowX: 'auto', border: '1px solid #232e48', borderRadius: '8px' }}>
+      <div
+        style={{
+          overflowX: 'auto',
+          border: '1px solid var(--border)',
+          borderRadius: 'var(--radius-md)',
+        }}
+      >
         <table
           style={{
             width: '100%',
             borderCollapse: 'collapse',
-            backgroundColor: '#151d30',
+            backgroundColor: 'var(--surface-0)',
             textAlign: 'left',
           }}
         >
           <thead>
-            <tr style={{ borderBottom: '1px solid #232e48', backgroundColor: '#0b0f19' }}>
+            <tr
+              style={{
+                borderBottom: '1px solid var(--border)',
+                backgroundColor: 'var(--surface-1)',
+              }}
+            >
               <th style={{ padding: '1rem', width: '40px' }}>
                 <input
                   type="checkbox"
@@ -165,7 +176,7 @@ export function SharedTable<T extends { id: string }>({
                     padding: '1rem',
                     fontSize: '0.85rem',
                     fontWeight: 600,
-                    color: '#94a3b8',
+                    color: 'var(--text-muted)',
                     cursor: c.sortable ? 'pointer' : 'default',
                     userSelect: 'none',
                   }}
@@ -180,14 +191,14 @@ export function SharedTable<T extends { id: string }>({
               <tr>
                 <td
                   colSpan={columns.length + 1}
-                  style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}
+                  style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}
                 >
                   No matching records found.
                 </td>
               </tr>
             ) : (
               paginatedData.map((row) => (
-                <tr key={row.id} style={{ borderBottom: '1px solid #232e48' }}>
+                <tr key={row.id} style={{ borderBottom: '1px solid var(--border)' }}>
                   <td style={{ padding: '1rem' }}>
                     <input
                       type="checkbox"
@@ -197,7 +208,14 @@ export function SharedTable<T extends { id: string }>({
                     />
                   </td>
                   {columns.map((col) => (
-                    <td key={col.id} style={{ padding: '1rem', fontSize: '0.875rem' }}>
+                    <td
+                      key={col.id}
+                      style={{
+                        padding: '1rem',
+                        fontSize: '0.875rem',
+                        color: 'var(--text-primary)',
+                      }}
+                    >
                       {col.cell ? col.cell({ row }) : String(row[col.accessorKey as keyof T] || '')}
                     </td>
                   ))}
@@ -215,7 +233,7 @@ export function SharedTable<T extends { id: string }>({
           justifyContent: 'space-between',
           alignItems: 'center',
           fontSize: '0.85rem',
-          color: '#94a3b8',
+          color: 'var(--text-muted)',
         }}
       >
         <span>

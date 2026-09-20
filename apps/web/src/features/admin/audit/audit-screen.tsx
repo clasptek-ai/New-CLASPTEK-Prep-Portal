@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Badge, Table } from '../../../components/ui/ui-components';
+import { PageContainer, PageHeader, PageContent } from '../../../shared/ui/layout/PageContainer';
 import { adminAuditService, AuditLogRecord } from '../../../services/admin/audit.service';
 import { ShieldCheck, Activity, Lock, Cpu, Search } from 'lucide-react';
 
@@ -43,13 +44,23 @@ export function AuditScreen() {
       log.details.toLowerCase().includes(search.toLowerCase());
 
     if (activeTab === 'audit') {
-      return matchesSearch && (log.category === 'SETTINGS_CHANGE' || log.category === 'CURRICULUM_PUBLISH' || !log.category);
+      return (
+        matchesSearch &&
+        (log.category === 'SETTINGS_CHANGE' ||
+          log.category === 'CURRICULUM_PUBLISH' ||
+          !log.category)
+      );
     }
     if (activeTab === 'events') {
       return matchesSearch && (log.category === 'EVENT' || log.category === 'STUDENT_REGISTRATION');
     }
     if (activeTab === 'security') {
-      return matchesSearch && (log.category === 'AUTHENTICATION' || log.category === 'USER_SUSPENSION' || log.category === 'GATE_ACCESS');
+      return (
+        matchesSearch &&
+        (log.category === 'AUTHENTICATION' ||
+          log.category === 'USER_SUSPENSION' ||
+          log.category === 'GATE_ACCESS')
+      );
     }
     if (activeTab === 'system') {
       return matchesSearch;
@@ -59,136 +70,142 @@ export function AuditScreen() {
 
   if (loading) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>
-        <h3>Loading platform audit logs history...</h3>
-      </div>
+      <PageContainer>
+        <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+          <h3>Loading platform audit logs history...</h3>
+        </div>
+      </PageContainer>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', width: '100%' }}>
-      {/* Page Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-        }}
-      >
-        <div>
-          <h1 style={{ margin: 0, fontSize: '1.75rem', fontWeight: 800, color: '#f8fafc' }}>
-            Audit Logs
-          </h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: '#94a3b8' }}>
-            Unified compliance, security, event operational tracking, and system logs.
-          </p>
-        </div>
+    <PageContainer>
+      <PageHeader
+        title="Audit Logs"
+        description="Unified compliance, security, event operational tracking, and system logs."
+        actions={
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              backgroundColor: 'var(--surface-1)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-md)',
+              padding: '0.5rem 0.85rem',
+              width: '100%',
+              maxWidth: '360px',
+            }}
+          >
+            <Search size={16} color="var(--text-muted)" />
+            <input
+              type="text"
+              placeholder="Search action logs, users, or IP..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-primary)',
+                outline: 'none',
+                width: '100%',
+                fontSize: '0.875rem',
+              }}
+            />
+          </div>
+        }
+      />
 
-        {/* Search */}
+      <PageContent>
+        {/* 4 Tabs Navigation */}
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
             gap: '0.5rem',
-            backgroundColor: '#111827',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '8px',
-            padding: '0.5rem 0.85rem',
-            width: '100%',
-            maxWidth: '360px',
+            borderBottom: '1px solid var(--border)',
+            paddingBottom: '0.25rem',
+            overflowX: 'auto',
+            marginBottom: '1.5rem',
           }}
         >
-          <Search size={16} color="#94a3b8" />
-          <input
-            type="text"
-            placeholder="Search action logs, users, or IP..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: '#f8fafc',
-              outline: 'none',
-              width: '100%',
-              fontSize: '0.875rem',
-            }}
-          />
+          {tabs.map((t) => {
+            const isActive = activeTab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.65rem 1.1rem',
+                  borderRadius: 'var(--radius-md) var(--radius-md) 0 0',
+                  border: 'none',
+                  backgroundColor: isActive ? 'var(--surface-1)' : 'transparent',
+                  color: isActive ? 'var(--brand)' : 'var(--text-muted)',
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: '0.875rem',
+                  cursor: 'pointer',
+                  borderBottom: isActive ? '2px solid var(--brand)' : '2px solid transparent',
+                  transition: 'all var(--transition-fast)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {t.icon}
+                <span>{t.label}</span>
+              </button>
+            );
+          })}
         </div>
-      </div>
 
-      {/* 4 Tabs Navigation */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '0.5rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          paddingBottom: '0.25rem',
-          overflowX: 'auto',
-        }}
-      >
-        {tabs.map((t) => {
-          const isActive = activeTab === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.65rem 1.1rem',
-                borderRadius: '8px 8px 0 0',
-                border: 'none',
-                backgroundColor: isActive ? '#1F2937' : 'transparent',
-                color: isActive ? '#38bdf8' : '#94a3b8',
-                fontWeight: isActive ? 700 : 500,
-                fontSize: '0.875rem',
-                cursor: 'pointer',
-                borderBottom: isActive ? '2px solid #38bdf8' : '2px solid transparent',
-                transition: 'all 150ms ease',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {t.icon}
-              <span>{t.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Audit Table */}
-      <Table
-        data={filtered}
-        columns={[
-          {
-            header: 'Action Event',
-            render: (row) => <span style={{ fontWeight: 600, color: '#f8fafc' }}>{row.action}</span>,
-          },
-          { header: 'User / Identity', render: (row) => <span style={{ color: '#cbd5e1' }}>{row.user}</span> },
-          {
-            header: 'IP Address',
-            render: (row) => <span style={{ fontSize: '0.8rem', color: '#38bdf8', fontWeight: 600 }}>{row.ip}</span>,
-          },
-          {
-            header: 'Details',
-            render: (row) => (
-              <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{row.details}</span>
-            ),
-          },
-          { header: 'Category', render: (row) => <Badge variant="info">{row.category || activeTab.toUpperCase()}</Badge> },
-          {
-            header: 'Timestamp',
-            render: (row) => (
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                {new Date(row.timestamp).toLocaleString()}
-              </span>
-            ),
-          },
-        ]}
-      />
-    </div>
+        {/* Audit Table */}
+        <Table
+          data={filtered}
+          columns={[
+            {
+              header: 'Action Event',
+              render: (row) => (
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{row.action}</span>
+              ),
+            },
+            {
+              header: 'User / Identity',
+              render: (row) => <span style={{ color: 'var(--text-secondary)' }}>{row.user}</span>,
+            },
+            {
+              header: 'IP Address',
+              render: (row) => (
+                <span style={{ fontSize: '0.8rem', color: 'var(--brand)', fontWeight: 600 }}>
+                  {row.ip}
+                </span>
+              ),
+            },
+            {
+              header: 'Details',
+              render: (row) => (
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                  {row.details}
+                </span>
+              ),
+            },
+            {
+              header: 'Category',
+              render: (row) => (
+                <Badge variant="info">{row.category || activeTab.toUpperCase()}</Badge>
+              ),
+            },
+            {
+              header: 'Timestamp',
+              render: (row) => (
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                  {new Date(row.timestamp).toLocaleString()}
+                </span>
+              ),
+            },
+          ]}
+        />
+      </PageContent>
+    </PageContainer>
   );
 }
 

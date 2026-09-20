@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { authFetch } from '@/lib/api-fetch';
 import { ArrowRight, CheckCircle2, AlertCircle, Award, Target, TrendingUp } from 'lucide-react';
 import { analyzeAssessmentIntelligence } from '@/features/intelligence/assessment-intelligence';
+import { PageContainer, PageContent } from '@/shared/ui/layout/PageContainer';
 
 interface SectionScore {
   sectionCode: string;
@@ -207,7 +208,7 @@ function StudentResultsContent() {
       <div className="min-h-96 flex items-center justify-center p-8 font-sans">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-3 border-[#045EAD] border-t-transparent rounded-full animate-spin mx-auto" />
-          <div className="text-sm font-semibold text-[#475569]">
+          <div className="text-sm font-semibold text-(--text-secondary)">
             Loading Assessment Performance...
           </div>
         </div>
@@ -218,24 +219,28 @@ function StudentResultsContent() {
   // State A: Unauthorized / Forbidden Attempt View
   if (isForbidden) {
     return (
-      <div className="max-w-2xl mx-auto my-16 p-8 bg-white border border-slate-200 rounded-2xl text-center space-y-5 shadow-sm font-sans">
-        <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
-          <AlertCircle size={24} />
-        </div>
-        <h2 className="text-xl font-bold text-deep-navy">Result Not Available</h2>
-        <p className="text-xs text-[#475569] max-w-md mx-auto">
-          {errorMessage || 'You do not have permission to view this assessment attempt.'}
-        </p>
-        <button
-          onClick={() => {
-            setActiveAttemptId(null);
-            router.push('/student/results');
-          }}
-          className="px-5 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold rounded-lg transition-colors shadow-sm cursor-pointer"
-        >
-          Return to My Results
-        </button>
-      </div>
+      <PageContainer>
+        <PageContent>
+          <div className="max-w-2xl mx-auto my-16 p-8 bg-(--surface-0) border border-(--border) rounded-2xl text-center space-y-5 shadow-sm font-sans">
+            <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
+              <AlertCircle size={24} />
+            </div>
+            <h2 className="text-xl font-bold text-(--text-primary)">Result Not Available</h2>
+            <p className="text-xs text-(--text-secondary) max-w-md mx-auto">
+              {errorMessage || 'You do not have permission to view this assessment attempt.'}
+            </p>
+            <button
+              onClick={() => {
+                setActiveAttemptId(null);
+                router.push('/student/results');
+              }}
+              className="px-5 py-2.5 bg-(--brand-primary) hover:bg-brand-hover text-white text-xs font-bold rounded-lg transition-colors shadow-sm cursor-pointer"
+            >
+              Return to My Results
+            </button>
+          </div>
+        </PageContent>
+      </PageContainer>
     );
   }
 
@@ -253,594 +258,617 @@ function StudentResultsContent() {
     const strokeDashoffset = circumference - (scoreVal / 100) * circumference;
 
     return (
-      <div className="max-w-5xl mx-auto my-8 p-6 md:p-8 bg-white border border-slate-200 rounded-2xl space-y-8 font-sans shadow-sm">
-        {/* Top Back Navigation */}
-        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-          <button
-            onClick={() => {
-              setActiveAttemptId(null);
-              router.push('/student/results');
-            }}
-            className="text-xs font-bold text-[#045EAD] hover:underline flex items-center gap-1.5 transition-colors cursor-pointer"
-          >
-            ← Return to All Results
-          </button>
-          <span className="text-[11px] text-[#475569] font-mono">
-            Session ID: {detailResult.attemptId.slice(0, 8)}...
-          </span>
-        </div>
-
-        {/* Header Banner */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[11px] font-bold text-[#045EAD] uppercase tracking-wider bg-bg-light-blue px-2.5 py-0.5 rounded-full">
-                {detailResult.examType || 'English Proficiency'} Diagnostic Audit
+      <PageContainer>
+        <PageContent>
+          <div className="w-full space-y-8 font-sans">
+            {/* Top Back Navigation */}
+            <div className="flex items-center justify-between border-b border-(--border) pb-4">
+              <button
+                onClick={() => {
+                  setActiveAttemptId(null);
+                  router.push('/student/results');
+                }}
+                className="text-xs font-bold text-(--brand-primary) hover:underline flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                ← Return to All Results
+              </button>
+              <span className="text-[11px] text-(--text-secondary) font-mono">
+                Session ID: {detailResult.attemptId.slice(0, 8)}...
               </span>
-              {detailResult.cefrLevel && (
-                <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[11px] font-bold">
-                  CEFR {detailResult.cefrLevel}
-                </span>
-              )}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-deep-navy tracking-tight">
-              Assessment Outcome &amp; Performance Breakdown
-            </h1>
-            <p className="text-xs text-[#475569] mt-1">
-              Evaluated by Authoritative Examination Engine on{' '}
-              {formatDate(detailResult.generatedAt)}
-            </p>
-          </div>
 
-          <div className="px-5 py-3 bg-bg-neutral border border-slate-200 rounded-xl text-center self-start md:self-auto">
-            <div className="text-[10px] text-[#475569] font-bold uppercase tracking-wider">
-              Placement Stage
+            {/* Header Banner */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[11px] font-bold text-(--brand-primary) uppercase tracking-wider bg-(--brand-subtle) px-2.5 py-0.5 rounded-full">
+                    {detailResult.examType || 'English Proficiency'} Diagnostic Audit
+                  </span>
+                  {detailResult.cefrLevel && (
+                    <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[11px] font-bold">
+                      CEFR {detailResult.cefrLevel}
+                    </span>
+                  )}
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-(--text-primary) tracking-tight">
+                  Assessment Outcome &amp; Performance Breakdown
+                </h1>
+                <p className="text-xs text-(--text-secondary) mt-1">
+                  Evaluated by Authoritative Examination Engine on{' '}
+                  {formatDate(detailResult.generatedAt)}
+                </p>
+              </div>
+
+              <div className="px-5 py-3 bg-(--surface-1) border border-(--border) rounded-xl text-center self-start md:self-auto">
+                <div className="text-[10px] text-(--text-secondary) font-bold uppercase tracking-wider">
+                  Placement Stage
+                </div>
+                <div className="text-base font-extrabold text-(--text-primary) mt-0.5">
+                  {detailResult.placementStage || 'FOUNDATION'}
+                </div>
+              </div>
             </div>
-            <div className="text-base font-extrabold text-deep-navy mt-0.5">
-              {detailResult.placementStage || 'FOUNDATION'}
-            </div>
-          </div>
-        </div>
 
-        {/* Bento Score Showcase */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-          {/* Left: Overall Band / Score Card with SVG Radial Gauge */}
-          <div className="lg:col-span-5 bg-bg-neutral border border-slate-200 rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#045EAD]" />
+            {/* Bento Score Showcase */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+              {/* Left: Overall Band / Score Card with SVG Radial Gauge */}
+              <div className="lg:col-span-5 bg-(--surface-1) border border-(--border) rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-(--brand-primary)" />
 
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#475569] block">
-                Overall Diagnostic Band
-              </span>
-              <div className="my-4 flex items-center justify-between gap-4">
                 <div>
-                  <div className="text-4xl font-extrabold text-deep-navy leading-none tabular-nums">
-                    {detailResult.predictedBand || (detailResult.overallScore / 10).toFixed(1)}
-                  </div>
-                  <span className="text-xs text-[#475569] font-medium block mt-1">
-                    Raw Score: {detailResult.overallScore}%
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-(--text-secondary) block">
+                    Overall Diagnostic Band
                   </span>
+                  <div className="my-4 flex items-center justify-between gap-4">
+                    <div>
+                      <div className="text-4xl font-extrabold text-(--text-primary) leading-none tabular-nums">
+                        {detailResult.predictedBand || (detailResult.overallScore / 10).toFixed(1)}
+                      </div>
+                      <span className="text-xs text-(--text-secondary) font-medium block mt-1">
+                        Raw Score: {detailResult.overallScore}%
+                      </span>
+                    </div>
+
+                    {/* SVG Radial Gauge */}
+                    <div className="relative w-20 h-20 shrink-0 flex items-center justify-center">
+                      <svg className="w-full h-full -rotate-90" viewBox="0 0 96 96">
+                        <circle
+                          cx="48"
+                          cy="48"
+                          r="38"
+                          stroke="#e2e8f0"
+                          strokeWidth="8"
+                          fill="transparent"
+                        />
+                        <circle
+                          cx="48"
+                          cy="48"
+                          r="38"
+                          stroke="#045EAD"
+                          strokeWidth="8"
+                          fill="transparent"
+                          strokeDasharray="238.76"
+                          strokeDashoffset={strokeDashoffset}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <span className="absolute text-xs font-bold text-(--text-primary)">
+                        {detailResult.overallScore}%
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* SVG Radial Gauge */}
-                <div className="relative w-20 h-20 shrink-0 flex items-center justify-center">
-                  <svg className="w-full h-full -rotate-90" viewBox="0 0 96 96">
-                    <circle
-                      cx="48"
-                      cy="48"
-                      r="38"
-                      stroke="#e2e8f0"
-                      strokeWidth="8"
-                      fill="transparent"
-                    />
-                    <circle
-                      cx="48"
-                      cy="48"
-                      r="38"
-                      stroke="#045EAD"
-                      strokeWidth="8"
-                      fill="transparent"
-                      strokeDasharray="238.76"
-                      strokeDashoffset={strokeDashoffset}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="absolute text-xs font-bold text-deep-navy">
-                    {detailResult.overallScore}%
+                <div className="pt-3 border-t border-(--border) text-xs text-(--text-secondary) flex items-center justify-between">
+                  <span>Reliability Index</span>
+                  <span className="font-bold text-emerald-700">
+                    {detailResult.reliabilityScore || 94}%
                   </span>
+                </div>
+              </div>
+
+              {/* Right: Sub-Score Granular Calibration */}
+              <div className="lg:col-span-7 bg-(--surface-0) border border-(--border) rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-(--text-secondary) block mb-3">
+                    Sub-Score Granular Calibration
+                  </span>
+                  <div className="space-y-3">
+                    {sectionScoresList.map((sec) => (
+                      <div key={sec.sectionCode} className="space-y-1">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="font-bold text-(--text-primary)">
+                            {sec.sectionName || sec.sectionCode}
+                          </span>
+                          <span className="font-mono text-(--brand-primary) font-bold">
+                            {sec.scorePercentage}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                          <div
+                            className="bg-(--brand-primary) h-full rounded-full transition-all duration-500"
+                            style={{ width: `${Math.min(100, Math.max(0, sec.scorePercentage))}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-200 text-xs text-[#475569] flex items-center justify-between">
-              <span>Reliability Index</span>
-              <span className="font-bold text-emerald-700">
-                {detailResult.reliabilityScore || 94}%
-              </span>
-            </div>
-          </div>
+            {/* AI Feedback */}
+            {detailResult.aiFeedback?.summary && (
+              <div className="bg-(--brand-subtle) border border-(--brand-border) p-5 rounded-xl space-y-1.5">
+                <div className="text-xs font-bold text-(--brand-primary) uppercase tracking-wider flex items-center gap-1.5">
+                  <span>Diagnostic Learning Evaluation</span>
+                </div>
+                <p className="text-xs text-(--text-primary) leading-relaxed">
+                  {detailResult.aiFeedback.summary}
+                </p>
+              </div>
+            )}
 
-          {/* Right: Sub-Score Granular Calibration */}
-          <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#475569] block mb-3">
-                Sub-Score Granular Calibration
+            {/* Strengths & Focus Areas */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-(--surface-1) p-5 rounded-xl border border-(--border) space-y-2">
+                <h3 className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
+                  Strongest Competencies
+                </h3>
+                <ul className="space-y-1.5">
+                  {strengthsList.map((str, idx) => (
+                    <li
+                      key={idx}
+                      className="text-xs text-(--text-secondary) flex items-center gap-2"
+                    >
+                      <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
+                      <span>{str}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-(--surface-1) p-5 rounded-xl border border-(--border) space-y-2">
+                <h3 className="text-xs font-bold text-amber-800 uppercase tracking-wider">
+                  Recommended Focus Areas
+                </h3>
+                <ul className="space-y-1.5">
+                  {focusAreasList.map((fa, idx) => (
+                    <li
+                      key={idx}
+                      className="text-xs text-(--text-secondary) flex items-center gap-2"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                      <span>{fa}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Recommended Pathway Banner */}
+            <div className="bg-(--surface-1) border border-(--border) p-6 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+              <div>
+                <div className="text-[11px] text-(--brand-primary) font-bold uppercase tracking-wider">
+                  Recommended Preparation Pathway
+                </div>
+                <div className="text-sm font-bold text-(--text-primary) mt-0.5">
+                  {detailResult.recommendedNextStep} (
+                  {detailResult.recommendedDuration || '4 Weeks'})
+                </div>
+              </div>
+              <button
+                onClick={handleEnroll}
+                disabled={enrolling}
+                className="px-6 py-2.5 bg-(--brand-primary) hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
+              >
+                {enrolling ? 'Enrolling...' : `Enroll in ${detailResult.placementStage} Track →`}
+              </button>
+            </div>
+
+            {/* Next Step Continuity */}
+            <div className="pt-4 border-t border-(--border) flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-xs font-bold text-(--text-secondary)">
+                Ready to build your score?
               </span>
-              <div className="space-y-3">
-                {sectionScoresList.map((sec) => (
-                  <div key={sec.sectionCode} className="space-y-1">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="font-bold text-deep-navy">
-                        {sec.sectionName || sec.sectionCode}
-                      </span>
-                      <span className="font-mono text-[#045EAD] font-bold">
-                        {sec.scorePercentage}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                      <div
-                        className="bg-[#045EAD] h-full rounded-full transition-all duration-500"
-                        style={{ width: `${Math.min(100, Math.max(0, sec.scorePercentage))}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => router.push('/practice')}
+                  className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-(--brand-subtle) border border-(--brand-border) text-(--brand-primary) hover:bg-[#d8ecf8] text-xs font-bold transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <span>Practice Weak Areas →</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push('/student/mock')}
+                  className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-(--surface-1) border border-(--border) text-(--text-primary) hover:bg-slate-200 text-xs font-bold transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <span>Take Full Mock Exam →</span>
+                </button>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* AI Feedback */}
-        {detailResult.aiFeedback?.summary && (
-          <div className="bg-bg-light-blue border border-[#B9DDF8] p-5 rounded-xl space-y-1.5">
-            <div className="text-xs font-bold text-[#045EAD] uppercase tracking-wider flex items-center gap-1.5">
-              <span>Diagnostic Learning Evaluation</span>
-            </div>
-            <p className="text-xs text-deep-navy leading-relaxed">
-              {detailResult.aiFeedback.summary}
-            </p>
-          </div>
-        )}
-
-        {/* Strengths & Focus Areas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-bg-neutral p-5 rounded-xl border border-slate-200 space-y-2">
-            <h3 className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
-              Strongest Competencies
-            </h3>
-            <ul className="space-y-1.5">
-              {strengthsList.map((str, idx) => (
-                <li key={idx} className="text-xs text-[#475569] flex items-center gap-2">
-                  <CheckCircle2 size={13} className="text-emerald-600 shrink-0" />
-                  <span>{str}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="bg-bg-neutral p-5 rounded-xl border border-slate-200 space-y-2">
-            <h3 className="text-xs font-bold text-amber-800 uppercase tracking-wider">
-              Recommended Focus Areas
-            </h3>
-            <ul className="space-y-1.5">
-              {focusAreasList.map((fa, idx) => (
-                <li key={idx} className="text-xs text-[#475569] flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                  <span>{fa}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Recommended Pathway Banner */}
-        <div className="bg-bg-neutral border border-slate-200 p-6 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
-          <div>
-            <div className="text-[11px] text-[#045EAD] font-bold uppercase tracking-wider">
-              Recommended Preparation Pathway
-            </div>
-            <div className="text-sm font-bold text-deep-navy mt-0.5">
-              {detailResult.recommendedNextStep} ({detailResult.recommendedDuration || '4 Weeks'})
-            </div>
-          </div>
-          <button
-            onClick={handleEnroll}
-            disabled={enrolling}
-            className="px-6 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
-          >
-            {enrolling ? 'Enrolling...' : `Enroll in ${detailResult.placementStage} Track →`}
-          </button>
-        </div>
-
-        {/* Next Step Continuity */}
-        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span className="text-xs font-bold text-[#475569]">Ready to build your score?</span>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => router.push('/practice')}
-              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-bg-light-blue border border-[#B9DDF8] text-[#045EAD] hover:bg-[#d8ecf8] text-xs font-bold transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <span>Practice Weak Areas →</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push('/student/mock')}
-              className="flex-1 sm:flex-initial px-4 py-2 rounded-lg bg-bg-neutral border border-slate-200 text-deep-navy hover:bg-slate-200 text-xs font-bold transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <span>Take Full Mock Exam →</span>
-            </button>
-          </div>
-        </div>
-      </div>
+        </PageContent>
+      </PageContainer>
     );
   }
 
   // State C: Student Results Main Landing Page
   return (
-    <div className="max-w-5xl mx-auto my-8 p-6 md:p-8 bg-white border border-slate-200 rounded-2xl space-y-8 font-sans shadow-sm">
-      {/* Page Header */}
-      <div className="border-b border-slate-200 pb-5">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] bg-bg-light-blue px-2.5 py-0.5 rounded-full">
-            Performance Ledger
-          </span>
-        </div>
-        <h1 className="text-2xl font-extrabold text-deep-navy tracking-tight">
-          My Assessment Results
-        </h1>
-        <p className="text-xs text-[#475569] mt-1">
-          Authoritative assessment records, calibrated target scores, and skill progression history.
-        </p>
-      </div>
-
-      {/* Empty State if no completed assessments */}
-      {!latestResult && recentResults.length === 0 ? (
-        <div className="py-16 px-6 bg-bg-neutral border border-slate-200 rounded-xl text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-bg-light-blue text-[#045EAD] flex items-center justify-center mx-auto">
-            <Award size={24} />
+    <PageContainer>
+      <PageContent>
+        <div className="w-full space-y-8 font-sans">
+          {/* Page Header */}
+          <div className="border-b border-(--border) pb-5">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-(--brand-primary) bg-(--brand-subtle) px-2.5 py-0.5 rounded-full">
+                Performance Ledger
+              </span>
+            </div>
+            <h1 className="text-2xl font-extrabold text-(--text-primary) tracking-tight">
+              My Assessment Results
+            </h1>
+            <p className="text-xs text-(--text-secondary) mt-1">
+              Authoritative assessment records, calibrated target scores, and skill progression
+              history.
+            </p>
           </div>
-          <h2 className="text-lg font-bold text-deep-navy">No results yet</h2>
-          <p className="text-xs text-[#475569] max-w-sm mx-auto leading-relaxed">
-            Complete your first diagnostic assessment to calibrate your baseline score and generate
-            skill profiles here.
-          </p>
-          <button
-            onClick={() => router.push('/student/assessments')}
-            className="px-6 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer inline-flex items-center gap-1.5"
-          >
-            <span>Start Pre-Assessment</span>
-            <ArrowRight size={14} />
-          </button>
-        </div>
-      ) : (
-        <>
-          {/* LATEST RESULT CARD */}
-          {latestResult && (
-            <div className="bg-bg-neutral p-6 rounded-2xl border border-slate-200 space-y-4 relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-[#045EAD]" />
 
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#045EAD] uppercase tracking-wider">
-                  Latest Completed Assessment
-                </span>
-                <span className="text-xs text-[#475569]">
-                  {formatDate(latestResult.generatedAt)}
-                </span>
+          {/* Empty State if no completed assessments */}
+          {!latestResult && recentResults.length === 0 ? (
+            <div className="py-16 px-6 bg-(--surface-1) border border-(--border) rounded-xl text-center space-y-4">
+              <div className="w-12 h-12 rounded-full bg-(--brand-subtle) text-(--brand-primary) flex items-center justify-center mx-auto">
+                <Award size={24} />
               </div>
+              <h2 className="text-lg font-bold text-(--text-primary)">No results yet</h2>
+              <p className="text-xs text-(--text-secondary) max-w-sm mx-auto leading-relaxed">
+                Complete your first diagnostic assessment to calibrate your baseline score and
+                generate skill profiles here.
+              </p>
+              <button
+                onClick={() => router.push('/student/assessments')}
+                className="px-6 py-2.5 bg-(--brand-primary) hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer inline-flex items-center gap-1.5"
+              >
+                <span>Start Pre-Assessment</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* LATEST RESULT CARD */}
+              {latestResult && (
+                <div className="bg-(--surface-1) p-6 rounded-2xl border border-(--border) space-y-4 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-(--brand-primary)" />
 
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                  <h3 className="text-lg font-bold text-deep-navy">
-                    {latestResult.examType || 'English Proficiency'} Diagnostic Assessment
-                  </h3>
-                  <p className="text-xs text-[#475569] mt-0.5">
-                    Official baseline calibration report
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
-                  {/* Above-the-fold score hierarchy: Predicted Band, Raw Score, CEFR */}
-                  <div className="flex items-center gap-2 sm:gap-3 bg-white px-3.5 py-2 rounded-xl border border-slate-200">
-                    {latestResult.predictedBand && (
-                      <div className="text-center px-2 border-r border-slate-100">
-                        <span className="text-[10px] text-[#475569] uppercase font-bold block">
-                          Predicted
-                        </span>
-                        <span className="text-sm font-extrabold text-[#045EAD]">
-                          Band {latestResult.predictedBand}
-                        </span>
-                      </div>
-                    )}
-                    <div className="text-center px-2">
-                      <span className="text-[10px] text-[#475569] uppercase font-bold block">
-                        Raw Score
-                      </span>
-                      <span className="text-sm font-extrabold text-deep-navy">
-                        {latestResult.overallScore}%
-                      </span>
-                    </div>
-                    {latestResult.cefrLevel && (
-                      <div className="text-center px-2 border-l border-slate-100">
-                        <span className="text-[10px] text-[#475569] uppercase font-bold block">
-                          CEFR
-                        </span>
-                        <span className="text-sm font-extrabold text-emerald-700">
-                          {latestResult.cefrLevel}
-                        </span>
-                      </div>
-                    )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-(--brand-primary) uppercase tracking-wider">
+                      Latest Completed Assessment
+                    </span>
+                    <span className="text-xs text-(--text-secondary)">
+                      {formatDate(latestResult.generatedAt)}
+                    </span>
                   </div>
 
-                  <button
-                    onClick={() => setActiveAttemptId(latestResult.attemptId)}
-                    className="px-5 py-2.5 bg-[#045EAD] hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
-                  >
-                    <span>View Full Result</span>
-                    <ArrowRight size={13} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-(--text-primary)">
+                        {latestResult.examType || 'English Proficiency'} Diagnostic Assessment
+                      </h3>
+                      <p className="text-xs text-(--text-secondary) mt-0.5">
+                        Official baseline calibration report
+                      </p>
+                    </div>
 
-          {/* PHASE 3: EVIDENCE-BASED COMPETENCY & PROGRESSION INTELLIGENCE */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Card 1: Priority Development Area */}
-            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#B45309]">
-                  Priority Development Area
-                </span>
-                <div className="p-2 rounded-lg bg-[#FEF3C7] text-[#B45309]">
-                  <Target size={16} />
-                </div>
-              </div>
-              <h3 className="text-base font-extrabold text-deep-navy">
-                {intelligence.priorityDevelopmentArea
-                  ? intelligence.priorityDevelopmentArea.skillName
-                  : 'Balanced Performance'}
-              </h3>
-              <p className="text-xs text-[#475569] leading-relaxed">
-                {intelligence.priorityEvidence}
-              </p>
-              {intelligence.priorityDevelopmentArea ? (
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-[#475569]">
-                    Measured:{' '}
-                    <strong className="text-deep-navy">
-                      {intelligence.priorityDevelopmentArea.scorePercentage}%
-                    </strong>
-                  </span>
-                  <button
-                    onClick={() =>
-                      router.push(
-                        `/practice?skill=${encodeURIComponent(intelligence.priorityDevelopmentArea!.skillName)}`
-                      )
-                    }
-                    className="text-xs font-bold text-[#045EAD] hover:underline inline-flex items-center gap-1 cursor-pointer"
-                  >
-                    Practice {intelligence.priorityDevelopmentArea.skillName} →
-                  </button>
-                </div>
-              ) : (
-                <div className="pt-2 border-t border-slate-100 text-[11px] text-[#64748B]">
-                  Complete more assessment sections to isolate specific skill priority.
-                </div>
-              )}
-            </div>
+                    <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
+                      {/* Above-the-fold score hierarchy: Predicted Band, Raw Score, CEFR */}
+                      <div className="flex items-center gap-2 sm:gap-3 bg-(--surface-0) px-3.5 py-2 rounded-xl border border-(--border)">
+                        {latestResult.predictedBand && (
+                          <div className="text-center px-2 border-r border-(--border)">
+                            <span className="text-[10px] text-(--text-secondary) uppercase font-bold block">
+                              Predicted
+                            </span>
+                            <span className="text-sm font-extrabold text-(--brand-primary)">
+                              Band {latestResult.predictedBand}
+                            </span>
+                          </div>
+                        )}
+                        <div className="text-center px-2">
+                          <span className="text-[10px] text-(--text-secondary) uppercase font-bold block">
+                            Raw Score
+                          </span>
+                          <span className="text-sm font-extrabold text-(--text-primary)">
+                            {latestResult.overallScore}%
+                          </span>
+                        </div>
+                        {latestResult.cefrLevel && (
+                          <div className="text-center px-2 border-l border-(--border)">
+                            <span className="text-[10px] text-(--text-secondary) uppercase font-bold block">
+                              CEFR
+                            </span>
+                            <span className="text-sm font-extrabold text-emerald-700">
+                              {latestResult.cefrLevel}
+                            </span>
+                          </div>
+                        )}
+                      </div>
 
-            {/* Card 2: Highest Measured Competency */}
-            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#15803D]">
-                  Current Measured Strength
-                </span>
-                <div className="p-2 rounded-lg bg-[#DCFCE7] text-[#15803D]">
-                  <Award size={16} />
-                </div>
-              </div>
-              <h3 className="text-base font-extrabold text-deep-navy">
-                {intelligence.strongestSkill
-                  ? intelligence.strongestSkill.skillName
-                  : 'All Skills Balanced'}
-              </h3>
-              <p className="text-xs text-[#475569] leading-relaxed">
-                {intelligence.strongestSkill
-                  ? `${intelligence.strongestSkill.skillName} is currently your highest measured comparable skill.`
-                  : 'Your measured assessment skills show even performance across active sections.'}
-              </p>
-              {intelligence.strongestSkill && (
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                  <span className="font-semibold text-[#475569]">Measured Accuracy:</span>
-                  <span className="font-extrabold text-deep-navy">
-                    {intelligence.strongestSkill.scorePercentage}%
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Baseline vs Mock Progression Comparison */}
-          {intelligence.comparison && (
-            <div className="p-5 rounded-2xl bg-bg-light-blue border border-[#B9DDF8] space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <TrendingUp size={16} className="text-[#045EAD]" />
-                  <span className="text-xs font-extrabold text-[#045EAD] uppercase tracking-wider">
-                    Baseline vs. Mock Progression
-                  </span>
-                </div>
-                <span className="text-[11px] font-semibold text-[#475569]">
-                  {intelligence.comparison.mockDate}
-                </span>
-              </div>
-              <p className="text-xs font-semibold text-[#1E293B]">
-                {intelligence.comparison.summaryStatement}
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
-                <div className="p-3 bg-white rounded-xl border border-slate-200">
-                  <span className="text-[10px] font-bold uppercase text-[#475569] block">
-                    Diagnostic Baseline
-                  </span>
-                  <span className="text-sm font-extrabold text-deep-navy">
-                    {intelligence.comparison.baselineBand ||
-                      `${intelligence.comparison.baselineOverallScore}%`}
-                  </span>
-                  <span className="text-[10px] text-[#64748B] block mt-0.5">
-                    {intelligence.comparison.baselineDate}
-                  </span>
-                </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-200">
-                  <span className="text-[10px] font-bold uppercase text-[#475569] block">
-                    Latest Mock
-                  </span>
-                  <span className="text-sm font-extrabold text-[#045EAD]">
-                    {intelligence.comparison.mockBand ||
-                      `${intelligence.comparison.mockOverallScore}%`}
-                  </span>
-                  <span className="text-[10px] text-[#64748B] block mt-0.5">
-                    {intelligence.comparison.mockDate}
-                  </span>
-                </div>
-                <div className="p-3 bg-white rounded-xl border border-slate-200 col-span-2 sm:col-span-1">
-                  <span className="text-[10px] font-bold uppercase text-[#475569] block">
-                    Net Delta
-                  </span>
-                  <span
-                    className={`text-sm font-extrabold ${(intelligence.comparison.bandDelta ?? intelligence.comparison.scoreDelta) >= 0 ? 'text-[#15803D]' : 'text-[#B45309]'}`}
-                  >
-                    {(intelligence.comparison.bandDelta ?? intelligence.comparison.scoreDelta) > 0
-                      ? '+'
-                      : ''}
-                    {intelligence.comparison.bandDelta !== undefined
-                      ? `${intelligence.comparison.bandDelta} Bands`
-                      : `${intelligence.comparison.scoreDelta}%`}
-                  </span>
-                  <span className="text-[10px] text-[#64748B] block mt-0.5">
-                    Authoritative delta
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* RECENT RESULTS TABLE */}
-          {recentResults.length > 0 && (
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
-              <h2 className="text-xs font-bold text-deep-navy uppercase tracking-wider">
-                Assessment History
-              </h2>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-600">
-                  <thead className="border-b border-slate-200 text-slate-700 uppercase font-bold text-[10px]">
-                    <tr>
-                      <th className="py-2.5 px-3">Assessment</th>
-                      <th className="py-2.5 px-3">Score</th>
-                      <th className="py-2.5 px-3">Date</th>
-                      <th className="py-2.5 px-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {recentResults.map((r) => (
-                      <tr
-                        key={r.resultId || r.attemptId}
-                        className="hover:bg-slate-50 transition-colors"
+                      <button
+                        onClick={() => setActiveAttemptId(latestResult.attemptId)}
+                        className="px-5 py-2.5 bg-(--brand-primary) hover:bg-brand-hover text-white font-bold text-xs rounded-lg transition-colors shadow-sm cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
                       >
-                        <td className="py-3 px-3 font-semibold text-deep-navy">
-                          {r.examType || 'English Proficiency'} Diagnostic
-                        </td>
-                        <td className="py-3 px-3 font-mono font-bold text-[#045EAD]">
-                          {r.overallScore}%
-                        </td>
-                        <td className="py-3 px-3 text-slate-600 font-medium">
-                          {formatDate(r.generatedAt)}
-                        </td>
-                        <td className="py-3 px-3 text-right">
-                          <button
-                            onClick={() => setActiveAttemptId(r.attemptId)}
-                            className="px-3 py-1.5 bg-bg-neutral hover:bg-slate-200 text-deep-navy font-semibold text-[11px] rounded-lg border border-slate-200 transition-colors cursor-pointer"
-                          >
-                            View Result
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        <span>View Full Result</span>
+                        <ArrowRight size={13} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* PHASE 3: EVIDENCE-BASED COMPETENCY & PROGRESSION INTELLIGENCE */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Card 1: Priority Development Area */}
+                <div className="p-5 rounded-2xl bg-(--surface-0) border border-(--border) shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#B45309]">
+                      Priority Development Area
+                    </span>
+                    <div className="p-2 rounded-lg bg-[#FEF3C7] text-[#B45309]">
+                      <Target size={16} />
+                    </div>
+                  </div>
+                  <h3 className="text-base font-extrabold text-(--text-primary)">
+                    {intelligence.priorityDevelopmentArea
+                      ? intelligence.priorityDevelopmentArea.skillName
+                      : 'Balanced Performance'}
+                  </h3>
+                  <p className="text-xs text-(--text-secondary) leading-relaxed">
+                    {intelligence.priorityEvidence}
+                  </p>
+                  {intelligence.priorityDevelopmentArea ? (
+                    <div className="pt-2 border-t border-(--border) flex items-center justify-between">
+                      <span className="text-[11px] font-semibold text-(--text-secondary)">
+                        Measured:{' '}
+                        <strong className="text-(--text-primary)">
+                          {intelligence.priorityDevelopmentArea.scorePercentage}%
+                        </strong>
+                      </span>
+                      <button
+                        onClick={() =>
+                          router.push(
+                            `/practice?skill=${encodeURIComponent(intelligence.priorityDevelopmentArea!.skillName)}`
+                          )
+                        }
+                        className="text-xs font-bold text-(--brand-primary) hover:underline inline-flex items-center gap-1 cursor-pointer"
+                      >
+                        Practice {intelligence.priorityDevelopmentArea.skillName} →
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="pt-2 border-t border-(--border) text-[11px] text-(--text-muted)">
+                      Complete more assessment sections to isolate specific skill priority.
+                    </div>
+                  )}
+                </div>
+
+                {/* Card 2: Highest Measured Competency */}
+                <div className="p-5 rounded-2xl bg-(--surface-0) border border-(--border) shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#15803D]">
+                      Current Measured Strength
+                    </span>
+                    <div className="p-2 rounded-lg bg-[#DCFCE7] text-[#15803D]">
+                      <Award size={16} />
+                    </div>
+                  </div>
+                  <h3 className="text-base font-extrabold text-(--text-primary)">
+                    {intelligence.strongestSkill
+                      ? intelligence.strongestSkill.skillName
+                      : 'All Skills Balanced'}
+                  </h3>
+                  <p className="text-xs text-(--text-secondary) leading-relaxed">
+                    {intelligence.strongestSkill
+                      ? `${intelligence.strongestSkill.skillName} is currently your highest measured comparable skill.`
+                      : 'Your measured assessment skills show even performance across active sections.'}
+                  </p>
+                  {intelligence.strongestSkill && (
+                    <div className="pt-2 border-t border-(--border) flex items-center justify-between text-[11px]">
+                      <span className="font-semibold text-(--text-secondary)">
+                        Measured Accuracy:
+                      </span>
+                      <span className="font-extrabold text-(--text-primary)">
+                        {intelligence.strongestSkill.scorePercentage}%
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+
+              {/* Baseline vs Mock Progression Comparison */}
+              {intelligence.comparison && (
+                <div className="p-5 rounded-2xl bg-(--brand-subtle) border border-(--brand-border) space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp size={16} className="text-(--brand-primary)" />
+                      <span className="text-xs font-extrabold text-(--brand-primary) uppercase tracking-wider">
+                        Baseline vs. Mock Progression
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-semibold text-(--text-secondary)">
+                      {intelligence.comparison.mockDate}
+                    </span>
+                  </div>
+                  <p className="text-xs font-semibold text-(--text-primary)">
+                    {intelligence.comparison.summaryStatement}
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
+                    <div className="p-3 bg-(--surface-0) rounded-xl border border-(--border)">
+                      <span className="text-[10px] font-bold uppercase text-(--text-secondary) block">
+                        Diagnostic Baseline
+                      </span>
+                      <span className="text-sm font-extrabold text-(--text-primary)">
+                        {intelligence.comparison.baselineBand ||
+                          `${intelligence.comparison.baselineOverallScore}%`}
+                      </span>
+                      <span className="text-[10px] text-(--text-muted) block mt-0.5">
+                        {intelligence.comparison.baselineDate}
+                      </span>
+                    </div>
+                    <div className="p-3 bg-(--surface-0) rounded-xl border border-(--border)">
+                      <span className="text-[10px] font-bold uppercase text-(--text-secondary) block">
+                        Latest Mock
+                      </span>
+                      <span className="text-sm font-extrabold text-(--brand-primary)">
+                        {intelligence.comparison.mockBand ||
+                          `${intelligence.comparison.mockOverallScore}%`}
+                      </span>
+                      <span className="text-[10px] text-(--text-muted) block mt-0.5">
+                        {intelligence.comparison.mockDate}
+                      </span>
+                    </div>
+                    <div className="p-3 bg-(--surface-0) rounded-xl border border-(--border) col-span-2 sm:col-span-1">
+                      <span className="text-[10px] font-bold uppercase text-(--text-secondary) block">
+                        Net Delta
+                      </span>
+                      <span
+                        className={`text-sm font-extrabold ${(intelligence.comparison.bandDelta ?? intelligence.comparison.scoreDelta) >= 0 ? 'text-[#15803D]' : 'text-[#B45309]'}`}
+                      >
+                        {(intelligence.comparison.bandDelta ?? intelligence.comparison.scoreDelta) >
+                        0
+                          ? '+'
+                          : ''}
+                        {intelligence.comparison.bandDelta !== undefined
+                          ? `${intelligence.comparison.bandDelta} Bands`
+                          : `${intelligence.comparison.scoreDelta}%`}
+                      </span>
+                      <span className="text-[10px] text-(--text-muted) block mt-0.5">
+                        Authoritative delta
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* RECENT RESULTS TABLE */}
+              {recentResults.length > 0 && (
+                <div className="bg-(--surface-0) p-6 rounded-2xl border border-(--border) space-y-4">
+                  <h2 className="text-xs font-bold text-(--text-primary) uppercase tracking-wider">
+                    Assessment History
+                  </h2>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs text-slate-600">
+                      <thead className="border-b border-(--border) text-slate-700 uppercase font-bold text-[10px]">
+                        <tr>
+                          <th className="py-2.5 px-3">Assessment</th>
+                          <th className="py-2.5 px-3">Score</th>
+                          <th className="py-2.5 px-3">Date</th>
+                          <th className="py-2.5 px-3 text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {recentResults.map((r) => (
+                          <tr
+                            key={r.resultId || r.attemptId}
+                            className="hover:bg-slate-50 transition-colors"
+                          >
+                            <td className="py-3 px-3 font-semibold text-(--text-primary)">
+                              {r.examType || 'English Proficiency'} Diagnostic
+                            </td>
+                            <td className="py-3 px-3 font-mono font-bold text-(--brand-primary)">
+                              {r.overallScore}%
+                            </td>
+                            <td className="py-3 px-3 text-slate-600 font-medium">
+                              {formatDate(r.generatedAt)}
+                            </td>
+                            <td className="py-3 px-3 text-right">
+                              <button
+                                onClick={() => setActiveAttemptId(r.attemptId)}
+                                className="px-3 py-1.5 bg-(--surface-1) hover:bg-slate-200 text-(--text-primary) font-semibold text-[11px] rounded-lg border border-(--border) transition-colors cursor-pointer"
+                              >
+                                View Result
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* NEXT STEP IN YOUR PREPARATION */}
+              <div className="bg-(--surface-1) p-6 rounded-2xl border border-(--border) space-y-4">
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-(--brand-primary) block">
+                    Task-Flow Continuity
+                  </span>
+                  <h2 className="text-base font-bold text-(--text-primary)">
+                    Next Step in Your Preparation
+                  </h2>
+                  <p className="text-xs text-(--text-secondary) mt-0.5">
+                    Target your identified skill gaps or simulate complete examination conditions.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => router.push(intelligence.recommendedAction.destination)}
+                    className="p-5 rounded-xl bg-(--surface-0) border border-(--brand-border) hover:border-[#045EAD] hover:shadow-sm text-left flex flex-col justify-between gap-3 transition-all cursor-pointer group"
+                  >
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-(--brand-primary) bg-(--brand-subtle) px-2.5 py-0.5 rounded-full border border-(--brand-border)">
+                        Primary Action
+                      </span>
+                      <h3 className="text-sm font-bold text-(--text-primary) mt-2 group-hover:text-(--brand-primary) transition-colors">
+                        {intelligence.recommendedAction.label}
+                      </h3>
+                      <p className="text-xs text-(--text-secondary) mt-1 leading-relaxed">
+                        {intelligence.recommendedAction.evidence}
+                      </p>
+                    </div>
+                    <span className="text-xs font-bold text-(--brand-primary) inline-flex items-center gap-1.5 pt-2 border-t border-(--border)">
+                      <span>Continue Preparation</span>
+                      <ArrowRight
+                        size={14}
+                        className="group-hover:translate-x-0.5 transition-transform"
+                      />
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => router.push('/student/mock')}
+                    className="p-5 rounded-xl bg-(--surface-0) border border-(--border) hover:border-slate-300 hover:shadow-sm text-left flex flex-col justify-between gap-3 transition-all cursor-pointer group"
+                  >
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-(--text-secondary) bg-(--surface-1) px-2.5 py-0.5 rounded-full border border-(--border)">
+                        Simulation Action
+                      </span>
+                      <h3 className="text-sm font-bold text-(--text-primary) mt-2 group-hover:text-(--text-primary) transition-colors">
+                        Take Full Mock Exam →
+                      </h3>
+                      <p className="text-xs text-(--text-secondary) mt-1 leading-relaxed">
+                        Simulate the complete proctored examination under authentic timed test
+                        conditions with full scoring.
+                      </p>
+                    </div>
+                    <span className="text-xs font-bold text-(--text-primary) inline-flex items-center gap-1.5 pt-2 border-t border-(--border)">
+                      <span>Launch Mock Examination</span>
+                      <ArrowRight
+                        size={14}
+                        className="group-hover:translate-x-0.5 transition-transform"
+                      />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </>
           )}
-
-          {/* NEXT STEP IN YOUR PREPARATION */}
-          <div className="bg-bg-neutral p-6 rounded-2xl border border-slate-200 space-y-4">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#045EAD] block">
-                Task-Flow Continuity
-              </span>
-              <h2 className="text-base font-bold text-deep-navy">Next Step in Your Preparation</h2>
-              <p className="text-xs text-[#475569] mt-0.5">
-                Target your identified skill gaps or simulate complete examination conditions.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              <button
-                type="button"
-                onClick={() => router.push(intelligence.recommendedAction.destination)}
-                className="p-5 rounded-xl bg-white border border-[#B9DDF8] hover:border-[#045EAD] hover:shadow-sm text-left flex flex-col justify-between gap-3 transition-all cursor-pointer group"
-              >
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#045EAD] bg-bg-light-blue px-2.5 py-0.5 rounded-full border border-[#B9DDF8]">
-                    Primary Action
-                  </span>
-                  <h3 className="text-sm font-bold text-deep-navy mt-2 group-hover:text-[#045EAD] transition-colors">
-                    {intelligence.recommendedAction.label}
-                  </h3>
-                  <p className="text-xs text-[#475569] mt-1 leading-relaxed">
-                    {intelligence.recommendedAction.evidence}
-                  </p>
-                </div>
-                <span className="text-xs font-bold text-[#045EAD] inline-flex items-center gap-1.5 pt-2 border-t border-slate-100">
-                  <span>Continue Preparation</span>
-                  <ArrowRight
-                    size={14}
-                    className="group-hover:translate-x-0.5 transition-transform"
-                  />
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => router.push('/student/mock')}
-                className="p-5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm text-left flex flex-col justify-between gap-3 transition-all cursor-pointer group"
-              >
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#475569] bg-bg-neutral px-2.5 py-0.5 rounded-full border border-slate-200">
-                    Simulation Action
-                  </span>
-                  <h3 className="text-sm font-bold text-deep-navy mt-2 group-hover:text-deep-navy transition-colors">
-                    Take Full Mock Exam →
-                  </h3>
-                  <p className="text-xs text-[#475569] mt-1 leading-relaxed">
-                    Simulate the complete proctored examination under authentic timed test
-                    conditions with full scoring.
-                  </p>
-                </div>
-                <span className="text-xs font-bold text-deep-navy inline-flex items-center gap-1.5 pt-2 border-t border-slate-100">
-                  <span>Launch Mock Examination</span>
-                  <ArrowRight
-                    size={14}
-                    className="group-hover:translate-x-0.5 transition-transform"
-                  />
-                </span>
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
+        </div>
+      </PageContent>
+    </PageContainer>
   );
 }
 

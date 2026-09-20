@@ -93,16 +93,16 @@ function ErrorForm() {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
-        backgroundColor: '#0b0f19',
-        color: '#f8fafc',
+        backgroundColor: 'var(--surface-0)',
+        color: 'var(--text-primary)',
         fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
       }}
     >
       <header
         style={{
           padding: '1.25rem 2rem',
-          backgroundColor: '#151d30',
-          borderBottom: '1px solid #232e48',
+          backgroundColor: 'var(--surface-1)',
+          borderBottom: '1px solid var(--border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -111,7 +111,7 @@ function ErrorForm() {
         <Link
           href="/"
           style={{
-            color: '#ffffff',
+            color: 'var(--text-primary)',
             fontWeight: 800,
             fontSize: '1.25rem',
             textDecoration: 'none',
@@ -120,7 +120,7 @@ function ErrorForm() {
             gap: '0.5rem',
           }}
         >
-          <span style={{ color: '#2563eb' }}>CLASPTEK</span> GLOBAL
+          <span style={{ color: 'var(--brand-primary)' }}>CLASPTEK</span> GLOBAL
         </Link>
       </header>
 
@@ -137,11 +137,11 @@ function ErrorForm() {
           style={{
             maxWidth: '520px',
             width: '100%',
-            backgroundColor: '#151d30',
-            border: '1px solid #232e48',
+            backgroundColor: 'var(--surface-1)',
+            border: '1px solid var(--border)',
             borderRadius: '12px',
             padding: '2.5rem',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
+            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.25)',
             textAlign: 'center',
           }}
         >
@@ -151,7 +151,7 @@ function ErrorForm() {
               margin: '0 0 1rem 0',
               fontSize: '1.5rem',
               fontWeight: 800,
-              color: '#f8fafc',
+              color: 'var(--text-primary)',
             }}
           >
             {err.title}
@@ -159,7 +159,7 @@ function ErrorForm() {
           <p
             style={{
               margin: '0 0 2rem 0',
-              color: '#94a3b8',
+              color: 'var(--text-muted)',
               lineHeight: 1.6,
               fontSize: '0.95rem',
             }}
@@ -178,7 +178,7 @@ function ErrorForm() {
             <button
               onClick={handleCTA}
               style={{
-                backgroundColor: '#2563eb',
+                backgroundColor: 'var(--brand-primary)',
                 color: '#ffffff',
                 border: 'none',
                 padding: '0.75rem 1.5rem',
@@ -201,8 +201,8 @@ function ErrorForm() {
               }}
               style={{
                 backgroundColor: 'transparent',
-                color: '#cbd5e1',
-                border: '1px solid #334155',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--border)',
                 padding: '0.75rem 1.5rem',
                 borderRadius: '6px',
                 fontWeight: 600,
@@ -218,11 +218,11 @@ function ErrorForm() {
 
       <footer
         style={{
-          backgroundColor: '#0b0f19',
-          borderTop: '1px solid #232e48',
+          backgroundColor: 'var(--surface-0)',
+          borderTop: '1px solid var(--border)',
           padding: '1.25rem',
           textAlign: 'center',
-          color: '#64748b',
+          color: 'var(--text-muted)',
           fontSize: '0.85rem',
         }}
       >
@@ -244,8 +244,8 @@ export default function ErrorPage() {
             minHeight: '100vh',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#0b0f19',
-            color: '#ffffff',
+            backgroundColor: 'var(--surface-0)',
+            color: 'var(--text-primary)',
             fontFamily: 'system-ui, sans-serif',
           }}
         >

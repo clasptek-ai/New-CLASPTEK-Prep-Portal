@@ -21,8 +21,8 @@ export default function AdminError({
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#090d16',
-        color: '#f8fafc',
+        backgroundColor: 'var(--surface-0)',
+        color: 'var(--text-primary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -36,12 +36,12 @@ export default function AdminError({
         style={{
           maxWidth: '560px',
           width: '100%',
-          backgroundColor: '#0f1729',
-          border: '1px solid #1e2d45',
+          backgroundColor: 'var(--surface-1)',
+          border: '1px solid var(--border)',
           borderRadius: '16px',
           padding: '2.5rem 2rem',
           textAlign: 'center',
-          boxShadow: '0 25px 50px rgba(0,0,0,0.6)',
+          boxShadow: '0 25px 50px rgba(0,0,0,0.25)',
         }}
       >
         <div
@@ -63,12 +63,24 @@ export default function AdminError({
         </div>
 
         <h1
-          style={{ margin: '0 0 0.75rem', fontSize: '1.4rem', fontWeight: 700, color: '#f8fafc' }}
+          style={{
+            margin: '0 0 0.75rem',
+            fontSize: '1.4rem',
+            fontWeight: 700,
+            color: 'var(--text-primary)',
+          }}
         >
           Admin Portal Error
         </h1>
 
-        <p style={{ color: '#94a3b8', fontSize: '0.9rem', lineHeight: 1.6, margin: '0 0 1rem' }}>
+        <p
+          style={{
+            color: 'var(--text-muted)',
+            fontSize: '0.9rem',
+            lineHeight: 1.6,
+            margin: '0 0 1rem',
+          }}
+        >
           {isProduction
             ? 'An error occurred in the admin portal. The error has been logged for investigation.'
             : (error?.message ?? 'An unexpected error occurred.')}
@@ -79,8 +91,8 @@ export default function AdminError({
           <pre
             style={{
               textAlign: 'left',
-              backgroundColor: '#0b0f19',
-              border: '1px solid #1e2d45',
+              backgroundColor: 'var(--surface-0)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               padding: '0.75rem 1rem',
               fontSize: '0.7rem',
@@ -98,7 +110,7 @@ export default function AdminError({
         {error?.digest && (
           <p
             style={{
-              color: '#475569',
+              color: 'var(--text-muted)',
               fontSize: '0.75rem',
               marginBottom: '1.5rem',
               fontFamily: 'monospace',
@@ -116,7 +128,7 @@ export default function AdminError({
             onClick={() => reset()}
             aria-label="Try loading this admin page again"
             style={{
-              backgroundColor: '#2563eb',
+              backgroundColor: 'var(--brand-primary)',
               color: '#fff',
               border: 'none',
               borderRadius: '8px',
@@ -134,8 +146,8 @@ export default function AdminError({
             aria-label="Return to admin dashboard"
             style={{
               backgroundColor: 'transparent',
-              color: '#cbd5e1',
-              border: '1px solid #334155',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               padding: '0.65rem 1.25rem',
               fontSize: '0.875rem',

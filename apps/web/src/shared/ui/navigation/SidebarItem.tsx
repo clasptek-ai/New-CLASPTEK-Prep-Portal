@@ -19,11 +19,11 @@ export const SidebarItem = forwardRef<HTMLAnchorElement, SidebarItemProps>(funct
         padding: isCollapsed ? '0.75rem' : '0.625rem 0.875rem',
         fontSize: '0.875rem',
         fontWeight: isActive ? 700 : 500,
-        borderRadius: 'var(--radius-md, 8px)',
-        color: isActive ? '#ffffff' : 'var(--text-secondary, #475569)',
-        backgroundColor: isActive ? 'var(--primary-500, #045EAD)' : 'transparent',
+        borderRadius: 'var(--radius-md)',
+        color: isActive ? '#ffffff' : 'var(--text-secondary)',
+        backgroundColor: isActive ? 'var(--brand)' : 'transparent',
         textDecoration: 'none',
-        transition: 'all 150ms ease-in-out',
+        transition: 'all var(--transition-fast)',
         ...style,
       }}
       {...props}
