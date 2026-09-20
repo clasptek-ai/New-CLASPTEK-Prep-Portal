@@ -20,7 +20,8 @@ describe('IELTS Server-Authoritative Marking Engine Regressions', () => {
   beforeAll(async () => {
     pool = new Pool({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } });
     mockRepo = new PostgresCanonicalMockRepository(pool);
-  });
+    await pool.query('SELECT 1');
+  }, 15000);
 
   afterAll(async () => {
     await pool.end();

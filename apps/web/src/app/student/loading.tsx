@@ -3,11 +3,12 @@ import React from 'react';
 /**
  * Student portal loading skeleton.
  * Shown by Next.js Suspense for all /student/* routes.
- * Mimics the student portal layout with sidebar + content shimmer.
+ * Mimics the student portal layout with sidebar + cards shimmer
+ * using canonical Clasptek light surfaces to prevent dark-to-light visual flash.
  */
 export default function StudentLoading() {
   const shimmer: React.CSSProperties = {
-    background: 'linear-gradient(90deg, #1a2540 25%, #243050 50%, #1a2540 75%)',
+    background: 'linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%)',
     backgroundSize: '200% 100%',
     animation: 'skeleton-shimmer 1.6s infinite linear',
     borderRadius: 8,
@@ -19,7 +20,7 @@ export default function StudentLoading() {
       aria-label="Loading student portal"
       style={{
         minHeight: '100vh',
-        backgroundColor: '#090d16',
+        backgroundColor: 'var(--surface-page, #f8fafc)',
         display: 'flex',
       }}
     >
@@ -28,8 +29,8 @@ export default function StudentLoading() {
         style={{
           width: 240,
           flexShrink: 0,
-          backgroundColor: '#0c1220',
-          borderRight: '1px solid #1a2540',
+          backgroundColor: 'var(--surface-0, #ffffff)',
+          borderRight: '1px solid var(--border, #e2e8f0)',
           padding: '1.5rem 1rem',
           display: 'flex',
           flexDirection: 'column',
@@ -67,22 +68,43 @@ export default function StudentLoading() {
         {/* Cards row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} aria-hidden="true" style={{ ...shimmer, height: 120, borderRadius: 12 }} />
+            <div
+              key={i}
+              aria-hidden="true"
+              style={{
+                backgroundColor: 'var(--surface-0, #ffffff)',
+                border: '1px solid var(--border, #e2e8f0)',
+                borderRadius: 12,
+                padding: '1.25rem',
+                height: 120,
+                boxSizing: 'border-box',
+              }}
+            >
+              <div style={{ ...shimmer, height: 16, width: '50%', marginBottom: 12 }} />
+              <div style={{ ...shimmer, height: 28, width: '35%' }} />
+            </div>
           ))}
         </div>
 
         {/* Content block */}
-        <div aria-hidden="true" style={{ ...shimmer, height: 280, borderRadius: 12 }} />
-
-        {/* Text lines */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              aria-hidden="true"
-              style={{ ...shimmer, height: 16, width: i === 2 ? '60%' : '100%' }}
-            />
-          ))}
+        <div
+          aria-hidden="true"
+          style={{
+            backgroundColor: 'var(--surface-0, #ffffff)',
+            border: '1px solid var(--border, #e2e8f0)',
+            borderRadius: 12,
+            padding: '1.5rem',
+            height: 240,
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+          }}
+        >
+          <div style={{ ...shimmer, height: 24, width: '30%' }} />
+          <div style={{ ...shimmer, height: 14, width: '90%' }} />
+          <div style={{ ...shimmer, height: 14, width: '80%' }} />
+          <div style={{ ...shimmer, height: 14, width: '60%' }} />
         </div>
       </div>
 
@@ -92,7 +114,7 @@ export default function StudentLoading() {
           100% { background-position: -200% 0; }
         }
         @media (prefers-reduced-motion: reduce) {
-          * { animation-duration: 0.01ms !important; }
+          * { animation: none !important; }
         }
       `}</style>
     </div>

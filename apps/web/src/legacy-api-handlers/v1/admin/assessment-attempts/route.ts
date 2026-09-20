@@ -60,7 +60,20 @@ export async function GET(req: NextRequest) {
         FROM public.assessment_attempts aa
         LEFT JOIN auth.users au ON au.id = aa.student_id
         LEFT JOIN public.profiles p ON p.user_id = aa.student_id OR p.id = aa.student_id
-        LEFT JOIN public.assessment_results ar ON ar.attempt_id = aa.id
+        LEFT JOIN LATERAL (
+          SELECT
+            ar.cefr_level,
+            ar.predicted_band,
+            ar.placement_level,
+            ar.recommended_course,
+            ar.recommended_duration
+          FROM public.assessment_results ar
+          WHERE ar.attempt_id = aa.id
+          ORDER BY
+            ar.generated_at DESC NULLS LAST,
+            ar.id DESC
+          LIMIT 1
+        ) ar ON true
         WHERE aa.deleted_at IS NULL
       `;
 
@@ -132,7 +145,17 @@ export async function GET(req: NextRequest) {
         FROM public.mock_sessions ms
         LEFT JOIN auth.users au ON au.id::text = ms.student_id::text
         LEFT JOIN public.profiles p ON (p.user_id = ms.student_id OR p.id = ms.student_id)
-        LEFT JOIN public.mock_results mr ON mr.session_id = ms.id
+        LEFT JOIN LATERAL (
+          SELECT
+            mr.official_scaled_score,
+            mr.official_score_label
+          FROM public.mock_results mr
+          WHERE mr.session_id = ms.id
+          ORDER BY
+            mr.scored_at DESC NULLS LAST,
+            mr.id DESC
+          LIMIT 1
+        ) mr ON true
         WHERE ms.status IS NOT NULL
       `;
 

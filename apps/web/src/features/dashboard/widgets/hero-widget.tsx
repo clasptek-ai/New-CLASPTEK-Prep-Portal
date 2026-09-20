@@ -16,6 +16,8 @@ export interface HeroWidgetProps {
   learningLevel?: string;
   state?: WidgetState;
   isDiagnosticCompleted?: boolean;
+  actionLabel?: string;
+  actionSubtitle?: string;
   onPrimaryAction?: () => void;
   onRetry?: () => void;
   onResumeLearning?: () => void;
@@ -27,6 +29,8 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
   studyStreakDays,
   state = 'SUCCESS',
   isDiagnosticCompleted = false,
+  actionLabel,
+  actionSubtitle,
   onPrimaryAction,
   onResumeLearning,
 }) => {
@@ -35,7 +39,13 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
 
   // Determine dominant next action handler and label
   const handleAction = onPrimaryAction || onResumeLearning;
-  const actionLabel = isDiagnosticCompleted ? 'Continue Practice' : 'Take Pre-Assessment';
+  const defaultActionLabel = isDiagnosticCompleted ? 'Continue Practice' : 'Take Pre-Assessment';
+  const resolvedActionLabel = actionLabel || defaultActionLabel;
+
+  const defaultSubtitle = isDiagnosticCompleted
+    ? 'Your baseline is calibrated. Continue focused practice drills to target skill gaps.'
+    : 'Complete your initial diagnostic pre-assessment to calibrate your personal preparation plan.';
+  const resolvedSubtitle = actionSubtitle || defaultSubtitle;
 
   return (
     <div className="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 shadow-sm relative overflow-hidden">
@@ -69,9 +79,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
 
             {/* Subtitle */}
             <p className="text-xs sm:text-sm text-[#475569] mt-1 leading-relaxed">
-              {isDiagnosticCompleted
-                ? 'Your baseline is calibrated. Continue focused practice drills to target skill gaps.'
-                : 'Complete your initial diagnostic pre-assessment to calibrate your personal preparation plan.'}
+              {resolvedSubtitle}
             </p>
           </div>
         </div>
@@ -101,7 +109,7 @@ export const HeroWidget: React.FC<HeroWidgetProps> = ({
               leftIcon={<Play size={14} fill="white" />}
               className="bg-[#045EAD] hover:bg-brand-hover text-white text-xs font-bold shadow-sm whitespace-nowrap"
             >
-              {actionLabel}
+              {resolvedActionLabel}
             </Button>
           )}
         </div>

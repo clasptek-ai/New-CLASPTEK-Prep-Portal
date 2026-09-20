@@ -11,7 +11,12 @@ import {
   useDashboardCalendarQuery,
   useDashboardAchievementsQuery,
   useMarkNotificationReadMutation,
+  useStudentResultsQuery,
 } from '../use-dashboard-queries';
+import {
+  analyzeAssessmentIntelligence,
+  CandidateIntelligenceProfile,
+} from '../../intelligence/assessment-intelligence';
 import {
   DashboardOverviewDto,
   DashboardActivityDto,
@@ -44,6 +49,7 @@ export interface DashboardViewModel {
   calendar?: DashboardCalendarDto;
   achievements?: DashboardAchievementsDto;
   calendarView: 'DAY' | 'WEEK' | 'MONTH';
+  intelligenceProfile: CandidateIntelligenceProfile;
 
   // Navigation Config for Quick Actions
   navigationRoutes: Record<string, string>;
@@ -69,6 +75,7 @@ export function useDashboardViewModel(): DashboardViewModel {
   const { data: notifications } = useDashboardNotificationsQuery(1, 10);
   const { data: calendar } = useDashboardCalendarQuery(calendarView);
   const { data: achievements } = useDashboardAchievementsQuery();
+  const { data: resultsData } = useStudentResultsQuery();
   const markReadMutation = useMarkNotificationReadMutation();
 
   const isLoading = authLoading || (overviewLoading && !overview);
@@ -162,6 +169,11 @@ export function useDashboardViewModel(): DashboardViewModel {
   const activeNotificationsCount =
     notifications?.unreadCount ?? overview?.unreadNotificationsCount ?? 0;
 
+  // Pure deterministic assessment intelligence computation scoped by active programme exam
+  const intelligenceProfile = useMemo(() => {
+    return analyzeAssessmentIntelligence(resultsData?.recentResults, config.title);
+  }, [resultsData?.recentResults, config.title]);
+
   return {
     activeProgrammeId,
     config,
@@ -174,6 +186,7 @@ export function useDashboardViewModel(): DashboardViewModel {
     completedTasksCount,
     totalTasksCount,
     activeNotificationsCount,
+    intelligenceProfile,
     overview,
     activity,
     notifications,

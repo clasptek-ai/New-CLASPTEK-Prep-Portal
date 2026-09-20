@@ -11,37 +11,37 @@ export const QuickActionsBar: React.FC = () => {
     {
       label: 'Import Questions',
       sub: 'Bulk CSV/JSON importer',
-      icon: <Upload size={16} color="#38bdf8" />,
+      icon: <Upload size={16} color="var(--brand)" />,
       onClick: () => router.push('/admin/question-bank/import'),
     },
     {
       label: 'Create Practice',
       sub: 'Configure practice templates',
-      icon: <Layers size={16} color="#38bdf8" />,
+      icon: <Layers size={16} color="var(--brand)" />,
       onClick: () => router.push('/admin/practice-sessions'),
     },
     {
       label: 'Create Diagnostic',
       sub: 'Baseline evaluation setup',
-      icon: <Award size={16} color="#38bdf8" />,
+      icon: <Award size={16} color="var(--brand)" />,
       onClick: () => router.push('/admin/assessments?mode=assessment'),
     },
     {
       label: 'Create Mock Exam',
       sub: 'Full timed blueprint test',
-      icon: <Play size={16} color="#38bdf8" />,
+      icon: <Play size={16} color="var(--brand)" />,
       onClick: () => router.push('/admin/assessments?mode=mock'),
     },
     {
       label: 'Manage Students',
       sub: 'User directory management',
-      icon: <Users size={16} color="#38bdf8" />,
+      icon: <Users size={16} color="var(--brand)" />,
       onClick: () => router.push('/admin/users'),
     },
     {
       label: 'View Reports',
       sub: 'Institutional analytics DTO',
-      icon: <BarChart2 size={16} color="#38bdf8" />,
+      icon: <BarChart2 size={16} color="var(--brand)" />,
       onClick: () => router.push('/admin/reports'),
     },
   ];
@@ -51,19 +51,19 @@ export const QuickActionsBar: React.FC = () => {
       style={{
         padding: '1.25rem 1.5rem',
         borderRadius: '16px',
-        backgroundColor: '#151d30',
-        border: '1px solid rgba(255, 255, 255, 0.07)',
+        backgroundColor: 'var(--surface-0)',
+        border: '1px solid var(--border)',
         display: 'flex',
         flexDirection: 'column',
         gap: '0.85rem',
-        boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2)',
+        boxShadow: 'var(--shadow-surface)',
       }}
     >
       <div
         style={{
           fontSize: '0.725rem',
           fontWeight: 800,
-          color: '#64748b',
+          color: 'var(--text-muted)',
           textTransform: 'uppercase',
           letterSpacing: '0.04em',
         }}
@@ -87,9 +87,9 @@ export const QuickActionsBar: React.FC = () => {
             style={{
               padding: '0.75rem 0.85rem',
               borderRadius: '12px',
-              backgroundColor: '#0f172a',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              color: '#ffffff',
+              backgroundColor: 'var(--surface-1)',
+              border: '1px solid var(--border)',
+              color: 'var(--text-primary)',
               display: 'flex',
               alignItems: 'center',
               gap: '0.65rem',
@@ -100,13 +100,13 @@ export const QuickActionsBar: React.FC = () => {
               transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#38bdf8';
-              e.currentTarget.style.backgroundColor = 'rgba(56, 189, 248, 0.08)';
+              e.currentTarget.style.borderColor = 'var(--brand)';
+              e.currentTarget.style.backgroundColor = 'var(--brand-subtle)';
               e.currentTarget.style.transform = 'translateY(-1px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-              e.currentTarget.style.backgroundColor = '#0f172a';
+              e.currentTarget.style.borderColor = 'var(--border)';
+              e.currentTarget.style.backgroundColor = 'var(--surface-1)';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
@@ -114,7 +114,7 @@ export const QuickActionsBar: React.FC = () => {
               style={{
                 padding: '0.35rem',
                 borderRadius: '6px',
-                backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                backgroundColor: 'var(--brand-subtle)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -128,7 +128,7 @@ export const QuickActionsBar: React.FC = () => {
                 style={{
                   fontSize: '0.8rem',
                   fontWeight: 700,
-                  color: '#ffffff',
+                  color: 'var(--text-primary)',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -139,7 +139,7 @@ export const QuickActionsBar: React.FC = () => {
               <div
                 style={{
                   fontSize: '0.7rem',
-                  color: '#94a3b8',
+                  color: 'var(--text-muted)',
                   marginTop: '1px',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',

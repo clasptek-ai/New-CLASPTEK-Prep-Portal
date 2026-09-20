@@ -144,7 +144,22 @@ export async function GET(
         att.created_at AS started_at
       FROM public.assessment_attempts att
       LEFT JOIN public.assessment_definitions ad ON att.catalog_id = ad.id
-      LEFT JOIN public.assessment_results res ON att.id = res.attempt_id
+      LEFT JOIN LATERAL (
+        SELECT
+          res.overall_score,
+          res.cefr_level,
+          res.predicted_band,
+          res.placement_level,
+          res.recommended_course,
+          res.recommended_duration,
+          res.time_taken_seconds
+        FROM public.assessment_results res
+        WHERE att.id = res.attempt_id
+        ORDER BY
+          res.generated_at DESC NULLS LAST,
+          res.id DESC
+        LIMIT 1
+      ) res ON true
       WHERE att.student_id::text = ANY($1::text[])
         AND att.deleted_at IS NULL
       ORDER BY att.created_at DESC`,
@@ -178,7 +193,16 @@ export async function GET(
         END AS duration_minutes,
         ms.started_at AS started_at
       FROM public.mock_sessions ms
-      LEFT JOIN public.mock_results mr ON ms.id = mr.session_id
+      LEFT JOIN LATERAL (
+        SELECT
+          mr.official_score_label
+        FROM public.mock_results mr
+        WHERE ms.id = mr.session_id
+        ORDER BY
+          mr.scored_at DESC NULLS LAST,
+          mr.id DESC
+        LIMIT 1
+      ) mr ON true
       WHERE ms.student_id::text = ANY($1::text[])
       ORDER BY ms.created_at DESC`,
       [studentIds]

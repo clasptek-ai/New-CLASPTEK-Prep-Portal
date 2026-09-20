@@ -1,5 +1,9 @@
-import { MockBlueprint, MockBlueprintSection } from '../domain/mock-blueprint';
-import { adminQuestionsService, AdminQuestion, QuestionType, SectionType } from '../../../services/admin/questions.service';
+import { MockBlueprint } from '../domain/mock-blueprint';
+import {
+  adminQuestionsService,
+  AdminQuestion,
+  SectionType,
+} from '../../../services/admin/questions.service';
 
 export interface BlueprintValidationResult {
   isValid: boolean;
@@ -82,7 +86,9 @@ export class BlueprintSelectorService {
    */
   public async selectQuestionsForBlueprint(
     blueprint: MockBlueprint
-  ): Promise<Array<{ sectionName: SectionType; timeLimitMinutes: number; questions: AdminQuestion[] }>> {
+  ): Promise<
+    Array<{ sectionName: SectionType; timeLimitMinutes: number; questions: AdminQuestion[] }>
+  > {
     const validation = await this.validateBlueprint(blueprint);
     if (!validation.isValid) {
       throw new BlueprintValidationError(validation);

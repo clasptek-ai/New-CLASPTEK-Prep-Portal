@@ -26,6 +26,16 @@ export interface PracticeAnswerItem {
   bookmarked?: boolean;
 }
 
+export interface PracticeQuestionReviewItem {
+  questionId: string;
+  questionVersionId?: string;
+  userAnswer: string;
+  isCorrect: boolean;
+  correctAnswer?: string | string[];
+  explanation?: string | null;
+  isSubjective?: boolean;
+}
+
 export interface BandScoreResult {
   rawScore: number;
   totalQuestions: number;
@@ -200,6 +210,7 @@ export interface PracticeSession {
   timeAllowedSeconds: number;
   timeSpentSeconds: number;
   scoreResult?: BandScoreResult;
+  questionReviews?: PracticeQuestionReviewItem[];
   createdAt: string;
   completedAt?: string;
 }
@@ -354,13 +365,15 @@ export const studentPracticeService = {
     sessionId: string,
     answers: Record<string, PracticeAnswerItem>,
     timeSpentSeconds: number,
-    exam: ExamType
+    exam: ExamType,
+    existingQuestions?: AdminQuestion[]
   ): Promise<PracticeSession> {
     const practiceRepo = RepositoryFactory.getPracticeRepository();
     const total = Object.keys(answers).length || 1;
 
     // Submit to server for server-side scoring (correctAnswer is blank in client for security)
     let scoreResult: BandScoreResult | undefined;
+    let questionReviews: PracticeQuestionReviewItem[] | undefined;
     try {
       const res = await fetch(`/api/v1/practice/${sessionId}/submit`, {
         method: 'POST',
@@ -376,6 +389,9 @@ export const studentPracticeService = {
           bandOrScale: serverData.bandOrScale ?? `${Math.round(serverData.scorePercentage ?? 0)}%`,
           label: serverData.label ?? 'Developing',
         };
+        if (Array.isArray(serverData.questionReviews)) {
+          questionReviews = serverData.questionReviews;
+        }
       }
     } catch {
       // Server submission failed — fall back to client-side tally
@@ -397,12 +413,13 @@ export const studentPracticeService = {
       skill: 'Custom Session',
       difficulty: 'MEDIUM',
       totalQuestions: scoreResult.totalQuestions,
-      questions: [],
+      questions: existingQuestions && existingQuestions.length > 0 ? existingQuestions : [],
       answers,
       isCompleted: true,
       timeAllowedSeconds: 0,
       timeSpentSeconds,
       scoreResult,
+      questionReviews,
       createdAt: new Date().toISOString(),
       completedAt: new Date().toISOString(),
     };

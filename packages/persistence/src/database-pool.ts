@@ -3,10 +3,12 @@ import { ServerEnvironment } from '@clasptek/configuration';
 import { Logger } from '@clasptek/observability';
 import dns from 'dns';
 
-try {
-  dns.setServers(['8.8.8.8', '1.1.1.1']);
-} catch {
-  /* ignore */
+if (process.env.CUSTOM_DNS_SERVERS) {
+  try {
+    dns.setServers(process.env.CUSTOM_DNS_SERVERS.split(',').map((s) => s.trim()));
+  } catch {
+    /* ignore */
+  }
 }
 
 declare global {
@@ -60,11 +62,16 @@ export class DatabasePool {
     }
 
     if (globalThis.__globalPgPool) {
-      const options = (globalThis.__globalPgPool as any).options;
-      const connStr = (options && options.connectionString) || '';
-      if (connStr.includes('pooler.supabase.com:5432')) {
+      try {
+        const client = await globalThis.__globalPgPool.connect();
+        client.release();
+        this.pool = globalThis.__globalPgPool;
+        this.isConnected = true;
+        return;
+      } catch (err: unknown) {
         this.logger.warn(
-          'Cached Postgres pool uses outdated port 5432, resetting singleton pool...'
+          'Cached Postgres pool failed health check, resetting singleton pool:',
+          toErrorRecord(err)
         );
         try {
           await globalThis.__globalPgPool.end();
@@ -72,25 +79,6 @@ export class DatabasePool {
           /* ignore */
         }
         globalThis.__globalPgPool = undefined;
-      } else {
-        try {
-          const client = await globalThis.__globalPgPool.connect();
-          client.release();
-          this.pool = globalThis.__globalPgPool;
-          this.isConnected = true;
-          return;
-        } catch (err: unknown) {
-          this.logger.warn(
-            'Cached Postgres pool failed health check, resetting singleton pool:',
-            toErrorRecord(err)
-          );
-          try {
-            await globalThis.__globalPgPool.end();
-          } catch {
-            /* ignore */
-          }
-          globalThis.__globalPgPool = undefined;
-        }
       }
     }
 
@@ -99,7 +87,7 @@ export class DatabasePool {
     const cleanUrl = this.config.DATABASE_URL.replace(
       'sslmode=verify-full',
       'sslmode=no-verify'
-    ).replace('pooler.supabase.com:5432', 'pooler.supabase.com:6543');
+    ).replace(':6543/', ':5432/');
     const maxRetries = 3;
     let lastError: any = null;
 
@@ -114,9 +102,11 @@ export class DatabasePool {
         });
 
         // Add error handler for idle clients to prevent unhandled node errors
-        newPool.on('error', (err: unknown) => {
-          this.logger.warn('Unexpected error on idle Postgres pool client:', toErrorRecord(err));
-        });
+        if (typeof (newPool as any).on === 'function') {
+          (newPool as any).on('error', (err: unknown) => {
+            this.logger.warn('Unexpected error on idle Postgres pool client:', toErrorRecord(err));
+          });
+        }
 
         // Acquire a client to verify database reachability
         const client = await newPool.connect();

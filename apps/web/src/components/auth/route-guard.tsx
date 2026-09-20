@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuthContext } from '../../providers/AuthProvider';
 import { logAuthRedirectToLogin } from '@/lib/auth-logger';
 import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
+import { ClasptekLoadingScreen } from '../feedback/ClasptekLoadingScreen';
 
 export type UserRole = 'STUDENT' | 'INSTRUCTOR' | 'ADMINISTRATOR' | 'SYSTEM_ADMIN';
 
@@ -154,34 +155,7 @@ export function RouteGuard({ allowedRoles, children }: RouteGuardProps) {
 
   if (authLoading || loading) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#0b0f19',
-          color: '#cbd5e1',
-          fontFamily: 'system-ui, sans-serif',
-          gap: '1rem',
-        }}
-      >
-        <div
-          style={{
-            width: '36px',
-            height: '36px',
-            border: '3px solid rgba(59, 130, 246, 0.2)',
-            borderTopColor: '#3b82f6',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-          }}
-        />
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-        <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, color: '#94a3b8' }}>
-          Verifying security context...
-        </h3>
-      </div>
+      <ClasptekLoadingScreen context="auth" message="Securing your session…" showSecurityBadge />
     );
   }
 

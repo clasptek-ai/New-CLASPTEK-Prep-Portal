@@ -288,7 +288,11 @@ export class PostgresCanonicalPracticeRepository {
     questionVersionId: string,
     userOptionCode: string,
     itemType?: string
-  ): Promise<{ isCorrect: boolean; explanation?: string }> {
+  ): Promise<{
+    isCorrect: boolean;
+    explanation?: string | undefined;
+    correctAnswer?: string | string[] | undefined;
+  }> {
     const MCQ_STYLE_TYPES = new Set([
       'MULTIPLE_CHOICE',
       'MCQ',
@@ -332,19 +336,24 @@ export class PostgresCanonicalPracticeRepository {
     );
     const explanation = expRes.rows[0]?.explanation || undefined;
 
-    if (!userOptionCode || userOptionCode.trim() === '') {
-      return { isCorrect: false, explanation };
-    }
-
     // For MCQ-style: check answer_options table first
     if (isMCQStyle || !upperType) {
-      const res = await this.pool.query(
-        `SELECT is_correct FROM public.answer_options
-         WHERE question_version_id = $1 AND LOWER(option_code) = LOWER($2) LIMIT 1`,
-        [questionVersionId, userOptionCode.trim()]
+      const optRes = await this.pool.query(
+        `SELECT option_code, is_correct FROM public.answer_options
+         WHERE question_version_id = $1 ORDER BY display_order ASC`,
+        [questionVersionId]
       );
-      if (res.rows.length > 0) {
-        return { isCorrect: res.rows[0].is_correct === true, explanation };
+      if (optRes.rows.length > 0) {
+        const correctOptions = optRes.rows.filter((o) => o.is_correct === true);
+        if (correctOptions.length > 0) {
+          const codes = correctOptions.map((o) => o.option_code);
+          const correctAnswer = codes.length === 1 ? codes[0] : codes;
+          const isCorrect =
+            userOptionCode && userOptionCode.trim() !== ''
+              ? codes.some((c) => c.toLowerCase() === userOptionCode.trim().toLowerCase())
+              : false;
+          return { isCorrect, explanation, correctAnswer };
+        }
       }
       // fall through to payload check
     }
@@ -365,6 +374,40 @@ export class PostgresCanonicalPracticeRepository {
 
     const { correct_answer, accepted_answers, multi_answers, payload_type } = payloadRes.rows[0];
     const effectiveType = (payload_type || upperType).toUpperCase();
+
+    // Resolve payload-based correctAnswer
+    let resolvedCorrectAnswer: string | string[] | undefined = undefined;
+    if (effectiveType === 'MULTI_BLANK' || multi_answers) {
+      const expectedBlankArrays: string[][] = Array.isArray(multi_answers)
+        ? multi_answers
+        : typeof multi_answers === 'string'
+          ? JSON.parse(multi_answers)
+          : null;
+
+      if (expectedBlankArrays && expectedBlankArrays.length > 0) {
+        resolvedCorrectAnswer = expectedBlankArrays
+          .map((arr) => (Array.isArray(arr) ? arr[0] : String(arr)))
+          .join(', ');
+      } else if (correct_answer) {
+        resolvedCorrectAnswer = correct_answer;
+      } else if (accepted_answers) {
+        const arr = Array.isArray(accepted_answers)
+          ? accepted_answers
+          : JSON.parse(typeof accepted_answers === 'string' ? accepted_answers : '[]');
+        resolvedCorrectAnswer = arr.length === 1 ? arr[0] : arr;
+      }
+    } else if (correct_answer) {
+      resolvedCorrectAnswer = correct_answer;
+    } else if (accepted_answers) {
+      const arr = Array.isArray(accepted_answers)
+        ? accepted_answers
+        : JSON.parse(typeof accepted_answers === 'string' ? accepted_answers : '[]');
+      resolvedCorrectAnswer = arr.length === 1 ? arr[0] : arr;
+    }
+
+    if (!userOptionCode || userOptionCode.trim() === '') {
+      return { isCorrect: false, explanation, correctAnswer: resolvedCorrectAnswer };
+    }
 
     // --- MULTI_BLANK handling ---
     if (effectiveType === 'MULTI_BLANK' || multi_answers) {
@@ -399,7 +442,7 @@ export class PostgresCanonicalPracticeRepository {
 
       if (expectedBlankArrays && expectedBlankArrays.length === 2) {
         if (candidateParts.length < 2 || !candidateParts[0] || !candidateParts[1]) {
-          return { isCorrect: false, explanation };
+          return { isCorrect: false, explanation, correctAnswer: resolvedCorrectAnswer };
         }
         const b1 = candidateParts[0];
         const b2 = candidateParts[1];
@@ -410,7 +453,9 @@ export class PostgresCanonicalPracticeRepository {
         const matchPositional =
           target0.some((t) => isMatch(b1, t)) && target1.some((t) => isMatch(b2, t));
 
-        if (matchPositional) return { isCorrect: true, explanation };
+        if (matchPositional) {
+          return { isCorrect: true, explanation, correctAnswer: resolvedCorrectAnswer };
+        }
       }
 
       if (accepted_answers) {
@@ -423,20 +468,20 @@ export class PostgresCanonicalPracticeRepository {
             );
         for (const aa of acceptedArr) {
           if (typeof aa === 'string' && isMatch(userOptionCode, aa)) {
-            return { isCorrect: true, explanation };
+            return { isCorrect: true, explanation, correctAnswer: resolvedCorrectAnswer };
           }
         }
       }
 
-      return { isCorrect: false, explanation };
+      return { isCorrect: false, explanation, correctAnswer: resolvedCorrectAnswer };
     }
 
     if (!correct_answer && !accepted_answers) {
-      return { isCorrect: false, explanation };
+      return { isCorrect: false, explanation, correctAnswer: resolvedCorrectAnswer };
     }
 
     if (correct_answer && isMatch(userOptionCode, correct_answer)) {
-      return { isCorrect: true, explanation };
+      return { isCorrect: true, explanation, correctAnswer: resolvedCorrectAnswer };
     }
 
     if (accepted_answers) {
@@ -445,12 +490,12 @@ export class PostgresCanonicalPracticeRepository {
         : JSON.parse(typeof accepted_answers === 'string' ? accepted_answers : '[]');
       for (const aa of arr) {
         if (typeof aa === 'string' && isMatch(userOptionCode, aa)) {
-          return { isCorrect: true, explanation };
+          return { isCorrect: true, explanation, correctAnswer: resolvedCorrectAnswer };
         }
       }
     }
 
-    return { isCorrect: false, explanation };
+    return { isCorrect: false, explanation, correctAnswer: resolvedCorrectAnswer };
   }
 
   public async completeSession(

@@ -176,11 +176,11 @@ export function AttemptInspectorModal({
         <div className="p-5 border-b border-(--border) flex justify-between items-center bg-(--surface-1)">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-(--brand-light) uppercase tracking-widest">
+              <span className="text-[10px] font-bold text-(--brand) uppercase tracking-widest">
                 Immutable Paper Snapshot Inspector
               </span>
               {isMock && (
-                <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[9px] font-bold font-mono">
+                <span className="px-2 py-0.5 rounded bg-(--accent-mock-subtle) text-(--accent-mock) border border-(--accent-mock-border) text-[9px] font-bold font-mono">
                   IELTS OFFICIAL MOCK
                 </span>
               )}
@@ -192,7 +192,7 @@ export function AttemptInspectorModal({
             <div className="text-xs text-(--text-muted) font-mono mt-0.5 flex gap-3">
               <span>Attempt ID: {attemptId}</span>
               {detailBundle?.attempt.candidateNumber && (
-                <span className="text-indigo-400 font-bold">
+                <span className="text-(--accent-diagnostic) font-bold">
                   Candidate No: {detailBundle.attempt.candidateNumber}
                 </span>
               )}
@@ -228,7 +228,7 @@ export function AttemptInspectorModal({
               onClick={() => setActiveTab(t.id as any)}
               className={`py-3 px-3 text-xs font-bold border-b-2 transition-colors shrink-0 ${
                 activeTab === t.id
-                  ? 'border-(--brand) text-(--brand-light)'
+                  ? 'border-(--brand) text-(--brand)'
                   : 'border-transparent text-(--text-muted) hover:text-(--text-primary)'
               }`}
             >
@@ -245,7 +245,7 @@ export function AttemptInspectorModal({
               <div>Deserializing frozen paper snapshot & audit events...</div>
             </div>
           ) : !detailBundle ? (
-            <div className="text-center text-rose-400 p-8">Failed to load attempt details.</div>
+            <div className="text-center text-(--error) p-8">Failed to load attempt details.</div>
           ) : (
             <>
               {/* TAB 1: OVERVIEW */}
@@ -256,7 +256,7 @@ export function AttemptInspectorModal({
                       <div className="text-[10px] text-(--text-muted) uppercase">
                         {isMock ? 'Overall IELTS Band' : 'Overall Score'}
                       </div>
-                      <div className="text-2xl font-black text-(--brand-light) mt-1">
+                      <div className="text-2xl font-black text-(--brand) mt-1">
                         {isMock
                           ? `Band ${Number(detailBundle.result?.overallScore || detailBundle.attempt.officialScaledScore || detailBundle.attempt.score || 0).toFixed(1)}`
                           : `${detailBundle.result?.overallScore || detailBundle.attempt.score}%`}
@@ -264,7 +264,7 @@ export function AttemptInspectorModal({
                     </div>
                     <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) text-center">
                       <div className="text-[10px] text-(--text-muted) uppercase">CEFR Level</div>
-                      <div className="text-xl font-bold text-indigo-400 mt-1">
+                      <div className="text-xl font-bold text-(--accent-diagnostic) mt-1">
                         {detailBundle.result?.cefrLevel || 'Pending Evaluation'}
                       </div>
                     </div>
@@ -272,15 +272,17 @@ export function AttemptInspectorModal({
                       <div className="text-[10px] text-(--text-muted) uppercase">
                         Official Score Label
                       </div>
-                      <div className="text-xl font-bold text-purple-400 mt-1">
+                      <div className="text-xl font-bold text-(--accent-mock) mt-1">
                         {detailBundle.attempt.officialScoreLabel ||
                           detailBundle.result?.predictedBand ||
                           'Pending'}
                       </div>
                     </div>
                     <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) text-center">
-                      <div className="text-[10px] text-(--text-muted) uppercase">Assessment Type</div>
-                      <div className="text-base font-bold text-emerald-400 mt-1.5">
+                      <div className="text-[10px] text-(--text-muted) uppercase">
+                        Assessment Type
+                      </div>
+                      <div className="text-base font-bold text-(--success) mt-1.5">
                         {isMock ? 'OFFICIAL MOCK' : 'DIAGNOSTIC'}
                       </div>
                     </div>
@@ -301,7 +303,7 @@ export function AttemptInspectorModal({
                             <div className="text-[10px] text-(--text-muted) uppercase font-semibold">
                               {sec.sectionName || sec.sectionCode}
                             </div>
-                            <div className="text-lg font-bold text-(--brand-light) font-mono">
+                            <div className="text-lg font-bold text-(--brand) font-mono">
                               {sec.scaledScore !== undefined
                                 ? `Band ${Number(sec.scaledScore).toFixed(1)}`
                                 : `${sec.scorePercentage}%`}
@@ -324,19 +326,23 @@ export function AttemptInspectorModal({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-(--text-secondary) font-mono">
                       <div>
                         Candidate Name:{' '}
-                        <strong className="text-(--text-primary)">{detailBundle.attempt.studentName}</strong>
+                        <strong className="text-(--text-primary)">
+                          {detailBundle.attempt.studentName}
+                        </strong>
                       </div>
                       <div>
                         Candidate Email:{' '}
-                        <strong className="text-(--text-primary)">{detailBundle.attempt.studentEmail}</strong>
+                        <strong className="text-(--text-primary)">
+                          {detailBundle.attempt.studentEmail}
+                        </strong>
                       </div>
                       <div>
                         Attempt Status:{' '}
-                        <strong className="text-emerald-400">{detailBundle.attempt.status}</strong>
+                        <strong className="text-(--success)">{detailBundle.attempt.status}</strong>
                       </div>
                       <div>
                         Evaluation State:{' '}
-                        <strong className="text-purple-400">
+                        <strong className="text-(--accent-mock)">
                           {detailBundle.attempt.evaluationState || 'COMPLETED'}
                         </strong>
                       </div>
@@ -356,7 +362,7 @@ export function AttemptInspectorModal({
                       </div>
                       <div>
                         Programme / Course:{' '}
-                        <strong className="text-(--brand-light)">
+                        <strong className="text-(--brand)">
                           {detailBundle.result?.recommendedCourse || 'IELTS Academic Masterclass'}
                         </strong>
                       </div>
@@ -374,7 +380,7 @@ export function AttemptInspectorModal({
                       {listeningItems.length} Items)
                     </span>
                     {isMock && (
-                      <span className="text-xs text-(--brand-light) font-mono font-normal">
+                      <span className="text-xs text-(--brand) font-mono font-normal">
                         Raw Correct:{' '}
                         {
                           listeningItems.filter(
@@ -388,13 +394,13 @@ export function AttemptInspectorModal({
 
                   {/* Master Section Audio Player & Verification Panel */}
                   {distinctAudioTracks.length > 0 && (
-                    <div className="bg-slate-950 p-4 rounded-xl border border-indigo-500/30 space-y-3">
+                    <div className="bg-(--surface-inverse-elevated) p-4 rounded-xl border border-(--border-inverse) space-y-3">
                       <div className="flex flex-wrap justify-between items-center gap-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">
+                          <span className="text-xs font-bold text-(--text-inverse) uppercase tracking-wider">
                             🎧 Audio Verification Console
                           </span>
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-(--success-subtle) text-(--success) border border-(--success-border)">
                             {distinctAudioTracks.length} Sections Ready
                           </span>
                         </div>
@@ -406,8 +412,8 @@ export function AttemptInspectorModal({
                               onClick={() => setSelectedTrackIndex(tIdx)}
                               className={`px-2.5 py-1 rounded text-[11px] font-mono font-bold border transition-colors ${
                                 selectedTrackIndex === tIdx
-                                  ? 'bg-indigo-600 text-white border-indigo-500'
-                                  : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
+                                  ? 'bg-(--brand) text-white border-(--brand)'
+                                  : 'bg-(--surface-inverse-muted) text-(--text-inverse-secondary) border-(--border-inverse) hover:bg-(--surface-inverse)'
                               }`}
                             >
                               Sec {tr.sectionNumber} ({tr.questionCount} Qs)
@@ -417,13 +423,13 @@ export function AttemptInspectorModal({
                       </div>
 
                       {distinctAudioTracks[selectedTrackIndex] && (
-                        <div className="bg-slate-900/90 p-3 rounded-lg border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div className="bg-(--surface-inverse) p-3 rounded-lg border border-(--border-inverse) flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                           <div className="space-y-0.5 min-w-0">
-                            <div className="font-semibold text-slate-200 text-xs truncate">
+                            <div className="font-semibold text-(--text-inverse) text-xs truncate">
                               Section {distinctAudioTracks[selectedTrackIndex].sectionNumber}:{' '}
                               {distinctAudioTracks[selectedTrackIndex].trackTitle}
                             </div>
-                            <div className="text-[10px] text-slate-400 font-mono flex flex-wrap gap-2">
+                            <div className="text-[10px] text-(--text-inverse-muted) font-mono flex flex-wrap gap-2">
                               <span>
                                 Track: {distinctAudioTracks[selectedTrackIndex].trackCode}
                               </span>
@@ -475,19 +481,19 @@ export function AttemptInspectorModal({
                       return (
                         <div
                           key={qId || idx}
-                          className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2.5"
+                          className="bg-(--surface-0) p-4 rounded-xl border border-(--border) space-y-2.5"
                         >
                           <div className="flex justify-between items-start gap-3">
-                            <div className="font-semibold text-slate-200">
+                            <div className="font-semibold text-(--text-primary)">
                               Q{idx + 1}. {q.prompt}
                             </div>
                             <span
                               className={`px-2.5 py-0.5 rounded text-[10px] font-bold border shrink-0 ${
                                 isCorrect === true
-                                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                                  ? 'bg-(--success-subtle) text-(--success) border-(--success-border)'
                                   : isCorrect === false
-                                    ? 'bg-rose-500/20 text-rose-400 border-rose-500/30'
-                                    : 'bg-slate-800 text-slate-400 border-slate-700'
+                                    ? 'bg-(--error-subtle) text-(--error) border-(--error-border)'
+                                    : 'bg-(--surface-1) text-(--text-muted) border-(--border)'
                               }`}
                             >
                               {isCorrect === true
@@ -500,8 +506,8 @@ export function AttemptInspectorModal({
 
                           {/* Audio player if audio exists */}
                           {resolvedAudioUrl && (
-                            <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 flex items-center gap-3">
-                              <span className="text-[10px] text-(--brand-light) font-bold font-mono">
+                            <div className="bg-(--surface-1) p-2.5 rounded-lg border border-(--border) flex items-center gap-3">
+                              <span className="text-[10px] text-(--brand) font-bold font-mono">
                                 AUDIO:
                               </span>
                               <audio
@@ -529,22 +535,22 @@ export function AttemptInspectorModal({
                                     key={opt.code || opt.id}
                                     className={`p-2.5 rounded-lg border flex items-center justify-between ${
                                       isOptSelected && isOptCorrect
-                                        ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-300 font-semibold'
+                                        ? 'bg-(--success-subtle) border-(--success) text-(--success) font-semibold'
                                         : isOptSelected && !isOptCorrect
-                                          ? 'bg-rose-950/40 border-rose-500/50 text-rose-300 font-semibold'
+                                          ? 'bg-(--error-subtle) border-(--error) text-(--error) font-semibold'
                                           : isOptCorrect
-                                            ? 'bg-emerald-950/20 border-emerald-500/30 text-emerald-400/80'
-                                            : 'bg-(--surface-1) border-(--border) text-(--text-muted)'
+                                            ? 'bg-(--success-subtle)/50 border-(--success-border) text-(--success)'
+                                            : 'bg-(--surface-1) border-(--border) text-(--text-secondary)'
                                     }`}
                                   >
                                     <span className="flex items-center gap-2">
-                                      <span className="w-5 h-5 rounded flex items-center justify-center bg-slate-900 border border-slate-800 font-bold text-[10px] uppercase">
+                                      <span className="w-5 h-5 rounded flex items-center justify-center bg-(--surface-0) border border-(--border) font-bold text-[10px] uppercase text-(--text-primary)">
                                         {opt.code || opt.id}
                                       </span>
                                       <span>{opt.text}</span>
                                     </span>
                                     {isOptSelected && (
-                                      <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-slate-900 font-mono font-bold">
+                                      <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-(--surface-0) border border-(--border) text-(--text-primary) font-mono font-bold">
                                         Candidate Choice
                                       </span>
                                     )}
@@ -554,10 +560,10 @@ export function AttemptInspectorModal({
                             </div>
                           )}
 
-                          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-900 font-mono text-[11px]">
+                          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-(--border) font-mono text-[11px]">
                             <div>
-                              <span className="text-slate-500">Answer Key / Correct: </span>
-                              <span className="text-emerald-400 font-bold">
+                              <span className="text-(--text-muted)">Answer Key / Correct: </span>
+                              <span className="text-(--success) font-bold">
                                 {q.correctOptionCode ||
                                   q.correctAnswer ||
                                   (Array.isArray(q.acceptedAnswers) && q.acceptedAnswers.length > 0
@@ -566,12 +572,12 @@ export function AttemptInspectorModal({
                               </span>
                             </div>
                             <div>
-                              <span className="text-slate-500">Candidate Answer: </span>
+                              <span className="text-(--text-muted)">Candidate Answer: </span>
                               <span
                                 className={
                                   isCorrect
-                                    ? 'text-emerald-400 font-bold'
-                                    : 'text-rose-400 font-bold'
+                                    ? 'text-(--success) font-bold'
+                                    : 'text-(--error) font-bold'
                                 }
                               >
                                 {String(selectedCode)}
@@ -588,13 +594,13 @@ export function AttemptInspectorModal({
               {/* TAB 3: READING */}
               {activeTab === 'READING' && (
                 <div className="space-y-4">
-                  <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3">
-                    <div className="font-bold text-sky-400 uppercase">
+                  <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) space-y-3">
+                    <div className="font-bold text-(--brand) uppercase">
                       Reading Passage:{' '}
                       {detailBundle.paperSnapshot.readingPassage?.title ||
                         'Academic Reading Section'}
                     </div>
-                    <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-300 leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap font-sans">
+                    <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) text-(--text-secondary) leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap font-sans">
                       {detailBundle.paperSnapshot.readingPassage?.content ||
                         'Reading passage captured from session snapshots.'}
                     </div>
@@ -636,14 +642,14 @@ export function AttemptInspectorModal({
                       return (
                         <div
                           key={qId || idx}
-                          className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3"
+                          className="bg-(--surface-0) p-4 rounded-xl border border-(--border) space-y-3"
                         >
-                          <div className="flex justify-between items-start font-semibold text-slate-200">
+                          <div className="flex justify-between items-start font-semibold text-(--text-primary)">
                             <div>
                               Reading Q{idx + 1}: {cq.prompt}
                             </div>
                             <span
-                              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}
+                              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${isCorrect ? 'bg-(--success-subtle) text-(--success) border-(--success-border)' : 'bg-(--error-subtle) text-(--error) border-(--error-border)'}`}
                             >
                               {isCorrect ? '✓ Correct' : '✗ Incorrect'}
                             </span>
@@ -663,14 +669,16 @@ export function AttemptInspectorModal({
                                   <div
                                     key={opt.code}
                                     className={`p-2 rounded-lg border flex items-center gap-2 ${
-                                      isOptCorrect
-                                        ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
-                                        : isOptSelected
-                                          ? 'border-rose-500/40 bg-rose-500/10 text-rose-300'
-                                          : 'border-slate-800 bg-slate-900 text-slate-400'
+                                      isOptSelected && isOptCorrect
+                                        ? 'border-(--success) bg-(--success-subtle) text-(--success) font-semibold'
+                                        : isOptSelected && !isOptCorrect
+                                          ? 'border-(--error) bg-(--error-subtle) text-(--error) font-semibold'
+                                          : isOptCorrect
+                                            ? 'border-(--success-border) bg-(--success-subtle)/50 text-(--success)'
+                                            : 'border-(--border) bg-(--surface-1) text-(--text-secondary)'
                                     }`}
                                   >
-                                    <span className="w-5 h-5 rounded-full border border-slate-700 flex items-center justify-center text-[10px] font-mono">
+                                    <span className="w-5 h-5 rounded-full border border-(--border) bg-(--surface-0) flex items-center justify-center text-[10px] font-mono text-(--text-primary)">
                                       {opt.code}
                                     </span>
                                     <span>{opt.text}</span>
@@ -680,12 +688,12 @@ export function AttemptInspectorModal({
                             </div>
                           )}
 
-                          <div className="flex flex-wrap gap-4 font-mono text-[11px] pt-1 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+                          <div className="flex flex-wrap gap-4 font-mono text-[11px] pt-1 bg-(--surface-1) p-2.5 rounded-lg border border-(--border)">
                             <div>
-                              <span className="text-slate-400">
+                              <span className="text-(--text-muted)">
                                 {isInputType ? 'Accepted Answers:' : 'Correct Option:'}{' '}
                               </span>
-                              <span className="text-emerald-400 font-bold">
+                              <span className="text-(--success) font-bold">
                                 {isInputType
                                   ? Array.isArray(cq.acceptedAnswers) &&
                                     cq.acceptedAnswers.length > 0
@@ -695,12 +703,12 @@ export function AttemptInspectorModal({
                               </span>
                             </div>
                             <div>
-                              <span className="text-slate-400">Candidate Response: </span>
+                              <span className="text-(--text-muted)">Candidate Response: </span>
                               <span
                                 className={
                                   isCorrect
-                                    ? 'text-emerald-400 font-bold'
-                                    : 'text-rose-400 font-bold'
+                                    ? 'text-(--success) font-bold'
+                                    : 'text-(--error) font-bold'
                                 }
                               >
                                 {String(isInputType ? candidateText : selectedCode)}
@@ -734,25 +742,26 @@ export function AttemptInspectorModal({
                     return (
                       <div
                         key={wt.id || idx}
-                        className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3"
+                        className="bg-(--surface-0) p-5 rounded-xl border border-(--border) space-y-3"
                       >
                         <div className="flex justify-between items-center flex-wrap gap-2">
-                          <span className="font-bold text-(--brand-light) uppercase">
+                          <span className="font-bold text-(--brand) uppercase">
                             Writing Task {wt.taskNumber || idx + 1}: {wt.title}
                           </span>
                           <div className="flex items-center gap-3">
-                            <span className="text-slate-400 font-mono text-[11px]">
-                              Word Count: <strong className="text-white">{wordCount}</strong> / Min{' '}
+                            <span className="text-(--text-muted) font-mono text-[11px]">
+                              Word Count:{' '}
+                              <strong className="text-(--text-primary)">{wordCount}</strong> / Min{' '}
                               {wt.minWords || 150}
                             </span>
                             {aiEval && (
                               <span
                                 className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${
                                   aiEval.status === 'COMPLETED'
-                                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                                    ? 'bg-(--accent-mock-subtle) text-(--accent-mock) border-(--accent-mock-border)'
                                     : aiEval.status === 'FAILED'
-                                      ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                                      : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                      ? 'bg-(--error-subtle) text-(--error) border-(--error-border)'
+                                      : 'bg-(--warning-subtle) text-(--warning) border-(--warning-border)'
                                 }`}
                               >
                                 {aiEval.status === 'COMPLETED'
@@ -765,35 +774,37 @@ export function AttemptInspectorModal({
 
                         {/* AI Provider Telemetry */}
                         {aiEval?.gradingProvider && (
-                          <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-slate-400 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
+                          <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-(--text-muted) bg-(--surface-1) px-3 py-1.5 rounded-lg border border-(--border)">
                             <span>
                               Provider:{' '}
-                              <strong className="text-(--brand-light)">
+                              <strong className="text-(--brand)">
                                 {aiEval.gradingProvider.toUpperCase()}
                               </strong>
                             </span>
                             <span>•</span>
                             <span>
                               Model:{' '}
-                              <strong className="text-purple-300">{aiEval.gradingModel}</strong>
+                              <strong className="text-(--accent-mock)">
+                                {aiEval.gradingModel}
+                              </strong>
                             </span>
                             {aiEval.isFallback && (
-                              <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-bold">
+                              <span className="px-1.5 py-0.5 rounded bg-(--warning-subtle) text-(--warning) border border-(--warning-border) text-[9px] font-bold">
                                 FALLBACK FROM {aiEval.fallbackFrom || 'PRIMARY'}
                               </span>
                             )}
                           </div>
                         )}
 
-                        <p className="text-slate-300 font-medium bg-slate-900 p-3 rounded-lg border border-slate-800">
+                        <p className="text-(--text-primary) font-medium bg-(--surface-1) p-3 rounded-lg border border-(--border)">
                           {wt.prompt}
                         </p>
 
                         <div className="space-y-1">
-                          <div className="text-slate-400 font-semibold uppercase text-[10px]">
+                          <div className="text-(--text-muted) font-semibold uppercase text-[10px]">
                             Candidate Submitted Response:
                           </div>
-                          <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200 font-mono leading-relaxed whitespace-pre-wrap">
+                          <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) text-(--text-primary) font-mono leading-relaxed whitespace-pre-wrap">
                             {textStr}
                           </div>
                         </div>
@@ -801,26 +812,26 @@ export function AttemptInspectorModal({
                         {/* Criteria Breakdown */}
                         {Array.isArray(aiEval?.criteria) && aiEval.criteria.length > 0 && (
                           <div className="space-y-2 pt-1">
-                            <div className="text-[10px] font-bold text-slate-400 uppercase">
+                            <div className="text-[10px] font-bold text-(--text-muted) uppercase">
                               Assessment Criteria Scores:
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                               {aiEval.criteria.map((c: any, cIdx: number) => (
                                 <div
                                   key={cIdx}
-                                  className="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1"
+                                  className="bg-(--surface-1) p-2.5 rounded-lg border border-(--border) space-y-1"
                                 >
-                                  <div className="text-[10px] text-slate-400 uppercase font-semibold">
+                                  <div className="text-[10px] text-(--text-muted) uppercase font-semibold">
                                     {c.criterionName}
                                   </div>
-                                  <div className="text-sm font-bold text-(--brand-light) font-mono">
+                                  <div className="text-sm font-bold text-(--brand) font-mono">
                                     {c.score !== null ? Number(c.score).toFixed(1) : '-'}{' '}
-                                    <span className="text-[10px] text-slate-500">
+                                    <span className="text-[10px] text-(--text-muted)">
                                       / {c.maxScore || 9}
                                     </span>
                                   </div>
                                   {c.feedback && (
-                                    <div className="text-[10px] text-slate-400 italic line-clamp-2">
+                                    <div className="text-[10px] text-(--text-secondary) italic line-clamp-2">
                                       {c.feedback}
                                     </div>
                                   )}
@@ -831,11 +842,11 @@ export function AttemptInspectorModal({
                         )}
 
                         {aiEval?.feedback && (
-                          <div className="bg-purple-950/30 border border-purple-800/40 p-3.5 rounded-xl space-y-1 mt-2">
-                            <div className="text-[10px] font-bold text-purple-400 uppercase">
+                          <div className="bg-(--accent-mock-subtle) border border-(--accent-mock-border) p-3.5 rounded-xl space-y-1 mt-2">
+                            <div className="text-[10px] font-bold text-(--accent-mock) uppercase">
                               AI Examiner Evaluation & Feedback:
                             </div>
-                            <p className="text-slate-300 text-xs leading-relaxed">
+                            <p className="text-(--text-primary) text-xs leading-relaxed">
                               {aiEval.feedback}
                             </p>
                           </div>
@@ -855,16 +866,16 @@ export function AttemptInspectorModal({
                       return (
                         <div
                           key={spk.id || idx}
-                          className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3"
+                          className="bg-(--surface-0) p-5 rounded-xl border border-(--border) space-y-3"
                         >
                           <div className="flex justify-between items-center">
-                            <span className="font-bold text-(--brand-light) uppercase">
+                            <span className="font-bold text-(--brand) uppercase">
                               Speaking Part {spk.partNumber || idx + 1}:{' '}
                               {spk.prompt || `Part ${idx + 1}`}
                             </span>
                             <div className="flex items-center gap-2">
                               {spk.durationSeconds > 0 && (
-                                <span className="text-slate-400 font-mono text-[11px]">
+                                <span className="text-(--text-muted) font-mono text-[11px]">
                                   Duration: {spk.durationSeconds}s
                                 </span>
                               )}
@@ -872,10 +883,10 @@ export function AttemptInspectorModal({
                                 <span
                                   className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono border ${
                                     aiEval.status === 'COMPLETED'
-                                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                                      ? 'bg-(--accent-mock-subtle) text-(--accent-mock) border-(--accent-mock-border)'
                                       : aiEval.status === 'FAILED'
-                                        ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                                        : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                                        ? 'bg-(--error-subtle) text-(--error) border-(--error-border)'
+                                        : 'bg-(--warning-subtle) text-(--warning) border-(--warning-border)'
                                   }`}
                                 >
                                   {aiEval.status === 'COMPLETED'
@@ -888,20 +899,22 @@ export function AttemptInspectorModal({
 
                           {/* AI Telemetry */}
                           {aiEval?.gradingProvider && (
-                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-slate-400 bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
+                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-(--text-muted) bg-(--surface-1) px-3 py-1.5 rounded-lg border border-(--border)">
                               <span>
                                 Provider:{' '}
-                                <strong className="text-(--brand-light)">
+                                <strong className="text-(--brand)">
                                   {aiEval.gradingProvider.toUpperCase()}
                                 </strong>
                               </span>
                               <span>•</span>
                               <span>
                                 Model:{' '}
-                                <strong className="text-purple-300">{aiEval.gradingModel}</strong>
+                                <strong className="text-(--accent-mock)">
+                                  {aiEval.gradingModel}
+                                </strong>
                               </span>
                               {aiEval.isFallback && (
-                                <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-bold">
+                                <span className="px-1.5 py-0.5 rounded bg-(--warning-subtle) text-(--warning) border border-(--warning-border) text-[9px] font-bold">
                                   FALLBACK FROM {aiEval.fallbackFrom || 'PRIMARY'}
                                 </span>
                               )}
@@ -911,10 +924,10 @@ export function AttemptInspectorModal({
                           {/* Candidate Transcript / Response */}
                           {spk.transcript && (
                             <div className="space-y-1">
-                              <div className="text-slate-400 font-semibold uppercase text-[10px]">
+                              <div className="text-(--text-muted) font-semibold uppercase text-[10px]">
                                 Candidate Transcript / Spoken Response:
                               </div>
-                              <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 text-slate-200 font-mono leading-relaxed whitespace-pre-wrap">
+                              <div className="bg-(--surface-1) p-4 rounded-xl border border-(--border) text-(--text-primary) font-mono leading-relaxed whitespace-pre-wrap">
                                 {spk.transcript}
                               </div>
                             </div>
@@ -922,8 +935,8 @@ export function AttemptInspectorModal({
 
                           {/* Audio Player if recording exists */}
                           {spk.audioUrl && (
-                            <div className="bg-slate-900 p-3 rounded-xl border border-slate-800 flex items-center gap-3">
-                              <span className="text-[10px] text-(--brand-light) font-bold font-mono">
+                            <div className="bg-(--surface-1) p-3 rounded-xl border border-(--border) flex items-center gap-3">
+                              <span className="text-[10px] text-(--brand) font-bold font-mono">
                                 RECORDING:
                               </span>
                               <audio controls src={spk.audioUrl} className="w-full h-10" />
@@ -933,26 +946,26 @@ export function AttemptInspectorModal({
                           {/* Criteria Breakdown */}
                           {Array.isArray(aiEval?.criteria) && aiEval.criteria.length > 0 && (
                             <div className="space-y-2 pt-1">
-                              <div className="text-[10px] font-bold text-slate-400 uppercase">
+                              <div className="text-[10px] font-bold text-(--text-muted) uppercase">
                                 Speaking Assessment Criteria:
                               </div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                                 {aiEval.criteria.map((c: any, cIdx: number) => (
                                   <div
                                     key={cIdx}
-                                    className="bg-slate-900 p-2.5 rounded-lg border border-slate-800 space-y-1"
+                                    className="bg-(--surface-1) p-2.5 rounded-lg border border-(--border) space-y-1"
                                   >
-                                    <div className="text-[10px] text-slate-400 uppercase font-semibold">
+                                    <div className="text-[10px] text-(--text-muted) uppercase font-semibold">
                                       {c.criterionName}
                                     </div>
-                                    <div className="text-sm font-bold text-(--brand-light) font-mono">
+                                    <div className="text-sm font-bold text-(--brand) font-mono">
                                       {c.score !== null ? Number(c.score).toFixed(1) : '-'}{' '}
-                                      <span className="text-[10px] text-slate-500">
+                                      <span className="text-[10px] text-(--text-muted)">
                                         / {c.maxScore || 9}
                                       </span>
                                     </div>
                                     {c.feedback && (
-                                      <div className="text-[10px] text-slate-400 italic line-clamp-2">
+                                      <div className="text-[10px] text-(--text-secondary) italic line-clamp-2">
                                         {c.feedback}
                                       </div>
                                     )}
@@ -963,11 +976,11 @@ export function AttemptInspectorModal({
                           )}
 
                           {aiEval?.feedback && (
-                            <div className="bg-purple-950/30 border border-purple-800/40 p-3.5 rounded-xl space-y-1 mt-2">
-                              <div className="text-[10px] font-bold text-purple-400 uppercase">
+                            <div className="bg-(--accent-mock-subtle) border border-(--accent-mock-border) p-3.5 rounded-xl space-y-1 mt-2">
+                              <div className="text-[10px] font-bold text-(--accent-mock) uppercase">
                                 Examiner Assessment & Feedback:
                               </div>
-                              <p className="text-slate-300 text-xs leading-relaxed">
+                              <p className="text-(--text-primary) text-xs leading-relaxed">
                                 {aiEval.feedback}
                               </p>
                             </div>
@@ -976,8 +989,8 @@ export function AttemptInspectorModal({
                       );
                     })
                   ) : (
-                    <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2 text-center text-slate-400">
-                      <div className="font-bold text-(--brand-light) uppercase">
+                    <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) space-y-2 text-center text-(--text-muted)">
+                      <div className="font-bold text-(--brand) uppercase">
                         Oral & Speaking Evaluation
                       </div>
                       <p>No speaking items captured in this attempt snapshot.</p>
@@ -991,27 +1004,28 @@ export function AttemptInspectorModal({
                 <div className="space-y-4">
                   {/* 4 Skill Section Breakdown */}
                   {Array.isArray(detailBundle.result?.sectionScores) && (
-                    <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3">
-                      <div className="font-bold text-(--brand-light) uppercase tracking-wider">
+                    <div className="bg-(--surface-0) p-5 rounded-xl border border-(--border) space-y-3">
+                      <div className="font-bold text-(--brand) uppercase tracking-wider">
                         Official Section Breakdown (All 4 Skills)
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                         {detailBundle.result.sectionScores.map((sec, i) => (
                           <div
                             key={i}
-                            className="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1 text-center"
+                            className="bg-(--surface-1) p-4 rounded-xl border border-(--border) space-y-1 text-center"
                           >
-                            <div className="text-[10px] text-slate-400 uppercase font-semibold">
+                            <div className="text-[10px] text-(--text-muted) uppercase font-semibold">
                               {sec.sectionName}
                             </div>
-                            <div className="text-2xl font-black text-white font-mono mt-1">
+                            <div className="text-2xl font-black text-(--text-primary) font-mono mt-1">
                               {sec.scaledScore !== undefined
                                 ? `Band ${Number(sec.scaledScore).toFixed(1)}`
                                 : `${sec.scorePercentage}%`}
                             </div>
                             {sec.rawScore !== undefined && (
-                              <div className="text-xs text-slate-400 font-mono">
-                                Raw Score: <strong className="text-(--brand-light)">{sec.rawScore}</strong>
+                              <div className="text-xs text-(--text-muted) font-mono">
+                                Raw Score:{' '}
+                                <strong className="text-(--brand)">{sec.rawScore}</strong>
                               </div>
                             )}
                           </div>
@@ -1022,20 +1036,20 @@ export function AttemptInspectorModal({
 
                   {detailBundle.result?.aiFeedback?.summary && (
                     <div className="bg-(--brand-subtle) border border-(--brand-border) p-4 rounded-xl space-y-1">
-                      <div className="font-bold text-(--brand-light) uppercase">
+                      <div className="font-bold text-(--brand) uppercase">
                         AI Diagnostic Evaluation
                       </div>
-                      <p className="text-slate-300 leading-relaxed">
+                      <p className="text-(--text-primary) leading-relaxed">
                         {detailBundle.result.aiFeedback.summary}
                       </p>
                     </div>
                   )}
                   {detailBundle.result?.strengths && (
-                    <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
-                      <div className="font-bold text-emerald-400 uppercase">
+                    <div className="bg-(--surface-0) p-4 rounded-xl border border-(--border) space-y-2">
+                      <div className="font-bold text-(--success) uppercase">
                         Strongest Competencies
                       </div>
-                      <ul className="list-disc list-inside text-slate-300">
+                      <ul className="list-disc list-inside text-(--text-primary)">
                         {detailBundle.result.strengths.map((s, i) => (
                           <li key={i}>{s}</li>
                         ))}
@@ -1048,22 +1062,22 @@ export function AttemptInspectorModal({
               {/* TAB 7: AUDIT TIMELINE */}
               {activeTab === 'AUDIT' && (
                 <div className="space-y-3">
-                  <div className="font-bold text-slate-200 uppercase">
+                  <div className="font-bold text-(--text-primary) uppercase">
                     Immutable Audit Timeline ({detailBundle.auditTimeline.length} Events)
                   </div>
 
-                  <div className="space-y-2 border-l-2 border-slate-800 pl-4">
+                  <div className="space-y-2 border-l-2 border-(--border) pl-4">
                     {detailBundle.auditTimeline.map((evt) => (
                       <div key={evt.id} className="relative space-y-1">
                         <div className="flex items-center space-x-2">
-                          <span className="px-2 py-0.5 bg-(--brand-subtle) text-(--brand-light) border border-(--brand-border) rounded font-bold font-mono text-[10px]">
+                          <span className="px-2 py-0.5 bg-(--brand-subtle) text-(--brand) border border-(--brand-border) rounded font-bold font-mono text-[10px]">
                             {evt.eventType}
                           </span>
-                          <span className="text-slate-500 font-mono text-[10px]">
+                          <span className="text-(--text-muted) font-mono text-[10px]">
                             {new Date(evt.timestamp).toLocaleString()}
                           </span>
                         </div>
-                        <pre className="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-[10px] text-slate-400 overflow-x-auto">
+                        <pre className="bg-(--surface-1) p-2.5 rounded-lg border border-(--border) text-[10px] text-(--text-secondary) overflow-x-auto">
                           {JSON.stringify(evt.payload, null, 2)}
                         </pre>
                       </div>
@@ -1089,6 +1103,7 @@ export function AttemptReviewConsole() {
   const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
 
   useEffect(() => {
+    let active = true;
     async function fetchAttempts() {
       setLoading(true);
       try {
@@ -1100,26 +1115,50 @@ export function AttemptReviewConsole() {
 
         const res = await fetch(`/api/v1/admin/assessment-attempts?${query.toString()}`);
         const data = await res.json();
-        if (data.attempts) {
+        if (active && data.attempts) {
           setAttempts(data.attempts);
         }
       } catch (err) {
-        console.error('Failed to fetch admin attempts:', err);
+        if (active) {
+          console.error('Failed to fetch admin attempts:', err);
+        }
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
     fetchAttempts();
+
+    return () => {
+      active = false;
+    };
   }, [search, statusFilter, cefrFilter, typeFilter]);
+
+  const uniqueAttempts = useMemo(() => {
+    const map = new Map<string, AttemptSummary>();
+
+    for (const att of attempts) {
+      if (!att.attemptId) continue;
+
+      if (!map.has(att.attemptId)) {
+        map.set(att.attemptId, att);
+      }
+    }
+
+    return Array.from(map.values());
+  }, [attempts]);
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 text-(--text-primary) font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-(--border) pb-6">
         <div>
-          <span className="text-xs font-bold text-(--brand-light) uppercase tracking-wider">
+          <span className="text-xs font-bold text-(--brand) uppercase tracking-wider">
             Assessment Audit Console
           </span>
-          <h1 className="text-2xl font-bold text-(--text-primary) mt-1">Student Attempt Review Console</h1>
+          <h1 className="text-2xl font-bold text-(--text-primary) mt-1">
+            Student Attempt Review Console
+          </h1>
           <p className="text-xs text-(--text-muted) mt-1">
             Inspect frozen paper snapshots, candidate answer logs, scoring rubrics, and event
             timelines for Official Mock Examinations and Diagnostics.
@@ -1131,7 +1170,9 @@ export function AttemptReviewConsole() {
           <button
             onClick={() => setTypeFilter('ALL')}
             className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${
-              typeFilter === 'ALL' ? 'bg-(--brand) text-white' : 'text-(--text-muted) hover:text-(--text-primary)'
+              typeFilter === 'ALL'
+                ? 'bg-(--brand) text-white'
+                : 'text-(--text-muted) hover:text-(--text-primary)'
             }`}
           >
             All Assessments
@@ -1139,7 +1180,9 @@ export function AttemptReviewConsole() {
           <button
             onClick={() => setTypeFilter('MOCK')}
             className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${
-              typeFilter === 'MOCK' ? 'bg-purple-500 text-white' : 'text-(--text-muted) hover:text-(--text-primary)'
+              typeFilter === 'MOCK'
+                ? 'bg-(--brand) text-white'
+                : 'text-(--text-muted) hover:text-(--text-primary)'
             }`}
           >
             Official Mock Exams
@@ -1148,7 +1191,7 @@ export function AttemptReviewConsole() {
             onClick={() => setTypeFilter('DIAGNOSTIC')}
             className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${
               typeFilter === 'DIAGNOSTIC'
-                ? 'bg-indigo-500 text-white'
+                ? 'bg-(--brand) text-white'
                 : 'text-(--text-muted) hover:text-(--text-primary)'
             }`}
           >
@@ -1200,7 +1243,7 @@ export function AttemptReviewConsole() {
             <div className="w-6 h-6 border-2 border-(--brand) border-t-transparent rounded-full animate-spin mx-auto" />
             <div>Loading student assessment attempts...</div>
           </div>
-        ) : attempts.length === 0 ? (
+        ) : uniqueAttempts.length === 0 ? (
           <div className="p-12 text-center text-xs text-(--text-muted)">
             No student assessment attempts found matching your filter criteria.
           </div>
@@ -1220,7 +1263,7 @@ export function AttemptReviewConsole() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-(--border)">
-                {attempts.map((att) => {
+                {uniqueAttempts.map((att) => {
                   const isMockAttempt = att.assessmentType === 'MOCK';
                   return (
                     <tr key={att.attemptId} className="hover:bg-(--surface-1)/50 transition-colors">
@@ -1234,8 +1277,8 @@ export function AttemptReviewConsole() {
                         <span
                           className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
                             isMockAttempt
-                              ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-                              : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                              ? 'bg-(--accent-mock-subtle) text-(--accent-mock) border-(--accent-mock-border)'
+                              : 'bg-(--accent-diagnostic-subtle) text-(--accent-diagnostic) border-(--accent-diagnostic-border)'
                           }`}
                         >
                           {isMockAttempt ? 'MOCK EXAM' : 'DIAGNOSTIC'}
@@ -1245,32 +1288,34 @@ export function AttemptReviewConsole() {
                         <span
                           className={`px-2.5 py-1 rounded-md text-[10px] font-bold border ${
                             att.status === 'SUBMITTED'
-                              ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+                              ? 'bg-(--success-subtle) text-(--success) border-(--success-border)'
                               : att.status === 'IN_PROGRESS'
-                                ? 'bg-(--brand-subtle) text-(--brand-light) border-(--brand-border)'
-                                : 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                                ? 'bg-(--brand-subtle) text-(--brand) border-(--brand-border)'
+                                : 'bg-(--warning-subtle) text-(--warning) border-(--warning-border)'
                           }`}
                         >
                           {att.status}
                         </span>
                       </td>
                       <td className="p-4">
-                        <span className="font-bold text-(--brand-light) font-mono text-sm">
+                        <span className="font-bold text-(--brand) font-mono text-sm">
                           {isMockAttempt && att.score <= 9.0
                             ? `Band ${Number(att.score).toFixed(1)}`
                             : `${att.score}%`}
                         </span>
                       </td>
                       <td className="p-4 space-x-1.5">
-                        <span className="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded text-[10px] font-bold">
+                        <span className="px-2 py-0.5 bg-(--accent-diagnostic-subtle) text-(--accent-diagnostic) border border-(--accent-diagnostic-border) rounded text-[10px] font-bold">
                           {att.cefrLevel}
                         </span>
-                        <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded text-[10px] font-bold">
+                        <span className="px-2 py-0.5 bg-(--accent-mock-subtle) text-(--accent-mock) border border-(--accent-mock-border) rounded text-[10px] font-bold">
                           {att.predictedBand}
                         </span>
                       </td>
                       <td className="p-4">
-                        <span className="text-(--text-secondary) font-semibold">{att.placementLevel}</span>
+                        <span className="text-(--text-secondary) font-semibold">
+                          {att.placementLevel}
+                        </span>
                       </td>
                       <td className="p-4 text-(--text-muted) text-[11px] font-mono">
                         {att.startedAt ? new Date(att.startedAt).toLocaleString() : '-'}

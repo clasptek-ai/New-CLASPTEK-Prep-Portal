@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { AuthShell } from '../shell/AuthShell';
 import { LoginForm } from '../../features/auth/login';
 import { Alert, AlertDescription, AlertTitle } from '../../shared/ui/alert/Alert';
+import { ClasptekLoadingScreen } from '../../components/feedback/ClasptekLoadingScreen';
 
 function LoginPageContent() {
   const searchParams = useSearchParams();
@@ -71,11 +72,7 @@ function LoginPageContent() {
 export default function LoginPage() {
   return (
     <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center text-[#475569] font-medium text-sm">
-          Loading Clasptek Portal...
-        </div>
-      }
+      fallback={<ClasptekLoadingScreen context="auth" message="Loading Clasptek Portal…" />}
     >
       <LoginPageContent />
     </Suspense>

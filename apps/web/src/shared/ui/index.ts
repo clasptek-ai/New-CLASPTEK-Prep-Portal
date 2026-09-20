@@ -147,3 +147,6 @@ export * from './highlight/TextHighlight';
 export * from './highlight/highlight.types';
 export * from './results/ScoreCard';
 export * from './results/results.types';
+
+// Canonical Loading & Transition Primitives (Phase 5.3)
+export * from '../../components/feedback/ClasptekLoadingScreen';

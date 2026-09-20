@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardViewModel } from '../hooks/use-dashboard-view-model';
 import { HeroWidget } from '../widgets/hero-widget';
+import { AssessmentIntelligenceWidget } from '../widgets/assessment-intelligence-widget';
 import { LearningProgressWidget } from '../widgets/learning-progress-widget';
 import { TodaysLearningWidget } from '../widgets/todays-learning-widget';
 import { UpcomingAssessmentsWidget } from '../widgets/upcoming-assessments-widget';
@@ -40,21 +41,28 @@ export const WidgetManager: React.FC<WidgetManagerProps> = ({ viewModel }) => {
         paddingBottom: '2rem',
       }}
     >
-      {/* ── Zone 1: Welcome + Programme + Next Action ── */}
+      {/* ── Zone 1: Welcome + Programme + Next Action (Intelligence Powered) ── */}
       <HeroWidget
         studentName={studentName}
         config={config}
         studyStreakDays={studyStreakDays}
         state={widgetState}
         isDiagnosticCompleted={
+          viewModel.intelligenceProfile.hasDiagnostic ||
           viewModel.overview?.assessmentSummary.diagnostic.status === 'COMPLETED'
         }
+        actionLabel={viewModel.intelligenceProfile.recommendedAction.label}
+        actionSubtitle={viewModel.intelligenceProfile.recommendedAction.evidence}
         onPrimaryAction={() => {
-          const isCompleted =
-            viewModel.overview?.assessmentSummary.diagnostic.status === 'COMPLETED';
-          router.push(isCompleted ? '/practice' : '/student/assessments');
+          router.push(viewModel.intelligenceProfile.recommendedAction.destination);
         }}
         onRetry={refetch}
+      />
+
+      {/* ── Zone 1.5: Assessment Intelligence & Progression ── */}
+      <AssessmentIntelligenceWidget
+        intelligence={viewModel.intelligenceProfile}
+        state={widgetState}
       />
 
       {/* ── Zone 2: Progress (2-column grid on wider viewports) ── */}

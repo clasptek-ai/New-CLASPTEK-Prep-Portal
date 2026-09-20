@@ -79,7 +79,7 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
         style={{
           fontSize: '0.75rem',
           fontWeight: 800,
-          color: '#64748b',
+          color: 'var(--text-muted)',
           textTransform: 'uppercase',
           letterSpacing: '0.06em',
         }}
@@ -100,8 +100,9 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
           style={{
             padding: '1.25rem 1.5rem',
             borderRadius: '16px',
-            backgroundColor: '#151d30',
-            border: '1px solid rgba(255, 255, 255, 0.07)',
+            backgroundColor: 'var(--surface-0)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-surface)',
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
@@ -109,10 +110,17 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '0.95rem',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 Candidate Registration Trend
               </h3>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                 Monthly student sign-ups (Past 6 Months)
               </div>
             </div>
@@ -120,10 +128,10 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
               style={{
                 padding: '0.4rem',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                backgroundColor: 'var(--brand-subtle)',
               }}
             >
-              <TrendingUp size={18} color="#38bdf8" />
+              <TrendingUp size={18} color="var(--brand)" />
             </div>
           </div>
 
@@ -154,7 +162,7 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                     style={{
                       fontSize: '0.7rem',
                       fontWeight: 700,
-                      color: item.count > 0 ? '#38bdf8' : '#64748b',
+                      color: item.count > 0 ? 'var(--chart-1)' : 'var(--text-muted)',
                     }}
                   >
                     {item.count}
@@ -165,12 +173,13 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                         width: '100%',
                         height: `${heightPct}%`,
                         borderRadius: '6px 6px 2px 2px',
-                        backgroundImage: 'linear-gradient(180deg, #38bdf8, #1e40af)',
+                        backgroundImage:
+                          'linear-gradient(180deg, var(--chart-1), var(--brand-hover))',
                         transition: 'height 0.3s ease',
                       }}
                     />
                   </div>
-                  <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                     {item.month}
                   </span>
                 </div>
@@ -184,8 +193,9 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
           style={{
             padding: '1.25rem 1.5rem',
             borderRadius: '16px',
-            backgroundColor: '#151d30',
-            border: '1px solid rgba(255, 255, 255, 0.07)',
+            backgroundColor: 'var(--surface-0)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-surface)',
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
@@ -193,10 +203,17 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '0.95rem',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 Daily Practice Activity
               </h3>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                 Candidate sessions executed (Past 7 Days)
               </div>
             </div>
@@ -204,10 +221,10 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
               style={{
                 padding: '0.4rem',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(52, 211, 153, 0.12)',
+                backgroundColor: 'rgba(13, 148, 136, 0.12)',
               }}
             >
-              <Layers size={18} color="#34d399" />
+              <Layers size={18} color="var(--chart-2)" />
             </div>
           </div>
 
@@ -238,7 +255,7 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                     style={{
                       fontSize: '0.7rem',
                       fontWeight: 700,
-                      color: item.count > 0 ? '#34d399' : '#64748b',
+                      color: item.count > 0 ? 'var(--chart-2)' : 'var(--text-muted)',
                     }}
                   >
                     {item.count}
@@ -249,12 +266,12 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                         width: '100%',
                         height: `${heightPct}%`,
                         borderRadius: '6px 6px 2px 2px',
-                        backgroundImage: 'linear-gradient(180deg, #34d399, #065f46)',
+                        backgroundImage: 'linear-gradient(180deg, var(--chart-2), #0f766e)',
                         transition: 'height 0.3s ease',
                       }}
                     />
                   </div>
-                  <span style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600 }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                     {item.day}
                   </span>
                 </div>
@@ -277,8 +294,9 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
           style={{
             padding: '1.25rem 1.5rem',
             borderRadius: '16px',
-            backgroundColor: '#151d30',
-            border: '1px solid rgba(255, 255, 255, 0.07)',
+            backgroundColor: 'var(--surface-0)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-surface)',
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
@@ -286,10 +304,17 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '0.95rem',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 Readiness Distribution
               </h3>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                 Candidate readiness score breakdown
               </div>
             </div>
@@ -297,10 +322,10 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
               style={{
                 padding: '0.4rem',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(168, 85, 247, 0.12)',
+                backgroundColor: 'var(--accent-mock-subtle)',
               }}
             >
-              <PieChart size={18} color="#a855f7" />
+              <PieChart size={18} color="var(--accent-mock)" />
             </div>
           </div>
 
@@ -311,12 +336,12 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                   display: 'flex',
                   justifyContent: 'space-between',
                   fontSize: '0.8rem',
-                  color: '#cbd5e1',
+                  color: 'var(--text-secondary)',
                   marginBottom: '0.25rem',
                 }}
               >
                 <span>High Readiness (≥70%)</span>
-                <strong style={{ color: '#34d399' }}>
+                <strong style={{ color: 'var(--success)' }}>
                   {high} ({highPct}%)
                 </strong>
               </div>
@@ -325,7 +350,8 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                   width: '100%',
                   height: '8px',
                   borderRadius: '4px',
-                  backgroundColor: '#0f172a',
+                  backgroundColor: 'var(--surface-2)',
+                  border: '1px solid var(--border-subtle)',
                   overflow: 'hidden',
                 }}
               >
@@ -333,7 +359,7 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                   style={{
                     width: `${highPct}%`,
                     height: '100%',
-                    backgroundColor: '#34d399',
+                    backgroundColor: 'var(--success)',
                     transition: 'width 0.3s ease',
                   }}
                 />
@@ -346,12 +372,12 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                   display: 'flex',
                   justifyContent: 'space-between',
                   fontSize: '0.8rem',
-                  color: '#cbd5e1',
+                  color: 'var(--text-secondary)',
                   marginBottom: '0.25rem',
                 }}
               >
                 <span>Medium Readiness (50-69%)</span>
-                <strong style={{ color: '#fbbf24' }}>
+                <strong style={{ color: 'var(--warning)' }}>
                   {medium} ({medPct}%)
                 </strong>
               </div>
@@ -360,7 +386,8 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                   width: '100%',
                   height: '8px',
                   borderRadius: '4px',
-                  backgroundColor: '#0f172a',
+                  backgroundColor: 'var(--surface-2)',
+                  border: '1px solid var(--border-subtle)',
                   overflow: 'hidden',
                 }}
               >
@@ -368,7 +395,7 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                   style={{
                     width: `${medPct}%`,
                     height: '100%',
-                    backgroundColor: '#fbbf24',
+                    backgroundColor: 'var(--warning)',
                     transition: 'width 0.3s ease',
                   }}
                 />
@@ -381,12 +408,12 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                   display: 'flex',
                   justifyContent: 'space-between',
                   fontSize: '0.8rem',
-                  color: '#cbd5e1',
+                  color: 'var(--text-secondary)',
                   marginBottom: '0.25rem',
                 }}
               >
                 <span>At Risk / Low (&lt;50%)</span>
-                <strong style={{ color: '#f87171' }}>
+                <strong style={{ color: 'var(--error)' }}>
                   {low} ({lowPct}%)
                 </strong>
               </div>
@@ -395,7 +422,8 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                   width: '100%',
                   height: '8px',
                   borderRadius: '4px',
-                  backgroundColor: '#0f172a',
+                  backgroundColor: 'var(--surface-2)',
+                  border: '1px solid var(--border-subtle)',
                   overflow: 'hidden',
                 }}
               >
@@ -403,7 +431,7 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                   style={{
                     width: `${lowPct}%`,
                     height: '100%',
-                    backgroundColor: '#f87171',
+                    backgroundColor: 'var(--error)',
                     transition: 'width 0.3s ease',
                   }}
                 />
@@ -417,8 +445,9 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
           style={{
             padding: '1.25rem 1.5rem',
             borderRadius: '16px',
-            backgroundColor: '#151d30',
-            border: '1px solid rgba(255, 255, 255, 0.07)',
+            backgroundColor: 'var(--surface-0)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-surface)',
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
@@ -426,10 +455,17 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '0.95rem',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 Programme Enrollment
               </h3>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                 Candidates grouped by academic target
               </div>
             </div>
@@ -437,10 +473,10 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
               style={{
                 padding: '0.4rem',
                 borderRadius: '8px',
-                backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                backgroundColor: 'var(--brand-subtle)',
               }}
             >
-              <Users size={18} color="#38bdf8" />
+              <Users size={18} color="var(--brand)" />
             </div>
           </div>
 
@@ -454,18 +490,21 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                       display: 'flex',
                       justifyContent: 'space-between',
                       fontSize: '0.78rem',
-                      color: '#cbd5e1',
+                      color: 'var(--text-secondary)',
                     }}
                   >
                     <span>{item.name}</span>
-                    <span style={{ fontWeight: 700, color: '#f8fafc' }}>{item.count}</span>
+                    <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                      {item.count}
+                    </span>
                   </div>
                   <div
                     style={{
                       width: '100%',
                       height: '6px',
                       borderRadius: '3px',
-                      backgroundColor: '#0f172a',
+                      backgroundColor: 'var(--surface-2)',
+                      border: '1px solid var(--border-subtle)',
                       overflow: 'hidden',
                     }}
                   >
@@ -473,7 +512,7 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                       style={{
                         width: `${widthPct}%`,
                         height: '100%',
-                        backgroundColor: '#38bdf8',
+                        backgroundColor: 'var(--chart-1)',
                         transition: 'width 0.3s ease',
                       }}
                     />
@@ -489,8 +528,9 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
           style={{
             padding: '1.25rem 1.5rem',
             borderRadius: '16px',
-            backgroundColor: '#151d30',
-            border: '1px solid rgba(255, 255, 255, 0.07)',
+            backgroundColor: 'var(--surface-0)',
+            border: '1px solid var(--border)',
+            boxShadow: 'var(--shadow-surface)',
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
@@ -498,10 +538,17 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: '0.95rem',
+                  fontWeight: 800,
+                  color: 'var(--text-primary)',
+                }}
+              >
                 Question Inventory
               </h3>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '2px' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                 Asset breakdown by category
               </div>
             </div>
@@ -511,12 +558,13 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                 style={{
                   padding: '0.2rem 0.5rem',
                   borderRadius: '4px',
-                  border: 'none',
+                  border:
+                    questionTab === 'byExam' ? '1px solid var(--brand)' : '1px solid var(--border)',
                   fontSize: '0.7rem',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  backgroundColor: questionTab === 'byExam' ? '#2563eb' : '#0f172a',
-                  color: questionTab === 'byExam' ? '#ffffff' : '#94a3b8',
+                  backgroundColor: questionTab === 'byExam' ? 'var(--brand)' : 'var(--surface-1)',
+                  color: questionTab === 'byExam' ? '#ffffff' : 'var(--text-muted)',
                 }}
               >
                 Exam
@@ -526,12 +574,15 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                 style={{
                   padding: '0.2rem 0.5rem',
                   borderRadius: '4px',
-                  border: 'none',
+                  border:
+                    questionTab === 'bySkill'
+                      ? '1px solid var(--brand)'
+                      : '1px solid var(--border)',
                   fontSize: '0.7rem',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  backgroundColor: questionTab === 'bySkill' ? '#2563eb' : '#0f172a',
-                  color: questionTab === 'bySkill' ? '#ffffff' : '#94a3b8',
+                  backgroundColor: questionTab === 'bySkill' ? 'var(--brand)' : 'var(--surface-1)',
+                  color: questionTab === 'bySkill' ? '#ffffff' : 'var(--text-muted)',
                 }}
               >
                 Skill
@@ -541,12 +592,16 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                 style={{
                   padding: '0.2rem 0.5rem',
                   borderRadius: '4px',
-                  border: 'none',
+                  border:
+                    questionTab === 'byDifficulty'
+                      ? '1px solid var(--brand)'
+                      : '1px solid var(--border)',
                   fontSize: '0.7rem',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  backgroundColor: questionTab === 'byDifficulty' ? '#2563eb' : '#0f172a',
-                  color: questionTab === 'byDifficulty' ? '#ffffff' : '#94a3b8',
+                  backgroundColor:
+                    questionTab === 'byDifficulty' ? 'var(--brand)' : 'var(--surface-1)',
+                  color: questionTab === 'byDifficulty' ? '#ffffff' : 'var(--text-muted)',
                 }}
               >
                 Difficulty
@@ -560,7 +615,7 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                 style={{
                   padding: '1rem',
                   textAlign: 'center',
-                  color: '#64748b',
+                  color: 'var(--text-muted)',
                   fontSize: '0.8rem',
                 }}
               >
@@ -579,18 +634,21 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                         display: 'flex',
                         justifyContent: 'space-between',
                         fontSize: '0.78rem',
-                        color: '#cbd5e1',
+                        color: 'var(--text-secondary)',
                       }}
                     >
                       <span>{item.name}</span>
-                      <span style={{ fontWeight: 700, color: '#f8fafc' }}>{item.count}</span>
+                      <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                        {item.count}
+                      </span>
                     </div>
                     <div
                       style={{
                         width: '100%',
                         height: '6px',
                         borderRadius: '3px',
-                        backgroundColor: '#0f172a',
+                        backgroundColor: 'var(--surface-2)',
+                        border: '1px solid var(--border-subtle)',
                         overflow: 'hidden',
                       }}
                     >
@@ -598,7 +656,7 @@ export const ExecutiveAnalytics: React.FC<ExecutiveAnalyticsProps> = ({ charts }
                         style={{
                           width: `${widthPct}%`,
                           height: '100%',
-                          backgroundColor: '#c084fc',
+                          backgroundColor: 'var(--chart-3)',
                           transition: 'width 0.3s ease',
                         }}
                       />

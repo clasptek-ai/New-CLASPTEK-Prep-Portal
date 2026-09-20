@@ -286,12 +286,13 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                 >
                   <Award size={22} />
                 </div>
-                <h1 style={{ fontSize: '1.625rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                <h1 style={{ fontSize: '1.625rem', fontWeight: 800, color: '#F8FAFC', margin: 0 }}>
                   Official Mock Examinations
                 </h1>
               </div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>
-                Full-length timed exam simulations for IELTS, TOEFL, SAT, CELPIP & English Proficiency.
+              <p style={{ color: '#94A3B8', fontSize: '0.9rem', margin: 0 }}>
+                Full-length timed exam simulations for IELTS, TOEFL, SAT, CELPIP & English
+                Proficiency.
               </p>
             </div>
 
@@ -360,7 +361,9 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                     Pre-Assessment Recommended for Baseline Profile
                   </h3>
                   <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569' }}>
-                    Completing your diagnostic Pre-Assessment establishes your starting academic profile. You can also proceed directly to official full-length mock simulations below.
+                    Completing your diagnostic Pre-Assessment establishes your starting academic
+                    profile. You can also proceed directly to official full-length mock simulations
+                    below.
                   </p>
                 </div>
 
@@ -425,7 +428,13 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                 >
                   IELTS Band 7.5 / TOEFL 105 / SAT 1420
                 </div>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0' }}>
+                <p
+                  style={{
+                    fontSize: '0.85rem',
+                    color: 'var(--text-secondary)',
+                    margin: '0.35rem 0 0',
+                  }}
+                >
                   Based on your performance across official blueprint sections.
                 </p>
               </div>
@@ -441,7 +450,7 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
 
           {/* Available Mock Examination Templates Grid */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+            <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#F8FAFC', margin: 0 }}>
               Available Official Exam Mocks ({templates.length})
             </h2>
 
@@ -507,7 +516,8 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
                       </h3>
 
                       <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: 0 }}>
-                        {t.totalQuestions} Questions · {t.sections.length} Blueprint Sections · Official Scoring Conversion
+                        {t.totalQuestions} Questions · {t.sections.length} Blueprint Sections ·
+                        Official Scoring Conversion
                       </p>
                     </div>
 
@@ -566,15 +576,25 @@ export function MockDashboard({ onStart }: MockDashboardProps) {
             >
               <Award size={40} />
             </div>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+            <h2
+              style={{
+                fontSize: '1.75rem',
+                fontWeight: 800,
+                color: 'var(--text-primary)',
+                margin: 0,
+              }}
+            >
               Official Mock Examination Score Report
             </h2>
             <div style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--success)' }}>
               {activeResult.scoreResult.bandOrScale}
             </div>
             <div style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>
-              Official Classification: <strong style={{ color: 'var(--text-primary)' }}>{activeResult.scoreResult.label}</strong> (
-              {activeResult.scoreResult.percentage}% Raw Accuracy)
+              Official Classification:{' '}
+              <strong style={{ color: 'var(--text-primary)' }}>
+                {activeResult.scoreResult.label}
+              </strong>{' '}
+              ({activeResult.scoreResult.percentage}% Raw Accuracy)
             </div>
 
             <Button variant="primary" onClick={() => setViewState('DASHBOARD')}>

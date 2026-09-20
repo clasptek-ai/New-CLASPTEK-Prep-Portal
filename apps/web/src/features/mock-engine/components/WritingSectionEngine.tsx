@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Pen,
   Image as ImageIcon,
@@ -476,9 +476,7 @@ export function WritingSectionEngine({
                 backgroundColor: notesOpen
                   ? 'rgba(59, 130, 246, 0.2)'
                   : 'rgba(255, 255, 255, 0.05)',
-                border: notesOpen
-                  ? '1px solid #3b82f6'
-                  : '1px solid rgba(255, 255, 255, 0.1)',
+                border: notesOpen ? '1px solid #3b82f6' : '1px solid rgba(255, 255, 255, 0.1)',
                 color: notesOpen ? '#60a5fa' : '#94a3b8',
                 fontSize: '0.75rem',
                 fontWeight: 600,
@@ -525,9 +523,7 @@ export function WritingSectionEngine({
             minHeight: '40px',
             borderRadius: '8px',
             border:
-              mobileTab === 'PROMPT'
-                ? '1.5px solid #f59e0b'
-                : '1px solid rgba(255, 255, 255, 0.1)',
+              mobileTab === 'PROMPT' ? '1.5px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
             backgroundColor:
               mobileTab === 'PROMPT' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.03)',
             color: mobileTab === 'PROMPT' ? '#fbbf24' : '#94a3b8',
@@ -551,9 +547,7 @@ export function WritingSectionEngine({
             minHeight: '40px',
             borderRadius: '8px',
             border:
-              mobileTab === 'EDITOR'
-                ? '1.5px solid #f59e0b'
-                : '1px solid rgba(255, 255, 255, 0.1)',
+              mobileTab === 'EDITOR' ? '1.5px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
             backgroundColor:
               mobileTab === 'EDITOR' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.03)',
             color: mobileTab === 'EDITOR' ? '#fbbf24' : '#94a3b8',
@@ -936,7 +930,8 @@ export function WritingSectionEngine({
                   <>
                     <CheckCircle2 size={14} color="#34d399" />
                     <span>
-                      {wordCount} words · Minimum met <strong style={{ color: '#ffffff' }}>✓</strong>
+                      {wordCount} words · Minimum met{' '}
+                      <strong style={{ color: '#ffffff' }}>✓</strong>
                     </span>
                   </>
                 ) : (

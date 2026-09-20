@@ -25,46 +25,45 @@ export async function GET(req: NextRequest) {
 
     const res = await pool.query(query, params);
 
-    const blueprintsWithValidation = await Promise.all(
-      res.rows.map(async (row) => {
-        const sections =
-          Array.isArray(row.sections_payload) && row.sections_payload.length > 0
-            ? row.sections_payload
-            : [
-                { name: 'Listening', orderIndex: 1, timeLimitMinutes: 30, questionCount: 40 },
-                { name: 'Reading', orderIndex: 2, timeLimitMinutes: 60, questionCount: 40 },
-                { name: 'Writing', orderIndex: 3, timeLimitMinutes: 60, questionCount: 2 },
-                { name: 'Speaking', orderIndex: 4, timeLimitMinutes: 15, questionCount: 3 },
-              ];
-        const bpRecord = {
-          id: row.id,
-          examCode: row.exam_code,
-          examType: row.exam_type || 'IELTS Academic',
-          title: row.title,
-          description: row.description || '',
-          scoringStrategy: row.scoring_strategy || 'CUSTOM',
-          status: row.status,
-          versionNo: row.version_no || 1,
-          sections,
-        };
+    const blueprintsWithValidation = [];
+    for (const row of res.rows) {
+      const sections =
+        Array.isArray(row.sections_payload) && row.sections_payload.length > 0
+          ? row.sections_payload
+          : [
+              { name: 'Listening', orderIndex: 1, timeLimitMinutes: 30, questionCount: 40 },
+              { name: 'Reading', orderIndex: 2, timeLimitMinutes: 60, questionCount: 40 },
+              { name: 'Writing', orderIndex: 3, timeLimitMinutes: 60, questionCount: 2 },
+              { name: 'Speaking', orderIndex: 4, timeLimitMinutes: 15, questionCount: 3 },
+            ];
+      const bpRecord = {
+        id: row.id,
+        examCode: row.exam_code,
+        examType: row.exam_type || 'IELTS Academic',
+        title: row.title,
+        description: row.description || '',
+        scoringStrategy: row.scoring_strategy || 'CUSTOM',
+        status: row.status,
+        versionNo: row.version_no || 1,
+        sections,
+      };
 
-        const validation = await mockRepo.validateBlueprintInventory(bpRecord);
+      const validation = await mockRepo.validateBlueprintInventory(bpRecord);
 
-        return {
-          id: row.id,
-          examCode: row.exam_code,
-          examType: row.exam_type,
-          title: row.title,
-          description: row.description,
-          scoringStrategy: row.scoring_strategy,
-          status: row.status,
-          versionNo: row.version_no,
-          sections,
-          inventoryStatus: validation.isValid ? 'READY' : 'INSUFFICIENT_INVENTORY',
-          inventoryDeficits: validation.deficits,
-        };
-      })
-    );
+      blueprintsWithValidation.push({
+        id: row.id,
+        examCode: row.exam_code,
+        examType: row.exam_type,
+        title: row.title,
+        description: row.description,
+        scoringStrategy: row.scoring_strategy,
+        status: row.status,
+        versionNo: row.version_no,
+        sections,
+        inventoryStatus: validation.isValid ? 'READY' : 'INSUFFICIENT_INVENTORY',
+        inventoryDeficits: validation.deficits,
+      });
+    }
 
     return NextResponse.json({
       success: true,

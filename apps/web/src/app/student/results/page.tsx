@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { authFetch } from '@/lib/api-fetch';
-import { ArrowRight, CheckCircle2, AlertCircle, Award } from 'lucide-react';
+import { ArrowRight, CheckCircle2, AlertCircle, Award, Target, TrendingUp } from 'lucide-react';
+import { analyzeAssessmentIntelligence } from '@/features/intelligence/assessment-intelligence';
 
 interface SectionScore {
   sectionCode: string;
@@ -58,6 +59,11 @@ function StudentResultsContent() {
   const [enrolling, setEnrolling] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isForbidden, setIsForbidden] = useState(false);
+
+  // Compute assessment intelligence profile strictly scoped by active examination context
+  const intelligence = useMemo(() => {
+    return analyzeAssessmentIntelligence(recentResults, latestResult?.examType);
+  }, [recentResults, latestResult?.examType]);
 
   // Sync attempt ID state from URL search params
   useEffect(() => {
@@ -578,6 +584,147 @@ function StudentResultsContent() {
             </div>
           )}
 
+          {/* PHASE 3: EVIDENCE-BASED COMPETENCY & PROGRESSION INTELLIGENCE */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Card 1: Priority Development Area */}
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#B45309]">
+                  Priority Development Area
+                </span>
+                <div className="p-2 rounded-lg bg-[#FEF3C7] text-[#B45309]">
+                  <Target size={16} />
+                </div>
+              </div>
+              <h3 className="text-base font-extrabold text-deep-navy">
+                {intelligence.priorityDevelopmentArea
+                  ? intelligence.priorityDevelopmentArea.skillName
+                  : 'Balanced Performance'}
+              </h3>
+              <p className="text-xs text-[#475569] leading-relaxed">
+                {intelligence.priorityEvidence}
+              </p>
+              {intelligence.priorityDevelopmentArea ? (
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] font-semibold text-[#475569]">
+                    Measured:{' '}
+                    <strong className="text-deep-navy">
+                      {intelligence.priorityDevelopmentArea.scorePercentage}%
+                    </strong>
+                  </span>
+                  <button
+                    onClick={() =>
+                      router.push(
+                        `/practice?skill=${encodeURIComponent(intelligence.priorityDevelopmentArea!.skillName)}`
+                      )
+                    }
+                    className="text-xs font-bold text-[#045EAD] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  >
+                    Practice {intelligence.priorityDevelopmentArea.skillName} →
+                  </button>
+                </div>
+              ) : (
+                <div className="pt-2 border-t border-slate-100 text-[11px] text-[#64748B]">
+                  Complete more assessment sections to isolate specific skill priority.
+                </div>
+              )}
+            </div>
+
+            {/* Card 2: Highest Measured Competency */}
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#15803D]">
+                  Current Measured Strength
+                </span>
+                <div className="p-2 rounded-lg bg-[#DCFCE7] text-[#15803D]">
+                  <Award size={16} />
+                </div>
+              </div>
+              <h3 className="text-base font-extrabold text-deep-navy">
+                {intelligence.strongestSkill
+                  ? intelligence.strongestSkill.skillName
+                  : 'All Skills Balanced'}
+              </h3>
+              <p className="text-xs text-[#475569] leading-relaxed">
+                {intelligence.strongestSkill
+                  ? `${intelligence.strongestSkill.skillName} is currently your highest measured comparable skill.`
+                  : 'Your measured assessment skills show even performance across active sections.'}
+              </p>
+              {intelligence.strongestSkill && (
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                  <span className="font-semibold text-[#475569]">Measured Accuracy:</span>
+                  <span className="font-extrabold text-deep-navy">
+                    {intelligence.strongestSkill.scorePercentage}%
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Baseline vs Mock Progression Comparison */}
+          {intelligence.comparison && (
+            <div className="p-5 rounded-2xl bg-bg-light-blue border border-[#B9DDF8] space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <TrendingUp size={16} className="text-[#045EAD]" />
+                  <span className="text-xs font-extrabold text-[#045EAD] uppercase tracking-wider">
+                    Baseline vs. Mock Progression
+                  </span>
+                </div>
+                <span className="text-[11px] font-semibold text-[#475569]">
+                  {intelligence.comparison.mockDate}
+                </span>
+              </div>
+              <p className="text-xs font-semibold text-[#1E293B]">
+                {intelligence.comparison.summaryStatement}
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
+                <div className="p-3 bg-white rounded-xl border border-slate-200">
+                  <span className="text-[10px] font-bold uppercase text-[#475569] block">
+                    Diagnostic Baseline
+                  </span>
+                  <span className="text-sm font-extrabold text-deep-navy">
+                    {intelligence.comparison.baselineBand ||
+                      `${intelligence.comparison.baselineOverallScore}%`}
+                  </span>
+                  <span className="text-[10px] text-[#64748B] block mt-0.5">
+                    {intelligence.comparison.baselineDate}
+                  </span>
+                </div>
+                <div className="p-3 bg-white rounded-xl border border-slate-200">
+                  <span className="text-[10px] font-bold uppercase text-[#475569] block">
+                    Latest Mock
+                  </span>
+                  <span className="text-sm font-extrabold text-[#045EAD]">
+                    {intelligence.comparison.mockBand ||
+                      `${intelligence.comparison.mockOverallScore}%`}
+                  </span>
+                  <span className="text-[10px] text-[#64748B] block mt-0.5">
+                    {intelligence.comparison.mockDate}
+                  </span>
+                </div>
+                <div className="p-3 bg-white rounded-xl border border-slate-200 col-span-2 sm:col-span-1">
+                  <span className="text-[10px] font-bold uppercase text-[#475569] block">
+                    Net Delta
+                  </span>
+                  <span
+                    className={`text-sm font-extrabold ${(intelligence.comparison.bandDelta ?? intelligence.comparison.scoreDelta) >= 0 ? 'text-[#15803D]' : 'text-[#B45309]'}`}
+                  >
+                    {(intelligence.comparison.bandDelta ?? intelligence.comparison.scoreDelta) > 0
+                      ? '+'
+                      : ''}
+                    {intelligence.comparison.bandDelta !== undefined
+                      ? `${intelligence.comparison.bandDelta} Bands`
+                      : `${intelligence.comparison.scoreDelta}%`}
+                  </span>
+                  <span className="text-[10px] text-[#64748B] block mt-0.5">
+                    Authoritative delta
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* RECENT RESULTS TABLE */}
           {recentResults.length > 0 && (
             <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
@@ -641,7 +788,7 @@ function StudentResultsContent() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
               <button
                 type="button"
-                onClick={() => router.push('/practice')}
+                onClick={() => router.push(intelligence.recommendedAction.destination)}
                 className="p-5 rounded-xl bg-white border border-[#B9DDF8] hover:border-[#045EAD] hover:shadow-sm text-left flex flex-col justify-between gap-3 transition-all cursor-pointer group"
               >
                 <div>
@@ -649,15 +796,14 @@ function StudentResultsContent() {
                     Primary Action
                   </span>
                   <h3 className="text-sm font-bold text-deep-navy mt-2 group-hover:text-[#045EAD] transition-colors">
-                    Practice Weak Areas →
+                    {intelligence.recommendedAction.label}
                   </h3>
                   <p className="text-xs text-[#475569] mt-1 leading-relaxed">
-                    Target your specific skill gaps with adaptive practice drills in Reading,
-                    Listening, Writing, and Speaking.
+                    {intelligence.recommendedAction.evidence}
                   </p>
                 </div>
                 <span className="text-xs font-bold text-[#045EAD] inline-flex items-center gap-1.5 pt-2 border-t border-slate-100">
-                  <span>Start Practice Drills</span>
+                  <span>Continue Preparation</span>
                   <ArrowRight
                     size={14}
                     className="group-hover:translate-x-0.5 transition-transform"

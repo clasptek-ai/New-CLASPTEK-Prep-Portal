@@ -33,12 +33,12 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
         style={{
           padding: '1.35rem 1.5rem',
           borderRadius: '16px',
-          backgroundColor: '#151d30',
-          border: '1px solid rgba(255, 255, 255, 0.07)',
+          backgroundColor: 'var(--surface-0)',
+          border: '1px solid var(--border)',
           display: 'flex',
           flexDirection: 'column',
           gap: '1.1rem',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+          boxShadow: 'var(--shadow-surface)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -48,21 +48,21 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
                 margin: 0,
                 fontSize: '1rem',
                 fontWeight: 800,
-                color: '#f8fafc',
+                color: 'var(--text-primary)',
                 letterSpacing: '0.01em',
               }}
             >
               Today&apos;s Activity
             </h3>
-            <div style={{ fontSize: '0.725rem', color: '#94a3b8', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '2px' }}>
               Real-time operational audit log events
             </div>
           </div>
           <span
             style={{
               fontSize: '0.7rem',
-              color: '#34d399',
-              backgroundColor: 'rgba(52, 211, 153, 0.12)',
+              color: 'var(--success)',
+              backgroundColor: 'var(--success-subtle)',
               padding: '0.2rem 0.55rem',
               borderRadius: '4px',
               fontWeight: 700,
@@ -87,20 +87,22 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
               style={{
                 padding: '2.5rem 1.5rem',
                 textAlign: 'center',
-                color: '#64748b',
+                color: 'var(--text-muted)',
                 fontSize: '0.875rem',
-                backgroundColor: '#0f172a',
+                backgroundColor: 'var(--surface-1)',
                 borderRadius: '12px',
-                border: '1px dashed rgba(255,255,255,0.08)',
+                border: '1px dashed var(--border)',
               }}
             >
               <Activity
                 size={24}
-                color="#64748b"
+                color="var(--text-muted)"
                 style={{ margin: '0 auto 0.5rem', display: 'block' }}
               />
-              <div style={{ fontWeight: 600, color: '#cbd5e1' }}>No activity recorded today.</div>
-              <div style={{ fontSize: '0.75rem', color: '#475569', marginTop: '4px' }}>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                No activity recorded today.
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                 New student registrations, practice completions, diagnostic assessments, and
                 published questions will appear here live.
               </div>
@@ -112,8 +114,8 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
                 style={{
                   padding: '0.75rem 0.9rem',
                   borderRadius: '10px',
-                  backgroundColor: '#0f172a',
-                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                  backgroundColor: 'var(--surface-1)',
+                  border: '1px solid var(--border)',
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: '0.75rem',
@@ -123,8 +125,8 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
                   style={{
                     padding: '0.3rem',
                     borderRadius: '6px',
-                    backgroundColor: 'rgba(56, 189, 248, 0.12)',
-                    color: '#38bdf8',
+                    backgroundColor: 'var(--brand-subtle)',
+                    color: 'var(--brand)',
                     marginTop: '2px',
                     flexShrink: 0,
                   }}
@@ -136,13 +138,15 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
                     style={{
                       fontSize: '0.825rem',
                       fontWeight: 600,
-                      color: '#f1f5f9',
+                      color: 'var(--text-primary)',
                       wordBreak: 'break-word',
                     }}
                   >
                     {act.action}
                   </div>
-                  <div style={{ fontSize: '0.725rem', color: '#94a3b8', marginTop: '2px' }}>
+                  <div
+                    style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '2px' }}
+                  >
                     {act.user} • {act.timestamp}
                   </div>
                 </div>
@@ -157,12 +161,12 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
         style={{
           padding: '1.35rem 1.5rem',
           borderRadius: '16px',
-          backgroundColor: '#151d30',
-          border: '1px solid rgba(255, 255, 255, 0.07)',
+          backgroundColor: 'var(--surface-0)',
+          border: '1px solid var(--border)',
           display: 'flex',
           flexDirection: 'column',
           gap: '1.1rem',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+          boxShadow: 'var(--shadow-surface)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -172,23 +176,22 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
                 margin: 0,
                 fontSize: '1rem',
                 fontWeight: 800,
-                color: '#f8fafc',
+                color: 'var(--text-primary)',
                 letterSpacing: '0.01em',
               }}
             >
               Pending Operations
             </h3>
-            <div style={{ fontSize: '0.725rem', color: '#94a3b8', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', marginTop: '2px' }}>
               Actionable items requiring administrative review
             </div>
           </div>
           <span
             style={{
               fontSize: '0.7rem',
-              color: tasks.length > 0 ? '#fbbf24' : '#34d399',
+              color: tasks.length > 0 ? 'var(--warning)' : 'var(--success)',
               fontWeight: 700,
-              backgroundColor:
-                tasks.length > 0 ? 'rgba(251, 191, 36, 0.12)' : 'rgba(52, 211, 153, 0.12)',
+              backgroundColor: tasks.length > 0 ? 'var(--warning-subtle)' : 'var(--success-subtle)',
               padding: '0.2rem 0.55rem',
               borderRadius: '4px',
             }}
@@ -203,22 +206,22 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
               style={{
                 padding: '2.5rem 1.5rem',
                 textAlign: 'center',
-                color: '#34d399',
+                color: 'var(--success)',
                 fontSize: '0.875rem',
-                backgroundColor: '#0f172a',
+                backgroundColor: 'var(--surface-1)',
                 borderRadius: '12px',
-                border: '1px dashed rgba(52, 211, 153, 0.2)',
+                border: '1px dashed var(--border)',
               }}
             >
               <CheckCircle2
                 size={24}
-                color="#34d399"
+                color="var(--success)"
                 style={{ margin: '0 auto 0.5rem', display: 'block' }}
               />
-              <div style={{ fontWeight: 600, color: '#f8fafc' }}>
+              <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                 All operations are up to date.
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '4px' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                 No questions under review, pending imports, or flagged assessment reviews.
               </div>
             </div>
@@ -229,8 +232,8 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
                 style={{
                   padding: '0.75rem 0.9rem',
                   borderRadius: '10px',
-                  backgroundColor: '#0f172a',
-                  border: '1px solid rgba(255,255,255,0.05)',
+                  backgroundColor: 'var(--surface-1)',
+                  border: '1px solid var(--border)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
@@ -243,13 +246,13 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.6rem',
-                    color: '#cbd5e1',
+                    color: 'var(--text-primary)',
                     flex: 1,
                   }}
                 >
                   <AlertCircle
                     size={15}
-                    color={task.color || '#fbbf24'}
+                    color={task.color || 'var(--warning)'}
                     style={{ flexShrink: 0 }}
                   />
                   <span>{task.label}</span>
@@ -258,14 +261,14 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
                   <Link
                     href={task.actionUrl}
                     style={{
-                      color: task.color || '#38bdf8',
+                      color: 'var(--brand)',
                       fontSize: '0.725rem',
                       fontWeight: 700,
                       textDecoration: 'none',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.2rem',
-                      backgroundColor: `${task.color || '#38bdf8'}15`,
+                      backgroundColor: 'var(--brand-subtle)',
                       padding: '0.25rem 0.55rem',
                       borderRadius: '6px',
                     }}
@@ -273,7 +276,7 @@ export const AdminSectionsGrid: React.FC<AdminSectionsGridProps> = ({
                     Resolve <ArrowUpRight size={13} />
                   </Link>
                 ) : (
-                  <strong style={{ color: task.color || '#fbbf24', fontSize: '0.725rem' }}>
+                  <strong style={{ color: task.color || 'var(--warning)', fontSize: '0.725rem' }}>
                     {task.status}
                   </strong>
                 )}
