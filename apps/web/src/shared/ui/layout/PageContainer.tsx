@@ -19,7 +19,7 @@ export function PageContainer({
   return (
     <div
       className={cn(
-        'w-full mx-auto flex flex-col gap-6 text-[var(--text-primary)] font-sans',
+        'w-full mx-auto flex flex-col gap-6 text-(--text-primary) font-sans',
         className
       )}
       style={{
@@ -57,7 +57,7 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[var(--border)] w-full',
+        'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-(--border) w-full',
         className
       )}
       style={style}
@@ -65,11 +65,11 @@ export function PageHeader({
     >
       <div className="flex flex-col gap-1">
         {badge && <div className="mb-0.5">{badge}</div>}
-        <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[var(--text-primary)] m-0">
+        <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-(--text-primary) m-0">
           {title}
         </h1>
         {description && (
-          <p className="text-xs sm:text-sm text-[var(--text-muted)] m-0 leading-relaxed">
+          <p className="text-xs sm:text-sm text-(--text-muted) m-0 leading-relaxed">
             {description}
           </p>
         )}

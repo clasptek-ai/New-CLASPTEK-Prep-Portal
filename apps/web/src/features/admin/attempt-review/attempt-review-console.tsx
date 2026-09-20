@@ -1150,7 +1150,7 @@ export function AttemptReviewConsole() {
   }, [attempts]);
 
   return (
-    <div className="space-y-6 text-[var(--text-primary)] font-sans w-full">
+    <div className="space-y-6 text-(--text-primary) font-sans w-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-(--border) pb-6">
         <div>
           <span className="text-xs font-bold text-(--brand) uppercase tracking-wider">
