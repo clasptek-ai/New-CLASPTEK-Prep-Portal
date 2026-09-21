@@ -2,7 +2,12 @@
 
 import React from 'react';
 import { Search, X } from 'lucide-react';
-import { ExamType, SectionType, DifficultyLevel, QuestionWorkflowStatus } from '../../../../services/admin/questions.service';
+import {
+  ExamType,
+  SectionType,
+  DifficultyLevel,
+  QuestionWorkflowStatus,
+} from '../../../../services/admin/questions.service';
 
 export interface QuestionBankFiltersProps {
   searchQuery: string;
@@ -17,6 +22,14 @@ export interface QuestionBankFiltersProps {
   onStatusChange: (v: QuestionWorkflowStatus | 'ALL') => void;
   /** Map of status → count for the workflow tabs */
   statusCounts: Record<string, number>;
+  selectedAssessment?: string;
+  onAssessmentChange?: (v: string) => void;
+  selectedContentKind?: string;
+  onContentKindChange?: (v: string) => void;
+  selectedQuestionType?: string;
+  onQuestionTypeChange?: (v: string) => void;
+  selectedDependency?: string;
+  onDependencyChange?: (v: string) => void;
 }
 
 const SELECT_STYLE: React.CSSProperties = {
@@ -35,7 +48,12 @@ const SELECT_STYLE: React.CSSProperties = {
 };
 
 const WORKFLOW_STATUSES: (QuestionWorkflowStatus | 'ALL')[] = [
-  'ALL', 'DRAFT', 'UNDER_REVIEW', 'APPROVED', 'PUBLISHED', 'ARCHIVED',
+  'ALL',
+  'DRAFT',
+  'UNDER_REVIEW',
+  'APPROVED',
+  'PUBLISHED',
+  'ARCHIVED',
 ];
 
 export const QuestionBankFilters: React.FC<QuestionBankFiltersProps> = ({
@@ -50,6 +68,14 @@ export const QuestionBankFilters: React.FC<QuestionBankFiltersProps> = ({
   selectedStatus,
   onStatusChange,
   statusCounts,
+  selectedAssessment = 'ALL',
+  onAssessmentChange,
+  selectedContentKind = 'ALL',
+  onContentKindChange,
+  selectedQuestionType = 'ALL',
+  onQuestionTypeChange,
+  selectedDependency = 'ALL',
+  onDependencyChange,
 }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
@@ -110,20 +136,21 @@ export const QuestionBankFilters: React.FC<QuestionBankFiltersProps> = ({
         className="card card--compact"
         style={{
           display: 'flex',
-          flexWrap: 'wrap',
+          flexDirection: 'column',
           gap: '0.75rem',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          padding: '0.875rem 1rem',
+          backgroundColor: 'var(--surface-0)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border)',
         }}
       >
-        {/* Search */}
+        {/* Row 1: Search Bar */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0.6rem',
-            flex: 1,
-            minWidth: '240px',
+            width: '100%',
             backgroundColor: 'var(--surface-input)',
             border: '1px solid var(--border-strong)',
             borderRadius: 'var(--radius-md)',
@@ -134,7 +161,7 @@ export const QuestionBankFilters: React.FC<QuestionBankFiltersProps> = ({
           <Search size={15} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
           <input
             type="text"
-            placeholder="Search by text, code (e.g. IELTS-RD-001), skill or tags…"
+            placeholder="Search questions by text, code (e.g. IELTS-L1-001, ENG-WRIT-LETTER-01), skill or tags…"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             style={{
@@ -167,8 +194,106 @@ export const QuestionBankFilters: React.FC<QuestionBankFiltersProps> = ({
           )}
         </div>
 
-        {/* Dropdown filters row */}
-        <div style={{ display: 'flex', gap: '0.625rem', flexWrap: 'wrap' }}>
+        {/* Row 2: Comprehensive Dropdowns (Assessment, Content Kind, Section, Question Type, QA Dependencies, Difficulty) */}
+        <div style={{ display: 'flex', gap: '0.625rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Assessment Filter */}
+          {onAssessmentChange && (
+            <select
+              value={selectedAssessment}
+              onChange={(e) => onAssessmentChange(e.target.value)}
+              style={SELECT_STYLE}
+              aria-label="Filter by assessment"
+            >
+              <option value="ALL">All Assessments</option>
+              <option value="Pre-Assessment">Pre-Assessment (Grammar, Reading, Writing)</option>
+              <option value="IELTS Mock">IELTS Academic Mock Exam (40L, 40R, 2W, 24S)</option>
+              <option value="IELTS Practice">IELTS Practice Inventory</option>
+              <option value="Other / Unclassified">Other / Unclassified</option>
+            </select>
+          )}
+
+          {/* Content Kind Filter */}
+          {onContentKindChange && (
+            <select
+              value={selectedContentKind}
+              onChange={(e) => onContentKindChange(e.target.value)}
+              style={SELECT_STYLE}
+              aria-label="Filter by content kind"
+            >
+              <option value="ALL">All Content Kinds</option>
+              <option value="QUESTION">Objective Questions</option>
+              <option value="WRITING_TASK">Writing Tasks</option>
+              <option value="SPEAKING_PROMPT">Speaking Prompts</option>
+            </select>
+          )}
+
+          {/* Section Filter */}
+          <select
+            value={selectedSection}
+            onChange={(e) => onSectionChange(e.target.value as SectionType | 'ALL')}
+            style={SELECT_STYLE}
+            aria-label="Filter by section"
+          >
+            <option value="ALL">All Sections</option>
+            <option value="Grammar">Grammar</option>
+            <option value="Reading">Reading</option>
+            <option value="Listening">Listening</option>
+            <option value="Writing">Writing</option>
+            <option value="Speaking">Speaking</option>
+            <option value="Math">Math</option>
+          </select>
+
+          {/* Question Type Filter */}
+          {onQuestionTypeChange && (
+            <select
+              value={selectedQuestionType}
+              onChange={(e) => onQuestionTypeChange(e.target.value)}
+              style={SELECT_STYLE}
+              aria-label="Filter by question type"
+            >
+              <option value="ALL">All Question Types</option>
+              <option value="MCQ">Multiple Choice (MCQ)</option>
+              <option value="SHORT_ANSWER">Short Answer</option>
+              <option value="COMPLETION">Completion</option>
+              <option value="SENTENCE_COMPLETION">Sentence Completion</option>
+              <option value="NOTE_COMPLETION">Note Completion</option>
+              <option value="SUMMARY_COMPLETION">Summary Completion</option>
+              <option value="TRUE_FALSE_NOT_GIVEN">True / False / Not Given</option>
+              <option value="YES_NO_NOT_GIVEN">Yes / No / Not Given</option>
+              <option value="MATCHING">Matching</option>
+              <option value="MATCHING_HEADINGS">Matching Headings</option>
+              <option value="MATCHING_INFORMATION">Matching Information</option>
+              <option value="WRITING_TASK_1">Writing Task 1</option>
+              <option value="WRITING_TASK_2">Writing Task 2</option>
+              <option value="SPEAKING">Speaking Prompt</option>
+            </select>
+          )}
+
+          {/* QA Content Dependency Filter */}
+          {onDependencyChange && (
+            <select
+              value={selectedDependency}
+              onChange={(e) => onDependencyChange(e.target.value)}
+              style={{
+                ...SELECT_STYLE,
+                borderColor:
+                  selectedDependency !== 'ALL' ? 'var(--brand-border)' : 'var(--border-strong)',
+                backgroundColor:
+                  selectedDependency !== 'ALL' ? 'var(--brand-subtle)' : 'var(--surface-input)',
+                fontWeight: selectedDependency !== 'ALL' ? 700 : 500,
+              }}
+              aria-label="Filter by content dependency"
+            >
+              <option value="ALL">QA: All Dependencies</option>
+              <option value="hasAnswer">✓ Has Authoritative Answer</option>
+              <option value="missingAnswer">⚠️ Missing Authoritative Answer</option>
+              <option value="hasPassage">✓ Has Reading Passage</option>
+              <option value="missingPassage">⚠️ Missing Reading Passage</option>
+              <option value="hasMedia">✓ Has Audio / Image Media</option>
+            </select>
+          )}
+
+          {/* Exam Filter */}
           <select
             value={selectedExam}
             onChange={(e) => onExamChange(e.target.value as ExamType | 'ALL')}
@@ -178,27 +303,13 @@ export const QuestionBankFilters: React.FC<QuestionBankFiltersProps> = ({
             <option value="ALL">All Exams</option>
             <option value="IELTS Academic">IELTS Academic</option>
             <option value="IELTS General Training">IELTS General</option>
+            <option value="English Proficiency">English Proficiency</option>
             <option value="TOEFL iBT">TOEFL iBT</option>
             <option value="SAT">SAT</option>
             <option value="CELPIP">CELPIP</option>
-            <option value="English Proficiency">English Proficiency</option>
           </select>
 
-          <select
-            value={selectedSection}
-            onChange={(e) => onSectionChange(e.target.value as SectionType | 'ALL')}
-            style={SELECT_STYLE}
-            aria-label="Filter by section"
-          >
-            <option value="ALL">All Sections</option>
-            <option value="Reading">Reading</option>
-            <option value="Listening">Listening</option>
-            <option value="Writing">Writing</option>
-            <option value="Speaking">Speaking</option>
-            <option value="Math">Math</option>
-            <option value="Grammar">Grammar</option>
-          </select>
-
+          {/* Difficulty Filter */}
           <select
             value={selectedDifficulty}
             onChange={(e) => onDifficultyChange(e.target.value as DifficultyLevel | 'ALL')}
@@ -209,6 +320,9 @@ export const QuestionBankFilters: React.FC<QuestionBankFiltersProps> = ({
             <option value="EASY">Easy</option>
             <option value="MEDIUM">Medium</option>
             <option value="HARD">Hard</option>
+            <option value="FOUNDATION">Foundation</option>
+            <option value="INTERMEDIATE">Intermediate</option>
+            <option value="ADVANCED">Advanced</option>
           </select>
         </div>
       </div>

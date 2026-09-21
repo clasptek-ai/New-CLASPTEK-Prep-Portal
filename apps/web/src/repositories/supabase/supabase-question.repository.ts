@@ -61,6 +61,11 @@ export class SupabaseQuestionRepository implements IQuestionRepository {
       if (spec.usage) params.set('usage', spec.usage);
       if (spec.search) params.set('search', spec.search);
 
+      if (spec.assessment) params.set('assessment', spec.assessment);
+      if (spec.contentKind) params.set('contentKind', spec.contentKind);
+      if (spec.questionType) params.set('questionType', spec.questionType);
+      if (spec.dependency) params.set('dependency', spec.dependency);
+
       const res = await fetch(`/api/v1/admin/questions?${params.toString()}`, {
         headers: { 'Cache-Control': 'no-cache' },
       });
@@ -76,6 +81,7 @@ export class SupabaseQuestionRepository implements IQuestionRepository {
             pageSize: json.pageSize || spec.pageSize || 20,
             totalPages: json.totalPages || 1,
             counts: json.counts,
+            metrics: json.metrics,
           };
         }
       }
@@ -102,6 +108,28 @@ export class SupabaseQuestionRepository implements IQuestionRepository {
     }
     if (spec.usage) {
       all = all.filter((q) => q.usages && q.usages.includes(spec.usage!));
+    }
+    if (spec.assessment && spec.assessment !== 'ALL') {
+      all = all.filter((q) => q.assessment === spec.assessment);
+    }
+    if (spec.contentKind && spec.contentKind !== 'ALL') {
+      all = all.filter((q) => q.contentKind === spec.contentKind);
+    }
+    if (spec.questionType && spec.questionType !== 'ALL') {
+      all = all.filter((q) => q.type === spec.questionType);
+    }
+    if (spec.dependency && spec.dependency !== 'ALL') {
+      if (spec.dependency === 'hasAnswer') {
+        all = all.filter((q) => !q.answer?.isMissing && (q.correctAnswer || q.answer?.primary));
+      } else if (spec.dependency === 'missingAnswer') {
+        all = all.filter((q) => q.answer?.isMissing || (!q.correctAnswer && !q.answer?.primary));
+      } else if (spec.dependency === 'hasPassage') {
+        all = all.filter((q) => q.passageId || q.passageCode);
+      } else if (spec.dependency === 'missingPassage') {
+        all = all.filter((q) => q.section === 'Reading' && !q.passageId && !q.passageCode);
+      } else if (spec.dependency === 'hasMedia') {
+        all = all.filter((q) => q.audioUrl || q.imageUrl);
+      }
     }
     if (spec.search && spec.search.trim()) {
       const query = spec.search.toLowerCase();

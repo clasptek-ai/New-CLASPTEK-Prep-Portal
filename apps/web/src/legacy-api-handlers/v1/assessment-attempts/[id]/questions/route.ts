@@ -19,7 +19,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const session = await getAuthenticatedSession(req);
     const studentId =
-      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+      session?.userId ||
+      (process.env.NODE_ENV !== 'production' ? req.headers.get('x-student-id') : null);
     if (!studentId) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized', requestId },
@@ -72,6 +73,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       0,
       Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)
     );
+
+    // If deadline has passed, guarantee attempt status is EXPIRED
+    if (remainingTime <= 0 && attempt.status === 'IN_PROGRESS') {
+      attempt.status = 'EXPIRED';
+      await pool
+        .query(
+          `UPDATE public.assessment_attempts 
+           SET status = 'COMPLETED', closed_at = NOW(), updated_at = NOW() 
+           WHERE id = $1 AND status = 'IN_PROGRESS'`,
+          [attemptId]
+        )
+        .catch(() => null);
+    }
 
     // 5. Append-only event log for question reading
     await pool
@@ -165,7 +179,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
           title: paperSnapshot.assessment?.title || 'Placement Assessment',
           durationMinutes,
         },
-        status: attempt.status,
+        status: remainingTime <= 0 ? 'EXPIRED' : attempt.status,
         remainingTime,
         totalQuestions,
         grammarQuestions: sanitizedGrammarQs,

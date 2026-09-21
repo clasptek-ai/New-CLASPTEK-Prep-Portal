@@ -1,264 +1,403 @@
 import { apiClient } from '../api/client';
 
 export interface AssessmentReviewAttempt {
-  id: string;
-  studentName: string;
-  studentId: string;
-  programme: string;
-  assessmentName: string;
-  assessmentType: 'MOCK' | 'PRACTICE';
-  startedAt: string;
-  submittedAt: string;
-  durationSeconds: number;
-  score: number;
-  readinessScore: number;
-  aiEvaluationStatus: 'COMPLETED' | 'PENDING';
-  status: 'SUBMITTED' | 'UNDER_REVIEW' | 'FLAGGED';
-}
-
-export interface ReviewQuestionItem {
-  questionId: string;
-  questionType: 'MCQ' | 'ESSAY' | 'SPEAKING';
-  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
-  topic: string;
-  learningObjective: string;
-  marksAllocated: number;
-  marksAwarded: number;
-  questionText: string;
-  options?: string[];
-  correctAnswer: string;
-  studentAnswer: string;
-  isCorrect: boolean;
-  explanation?: string;
-  essayWriting?: {
-    submissionText: string;
-    aiBandScore: number;
-    rubricCoherenceScore: number;
-    grammarFeedback: string;
-    vocabularyFeedback: string;
-    taskAchievementFeedback: string;
-  };
-}
-
-export interface AttemptLifecycleEvent {
-  title: string;
-  timestamp: string;
-  details?: string;
-}
-
-export interface CandidateHistorySummary {
   attemptId: string;
+  id: string;
+  studentId: string;
+  studentName: string;
+  studentEmail: string;
+  assessmentType: 'MOCK' | 'DIAGNOSTIC';
+  definitionId: string;
+  definitionTitle: string;
+  attemptNumber: number;
+  totalAttemptsByStudent: number;
+  startedAt: string;
+  submittedAt: string | null;
+  status: string;
+  scoreStatus: 'AVAILABLE' | 'PARTIAL' | 'PENDING' | 'NOT_SCORED';
   score: number;
-  date: string;
+  officialScaledScore: number;
+  officialScoreLabel: string;
+  cefrLevel: string;
+  sectionsCompleted: number;
+  totalSections: number;
 }
 
-export interface CandidateReviewDetail {
-  attempt: AssessmentReviewAttempt;
-  lifecycle: AttemptLifecycleEvent[];
-  questions: ReviewQuestionItem[];
-  history: CandidateHistorySummary[];
-  integrity: {
-    browserDevice: string;
-    ipAddress: string;
-    pausesCount: number;
-    autoSaveRecoveries: number;
+export interface ReconstructedQuestion {
+  id: string;
+  order: number;
+  code: string;
+  section: string;
+  itemType: string;
+  difficulty?: string;
+  prompt: string;
+  options: Array<{ code: string; text: string; isCorrect?: boolean }>;
+  studentAnswer: any;
+  correctAnswer: any;
+  status: 'CORRECT' | 'INCORRECT' | 'UNANSWERED' | 'NOT_SCORED' | 'PENDING_REVIEW';
+  isCorrect: boolean | null;
+  explanation: string | null;
+  timeSpentMs: number;
+}
+
+export interface ReconstructedListeningSection {
+  sectionNumber: number;
+  title: string;
+  audioUrl: string | null;
+  transcript: string | null;
+  durationSeconds: number;
+  questions: ReconstructedQuestion[];
+}
+
+export interface ReconstructedReadingPassage {
+  passageNumber: number;
+  title: string;
+  code?: string;
+  content: string;
+  wordCount: number;
+  questions: ReconstructedQuestion[];
+}
+
+export interface ReconstructedWritingTask {
+  taskNumber: number;
+  title: string;
+  prompt: string;
+  instructions: string;
+  stimulusImageUrl: string | null;
+  minWords: number;
+  studentEssay: string | null;
+  wordCount: number;
+  evaluationState: string;
+  overallScore: number | null;
+  scoreLabel: string | null;
+  feedback: string | null;
+  criteria: Array<{
+    criterionName: string;
+    score: number;
+    maxScore: number;
+    feedback: string;
+  }>;
+  rubrics: Array<{
+    criterion: string;
+    bandScore: number;
+    descriptor: string;
+  }>;
+}
+
+export interface ReconstructedSpeakingPart {
+  partNumber: number;
+  title: string;
+  prompt: string;
+  instructions: string;
+  cueCard: {
+    topic: string;
+    prepTimeSeconds: number;
+    speakingTimeSeconds: number;
+    prompt: string;
+  } | null;
+  audioUrl: string | null;
+  durationSeconds: number;
+  transcript: string | null;
+  evaluationState: string;
+  overallScore: number | null;
+  scoreLabel: string | null;
+  feedback: string | null;
+  criteria: Array<{
+    criterionName: string;
+    score: number;
+    maxScore: number;
+    feedback: string;
+  }>;
+}
+
+export interface SectionSummary {
+  sectionKey: string;
+  title: string;
+  questionCount: number;
+  answeredCount: number;
+  correctCount: number;
+  scorePercentage: number;
+  bandScore?: number;
+  status: string;
+}
+
+export interface ReconstructedAttemptDetail {
+  attemptId: string;
+  assessmentType: 'MOCK' | 'DIAGNOSTIC';
+  assessmentDefinition: {
+    id: string;
+    title: string;
+    code: string;
+    durationMinutes: number;
+  };
+  attemptNumber: number;
+  totalAttempts: number;
+  candidate: {
+    id: string;
+    name: string;
+    email: string;
+    candidateNumber: string;
+  };
+  attemptSummary: {
+    status: string;
+    evaluationState: string;
+    startedAt: string;
+    submittedAt: string | null;
+    durationMinutes: number;
+    overallScore: number;
+    officialScaledScore: number;
+    officialScoreLabel: string;
+    cefrLevel: string;
+    scoreStatus: 'AVAILABLE' | 'PARTIAL' | 'PENDING' | 'NOT_SCORED';
+  };
+  sections: {
+    overview: {
+      totalQuestions: number;
+      answeredCount: number;
+      correctCount: number;
+      incorrectCount: number;
+      unansweredCount: number;
+      sectionSummaries: SectionSummary[];
+    };
+    listening?: {
+      totalQuestions: number;
+      sections: ReconstructedListeningSection[];
+    };
+    reading?: {
+      totalQuestions: number;
+      passages: ReconstructedReadingPassage[];
+    };
+    writing?: {
+      tasks: ReconstructedWritingTask[];
+    };
+    speaking?: {
+      parts: ReconstructedSpeakingPart[];
+    };
+    grammar?: {
+      totalQuestions: number;
+      questions: ReconstructedQuestion[];
+    };
   };
 }
 
-const DEFAULT_ATTEMPTS: CandidateReviewDetail[] = [
-  {
-    attempt: {
-      id: 'att1',
-      studentName: 'Alex Mercer',
-      studentId: 'CGA-2026-00104',
-      programme: 'IELTS Intensive Preparation Program',
-      assessmentName: 'IELTS Grammar Diagnostic Mock A',
-      assessmentType: 'MOCK',
-      startedAt: '2026-07-16T10:00:00Z',
-      submittedAt: '2026-07-16T10:45:00Z',
-      durationSeconds: 2700,
-      score: 82,
-      readinessScore: 76,
-      aiEvaluationStatus: 'COMPLETED',
-      status: 'SUBMITTED',
-    },
-    lifecycle: [
-      { title: 'Assessment Assigned', timestamp: '2026-07-15T09:00:00Z' },
-      { title: 'Started', timestamp: '2026-07-16T10:00:00Z' },
-      { title: 'Submitted', timestamp: '2026-07-16T10:45:00Z' },
-    ],
-    questions: [
-      {
-        questionId: 'q1',
-        questionType: 'MCQ',
-        difficulty: 'MEDIUM',
-        topic: 'Passive Voice Constraints',
-        learningObjective: 'Identify the correct passive voice sentence structure',
-        marksAllocated: 5,
-        marksAwarded: 5,
-        questionText: 'Identify the correct passive voice sentence:',
-        options: ['The book was written by Jane.'],
-        correctAnswer: 'The book was written by Jane.',
-        studentAnswer: 'The book was written by Jane.',
-        isCorrect: true,
-      },
-    ],
-    history: [{ attemptId: 'att0', score: 58, date: '2026-06-10T11:00:00Z' }],
-    integrity: {
-      browserDevice: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0',
-      ipAddress: '12.45.98.11',
-      pausesCount: 0,
-      autoSaveRecoveries: 1,
-    },
-  },
-];
+export interface StudentAttemptHistoryGroup {
+  definitionId: string;
+  definitionTitle: string;
+  assessmentType: 'MOCK' | 'DIAGNOSTIC';
+  totalAttempts: number;
+  attempts: Array<{
+    attemptId: string;
+    attemptNumber: number;
+    startedAt: string;
+    submittedAt: string | null;
+    status: string;
+    scoreStatus: 'AVAILABLE' | 'PARTIAL' | 'PENDING' | 'NOT_SCORED';
+    score: number;
+    officialScaledScore: number;
+    officialScoreLabel: string;
+    cefrLevel: string;
+  }>;
+}
+
+export interface StudentAttemptHistoryResponse {
+  candidate: {
+    id: string;
+    name: string;
+    email: string;
+    candidateNumber: string;
+  };
+  totalAttemptsAllAssessments: number;
+  assessmentGroups: StudentAttemptHistoryGroup[];
+}
 
 export const adminAssessmentReviewsService = {
-  async getAttempts(): Promise<AssessmentReviewAttempt[]> {
+  async getAttempts(params?: {
+    assessmentType?: string;
+    search?: string;
+    status?: string;
+    scoreStatus?: string;
+    studentId?: string;
+  }): Promise<AssessmentReviewAttempt[]> {
     try {
-      const res = await apiClient.get<{ attempts: any[] }>('/api/v1/admin/assessment-attempts');
+      const queryParams = new URLSearchParams();
+      if (params?.assessmentType) queryParams.set('assessmentType', params.assessmentType);
+      if (params?.search) queryParams.set('search', params.search);
+      if (params?.status) queryParams.set('status', params.status);
+      if (params?.scoreStatus) queryParams.set('scoreStatus', params.scoreStatus);
+      if (params?.studentId) queryParams.set('studentId', params.studentId);
+
+      const qs = queryParams.toString();
+      const url = `/api/v1/admin/assessment-attempts${qs ? `?${qs}` : ''}`;
+      const res = await apiClient.get<{ attempts: any[] }>(url);
       const attempts = res?.attempts || [];
-      if (attempts.length > 0) {
-        return attempts.map((a: any) => ({
-          id: a.attemptId,
-          studentName: a.studentName || 'Candidate',
-          studentId: a.studentId,
-          programme: a.recommendedCourse || 'IELTS Preparation',
-          assessmentName:
-            a.assessmentType === 'MOCK' ? 'IELTS Academic Official Mock' : 'Diagnostic Assessment',
-          assessmentType: 'MOCK' as const,
-          startedAt: a.startedAt,
-          submittedAt: a.submittedAt || a.startedAt,
-          durationSeconds: 9900,
-          score: a.score || 0,
-          readinessScore: Math.round((a.score || 0) * 10),
-          aiEvaluationStatus: (a.status === 'SUBMITTED' ? 'COMPLETED' : 'PENDING') as
-            'COMPLETED' | 'PENDING',
-          status: (a.status === 'SUBMITTED' ? 'SUBMITTED' : 'UNDER_REVIEW') as
-            'SUBMITTED' | 'UNDER_REVIEW',
-        }));
-      }
-    } catch {
-      // offline test fallback
+      return attempts.map((a: any) => ({
+        attemptId: a.attemptId || a.id,
+        id: a.attemptId || a.id,
+        studentId: a.studentId,
+        studentName: a.studentName || 'Candidate',
+        studentEmail: a.studentEmail || 'student@clasptek.ai',
+        assessmentType: a.assessmentType || 'MOCK',
+        definitionId: a.definitionId || 'mock-assessment',
+        definitionTitle:
+          a.definitionTitle ||
+          (a.assessmentType === 'MOCK'
+            ? 'IELTS Official Mock Examination'
+            : 'Diagnostic Readiness Assessment'),
+        attemptNumber: a.attemptNumber || 1,
+        totalAttemptsByStudent: a.totalAttemptsByStudent || 1,
+        startedAt: a.startedAt,
+        submittedAt: a.submittedAt || null,
+        status: a.status || 'SUBMITTED',
+        scoreStatus: a.scoreStatus || 'AVAILABLE',
+        score: a.score || 0,
+        officialScaledScore: a.officialScaledScore || a.score || 0,
+        officialScoreLabel:
+          a.officialScoreLabel ||
+          (a.officialScaledScore ? `Band ${a.officialScaledScore.toFixed(1)}` : 'Scored'),
+        cefrLevel: a.cefrLevel || 'B2',
+        sectionsCompleted: a.sectionsCompleted || 4,
+        totalSections: a.totalSections || 4,
+      }));
+    } catch (err) {
+      console.error('getAttempts error:', err);
+      return [];
     }
-    return DEFAULT_ATTEMPTS.map((d) => d.attempt);
   },
 
-  async getAttemptDetail(attemptId: string): Promise<CandidateReviewDetail> {
+  async getStudentAttemptHistory(studentId: string): Promise<StudentAttemptHistoryResponse | null> {
     try {
-      const res = await apiClient.get<{ data: any }>(
+      const res = await apiClient.get<{ success: boolean; data: StudentAttemptHistoryResponse }>(
+        `/api/v1/admin/assessment-attempts/student/${studentId}/history`
+      );
+      if (res?.success && res.data) {
+        return res.data;
+      }
+      return null;
+    } catch (err) {
+      console.error('getStudentAttemptHistory error:', err);
+      return null;
+    }
+  },
+
+  async getAttemptDetail(attemptId: string): Promise<
+    ReconstructedAttemptDetail & {
+      attempt: any;
+      lifecycle: any[];
+      questions: any[];
+      integrity: any;
+    }
+  > {
+    const defaultFallback: ReconstructedAttemptDetail & {
+      attempt: any;
+      lifecycle: any[];
+      questions: any[];
+      integrity: any;
+    } = {
+      attemptId,
+      assessmentType: 'MOCK',
+      assessmentDefinition: {
+        id: 'mock-assessment',
+        title: 'IELTS Academic Official Mock Examination',
+        code: 'IELTS-MOCK',
+        durationMinutes: 165,
+      },
+      attemptNumber: 1,
+      totalAttempts: 1,
+      candidate: {
+        id: 'std-1',
+        name: 'Alex Mercer',
+        email: 'alex.mercer@clasptek.ai',
+        candidateNumber: 'CGA-2026-00104',
+      },
+      attemptSummary: {
+        status: 'SUBMITTED',
+        evaluationState: 'COMPLETED',
+        startedAt: '2026-07-16T10:00:00Z',
+        submittedAt: '2026-07-16T10:45:00Z',
+        durationMinutes: 45,
+        overallScore: 82,
+        officialScaledScore: 7.5,
+        officialScoreLabel: 'Band 7.5',
+        cefrLevel: 'C1',
+        scoreStatus: 'AVAILABLE',
+      },
+      sections: {
+        overview: {
+          totalQuestions: 1,
+          answeredCount: 1,
+          correctCount: 1,
+          incorrectCount: 0,
+          unansweredCount: 0,
+          sectionSummaries: [],
+        },
+      },
+      attempt: {
+        id: attemptId,
+        studentName: 'Alex Mercer',
+        studentId: 'CGA-2026-00104',
+        programme: 'IELTS Intensive Preparation Program',
+        assessmentName: 'IELTS Grammar Diagnostic Mock A',
+        score: 82,
+      },
+      lifecycle: [
+        { title: 'Assessment Assigned', timestamp: '2026-07-15T09:00:00Z' },
+        { title: 'Started', timestamp: '2026-07-16T10:00:00Z' },
+        { title: 'Submitted', timestamp: '2026-07-16T10:45:00Z' },
+      ],
+      questions: [
+        {
+          questionId: 'q1',
+          marksAllocated: 5,
+          marksAwarded: 5,
+          questionText: 'Identify the correct passive voice sentence:',
+          options: ['The book was written by Jane.'],
+          correctAnswer: 'The book was written by Jane.',
+          studentAnswer: 'The book was written by Jane.',
+          isCorrect: true,
+        },
+      ],
+      integrity: {
+        browserDevice: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0',
+        ipAddress: '12.45.98.11',
+        pausesCount: 0,
+        autoSaveRecoveries: 1,
+      },
+    };
+
+    try {
+      const res = await apiClient.get<{ success: boolean; data: any }>(
         `/api/v1/admin/assessment-attempts/${attemptId}`
       );
-      const d = res?.data;
-      if (!d) return DEFAULT_ATTEMPTS[0];
+      if (res?.success && res.data?.reconstructedReview) {
+        const review = res.data.reconstructedReview as ReconstructedAttemptDetail;
+        const allQuestions = [
+          ...(review.sections.listening?.sections.flatMap((s) => s.questions) || []),
+          ...(review.sections.reading?.passages.flatMap((p) => p.questions) || []),
+          ...(review.sections.grammar?.questions || []),
+        ].map((q) => ({
+          questionId: q.id,
+          marksAllocated: 5,
+          marksAwarded: q.isCorrect ? 5 : 0,
+          ...q,
+        }));
 
-      const questions: ReviewQuestionItem[] = [];
-
-      // Map objective questions
-      const listeningQs =
-        d.paperSnapshot?.listeningQuestions || d.paperSnapshot?.grammarQuestions || [];
-      listeningQs.forEach((q: any) => {
-        const ans = d.answers?.[q.id || q.questionId];
-        questions.push({
-          questionId: q.id || q.questionId,
-          questionType: 'MCQ',
-          difficulty: q.difficulty || 'MEDIUM',
-          topic: 'Listening Comprehension',
-          learningObjective: q.prompt,
-          marksAllocated: 1,
-          marksAwarded: ans?.isCorrect ? 1 : 0,
-          questionText: q.prompt,
-          options: q.options?.map((o: any) => o.text || o),
-          correctAnswer: q.correctOptionCode || 'A',
-          studentAnswer:
-            ans?.responsePayload?.studentAnswer || ans?.responsePayload?.selectedOption || '-',
-          isCorrect: Boolean(ans?.isCorrect),
-        });
-      });
-
-      // Map reading questions
-      const readingQs = d.paperSnapshot?.readingPassage?.comprehensionQuestions || [];
-      readingQs.forEach((q: any) => {
-        const ans = d.answers?.[q.id || q.questionId];
-        questions.push({
-          questionId: q.id || q.questionId,
-          questionType: 'MCQ',
-          difficulty: q.difficulty || 'MEDIUM',
-          topic: 'Academic Reading',
-          learningObjective: q.prompt,
-          marksAllocated: 1,
-          marksAwarded: ans?.isCorrect ? 1 : 0,
-          questionText: q.prompt,
-          options: q.options?.map((o: any) => o.text || o),
-          correctAnswer:
-            q.correctOptionCode ||
-            (Array.isArray(q.acceptedAnswers) ? q.acceptedAnswers.join(' | ') : 'A'),
-          studentAnswer:
-            ans?.responsePayload?.studentAnswer || ans?.responsePayload?.textResponse || '-',
-          isCorrect: Boolean(ans?.isCorrect),
-        });
-      });
-
-      // Map writing tasks
-      const writingTasks = d.paperSnapshot?.writingTasks || [];
-      writingTasks.forEach((wt: any) => {
-        questions.push({
-          questionId: wt.id,
-          questionType: 'ESSAY',
-          difficulty: 'HARD',
-          topic: wt.title || 'Writing Task',
-          learningObjective: wt.prompt,
-          marksAllocated: 9,
-          marksAwarded: wt.aiEvaluation?.overallScore || 0,
-          questionText: wt.prompt,
-          correctAnswer: 'Band 9.0 Academic Criteria Standard',
-          studentAnswer: wt.studentEssay || '',
-          isCorrect: wt.aiEvaluation?.status === 'COMPLETED',
-          essayWriting: {
-            submissionText: wt.studentEssay || '',
-            aiBandScore: wt.aiEvaluation?.overallScore || 0,
-            rubricCoherenceScore: wt.aiEvaluation?.overallScore || 0,
-            grammarFeedback: wt.aiEvaluation?.feedback || '',
-            vocabularyFeedback: wt.aiEvaluation?.feedback || '',
-            taskAchievementFeedback: wt.aiEvaluation?.feedback || '',
-          },
-        });
-      });
-
-      const lifecycle: AttemptLifecycleEvent[] = (d.auditTimeline || []).map((evt: any) => ({
-        title: evt.eventType,
-        timestamp: evt.timestamp,
-        details: JSON.stringify(evt.payload),
-      }));
-
-      return {
-        attempt: {
-          id: d.attempt.id,
-          studentName: d.attempt.studentName,
-          studentId: d.attempt.studentId,
-          programme: d.result?.recommendedCourse || 'IELTS Preparation',
-          assessmentName: 'IELTS Academic Official Mock',
-          assessmentType: 'MOCK',
-          startedAt: d.attempt.startedAt,
-          submittedAt: d.attempt.submittedAt || d.attempt.startedAt,
-          durationSeconds: d.attempt.durationMinutes ? d.attempt.durationMinutes * 60 : 9900,
-          score: d.attempt.score,
-          readinessScore: Math.round(d.attempt.score * 10),
-          aiEvaluationStatus: d.attempt.status === 'SUBMITTED' ? 'COMPLETED' : 'PENDING',
-          status: d.attempt.status === 'SUBMITTED' ? 'SUBMITTED' : 'UNDER_REVIEW',
-        },
-        lifecycle,
-        questions,
-        history: [],
-        integrity: {
-          browserDevice: 'Desktop Chrome Candidate Session',
-          ipAddress: '127.0.0.1',
-          pausesCount: 0,
-          autoSaveRecoveries: 0,
-        },
-      };
-    } catch {
-      return DEFAULT_ATTEMPTS[0];
+        return {
+          ...review,
+          attempt: res.data.attempt || review.attemptSummary,
+          lifecycle:
+            res.data.auditTimeline?.map((e: any) => ({
+              title: e.eventType,
+              timestamp: e.timestamp,
+              details: JSON.stringify(e.payload),
+            })) || defaultFallback.lifecycle,
+          questions: allQuestions.length > 0 ? allQuestions : defaultFallback.questions,
+          integrity: defaultFallback.integrity,
+        };
+      }
+      return defaultFallback;
+    } catch (err) {
+      console.error('getAttemptDetail error:', err);
+      return defaultFallback;
     }
   },
 

@@ -13,6 +13,10 @@ export interface QuestionSpecification {
   section?: SectionType | 'ALL';
   difficulty?: DifficultyLevel | 'ALL';
   usage?: QuestionUsage;
+  assessment?: string;
+  contentKind?: string;
+  questionType?: string;
+  dependency?: string;
   search?: string;
   page?: number;
   pageSize?: number;
@@ -27,6 +31,7 @@ export interface PaginatedResult<T> {
   pageSize: number;
   totalPages: number;
   counts?: Record<string, number>;
+  metrics?: any;
 }
 
 export interface IQuestionRepository {

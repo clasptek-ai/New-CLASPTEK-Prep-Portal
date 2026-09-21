@@ -101,15 +101,83 @@ export interface MediaAsset {
   createdAt: string;
 }
 
+export type ContentKind = 'QUESTION' | 'WRITING_TASK' | 'SPEAKING_PROMPT';
+export type AssessmentCategory =
+  'Pre-Assessment' | 'IELTS Mock' | 'IELTS Practice' | 'Other / Unclassified';
+export type AssessmentSource = 'authoritative' | 'inferred' | 'unclassified';
+
+export interface AuthoritativeAnswer {
+  type: 'OPTION_CODE' | 'TEXT' | 'ARRAY' | 'MAPPING' | 'RUBRIC' | 'NONE';
+  primary?: string;
+  optionCode?: string;
+  acceptedAnswers?: string[];
+  mapping?: Record<string, string>;
+  rubricId?: string;
+  display: string;
+  isMissing: boolean;
+}
+
+export interface InventoryMetrics {
+  totalUniqueQuestions: number;
+  totalQuestionVersions: number;
+  totalWritingTasks: number;
+  totalReadingPassages: number;
+  totalListeningSections: number;
+  publishedCount: number;
+  draftCount: number;
+  underReviewCount: number;
+  approvedCount: number;
+  archivedCount: number;
+  answersPresentCount: number;
+  answersMissingCount: number;
+  passagesResolvedCount: number;
+  passagesUnresolvedCount: number;
+  mediaResolvedCount: number;
+  mediaMissingCount: number;
+  tree: {
+    preAssessment: {
+      total: number;
+      grammar: number;
+      reading: number;
+      writing: number;
+    };
+    ieltsMock: {
+      total: number;
+      listening: number;
+      reading: number;
+      writing: number;
+      speaking: number;
+    };
+    ieltsPractice: {
+      total: number;
+      reading: number;
+      diagnosticReading: number;
+    };
+    otherUnclassified: {
+      total: number;
+      items: number;
+    };
+  };
+  reconciliation: {
+    totalAccounted: number;
+    databaseTotal: number;
+    isReconciled: boolean;
+  };
+}
+
 export interface AdminQuestion {
   id: string;
   code: string;
-  exam: ExamType;
-  section: SectionType;
+  contentKind?: ContentKind;
+  exam: ExamType | string;
+  section: SectionType | string;
+  assessment?: AssessmentCategory;
+  assessmentSource?: AssessmentSource;
   skill: string;
   subSkill?: string;
-  type: QuestionType;
-  difficulty: DifficultyLevel;
+  type: QuestionType | string;
+  difficulty: DifficultyLevel | string;
+  proficiencyLevel?: string | null;
   status: QuestionWorkflowStatus;
   usages: QuestionUsage[]; // Multi-select usage: Diagnostic, Practice, Mock
   estimatedTime: string;
@@ -118,8 +186,10 @@ export interface AdminQuestion {
   language: string;
   tags: string[];
   text: string;
+  instructions?: string;
   options?: string[];
   correctAnswer: string;
+  answer?: AuthoritativeAnswer;
   distractors?: string[];
   explanation: string;
   hints?: string[];
@@ -128,6 +198,10 @@ export interface AdminQuestion {
   passageCode?: string;
   passageTitle?: string;
   passageText?: string;
+  passageContent?: string | null;
+  passageWordCount?: number | null;
+  linkedQuestionCount?: number | null;
+  passageStatus?: 'RESOLVED' | 'UNRESOLVED_DEPENDENCY' | 'NONE';
   groupCode?: string;
   groupTitle?: string;
   groupInstructions?: string;
@@ -135,8 +209,19 @@ export interface AdminQuestion {
   contentType?: string;
   sharedData?: any;
   acceptedAnswers?: string[];
-  audioUrl?: string;
-  imageUrl?: string;
+  audioUrl?: string | null;
+  trackTitle?: string | null;
+  transcript?: string | null;
+  sectionNumber?: number | null;
+  questionRange?: string | null;
+  imageUrl?: string | null;
+  wordLimit?: { min?: number | null; max?: number | null };
+  rubrics?: Array<{ criterion: string; bandScore: string; descriptor: string }>;
+  referenceResponse?: string | null;
+  partNumber?: number | null;
+  cueCard?: any;
+  timing?: { preparationSeconds: number; speakingSeconds: number };
+  criteria?: any[];
   writingSpec?: WritingTaskSpec;
   speakingSpec?: SpeakingTaskSpec;
   hash: string;
@@ -433,12 +518,28 @@ export function saveStoredMedia(media: MediaAsset[]) {
 }
 
 export const adminQuestionsService = {
+  async getInventoryMetrics(): Promise<InventoryMetrics | null> {
+    try {
+      const res = await apiClient.get<any>('/api/v1/admin/questions/inventory-metrics');
+      if (res && (res.metrics || res.data)) {
+        return res.metrics || res.data;
+      }
+    } catch (e) {
+      console.warn('Could not fetch inventory metrics from API:', e);
+    }
+    return null;
+  },
+
   async getQuestionsWithPagination(filter?: {
     status?: QuestionWorkflowStatus | 'ALL';
     exam?: ExamType | 'ALL';
     section?: SectionType | 'ALL';
     difficulty?: DifficultyLevel | 'ALL';
     search?: string;
+    assessment?: string;
+    contentKind?: string;
+    questionType?: string;
+    dependency?: string;
     page?: number;
     pageSize?: number;
   }) {
@@ -449,6 +550,10 @@ export const adminQuestionsService = {
       section: filter?.section,
       difficulty: filter?.difficulty,
       search: filter?.search,
+      assessment: filter?.assessment,
+      contentKind: filter?.contentKind,
+      questionType: filter?.questionType,
+      dependency: filter?.dependency,
       page: filter?.page || 1,
       pageSize: filter?.pageSize || 50,
     });

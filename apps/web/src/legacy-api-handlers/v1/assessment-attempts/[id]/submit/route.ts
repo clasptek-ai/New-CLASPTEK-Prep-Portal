@@ -25,7 +25,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try {
     const session = await getAuthenticatedSession(req);
     const studentId =
-      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+      session?.userId ||
+      (process.env.NODE_ENV !== 'production' ? req.headers.get('x-student-id') : null);
 
     if (!studentId) {
       return NextResponse.json(

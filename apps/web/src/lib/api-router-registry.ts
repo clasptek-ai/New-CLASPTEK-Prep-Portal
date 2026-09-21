@@ -44,6 +44,21 @@ async function wrapper_get_admin_assessment_attempts(req: any, params: Record<st
   return (get_admin_assessment_attempts as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.get('/admin/assessment-attempts', wrapper_get_admin_assessment_attempts);
+import { GET as get_admin_assessment_attempts_student_history } from '@/legacy-api-handlers/v1/admin/assessment-attempts/student/[studentId]/history/route';
+
+async function wrapper_get_admin_assessment_attempts_student_history(
+  req: any,
+  params: Record<string, string>
+) {
+  return (get_admin_assessment_attempts_student_history as any)(req, {
+    params: Promise.resolve(params),
+  });
+}
+apiRouter.get(
+  '/admin/assessment-attempts/student/:studentId/history',
+  wrapper_get_admin_assessment_attempts_student_history
+);
+
 import { GET as get_admin_assessment_attempts_id } from '@/legacy-api-handlers/v1/admin/assessment-attempts/[id]/route';
 
 async function wrapper_get_admin_assessment_attempts_id(req: any, params: Record<string, string>) {
@@ -426,6 +441,16 @@ async function wrapper_post_admin_questions_import_validate(
   return (post_admin_questions_import_validate as any)(req, { params: Promise.resolve(params) });
 }
 apiRouter.post('/admin/questions/import/validate', wrapper_post_admin_questions_import_validate);
+import { GET as get_admin_questions_inventory_metrics } from '@/legacy-api-handlers/v1/admin/questions/inventory-metrics/route';
+
+async function wrapper_get_admin_questions_inventory_metrics(
+  req: any,
+  params: Record<string, string>
+) {
+  return (get_admin_questions_inventory_metrics as any)(req, { params: Promise.resolve(params) });
+}
+apiRouter.get('/admin/questions/inventory-metrics', wrapper_get_admin_questions_inventory_metrics);
+
 import { GET as get_admin_questions } from '@/legacy-api-handlers/v1/admin/questions/route';
 
 async function wrapper_get_admin_questions(req: any, params: Record<string, string>) {

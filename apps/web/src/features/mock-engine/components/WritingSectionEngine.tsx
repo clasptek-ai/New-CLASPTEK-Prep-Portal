@@ -328,9 +328,11 @@ export function WritingSectionEngine({
   const rawImageUrl = currentTask?.imageUrl;
   const preferredStimulusUrl = useMemo(() => resolveStimulusSource(rawImageUrl), [rawImageUrl]);
   const [activeImgUrl, setActiveImgUrl] = useState<string | undefined>(preferredStimulusUrl);
+  const [imageLoadFailed, setImageLoadFailed] = useState(false);
 
   useEffect(() => {
     setActiveImgUrl(preferredStimulusUrl);
+    setImageLoadFailed(false);
   }, [preferredStimulusUrl]);
 
   // Rough notes handler for Task 2
@@ -782,25 +784,56 @@ export function WritingSectionEngine({
                     cursor: 'zoom-in',
                     backgroundColor: '#ffffff',
                   }}
-                  onClick={() => setLightboxOpen(true)}
-                  title="Click to expand diagram"
+                  onClick={() => {
+                    if (!imageLoadFailed) setLightboxOpen(true);
+                  }}
+                  title={imageLoadFailed ? 'Stimulus unavailable' : 'Click to expand diagram'}
                 >
-                  <img
-                    src={activeImgUrl || rawImageUrl}
-                    alt={`IELTS Writing ${taskLabel} diagram`}
-                    onError={() => {
-                      if (activeImgUrl !== rawImageUrl) {
-                        setActiveImgUrl(rawImageUrl);
-                      }
-                    }}
-                    style={{
-                      width: '100%',
-                      maxWidth: '100%',
-                      height: 'auto',
-                      objectFit: 'contain',
-                      display: 'block',
-                    }}
-                  />
+                  {imageLoadFailed ? (
+                    <div
+                      style={{
+                        padding: '2rem 1.5rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.6rem',
+                        backgroundColor: '#0f172a',
+                        color: '#94a3b8',
+                        borderRadius: '8px',
+                        width: '100%',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <AlertCircle size={24} color="#f59e0b" />
+                      <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc' }}>
+                        Visual Stimulus Diagram Unavailable
+                      </span>
+                      <span style={{ fontSize: '0.78rem', maxWidth: '380px', lineHeight: 1.5 }}>
+                        Unable to load diagram asset. Please refer to the written prompt and
+                        instruction text above to complete your response.
+                      </span>
+                    </div>
+                  ) : (
+                    <img
+                      src={activeImgUrl || rawImageUrl}
+                      alt={`IELTS Writing ${taskLabel} diagram`}
+                      onError={() => {
+                        if (rawImageUrl && activeImgUrl !== rawImageUrl) {
+                          setActiveImgUrl(rawImageUrl);
+                        } else {
+                          setImageLoadFailed(true);
+                        }
+                      }}
+                      style={{
+                        width: '100%',
+                        maxWidth: '100%',
+                        height: 'auto',
+                        objectFit: 'contain',
+                        display: 'block',
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             )}

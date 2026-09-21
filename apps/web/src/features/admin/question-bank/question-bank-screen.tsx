@@ -22,6 +22,9 @@ import { BulkConfirmationModal } from './components/BulkConfirmationModal';
 import { QuestionBankHeader } from './components/QuestionBankHeader';
 import { QuestionBankFilters } from './components/QuestionBankFilters';
 import { QuestionRow } from './components/QuestionRow';
+import { UniversalQuestionPreviewModal } from './components/UniversalQuestionPreviewModal';
+import { QuestionInventorySummary } from './components/QuestionInventorySummary';
+import { InventoryMetrics } from '../../../services/admin/questions.service';
 import {
   CheckCircle2,
   BookOpen,
@@ -38,6 +41,7 @@ export function QuestionBankScreen() {
   const [questions, setQuestions] = useState<AdminQuestion[]>([]);
   const [passages, setPassages] = useState<Passage[]>([]);
   const [mediaList, setMediaList] = useState<MediaAsset[]>([]);
+  const [metrics, setMetrics] = useState<InventoryMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState<string | null>(null);
 
@@ -53,6 +57,10 @@ export function QuestionBankScreen() {
   const [selectedExam, setSelectedExam] = useState<ExamType | 'ALL'>('ALL');
   const [selectedSection, setSelectedSection] = useState<SectionType | 'ALL'>('ALL');
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel | 'ALL'>('ALL');
+  const [selectedAssessment, setSelectedAssessment] = useState<string>('ALL');
+  const [selectedContentKind, setSelectedContentKind] = useState<string>('ALL');
+  const [selectedQuestionType, setSelectedQuestionType] = useState<string>('ALL');
+  const [selectedDependency, setSelectedDependency] = useState<string>('ALL');
 
   // Modal States
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -103,25 +111,47 @@ export function QuestionBankScreen() {
 
   useEffect(() => {
     loadData();
-  }, [selectedStatus, selectedExam, selectedSection, selectedDifficulty]);
+  }, [
+    selectedStatus,
+    selectedExam,
+    selectedSection,
+    selectedDifficulty,
+    selectedAssessment,
+    selectedContentKind,
+    selectedQuestionType,
+    selectedDependency,
+  ]);
 
   async function loadData() {
     setLoading(true);
     try {
-      const qRes = await adminQuestionsService.getQuestionsWithPagination({
-        status: selectedStatus,
-        exam: selectedExam,
-        section: selectedSection,
-        difficulty: selectedDifficulty,
-        search: searchQuery,
-        pageSize: 10000,
-      });
-      const pData = await adminQuestionsService.getPassages();
-      const mData = await adminQuestionsService.getMedia();
+      const [qRes, pData, mData, metricData] = await Promise.all([
+        adminQuestionsService.getQuestionsWithPagination({
+          status: selectedStatus,
+          exam: selectedExam,
+          section: selectedSection,
+          difficulty: selectedDifficulty,
+          search: searchQuery,
+          assessment: selectedAssessment,
+          contentKind: selectedContentKind,
+          questionType: selectedQuestionType,
+          dependency: selectedDependency,
+          pageSize: 10000,
+        }),
+        adminQuestionsService.getPassages(),
+        adminQuestionsService.getMedia(),
+        adminQuestionsService.getInventoryMetrics(),
+      ]);
+
       setQuestions(qRes.data || []);
       setTotalQuestionsCount(qRes.total || (qRes.data || []).length);
       setPassages(pData);
       setMediaList(mData);
+      if (metricData) {
+        setMetrics(metricData);
+      } else if (qRes.metrics) {
+        setMetrics(qRes.metrics);
+      }
     } catch (e) {
       console.error('Failed to load question bank datasets', e);
     } finally {
@@ -271,6 +301,26 @@ export function QuestionBankScreen() {
       selectedExam === 'ALL' || q.exam === selectedExam || q.programmeName === selectedExam;
     const matchesSection = selectedSection === 'ALL' || q.section === selectedSection;
     const matchesDifficulty = selectedDifficulty === 'ALL' || q.difficulty === selectedDifficulty;
+    const matchesAssessment = selectedAssessment === 'ALL' || q.assessment === selectedAssessment;
+    const matchesContentKind =
+      selectedContentKind === 'ALL' || q.contentKind === selectedContentKind;
+    const matchesQuestionType = selectedQuestionType === 'ALL' || q.type === selectedQuestionType;
+    let matchesDependency = true;
+    if (selectedDependency !== 'ALL') {
+      if (selectedDependency === 'hasAnswer') {
+        matchesDependency = !q.answer?.isMissing && Boolean(q.correctAnswer || q.answer?.primary);
+      } else if (selectedDependency === 'missingAnswer') {
+        matchesDependency = Boolean(
+          q.answer?.isMissing || (!q.correctAnswer && !q.answer?.primary)
+        );
+      } else if (selectedDependency === 'hasPassage') {
+        matchesDependency = Boolean(q.passageId || q.passageCode);
+      } else if (selectedDependency === 'missingPassage') {
+        matchesDependency = q.section === 'Reading' && !q.passageId && !q.passageCode;
+      } else if (selectedDependency === 'hasMedia') {
+        matchesDependency = Boolean(q.audioUrl || q.imageUrl);
+      }
+    }
     const matchesSearch =
       !searchQuery.trim() ||
       q.text.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -278,7 +328,17 @@ export function QuestionBankScreen() {
       q.skill.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (q.tags && q.tags.some((t) => t.toLowerCase().includes(searchQuery.toLowerCase())));
 
-    return matchesStatus && matchesExam && matchesSection && matchesDifficulty && matchesSearch;
+    return (
+      matchesStatus &&
+      matchesExam &&
+      matchesSection &&
+      matchesDifficulty &&
+      matchesAssessment &&
+      matchesContentKind &&
+      matchesQuestionType &&
+      matchesDependency &&
+      matchesSearch
+    );
   });
 
   // Enterprise Bulk Selection Hook & State
@@ -291,6 +351,10 @@ export function QuestionBankScreen() {
     exam: selectedExam,
     section: selectedSection,
     difficulty: selectedDifficulty,
+    assessment: selectedAssessment,
+    contentKind: selectedContentKind,
+    questionType: selectedQuestionType,
+    dependency: selectedDependency,
   };
 
   const handleExecuteBulkAction = async (
@@ -379,23 +443,6 @@ export function QuestionBankScreen() {
     APPROVED: questions.filter((q) => q.status === 'APPROVED').length,
     PUBLISHED: questions.filter((q) => q.status === 'PUBLISHED').length,
     ARCHIVED: questions.filter((q) => q.status === 'ARCHIVED').length,
-  };
-
-  const getStatusBadgeVariant = (st: QuestionWorkflowStatus) => {
-    switch (st) {
-      case 'PUBLISHED':
-        return 'success';
-      case 'APPROVED':
-        return 'info';
-      case 'UNDER_REVIEW':
-        return 'warning';
-      case 'DRAFT':
-        return 'neutral';
-      case 'ARCHIVED':
-        return 'danger';
-      default:
-        return 'neutral';
-    }
   };
 
   return (
@@ -517,6 +564,17 @@ export function QuestionBankScreen() {
           {/* VIEW TAB 1: QUESTION REPOSITORY */}
           {activeTab === 'QUESTIONS' && (
             <>
+              {/* Dynamic Database Inventory & Provenance Hierarchy Tree */}
+              <QuestionInventorySummary
+                metrics={metrics}
+                onSelectFilter={(filters) => {
+                  if (filters.assessment) setSelectedAssessment(filters.assessment);
+                  if (filters.section) setSelectedSection(filters.section as any);
+                  if (filters.contentKind) setSelectedContentKind(filters.contentKind);
+                  if (filters.dependency) setSelectedDependency(filters.dependency);
+                }}
+              />
+
               {/* Filters: Workflow Status Tabs + Search + Dropdowns */}
               <QuestionBankFilters
                 searchQuery={searchQuery}
@@ -529,6 +587,14 @@ export function QuestionBankScreen() {
                 onDifficultyChange={setSelectedDifficulty}
                 selectedStatus={selectedStatus}
                 onStatusChange={setSelectedStatus}
+                selectedAssessment={selectedAssessment}
+                onAssessmentChange={setSelectedAssessment}
+                selectedContentKind={selectedContentKind}
+                onContentKindChange={setSelectedContentKind}
+                selectedQuestionType={selectedQuestionType}
+                onQuestionTypeChange={setSelectedQuestionType}
+                selectedDependency={selectedDependency}
+                onDependencyChange={setSelectedDependency}
                 statusCounts={{
                   ALL: questions.length,
                   DRAFT: counts.DRAFT,
@@ -1455,115 +1521,12 @@ export function QuestionBankScreen() {
             </div>
           )}
 
-          {/* MODAL 3: PREVIEW QUESTION DETAILS */}
-          {previewQuestion && (
-            <div
-              style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: 'rgba(0,0,0,0.6)',
-                backdropFilter: 'blur(4px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 999,
-                padding: '1rem',
-              }}
-            >
-              <div
-                style={{
-                  maxWidth: '650px',
-                  width: '100%',
-                  backgroundColor: 'var(--surface-0)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '16px',
-                  padding: '1.75rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1rem',
-                }}
-              >
-                <div
-                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                >
-                  <span
-                    style={{
-                      fontSize: '0.85rem',
-                      fontFamily: 'monospace',
-                      color: 'var(--brand-primary)',
-                    }}
-                  >
-                    {previewQuestion.code}
-                  </span>
-                  <Badge variant={getStatusBadgeVariant(previewQuestion.status)}>
-                    {previewQuestion.status}
-                  </Badge>
-                </div>
-
-                <h3
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 700,
-                    color: 'var(--text-primary)',
-                    margin: 0,
-                  }}
-                >
-                  {previewQuestion.text}
-                </h3>
-
-                {previewQuestion.options && previewQuestion.options.length > 0 && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    {previewQuestion.options.map((opt, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          padding: '0.6rem 0.85rem',
-                          borderRadius: '6px',
-                          backgroundColor:
-                            opt === previewQuestion.correctAnswer
-                              ? 'rgba(16, 185, 129, 0.15)'
-                              : 'var(--surface-1)',
-                          border: '1px solid',
-                          borderColor:
-                            opt === previewQuestion.correctAnswer ? '#10b981' : 'var(--border)',
-                          color:
-                            opt === previewQuestion.correctAnswer
-                              ? '#34d399'
-                              : 'var(--text-secondary)',
-                          fontSize: '0.875rem',
-                        }}
-                      >
-                        {opt} {opt === previewQuestion.correctAnswer && '✓ (Correct)'}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {previewQuestion.explanation && (
-                  <div
-                    style={{
-                      backgroundColor: 'var(--surface-1)',
-                      padding: '0.85rem',
-                      borderRadius: '8px',
-                      fontSize: '0.85rem',
-                      color: 'var(--text-secondary)',
-                    }}
-                  >
-                    <strong>Explanation:</strong> {previewQuestion.explanation}
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button variant="outline" onClick={() => setPreviewQuestion(null)}>
-                    Close Preview
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* MODAL 3: UNIVERSAL QUESTION, ANSWER & PASSAGE INSPECTOR */}
+          <UniversalQuestionPreviewModal
+            question={previewQuestion}
+            onClose={() => setPreviewQuestion(null)}
+            onStatusChange={(id, status) => handleStatusChange(id, status)}
+          />
 
           {/* PASSAGE DETAILS MODAL */}
           {previewPassage && (

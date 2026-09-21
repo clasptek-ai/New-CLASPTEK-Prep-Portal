@@ -20,6 +20,7 @@ function AssessmentPlayerContent() {
   const [title, setTitle] = useState('Assessment Engine Player');
   const [remainingTimeSeconds, setRemainingTimeSeconds] = useState(2700);
   const [initialSavedAnswers, setInitialSavedAnswers] = useState<Record<string, any>>({});
+  const [status, setStatus] = useState<string>('IN_PROGRESS');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -57,10 +58,12 @@ function AssessmentPlayerContent() {
           readingPassage,
           writingTasks,
           savedAnswers,
+          status: attemptStatus,
         } = json.data;
 
         setTitle(assessment?.title || 'Placement Assessment');
-        setRemainingTimeSeconds(remainingTime || 2700);
+        setRemainingTimeSeconds(remainingTime !== undefined ? remainingTime : 2700);
+        setStatus(attemptStatus || 'IN_PROGRESS');
         if (savedAnswers) {
           setInitialSavedAnswers(savedAnswers);
         }
@@ -171,7 +174,9 @@ function AssessmentPlayerContent() {
       <div className="min-h-screen bg-(--background) text-(--text-primary) flex items-center justify-center p-8">
         <div className="text-center space-y-4 max-w-md bg-(--surface-0) p-6 rounded-xl border border-(--error-border) text-(--error)">
           <div className="text-lg font-bold">Assessment Error</div>
-          <p className="text-sm text-(--text-secondary)">{errorMessage || 'Invalid Attempt Session'}</p>
+          <p className="text-sm text-(--text-secondary)">
+            {errorMessage || 'Invalid Attempt Session'}
+          </p>
           <button
             onClick={() => router.push('/student/welcome')}
             className="px-4 py-2 bg-(--brand) hover:bg-(--brand-hover) text-white font-medium rounded-lg text-sm transition-colors min-h-11"
@@ -193,6 +198,7 @@ function AssessmentPlayerContent() {
         attemptId={attemptId}
         initialRemainingTime={remainingTimeSeconds}
         initialSavedAnswers={initialSavedAnswers}
+        status={status}
       />
     </div>
   );

@@ -10,7 +10,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const session = await getAuthenticatedSession(req);
     const studentId =
-      session?.userId || (process.env.NODE_ENV === 'test' ? req.headers.get('x-student-id') : null);
+      session?.userId ||
+      (process.env.NODE_ENV !== 'production' ? req.headers.get('x-student-id') : null);
     if (!studentId) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
@@ -22,15 +23,58 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const { dbPool } = await getDiagnosticContext();
     const pool = dbPool.getPool();
 
-    // Verify attempt ownership and active status
+    // Verify attempt ownership, active status, and authoritative server deadline
     const attemptRes = await pool.query(
-      `SELECT id, status FROM public.assessment_attempts WHERE id = $1 AND student_id = $2 AND status = 'IN_PROGRESS'`,
+      `SELECT id, status, expires_at, started_at, duration_minutes 
+       FROM public.assessment_attempts 
+       WHERE id = $1 AND student_id = $2`,
       [attemptId, studentId]
     );
 
     if (attemptRes.rows.length === 0) {
       return NextResponse.json(
-        { success: false, error: 'Attempt not active or unauthorized' },
+        { success: false, error: 'Attempt not found or unauthorized' },
+        { status: 403 }
+      );
+    }
+
+    const attempt = attemptRes.rows[0];
+
+    // Check if attempt is already closed or expired
+    if (attempt.status !== 'IN_PROGRESS') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Attempt is ${attempt.status}. Mutations are rejected.`,
+          code: 'ATTEMPT_NOT_ACTIVE',
+        },
+        { status: 403 }
+      );
+    }
+
+    // Authoritative Server Deadline Check
+    const deadlineMs = attempt.expires_at
+      ? new Date(attempt.expires_at).getTime()
+      : attempt.started_at && attempt.duration_minutes
+        ? new Date(attempt.started_at).getTime() + attempt.duration_minutes * 60 * 1000
+        : null;
+
+    if (deadlineMs && Date.now() > deadlineMs) {
+      // Mark attempt completed/closed in database idempotently
+      await pool.query(
+        `UPDATE public.assessment_attempts 
+         SET status = 'COMPLETED', closed_at = NOW(), updated_at = NOW() 
+         WHERE id = $1`,
+        [attemptId]
+      );
+
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            'EXPIRED: Assessment attempt deadline has passed. Mutations are strictly rejected.',
+          code: 'ATTEMPT_EXPIRED',
+        },
         { status: 403 }
       );
     }

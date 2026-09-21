@@ -33,10 +33,10 @@ interface IELTSExamEngineProps {
 }
 
 const SECTION_COLORS: Record<string, string> = {
-  Listening: '#8b5cf6',
-  Reading: '#3b82f6',
-  Writing: '#f59e0b',
-  Speaking: '#10b981',
+  Listening: '#0284c7', // Clasptek Sky Blue
+  Reading: '#045ead', // Clasptek Brand Primary
+  Writing: '#d97706', // Clasptek Warm Ochre
+  Speaking: '#0d9488', // Clasptek Teal
 };
 
 export function IELTSExamEngine({

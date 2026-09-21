@@ -45,6 +45,7 @@ export interface ExamFooterProps {
   onJumpToQuestion?: (index: number) => void;
   nextButtonLabel?: string;
   submitButtonLabel?: string;
+  isExamActive?: boolean;
 }
 
 export interface MockExamFullscreenShellProps {
@@ -229,7 +230,7 @@ export function ExamHeader({
           }}
         >
           {sections.map((sec, idx) => {
-            const isClickable = Boolean(onSelectSection);
+            const isClickable = Boolean(onSelectSection) && !isExpired;
             return (
               <button
                 key={sec.name}
@@ -415,8 +416,11 @@ export function ExamFooter({
   onJumpToQuestion,
   nextButtonLabel = 'Next',
   submitButtonLabel = 'Submit Exam',
+  isExamActive = true,
 }: ExamFooterProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const prevAllowed = canPrevious && isExamActive;
+  const nextAllowed = canNext && isExamActive;
 
   return (
     <>
@@ -442,7 +446,7 @@ export function ExamFooter({
           <button
             type="button"
             onClick={onPrevious}
-            disabled={!canPrevious}
+            disabled={!prevAllowed}
             aria-label="Previous question"
             style={{
               display: 'inline-flex',
@@ -452,13 +456,13 @@ export function ExamFooter({
               padding: '0.6rem 1.25rem',
               borderRadius: '10px',
               border: '1px solid rgba(255, 255, 255, 0.12)',
-              backgroundColor: canPrevious
+              backgroundColor: prevAllowed
                 ? 'rgba(255, 255, 255, 0.06)'
                 : 'rgba(255, 255, 255, 0.02)',
-              color: canPrevious ? '#f8fafc' : '#475569',
+              color: prevAllowed ? '#f8fafc' : '#475569',
               fontSize: '0.9rem',
               fontWeight: 700,
-              cursor: canPrevious ? 'pointer' : 'not-allowed',
+              cursor: prevAllowed ? 'pointer' : 'not-allowed',
               minHeight: '44px',
               minWidth: '100px',
               transition: 'all 0.15s ease',
@@ -529,6 +533,7 @@ export function ExamFooter({
             <button
               type="button"
               onClick={onSubmit}
+              disabled={!isExamActive}
               aria-label="Submit Examination"
               style={{
                 display: 'inline-flex',
@@ -538,12 +543,14 @@ export function ExamFooter({
                 padding: '0.6rem 1.4rem',
                 borderRadius: '10px',
                 border: 'none',
-                background: 'linear-gradient(135deg, #10b981, #059669)',
-                color: '#ffffff',
+                background: isExamActive
+                  ? 'linear-gradient(135deg, #10b981, #059669)'
+                  : 'rgba(255, 255, 255, 0.05)',
+                color: isExamActive ? '#ffffff' : '#475569',
                 fontSize: '0.92rem',
                 fontWeight: 800,
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                cursor: isExamActive ? 'pointer' : 'not-allowed',
+                boxShadow: isExamActive ? '0 4px 12px rgba(16, 185, 129, 0.3)' : 'none',
                 minHeight: '44px',
                 minWidth: '120px',
                 transition: 'all 0.15s ease',
@@ -557,7 +564,7 @@ export function ExamFooter({
             <button
               type="button"
               onClick={onNext}
-              disabled={!canNext}
+              disabled={!nextAllowed}
               aria-label="Next question"
               style={{
                 display: 'inline-flex',
@@ -567,14 +574,14 @@ export function ExamFooter({
                 padding: '0.6rem 1.4rem',
                 borderRadius: '10px',
                 border: 'none',
-                background: canNext
+                background: nextAllowed
                   ? 'linear-gradient(135deg, #3b82f6, #2563eb)'
                   : 'rgba(255, 255, 255, 0.05)',
-                color: canNext ? '#ffffff' : '#475569',
+                color: nextAllowed ? '#ffffff' : '#475569',
                 fontSize: '0.9rem',
                 fontWeight: 800,
-                cursor: canNext ? 'pointer' : 'not-allowed',
-                boxShadow: canNext ? '0 4px 12px rgba(37, 99, 235, 0.25)' : 'none',
+                cursor: nextAllowed ? 'pointer' : 'not-allowed',
+                boxShadow: nextAllowed ? '0 4px 12px rgba(37, 99, 235, 0.25)' : 'none',
                 minHeight: '44px',
                 minWidth: '100px',
                 transition: 'all 0.15s ease',
@@ -762,7 +769,7 @@ export function MockExamFullscreenShell({
     >
       <ExamHeader {...headerProps} />
       <ExamContent>{children}</ExamContent>
-      {footerProps && <ExamFooter {...footerProps} />}
+      {footerProps && <ExamFooter {...footerProps} isExamActive={isExamActive} />}
 
       {/* Global Responsive Styles */}
       <style>{`
